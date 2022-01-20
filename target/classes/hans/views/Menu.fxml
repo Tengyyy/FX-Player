@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<Pane id="menuBackground" fx:id="menuBackgroundPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" styleClass="root"
+      stylesheets="@../styles/application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="hans.MenuController">
+    <children>
+        <ScrollPane id="scrollPane" fx:id="menuScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER"
+                    onDragDropped="#menuDragDropped" onDragEntered="#menuDragEntered" onDragOver="#menuDragOver"
+                    prefHeight="600.0" prefWidth="400.0">
+            <padding>
+                <Insets bottom="20.0" left="30.0" right="30.0" top="20.0"/>
+            </padding>
+            <content>
+                <VBox id="menuContainer" fx:id="menuContainer" alignment="CENTER" prefHeight="200.0" prefWidth="100.0"
+                      spacing="20.0">
+                    <children>
+                        <Text fx:id="dragDropText" fill="#f3f1f5" strokeType="OUTSIDE" strokeWidth="0.0"
+                              text="Drag mp4-files here to add videos to the queue" textAlignment="CENTER">
+                            <font>
+                                <Font name="Roboto Medium" size="22.0"/>
+                            </font>
+                        </Text>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
+</Pane>

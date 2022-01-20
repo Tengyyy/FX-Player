@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<Pane fx:id="settingsBackgroundPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="170.0" minWidth="235.0" prefHeight="170.0" prefWidth="235.0" stylesheets="@../styles/application.css" StackPane.alignment="BOTTOM_RIGHT" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.SettingsController">
+    <StackPane.margin>
+        <Insets bottom="60.0" right="10.0" />
+    </StackPane.margin>
+    <children>
+        <StackPane fx:id="bufferPane" alignment="BOTTOM_CENTER" prefHeight="170.0" prefWidth="235.0">
+            <children>
+                <StackPane fx:id="settingsPane" alignment="BOTTOM_CENTER" maxWidth="-Infinity" prefHeight="170.0" prefWidth="235.0" StackPane.alignment="BOTTOM_CENTER">
+                    <children>
+                        <VBox fx:id="settingsHome" alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="170.0" minWidth="235.0" prefHeight="170.0" prefWidth="235.0" StackPane.alignment="BOTTOM_CENTER">
+                            <children>
+                                <HBox fx:id="playbackOptionsBox" prefHeight="50.0" prefWidth="235.0">
+                                    <children>
+                                        <Label focusTraversable="false" maxWidth="-Infinity" prefHeight="50.0" prefWidth="125.0" text="Playback options" textFill="WHITE">
+
+                                        </Label>
+                                        <Label fx:id="playbackOptionsArrow" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" prefHeight="50.0" prefWidth="90.0" textFill="WHITE">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </HBox>
+                                <HBox fx:id="videoBox" alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="235.0">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                    <children>
+                                        <HBox fx:id="videoNameBox" alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="195.0">
+                                            <children>
+                                                <Text fx:id="videoNameText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a video">
+
+                                                </Text>
+                                            </children>
+                                            <HBox.margin>
+                                                <Insets right="6.0" />
+                                            </HBox.margin>
+                                        </HBox>
+                                        <Label fx:id="videoArrowLabel" contentDisplay="GRAPHIC_ONLY" prefHeight="50.0" prefWidth="14.0" />
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="playbackSpeedBox" alignment="CENTER_LEFT" onMouseClicked="#openPlaybackSpeedPage" prefHeight="50.0" prefWidth="235.0">
+                                    <children>
+                                        <Label focusTraversable="false" prefHeight="50.0" prefWidth="125.0" text="Playback speed" textFill="WHITE" HBox.hgrow="ALWAYS">
+
+                                        </Label>
+                                        <Label fx:id="playbackValueLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" prefHeight="50.0" prefWidth="90.0" text="Normal" textFill="WHITE" HBox.hgrow="ALWAYS">
+
+                                        </Label>
+                                    </children>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                    <VBox.margin>
+                                        <Insets />
+                                    </VBox.margin>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                    </children>
+                </StackPane>
+            </children>
+        </StackPane>
+        <ScrollPane fx:id="playbackSpeedScroll" focusTraversable="false" hbarPolicy="NEVER" maxHeight="537.0" maxWidth="235.0" minHeight="170.0" minWidth="235.0" prefHeight="487.0" prefWidth="235.0" styleClass="playbackSpeedScroll" stylesheets="@../styles/application.css">
+            <content>
+                <VBox fx:id="playbackSpeedPage" alignment="BOTTOM_LEFT" maxHeight="537.0" minHeight="170.0" minWidth="235.0" prefHeight="484.0" prefWidth="235.0">
+                    <padding>
+                        <Insets bottom="10.0" top="10.0" />
+                    </padding>
+                    <children>
+                        <HBox fx:id="playbackSpeedTitle" maxWidth="-Infinity" prefHeight="50.0" prefWidth="235.0">
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="playbackSpeedArrow" alignment="CENTER" focusTraversable="false" onMouseClicked="#closePlaybackSpeedPage" prefHeight="50.0" prefWidth="24.0">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </Label>
+                                <Label fx:id="playbackSpeedTitleLabel" focusTraversable="false" onMouseClicked="#closePlaybackSpeedPage" prefHeight="50.0" prefWidth="106.0" text="Playback speed" textFill="WHITE">
+
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </Label>
+                                <Label prefHeight="50.0" prefWidth="20.0" />
+                                <Label id="playbackSpeedCustom" fx:id="playbackSpeedCustom" alignment="CENTER_RIGHT" focusTraversable="false" maxWidth="-Infinity" onMouseClicked="#openCustomSpeed" prefHeight="50.0" prefWidth="65.0" text="Custom" textFill="WHITE" underline="true">
+                                    <padding>
+                                        <Insets right="20.0" />
+                                    </padding>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </Label>
+                            </children>
+                        </HBox>
+                        <Separator prefWidth="200.0">
+                            <VBox.margin>
+                                <Insets bottom="5.0" top="5.0" />
+                            </VBox.margin>
+                        </Separator>
+                        <HBox fx:id="playbackSpeed1" prefHeight="50.0" prefWidth="200.0">
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="checkBox1" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </Label>
+                                <Label prefHeight="50.0" prefWidth="186.0" text="0.25" textFill="WHITE">
+
+                                </Label>
+                            </children>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </HBox>
+                        <HBox fx:id="playbackSpeed2" prefHeight="50.0" prefWidth="200.0">
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="checkBox2" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </Label>
+                                <Label prefHeight="50.0" prefWidth="186.0" text="0.5" textFill="WHITE">
+
+                                </Label>
+                            </children>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </HBox>
+                        <HBox fx:id="playbackSpeed3" prefHeight="50.0" prefWidth="200.0">
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="checkBox3" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </Label>
+                                <Label prefHeight="50.0" prefWidth="186.0" text="0.75" textFill="WHITE">
+
+                                </Label>
+                            </children>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </HBox>
+                        <HBox fx:id="playbackSpeed4" prefHeight="50.0" prefWidth="200.0">
+                            <padding>
+                                <Insets left="5.0" right="10.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="checkBox4" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </Label>
+                                <Label prefHeight="50.0" prefWidth="186.0" text="Normal" textFill="WHITE">
+
+                                </Label>
+                            </children>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </HBox>
+                        <HBox fx:id="playbackSpeed5" prefHeight="50.0" prefWidth="200.0">
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="checkBox5" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </Label>
+                                <Label prefHeight="50.0" prefWidth="186.0" text="1.25" textFill="WHITE">
+
+                                </Label>
+                            </children>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </HBox>
+                        <HBox fx:id="playbackSpeed6" prefHeight="50.0" prefWidth="200.0">
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="checkBox6" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </Label>
+                        <Label prefHeight="50.0" prefWidth="186.0" text="1.5" textFill="WHITE">
+
+                        </Label>
+                            </children>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </HBox>
+                        <HBox fx:id="playbackSpeed7" prefHeight="50.0" prefWidth="200.0">
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="checkBox7" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </Label>
+                                <Label prefHeight="50.0" prefWidth="186.0" text="1.75" textFill="WHITE">
+
+                                </Label>
+                            </children>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </HBox>
+                        <HBox fx:id="playbackSpeed8" prefHeight="50.0" prefWidth="200.0">
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="checkBox8" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </Label>
+                                <Label prefHeight="50.0" prefWidth="186.0" text="2" textFill="WHITE">
+
+                                </Label>
+                            </children>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </HBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+        <StackPane fx:id="customSpeedBuffer" alignment="BOTTOM_CENTER" prefHeight="170.0" prefWidth="235.0" translateX="235.0">
+            <children>
+                <StackPane fx:id="customSpeedPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="130.0" minWidth="235.0" prefHeight="130.0" prefWidth="235.0" StackPane.alignment="BOTTOM_CENTER">
+                    <children>
+                        <VBox fx:id="customSpeedBox" alignment="TOP_CENTER" prefHeight="130.0" prefWidth="235.0">
+                            <children>
+                                <HBox fx:id="customSpeedTitle" prefHeight="50.0" prefWidth="235.0">
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                    <children>
+                                        <Label fx:id="customSpeedArrow" onMouseClicked="#closeCustomSpeed" prefHeight="50.0" prefWidth="24.0">
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Label>
+                                        <Label fx:id="customSpeedTitleLabel" onMouseClicked="#closeCustomSpeed" prefHeight="50.0" prefWidth="60.0" text="Custom" textFill="WHITE">
+
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <Separator prefWidth="200.0">
+                                    <VBox.margin>
+                                        <Insets bottom="5.0" top="5.0" />
+                                    </VBox.margin>
+                                </Separator>
+                                <StackPane prefHeight="30.0" prefWidth="235.0">
+                                    <children>
+                                        <ProgressBar fx:id="customSpeedTrack" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="7.0" prefWidth="138.0" progress="0.45" styleClass="customSpeedTrack" />
+                                        <Slider fx:id="customSpeedSlider" blockIncrement="0.05" majorTickUnit="0.05" max="2.0" maxWidth="-Infinity" min="0.25" minWidth="-Infinity" minorTickCount="0" prefWidth="150.0" styleClass="customSpeedSlider" value="1.0" />
+                                    </children>
+                                </StackPane>
+                                <Label id="customSpeedValue" fx:id="customSpeedLabel" text="1x" textFill="WHITE">
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                </StackPane>
+            </children>
+        </StackPane>
+        <StackPane fx:id="playbackOptionsBuffer" alignment="BOTTOM_CENTER" prefHeight="230.0" prefWidth="235.0" translateY="-60.0">
+            <children>
+                <StackPane fx:id="playbackOptionsPane" prefHeight="230.0" prefWidth="235.0">
+                    <children>
+                        <VBox fx:id="playbackOptionsVBox" prefHeight="230.0" prefWidth="235.0">
+                            <children>
+                                <HBox fx:id="playbackOptionsTitle" prefHeight="50.0" prefWidth="235.0">
+                                    <children>
+                                        <Label fx:id="playbackOptionsTitleArrow" prefHeight="50.0" prefWidth="24.0" textFill="WHITE">
+
+                                        </Label>
+                                        <Label fx:id="playbackOptionsTitleText" prefHeight="50.0" prefWidth="191.0" text="Playback options" textFill="WHITE">
+
+                                        </Label>
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </HBox>
+                                <Separator prefWidth="200.0">
+                                    <VBox.margin>
+                                        <Insets bottom="3.3333333333333" top="3.333333333" />
+                                    </VBox.margin>
+                                </Separator>
+                                <HBox fx:id="shuffleBox" prefHeight="50.0" prefWidth="235.0">
+                                    <children>
+                                        <Label fx:id="shuffleLabel" prefHeight="50.0" prefWidth="165.0" text="Shuffle" textFill="WHITE">
+
+                                        </Label>
+                                        <JFXToggleButton fx:id="shuffleSwitch" alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxHeight="50.0" prefHeight="50.0" prefWidth="50.0" style="-fx-padding: 0;" textFill="WHITE" toggleColor="RED" toggleLineColor="#be4040" unToggleLineColor="#535151">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                        </JFXToggleButton>
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </HBox>
+                                <HBox fx:id="loopBox" prefHeight="50.0" prefWidth="235.0">
+                                    <children>
+                                        <Label fx:id="loopLabel" prefHeight="50.0" prefWidth="165.0" text="Loop video" textFill="WHITE">
+
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Label>
+                                        <JFXToggleButton fx:id="loopSwitch" contentDisplay="RIGHT" prefHeight="50.0" prefWidth="50.0" style="-fx-padding: 0;" textFill="WHITE" toggleColor="RED" toggleLineColor="#be4040" unToggleLineColor="#535151">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </JFXToggleButton>
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="autoplayBox" prefHeight="50.0" prefWidth="235.0">
+                                    <children>
+                                        <Label fx:id="autoplayLabel" prefHeight="50.0" prefWidth="165.0" text="Autoplay" textFill="WHITE">
+
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Label>
+                                        <JFXToggleButton fx:id="autoplaySwitch" contentDisplay="RIGHT" maxWidth="124.0" prefHeight="50.0" prefWidth="50.0" style="-fx-padding: 0;" textFill="WHITE" toggleColor="RED" toggleLineColor="#be4040" unToggleLineColor="#535151">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </JFXToggleButton>
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                    </children>
+                </StackPane>
+            </children>
+        </StackPane>
+    </children>
+</Pane>

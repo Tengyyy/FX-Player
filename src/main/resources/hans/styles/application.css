@@ -1,0 +1,172 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+@font-face {
+    src: url('../fonts/Roboto-Medium.ttf');
+}
+
+.root {
+	-fx-font-family: "Roboto Medium";
+	-fx-font-size: 15;
+}
+
+#customSpeedValue {
+    -fx-font-family: "Roboto Medium";
+	-fx-font-size: 20;
+}
+
+#playbackSpeedCustom {
+    -fx-font-family: "Roboto Medium";
+	-fx-font-size: 12;
+}
+
+#durationLabel {
+    -fx-font-family: "Roboto Medium";
+	-fx-font-size: 18;
+}
+
+.playbackSpeedScroll {
+       -fx-background-color: transparent;
+}
+
+.playbackSpeedScroll > .viewport {
+   -fx-background-color: transparent;
+}
+
+.playbackSpeedScroll .scroll-bar:horizontal .track,
+.playbackSpeedScroll .scroll-bar:vertical .track{
+    -fx-background-color :rgba(30,30,30,0.8);
+    -fx-border-color :rgba(30,30,30,1);
+    -fx-background-radius : 0.0em;
+    -fx-border-radius :0.0em;
+}
+
+
+.playbackSpeedScroll .scroll-bar:horizontal .increment-button ,
+.playbackSpeedScroll .scroll-bar:horizontal .decrement-button {
+    -fx-background-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-padding :0.0 0.0 0.0 0.0;
+
+}
+
+.playbackSpeedScroll .scroll-bar:vertical .increment-button ,
+.playbackSpeedScroll .scroll-bar:vertical .decrement-button {
+    -fx-background-color : transparent;
+    -fx-background-radius : 0.0em;
+    -fx-padding :0.0 0.0 0.0 0.0;
+
+}
+
+ .playbackSpeedScroll .scroll-bar .increment-arrow,
+ .playbackSpeedScroll .scroll-bar .decrement-arrow{
+    -fx-shape : " ";    
+    -fx-padding :0.0em 0.0;
+}
+
+ .playbackSpeedScroll .scroll-bar:vertical .increment-arrow,
+ .playbackSpeedScroll .scroll-bar:vertical .decrement-arrow{
+    -fx-shape : " ";    
+    -fx-padding :0.0 0.0em;
+}
+
+.playbackSpeedScroll .scroll-bar:horizontal .thumb,
+.playbackSpeedScroll .scroll-bar:vertical .thumb {
+    -fx-background-color :derive(black,90.0%);
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 2.0em;
+}
+
+
+
+.customSpeedSlider .track {
+	
+	-fx-background-color: null;
+}
+
+
+.customSpeedTrack {
+	-fx-accent: white;
+}
+
+.customSpeedTrack > .track {
+	-fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-text-box-border: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.customSpeedTrack > .bar {
+	-fx-padding: 1px;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.customSpeedSlider > .thumb {
+	-fx-background-color: white;
+	-fx-padding: 10;
+}
+
+
+
+.volumeSlider .track {
+	
+	-fx-background-color: null;
+}
+
+
+.volumeTrack {
+	-fx-accent: white;
+}
+
+.volumeTrack > .track {
+	-fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-text-box-border: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.volumeTrack > .bar {
+	-fx-padding: 1px;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.volumeSlider > .thumb {
+	-fx-background-color: white;
+	-fx-padding: 7;
+}
+
+
+
+.durationSlider .track {
+	
+	-fx-background-color: null;
+	-fx-pref-height: 50px;
+}
+
+
+.durationTrack {
+	-fx-accent: red;
+}
+
+.durationTrack > .track {
+	-fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-text-box-border: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.durationTrack > .bar {
+	-fx-padding: 0px;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.durationSlider > .thumb {
+	-fx-background-color: red;
+	-fx-padding: 10; /* hides thumb by default */
+	
+}

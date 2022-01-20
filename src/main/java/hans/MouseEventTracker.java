@@ -47,4 +47,8 @@ public class MouseEventTracker {
         pause.playFromStart();
     }
 
+    public void hide(){
+        mouseMoving.set(false);
+    }
+
 }

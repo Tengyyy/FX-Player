@@ -42,7 +42,7 @@ public class CustomSpeedTab extends HBox {
         playbackCustomCheck.setPadding(new Insets(0, 5, 0, 0));
 
         if (selected) {
-            settingsController.updatePlaybackSpeed(0, settingsController.formattedValue2, playbackCustomCheck);
+            settingsController.updatePlaybackSpeed(0, settingsController.formattedValue2, playbackCustomCheck, true);
         }
 
         playbackCustomText.setTextFill(Color.WHITE);
@@ -55,7 +55,7 @@ public class CustomSpeedTab extends HBox {
         settingsController.playbackSpeedPage.getChildren().add(2, this);
 
         this.setOnMouseClicked((e) -> {
-            settingsController.updatePlaybackSpeed(0, settingsController.formattedValue2, playbackCustomCheck);
+            settingsController.updatePlaybackSpeed(0, settingsController.formattedValue2, playbackCustomCheck, false);
             settingsController.mainController.mediaPlayer.setRate(settingsController.formattedValue2);
         });
     }

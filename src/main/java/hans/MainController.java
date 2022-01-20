@@ -24,9 +24,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Background;
 
 import javafx.scene.layout.StackPane;
@@ -497,6 +500,48 @@ public class MainController implements Initializable {
         } else {
             menuStage.setIconified(false); // Restores the window if its iconified (hidden)
         }
+    }
+
+    public void handleDragEntered(DragEvent e){
+        if(!Utilities.getFileExtension(e.getDragboard().getFiles().get(0)).equals("mp4")) return;
+
+        mediaView.setEffect(new GaussianBlur());
+        // show video adding icon
+        controlBarController.mouseEventTracker.hide();
+    }
+
+    public void handleDragExited(DragEvent e){
+        mediaView.setEffect(null);
+    }
+
+    public void handleDragOver(DragEvent e){
+        if(!Utilities.getFileExtension(e.getDragboard().getFiles().get(0)).equals("mp4")) return;
+
+        e.acceptTransferModes(TransferMode.LINK);
+    }
+
+    public void handleDragDropped(DragEvent e){
+        mediaView.setEffect(null);
+        File file = e.getDragboard().getFiles().get(0);
+
+        /* return statement */
+        if(!Utilities.getFileExtension(file).equals("mp4")) return;
+
+        settingsController.videoNameText.setText(file.getName()); // updates video name text and window title with filename
+        App.stage.setTitle(file.getName());
+
+        // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
+        AnimationsClass.stopMarquee(settingsController.videoNameText);
+
+        ////////////// this can be turned into one mediaplayer cleaning method
+        mediaPlayer.dispose();
+        atEnd = false;
+        seekedToEnd = false;
+        playing = false;
+        wasPlaying = false;
+        ///////////////////////////////////////////////////////////////////
+
+        createMediaPlayer(file);
     }
 
 

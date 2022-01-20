@@ -7,26 +7,21 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.media.MediaView?>
 
-<StackPane fx:id="pane" focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-           minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root"
-           stylesheets="@../styles/focusStyles.css" xmlns="http://javafx.com/javafx/17"
-           xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MainController">
+<StackPane fx:id="pane" focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefHeight="400.0" prefWidth="600.0" styleClass="root" stylesheets="@../styles/focusStyles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MainController">
     <children>
-        <MediaView fx:id="mediaView" focusTraversable="true" onMouseClicked="#mediaClick" styleClass="focusableProperty"
-                   StackPane.alignment="CENTER">
+        <MediaView fx:id="mediaView" focusTraversable="true" onMouseClicked="#mediaClick" styleClass="focusableProperty" StackPane.alignment="CENTER">
             <viewport>
-                <Rectangle2D/>
+                <Rectangle2D />
             </viewport>
         </MediaView>
-        <fx:include fx:id="controlBar" source="ControlBar.fxml"/>
-        <fx:include fx:id="settings" source="Settings.fxml"/>
-        <Button fx:id="menuButton" mnemonicParsing="false" onAction="#openMenu" prefHeight="60.0" prefWidth="60.0"
-                style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="TOP_LEFT">
+        <fx:include fx:id="controlBar" source="ControlBar.fxml" />
+        <fx:include fx:id="settings" source="Settings.fxml" />
+        <Button fx:id="menuButton" mnemonicParsing="false" onAction="#openMenu" prefHeight="60.0" prefWidth="60.0" style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="TOP_LEFT">
             <graphic>
-                <ImageView fx:id="menuIcon" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+                <ImageView fx:id="menuIcon" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" />
             </graphic>
             <cursor>
-                <Cursor fx:constant="HAND"/>
+                <Cursor fx:constant="HAND" />
             </cursor>
         </Button>
     </children>

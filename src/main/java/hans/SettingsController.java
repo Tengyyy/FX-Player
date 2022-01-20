@@ -476,7 +476,7 @@ public class SettingsController implements Initializable {
             final double I = i + 1;
 
             playbackSpeedBoxesArray[i].setOnMouseClicked((e) -> {
-                updatePlaybackSpeed((int) I, I / 4, playbackSpeedCheckBoxesArray[(int) I - 1]);
+                updatePlaybackSpeed((int) I, I / 4, playbackSpeedCheckBoxesArray[(int) I - 1], false);
 
                 mainController.mediaPlayer.setRate(I / 4);
             });
@@ -543,7 +543,7 @@ public class SettingsController implements Initializable {
 
         // this part will be run if the custom speed tab doesnt need to be updated but the rest of the tabs do
         if (isDefaultValue)
-            updatePlaybackSpeed((int) formattedValue * 4, formattedValue, playbackSpeedCheckBoxesArray[(int) (formattedValue * 4 - 1)]);
+            updatePlaybackSpeed((int) formattedValue * 4, formattedValue, playbackSpeedCheckBoxesArray[(int) (formattedValue * 4 - 1)], true);
 
 
         if (controlBarController.settingsButtonHover) {
@@ -645,7 +645,7 @@ public class SettingsController implements Initializable {
         if (loadCustomSpeed) createCustomSpeedTab();
 
         if (isDefaultValue) {
-            updatePlaybackSpeed((int) formattedValue * 4, formattedValue, playbackSpeedCheckBoxesArray[(int) (formattedValue * 4 - 1)]);
+            updatePlaybackSpeed((int) formattedValue * 4, formattedValue, playbackSpeedCheckBoxesArray[(int) (formattedValue * 4 - 1)], true);
         }
 
         double toHeight;
@@ -709,7 +709,7 @@ public class SettingsController implements Initializable {
         playbackCustom = new CustomSpeedTab(this, formattedValue == formattedValue2 ? true : false);
     }
 
-    public void updatePlaybackSpeed(int trackerValue, double speedValue, Label activeCheckBox) {
+    public void updatePlaybackSpeed(int trackerValue, double speedValue, Label activeCheckBox, boolean updateScroll) {
 
         isDefaultValue = false;
 
@@ -727,7 +727,7 @@ public class SettingsController implements Initializable {
             playbackCustom.playbackCustomCheck.setGraphic(null);
         }
 
-        playbackSpeedScroll.setVvalue(scrollValue / playbackSpeedPage.getHeight());
+        if(updateScroll) playbackSpeedScroll.setVvalue(scrollValue / playbackSpeedPage.getHeight());
 
         for (Label checkBox : playbackSpeedCheckBoxesArray) {
             checkBox.setGraphic(null);

@@ -456,7 +456,7 @@ public class AnimationsClass {
     public static void hideControls(ControlBarController controlBarController) {
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), controlBarController.controlBar);
-        translateTransition.setFromY(0);
+        translateTransition.setFromY(controlBarController.controlBar.getTranslateY());
         translateTransition.setToY(50);
         translateTransition.setCycleCount(1);
         translateTransition.setInterpolator(Interpolator.LINEAR);

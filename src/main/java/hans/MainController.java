@@ -24,6 +24,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
+import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -110,6 +111,9 @@ public class MainController implements Initializable {
     ControlTooltip menuTooltip;
 
     Stage menuStage = new Stage();
+
+    Image addVideoImage = new Image(new File("src/main/resources/hans/images/addVideo.png").toURI().toString());
+    ImageView addVideo;
 
 
     @Override
@@ -505,19 +509,36 @@ public class MainController implements Initializable {
     public void handleDragEntered(DragEvent e){
         if(!Utilities.getFileExtension(e.getDragboard().getFiles().get(0)).equals("mp4")) return;
 
-        mediaView.setEffect(new GaussianBlur());
-        // show video adding icon
-        controlBarController.mouseEventTracker.hide();
+        mediaView.setEffect(new GaussianBlur(30));
+
+        if(settingsController.settingsOpen) settingsController.closeSettings();
+        else if(captionsOpen) controlBarController.closeCaptions();
+
+       if(playing)controlBarController.mouseEventTracker.hide();
+        else if(!playing) AnimationsClass.hideControls(controlBarController);
+
+        addVideo = new ImageView(addVideoImage);
+        addVideo.setFitWidth(150);
+        addVideo.setFitHeight(150);
+        addVideo.setEffect(new DropShadow());
+        if(pane.getChildren().size() == 4){
+            pane.getChildren().add(addVideo);
+        }
+
     }
 
     public void handleDragExited(DragEvent e){
         mediaView.setEffect(null);
+
+        if(pane.getChildren().size() == 5){
+            pane.getChildren().remove(4);
+        }
     }
 
     public void handleDragOver(DragEvent e){
         if(!Utilities.getFileExtension(e.getDragboard().getFiles().get(0)).equals("mp4")) return;
 
-        e.acceptTransferModes(TransferMode.LINK);
+        e.acceptTransferModes(TransferMode.COPY);
     }
 
     public void handleDragDropped(DragEvent e){
@@ -529,6 +550,11 @@ public class MainController implements Initializable {
 
         settingsController.videoNameText.setText(file.getName()); // updates video name text and window title with filename
         App.stage.setTitle(file.getName());
+
+
+        if(pane.getChildren().size() == 5){
+            pane.getChildren().remove(4);
+        }
 
         // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
         AnimationsClass.stopMarquee(settingsController.videoNameText);

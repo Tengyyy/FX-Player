@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<Pane id="menuBackground" fx:id="menuBackgroundPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-      minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" styleClass="root"
-      stylesheets="@../styles/application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="hans.MenuController">
-    <children>
-        <ScrollPane id="scrollPane" fx:id="menuScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER"
-                    onDragDropped="#menuDragDropped" onDragEntered="#menuDragEntered" onDragOver="#menuDragOver"
-                    prefHeight="600.0" prefWidth="400.0">
-            <padding>
-                <Insets bottom="20.0" left="30.0" right="30.0" top="20.0"/>
-            </padding>
-            <content>
-                <VBox id="menuContainer" fx:id="menuContainer" alignment="CENTER" prefHeight="200.0" prefWidth="100.0"
-                      spacing="20.0">
-                    <children>
-                        <Text fx:id="dragDropText" fill="#f3f1f5" strokeType="OUTSIDE" strokeWidth="0.0"
-                              text="Drag mp4-files here to add videos to the queue" textAlignment="CENTER">
-                            <font>
-                                <Font name="Roboto Medium" size="22.0"/>
-                            </font>
-                        </Text>
-                    </children>
-                </VBox>
-            </content>
-        </ScrollPane>
-    </children>
-</Pane>
+<GridPane fx:id="menuPane" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="572.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="60.0" percentHeight="15.0" prefHeight="80.0" valignment="CENTER" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="0.0" percentHeight="85.0" prefHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <JFXButton maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="60.0" ripplerFill="#646464" style="-fx-background-color: #303030; -fx-background-radius: 0;" text="Queue" textFill="WHITE" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </JFXButton>
+      <JFXButton maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="60.0" ripplerFill="#646464" style="-fx-background-color: #303030; -fx-background-radius: 0;" text="Add Videos" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </JFXButton>
+      <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+   </children>
+</GridPane>

@@ -3,6 +3,7 @@ package hans;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.control.TabPane;
 import javafx.util.Duration;
 
 public class MouseEventTracker {
@@ -40,6 +41,7 @@ public class MouseEventTracker {
         // countdown that changes mouseMoving property to false if it reaches the end
         pause = new PauseTransition(Duration.millis(delay * 1000));
         pause.setOnFinished(e -> mouseMoving.set(false));
+
     }
 
     public void move() { // resets the countdown when called

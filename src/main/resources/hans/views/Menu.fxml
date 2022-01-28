@@ -1,32 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.VBox?>
 
-<GridPane fx:id="menuPane" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="572.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane id="menuPane" fx:id="menuPane" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="572.0" styleClass="root" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MenuController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="50.0" prefWidth="0.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="50.0" prefWidth="0.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="60.0" percentHeight="15.0" prefHeight="80.0" valignment="CENTER" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="0.0" percentHeight="85.0" prefHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="0.0" minHeight="0.0" percentHeight="12.0" prefHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="0.0" percentHeight="88.0" prefHeight="0.0" valignment="BOTTOM" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <JFXButton maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="60.0" ripplerFill="#646464" style="-fx-background-color: #303030; -fx-background-radius: 0;" text="Queue" textFill="WHITE" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </JFXButton>
-      <JFXButton maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="60.0" ripplerFill="#646464" style="-fx-background-color: #303030; -fx-background-radius: 0;" text="Add Videos" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </JFXButton>
-      <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+      <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+         <children>
+            <JFXButton fx:id="queueButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#openQueueTab" ripplerFill="GREY" styleClass="menuButton" text="Queue" textFill="WHITE">
+
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+            </JFXButton>
+            <Pane fx:id="queueLine" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mouseTransparent="true" prefWidth="200.0" styleClass="buttonLine" StackPane.alignment="BOTTOM_CENTER" />
+         </children>
+      </StackPane>
+      <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+         <children>
+            <Pane fx:id="addLine" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mouseTransparent="true" prefWidth="200.0" styleClass="buttonLine" StackPane.alignment="BOTTOM_CENTER" />
+            <JFXButton fx:id="addButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#openAddVideosTab" ripplerFill="GREY" styleClass="menuButton" text="Add Videos" textFill="WHITE">
+
+            </JFXButton>
+         </children>
+      </StackPane>
+      <StackPane id="menuContent" fx:id="menuContent" GridPane.columnSpan="2" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+         <children>
+            <AnchorPane fx:id="queuePane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: transparent;">
+               <children>
+                  <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: purple;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <VBox fx:id="queueBox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: purple;" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="addPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;">
+               <children>
+                  <VBox fx:id="addBox" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: red;" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
+               </children>
+            </AnchorPane>
+         </children></StackPane>
    </children>
 </GridPane>

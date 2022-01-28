@@ -8,25 +8,42 @@
 	-fx-font-size: 15;
 }
 
-.tab-header-background {
-    -fx-background-color: rgb(32, 32, 32);
+.menuButton {
+    -fx-background-color: #303030;
+    -fx-background-radius: 0;
+    -fx-font-size: 1.2em;
 }
 
-.tab:hover {
-    -fx-background-color: rgb(40, 40, 40);
+#queueScroll {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
 }
 
-.jfx-tab-pane .tab-header-area .jfx-rippler{
-    -jfx-rippler-fill: rgb(100,100,100);
+#queueScroll:focused {
+    -fx-background-insets: 0;
+}
+
+#queueScroll .corner {
+    -fx-background-insets: 0;
 }
 
 
-#menuTabPane .tab-selected-line {
-    -fx-background-color: #FF0000;
+
+
+.buttonLine {
     -fx-pref-height: 0.5em;
 }
 
-#menuTabPane {
-    -fx-tab-min-height: 4em;
-    -fx-tab-pref-height: 5em;
+
+.menuButton:hover {
+    -fx-background-color: #404040;
 }
+
+#menuPane {
+    -fx-background-color: #303030;
+}
+
+#menuContent {
+    -fx-background-color: #202020;
+}
+

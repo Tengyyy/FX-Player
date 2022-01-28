@@ -18,6 +18,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -581,6 +582,58 @@ public class AnimationsClass {
         durationSliderTimelineOff.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(durationSlider.lookup(".thumb").scaleXProperty(), 0, Interpolator.LINEAR)));
         durationSliderTimelineOff.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(durationSlider.lookup(".thumb").scaleYProperty(), 0, Interpolator.LINEAR)));
         durationSliderTimelineOff.play();
+    }
+
+    public static void openQueueTab(AnchorPane addPane, AnchorPane queuePane, MenuController menuController){
+        addPane.translateXProperty().unbind();
+        queuePane.translateXProperty().unbind();
+
+        TranslateTransition translateTransition1 = new TranslateTransition(Duration.millis(200), addPane);
+        translateTransition1.setFromX(0);
+        translateTransition1.setToX(addPane.getWidth());
+        translateTransition1.setCycleCount(1);
+        translateTransition1.setInterpolator(Interpolator.LINEAR);
+
+        TranslateTransition translateTransition2 = new TranslateTransition(Duration.millis(200), queuePane);
+        translateTransition2.setFromX(queuePane.getTranslateX());
+        translateTransition2.setToX(0);
+        translateTransition2.setCycleCount(1);
+        translateTransition2.setInterpolator(Interpolator.LINEAR);
+
+        ParallelTransition parallelTransition = new ParallelTransition();
+        parallelTransition.getChildren().addAll(translateTransition1, translateTransition2);
+        parallelTransition.setCycleCount(1);
+        parallelTransition.setOnFinished((e) -> {
+            addPane.translateXProperty().bind(addPane.getScene().widthProperty());
+            menuController.queueTabOpen = true;
+        });
+        parallelTransition.play();
+    }
+
+    public static void openAddVideosTab(AnchorPane addPane, AnchorPane queuePane, MenuController menuController){
+        addPane.translateXProperty().unbind();
+        queuePane.translateXProperty().unbind();
+
+        TranslateTransition translateTransition1 = new TranslateTransition(Duration.millis(200), addPane);
+        translateTransition1.setFromX(addPane.getTranslateX());
+        translateTransition1.setToX(0);
+        translateTransition1.setCycleCount(1);
+        translateTransition1.setInterpolator(Interpolator.LINEAR);
+
+        TranslateTransition translateTransition2 = new TranslateTransition(Duration.millis(200), queuePane);
+        translateTransition2.setFromX(0);
+        translateTransition2.setToX(-queuePane.getWidth());
+        translateTransition2.setCycleCount(1);
+        translateTransition2.setInterpolator(Interpolator.LINEAR);
+
+        ParallelTransition parallelTransition = new ParallelTransition();
+        parallelTransition.getChildren().addAll(translateTransition1, translateTransition2);
+        parallelTransition.setCycleCount(1);
+        parallelTransition.setOnFinished((e) -> {
+            queuePane.translateXProperty().bind(queuePane.getScene().widthProperty().multiply(-1));
+            menuController.queueTabOpen = false;
+        });
+        parallelTransition.play();
     }
 
 }

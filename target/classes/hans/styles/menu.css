@@ -3,9 +3,27 @@
     src: url('../fonts/Roboto-Medium.ttf');
 }
 
+@font-face {
+    src: url('../fonts/Roboto-Bold.ttf');
+}
+
+@font-face {
+    src: url('../fonts/Roboto-Regular.ttf');
+}
+
 .root {
 	-fx-font-family: "Roboto Medium";
 	-fx-font-size: 15;
+}
+
+#addVideosBoldText {
+-fx-font-family: "Roboto Bold";
+	-fx-font-size: 22;
+}
+
+#addVideosNormalText {
+-fx-font-family: "Roboto Regular";
+	-fx-font-size: 20;
 }
 
 .menuButton {
@@ -19,7 +37,7 @@
     -fx-padding: 0;
 }
 
-#queueScroll:focused {
+#queueScroll:focused { /*removes the annoying outline when clicking on the scrollpane*/
     -fx-background-insets: 0;
 }
 
@@ -27,6 +45,12 @@
     -fx-background-insets: 0;
 }
 
+#addBackground {
+    -fx-border-style: dashed;
+    -fx-border-width: 3;
+    -fx-border-color: white;
+    -fx-background-color: transparent;
+}
 
 
 
@@ -47,3 +71,6 @@
     -fx-background-color: #202020;
 }
 
+.menuItemPane{
+    -fx-background-color: #202020;
+}

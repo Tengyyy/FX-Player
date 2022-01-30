@@ -606,6 +606,7 @@ public class AnimationsClass {
         parallelTransition.setOnFinished((e) -> {
             addPane.translateXProperty().bind(addPane.getScene().widthProperty());
             menuController.queueTabOpen = true;
+            menuController.tabAnimationInProgress = false;
         });
         parallelTransition.play();
     }
@@ -632,6 +633,7 @@ public class AnimationsClass {
         parallelTransition.setOnFinished((e) -> {
             queuePane.translateXProperty().bind(queuePane.getScene().widthProperty().multiply(-1));
             menuController.queueTabOpen = false;
+            menuController.tabAnimationInProgress = false;
         });
         parallelTransition.play();
     }

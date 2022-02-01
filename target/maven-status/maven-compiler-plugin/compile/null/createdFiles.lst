@@ -20,6 +20,7 @@ hans\ControlBarController$5.class
 hans\MainController$4.class
 hans\ControlBarController$2.class
 hans\SettingsController$4.class
+hans\AnimationsClass$4.class
 hans\MenuItem.class
 module-info.class
 hans\AnimationsClass$1.class
@@ -27,6 +28,7 @@ hans\ControlBarController$6.class
 hans\Utilities.class
 hans\MainController$1.class
 hans\SettingsController$3.class
+hans\AnimationsClass$3.class
 hans\ControlBarController$3.class
 hans\SettingsController$6.class
 hans\MediaInterface.class

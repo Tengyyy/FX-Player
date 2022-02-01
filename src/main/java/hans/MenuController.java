@@ -17,6 +17,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -148,6 +149,8 @@ public class MenuController implements Initializable {
 
        //if the dragboard contains mp4 files, play the file adding animation
 
+        AnimationsClass.addPaneDragEntered(addBackground, addPane);
+
     }
 
     public void addPaneDragOver(DragEvent e){
@@ -157,14 +160,30 @@ public class MenuController implements Initializable {
     }
 
     public void addPaneDragDropped(DragEvent e){
-        // clear dragBoardVideos
+
         // add mp4 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
 
+        int addedVideos = dragBoardVideos.size();
+
+        dragBoardVideos.clear();
+
+        AnimationsClass.addPaneDragDropped(addBackground, addPane);
+        //pop-up
     }
 
     public void addPaneDragExited(){
-        // clear dragBoardVideos
-        // reset the addpane animation/styling
+
+        dragBoardVideos.clear();
+
+        if(AnimationsClass.addPaneDragEntered != null){
+            AnimationsClass.addPaneDragEntered.stop();
+        }
+
+        addBackground.setScaleX(1);
+        addBackground.setScaleY(1);
+
+        addPane.setBackground(new Background(new BackgroundFill(Color.web("#202020"), CornerRadii.EMPTY, Insets.EMPTY)));
+
     }
 }
 

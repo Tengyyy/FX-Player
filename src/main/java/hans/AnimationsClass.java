@@ -1,28 +1,17 @@
 package hans;
 
-import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -38,6 +27,9 @@ public class AnimationsClass {
     static Timeline resetTimeline;
 
     static KeyFrame updateFrame;
+
+    static ParallelTransition addPaneDragEntered;
+    static ParallelTransition addPaneDragDropped;
 
     public static void openSettings(StackPane bufferPane) {
 
@@ -638,4 +630,75 @@ public class AnimationsClass {
         parallelTransition.play();
     }
 
+    public static void addPaneDragEntered(Pane addBackground, AnchorPane addPane){
+
+        if(addPaneDragDropped != null){
+            addPaneDragDropped.stop();
+        }
+
+
+
+        ScaleTransition addPaneScaleEntered = new ScaleTransition(Duration.millis(200), addBackground);
+        addPaneScaleEntered.setCycleCount(1);
+        addPaneScaleEntered.setAutoReverse(false);
+
+        addPaneScaleEntered.setFromX(addBackground.getScaleX());
+        addPaneScaleEntered.setToX((addBackground.getWidth() - 50) / addBackground.getWidth());
+        addPaneScaleEntered.setFromY(addBackground.getScaleY());
+        addPaneScaleEntered.setToY((addBackground.getWidth() - 50) / addBackground.getWidth());
+
+        Rectangle rect = new Rectangle();
+        rect.setFill(Color.web("#202020"));
+        FillTransition tr = new FillTransition();
+        tr.setShape(rect);
+        tr.setDuration(Duration.millis(200));
+        tr.setFromValue(Color.web("#202020"));
+        tr.setToValue(Color.web("#292929"));
+
+        tr.setInterpolator(new Interpolator() {
+            @Override
+            protected double curve(double t) {
+                addPane.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, Insets.EMPTY)));
+                return t;
+            }
+        });
+
+        addPaneDragEntered = new ParallelTransition(addPaneScaleEntered, tr);
+        addPaneDragEntered.play();
+    }
+
+    public static void addPaneDragDropped(Pane addBackground, AnchorPane addPane){
+
+        if(addPaneDragEntered != null){
+            addPaneDragEntered.stop();
+        }
+
+        ScaleTransition addPaneScaleDropped = new ScaleTransition(Duration.millis(200), addBackground);
+        addPaneScaleDropped.setCycleCount(1);
+        addPaneScaleDropped.setAutoReverse(false);
+
+        addPaneScaleDropped.setFromX(addBackground.getScaleX());
+        addPaneScaleDropped.setToX(1);
+        addPaneScaleDropped.setFromY(addBackground.getScaleY());
+        addPaneScaleDropped.setToY(1);
+
+        Rectangle rect = new Rectangle();
+        rect.setFill(Color.web("#292929"));
+        FillTransition tr = new FillTransition();
+        tr.setShape(rect);
+        tr.setDuration(Duration.millis(200));
+        tr.setFromValue(Color.web("#292929"));
+        tr.setToValue(Color.web("#202020"));
+
+        tr.setInterpolator(new Interpolator() {
+            @Override
+            protected double curve(double t) {
+                addPane.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, Insets.EMPTY)));
+                return t;
+            }
+        });
+
+        addPaneDragDropped = new ParallelTransition(addPaneScaleDropped, tr);
+        addPaneDragDropped.play();
+    }
 }

@@ -16,12 +16,12 @@
 	-fx-font-size: 15;
 }
 
-#addVideosBoldText {
+#addVideosBoldText, #addedVideosBoldText {
 -fx-font-family: "Roboto Bold";
 	-fx-font-size: 22;
 }
 
-#addVideosNormalText {
+#addVideosNormalText, #addedVideosNormalText {
 -fx-font-family: "Roboto Regular";
 	-fx-font-size: 20;
 }

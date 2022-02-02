@@ -85,6 +85,30 @@
                               <Insets left="40.0" right="40.0" top="30.0" />
                            </VBox.margin>
                         </TextFlow>
+                        <TextFlow fx:id="addedVideosText1" textAlignment="CENTER">
+                           <children>
+                              <Text id="addedVideosNormalText" fx:id="addedVideosNormalText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Added 2 videos to the queue." textAlignment="CENTER">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="35.0" right="35.0" top="30.0" />
+                           </VBox.margin>
+                        </TextFlow>
+                        <TextFlow fx:id="addedVideosText2" textAlignment="CENTER">
+                           <children>
+                              <Text id="addedVideosBoldText" fx:id="addedVideosBoldText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Add more?">
+                                 <font>
+                                    <Font name="System Bold" size="20.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="40.0" right="40.0" />
+                           </VBox.margin>
+                        </TextFlow>
                      </children>
                      <cursor>
                         <Cursor fx:constant="HAND" />

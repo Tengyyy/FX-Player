@@ -56,13 +56,14 @@ public class MenuController implements Initializable {
     ScrollPane queueScroll;
 
     @FXML
-    TextFlow addVideosText;
+    TextFlow addVideosText, addedVideosText1, addedVideosText2;
 
     @FXML
-    Text addVideosBoldText, addVideosNormalText;
+    Text addVideosBoldText, addVideosNormalText, addedVideosNormalText;
 
     @FXML
     Region svgShape;
+
     boolean queueTabOpen = false;
     boolean tabAnimationInProgress = false;
 
@@ -74,9 +75,14 @@ public class MenuController implements Initializable {
     ArrayList<File> dragBoardFiles;
     ArrayList<File> dragBoardVideos = new ArrayList<File>();
 
+    boolean videosAdded = false; // if true the user has added videos to the add pane and has yet to open the queue, which means that the text should show many videos were added
+
+    int videosAddedCounter = 0; // keeps track of how many videos have been added, while the user hasnt openened the queue (queue tab header counter)
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        System.out.println(videosAddedCounter);
 
         fileChooser.setTitle("Open video");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4"));
@@ -100,6 +106,9 @@ public class MenuController implements Initializable {
 
         });
 
+        //TODO: see jama siin lõpuni implementida
+       addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
+
     }
 
     public void openQueueTab(){
@@ -109,6 +118,12 @@ public class MenuController implements Initializable {
         queueLine.setStyle(activeLine);
         addLine.setStyle(inactiveLine);
 
+        if(videosAdded){
+            videosAdded = false;
+            videosAddedCounter = 0;
+
+            //remove added videos indicator from queue tab header
+        }
 
         AnimationsClass.openQueueTab(addPane, queuePane, this);
 
@@ -121,17 +136,35 @@ public class MenuController implements Initializable {
         addLine.setStyle(activeLine);
         queueLine.setStyle(inactiveLine);
 
+        addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
+        addBox.getChildren().add(addVideosText);
+
         AnimationsClass.openAddVideosTab(addPane, queuePane, this);
     }
 
     public void openVideoChooser(){
-        System.out.println("hmmm");
 
-        File selectedFile = fileChooser.showOpenDialog(App.stage);
+        //TODO: close fileChooser window when menu is closed
+
+
+        File selectedFile = fileChooser.showOpenDialog(addPane.getScene().getWindow());
 
         if(selectedFile != null){
             // add video to queue
-            System.out.println("Added video to queue");
+
+            videosAddedCounter++;
+
+            System.out.println(videosAddedCounter);
+
+            addedVideosNormalText.setText("Added 1 video to the queue.");
+
+
+            if(!videosAdded){
+                videosAdded = true;
+
+                addBox.getChildren().remove(addVideosText);
+                addBox.getChildren().addAll(addedVideosText1, addedVideosText2);
+            }
         }
 
     }
@@ -161,14 +194,26 @@ public class MenuController implements Initializable {
 
     public void addPaneDragDropped(DragEvent e){
 
+        if(dragBoardVideos.isEmpty()) return;
+
         // add mp4 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
 
-        int addedVideos = dragBoardVideos.size();
-
+        int dragVideosAdded = dragBoardVideos.size();
         dragBoardVideos.clear();
 
+        videosAddedCounter += dragVideosAdded;
+        System.out.println(videosAddedCounter);
+
+        if(dragVideosAdded == 1) addedVideosNormalText.setText("Added 1 video to the queue.");
+        else addedVideosNormalText.setText("Added " + dragVideosAdded + " videos to the queue.");
+
+        if(!videosAdded){
+            videosAdded = true;
+
+            addBox.getChildren().remove(addVideosText);
+            addBox.getChildren().addAll(addedVideosText1, addedVideosText2);
+        }
         AnimationsClass.addPaneDragDropped(addBackground, addPane);
-        //pop-up
     }
 
     public void addPaneDragExited(){

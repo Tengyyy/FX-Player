@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.input.DragEvent;
@@ -64,6 +65,9 @@ public class MenuController implements Initializable {
     @FXML
     Region svgShape;
 
+    @FXML
+    Label queueNotification;
+
     boolean queueTabOpen = false;
     boolean tabAnimationInProgress = false;
 
@@ -106,8 +110,10 @@ public class MenuController implements Initializable {
 
         });
 
-        //TODO: see jama siin lõpuni implementida
        addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
+
+       //TODO: notification label lõpuni implementida
+       queueNotification.setOpacity(0);
 
     }
 
@@ -122,7 +128,7 @@ public class MenuController implements Initializable {
             videosAdded = false;
             videosAddedCounter = 0;
 
-            //remove added videos indicator from queue tab header
+            queueNotification.setOpacity(0);
         }
 
         AnimationsClass.openQueueTab(addPane, queuePane, this);
@@ -136,8 +142,10 @@ public class MenuController implements Initializable {
         addLine.setStyle(activeLine);
         queueLine.setStyle(inactiveLine);
 
-        addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
-        addBox.getChildren().add(addVideosText);
+        if(videosAdded) {
+            addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
+            addBox.getChildren().add(addVideosText);
+        }
 
         AnimationsClass.openAddVideosTab(addPane, queuePane, this);
     }
@@ -156,8 +164,10 @@ public class MenuController implements Initializable {
 
             System.out.println(videosAddedCounter);
 
-            addedVideosNormalText.setText("Added 1 video to the queue.");
+            queueNotification.setText(String.valueOf(videosAddedCounter));
+            //play notification animation (blink 3 times)
 
+            addedVideosNormalText.setText("Added 1 video to the queue.");
 
             if(!videosAdded){
                 videosAdded = true;
@@ -203,6 +213,9 @@ public class MenuController implements Initializable {
 
         videosAddedCounter += dragVideosAdded;
         System.out.println(videosAddedCounter);
+
+        queueNotification.setText(String.valueOf(videosAddedCounter));
+        //play notification animation (blink 3 times)
 
         if(dragVideosAdded == 1) addedVideosNormalText.setText("Added 1 video to the queue.");
         else addedVideosNormalText.setText("Added " + dragVideosAdded + " videos to the queue.");

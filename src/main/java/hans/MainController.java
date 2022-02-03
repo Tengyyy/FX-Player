@@ -465,7 +465,7 @@ public class MainController implements Initializable {
 
     public void openMenu() {
 
-        // TODO: save the important variables associated with the menuController when closing the menu window (to create the queue items when reopening menu)
+        // TODO: save the important variables associated with the menuController when closing the menu window (to create the queue items when reopening menu)m
 
         if (!menuOpen) {
             Parent root;

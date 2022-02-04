@@ -125,9 +125,7 @@ public class MenuController implements Initializable {
         addLine.setStyle(inactiveLine);
 
         if(videosAdded){
-            videosAdded = false;
             videosAddedCounter = 0;
-
             queueNotification.setOpacity(0);
         }
 
@@ -143,6 +141,7 @@ public class MenuController implements Initializable {
         queueLine.setStyle(inactiveLine);
 
         if(videosAdded) {
+            videosAdded = false;
             addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
             addBox.getChildren().add(addVideosText);
         }
@@ -166,6 +165,9 @@ public class MenuController implements Initializable {
 
             queueNotification.setText(String.valueOf(videosAddedCounter));
             //play notification animation (blink 3 times)
+            queueNotification.setOpacity(1);
+
+            AnimationsClass.queueNotificationBlink(queueNotification);
 
             addedVideosNormalText.setText("Added 1 video to the queue.");
 
@@ -216,6 +218,10 @@ public class MenuController implements Initializable {
 
         queueNotification.setText(String.valueOf(videosAddedCounter));
         //play notification animation (blink 3 times)
+
+        queueNotification.setOpacity(1);
+        AnimationsClass.queueNotificationBlink(queueNotification);
+
 
         if(dragVideosAdded == 1) addedVideosNormalText.setText("Added 1 video to the queue.");
         else addedVideosNormalText.setText("Added " + dragVideosAdded + " videos to the queue.");

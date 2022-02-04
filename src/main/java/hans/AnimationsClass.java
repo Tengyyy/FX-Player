@@ -701,4 +701,13 @@ public class AnimationsClass {
         addPaneDragDropped = new ParallelTransition(addPaneScaleDropped, tr);
         addPaneDragDropped.play();
     }
+
+    public static void queueNotificationBlink(Label queueNotification){
+        FadeTransition queueNotificationFade = new FadeTransition(Duration.millis(500), queueNotification);
+        queueNotificationFade.setFromValue(1);
+        queueNotificationFade.setToValue(0.0f);
+        queueNotificationFade.setAutoReverse(true);
+        queueNotificationFade.setCycleCount(4);
+        queueNotificationFade.play();
+    }
 }

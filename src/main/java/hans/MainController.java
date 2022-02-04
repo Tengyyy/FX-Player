@@ -613,7 +613,7 @@ public class MainController implements Initializable {
             public void run() {
                 // TODO Auto-generated method stub
 
-                mediaPlayer.setVolume(controlBarController.volumeSlider.getValue() / 100);
+                mediaPlayer.setVolume(/*controlBarController.volumeSlider.getValue() / 100*/ 0);
 
                 controlBarController.play();
 

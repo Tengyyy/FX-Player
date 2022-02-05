@@ -162,6 +162,8 @@ public class ControlBarController implements Initializable {
     ControlTooltip captions;
     ControlTooltip nextVideoTooltip;
 
+    MediaInterface mediaInterface;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -270,7 +272,7 @@ public class ControlBarController implements Initializable {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 // TODO Auto-generated method stub
 
-                mainController.mediaPlayer.setVolume(volumeSlider.getValue() / 100);
+                mediaInterface.mediaPlayer.setVolume(volumeSlider.getValue() / 100);
 
                 volumeTrack.setProgress(volumeSlider.getValue() / 100);
 
@@ -362,7 +364,7 @@ public class ControlBarController implements Initializable {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 
 
-                mainController.updateMedia(newValue.doubleValue());
+                mediaInterface.updateMedia(newValue.doubleValue());
             }
 
         });
@@ -374,8 +376,8 @@ public class ControlBarController implements Initializable {
 
                 if (newValue) { // pause video when user starts seeking
                     playLogo.setImage(playImage);
-                    mainController.mediaPlayer.pause();
-                    mainController.playing = false;
+                    mediaInterface.mediaPlayer.pause();
+                    mediaInterface.playing = false;
 
                     if (pause.isShowing()) {
                         pause.hide();
@@ -390,13 +392,13 @@ public class ControlBarController implements Initializable {
                         durationSliderHoverOff();
                     }
 
-                    mainController.mediaPlayer.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
+                    mediaInterface.mediaPlayer.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
 
                     if (settingsController.settingsOpen) { // close settings pane after user finishes seeking media (if its open)
                         settingsController.closeSettings();
                     }
 
-                    if (mainController.atEnd) { // if user drags the duration slider to the end turn play button to replay button
+                    if (mediaInterface.atEnd) { // if user drags the duration slider to the end turn play button to replay button
                         playLogo.setImage(replayImage);
                         playButton.setOnAction((e) -> playButtonClick2());
 
@@ -408,9 +410,9 @@ public class ControlBarController implements Initializable {
                         } else {
                             replay = new ControlTooltip("Replay (k)", playButton, false, controlBar);
                         }
-                    } else if (mainController.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
-                        mainController.mediaPlayer.play();
-                        mainController.playing = true;
+                    } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
+                        mediaInterface.mediaPlayer.play();
+                        mediaInterface.playing = true;
                         playLogo.setImage(pauseImage);
 
                         if (play.isShowing() || replay.isShowing()) {
@@ -502,9 +504,10 @@ public class ControlBarController implements Initializable {
 
     }
 
-    public void init(MainController mainController, SettingsController settingsController) {
+    public void init(MainController mainController, SettingsController settingsController, MediaInterface mediaInterface) {
         this.mainController = mainController;
         this.settingsController = settingsController;
+        this.mediaInterface = mediaInterface;
 
         mouseEventTracker = new MouseEventTracker(4, mainController, this, settingsController); // creates instance of the MouseEventTracker class which keeps track of when to hide and show the control-bar
 
@@ -512,10 +515,10 @@ public class ControlBarController implements Initializable {
 
     public void toggleDurationLabel() {
         if (showingTimeLeft) {
-            Utilities.setCurrentTimeLabel(durationLabel, mainController.mediaPlayer, mainController.media);
+            Utilities.setCurrentTimeLabel(durationLabel, mediaInterface.mediaPlayer, mediaInterface.media);
             showingTimeLeft = false;
         } else {
-            Utilities.setTimeLeftLabel(durationLabel, mainController.mediaPlayer, mainController.media);
+            Utilities.setTimeLeftLabel(durationLabel, mediaInterface.mediaPlayer, mediaInterface.media);
             showingTimeLeft = true;
         }
     }
@@ -525,7 +528,7 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         } else {
-            if (mainController.playing) {
+            if (mediaInterface.playing) {
                 pause();
             } else {
                 play();
@@ -538,16 +541,15 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         } else {
-
             replayMedia();
-            mainController.seekedToEnd = false;
+            mediaInterface.seekedToEnd = false;
         }
     }
 
 
     public void play() {
-        mainController.mediaPlayer.play();
-        mainController.playing = true;
+        mediaInterface.mediaPlayer.play();
+        mediaInterface.playing = true;
         playLogo.setImage(pauseImage);
 
         if (play.isShowing()) {
@@ -558,15 +560,15 @@ public class ControlBarController implements Initializable {
             pause = new ControlTooltip("Pause (k)", playButton, false, controlBar);
         }
 
-        mainController.wasPlaying = mainController.playing; // updates the value of wasPlaying variable - when this method is called the
+        mediaInterface.wasPlaying = mediaInterface.playing; // updates the value of wasPlaying variable - when this method is called the
         // user really wants to play or pause the video and therefore the previous
         // wasPlaying state no longer needs to be tracked
     }
 
     public void pause() {
 
-        mainController.mediaPlayer.pause();
-        mainController.playing = false;
+        mediaInterface.mediaPlayer.pause();
+        mediaInterface.playing = false;
         playLogo.setImage(playImage);
 
         if (pause.isShowing()) {
@@ -577,7 +579,7 @@ public class ControlBarController implements Initializable {
             play = new ControlTooltip("Play (k)", playButton, false, controlBar);
         }
 
-        mainController.wasPlaying = mainController.playing;
+        mediaInterface.wasPlaying = mediaInterface.playing;
     }
 
 
@@ -591,12 +593,12 @@ public class ControlBarController implements Initializable {
             pause = new ControlTooltip("Pause (k)", playButton, false, controlBar);
         }
 
-        mainController.mediaPlayer.seek(Duration.ZERO);
-        mainController.mediaPlayer.play();
-        mainController.playing = true;
-        mainController.atEnd = false;
+        mediaInterface.mediaPlayer.seek(Duration.ZERO);
+        mediaInterface.mediaPlayer.play();
+        mediaInterface.playing = true;
+        mediaInterface.atEnd = false;
         playLogo.setImage(pauseImage);
-        mainController.seekedToEnd = false;
+        mediaInterface.seekedToEnd = false;
         //pause = new ControlTooltip("Pause (k)", playButton);
         playButton.setOnAction((e) -> playButtonClick1());
 
@@ -625,7 +627,7 @@ public class ControlBarController implements Initializable {
     }
 
     public void fullScreen() {
-        // gotta move some of this logic to the main class
+        // got to move some of this logic to the main class
         App.stage.setFullScreen(!App.stage.isFullScreen());
 
         if (App.stage.isFullScreen()) {
@@ -682,7 +684,7 @@ public class ControlBarController implements Initializable {
     public void mute() {
         muted = true;
         volumeIcon.setImage(volumeMute);
-        mainController.mediaPlayer.setVolume(0);
+        mediaInterface.mediaPlayer.setVolume(0);
         volumeValue = volumeSlider.getValue(); //stores the value of the volumeslider before setting it to 0
 
         volumeSlider.setValue(0);
@@ -691,7 +693,7 @@ public class ControlBarController implements Initializable {
     public void unmute() {
         muted = false;
         volumeIcon.setImage(volumeUp);
-        mainController.mediaPlayer.setVolume(volumeValue);
+        mediaInterface.mediaPlayer.setVolume(volumeValue);
         volumeSlider.setValue(volumeValue); // sets volume back to the value it was at before muting
     }
 

@@ -142,6 +142,8 @@ public class SettingsController implements Initializable {
     HBox[] playbackSpeedBoxesArray; // array containing playback speed selection tabs
     Label[] playbackSpeedCheckBoxesArray; // array containing checkmark fields inside playback speed tabs
 
+    MediaInterface mediaInterface;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -328,7 +330,7 @@ public class SettingsController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if (!newValue) {
-                    mainController.mediaPlayer.setRate(formattedValue);
+                    mediaInterface.mediaPlayer.setRate(formattedValue);
                 }
             }
         });
@@ -478,7 +480,7 @@ public class SettingsController implements Initializable {
             playbackSpeedBoxesArray[i].setOnMouseClicked((e) -> {
                 updatePlaybackSpeed((int) I, I / 4, playbackSpeedCheckBoxesArray[(int) I - 1], false);
 
-                mainController.mediaPlayer.setRate(I / 4);
+                mediaInterface.mediaPlayer.setRate(I / 4);
             });
         }
 
@@ -502,9 +504,10 @@ public class SettingsController implements Initializable {
 
     }
 
-    public void init(MainController mainController, ControlBarController controlBarController) {
+    public void init(MainController mainController, ControlBarController controlBarController, MediaInterface mediaInterface) {
         this.mainController = mainController;
         this.controlBarController = controlBarController;
+        this.mediaInterface = mediaInterface;
     }
 
 
@@ -688,14 +691,14 @@ public class SettingsController implements Initializable {
             AnimationsClass.stopMarquee(videoNameText);
 
             ////////////// this can be turned into one mediaplayer cleaning method
-            mainController.mediaPlayer.dispose();
-            mainController.atEnd = false;
-            mainController.seekedToEnd = false;
-            mainController.playing = false;
-            mainController.wasPlaying = false;
+            mediaInterface.mediaPlayer.dispose();
+            mediaInterface.atEnd = false;
+            mediaInterface.seekedToEnd = false;
+            mediaInterface.playing = false;
+            mediaInterface.wasPlaying = false;
             ///////////////////////////////////////////////////////////////////
 
-            mainController.createMediaPlayer(selectedFile);
+            mediaInterface.createMediaPlayer(selectedFile);
 
         }
 

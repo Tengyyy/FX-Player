@@ -71,20 +71,12 @@ public class MainController implements Initializable {
 
     MenuController menuController;
 
+    MediaInterface mediaInterface;
+
 
     // custom playback speed selection box that will be created if the user selects a custom speed using the slider
 
     private File file;
-    public Media media;
-    public MediaPlayer mediaPlayer;
-
-
-    // Variables to keep track of mediaplayer status:
-    boolean playing = false; // is mediaplayer currently playing
-    boolean wasPlaying = false; // was mediaplayer playing before a seeking action occurred
-    public boolean atEnd = false; // is mediaplayer at the end of the video
-    public boolean seekedToEnd = false; // true = video was seeked to the end; false = video naturally reached the end or the video is still playing
-    ////////////////////////////////////////////////
 
     DoubleProperty mediaViewWidth;
     DoubleProperty mediaViewHeight;
@@ -116,11 +108,14 @@ public class MainController implements Initializable {
     ImageView addVideo;
 
 
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
-        controlBarController.init(this, settingsController); // shares references of all the controllers between eachother
-        settingsController.init(this, controlBarController);
+        mediaInterface = new MediaInterface(this, controlBarController, settingsController);
+
+        controlBarController.init(this, settingsController, mediaInterface); // shares references of all the controllers between eachother
+        settingsController.init(this, controlBarController, mediaInterface);
 
         file = new File("src/main/resources/hans/hey.mp4");
 
@@ -174,7 +169,7 @@ public class MainController implements Initializable {
                     }
                 });
 
-        createMediaPlayer(file);
+        mediaInterface.createMediaPlayer(file);
 
     }
 
@@ -186,10 +181,10 @@ public class MainController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         } else {
-            if (atEnd) {
+            if (mediaInterface.atEnd) {
                 controlBarController.replayMedia();
             } else {
-                if (playing) {
+                if (mediaInterface.playing) {
                     controlBarController.pause();
                 } else {
                     controlBarController.play();
@@ -346,123 +341,6 @@ public class MainController implements Initializable {
 
     }
 
-    public void updateMedia(double newValue) {
-        if (!controlBarController.showingTimeLeft)
-            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, media);
-        else
-            Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, media);
-
-        if (atEnd) {
-            atEnd = false;
-            seekedToEnd = false;
-
-            if (wasPlaying) {
-                if (!controlBarController.durationSlider.isValueChanging()) {
-                    controlBarController.playLogo.setImage(controlBarController.pauseImage);
-
-                    playing = true;
-                    mediaPlayer.play();
-
-                    if (controlBarController.play.isShowing() || controlBarController.replay.isShowing()) {
-                        controlBarController.play.hide();
-                        controlBarController.replay.hide();
-                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar);
-                        controlBarController.pause.showTooltip();
-                    } else {
-                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar);
-                    }
-                }
-            } else {
-                controlBarController.playLogo.setImage(controlBarController.playImage);
-                playing = false;
-
-                if (controlBarController.pause.isShowing() || controlBarController.replay.isShowing()) {
-                    controlBarController.pause.hide();
-                    controlBarController.replay.hide();
-                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar);
-                    controlBarController.play.showTooltip();
-                } else {
-                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar);
-                }
-
-            }
-            controlBarController.playButton.setOnAction((e) -> {
-                controlBarController.playButtonClick1();
-            });
-        } else if (newValue >= controlBarController.durationSlider.getMax()) {
-
-            if (controlBarController.durationSlider.isValueChanging()) {
-                seekedToEnd = true;
-            }
-
-            atEnd = true;
-            playing = false;
-            mediaPlayer.pause();
-            if (!controlBarController.durationSlider.isValueChanging()) {
-
-                endMedia();
-
-            }
-        }
-
-        if (Math.abs(mediaPlayer.getCurrentTime().toSeconds() - newValue) > 0.5) {
-            mediaPlayer.seek(Duration.seconds(newValue));
-        }
-
-        controlBarController.durationTrack.setProgress(controlBarController.durationSlider.getValue() / controlBarController.durationSlider.getMax());
-
-
-    }
-
-    public void endMedia() {
-
-        if ((!settingsController.shuffleOn && !settingsController.loopOn && !settingsController.autoplayOn) || (settingsController.loopOn && seekedToEnd)) {
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
-
-            controlBarController.durationLabel.textProperty().unbind();
-            controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(media.getDuration()));
-
-
-            controlBarController.playLogo.setImage(new Image(controlBarController.replayFile.toURI().toString()));
-
-            if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
-                controlBarController.play.hide();
-                controlBarController.pause.hide();
-                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, false, controlBarController.controlBar);
-                controlBarController.replay.showTooltip();
-            } else {
-                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, false, controlBarController.controlBar);
-            }
-
-            controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());
-
-            if (!controlBarController.controlBarOpen) {
-                controlBarController.displayControls();
-            }
-
-
-        } else if (settingsController.loopOn && !seekedToEnd) {
-            // restart current video
-
-
-            mediaPlayer.stop();
-
-        } else if (settingsController.shuffleOn) {
-
-            //if(!controlBarController.controlBarOpen) {
-            //	controlBarController.displayControls();
-            //}
-
-        } else if (settingsController.autoplayOn) {
-            // play next song in queue/directory
-
-            //if(!controlBarController.controlBarOpen) {
-            //	controlBarController.displayControls();
-            //}
-        }
-
-    }
-
     public void openMenu() {
 
         // TODO: save the important variables associated with the menuController when closing the menu window (to create the queue items when reopening menu)m
@@ -517,8 +395,8 @@ public class MainController implements Initializable {
         if(settingsController.settingsOpen) settingsController.closeSettings();
         else if(captionsOpen) controlBarController.closeCaptions();
 
-       if(playing)controlBarController.mouseEventTracker.hide();
-        else if(!playing) AnimationsClass.hideControls(controlBarController);
+       if(mediaInterface.playing)controlBarController.mouseEventTracker.hide();
+       else AnimationsClass.hideControls(controlBarController);
 
         addVideo = new ImageView(addVideoImage);
         addVideo.setFitWidth(150);
@@ -563,14 +441,14 @@ public class MainController implements Initializable {
         AnimationsClass.stopMarquee(settingsController.videoNameText);
 
         ////////////// this can be turned into one mediaplayer cleaning method
-        mediaPlayer.dispose();
-        atEnd = false;
-        seekedToEnd = false;
-        playing = false;
-        wasPlaying = false;
+        mediaInterface.mediaPlayer.dispose();
+        mediaInterface.atEnd = false;
+        mediaInterface.seekedToEnd = false;
+        mediaInterface.playing = false;
+        mediaInterface.wasPlaying = false;
         ///////////////////////////////////////////////////////////////////
 
-        createMediaPlayer(file);
+        mediaInterface.createMediaPlayer(file);
     }
 
 
@@ -582,90 +460,9 @@ public class MainController implements Initializable {
         return controlBarController;
     }
 
-
-    public void createMediaPlayer(File file) {
-
-        controlBarController.durationSlider.setValue(0);
-
-        media = new Media(file.toURI().toString());
-        mediaPlayer = new MediaPlayer(media);
-        mediaView.setMediaPlayer(mediaPlayer);
-
-        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
-            @Override
-            public void changed(ObservableValue<? extends Duration> observableValue, Duration oldTime, Duration newTime) {
-                if (!controlBarController.showingTimeLeft)
-                    Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, media);
-                else
-                    Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, media);
-
-                if (!controlBarController.durationSlider.isValueChanging()) {
-                    controlBarController.durationSlider.setValue(newTime.toSeconds());
-                }
-
-            }
-        });
-
-
-        mediaPlayer.setOnReady(new Runnable() {
-
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-
-                mediaPlayer.setVolume(/*controlBarController.volumeSlider.getValue() / 100*/ 0);
-
-                controlBarController.play();
-
-                controlBarController.durationSlider.setMax(Math.floor(media.getDuration().toSeconds()));
-
-                TimerTask setRate = new TimerTask() {
-
-                    @Override
-                    public void run() {
-
-                        switch (settingsController.playbackSpeedTracker) {
-                            case 0:
-                                mediaPlayer.setRate(settingsController.formattedValue);
-                                break;
-                            case 1:
-                                mediaPlayer.setRate(0.25);
-                                break;
-                            case 2:
-                                mediaPlayer.setRate(0.5);
-                                break;
-                            case 3:
-                                mediaPlayer.setRate(0.75);
-                                break;
-                            case 4:
-                                mediaPlayer.setRate(1);
-                                break;
-                            case 5:
-                                mediaPlayer.setRate(1.25);
-                                break;
-                            case 6:
-                                mediaPlayer.setRate(1.5);
-                                break;
-                            case 7:
-                                mediaPlayer.setRate(1.75);
-                                break;
-                            case 8:
-                                mediaPlayer.setRate(2);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                };
-
-                Timer timer = new Timer();
-
-                // this is mega stupid but it works
-                timer.schedule(setRate, 200);
-            }
-
-        });
-
+    public MediaInterface getMediaInterface() {
+        return mediaInterface;
     }
+
+
 }

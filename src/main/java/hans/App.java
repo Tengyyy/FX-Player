@@ -27,6 +27,8 @@ public class App extends Application {
     ControlBarController controlBarController;
     SettingsController settingsController;
 
+    MediaInterface mediaInterface;
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -42,6 +44,8 @@ public class App extends Application {
             controlBarController = mainController.getControlBarController();
 
             settingsController = mainController.getSettingsController();
+
+            mediaInterface = mainController.getMediaInterface();
 
 
             Scene scene = new Scene(root, 600, 400);
@@ -98,8 +102,8 @@ public class App extends Application {
                         controlBarController.mouseEventTracker.move();
                         if (!mainController.getControlBarController().volumeSlider.isFocused()) {
 
-                            if (mainController.mediaPlayer.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
-                                mainController.seekedToEnd = true;
+                            if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
+                                mediaInterface.seekedToEnd = true;
                             }
 
                             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
@@ -114,7 +118,7 @@ public class App extends Application {
                         controlBarController.mouseEventTracker.move();
 
                         if (!controlBarController.volumeSlider.isFocused()) {
-                            mainController.seekedToEnd = false;
+                            mediaInterface.seekedToEnd = false;
 
                             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
                             event.consume();
@@ -146,8 +150,8 @@ public class App extends Application {
                         if (!controlBarController.volumeSlider.isFocused()) {
 
 
-                            if (mainController.mediaPlayer.getCurrentTime().toSeconds() + 10 >= controlBarController.durationSlider.getMax()) {
-                                mainController.seekedToEnd = true;
+                            if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 10 >= controlBarController.durationSlider.getMax()) {
+                                mediaInterface.seekedToEnd = true;
                             }
                             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 10);
                             event.consume();
@@ -161,7 +165,7 @@ public class App extends Application {
 
                         controlBarController.mouseEventTracker.move();
                         if (!controlBarController.volumeSlider.isFocused()) {
-                            mainController.seekedToEnd = false;
+                            mediaInterface.seekedToEnd = false;
                             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);
                         }
                     }
@@ -169,61 +173,61 @@ public class App extends Application {
                     case DIGIT1: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mainController.media.getDuration().toSeconds() * 1 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.media.getDuration().toSeconds() * 1 / 10);
                     }
                     break;
                     case DIGIT2: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mainController.media.getDuration().toSeconds() * 2 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.media.getDuration().toSeconds() * 2 / 10);
                     }
                     break;
                     case DIGIT3: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mainController.media.getDuration().toSeconds() * 3 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.media.getDuration().toSeconds() * 3 / 10);
                     }
                     break;
                     case DIGIT4: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mainController.media.getDuration().toSeconds() * 4 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.media.getDuration().toSeconds() * 4 / 10);
                     }
                     break;
                     case DIGIT5: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mainController.media.getDuration().toSeconds() * 5 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.media.getDuration().toSeconds() * 5 / 10);
                     }
                     break;
                     case DIGIT6: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mainController.media.getDuration().toSeconds() * 6 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.media.getDuration().toSeconds() * 6 / 10);
                     }
                     break;
                     case DIGIT7: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mainController.media.getDuration().toSeconds() * 7 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.media.getDuration().toSeconds() * 7 / 10);
                     }
                     break;
                     case DIGIT8: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mainController.media.getDuration().toSeconds() * 8 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.media.getDuration().toSeconds() * 8 / 10);
                     }
                     break;
                     case DIGIT9: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mainController.media.getDuration().toSeconds() * 9 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.media.getDuration().toSeconds() * 9 / 10);
                     }
                     break;
                     case DIGIT0: {
 
                         controlBarController.mouseEventTracker.move();
-                        mainController.seekedToEnd = true;
+                        mediaInterface.seekedToEnd = true;
                         controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
                     }
                     break;
@@ -232,10 +236,10 @@ public class App extends Application {
 
                         controlBarController.mouseEventTracker.move();
                         if (!controlBarController.durationSlider.isValueChanging()) {  // wont let user play/pause video while media slider is seeking
-                            if (mainController.atEnd) {
+                            if (mediaInterface.atEnd) {
                                 controlBarController.replayMedia();
                             } else {
-                                if (mainController.playing) {
+                                if (mediaInterface.playing) {
                                     controlBarController.pause();
                                 } else {
                                     controlBarController.play();
@@ -269,10 +273,10 @@ public class App extends Application {
 
                         controlBarController.mouseEventTracker.move();
                         if (!controlBarController.durationSlider.isValueChanging()) { // wont let user play/pause video while media slider is seeking
-                            if (mainController.atEnd) {
+                            if (mediaInterface.atEnd) {
                                 controlBarController.replayMedia();
                             } else {
-                                if (mainController.playing) {
+                                if (mediaInterface.playing) {
                                     controlBarController.pause();
                                 } else {
                                     controlBarController.play();

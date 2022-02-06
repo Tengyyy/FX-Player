@@ -52,8 +52,6 @@ public class App extends Application {
 
             scene.getStylesheets().add(getClass().getResource("styles/application.css").toExternalForm());
 
-            //TODO: Continue this bit to make the controlbar hiding logic
-
             scene.addEventFilter(MouseEvent.ANY, event -> {
                 if (controlBarController.mouseEventTracker != null)
                     controlBarController.mouseEventTracker.move();

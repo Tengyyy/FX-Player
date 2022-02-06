@@ -354,6 +354,8 @@ public class MainController implements Initializable {
 
                 menuController = loader.getController();
 
+                menuController.init(this, controlBarController, settingsController, mediaInterface);
+
                 if (menuStage == null) {
                     menuStage = new Stage();
                 }
@@ -440,13 +442,11 @@ public class MainController implements Initializable {
         // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
         AnimationsClass.stopMarquee(settingsController.videoNameText);
 
-        ////////////// this can be turned into one mediaplayer cleaning method
-        mediaInterface.mediaPlayer.dispose();
-        mediaInterface.atEnd = false;
-        mediaInterface.seekedToEnd = false;
-        mediaInterface.playing = false;
-        mediaInterface.wasPlaying = false;
-        ///////////////////////////////////////////////////////////////////
+        mediaInterface.resetMediaPlayer();
+
+        mediaInterface.videoList.add(file);
+        mediaInterface.unplayedVideoList.add(file);
+
 
         mediaInterface.createMediaPlayer(file);
     }
@@ -463,6 +463,4 @@ public class MainController implements Initializable {
     public MediaInterface getMediaInterface() {
         return mediaInterface;
     }
-
-
 }

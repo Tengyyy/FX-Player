@@ -1,8 +1,6 @@
 package hans;
 
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -19,9 +17,13 @@ public class MediaInterface {
     ControlBarController controlBarController;
     SettingsController settingsController;
 
+    // all videos that have been added to the queue or directly to the player
+    ArrayList<File> videoList = new ArrayList<File>();
 
-    ArrayList<File> videoQueue = new ArrayList<File>();
+    // videoList minus the videos that have already been played
+    ArrayList<File> unplayedVideoList = new ArrayList<File>();
 
+    File currentVideo;
     Media media;
     MediaPlayer mediaPlayer;
 
@@ -157,7 +159,19 @@ public class MediaInterface {
 
     public void createMediaPlayer(File file) {
 
+        this.currentVideo = file;
+
         controlBarController.durationSlider.setValue(0);
+
+        unplayedVideoList.remove(file);
+        for(File temp : videoList){
+            System.out.println(temp.getAbsolutePath());
+        }
+        System.out.println("\n");
+
+        for(File temp : unplayedVideoList){
+            System.out.println(temp.getAbsolutePath());
+        }
 
         media = new Media(file.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
@@ -192,49 +206,25 @@ public class MediaInterface {
 
                     @Override
                     public void run() {
-
-                        switch (settingsController.playbackSpeedTracker) {
-                            case 0:
-                                mediaPlayer.setRate(settingsController.formattedValue);
-                                break;
-                            case 1:
-                                mediaPlayer.setRate(0.25);
-                                break;
-                            case 2:
-                                mediaPlayer.setRate(0.5);
-                                break;
-                            case 3:
-                                mediaPlayer.setRate(0.75);
-                                break;
-                            case 4:
-                                mediaPlayer.setRate(1);
-                                break;
-                            case 5:
-                                mediaPlayer.setRate(1.25);
-                                break;
-                            case 6:
-                                mediaPlayer.setRate(1.5);
-                                break;
-                            case 7:
-                                mediaPlayer.setRate(1.75);
-                                break;
-                            case 8:
-                                mediaPlayer.setRate(2);
-                                break;
-                            default:
-                                break;
-                        }
+                        if(settingsController.playbackSpeedTracker == 0) mediaPlayer.setRate(settingsController.formattedValue);
+                        else mediaPlayer.setRate(settingsController.playbackSpeedTracker / 4);
                     }
-
                 };
 
                 Timer timer = new Timer();
 
-                // this is mega stupid but it works
                 timer.schedule(setRate, 200);
             }
 
         });
 
+    }
+
+    public void resetMediaPlayer(){
+        mediaPlayer.dispose();
+        atEnd = false;
+        seekedToEnd = false;
+        playing = false;
+        wasPlaying = false;
     }
 }

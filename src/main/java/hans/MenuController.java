@@ -68,6 +68,11 @@ public class MenuController implements Initializable {
     @FXML
     Label queueNotification;
 
+    MainController mainController;
+    ControlBarController controlBarController;
+    SettingsController settingsController;
+    MediaInterface mediaInterface;
+
     boolean queueTabOpen = false;
     boolean tabAnimationInProgress = false;
 
@@ -112,7 +117,6 @@ public class MenuController implements Initializable {
 
        addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
 
-       //TODO: notification label lõpuni implementida
        queueNotification.setOpacity(0);
 
     }
@@ -151,17 +155,15 @@ public class MenuController implements Initializable {
 
     public void openVideoChooser(){
 
-        //TODO: close fileChooser window when menu is closed
-
-
         File selectedFile = fileChooser.showOpenDialog(addPane.getScene().getWindow());
 
         if(selectedFile != null){
-            // add video to queue
+
+            mediaInterface.videoList.add(selectedFile);
+            mediaInterface.unplayedVideoList.add(selectedFile);
 
             videosAddedCounter++;
 
-            System.out.println(videosAddedCounter);
 
             queueNotification.setText(String.valueOf(videosAddedCounter));
             //play notification animation (blink 3 times)
@@ -210,11 +212,15 @@ public class MenuController implements Initializable {
 
         // add mp4 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
 
+        mediaInterface.videoList.addAll(dragBoardVideos);
+        mediaInterface.unplayedVideoList.addAll(dragBoardVideos);
+
         int dragVideosAdded = dragBoardVideos.size();
         dragBoardVideos.clear();
 
         videosAddedCounter += dragVideosAdded;
-        System.out.println(videosAddedCounter);
+
+
 
         queueNotification.setText(String.valueOf(videosAddedCounter));
         //play notification animation (blink 3 times)
@@ -248,6 +254,13 @@ public class MenuController implements Initializable {
 
         addPane.setBackground(new Background(new BackgroundFill(Color.web("#202020"), CornerRadii.EMPTY, Insets.EMPTY)));
 
+    }
+
+    public void init(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MediaInterface mediaInterface){
+        this.mainController = mainController;
+        this.controlBarController = controlBarController;
+        this.settingsController = settingsController;
+        this.mediaInterface = mediaInterface;
     }
 }
 

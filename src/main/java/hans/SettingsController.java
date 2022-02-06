@@ -677,7 +677,6 @@ public class SettingsController implements Initializable {
         settingsHomeOpen = true;
 
         AnimationsClass.closePlaybackOptions(playbackOptionsBuffer, settingsBackgroundPane, bufferPane);
-
     }
 
     public void openVideoChooser() {
@@ -690,18 +689,14 @@ public class SettingsController implements Initializable {
             // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
             AnimationsClass.stopMarquee(videoNameText);
 
-            ////////////// this can be turned into one mediaplayer cleaning method
-            mediaInterface.mediaPlayer.dispose();
-            mediaInterface.atEnd = false;
-            mediaInterface.seekedToEnd = false;
-            mediaInterface.playing = false;
-            mediaInterface.wasPlaying = false;
-            ///////////////////////////////////////////////////////////////////
+            mediaInterface.resetMediaPlayer();
+
+            mediaInterface.videoList.add(selectedFile);
+            mediaInterface.unplayedVideoList.add(selectedFile);
 
             mediaInterface.createMediaPlayer(selectedFile);
 
         }
-
     }
 
     public void createCustomSpeedTab() {

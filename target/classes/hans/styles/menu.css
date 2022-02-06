@@ -35,6 +35,55 @@
 #queueScroll {
     -fx-background-insets: 0;
     -fx-padding: 0;
+    -fx-background-color: #202020;
+}
+
+#queueScroll > .viewPort {
+    -fx-background-color: #202020;
+}
+
+#queueScroll .scroll-bar:horizontal .track,
+#queueScroll .scroll-bar:vertical .track{
+    -fx-background-color :rgba(30,30,30,0.8);
+    -fx-border-color :rgba(30,30,30,1);
+    -fx-background-radius : 0.0em;
+    -fx-border-radius :0.0em;
+}
+
+
+#queueScroll .scroll-bar:horizontal .increment-button ,
+.#queueScroll .scroll-bar:horizontal .decrement-button {
+    -fx-background-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-padding :0.0 0.0 0.0 0.0;
+
+}
+
+#queueScroll .scroll-bar:vertical .increment-button ,
+#queueScroll .scroll-bar:vertical .decrement-button {
+    -fx-background-color : transparent;
+    -fx-background-radius : 0.0em;
+    -fx-padding :0.0 0.0 0.0 0.0;
+
+}
+
+ #queueScroll .scroll-bar .increment-arrow,
+ #queueScroll .scroll-bar .decrement-arrow{
+    -fx-shape : " ";
+    -fx-padding :0.0em 0.0;
+}
+
+ #queueScroll .scroll-bar:vertical .increment-arrow,
+ #queueScroll .scroll-bar:vertical .decrement-arrow{
+    -fx-shape : " ";
+    -fx-padding :0.0 0.0em;
+}
+
+#queueScroll .scroll-bar:horizontal .thumb,
+#queueScroll .scroll-bar:vertical .thumb {
+    -fx-background-color :derive(black,90.0%);
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 2.0em;
 }
 
 #queueScroll:focused { /*removes the annoying outline when clicking on the scrollpane*/

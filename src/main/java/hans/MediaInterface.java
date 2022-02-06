@@ -1,6 +1,7 @@
 package hans;
 
 
+import javafx.collections.MapChangeListener;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -174,8 +175,13 @@ public class MediaInterface {
         }
 
         media = new Media(file.toURI().toString());
+
+
+
         mediaPlayer = new MediaPlayer(media);
+
         mainController.mediaView.setMediaPlayer(mediaPlayer);
+
 
         mediaPlayer.currentTimeProperty().addListener((observableValue, oldTime, newTime) -> {
             if (!controlBarController.showingTimeLeft)

@@ -1,10 +1,10 @@
 
 @font-face {
-    src: url('../fonts/Roboto-Medium.ttf');
+    src: url('../fonts/Roboto-Bold.ttf');
 }
 
 @font-face {
-    src: url('../fonts/Roboto-Bold.ttf');
+    src: url('../fonts/Roboto-Medium.ttf');
 }
 
 @font-face {
@@ -17,12 +17,12 @@
 }
 
 #addVideosBoldText, #addedVideosBoldText {
--fx-font-family: "Roboto Bold";
+    -fx-font-family: "Roboto Bold";
 	-fx-font-size: 22;
 }
 
 #addVideosNormalText, #addedVideosNormalText {
--fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
 	-fx-font-size: 20;
 }
 
@@ -123,3 +123,47 @@
 .menuItemPane{
     -fx-background-color: #202020;
 }
+
+
+.queueItem {
+    -fx-background-color: #2C2C2C;
+    -fx-background-radius: 15;
+    -fx-border-style: solid;
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+}
+
+.playButton {
+    -fx-padding: 0;
+    -fx-background-radius: 100;
+    -fx-background-color: transparent;
+}
+
+.videoTitle {
+    -fx-font-size: 18;
+    -fx-font-family: "Roboto";
+    -fx-fill: white;
+}
+
+.optionsButton, .removeButton {
+    -fx-background-radius: 100;
+    -fx-padding: 0;
+    -fx-background-color: #454545;
+}
+
+#optionsIcon, #removeIcon {
+    -fx-background-color: white;
+}
+
+
+#playIcon {
+    -fx-background-color: white;
+}
+
+#playText {
+    -fx-font-size: 24;
+    -fx-font-family: "Roboto";
+    -fx-fill: white;
+}
+

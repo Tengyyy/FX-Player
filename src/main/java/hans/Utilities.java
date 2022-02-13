@@ -6,8 +6,11 @@ import java.util.concurrent.Callable;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 public class Utilities {
@@ -67,6 +70,17 @@ public class Utilities {
             return " ";
         }
 
+    }
+
+    public static void clipChildren(Region region) {
+        final Rectangle clipPane = new Rectangle();
+        region.setClip(clipPane);
+
+        region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
+            clipPane.setWidth(newValue.getWidth());
+            clipPane.setHeight(newValue.getHeight());
+            System.out.println("su ema");
+        });
     }
 
 }

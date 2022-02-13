@@ -147,7 +147,7 @@ public class MainController implements Initializable {
             @Override
             public void run() {
                 // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
-                menuTooltip = new ControlTooltip("Open menu (q)", menuButton, true, controlBarController.controlBar);
+                menuTooltip = new ControlTooltip("Open menu (q)", menuButton, true, controlBarController.controlBar, 0);
             }
         });
 

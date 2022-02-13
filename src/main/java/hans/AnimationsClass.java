@@ -28,8 +28,22 @@ public class AnimationsClass {
 
     static KeyFrame updateFrame;
 
+    static Timeline queueItemTimeline;
+    static Timeline queueItemResetTimeline;
+
+    static KeyFrame queueUpdateFrame;
+
     static ParallelTransition addPaneDragEntered;
     static ParallelTransition addPaneDragDropped;
+
+    static FadeTransition queueNotificationFade;
+
+    static FadeTransition optionsButtonBackgroundFadeOn;
+    static FadeTransition optionsButtonBackgroundFadeOff;
+
+    static ScaleTransition queuePlayButtonScaleOn;
+    static ScaleTransition queuePlayButtonScaleOff;
+
 
     public static void openSettings(StackPane bufferPane) {
 
@@ -464,7 +478,7 @@ public class AnimationsClass {
         controlBarController.mainController.menuButton.setVisible(false);
     }
 
-    public static void marqueeOn(Text videoNameText, HBox videoNameBox) {
+    public static void marqueeOn(Text text, HBox parentBox) {
 
         if (videoNameTimeline == null) {
 
@@ -476,9 +490,9 @@ public class AnimationsClass {
 
                 @Override
                 public void handle(ActionEvent event) {
-                    double tW = videoNameText.getLayoutBounds().getWidth();
-                    double pW = videoNameBox.getWidth();
-                    double layoutX = videoNameText.getLayoutX();
+                    double tW = text.getLayoutBounds().getWidth();
+                    double pW = parentBox.getWidth();
+                    double layoutX = text.getLayoutX();
 
                     if ((rightMovement && layoutX >= 0) || (!rightMovement && layoutX + tW <= pW)) {
                         // invert movement, if bounds are reached
@@ -491,7 +505,7 @@ public class AnimationsClass {
                     } else {
                         layoutX -= 0.5;
                     }
-                    videoNameText.setLayoutX(layoutX);
+                    text.setLayoutX(layoutX);
                 }
             });
 
@@ -500,15 +514,15 @@ public class AnimationsClass {
         }
 
         if (videoNameTimeline != null && resetTimeline != null) {
-            if (videoNameTimeline.getStatus() != Animation.Status.RUNNING && resetTimeline.getStatus() != Animation.Status.RUNNING && videoNameText.getLayoutBounds().getWidth() > videoNameBox.getWidth()) {
-                videoNameText.setLayoutX(0);
+            if (videoNameTimeline.getStatus() != Animation.Status.RUNNING && resetTimeline.getStatus() != Animation.Status.RUNNING && text.getLayoutBounds().getWidth() > parentBox.getWidth()) {
+                text.setLayoutX(0);
                 videoNameTimeline.play();
             }
         }
     }
 
 
-    public static void marqueeOff(Text videoNameText) {
+    public static void marqueeOff(Text text) {
 
         if (resetTimeline == null) {
 
@@ -519,7 +533,7 @@ public class AnimationsClass {
                 @Override
                 public void handle(ActionEvent event) {
 
-                    double layoutX = videoNameText.getLayoutX();
+                    double layoutX = text.getLayoutX();
 
                     if (Math.round(layoutX) == 0) {
                         resetTimeline.stop();
@@ -527,7 +541,7 @@ public class AnimationsClass {
                         layoutX += 1;
 
 
-                    videoNameText.setLayoutX(layoutX);
+                    text.setLayoutX(layoutX);
                 }
             });
 
@@ -551,6 +565,7 @@ public class AnimationsClass {
             videoNameText.setLayoutX(0);
         }
     }
+
 
 
     public static void durationSliderHoverOn(ProgressBar durationTrack, Slider durationSlider) {
@@ -703,11 +718,43 @@ public class AnimationsClass {
     }
 
     public static void queueNotificationBlink(Label queueNotification){
-        FadeTransition queueNotificationFade = new FadeTransition(Duration.millis(500), queueNotification);
+        queueNotificationFade = new FadeTransition(Duration.millis(500), queueNotification);
         queueNotificationFade.setFromValue(1);
         queueNotificationFade.setToValue(0.0f);
         queueNotificationFade.setAutoReverse(true);
         queueNotificationFade.setCycleCount(4);
         queueNotificationFade.play();
+    }
+
+    public static void queueButtonBackgroundHoverOn(Button button){
+        optionsButtonBackgroundFadeOn = new FadeTransition(Duration.millis(200), button);
+        optionsButtonBackgroundFadeOn.setFromValue(0);
+        optionsButtonBackgroundFadeOn.setToValue(1);
+        optionsButtonBackgroundFadeOn.play();
+    }
+
+    public static void queueButtonBackgroundHoverOff(Button button){
+        optionsButtonBackgroundFadeOff = new FadeTransition(Duration.millis(200), button);
+        optionsButtonBackgroundFadeOff.setFromValue(1);
+        optionsButtonBackgroundFadeOff.setToValue(0);
+        optionsButtonBackgroundFadeOff.play();
+    }
+
+    public static void queuePlayHoverOn(StackPane playButtonWrapper){
+        queuePlayButtonScaleOn = new ScaleTransition(Duration.millis(100), playButtonWrapper);
+        queuePlayButtonScaleOn.setFromX(1);
+        queuePlayButtonScaleOn.setToX(1.1);
+        queuePlayButtonScaleOn.setFromY(1);
+        queuePlayButtonScaleOn.setToY(1.1);
+        queuePlayButtonScaleOn.play();
+    }
+
+    public static void queuePlayHoverOff(StackPane playButtonWrapper){
+        queuePlayButtonScaleOff = new ScaleTransition(Duration.millis(100), playButtonWrapper);
+        queuePlayButtonScaleOff.setFromX(1.1);
+        queuePlayButtonScaleOff.setToX(1);
+        queuePlayButtonScaleOff.setFromY(1.1);
+        queuePlayButtonScaleOff.setToY(1);
+        queuePlayButtonScaleOff.play();
     }
 }

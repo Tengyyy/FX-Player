@@ -32,6 +32,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 
+import static hans.AnimationsClass.queueNotificationFade;
+
 
 public class MenuController implements Initializable {
 
@@ -84,14 +86,14 @@ public class MenuController implements Initializable {
     ArrayList<File> dragBoardFiles;
     ArrayList<File> dragBoardVideos = new ArrayList<File>();
 
+    ArrayList<QueueItem> queue = new ArrayList<QueueItem>();
+
     boolean videosAdded = false; // if true the user has added videos to the add pane and has yet to open the queue, which means that the text should show many videos were added
 
     int videosAddedCounter = 0; // keeps track of how many videos have been added, while the user hasnt openened the queue (queue tab header counter)
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        System.out.println(videosAddedCounter);
 
         fileChooser.setTitle("Open video");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4"));
@@ -115,6 +117,8 @@ public class MenuController implements Initializable {
 
         });
 
+        addBox.setSpacing(10);
+
        addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
 
        queueNotification.setOpacity(0);
@@ -130,6 +134,11 @@ public class MenuController implements Initializable {
 
         if(videosAdded){
             videosAddedCounter = 0;
+
+            if(queueNotificationFade != null){
+                queueNotificationFade.stop();
+            }
+
             queueNotification.setOpacity(0);
         }
 
@@ -161,6 +170,8 @@ public class MenuController implements Initializable {
 
             mediaInterface.videoList.add(selectedFile);
             mediaInterface.unplayedVideoList.add(selectedFile);
+
+            new QueueItem(selectedFile, this);
 
             videosAddedCounter++;
 
@@ -214,6 +225,11 @@ public class MenuController implements Initializable {
 
         mediaInterface.videoList.addAll(dragBoardVideos);
         mediaInterface.unplayedVideoList.addAll(dragBoardVideos);
+
+        for(File vid : dragBoardVideos){
+            new QueueItem(vid, this);
+        }
+
 
         int dragVideosAdded = dragBoardVideos.size();
         dragBoardVideos.clear();

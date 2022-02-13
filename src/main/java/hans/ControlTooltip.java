@@ -1,6 +1,9 @@
 package hans;
 
 
+import javafx.animation.PauseTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -22,39 +25,43 @@ public class ControlTooltip extends Tooltip {
 
     VBox controlBar;
 
-    ControlTooltip(String tooltipText, Button tooltipParent, boolean menuTooltip, VBox controlBar) {
+    int delay;
+
+    BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
+    PauseTransition countdown;
+
+    ControlTooltip(String tooltipText, Button tooltipParent, boolean menuTooltip, VBox controlBar, int delay) {
 
         this.tooltipText = tooltipText;
         this.tooltipParent = tooltipParent;
         this.menuTooltip = menuTooltip;
         this.controlBar = controlBar;
+        this.delay = delay;
 
         this.setText(tooltipText);
-        this.setShowDelay(Duration.ZERO);
-
 
         this.show(tooltipParent, 0, 0);
         tooltipMiddle = (this.getWidth() - 18) / 2;
         tooltipHeight = this.getHeight();
         this.hide();
 
-        tooltipParent.setOnMouseEntered((e) -> {
-
-            if (tooltipParent.getScene().getWindow().isFocused()) {
-                Bounds bounds = tooltipParent.localToScreen(tooltipParent.getBoundsInLocal());
-                nodeMiddleX = tooltipParent.getWidth() / 2;
-                nodeMiddleY = tooltipParent.getHeight() / 2;
-
-
-                if (!menuTooltip) {
-                    this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight - controlBar.getTranslateY());
-                } else
-                    this.show(tooltipParent, bounds.getMaxX() + 10, bounds.getMinY() + nodeMiddleY - ((tooltipHeight - 18) / 2));
+        mouseHover.addListener((obs, wasHover, isHover) -> {
+            if(isHover){
+                showTooltip();
             }
+        });
+
+            countdown = new PauseTransition(Duration.millis(delay));
+            countdown.setOnFinished((e) -> mouseHover.set(true));
+
+        tooltipParent.setOnMouseEntered((e) -> {
+            countdown.playFromStart();
         });
 
         tooltipParent.setOnMouseExited((e) -> {
             this.hide();
+            mouseHover.set(false);
+            countdown.stop();
         });
 
     }
@@ -65,8 +72,10 @@ public class ControlTooltip extends Tooltip {
         nodeMiddleX = tooltipParent.getWidth() / 2;
         nodeMiddleY = tooltipParent.getHeight() / 2;
 
+        double translation = this.delay == 0 ? controlBar.getTranslateY() : 0;
+
         if (!menuTooltip)
-            this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight - controlBar.getTranslateY());
+            this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight - translation);
         else
             this.show(tooltipParent, bounds.getMaxX() + 10, bounds.getMinY() + nodeMiddleY - ((tooltipHeight - 18) / 2));
     }

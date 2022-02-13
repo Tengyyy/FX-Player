@@ -24,6 +24,11 @@ public class MediaInterface {
     // videoList minus the videos that have already been played
     ArrayList<File> unplayedVideoList = new ArrayList<File>();
 
+    // contains all the videos that have been played, in the order that they were played (necessary to navigate videos with the control arrows)
+    ArrayList<File> videoHistory = new ArrayList<File>();
+
+
+
     File currentVideo;
     Media media;
     MediaPlayer mediaPlayer;
@@ -61,10 +66,10 @@ public class MediaInterface {
                     if (controlBarController.play.isShowing() || controlBarController.replay.isShowing()) {
                         controlBarController.play.hide();
                         controlBarController.replay.hide();
-                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar);
+                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
                         controlBarController.pause.showTooltip();
                     } else {
-                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar);
+                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
                     }
                 }
             } else {
@@ -74,10 +79,10 @@ public class MediaInterface {
                 if (controlBarController.pause.isShowing() || controlBarController.replay.isShowing()) {
                     controlBarController.pause.hide();
                     controlBarController.replay.hide();
-                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar);
+                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
                     controlBarController.play.showTooltip();
                 } else {
-                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar);
+                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
                 }
 
             }
@@ -123,10 +128,10 @@ public class MediaInterface {
             if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
                 controlBarController.play.hide();
                 controlBarController.pause.hide();
-                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, false, controlBarController.controlBar);
+                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
                 controlBarController.replay.showTooltip();
             } else {
-                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, false, controlBarController.controlBar);
+                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
             }
 
             controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());

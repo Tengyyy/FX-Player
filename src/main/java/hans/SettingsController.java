@@ -550,46 +550,46 @@ public class SettingsController implements Initializable {
 
 
         if (controlBarController.settingsButtonHover) {
-            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, false, controlBarController.controlBar);
+            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, false, controlBarController.controlBar, 0);
             controlBarController.settings.showTooltip();
 
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, false, controlBarController.controlBar);
+            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, false, controlBarController.controlBar, 0);
 
             if (App.fullScreen)
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar);
+                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar, 0);
             else
-                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar);
+                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar, 0);
         } else if (controlBarController.captionsButtonHover) {
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, false, controlBarController.controlBar);
+            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, false, controlBarController.controlBar, 0);
             controlBarController.captions.showTooltip();
 
-            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, false, controlBarController.controlBar);
+            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, false, controlBarController.controlBar, 0);
 
             if (App.fullScreen)
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar);
+                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar, 0);
             else
-                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar);
+                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar, 0);
         } else if (controlBarController.fullScreenButtonHover) {
             if (App.fullScreen) {
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar);
+                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar, 0);
                 controlBarController.exitFullScreen.showTooltip();
             } else {
-                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar);
+                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar, 0);
                 controlBarController.fullScreen.showTooltip();
             }
 
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, false, controlBarController.controlBar);
+            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, false, controlBarController.controlBar, 0);
 
-            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, false, controlBarController.controlBar);
+            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, false, controlBarController.controlBar, 0);
         } else {
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, false, controlBarController.controlBar);
+            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, false, controlBarController.controlBar, 0);
 
-            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, false, controlBarController.controlBar);
+            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, false, controlBarController.controlBar, 0);
 
             if (App.fullScreen)
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar);
+                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar, 0);
             else
-                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar);
+                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, false, controlBarController.controlBar, 0);
         }
 
 

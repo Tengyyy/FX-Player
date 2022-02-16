@@ -2,6 +2,7 @@ package hans;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.ResourceBundle;
 
 
 import com.jfoenix.controls.JFXButton;
+import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
@@ -153,6 +155,13 @@ public class MenuController implements Initializable {
         addLine.setStyle(activeLine);
         queueLine.setStyle(inactiveLine);
 
+        for(QueueItem queueItem : queue){
+            if(queueItem.marqueeOnTimeline.getStatus() == Animation.Status.RUNNING){
+                queueItem.videoTitle.setTranslateX(0);
+                //queueItem.marqueeOnTimeline.stop(); // got to figure if not stopping this timeline causes a memory leak or not
+            }
+        }
+
         if(videosAdded) {
             videosAdded = false;
             addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
@@ -162,7 +171,7 @@ public class MenuController implements Initializable {
         AnimationsClass.openAddVideosTab(addPane, queuePane, this);
     }
 
-    public void openVideoChooser(){
+    public void openVideoChooser() throws IOException {
 
         File selectedFile = fileChooser.showOpenDialog(addPane.getScene().getWindow());
 

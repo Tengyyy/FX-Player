@@ -3,6 +3,7 @@ package hans;
 import javafx.animation.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -476,6 +477,76 @@ public class AnimationsClass {
         });
 
         controlBarController.mainController.menuButton.setVisible(false);
+    }
+
+    public static void marquee(Text text, Region parent, double speed, Timeline timeline, BooleanProperty firstLoad, BooleanProperty textHover, DoubleProperty textWidth, double offset){
+
+        KeyFrame updateFrame = new KeyFrame(Duration.seconds(1 / 60d), new EventHandler<ActionEvent>() {
+
+                private boolean rightMovement = false;
+
+                @Override
+                public void handle(ActionEvent actionEvent) {
+
+                    if (firstLoad.getValue()) {
+                        // gets and stores the text width during the first iteration of the marquee animation
+                        // cant be retrieved during every iteration due to a javafx glitch (text layout bounds change when hovering on and off)
+                        textWidth.set(text.getLayoutBounds().getWidth());
+                        firstLoad.set(false);
+                    }
+
+                    double tW = textWidth.getValue();
+                    double pW = parent.getClip().getLayoutBounds().getWidth();
+                    double translateX = text.getTranslateX();
+
+                    if (tW <= pW && translateX >= 0) {
+                        // stop, if the pane is large enough and the position is correct
+                        text.setTranslateX(0);
+                        timeline.stop();
+                        rightMovement = false;
+
+                    } else {
+
+                        if(translateX >= 0 && !textHover.getValue()){
+                            //stops the marquee animation if it reaches the left bound and the user isnt hovering the text
+                            text.setTranslateX(0);
+                            timeline.stop();
+                            rightMovement = false;
+                        }
+
+                        // invert movement direction if bounds are reached
+                        if (rightMovement && translateX >= offset) {
+                            rightMovement = false;
+                        }
+                        else if(!rightMovement && translateX + tW + offset <= pW){
+                            rightMovement = true;
+                        }
+
+                        // update position
+                        if(textHover.getValue()) {
+                            if (rightMovement) translateX += speed;
+                            else translateX -= speed;
+                        }
+                        else {
+                            if(translateX > 0){
+                                translateX -= 2*speed;
+                            }
+                            else {
+                                translateX += 2 * speed;
+                            }
+                        }
+
+                        text.setTranslateX(translateX);
+                    }
+                }
+            });
+
+            timeline.getKeyFrames().add(updateFrame);
+            timeline.setCycleCount(Animation.INDEFINITE);
+
+            if(text.getLayoutBounds().getWidth() > parent.getClip().getLayoutBounds().getWidth()){
+                timeline.play();
+            }
     }
 
     public static void marqueeOn(Text text, HBox parentBox) {

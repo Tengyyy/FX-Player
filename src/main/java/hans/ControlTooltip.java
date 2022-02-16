@@ -51,8 +51,8 @@ public class ControlTooltip extends Tooltip {
             }
         });
 
-            countdown = new PauseTransition(Duration.millis(delay));
-            countdown.setOnFinished((e) -> mouseHover.set(true));
+        countdown = new PauseTransition(Duration.millis(delay));
+        countdown.setOnFinished((e) -> mouseHover.set(true));
 
         tooltipParent.setOnMouseEntered((e) -> {
             countdown.playFromStart();

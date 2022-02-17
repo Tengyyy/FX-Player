@@ -18,7 +18,9 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -144,6 +146,15 @@ public class SettingsController implements Initializable {
 
     MediaInterface mediaInterface;
 
+    Timeline marqueeTimeline;
+
+    BooleanProperty titleHover = new SimpleBooleanProperty(false);
+
+    BooleanProperty firstLoad = new SimpleBooleanProperty(true);
+    DoubleProperty titleWidth = new SimpleDoubleProperty();
+
+    PauseTransition countdown;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -195,7 +206,6 @@ public class SettingsController implements Initializable {
 
 
         playbackOptionsBox.setOnMouseClicked((e) -> {
-
             openPlaybackOptions();
         });
 
@@ -254,8 +264,8 @@ public class SettingsController implements Initializable {
             if (autoplaySwitch.isSelected()) {
                 autoplaySwitch.fire();
             }
-
         });
+
         loopSwitch.setOnMouseClicked((e) -> {
 
             if (shuffleSwitch.isSelected()) {
@@ -266,6 +276,7 @@ public class SettingsController implements Initializable {
                 autoplaySwitch.fire();
             }
         });
+
         autoplaySwitch.setOnMouseClicked((e) -> {
 
             if (loopSwitch.isSelected()) {
@@ -277,41 +288,27 @@ public class SettingsController implements Initializable {
             }
         });
 
-        shuffleSwitch.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (newValue) { // ON
-                    shuffleOn = true;
-                } else { // OFF
-                    shuffleOn = false;
-                }
+        shuffleSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) { // ON
+                shuffleOn = true;
+            } else { // OFF
+                shuffleOn = false;
             }
-
         });
 
-        loopSwitch.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (newValue) { // ON
-                    loopOn = true;
-                } else { // OFF
-                    loopOn = false;
-                }
+        loopSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) { // ON
+                loopOn = true;
+            } else { // OFF
+                loopOn = false;
             }
-
         });
 
-        autoplaySwitch.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (newValue) { // ON
-                    autoplayOn = true;
-                } else { // OFF
-                    autoplayOn = false;
-                }
+        autoplaySwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) { // ON
+                autoplayOn = true;
+            } else { // OFF
+                autoplayOn = false;
             }
         });
 
@@ -439,23 +436,18 @@ public class SettingsController implements Initializable {
         playbackSpeedScroll.translateYProperty()
                 .bind(Bindings.subtract(settingsBackgroundPane.heightProperty(), playbackSpeedScroll.heightProperty()));
 
-        Platform.runLater(new Runnable() {
+        Platform.runLater(() -> {
 
-            @Override
-            public void run() {
-
-                if (playbackCustom != null) {
-                    playbackSpeedScroll.prefHeightProperty().bind(Bindings.min(537, Bindings.subtract(mainController.mediaViewHeight, 100)));
-                } else {
-                    playbackSpeedScroll.prefHeightProperty().bind(Bindings.min(487, Bindings.subtract(mainController.mediaViewHeight, 100)));
-                }
-
-                //this can surely be improved
-                playbackOptionsBuffer.setTranslateX(settingsBackgroundPane.getWidth());
-                playbackSpeedScroll.setTranslateX(settingsBackgroundPane.getWidth());
-                customSpeedBuffer.setTranslateX(settingsBackgroundPane.getWidth());
-
+            if (playbackCustom != null) {
+                playbackSpeedScroll.prefHeightProperty().bind(Bindings.min(537, Bindings.subtract(mainController.mediaViewHeight, 100)));
+            } else {
+                playbackSpeedScroll.prefHeightProperty().bind(Bindings.min(487, Bindings.subtract(mainController.mediaViewHeight, 100)));
             }
+
+            //this can surely be improved
+            playbackOptionsBuffer.setTranslateX(settingsBackgroundPane.getWidth());
+            playbackSpeedScroll.setTranslateX(settingsBackgroundPane.getWidth());
+            customSpeedBuffer.setTranslateX(settingsBackgroundPane.getWidth());
 
         });
         playbackOptionsBuffer.translateYProperty().bind(
@@ -488,18 +480,44 @@ public class SettingsController implements Initializable {
         videoNameText.setLayoutY(30);
         //videoNameText.setLayoutX(0);
 
+        titleHover.addListener((obs,wasHover, isHover) -> {
+            if(isHover){
+                if (marqueeTimeline == null) {
+                    marqueeTimeline = new Timeline();
+                    AnimationsClass.marquee(videoNameText, videoNameBox, 0.5, marqueeTimeline, firstLoad, titleHover, titleWidth, 10);
+                } else if (marqueeTimeline.getStatus() != Animation.Status.RUNNING && videoNameText.getLayoutBounds().getWidth() > videoNameBox.getClip().getLayoutBounds().getWidth()) {
+                    marqueeTimeline.play();
+                }
+            }
+        });
+
+        countdown = new PauseTransition(Duration.millis(1000));
+        countdown.setOnFinished((e) -> {
+            titleHover.set(true);
+        });
+
         Rectangle videoNameClip = new Rectangle(195, 50);
         videoNameBox.setClip(videoNameClip);
 
 
         videoBox.setOnMouseEntered((e) -> {
             Utilities.hoverEffectOn(videoBox);
-            AnimationsClass.marqueeOn(videoNameText, videoNameBox);
+
+            //TODO: implement new universal marquee animation
+            if(marqueeTimeline != null && marqueeTimeline.getStatus() == Animation.Status.RUNNING) titleHover.set(true);
+            else countdown.playFromStart();
+            // AnimationsClass.marqueeOn(videoNameText, videoNameBox);
         });
 
         videoBox.setOnMouseExited((e) -> {
             Utilities.hoverEffectOff(videoBox);
-            AnimationsClass.marqueeOff(videoNameText);
+
+            titleHover.set(false);
+            if(countdown.getStatus() == Animation.Status.RUNNING) {
+                countdown.stop();
+            }
+
+            //AnimationsClass.marqueeOff(videoNameText);
         });
 
     }
@@ -688,6 +706,8 @@ public class SettingsController implements Initializable {
 
             // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
             AnimationsClass.stopMarquee(videoNameText);
+
+            if(marqueeTimeline.getStatus() == Animation.Status.RUNNING) videoNameText.setTranslateX(0);
 
             mediaInterface.resetMediaPlayer();
 

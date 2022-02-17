@@ -75,7 +75,7 @@ public class QueueItem extends GridPane {
 
     ControlTooltip play, pause, remove, options;
 
-    Timeline marqueeOnTimeline;
+    Timeline marqueeTimeline;
 
     BooleanProperty titleHover = new SimpleBooleanProperty(false);
 
@@ -193,11 +193,11 @@ public class QueueItem extends GridPane {
 
             titleHover.addListener((obs,wasHover, isHover) -> {
                 if(isHover){
-                    if (marqueeOnTimeline == null) {
-                        marqueeOnTimeline = new Timeline();
-                        AnimationsClass.marquee(videoTitle, videoTitleWrapper, 0.5, marqueeOnTimeline, firstLoad, titleHover, titleWidth, 10);
-                    } else if (marqueeOnTimeline.getStatus() != Animation.Status.RUNNING && videoTitle.getLayoutBounds().getWidth() > videoTitleWrapper.getClip().getLayoutBounds().getWidth()) {
-                        marqueeOnTimeline.play();
+                    if (marqueeTimeline == null) {
+                        marqueeTimeline = new Timeline();
+                        AnimationsClass.marquee(videoTitle, videoTitleWrapper, 0.5, marqueeTimeline, firstLoad, titleHover, titleWidth, 10);
+                    } else if (marqueeTimeline.getStatus() != Animation.Status.RUNNING && videoTitle.getLayoutBounds().getWidth() > videoTitleWrapper.getClip().getLayoutBounds().getWidth()) {
+                        marqueeTimeline.play();
                     }
                 }
             });
@@ -228,7 +228,7 @@ public class QueueItem extends GridPane {
             });
 
             videoTitleWrapper.setOnMouseEntered((e) -> {
-                if(marqueeOnTimeline != null && marqueeOnTimeline.getStatus() == Animation.Status.RUNNING) titleHover.set(true);
+                if(marqueeTimeline != null && marqueeTimeline.getStatus() == Animation.Status.RUNNING) titleHover.set(true);
                 else countdown.playFromStart();
 
                 videoTitle.setUnderline(true);

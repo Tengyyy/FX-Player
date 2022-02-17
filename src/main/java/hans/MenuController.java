@@ -156,7 +156,7 @@ public class MenuController implements Initializable {
         queueLine.setStyle(inactiveLine);
 
         for(QueueItem queueItem : queue){
-            if(queueItem.marqueeOnTimeline.getStatus() == Animation.Status.RUNNING){
+            if(queueItem.marqueeTimeline.getStatus() == Animation.Status.RUNNING){
                 queueItem.videoTitle.setTranslateX(0);
                 //queueItem.marqueeOnTimeline.stop(); // got to figure if not stopping this timeline causes a memory leak or not
             }

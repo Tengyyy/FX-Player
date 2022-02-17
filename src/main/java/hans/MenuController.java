@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
@@ -33,8 +34,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
-
-import static hans.AnimationsClass.queueNotificationFade;
 
 
 public class MenuController implements Initializable {
@@ -94,6 +93,9 @@ public class MenuController implements Initializable {
 
     int videosAddedCounter = 0; // keeps track of how many videos have been added, while the user hasnt openened the queue (queue tab header counter)
 
+    //Animations//
+    FadeTransition queueNotificationFade = new FadeTransition();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -137,7 +139,7 @@ public class MenuController implements Initializable {
         if(videosAdded){
             videosAddedCounter = 0;
 
-            if(queueNotificationFade != null){
+            if(queueNotificationFade.getStatus() == Animation.Status.RUNNING){
                 queueNotificationFade.stop();
             }
 
@@ -156,8 +158,8 @@ public class MenuController implements Initializable {
         queueLine.setStyle(inactiveLine);
 
         for(QueueItem queueItem : queue){
-            if(queueItem.marqueeTimeline.getStatus() == Animation.Status.RUNNING){
-                queueItem.videoTitle.setTranslateX(0);
+            if(queueItem.marqueeTimeline != null && queueItem.marqueeTimeline.getStatus() == Animation.Status.RUNNING){
+                queueItem.videoTitle.setLayoutX(0);
                 //queueItem.marqueeOnTimeline.stop(); // got to figure if not stopping this timeline causes a memory leak or not
             }
         }
@@ -189,7 +191,7 @@ public class MenuController implements Initializable {
             //play notification animation (blink 3 times)
             queueNotification.setOpacity(1);
 
-            AnimationsClass.queueNotificationBlink(queueNotification);
+            AnimationsClass.fadeAnimation(queueNotificationFade, 500, queueNotification, 1, 0, true, 4, true);
 
             addedVideosNormalText.setText("Added 1 video to the queue.");
 
@@ -251,7 +253,8 @@ public class MenuController implements Initializable {
         //play notification animation (blink 3 times)
 
         queueNotification.setOpacity(1);
-        AnimationsClass.queueNotificationBlink(queueNotification);
+       // AnimationsClass.queueNotificationBlink(queueNotification);
+        AnimationsClass.fadeAnimation(queueNotificationFade, 500, queueNotification, 1, 0, true, 4, true);
 
 
         if(dragVideosAdded == 1) addedVideosNormalText.setText("Added 1 video to the queue.");

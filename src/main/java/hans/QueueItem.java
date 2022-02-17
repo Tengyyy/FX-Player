@@ -2,38 +2,27 @@ package hans;
 
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXClippedPane;
 import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
-
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class QueueItem extends GridPane {
 
@@ -78,9 +67,6 @@ public class QueueItem extends GridPane {
     Timeline marqueeTimeline;
 
     BooleanProperty titleHover = new SimpleBooleanProperty(false);
-
-    BooleanProperty firstLoad = new SimpleBooleanProperty(true);
-    DoubleProperty titleWidth = new SimpleDoubleProperty();
 
     PauseTransition countdown;
 
@@ -133,16 +119,18 @@ public class QueueItem extends GridPane {
 
         videoTitle.getStyleClass().add("videoTitle");
         videoTitle.setText(videoFile.getName());
+        videoTitle.setManaged(false);
+        Platform.runLater(() -> videoTitle.setLayoutY(this.getHeight() / 2 + videoTitle.getLayoutBounds().getHeight() / 4));
 
         Rectangle clip = new Rectangle(videoTitleWrapper.getWidth(), videoTitleWrapper.getHeight());
-            clip.widthProperty().bind(this.widthProperty().subtract(170));
-            clip.heightProperty().bind(this.heightProperty());
+        clip.widthProperty().bind(videoTitleWrapper.widthProperty());
+        clip.heightProperty().bind(videoTitleWrapper.heightProperty());
 
-            videoTitleWrapper.setAlignment(Pos.CENTER_LEFT);
-            videoTitleWrapper.setClip(clip);
-            videoTitleWrapper.setPrefHeight(60);
-            videoTitleWrapper.getChildren().add(videoTitle);
-            GridPane.setMargin(videoTitleWrapper, new Insets(0, 0, 0, 10));
+        videoTitleWrapper.setAlignment(Pos.CENTER_LEFT);
+        videoTitleWrapper.setClip(clip);
+        videoTitleWrapper.setPrefHeight(60);
+        videoTitleWrapper.getChildren().add(videoTitle);
+        GridPane.setMargin(videoTitleWrapper, new Insets(0, 0, 0, 10));
 
             removeButton.setPrefWidth(35);
             removeButton.setPrefHeight(35);
@@ -195,8 +183,8 @@ public class QueueItem extends GridPane {
                 if(isHover){
                     if (marqueeTimeline == null) {
                         marqueeTimeline = new Timeline();
-                        AnimationsClass.marquee(videoTitle, videoTitleWrapper, 0.5, marqueeTimeline, firstLoad, titleHover, titleWidth, 10);
-                    } else if (marqueeTimeline.getStatus() != Animation.Status.RUNNING && videoTitle.getLayoutBounds().getWidth() > videoTitleWrapper.getClip().getLayoutBounds().getWidth()) {
+                        AnimationsClass.marquee(videoTitle, videoTitleWrapper, 0.5, marqueeTimeline, titleHover, 10);
+                    } else if (marqueeTimeline.getStatus() != Animation.Status.RUNNING && videoTitle.getLayoutBounds().getWidth() > videoTitleWrapper.getWidth()) {
                         marqueeTimeline.play();
                     }
                 }
@@ -247,19 +235,19 @@ public class QueueItem extends GridPane {
             });
 
             optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-                AnimationsClass.queueButtonBackgroundHoverOn(optionsButton);
+                AnimationsClass.fadeAnimation(new FadeTransition(), 200, optionsButton, 0, 1, false, 1, true);
             });
 
             optionsButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-                AnimationsClass.queueButtonBackgroundHoverOff(optionsButton);
+                AnimationsClass.fadeAnimation(new FadeTransition(), 200, optionsButton, 1, 0, false, 1, true);
             });
 
             removeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-                AnimationsClass.queueButtonBackgroundHoverOn(removeButton);
+                AnimationsClass.fadeAnimation(new FadeTransition(), 200, removeButton, 0, 1, false, 1, true);
             });
 
             removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-                AnimationsClass.queueButtonBackgroundHoverOff(removeButton);
+                AnimationsClass.fadeAnimation(new FadeTransition(), 200, removeButton, 1, 0, false, 1, true);
             });
 
 

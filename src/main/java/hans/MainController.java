@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -440,7 +441,7 @@ public class MainController implements Initializable {
         }
 
         // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
-        AnimationsClass.stopMarquee(settingsController.videoNameText);
+        if(settingsController.marqueeTimeline != null && settingsController.marqueeTimeline.getStatus() == Animation.Status.RUNNING) settingsController.videoNameText.setLayoutX(0);
 
         mediaInterface.resetMediaPlayer();
 

@@ -24,10 +24,6 @@ public class AnimationsClass {
     static TranslateTransition volumeSliderTranslateTransition2;
     static TranslateTransition volumeSliderTranslateTransition3;
 
-    static Timeline videoNameTimeline;
-    static Timeline resetTimeline;
-
-    static KeyFrame updateFrame;
 
     static Timeline queueItemTimeline;
     static Timeline queueItemResetTimeline;
@@ -37,9 +33,7 @@ public class AnimationsClass {
     static ParallelTransition addPaneDragEntered;
     static ParallelTransition addPaneDragDropped;
 
-    static FadeTransition queueNotificationFade;
 
-    static FadeTransition optionsButtonBackgroundFadeOn;
     static FadeTransition optionsButtonBackgroundFadeOff;
 
     static ScaleTransition queuePlayButtonScaleOn;
@@ -479,7 +473,7 @@ public class AnimationsClass {
         controlBarController.mainController.menuButton.setVisible(false);
     }
 
-    public static void marquee(Text text, Region parent, double speed, Timeline timeline, BooleanProperty firstLoad, BooleanProperty textHover, DoubleProperty textWidth, double offset){
+    public static void marquee(Text text, Region parent, double speed, Timeline timeline, BooleanProperty textHover, double offset){
 
         KeyFrame updateFrame = new KeyFrame(Duration.seconds(1 / 60d), new EventHandler<ActionEvent>() {
 
@@ -488,55 +482,49 @@ public class AnimationsClass {
                 @Override
                 public void handle(ActionEvent actionEvent) {
 
-                    if (firstLoad.getValue()) {
-                        // gets and stores the text width during the first iteration of the marquee animation
-                        // cant be retrieved during every iteration due to a javafx glitch (text layout bounds change when hovering on and off)
-                        textWidth.set(text.getLayoutBounds().getWidth());
-                        firstLoad.set(false);
-                    }
 
-                    double tW = textWidth.getValue();
-                    double pW = parent.getClip().getLayoutBounds().getWidth();
-                    double translateX = text.getTranslateX();
+                    double tW = text.getLayoutBounds().getWidth();
+                    double pW = parent.getWidth();
+                    double layoutX = text.getLayoutX();
 
-                    if (tW <= pW && translateX >= 0) {
+                    if (tW <= pW && layoutX >= 0) {
                         // stop, if the pane is large enough and the position is correct
-                        text.setTranslateX(0);
+                        text.setLayoutX(0);
                         timeline.stop();
                         rightMovement = false;
 
                     } else {
 
-                        if(translateX >= 0 && !textHover.getValue()){
+                        if(layoutX >= 0 && !textHover.getValue()){
                             //stops the marquee animation if it reaches the left bound and the user isnt hovering the text
-                            text.setTranslateX(0);
+                            text.setLayoutX(0);
                             timeline.stop();
                             rightMovement = false;
                         }
 
                         // invert movement direction if bounds are reached
-                        if (rightMovement && translateX >= offset) {
+                        if (rightMovement && layoutX >= offset) {
                             rightMovement = false;
                         }
-                        else if(!rightMovement && translateX + tW + offset <= pW){
+                        else if(!rightMovement && layoutX + tW + offset <= pW){
                             rightMovement = true;
                         }
 
                         // update position
                         if(textHover.getValue()) {
-                            if (rightMovement) translateX += speed;
-                            else translateX -= speed;
+                            if (rightMovement) layoutX += speed;
+                            else layoutX -= speed;
                         }
                         else {
-                            if(translateX > 0){
-                                translateX -= 2*speed;
+                            if(layoutX > 0){
+                                layoutX -= 2*speed;
                             }
                             else {
-                                translateX += 2 * speed;
+                                layoutX += 2 * speed;
                             }
                         }
 
-                        text.setTranslateX(translateX);
+                        text.setLayoutX(layoutX);
                     }
                 }
             });
@@ -544,100 +532,10 @@ public class AnimationsClass {
             timeline.getKeyFrames().add(updateFrame);
             timeline.setCycleCount(Animation.INDEFINITE);
 
-            if(text.getLayoutBounds().getWidth() > parent.getClip().getLayoutBounds().getWidth()){
+            if(text.getLayoutBounds().getWidth() > parent.getWidth()){
                 timeline.play();
             }
     }
-
-    public static void marqueeOn(Text text, HBox parentBox) {
-
-        if (videoNameTimeline == null) {
-
-            videoNameTimeline = new Timeline();
-
-            updateFrame = new KeyFrame(Duration.seconds(1 / 60d), new EventHandler<ActionEvent>() {
-
-                private boolean rightMovement;
-
-                @Override
-                public void handle(ActionEvent event) {
-                    double tW = text.getLayoutBounds().getWidth();
-                    double pW = parentBox.getWidth();
-                    double layoutX = text.getLayoutX();
-
-                    if ((rightMovement && layoutX >= 0) || (!rightMovement && layoutX + tW <= pW)) {
-                        // invert movement, if bounds are reached
-                        rightMovement = !rightMovement;
-                    }
-
-                    // update position
-                    if (rightMovement) {
-                        layoutX += 0.5;
-                    } else {
-                        layoutX -= 0.5;
-                    }
-                    text.setLayoutX(layoutX);
-                }
-            });
-
-            videoNameTimeline.getKeyFrames().add(updateFrame);
-            videoNameTimeline.setCycleCount(Animation.INDEFINITE);
-        }
-
-        if (videoNameTimeline != null && resetTimeline != null) {
-            if (videoNameTimeline.getStatus() != Animation.Status.RUNNING && resetTimeline.getStatus() != Animation.Status.RUNNING && text.getLayoutBounds().getWidth() > parentBox.getWidth()) {
-                text.setLayoutX(0);
-                videoNameTimeline.play();
-            }
-        }
-    }
-
-
-    public static void marqueeOff(Text text) {
-
-        if (resetTimeline == null) {
-
-            resetTimeline = new Timeline();
-
-            KeyFrame resetFrame = new KeyFrame(Duration.seconds(1 / 60d), new EventHandler<ActionEvent>() {
-
-                @Override
-                public void handle(ActionEvent event) {
-
-                    double layoutX = text.getLayoutX();
-
-                    if (Math.round(layoutX) == 0) {
-                        resetTimeline.stop();
-                    } else if (layoutX < 0)
-                        layoutX += 1;
-
-
-                    text.setLayoutX(layoutX);
-                }
-            });
-
-            resetTimeline.getKeyFrames().add(resetFrame);
-            resetTimeline.setCycleCount(Animation.INDEFINITE);
-        }
-
-        if (videoNameTimeline != null && videoNameTimeline.getStatus() == Animation.Status.RUNNING) {
-            videoNameTimeline.stop();
-            resetTimeline.play();
-        }
-    }
-
-
-    public static void stopMarquee(Text videoNameText) {
-        if (videoNameTimeline != null && videoNameTimeline.getStatus() == Animation.Status.RUNNING) {
-            videoNameTimeline.stop();
-            videoNameText.setLayoutX(0);
-        } else if (resetTimeline != null && resetTimeline.getStatus() == Animation.Status.RUNNING) {
-            resetTimeline.stop();
-            videoNameText.setLayoutX(0);
-        }
-    }
-
-
 
     public static void durationSliderHoverOn(ProgressBar durationTrack, Slider durationSlider) {
         Timeline durationSliderTimelineOn = new Timeline();
@@ -788,27 +686,15 @@ public class AnimationsClass {
         addPaneDragDropped.play();
     }
 
-    public static void queueNotificationBlink(Label queueNotification){
-        queueNotificationFade = new FadeTransition(Duration.millis(500), queueNotification);
-        queueNotificationFade.setFromValue(1);
-        queueNotificationFade.setToValue(0.0f);
-        queueNotificationFade.setAutoReverse(true);
-        queueNotificationFade.setCycleCount(4);
-        queueNotificationFade.play();
-    }
 
-    public static void queueButtonBackgroundHoverOn(Button button){
-        optionsButtonBackgroundFadeOn = new FadeTransition(Duration.millis(200), button);
-        optionsButtonBackgroundFadeOn.setFromValue(0);
-        optionsButtonBackgroundFadeOn.setToValue(1);
-        optionsButtonBackgroundFadeOn.play();
-    }
-
-    public static void queueButtonBackgroundHoverOff(Button button){
-        optionsButtonBackgroundFadeOff = new FadeTransition(Duration.millis(200), button);
-        optionsButtonBackgroundFadeOff.setFromValue(1);
-        optionsButtonBackgroundFadeOff.setToValue(0);
-        optionsButtonBackgroundFadeOff.play();
+    public static void fadeAnimation(FadeTransition fadeTransition, double duration, Region node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
+        fadeTransition.setDuration(Duration.millis(duration));
+        fadeTransition.setNode(node);
+        fadeTransition.setFromValue(fromValue);
+        fadeTransition.setToValue(toValue);
+        fadeTransition.setAutoReverse(autoReverse);
+        fadeTransition.setCycleCount(cycleCount);
+        if(play) fadeTransition.play();
     }
 
     public static void queuePlayHoverOn(StackPane playButtonWrapper){

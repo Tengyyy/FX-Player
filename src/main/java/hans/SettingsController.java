@@ -484,8 +484,8 @@ public class SettingsController implements Initializable {
             if(isHover){
                 if (marqueeTimeline == null) {
                     marqueeTimeline = new Timeline();
-                    AnimationsClass.marquee(videoNameText, videoNameBox, 0.5, marqueeTimeline, firstLoad, titleHover, titleWidth, 10);
-                } else if (marqueeTimeline.getStatus() != Animation.Status.RUNNING && videoNameText.getLayoutBounds().getWidth() > videoNameBox.getClip().getLayoutBounds().getWidth()) {
+                    AnimationsClass.marquee(videoNameText, videoNameBox, 0.5, marqueeTimeline, titleHover, 10);
+                } else if (marqueeTimeline.getStatus() != Animation.Status.RUNNING && videoNameText.getLayoutBounds().getWidth() > videoNameBox.getWidth()) {
                     marqueeTimeline.play();
                 }
             }
@@ -506,7 +506,6 @@ public class SettingsController implements Initializable {
             //TODO: implement new universal marquee animation
             if(marqueeTimeline != null && marqueeTimeline.getStatus() == Animation.Status.RUNNING) titleHover.set(true);
             else countdown.playFromStart();
-            // AnimationsClass.marqueeOn(videoNameText, videoNameBox);
         });
 
         videoBox.setOnMouseExited((e) -> {
@@ -517,7 +516,6 @@ public class SettingsController implements Initializable {
                 countdown.stop();
             }
 
-            //AnimationsClass.marqueeOff(videoNameText);
         });
 
     }
@@ -705,9 +703,9 @@ public class SettingsController implements Initializable {
             App.stage.setTitle(selectedFile.getName());
 
             // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
-            AnimationsClass.stopMarquee(videoNameText);
+            //AnimationsClass.stopMarquee(videoNameText);
 
-            if(marqueeTimeline.getStatus() == Animation.Status.RUNNING) videoNameText.setTranslateX(0);
+            if(marqueeTimeline != null && marqueeTimeline.getStatus() == Animation.Status.RUNNING) videoNameText.setLayoutX(0);
 
             mediaInterface.resetMediaPlayer();
 

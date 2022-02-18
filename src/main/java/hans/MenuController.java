@@ -94,7 +94,7 @@ public class MenuController implements Initializable {
     int videosAddedCounter = 0; // keeps track of how many videos have been added, while the user hasnt openened the queue (queue tab header counter)
 
     //Animations//
-    FadeTransition queueNotificationFade = new FadeTransition();
+    FadeTransition queueNotificationFade;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -191,7 +191,7 @@ public class MenuController implements Initializable {
             //play notification animation (blink 3 times)
             queueNotification.setOpacity(1);
 
-            AnimationsClass.fadeAnimation(queueNotificationFade, 500, queueNotification, 1, 0, true, 4, true);
+            queueNotificationFade =  AnimationsClass.fadeAnimation(500, queueNotification, 1, 0, true, 4, true);
 
             addedVideosNormalText.setText("Added 1 video to the queue.");
 
@@ -254,7 +254,7 @@ public class MenuController implements Initializable {
 
         queueNotification.setOpacity(1);
        // AnimationsClass.queueNotificationBlink(queueNotification);
-        AnimationsClass.fadeAnimation(queueNotificationFade, 500, queueNotification, 1, 0, true, 4, true);
+        queueNotificationFade = AnimationsClass.fadeAnimation(500, queueNotification, 1, 0, true, 4, true);
 
 
         if(dragVideosAdded == 1) addedVideosNormalText.setText("Added 1 video to the queue.");

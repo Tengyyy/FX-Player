@@ -3,10 +3,10 @@ package hans;
 import javafx.animation.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -25,19 +25,9 @@ public class AnimationsClass {
     static TranslateTransition volumeSliderTranslateTransition3;
 
 
-    static Timeline queueItemTimeline;
-    static Timeline queueItemResetTimeline;
-
-    static KeyFrame queueUpdateFrame;
-
     static ParallelTransition addPaneDragEntered;
     static ParallelTransition addPaneDragDropped;
 
-
-    static FadeTransition optionsButtonBackgroundFadeOff;
-
-    static ScaleTransition queuePlayButtonScaleOn;
-    static ScaleTransition queuePlayButtonScaleOff;
 
 
     public static void openSettings(StackPane bufferPane) {
@@ -362,24 +352,6 @@ public class AnimationsClass {
         parallelTransition.play();
     }
 
-    public static void openCaptions(Line captionLine) {
-        ScaleTransition scale = new ScaleTransition(Duration.millis(100), captionLine);
-        scale.setFromX(0);
-        scale.setToX(1);
-        scale.setCycleCount(1);
-        scale.setInterpolator(Interpolator.LINEAR);
-        scale.play();
-    }
-
-    public static void closeCaptions(Line captionLine) {
-        ScaleTransition scale = new ScaleTransition(Duration.millis(100), captionLine);
-        scale.setFromX(1);
-        scale.setToX(0);
-        scale.setCycleCount(1);
-        scale.setInterpolator(Interpolator.LINEAR);
-        scale.play();
-    }
-
     public static void fullScreenHoverOn(ImageView fullScreenIcon) {
         fullScreenButtonScaleTransition = new ScaleTransition(Duration.millis(200), fullScreenIcon);
         fullScreenButtonScaleTransition.setCycleCount(2);
@@ -687,7 +659,8 @@ public class AnimationsClass {
     }
 
 
-    public static void fadeAnimation(FadeTransition fadeTransition, double duration, Region node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
+    public static FadeTransition fadeAnimation(double duration, Region node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
+        FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setDuration(Duration.millis(duration));
         fadeTransition.setNode(node);
         fadeTransition.setFromValue(fromValue);
@@ -695,23 +668,32 @@ public class AnimationsClass {
         fadeTransition.setAutoReverse(autoReverse);
         fadeTransition.setCycleCount(cycleCount);
         if(play) fadeTransition.play();
+
+        return fadeTransition;
     }
 
-    public static void queuePlayHoverOn(StackPane playButtonWrapper){
-        queuePlayButtonScaleOn = new ScaleTransition(Duration.millis(100), playButtonWrapper);
-        queuePlayButtonScaleOn.setFromX(1);
-        queuePlayButtonScaleOn.setToX(1.1);
-        queuePlayButtonScaleOn.setFromY(1);
-        queuePlayButtonScaleOn.setToY(1.1);
-        queuePlayButtonScaleOn.play();
+    public static ScaleTransition scaleAnimation(double duration, Node node, double fromX, double toX, double fromY, double toY, boolean autoReverse, int cycleCount, boolean play){
+        ScaleTransition scaleTransition = new ScaleTransition();
+        scaleTransition.setDuration(Duration.millis(duration));
+        scaleTransition.setNode(node);
+        scaleTransition.setFromX(fromX);
+        scaleTransition.setToX(toX);
+        scaleTransition.setFromY(fromY);
+        scaleTransition.setToY(toY);
+        scaleTransition.setAutoReverse(autoReverse);
+        scaleTransition.setCycleCount(cycleCount);
+        if(play) scaleTransition.play();
+
+        return scaleTransition;
     }
 
-    public static void queuePlayHoverOff(StackPane playButtonWrapper){
-        queuePlayButtonScaleOff = new ScaleTransition(Duration.millis(100), playButtonWrapper);
-        queuePlayButtonScaleOff.setFromX(1.1);
-        queuePlayButtonScaleOff.setToX(1);
-        queuePlayButtonScaleOff.setFromY(1.1);
-        queuePlayButtonScaleOff.setToY(1);
-        queuePlayButtonScaleOff.play();
+    public static ParallelTransition parallelAnimation(boolean play, Transition... transitions){
+        ParallelTransition parallelTransition = new ParallelTransition();
+        for(Transition transition :  transitions){
+            parallelTransition.getChildren().add(transition);
+        }
+
+        return parallelTransition;
     }
+
 }

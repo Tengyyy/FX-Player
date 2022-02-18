@@ -227,27 +227,32 @@ public class QueueItem extends GridPane {
 
 
         playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-                AnimationsClass.queuePlayHoverOn(playButtonWrapper);
+               // AnimationsClass.queuePlayHoverOn(playButtonWrapper);
+
+                AnimationsClass.scaleAnimation(100, playButtonWrapper, 1, 1.1, 1, 1.1, false, 1, true);
             });
 
             playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-                AnimationsClass.queuePlayHoverOff(playButtonWrapper);
+                //AnimationsClass.queuePlayHoverOff(playButtonWrapper);
+
+                AnimationsClass.scaleAnimation(100, playButtonWrapper, 1.1, 1, 1.1, 1, false, 1, true);
+
             });
 
             optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-                AnimationsClass.fadeAnimation(new FadeTransition(), 200, optionsButton, 0, 1, false, 1, true);
+                AnimationsClass.fadeAnimation(200, optionsButton, 0, 1, false, 1, true);
             });
 
             optionsButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-                AnimationsClass.fadeAnimation(new FadeTransition(), 200, optionsButton, 1, 0, false, 1, true);
+                AnimationsClass.fadeAnimation(200, optionsButton, 1, 0, false, 1, true);
             });
 
             removeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-                AnimationsClass.fadeAnimation(new FadeTransition(), 200, removeButton, 0, 1, false, 1, true);
+                AnimationsClass.fadeAnimation(200, removeButton, 0, 1, false, 1, true);
             });
 
             removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-                AnimationsClass.fadeAnimation(new FadeTransition(), 200, removeButton, 1, 0, false, 1, true);
+                AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true);
             });
 
 

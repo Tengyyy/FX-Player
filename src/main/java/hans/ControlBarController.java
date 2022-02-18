@@ -714,7 +714,9 @@ public class ControlBarController implements Initializable {
             settingsController.closeSettings();
         }
 
-        AnimationsClass.openCaptions(captionLine);
+        //AnimationsClass.openCaptions(captionLine);
+
+        AnimationsClass.scaleAnimation(100, captionLine, 0, 1, 1, 1, false, 1, true);
 
         if (captions.isShowing() || settings.isShowing() || fullScreen.isShowing() || exitFullScreen.isShowing()) {
             captions.hide();
@@ -770,7 +772,9 @@ public class ControlBarController implements Initializable {
             else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, false, controlBar, 0);
         }
 
-        AnimationsClass.closeCaptions(captionLine);
+        //AnimationsClass.closeCaptions(captionLine);
+        AnimationsClass.scaleAnimation(100, captionLine, 1, 0, 1, 1, false, 1, true);
+
     }
 
     public void settingsButtonClick() {

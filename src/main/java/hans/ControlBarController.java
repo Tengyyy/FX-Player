@@ -4,6 +4,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.animation.Animation;
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -151,37 +153,26 @@ public class ControlBarController implements Initializable {
 
     MouseEventTracker mouseEventTracker;
 
-    ControlTooltip play;
-    ControlTooltip pause;
-    ControlTooltip replay;
-    ControlTooltip mute;
-    ControlTooltip unmute;
-    ControlTooltip settings;
-    ControlTooltip fullScreen;
-    ControlTooltip exitFullScreen;
-    ControlTooltip captions;
-    ControlTooltip nextVideoTooltip;
+    ControlTooltip play, pause, replay, mute, unmute, settings, fullScreen, exitFullScreen, captions, nextVideoTooltip;
 
     MediaInterface mediaInterface;
+
+    ScaleTransition fullScreenButtonScaleTransition;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                pause = new ControlTooltip("Pause (k)", playButton, false, controlBar, 0);
-                replay = new ControlTooltip("Replay (k)", playButton, false, controlBar, 0);
-                play = new ControlTooltip("Play (k)", playButton, false, controlBar, 0);
-                unmute = new ControlTooltip("Unmute (m)", volumeButton, false, controlBar, 0);
-                mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
-                settings = new ControlTooltip("Settings (s)", settingsButton, false, controlBar, 0);
-                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, false, controlBar, 0);
-                fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, false, controlBar, 0);
-                nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, false, controlBar, 0);
-                captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, false, controlBar, 0);
-            }
+        Platform.runLater(() -> {
+            pause = new ControlTooltip("Pause (k)", playButton, false, controlBar, 0);
+            replay = new ControlTooltip("Replay (k)", playButton, false, controlBar, 0);
+            play = new ControlTooltip("Play (k)", playButton, false, controlBar, 0);
+            unmute = new ControlTooltip("Unmute (m)", volumeButton, false, controlBar, 0);
+            mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
+            settings = new ControlTooltip("Settings (s)", settingsButton, false, controlBar, 0);
+            exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, false, controlBar, 0);
+            fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, false, controlBar, 0);
+            nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, false, controlBar, 0);
+            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, false, controlBar, 0);
         });
 
 
@@ -661,12 +652,15 @@ public class ControlBarController implements Initializable {
 
     public void fullScreenButtonHoverOn() {
         fullScreenButtonHover = true;
-        AnimationsClass.fullScreenHoverOn(fullScreenIcon);
+        fullScreenButtonScaleTransition = AnimationsClass.scaleAnimation(200, fullScreenIcon,1, 1.3, 1, 1.3, true, 2, true);
+
     }
 
     public void fullScreenButtonHoverOff() {
         fullScreenButtonHover = false;
-        AnimationsClass.fullScreenHoverOff(fullScreenIcon);
+        if(fullScreenButtonScaleTransition != null && fullScreenButtonScaleTransition.getStatus() == Animation.Status.RUNNING) fullScreenButtonScaleTransition.stop();
+        fullScreenIcon.setScaleX(1);
+        fullScreenIcon.setScaleY(1);
     }
 
 
@@ -807,12 +801,16 @@ public class ControlBarController implements Initializable {
     }
 
     public void durationSliderHoverOn() {
-        AnimationsClass.durationSliderHoverOn(durationTrack, durationSlider);
+        ScaleTransition sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), 0, 1, 0, 1, false, 1, false);
+        ScaleTransition sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, durationTrack, 1, 1, 1, 1.6, false, 1, false);
+        AnimationsClass.parallelAnimation(true, sliderThumbHoverOn, sliderTrackHoverOn);
     }
 
 
     public void durationSliderHoverOff() {
-        AnimationsClass.durationSliderHoverOff(durationTrack, durationSlider);
+        ScaleTransition sliderThumbHoverOff = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), 1, 0, 1, 0, false, 1, false);
+        ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, durationTrack, 1, 1, 1.6, 1, false, 1, false);
+        AnimationsClass.parallelAnimation(true, sliderThumbHoverOff, sliderTrackHoverOff);
     }
 
     public void displayControls() {

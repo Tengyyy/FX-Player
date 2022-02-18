@@ -352,23 +352,6 @@ public class AnimationsClass {
         parallelTransition.play();
     }
 
-    public static void fullScreenHoverOn(ImageView fullScreenIcon) {
-        fullScreenButtonScaleTransition = new ScaleTransition(Duration.millis(200), fullScreenIcon);
-        fullScreenButtonScaleTransition.setCycleCount(2);
-        fullScreenButtonScaleTransition.setAutoReverse(true);
-        fullScreenButtonScaleTransition.setFromX(1);
-        fullScreenButtonScaleTransition.setToX(1.3);
-        fullScreenButtonScaleTransition.setFromY(1);
-        fullScreenButtonScaleTransition.setToY(1.3);
-        fullScreenButtonScaleTransition.play();
-    }
-
-    public static void fullScreenHoverOff(ImageView fullScreenIcon) {
-        fullScreenButtonScaleTransition.stop();
-        fullScreenIcon.setScaleX(1);
-        fullScreenIcon.setScaleY(1);
-    }
-
     public static void volumeSliderHoverOn(Slider volumeSlider, Label durationLabel, ProgressBar volumeTrack) {
         volumeSliderTranslateTransition1 = new TranslateTransition(Duration.millis(100), volumeSlider);
         volumeSliderTranslateTransition1.setFromX(-60);
@@ -448,12 +431,10 @@ public class AnimationsClass {
     public static void marquee(Text text, Region parent, double speed, Timeline timeline, BooleanProperty textHover, double offset){
 
         KeyFrame updateFrame = new KeyFrame(Duration.seconds(1 / 60d), new EventHandler<ActionEvent>() {
-
                 private boolean rightMovement = false;
 
                 @Override
                 public void handle(ActionEvent actionEvent) {
-
 
                     double tW = text.getLayoutBounds().getWidth();
                     double pW = parent.getWidth();
@@ -464,9 +445,7 @@ public class AnimationsClass {
                         text.setLayoutX(0);
                         timeline.stop();
                         rightMovement = false;
-
                     } else {
-
                         if(layoutX >= 0 && !textHover.getValue()){
                             //stops the marquee animation if it reaches the left bound and the user isnt hovering the text
                             text.setLayoutX(0);
@@ -495,7 +474,6 @@ public class AnimationsClass {
                                 layoutX += 2 * speed;
                             }
                         }
-
                         text.setLayoutX(layoutX);
                     }
                 }
@@ -509,28 +487,6 @@ public class AnimationsClass {
             }
     }
 
-    public static void durationSliderHoverOn(ProgressBar durationTrack, Slider durationSlider) {
-        Timeline durationSliderTimelineOn = new Timeline();
-
-        durationSliderTimelineOn.setCycleCount(1);
-        durationSliderTimelineOn.setAutoReverse(false);
-        durationSliderTimelineOn.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(durationTrack.scaleYProperty(), 1.6, Interpolator.LINEAR)));
-        durationSliderTimelineOn.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(durationSlider.lookup(".thumb").scaleXProperty(), 1, Interpolator.LINEAR)));
-        durationSliderTimelineOn.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(durationSlider.lookup(".thumb").scaleYProperty(), 1, Interpolator.LINEAR)));
-        durationSliderTimelineOn.play();
-    }
-
-    public static void durationSliderHoverOff(ProgressBar durationTrack, Slider durationSlider) {
-
-        Timeline durationSliderTimelineOff = new Timeline();
-
-        durationSliderTimelineOff.setCycleCount(1);
-        durationSliderTimelineOff.setAutoReverse(false);
-        durationSliderTimelineOff.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(durationTrack.scaleYProperty(), 1, Interpolator.LINEAR)));
-        durationSliderTimelineOff.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(durationSlider.lookup(".thumb").scaleXProperty(), 0, Interpolator.LINEAR)));
-        durationSliderTimelineOff.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(durationSlider.lookup(".thumb").scaleYProperty(), 0, Interpolator.LINEAR)));
-        durationSliderTimelineOff.play();
-    }
 
     public static void openQueueTab(AnchorPane addPane, AnchorPane queuePane, MenuController menuController){
         addPane.translateXProperty().unbind();
@@ -692,6 +648,8 @@ public class AnimationsClass {
         for(Transition transition :  transitions){
             parallelTransition.getChildren().add(transition);
         }
+
+        if(play) parallelTransition.play();
 
         return parallelTransition;
     }

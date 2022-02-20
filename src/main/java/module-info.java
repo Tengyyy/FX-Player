@@ -6,6 +6,7 @@ module hans {
     requires javafx.base;
     requires com.jfoenix;
     requires animated;
+    requires AnimateFX;
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;

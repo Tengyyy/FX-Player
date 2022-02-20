@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 
+import animatefx.animation.FadeIn;
+import animatefx.animation.SlideInLeft;
+import animatefx.animation.SlideOutLeft;
 import com.jfoenix.controls.JFXButton;
 import eu.iamgio.animated.AnimationPair;
 import javafx.animation.Animation;
@@ -19,11 +22,13 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -37,6 +42,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import eu.iamgio.animated.AnimatedVBox;
+import animatefx.animation.FadeInUp;
 
 
 public class MenuController implements Initializable {
@@ -74,7 +80,8 @@ public class MenuController implements Initializable {
     @FXML
     Label queueNotification;
 
-    AnimatedVBox queueBox = new AnimatedVBox(AnimationPair.fadeLeft());
+    AnimatedVBox queueBox = new AnimatedVBox(new AnimationPair(new FadeInUp(), new SlideOutLeft()).setSpeed(3, 3));
+
 
     MainController mainController;
     ControlBarController controlBarController;
@@ -131,7 +138,7 @@ public class MenuController implements Initializable {
 
        queueNotification.setOpacity(0);
 
-       queueBox.setSpacing(10);
+        queueBox.setSpacing(10);
        queueBox.setPadding(new Insets(20, 20, 20, 20));
        queueBox.setId("queueBox");
        queueBox.setAlignment(Pos.TOP_CENTER);

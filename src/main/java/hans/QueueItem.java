@@ -70,6 +70,9 @@ public class QueueItem extends GridPane {
 
     PauseTransition countdown;
 
+    int itemHeight = 64;
+    double textHeight = 21.09375;
+
 
     QueueItem(File videoFile, MenuController menuController) {
 
@@ -120,7 +123,8 @@ public class QueueItem extends GridPane {
         videoTitle.getStyleClass().add("videoTitle");
         videoTitle.setText(videoFile.getName());
         videoTitle.setManaged(false);
-        Platform.runLater(() -> videoTitle.setLayoutY(this.getHeight() / 2 + videoTitle.getLayoutBounds().getHeight() / 4));
+        videoTitle.setLayoutY(32 + 21.09375 / 4);
+
 
         Rectangle clip = new Rectangle(videoTitleWrapper.getWidth(), videoTitleWrapper.getHeight());
         clip.widthProperty().bind(videoTitleWrapper.widthProperty());
@@ -256,15 +260,26 @@ public class QueueItem extends GridPane {
             });
 
             removeButton.setOnAction((e) -> {
+
+
                 menuController.queue.remove(this);
                 menuController.queueBox.getChildren().remove(this);
 
+                for(QueueItem queueItem : menuController.queue){
+                    queueItem.videoIndex = menuController.queue.indexOf(queueItem) + 1;
+                    queueItem.playText.setText(String.valueOf(queueItem.videoIndex));
+                }
+
                 //TODO: also remove this video from mediaInterface videoList and unplayed/played list
+                // and stop the mediaplayer if this video was playing
+
+
             });
 
 
             menuController.queue.add(this);
             menuController.queueBox.getChildren().add(this);
+
 
             pause = new ControlTooltip("Pause video", playButton, false, new VBox(), 1000);
             play = new ControlTooltip("Play video", playButton, false, new VBox(), 1000);

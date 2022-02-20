@@ -64,14 +64,7 @@
          <children>
             <AnchorPane fx:id="queuePane" prefHeight="200.0" prefWidth="200.0" styleClass="menuItemPane">
                <children>
-                  <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <content>
-                        <VBox id="queueBox" fx:id="queueBox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: #202020;">
-                           <padding>
-                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                           </padding></VBox>
-                     </content>
-                  </ScrollPane>
+                  <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
             <AnchorPane fx:id="addPane" onDragDropped="#addPaneDragDropped" onDragEntered="#addPaneDragEntered" onDragExited="#addPaneDragExited" onDragOver="#addPaneDragOver" prefHeight="200.0" prefWidth="200.0" styleClass="menuItemPane">

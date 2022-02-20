@@ -241,69 +241,57 @@ public class ControlBarController implements Initializable {
         volumeSlider.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> volumeSlider.setValueChanging(false));
 
 
-        volumeSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
+        volumeSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                // TODO Auto-generated method stub
-
-
-                if (!newValue && settingsController.settingsOpen) {
-                    settingsController.closeSettings();
-                }
-
+            if (!newValue && settingsController.settingsOpen) {
+                settingsController.closeSettings();
             }
 
         });
 
 
-        volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+        volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                // TODO Auto-generated method stub
+            mediaInterface.mediaPlayer.setVolume(volumeSlider.getValue() / 100);
 
-                mediaInterface.mediaPlayer.setVolume(volumeSlider.getValue() / 100);
+            volumeTrack.setProgress(volumeSlider.getValue() / 100);
 
-                volumeTrack.setProgress(volumeSlider.getValue() / 100);
+            if (volumeSlider.getValue() == 0) {
+                volumeIcon.setImage(volumeMute);
+                muted = true;
 
-                if (volumeSlider.getValue() == 0) {
-                    volumeIcon.setImage(volumeMute);
-                    muted = true;
-
-                    if (mute.isShowing()) {
-                        mute.hide();
-                        unmute.hide();
-                        unmute = new ControlTooltip("Unmute (m)", volumeButton, false, controlBar, 0);
-                        unmute.showTooltip();
-                    } else {
-                        unmute = new ControlTooltip("Unmute (m)", volumeButton, false, controlBar, 0);
-                    }
-
-                } else if (volumeSlider.getValue() < 50) {
-                    volumeIcon.setImage(volumeDown);
-                    muted = false;
-
-                    if (mute.isShowing() || unmute.isShowing()) {
-                        mute.hide();
-                        unmute.hide();
-                        mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
-                        mute.showTooltip();
-                    } else {
-                        mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
-                    }
+                if (mute.isShowing()) {
+                    mute.hide();
+                    unmute.hide();
+                    unmute = new ControlTooltip("Unmute (m)", volumeButton, false, controlBar, 0);
+                    unmute.showTooltip();
                 } else {
-                    volumeIcon.setImage(volumeUp);
-                    muted = false;
+                    unmute = new ControlTooltip("Unmute (m)", volumeButton, false, controlBar, 0);
+                }
 
-                    if (mute.isShowing() || unmute.isShowing()) {
-                        mute.hide();
-                        unmute.hide();
-                        mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
-                        mute.showTooltip();
-                    } else {
-                        mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
-                    }
+            } else if (volumeSlider.getValue() < 50) {
+                volumeIcon.setImage(volumeDown);
+                muted = false;
+
+                if (mute.isShowing() || unmute.isShowing()) {
+                    mute.hide();
+                    unmute.hide();
+                    mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
+                    mute.showTooltip();
+                } else {
+                    mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
+                }
+            } else {
+                volumeIcon.setImage(volumeUp);
+                muted = false;
+
+                if (mute.isShowing() || unmute.isShowing()) {
+                    mute.hide();
+                    unmute.hide();
+                    mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
+                    mute.showTooltip();
+                } else {
+                    mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
                 }
             }
         });
@@ -322,98 +310,82 @@ public class ControlBarController implements Initializable {
         });
 
 
-        Platform.runLater(new Runnable() { // this part has to be run later because the slider thumb loads in later than the slider itself
+        // this part has to be run later because the slider thumb loads in later than the slider itself
+        Platform.runLater(() -> {
 
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
+            durationSlider.lookup(".thumb").setScaleX(0);
+            durationSlider.lookup(".thumb").setScaleY(0);
 
-                durationSlider.lookup(".thumb").setScaleX(0);
-                durationSlider.lookup(".thumb").setScaleY(0);
-
-                durationSlider.lookup(".track").setCursor(Cursor.HAND);
-                durationSlider.lookup(".thumb").setCursor(Cursor.HAND);
+            durationSlider.lookup(".track").setCursor(Cursor.HAND);
+            durationSlider.lookup(".thumb").setCursor(Cursor.HAND);
 
 
-                durationSlider.setOnMouseEntered((e) -> {
-                    durationSliderHover = true;
-                    durationSliderHoverOn();
-                });
+            durationSlider.setOnMouseEntered((e) -> {
+                durationSliderHover = true;
+                durationSliderHoverOn();
+            });
 
-                durationSlider.setOnMouseExited((e) -> {
-                    durationSliderHover = false;
-                    if (!e.isPrimaryButtonDown() && !e.isSecondaryButtonDown() && !e.isMiddleButtonDown()) {
-                        durationSliderHoverOff();
-                    }
-                });
-            }
-
+            durationSlider.setOnMouseExited((e) -> {
+                durationSliderHover = false;
+                if (!e.isPrimaryButtonDown() && !e.isSecondaryButtonDown() && !e.isMiddleButtonDown()) {
+                    durationSliderHoverOff();
+                }
+            });
         });
 
-        durationSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> mediaInterface.updateMedia(newValue.doubleValue()));
 
+        // vaja ära fixida see jama
+        durationSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
-                mediaInterface.updateMedia(newValue.doubleValue());
-            }
+            if (newValue) { // pause video when user starts seeking
+                playLogo.setImage(playImage);
+                mediaInterface.mediaPlayer.pause();
+                mediaInterface.playing = false;
 
-        });
-
-        durationSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() { // vaja ära fixida see jama
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-
-
-                if (newValue) { // pause video when user starts seeking
-                    playLogo.setImage(playImage);
-                    mediaInterface.mediaPlayer.pause();
-                    mediaInterface.playing = false;
-
-                    if (pause.isShowing()) {
-                        pause.hide();
-                        play = new ControlTooltip("Play (k)", playButton, false, controlBar, 0);
-                        play.showTooltip();
-                    } else {
-                        play = new ControlTooltip("Play (k)", playButton, false, controlBar, 0);
-                    }
+                if (pause.isShowing()) {
+                    pause.hide();
+                    play = new ControlTooltip("Play (k)", playButton, false, controlBar, 0);
+                    play.showTooltip();
                 } else {
+                    play = new ControlTooltip("Play (k)", playButton, false, controlBar, 0);
+                }
+            } else {
 
-                    if (!durationSliderHover) {
-                        durationSliderHoverOff();
+                if (!durationSliderHover) {
+                    durationSliderHoverOff();
+                }
+
+                mediaInterface.mediaPlayer.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
+
+                if (settingsController.settingsOpen) { // close settings pane after user finishes seeking media (if its open)
+                    settingsController.closeSettings();
+                }
+
+                if (mediaInterface.atEnd) { // if user drags the duration slider to the end turn play button to replay button
+                    playLogo.setImage(replayImage);
+                    playButton.setOnAction((e) -> playButtonClick2());
+
+                    if (play.isShowing() || pause.isShowing()) {
+                        play.hide();
+                        pause.hide();
+                        replay = new ControlTooltip("Replay (k)", playButton, false, controlBar, 0);
+                        replay.showTooltip();
+                    } else {
+                        replay = new ControlTooltip("Replay (k)", playButton, false, controlBar, 0);
                     }
+                } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
+                    mediaInterface.mediaPlayer.play();
+                    mediaInterface.playing = true;
+                    playLogo.setImage(pauseImage);
 
-                    mediaInterface.mediaPlayer.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
-
-                    if (settingsController.settingsOpen) { // close settings pane after user finishes seeking media (if its open)
-                        settingsController.closeSettings();
-                    }
-
-                    if (mediaInterface.atEnd) { // if user drags the duration slider to the end turn play button to replay button
-                        playLogo.setImage(replayImage);
-                        playButton.setOnAction((e) -> playButtonClick2());
-
-                        if (play.isShowing() || pause.isShowing()) {
-                            play.hide();
-                            pause.hide();
-                            replay = new ControlTooltip("Replay (k)", playButton, false, controlBar, 0);
-                            replay.showTooltip();
-                        } else {
-                            replay = new ControlTooltip("Replay (k)", playButton, false, controlBar, 0);
-                        }
-                    } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
-                        mediaInterface.mediaPlayer.play();
-                        mediaInterface.playing = true;
-                        playLogo.setImage(pauseImage);
-
-                        if (play.isShowing() || replay.isShowing()) {
-                            play.hide();
-                            replay.hide();
-                            pause = new ControlTooltip("Pause (k)", playButton, false, controlBar, 0);
-                            pause.showTooltip();
-                        } else {
-                            pause = new ControlTooltip("Pause (k)", playButton, false, controlBar, 0);
-                        }
+                    if (play.isShowing() || replay.isShowing()) {
+                        play.hide();
+                        replay.hide();
+                        pause = new ControlTooltip("Pause (k)", playButton, false, controlBar, 0);
+                        pause.showTooltip();
+                    } else {
+                        pause = new ControlTooltip("Pause (k)", playButton, false, controlBar, 0);
                     }
                 }
             }
@@ -707,8 +679,6 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         }
-
-        //AnimationsClass.openCaptions(captionLine);
 
         AnimationsClass.scaleAnimation(100, captionLine, 0, 1, 1, 1, false, 1, true);
 

@@ -94,6 +94,10 @@
     -fx-background-insets: 0;
 }
 
+#queueBox {
+    -fx-background-color: #202020;
+}
+
 #addBackground {
     -fx-border-style: dashed;
     -fx-border-width: 3;

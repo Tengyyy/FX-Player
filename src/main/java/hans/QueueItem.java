@@ -255,6 +255,13 @@ public class QueueItem extends GridPane {
                 AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true);
             });
 
+            removeButton.setOnAction((e) -> {
+                menuController.queue.remove(this);
+                menuController.queueBox.getChildren().remove(this);
+
+                //TODO: also remove this video from mediaInterface videoList and unplayed/played list
+            });
+
 
             menuController.queue.add(this);
             menuController.queueBox.getChildren().add(this);

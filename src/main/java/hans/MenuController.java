@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 
 
 import com.jfoenix.controls.JFXButton;
+import eu.iamgio.animated.AnimationPair;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -21,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -34,6 +36,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
+import eu.iamgio.animated.AnimatedVBox;
 
 
 public class MenuController implements Initializable {
@@ -54,7 +57,7 @@ public class MenuController implements Initializable {
     AnchorPane addPane, queuePane;
 
     @FXML
-    VBox addBox, queueBox;
+    VBox addBox;
 
     @FXML
     ScrollPane queueScroll;
@@ -70,6 +73,8 @@ public class MenuController implements Initializable {
 
     @FXML
     Label queueNotification;
+
+    AnimatedVBox queueBox = new AnimatedVBox(AnimationPair.fadeLeft());
 
     MainController mainController;
     ControlBarController controlBarController;
@@ -89,7 +94,7 @@ public class MenuController implements Initializable {
 
     ArrayList<QueueItem> queue = new ArrayList<QueueItem>();
 
-    boolean videosAdded = false; // if true the user has added videos to the add pane and has yet to open the queue, which means that the text should show many videos were added
+    boolean videosAdded = false; // if true, the user has added videos to the add pane and has yet to open the queue, which means that the text should show many videos were added
 
     int videosAddedCounter = 0; // keeps track of how many videos have been added, while the user hasnt openened the queue (queue tab header counter)
 
@@ -122,10 +127,15 @@ public class MenuController implements Initializable {
         });
 
         addBox.setSpacing(10);
-
        addBox.getChildren().removeAll(addedVideosText1, addedVideosText2);
 
        queueNotification.setOpacity(0);
+
+       queueBox.setSpacing(10);
+       queueBox.setPadding(new Insets(20, 20, 20, 20));
+       queueBox.setId("queueBox");
+       queueBox.setAlignment(Pos.TOP_CENTER);
+       queueScroll.setContent(queueBox);
 
     }
 

@@ -39,6 +39,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -699,20 +700,16 @@ public class SettingsController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(App.stage);
 
         if (selectedFile != null) {
-            videoNameText.setText(selectedFile.getName()); // updates video name text and window title with filename
-            App.stage.setTitle(selectedFile.getName());
 
             // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
             //AnimationsClass.stopMarquee(videoNameText);
 
-            if(marqueeTimeline != null && marqueeTimeline.getStatus() == Animation.Status.RUNNING) videoNameText.setLayoutX(0);
-
             mediaInterface.resetMediaPlayer();
 
-            mediaInterface.videoList.add(selectedFile);
-            mediaInterface.unplayedVideoList.add(selectedFile);
+            mediaInterface.videoList.add(new Media(selectedFile.toURI().toString()));
+            mediaInterface.unplayedVideoList.add(new Media(selectedFile.toURI().toString()));
 
-            mediaInterface.createMediaPlayer(selectedFile);
+            mediaInterface.createMediaPlayer(new Media(selectedFile.toURI().toString()));
 
         }
     }

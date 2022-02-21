@@ -170,7 +170,7 @@ public class MainController implements Initializable {
                     }
                 });
 
-        mediaInterface.createMediaPlayer(file);
+        mediaInterface.createMediaPlayer(new Media(file.toURI().toString()));
 
     }
 
@@ -432,9 +432,6 @@ public class MainController implements Initializable {
         /* return statement */
         if(!Utilities.getFileExtension(file).equals("mp4")) return;
 
-        settingsController.videoNameText.setText(file.getName()); // updates video name text and window title with filename
-        App.stage.setTitle(file.getName());
-
 
         if(pane.getChildren().size() == 5){
             pane.getChildren().remove(4);
@@ -445,11 +442,9 @@ public class MainController implements Initializable {
 
         mediaInterface.resetMediaPlayer();
 
-        mediaInterface.videoList.add(file);
-        mediaInterface.unplayedVideoList.add(file);
-
-
-        mediaInterface.createMediaPlayer(file);
+        mediaInterface.videoList.add(new Media(file.toURI().toString()));
+        mediaInterface.unplayedVideoList.add(new Media(file.toURI().toString()));
+        mediaInterface.createMediaPlayer(new Media(file.toURI().toString()));
     }
 
 

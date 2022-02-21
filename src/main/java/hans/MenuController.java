@@ -35,6 +35,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
@@ -97,7 +98,7 @@ public class MenuController implements Initializable {
     FileChooser fileChooser = new FileChooser();
 
     ArrayList<File> dragBoardFiles;
-    ArrayList<File> dragBoardVideos = new ArrayList<File>();
+    ArrayList<Media> dragBoardVideos = new ArrayList<Media>();
 
     ArrayList<QueueItem> queue = new ArrayList<QueueItem>();
 
@@ -196,10 +197,10 @@ public class MenuController implements Initializable {
 
         if(selectedFile != null){
 
-            mediaInterface.videoList.add(selectedFile);
-            mediaInterface.unplayedVideoList.add(selectedFile);
+            mediaInterface.videoList.add(new Media(selectedFile.toURI().toString()));
+            mediaInterface.unplayedVideoList.add(new Media(selectedFile.toURI().toString()));
 
-            new QueueItem(selectedFile, this);
+            new QueueItem(new Media(selectedFile.toURI().toString()), this, mediaInterface);
 
             videosAddedCounter++;
 
@@ -227,7 +228,7 @@ public class MenuController implements Initializable {
 
        for(File file : dragBoardFiles){
            if(Utilities.getFileExtension(file).equals("mp4")){
-               dragBoardVideos.add(file);
+               dragBoardVideos.add(new Media(file.toURI().toString()));
            }
        }
 
@@ -254,8 +255,8 @@ public class MenuController implements Initializable {
         mediaInterface.videoList.addAll(dragBoardVideos);
         mediaInterface.unplayedVideoList.addAll(dragBoardVideos);
 
-        for(File vid : dragBoardVideos){
-            new QueueItem(vid, this);
+        for(Media vid : dragBoardVideos){
+            new QueueItem(vid, this, mediaInterface);
         }
 
 

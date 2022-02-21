@@ -17,6 +17,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
@@ -43,7 +44,8 @@ public class QueueItem extends GridPane {
 
     JFXButton removeButton = new JFXButton();
 
-    File videoFile; // the video file that this queue item represents
+    Media videoItem; // the video file that this media object represents
+    File videoFile; // need to create file instance aswell to correctly retrieve filename of the media object
 
     MenuController menuController;
 
@@ -74,10 +76,12 @@ public class QueueItem extends GridPane {
     double textHeight = 21.09375;
 
 
-    QueueItem(File videoFile, MenuController menuController) {
+    QueueItem(Media videoItem, MenuController menuController, MediaInterface mediaInterface) {
 
-        this.videoFile = videoFile;
+        this.videoItem = videoItem;
         this.menuController = menuController;
+
+        videoFile = new File(videoItem.getSource().replaceAll("%20", " "));
 
         videoIndex = menuController.queue.size() + 1;
 
@@ -261,25 +265,25 @@ public class QueueItem extends GridPane {
 
             removeButton.setOnAction((e) -> {
 
+                //TODO: unplayed/played list and stop the mediaplayer if this video was playing
+                mediaInterface.videoList.remove(videoItem);
+
 
                 menuController.queue.remove(this);
                 menuController.queueBox.getChildren().remove(this);
 
+                // updates video indexes
                 for(QueueItem queueItem : menuController.queue){
                     queueItem.videoIndex = menuController.queue.indexOf(queueItem) + 1;
                     queueItem.playText.setText(String.valueOf(queueItem.videoIndex));
                 }
-
-                //TODO: also remove this video from mediaInterface videoList and unplayed/played list
-                // and stop the mediaplayer if this video was playing
-
 
             });
 
 
             menuController.queue.add(this);
             menuController.queueBox.getChildren().add(this);
-
+            mediaInterface.videoList.add(videoItem);
 
             pause = new ControlTooltip("Pause video", playButton, false, new VBox(), 1000);
             play = new ControlTooltip("Play video", playButton, false, new VBox(), 1000);

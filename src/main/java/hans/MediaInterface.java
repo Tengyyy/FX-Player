@@ -1,6 +1,7 @@
 package hans;
 
 
+import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
@@ -9,6 +10,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,18 +21,17 @@ public class MediaInterface {
     SettingsController settingsController;
 
     // all videos that have been added to the queue or directly to the player
-    ArrayList<File> videoList = new ArrayList<File>();
+    List<Media> videoList = new ArrayList<Media>();
 
     // videoList minus the videos that have already been played
-    ArrayList<File> unplayedVideoList = new ArrayList<File>();
+    List<Media> unplayedVideoList = new ArrayList<Media>();
 
     // contains all the videos that have been played, in the order that they were played (necessary to navigate videos with the control arrows)
-    ArrayList<File> videoHistory = new ArrayList<File>();
+    List<Media> playedVideoList = new ArrayList<Media>();
 
 
 
-    File currentVideo;
-    Media media;
+    Media currentVideo;
     MediaPlayer mediaPlayer;
 
     // Variables to keep track of mediaplayer status:
@@ -48,9 +49,9 @@ public class MediaInterface {
 
     public void updateMedia(double newValue) {
         if (!controlBarController.showingTimeLeft)
-            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, media);
+            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, currentVideo);
         else
-            Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, media);
+            Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, currentVideo);
 
         if (atEnd) {
             atEnd = false;
@@ -120,7 +121,7 @@ public class MediaInterface {
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
 
             controlBarController.durationLabel.textProperty().unbind();
-            controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(media.getDuration()));
+            controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(currentVideo.getDuration()));
 
 
             controlBarController.playLogo.setImage(new Image(controlBarController.replayFile.toURI().toString()));
@@ -163,30 +164,24 @@ public class MediaInterface {
 
     }
 
-    public void createMediaPlayer(File file) {
+    public void createMediaPlayer(Media media) {
 
-        this.currentVideo = file;
+        this.currentVideo = media;
 
         controlBarController.durationSlider.setValue(0);
 
-        unplayedVideoList.remove(file);
-        for(File temp : videoList){
-            System.out.println(temp.getAbsolutePath());
-        }
-        System.out.println("\n");
-
-        for(File temp : unplayedVideoList){
-            System.out.println(temp.getAbsolutePath());
-        }
-
-        media = new Media(file.toURI().toString());
-
-
+        if (unplayedVideoList.contains(media)) unplayedVideoList.remove(media);
 
         mediaPlayer = new MediaPlayer(media);
 
         mainController.mediaView.setMediaPlayer(mediaPlayer);
 
+        // update video name field in settings pane and the stage title with the new video
+        Platform.runLater(() -> {
+            File videoTitleFile = new File(media.getSource().replaceAll("%20", " "));
+            settingsController.videoNameText.setText(videoTitleFile.getName()); // updates video name text in settings pane and window title with filename
+            App.stage.setTitle(videoTitleFile.getName());
+        });
 
         mediaPlayer.currentTimeProperty().addListener((observableValue, oldTime, newTime) -> {
             if (!controlBarController.showingTimeLeft)
@@ -237,5 +232,36 @@ public class MediaInterface {
         seekedToEnd = false;
         playing = false;
         wasPlaying = false;
+
+        settingsController.videoNameText.setLayoutX(0);
+
+        App.stage.setTitle("MP4 Player");
+        settingsController.videoNameText.setText("Choose video");
     }
+
+    public void addVideo(Media media){
+
+    }
+
+    public void addUnplayedVideo(Media media){
+
+    }
+
+    public void addPlayedVideo(Media Media){
+
+    }
+
+    public void removeVideo(Media media){
+    }
+
+    public void removePlayedVideo(Media media){
+
+    }
+
+    public void removeUnplayedVideo(Media media){
+
+    }
+
+
+
 }

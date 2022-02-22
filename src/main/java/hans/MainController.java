@@ -442,9 +442,10 @@ public class MainController implements Initializable {
 
         mediaInterface.resetMediaPlayer();
 
-        mediaInterface.videoList.add(new Media(file.toURI().toString()));
-        mediaInterface.unplayedVideoList.add(new Media(file.toURI().toString()));
-        mediaInterface.createMediaPlayer(new Media(file.toURI().toString()));
+        Media temp = new Media(file.toURI().toString());
+        mediaInterface.videoList.add(temp);
+        mediaInterface.unplayedVideoList.add(temp);
+        mediaInterface.createMediaPlayer(temp);
     }
 
 

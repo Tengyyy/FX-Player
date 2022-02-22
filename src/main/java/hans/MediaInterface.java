@@ -32,6 +32,8 @@ public class MediaInterface {
 
 
     Media currentVideo;
+    File currentFile; // create file-type object of the video aswell to get name of the video
+
     MediaPlayer mediaPlayer;
 
     // Variables to keep track of mediaplayer status:
@@ -142,24 +144,24 @@ public class MediaInterface {
             }
 
 
-        } else if (settingsController.loopOn && !seekedToEnd) {
+        } else if (settingsController.loopOn) {
+            controlBarController.mouseEventTracker.move();
+
             // restart current video
-
-
             mediaPlayer.stop();
 
         } else if (settingsController.shuffleOn) {
+            controlBarController.mouseEventTracker.move();
 
-            //if(!controlBarController.controlBarOpen) {
-            //	controlBarController.displayControls();
-            //}
+            // randomly pick a video from unplayedVideosList
+            playRandom();
 
         } else if (settingsController.autoplayOn) {
-            // play next song in queue/directory
+            controlBarController.mouseEventTracker.move();
 
-            //if(!controlBarController.controlBarOpen) {
-            //	controlBarController.displayControls();
-            //}
+            // if user is inside the playedvideos list, play the next video in that arraylist
+            // if its the last video, then play next song in normal videolist, if its at the end of videolist, play first song on videolist
+
         }
 
     }
@@ -170,24 +172,24 @@ public class MediaInterface {
 
         controlBarController.durationSlider.setValue(0);
 
-        if (unplayedVideoList.contains(media)) unplayedVideoList.remove(media);
+        if (unplayedVideoList.contains(currentVideo)) unplayedVideoList.remove(currentVideo);
 
-        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer = new MediaPlayer(currentVideo);
 
         mainController.mediaView.setMediaPlayer(mediaPlayer);
 
         // update video name field in settings pane and the stage title with the new video
         Platform.runLater(() -> {
-            File videoTitleFile = new File(media.getSource().replaceAll("%20", " "));
-            settingsController.videoNameText.setText(videoTitleFile.getName()); // updates video name text in settings pane and window title with filename
-            App.stage.setTitle(videoTitleFile.getName());
+            currentFile = new File(currentVideo.getSource().replaceAll("%20", " "));
+            settingsController.videoNameText.setText(currentFile.getName()); // updates video name text in settings pane and window title with filename
+            App.stage.setTitle(currentFile.getName());
         });
 
         mediaPlayer.currentTimeProperty().addListener((observableValue, oldTime, newTime) -> {
             if (!controlBarController.showingTimeLeft)
-                Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, media);
+                Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, currentVideo);
             else
-                Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, media);
+                Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, currentVideo);
 
             if (!controlBarController.durationSlider.isValueChanging()) {
                 controlBarController.durationSlider.setValue(newTime.toSeconds());
@@ -206,7 +208,7 @@ public class MediaInterface {
 
                 controlBarController.play();
 
-                controlBarController.durationSlider.setMax(Math.floor(media.getDuration().toSeconds()));
+                controlBarController.durationSlider.setMax(Math.floor(currentVideo.getDuration().toSeconds()));
 
                 TimerTask setRate = new TimerTask() {
 
@@ -232,6 +234,9 @@ public class MediaInterface {
         seekedToEnd = false;
         playing = false;
         wasPlaying = false;
+
+        playedVideoList.add(currentVideo);
+        currentVideo = null;
 
         settingsController.videoNameText.setLayoutX(0);
 
@@ -262,6 +267,7 @@ public class MediaInterface {
 
     }
 
-
+    public void playRandom() {
+    }
 
 }

@@ -24,6 +24,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import java.io.File;
+import java.util.Collections;
 
 public class QueueItem extends GridPane {
 
@@ -44,8 +45,8 @@ public class QueueItem extends GridPane {
 
     JFXButton removeButton = new JFXButton();
 
-    Media videoItem; // the video file that this media object represents
-    File videoFile; // need to create file instance aswell to correctly retrieve filename of the media object
+    Media videoItem;
+    File videoFile;// the video file that the above media object represents
 
     MenuController menuController;
 
@@ -80,8 +81,6 @@ public class QueueItem extends GridPane {
 
         this.videoItem = videoItem;
         this.menuController = menuController;
-
-        videoFile = new File(videoItem.getSource().replaceAll("%20", " "));
 
         videoIndex = menuController.queue.size() + 1;
 
@@ -125,6 +124,8 @@ public class QueueItem extends GridPane {
         playButtonWrapper.getChildren().addAll(playText, playButton, playIcon);
 
         videoTitle.getStyleClass().add("videoTitle");
+
+        videoFile = new File(videoItem.getSource().replaceAll("%20", " "));
         videoTitle.setText(videoFile.getName());
         videoTitle.setManaged(false);
         videoTitle.setLayoutY(32 + 21.09375 / 4);
@@ -264,10 +265,10 @@ public class QueueItem extends GridPane {
             });
 
             removeButton.setOnAction((e) -> {
-
-                //TODO: unplayed/played list and stop the mediaplayer if this video was playing
-                mediaInterface.videoList.remove(videoItem);
-
+                //TODO: stop the mediaplayer if this video was playing
+                mediaInterface.videoList.remove(Collections.singletonList(videoItem));
+                mediaInterface.unplayedVideoList.remove(Collections.singletonList(videoItem));
+                mediaInterface.playedVideoList.remove(Collections.singletonList(videoItem));
 
                 menuController.queue.remove(this);
                 menuController.queueBox.getChildren().remove(this);
@@ -277,13 +278,10 @@ public class QueueItem extends GridPane {
                     queueItem.videoIndex = menuController.queue.indexOf(queueItem) + 1;
                     queueItem.playText.setText(String.valueOf(queueItem.videoIndex));
                 }
-
             });
-
 
             menuController.queue.add(this);
             menuController.queueBox.getChildren().add(this);
-            mediaInterface.videoList.add(videoItem);
 
             pause = new ControlTooltip("Pause video", playButton, false, new VBox(), 1000);
             play = new ControlTooltip("Play video", playButton, false, new VBox(), 1000);

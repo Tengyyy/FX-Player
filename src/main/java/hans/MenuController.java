@@ -145,6 +145,13 @@ public class MenuController implements Initializable {
        queueBox.setAlignment(Pos.TOP_CENTER);
        queueScroll.setContent(queueBox);
 
+       // creates queue items for all the items in the videolist when opening the menu
+        Platform.runLater(() -> {
+            for(Media media : mediaInterface.videoList){
+                new QueueItem(media, this, mediaInterface);
+            }
+        });
+
     }
 
     public void openQueueTab(){
@@ -197,10 +204,12 @@ public class MenuController implements Initializable {
 
         if(selectedFile != null){
 
-            mediaInterface.videoList.add(new Media(selectedFile.toURI().toString()));
-            mediaInterface.unplayedVideoList.add(new Media(selectedFile.toURI().toString()));
+            Media temp = new Media(selectedFile.toURI().toString());
 
-            new QueueItem(new Media(selectedFile.toURI().toString()), this, mediaInterface);
+            mediaInterface.videoList.add(temp);
+            mediaInterface.unplayedVideoList.add(temp);
+
+            new QueueItem(temp, this, mediaInterface);
 
             videosAddedCounter++;
 

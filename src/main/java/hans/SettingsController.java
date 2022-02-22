@@ -706,10 +706,11 @@ public class SettingsController implements Initializable {
 
             mediaInterface.resetMediaPlayer();
 
-            mediaInterface.videoList.add(new Media(selectedFile.toURI().toString()));
-            mediaInterface.unplayedVideoList.add(new Media(selectedFile.toURI().toString()));
+            Media temp = new Media(selectedFile.toURI().toString());
 
-            mediaInterface.createMediaPlayer(new Media(selectedFile.toURI().toString()));
+            mediaInterface.videoList.add(temp);
+            mediaInterface.unplayedVideoList.add(temp);
+            mediaInterface.createMediaPlayer(temp);
 
         }
     }

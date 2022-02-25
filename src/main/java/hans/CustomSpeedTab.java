@@ -56,7 +56,7 @@ public class CustomSpeedTab extends HBox {
 
         this.setOnMouseClicked((e) -> {
             settingsController.updatePlaybackSpeed(0, settingsController.formattedValue2, playbackCustomCheck, false);
-            settingsController.mediaInterface.mediaPlayer.setRate(settingsController.formattedValue2);
+            if(settingsController.mediaInterface.currentVideo != null) settingsController.mediaInterface.mediaPlayer.setRate(settingsController.formattedValue2);
         });
     }
 }

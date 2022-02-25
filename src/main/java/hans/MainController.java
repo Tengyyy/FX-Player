@@ -344,7 +344,6 @@ public class MainController implements Initializable {
 
     public void openMenu() {
 
-        // TODO: save the important variables associated with the menuController when closing the menu window (to create the queue items when reopening menu)m
 
         if (!menuOpen) {
             Parent root;
@@ -443,9 +442,13 @@ public class MainController implements Initializable {
         mediaInterface.resetMediaPlayer();
 
         Media temp = new Media(file.toURI().toString());
+        if(menuController != null) {
+            new QueueItem(temp, menuController, mediaInterface);
+        }
         mediaInterface.videoList.add(temp);
         mediaInterface.unplayedVideoList.add(temp);
         mediaInterface.createMediaPlayer(temp);
+
     }
 
 

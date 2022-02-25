@@ -328,7 +328,7 @@ public class SettingsController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if (!newValue) {
-                    mediaInterface.mediaPlayer.setRate(formattedValue);
+                    if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.setRate(formattedValue);
                 }
             }
         });
@@ -473,7 +473,7 @@ public class SettingsController implements Initializable {
             playbackSpeedBoxesArray[i].setOnMouseClicked((e) -> {
                 updatePlaybackSpeed((int) I, I / 4, playbackSpeedCheckBoxesArray[(int) I - 1], false);
 
-                mediaInterface.mediaPlayer.setRate(I / 4);
+                if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.setRate(I / 4);
             });
         }
 
@@ -707,6 +707,10 @@ public class SettingsController implements Initializable {
             mediaInterface.resetMediaPlayer();
 
             Media temp = new Media(selectedFile.toURI().toString());
+
+            if(mainController.menuController != null) {
+                new QueueItem(temp, mainController.menuController, mediaInterface);
+            }
 
             mediaInterface.videoList.add(temp);
             mediaInterface.unplayedVideoList.add(temp);

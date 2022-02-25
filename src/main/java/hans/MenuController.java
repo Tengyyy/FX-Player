@@ -89,6 +89,8 @@ public class MenuController implements Initializable {
     SettingsController settingsController;
     MediaInterface mediaInterface;
 
+    QueueItem activeItem;
+
     boolean queueTabOpen = false;
     boolean tabAnimationInProgress = false;
 

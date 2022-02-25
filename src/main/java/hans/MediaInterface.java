@@ -33,6 +33,7 @@ public class MediaInterface {
 
     Media currentVideo;
     File currentFile; // create file-type object of the video aswell to get name of the video
+    int currentVideoIndex;
 
     MediaPlayer mediaPlayer;
 
@@ -104,7 +105,6 @@ public class MediaInterface {
             if (!controlBarController.durationSlider.isValueChanging()) {
 
                 endMedia();
-
             }
         }
 
@@ -112,7 +112,7 @@ public class MediaInterface {
             mediaPlayer.seek(Duration.seconds(newValue));
         }
 
-        controlBarController.durationTrack.setProgress(controlBarController.durationSlider.getValue() / controlBarController.durationSlider.getMax());
+        //controlBarController.durationTrack.setProgress(controlBarController.durationSlider.getValue() / controlBarController.durationSlider.getMax());
 
 
     }
@@ -127,6 +127,11 @@ public class MediaInterface {
 
 
             controlBarController.playLogo.setImage(new Image(controlBarController.replayFile.toURI().toString()));
+
+            if(mainController.menuController != null){
+                QueueItem temp = mainController.menuController.queue.get(currentVideoIndex);
+                temp.playIcon.setShape(temp.playSVG);
+            }
 
             if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
                 controlBarController.play.hide();
@@ -169,6 +174,17 @@ public class MediaInterface {
     public void createMediaPlayer(Media media) {
 
         this.currentVideo = media;
+        currentVideoIndex = videoList.indexOf(media);
+
+        if(mainController.menuController != null){
+            mainController.menuController.queue.get(currentVideoIndex).setActive();
+        }
+
+        // resets all media state variables before creating a new player
+        atEnd = false;
+        seekedToEnd = false;
+        playing = false;
+        wasPlaying = false;
 
         controlBarController.durationSlider.setValue(0);
 
@@ -198,50 +214,50 @@ public class MediaInterface {
         });
 
 
-        mediaPlayer.setOnReady(new Runnable() {
+        mediaPlayer.setOnReady(() -> {
+            // TODO Auto-generated method stub
 
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
+            mediaPlayer.setVolume(controlBarController.volumeSlider.getValue() / 100);
 
-                mediaPlayer.setVolume(/*controlBarController.volumeSlider.getValue() / 100*/ 0);
+            controlBarController.play();
 
-                controlBarController.play();
+            controlBarController.durationSlider.setMax(Math.floor(currentVideo.getDuration().toSeconds()));
 
-                controlBarController.durationSlider.setMax(Math.floor(currentVideo.getDuration().toSeconds()));
+            TimerTask setRate = new TimerTask() {
 
-                TimerTask setRate = new TimerTask() {
+                @Override
+                public void run() {
+                    if(settingsController.playbackSpeedTracker == 0) mediaPlayer.setRate(settingsController.formattedValue);
+                    else mediaPlayer.setRate(settingsController.playbackSpeedTracker / 4);
+                }
+            };
 
-                    @Override
-                    public void run() {
-                        if(settingsController.playbackSpeedTracker == 0) mediaPlayer.setRate(settingsController.formattedValue);
-                        else mediaPlayer.setRate(settingsController.playbackSpeedTracker / 4);
-                    }
-                };
+            Timer timer = new Timer();
 
-                Timer timer = new Timer();
-
-                timer.schedule(setRate, 200);
-            }
-
+            timer.schedule(setRate, 200);
         });
 
     }
 
     public void resetMediaPlayer(){
-        mediaPlayer.dispose();
-        atEnd = false;
-        seekedToEnd = false;
-        playing = false;
-        wasPlaying = false;
 
         playedVideoList.add(currentVideo);
         currentVideo = null;
 
-        settingsController.videoNameText.setLayoutX(0);
+        currentVideoIndex = -1;
+
+        mediaPlayer.dispose();
+        mainController.mediaView.setMediaPlayer(null);
+
+        controlBarController.durationSlider.setValue(0);
 
         App.stage.setTitle("MP4 Player");
-        settingsController.videoNameText.setText("Choose video");
+
+        settingsController.videoNameText.setLayoutX(0);
+        settingsController.videoNameText.setText("Select a video");
+
+        if(controlBarController.showingTimeLeft) controlBarController.durationLabel.setText("−00:00/00:00");
+        else controlBarController.durationLabel.setText("00:00/00:00");
     }
 
     public void addVideo(Media media){

@@ -132,10 +132,6 @@
 .queueItem {
     -fx-background-color: #2C2C2C;
     -fx-background-radius: 15;
-    -fx-border-style: solid;
-    -fx-border-color: white;
-    -fx-border-width: 2;
-    -fx-border-radius: 15;
 }
 
 .playButton {

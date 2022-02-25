@@ -73,9 +73,13 @@ public class QueueItem extends GridPane {
 
     PauseTransition countdown;
 
+    boolean isActive = false;
+    boolean mouseHover = false;
+
     int itemHeight = 64;
     double textHeight = 21.09375;
 
+    SVGPath playSVG, pauseSVG;
 
     QueueItem(Media videoItem, MenuController menuController, MediaInterface mediaInterface) {
 
@@ -99,6 +103,8 @@ public class QueueItem extends GridPane {
 
         this.getStyleClass().add("queueItem");
 
+        this.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(15),new BorderWidths(2))));
+
         playText.setText(String.valueOf(videoIndex));
         playText.setId("playText");
         playText.setMouseTransparent(true);
@@ -109,8 +115,11 @@ public class QueueItem extends GridPane {
         playButton.setCursor(Cursor.HAND);
 
 
-        SVGPath playSVG = new SVGPath();
+        playSVG = new SVGPath();
         playSVG.setContent("M 94.585,67.086 63.001,44.44 c -3.369,-2.416 -8.059,-0.008 -8.059,4.138 v 45.293 c 0,4.146 4.69,6.554 8.059,4.138 L 94.584,75.362 c 2.834,-2.031 2.834,-6.244 10e-4,-8.276 z M 142.411,68.9 C 141.216,31.48 110.968,1.233 73.549,0.038 53.188,-0.608 34.139,7.142 20.061,21.677 6.527,35.65 -0.584,54.071 0.038,73.549 c 1.194,37.419 31.442,67.667 68.861,68.861 0.779,0.025 1.551,0.037 2.325,0.037 19.454,0 37.624,-7.698 51.163,-21.676 13.534,-13.972 20.646,-32.394 20.024,-51.871 z m -30.798,41.436 c -10.688,11.035 -25.032,17.112 -40.389,17.112 -0.614,0 -1.228,-0.01 -1.847,-0.029 C 39.845,126.476 15.973,102.604 15.029,73.071 14.538,57.689 20.151,43.143 30.835,32.113 41.523,21.078 55.867,15.001 71.224,15.001 c 0.614,0 1.228,0.01 1.847,0.029 29.532,0.943 53.404,24.815 54.348,54.348 0.491,15.382 -5.123,29.928 -15.806,40.958 z");
+
+        pauseSVG = new SVGPath();
+        pauseSVG.setContent("M256,0C114.842,0,0,114.842,0,256s114.842,256,256,256s256-114.842,256-256S397.158,0,256,0z M256,465.455c-115.493,0-209.455-93.961-209.455-209.455S140.507,46.545,256,46.545S465.455,140.507,465.455,256S371.493,465.455,256,465.455z M318.061,139.636c-12.853,0-23.273,10.42-23.273,23.273v186.182c0,12.853,10.42,23.273,23.273,23.273c12.853,0,23.273-10.42,23.273-23.273V162.909C341.333,150.056,330.913,139.636,318.061,139.636z M193.939,139.636c-12.853,0-23.273,10.42-23.273,23.273v186.182c0,12.853,10.42,23.273,23.273,23.273c12.853,0,23.273-10.42,23.273-23.273V162.909C217.212,150.056,206.792,139.636,193.939,139.636z");
 
         playIcon = new Region();
         playIcon.setShape(playSVG);
@@ -206,16 +215,23 @@ public class QueueItem extends GridPane {
 
 
             this.setOnMouseEntered((e) -> {
-                playText.setVisible(false);
-                playIcon.setVisible(true);
+                mouseHover = true;
+
+                if(!isActive) {
+                    playText.setVisible(false);
+                    playIcon.setVisible(true);
+                }
                 this.setStyle("-fx-background-color: #3C3C3C;");
 
 
             });
 
             this.setOnMouseExited((e) -> {
-                playText.setVisible(true);
-                playIcon.setVisible(false);
+                mouseHover = false;
+                if(!isActive) {
+                    playText.setVisible(true);
+                    playIcon.setVisible(false);
+                }
                 this.setStyle("-fx-background-color: #2C2C2C;");
 
                 titleHover.set(false);
@@ -248,6 +264,10 @@ public class QueueItem extends GridPane {
 
             });
 
+            playButton.setOnAction((e) -> {
+                //this.setActive();
+            });
+
             optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
                 AnimationsClass.fadeAnimation(200, optionsButton, 0, 1, false, 1, true);
             });
@@ -265,13 +285,18 @@ public class QueueItem extends GridPane {
             });
 
             removeButton.setOnAction((e) -> {
-                //TODO: stop the mediaplayer if this video was playing
-                mediaInterface.videoList.remove(Collections.singletonList(videoItem));
-                mediaInterface.unplayedVideoList.remove(Collections.singletonList(videoItem));
-                mediaInterface.playedVideoList.remove(Collections.singletonList(videoItem));
+                if(menuController.activeItem == this) menuController.activeItem = null;
+
+                if(mediaInterface.currentVideo == this.videoItem) mediaInterface.resetMediaPlayer();
+
+                mediaInterface.videoList.removeAll(Collections.singletonList(videoItem));
+                mediaInterface.unplayedVideoList.removeAll(Collections.singletonList(videoItem));
+                mediaInterface.playedVideoList.removeAll(Collections.singletonList(videoItem));
 
                 menuController.queue.remove(this);
                 menuController.queueBox.getChildren().remove(this);
+
+                mediaInterface.currentVideoIndex = mediaInterface.videoList.indexOf(mediaInterface.currentVideo);
 
                 // updates video indexes
                 for(QueueItem queueItem : menuController.queue){
@@ -291,5 +316,24 @@ public class QueueItem extends GridPane {
 
         }
 
+        public void setActive(){
+
+            if(menuController.activeItem != null){
+                menuController.activeItem.isActive = false;
+                menuController.activeItem.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(15),new BorderWidths(2))));
+                menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
+                if(!menuController.activeItem.mouseHover){
+                    menuController.activeItem.playText.setVisible(true);
+                    menuController.activeItem.playIcon.setVisible(false);
+
+                }
+            }
+
+            isActive = true;
+            menuController.activeItem = this;
+            this.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(15),new BorderWidths(2))));
+            playText.setVisible(false);
+            playIcon.setVisible(true);
+        }
 
 }

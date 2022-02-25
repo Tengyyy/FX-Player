@@ -265,7 +265,17 @@ public class QueueItem extends GridPane {
             });
 
             playButton.setOnAction((e) -> {
-                //this.setActive();
+                if(mediaInterface.currentVideo != this.videoItem){
+                    mediaInterface.resetMediaPlayer();
+                    mediaInterface.createMediaPlayer(this.videoItem);
+                }
+                else {
+                    if (mediaInterface.playing) {
+                        menuController.controlBarController.pause();
+                    } else {
+                        menuController.controlBarController.play();
+                    }
+                }
             });
 
             optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
@@ -316,24 +326,25 @@ public class QueueItem extends GridPane {
 
         }
 
-        public void setActive(){
+        public void setActive() {
 
-            if(menuController.activeItem != null){
+        if(!isActive){
+            if (menuController.activeItem != null) {
                 menuController.activeItem.isActive = false;
-                menuController.activeItem.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(15),new BorderWidths(2))));
+                menuController.activeItem.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(15), new BorderWidths(2))));
                 menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
-                if(!menuController.activeItem.mouseHover){
+                if (!menuController.activeItem.mouseHover) {
                     menuController.activeItem.playText.setVisible(true);
                     menuController.activeItem.playIcon.setVisible(false);
-
                 }
             }
 
+
             isActive = true;
             menuController.activeItem = this;
-            this.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(15),new BorderWidths(2))));
+            this.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(15), new BorderWidths(2))));
             playText.setVisible(false);
             playIcon.setVisible(true);
         }
-
+    }
 }

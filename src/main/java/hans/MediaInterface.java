@@ -51,6 +51,7 @@ public class MediaInterface {
     }
 
     public void updateMedia(double newValue) {
+
         if (!controlBarController.showingTimeLeft)
             Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, currentVideo);
         else
@@ -62,6 +63,7 @@ public class MediaInterface {
 
             if (wasPlaying) {
                 if (!controlBarController.durationSlider.isValueChanging()) {
+
                     controlBarController.playLogo.setImage(controlBarController.pauseImage);
 
                     playing = true;
@@ -118,6 +120,7 @@ public class MediaInterface {
     }
 
     public void endMedia() {
+
 
         if ((!settingsController.shuffleOn && !settingsController.loopOn && !settingsController.autoplayOn) || (settingsController.loopOn && seekedToEnd)) {
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());

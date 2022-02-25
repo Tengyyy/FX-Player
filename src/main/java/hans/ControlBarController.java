@@ -520,7 +520,6 @@ public class ControlBarController implements Initializable {
 
         if(mediaInterface.currentVideo != null) {
             mediaInterface.mediaPlayer.play();
-            mediaInterface.playing = true;
 
             if(mainController.menuController != null){
                 QueueItem temp = mainController.menuController.queue.get(mediaInterface.currentVideoIndex);
@@ -528,6 +527,7 @@ public class ControlBarController implements Initializable {
             }
         }
         playLogo.setImage(pauseImage);
+        mediaInterface.playing = true;
 
         if (play.isShowing()) {
             play.hide();
@@ -546,7 +546,6 @@ public class ControlBarController implements Initializable {
 
         if(mediaInterface.currentVideo != null) {
             mediaInterface.mediaPlayer.pause();
-            mediaInterface.playing = false;
 
             if(mainController.menuController != null){
                 QueueItem temp = mainController.menuController.queue.get(mediaInterface.currentVideoIndex);
@@ -554,6 +553,7 @@ public class ControlBarController implements Initializable {
             }
         }
         playLogo.setImage(playImage);
+        mediaInterface.playing = false;
 
         if (pause.isShowing()) {
             pause.hide();

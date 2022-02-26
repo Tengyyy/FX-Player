@@ -35,6 +35,7 @@ public class MediaInterface {
     File currentFile; // create file-type object of the video aswell to get name of the video
     int currentVideoIndex;
 
+
     MediaPlayer mediaPlayer;
 
     // Variables to keep track of mediaplayer status:
@@ -62,6 +63,11 @@ public class MediaInterface {
             seekedToEnd = false;
 
             if (wasPlaying) {
+                if(mainController.menuController != null) {
+                    mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.pauseSVG);
+                    mainController.menuController.activeItem.play.updateText("Pause video");
+                }
+
                 if (!controlBarController.durationSlider.isValueChanging()) {
 
                     controlBarController.playLogo.setImage(controlBarController.pauseImage);
@@ -77,6 +83,12 @@ public class MediaInterface {
                     } else {
                         controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
                     }
+
+                    if(mainController.menuController != null){
+                        mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.pauseSVG);
+                        mainController.menuController.activeItem.play.updateText("Pause video");
+                    }
+
                 }
             } else {
                 controlBarController.playLogo.setImage(controlBarController.playImage);
@@ -89,6 +101,11 @@ public class MediaInterface {
                     controlBarController.play.showTooltip();
                 } else {
                     controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
+                }
+
+                if(mainController.menuController != null){
+                    mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.playSVG);
+                    mainController.menuController.activeItem.play.updateText("Play video");
                 }
 
             }
@@ -105,7 +122,6 @@ public class MediaInterface {
             playing = false;
             mediaPlayer.pause();
             if (!controlBarController.durationSlider.isValueChanging()) {
-
                 endMedia();
             }
         }
@@ -114,7 +130,6 @@ public class MediaInterface {
             mediaPlayer.seek(Duration.seconds(newValue));
         }
 
-        //controlBarController.durationTrack.setProgress(controlBarController.durationSlider.getValue() / controlBarController.durationSlider.getMax());
 
 
     }
@@ -132,8 +147,8 @@ public class MediaInterface {
             controlBarController.playLogo.setImage(new Image(controlBarController.replayFile.toURI().toString()));
 
             if(mainController.menuController != null){
-                QueueItem temp = mainController.menuController.queue.get(currentVideoIndex);
-                temp.playIcon.setShape(temp.playSVG);
+                mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.playSVG);
+                mainController.menuController.activeItem.play.updateText("Play video");
             }
 
             if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
@@ -162,6 +177,7 @@ public class MediaInterface {
             controlBarController.mouseEventTracker.move();
 
             // randomly pick a video from unplayedVideosList
+            // or play next song in playedList if user is inside that
             playRandom();
 
         } else if (settingsController.autoplayOn) {

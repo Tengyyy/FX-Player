@@ -150,7 +150,14 @@ public class MenuController implements Initializable {
        // creates queue items for all the items in the videolist when opening the menu
         Platform.runLater(() -> {
             for(Media media : mediaInterface.videoList){
-                new QueueItem(media, this, mediaInterface);
+                QueueItem queueItem = new QueueItem(media, this, mediaInterface);
+                if(queueItem.videoIndex - 1 == mediaInterface.currentVideoIndex){
+                    queueItem.setActive();
+                    if(mediaInterface.playing){
+                        queueItem.playIcon.setShape(queueItem.pauseSVG);
+                        queueItem.play.setText("Pause video");
+                    }
+                }
             }
         });
 

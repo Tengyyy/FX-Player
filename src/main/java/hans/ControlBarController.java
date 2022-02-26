@@ -378,11 +378,17 @@ public class ControlBarController implements Initializable {
                     } else {
                         replay = new ControlTooltip("Replay (k)", playButton, false, controlBar, 0);
                     }
+                    if(mainController.menuController != null){
+                        mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.playSVG);
+                        mainController.menuController.activeItem.play.updateText("Play video");
+                    }
+
                 } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
                     if(mediaInterface.currentVideo != null) {
                         mediaInterface.mediaPlayer.play();
                         mediaInterface.playing = true;
                     }
+
                     playLogo.setImage(pauseImage);
 
                     if (play.isShowing() || replay.isShowing()) {
@@ -522,8 +528,8 @@ public class ControlBarController implements Initializable {
             mediaInterface.mediaPlayer.play();
 
             if(mainController.menuController != null){
-                QueueItem temp = mainController.menuController.queue.get(mediaInterface.currentVideoIndex);
-                temp.playIcon.setShape(temp.pauseSVG);
+                mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.pauseSVG);
+                mainController.menuController.activeItem.play.updateText("Pause video");
             }
         }
         playLogo.setImage(pauseImage);
@@ -548,8 +554,8 @@ public class ControlBarController implements Initializable {
             mediaInterface.mediaPlayer.pause();
 
             if(mainController.menuController != null){
-                QueueItem temp = mainController.menuController.queue.get(mediaInterface.currentVideoIndex);
-                temp.playIcon.setShape(temp.playSVG);
+                mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.playSVG);
+                mainController.menuController.activeItem.play.updateText("Play video");
             }
         }
         playLogo.setImage(playImage);
@@ -582,8 +588,8 @@ public class ControlBarController implements Initializable {
             mediaInterface.mediaPlayer.play();
 
             if(mainController.menuController != null){
-                QueueItem temp = mainController.menuController.queue.get(mediaInterface.currentVideoIndex);
-                temp.playIcon.setShape(temp.pauseSVG);
+                mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.pauseSVG);
+                mainController.menuController.activeItem.play.updateText("Pause video");
             }
         }
         mediaInterface.playing = true;

@@ -63,9 +63,7 @@ public class ControlTooltip extends Tooltip {
             mouseHover.set(false);
             countdown.stop();
         });
-
     }
-
 
     public void showTooltip() {
         Bounds bounds = tooltipParent.localToScreen(tooltipParent.getBoundsInLocal());
@@ -79,4 +77,27 @@ public class ControlTooltip extends Tooltip {
         else
             this.show(tooltipParent, bounds.getMaxX() + 10, bounds.getMinY() + nodeMiddleY - ((tooltipHeight - 18) / 2));
     }
+
+   /* public void reposition(){
+        this.show(tooltipParent, 0, 0);
+        tooltipMiddle = (this.getWidth() - 18) / 2;
+        this.hide();
+    }*/
+
+    public void updateText(String newText){
+        this.setText(newText);
+        if(this.isShowing()){
+            this.hide();
+            this.show(tooltipParent, 0, 0);
+            tooltipMiddle = (this.getWidth() - 18) / 2;
+            this.hide();
+            this.showTooltip();
+        }
+        else {
+            this.show(tooltipParent, 0, 0);
+            tooltipMiddle = (this.getWidth() - 18) / 2;
+            this.hide();
+        }
+    }
+
 }

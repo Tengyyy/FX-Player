@@ -270,11 +270,9 @@ public class QueueItem extends GridPane {
                     mediaInterface.createMediaPlayer(this.videoItem);
                 }
                 else {
-                    if (mediaInterface.playing) {
-                        menuController.controlBarController.pause();
-                    } else {
-                        menuController.controlBarController.play();
-                    }
+                    if(mediaInterface.atEnd) menuController.controlBarController.replayMedia();
+                    else if (mediaInterface.playing) menuController.controlBarController.pause();
+                    else menuController.controlBarController.play();
                 }
             });
 
@@ -318,7 +316,6 @@ public class QueueItem extends GridPane {
             menuController.queue.add(this);
             menuController.queueBox.getChildren().add(this);
 
-            pause = new ControlTooltip("Pause video", playButton, false, new VBox(), 1000);
             play = new ControlTooltip("Play video", playButton, false, new VBox(), 1000);
             remove = new ControlTooltip("Remove video", removeButton, false, new VBox(), 1000);
             options = new ControlTooltip("Options", optionsButton, false, new VBox(), 1000);
@@ -338,8 +335,6 @@ public class QueueItem extends GridPane {
                     menuController.activeItem.playIcon.setVisible(false);
                 }
             }
-
-
             isActive = true;
             menuController.activeItem = this;
             this.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(15), new BorderWidths(2))));

@@ -9,10 +9,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class MediaInterface {
 
@@ -28,6 +25,16 @@ public class MediaInterface {
 
     // contains all the videos that have been played, in the order that they were played (necessary to navigate videos with the control arrows)
     List<Media> playedVideoList = new ArrayList<Media>();
+
+    /*
+    When removing items from the playedVideoList,
+    create an array of the indexes of the items that will be removed and decrement playedVideoIndex by the amount of indexes
+    that are smaller than playedVideoIndex,
+    meaning those videos were added before the active item inside playedVideoList
+    */
+
+    // keeps track of position inside the video history list, if -1 the user is not currently inside the played video list (hasnt used the back arrow to play previous videos)
+    int playedVideoIndex = -1;
 
 
 
@@ -178,7 +185,14 @@ public class MediaInterface {
 
             // randomly pick a video from unplayedVideosList
             // or play next song in playedList if user is inside that
-            playRandom();
+            resetMediaPlayer();
+
+            if(playedVideoIndex != -1 && playedVideoIndex < playedVideoList.size() - 1){
+                // play next video inside playedVideoList
+                playedVideoIndex+=1;
+                createMediaPlayer(playedVideoList.get(playedVideoIndex));
+            }
+            else playRandom();
 
         } else if (settingsController.autoplayOn) {
             controlBarController.mouseEventTracker.move();
@@ -259,8 +273,10 @@ public class MediaInterface {
     }
 
     public void resetMediaPlayer(){
+        if(playedVideoIndex == -1) {
+            playedVideoList.add(currentVideo);
+        }
 
-        playedVideoList.add(currentVideo);
         currentVideo = null;
 
         currentVideoIndex = -1;
@@ -303,6 +319,14 @@ public class MediaInterface {
     }
 
     public void playRandom() {
+        if(unplayedVideoList.isEmpty()){
+            for(Media media : videoList){
+                unplayedVideoList.add(media);
+            }
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(unplayedVideoList.size());
+        createMediaPlayer(unplayedVideoList.get(randomIndex));
     }
 
 }

@@ -169,5 +169,12 @@
 .durationSlider > .thumb {
 	-fx-background-color: red;
 	-fx-padding: 10; /* hides thumb by default */
-	
+}
+
+.controlButton {
+    -fx-background-color: transparent;
+}
+
+.controlIcon {
+    -fx-background-color: white;
 }

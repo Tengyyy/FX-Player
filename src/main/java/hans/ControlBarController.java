@@ -19,12 +19,10 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 public class ControlBarController implements Initializable {
@@ -33,7 +31,7 @@ public class ControlBarController implements Initializable {
     VBox controlBar;
 
     @FXML
-    Button fullScreenButton, playButton, volumeButton, settingsButton, nextVideoButton, captionsButton;
+    Button fullScreenButton, playButton, volumeButton, settingsButton, nextVideoButton, captionsButton, previousVideoButton;
 
 
     @FXML
@@ -77,6 +75,13 @@ public class ControlBarController implements Initializable {
 
     @FXML
     public Pane playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, fullScreenButtonPane;
+
+    @FXML
+    public StackPane previousVideoPane;
+
+    @FXML
+    public Region previousVideoIcon;
+
 
     MainController mainController;
     SettingsController settingsController;
@@ -153,7 +158,7 @@ public class ControlBarController implements Initializable {
 
     MouseEventTracker mouseEventTracker;
 
-    ControlTooltip play, pause, replay, mute, unmute, settings, fullScreen, exitFullScreen, captions, nextVideoTooltip;
+    ControlTooltip play, pause, replay, mute, unmute, settings, fullScreen, exitFullScreen, captions, nextVideoTooltip, previousVideoTooltip;
 
     MediaInterface mediaInterface;
 
@@ -172,6 +177,7 @@ public class ControlBarController implements Initializable {
             exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, false, controlBar, 0);
             fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, false, controlBar, 0);
             nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, false, controlBar, 0);
+            previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P)", previousVideoButton, false, controlBar, 0);
             captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, false, controlBar, 0);
         });
 
@@ -215,6 +221,10 @@ public class ControlBarController implements Initializable {
         volumeMute = new Image(volumeMuteFile.toURI().toString());
         settingsImage = new Image(settingsImageFile.toURI().toString());
         captionsImage = new Image(captionsFile.toURI().toString());
+
+        SVGPath previousVideoSVG = new SVGPath();
+        previousVideoSVG.setContent("M 5.188,0.033 H 2.53 c -0.172,0 -0.315,0.182 -0.315,0.401 V 17.37 c 0,0.221 0.143,0.403 0.315,0.403 h 2.657 c 0.174,0 0.315,-0.183 0.315,-0.403 V 0.434 C 5.503,0.215 5.361,0.033 5.188,0.033 Z M 15.363,0.042 C 15.224,-0.028 15.06,-0.009 14.939,0.085 L 4.163,8.587 C 4.069,8.664 4.01,8.78 4.01,8.9 c 0,0.119 0.059,0.24 0.153,0.314 l 10.776,8.502 c 0.071,0.057 0.162,0.086 0.249,0.086 l 0.175,-0.039 c 0.139,-0.064 0.225,-0.207 0.225,-0.361 V 0.403 c 0,-0.154 -0.086,-0.296 -0.225,-0.361 z");
+        previousVideoIcon.setShape(previousVideoSVG);
 
         playLogo.setImage(playImage);
         playButton.setBackground(Background.EMPTY);

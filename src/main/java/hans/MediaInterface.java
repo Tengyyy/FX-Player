@@ -40,7 +40,7 @@ public class MediaInterface {
 
     Media currentVideo;
     File currentFile; // create file-type object of the video aswell to get name of the video
-    int currentVideoIndex;
+    int currentVideoIndex = -1;
 
 
     MediaPlayer mediaPlayer;
@@ -180,27 +180,8 @@ public class MediaInterface {
             // restart current video
             mediaPlayer.stop();
 
-        } else if (settingsController.shuffleOn) {
-            controlBarController.mouseEventTracker.move();
-
-            // randomly pick a video from unplayedVideosList
-            // or play next song in playedList if user is inside that
-            resetMediaPlayer();
-
-            if(playedVideoIndex != -1 && playedVideoIndex < playedVideoList.size() - 1){
-                // play next video inside playedVideoList
-                playedVideoIndex+=1;
-                createMediaPlayer(playedVideoList.get(playedVideoIndex));
-            }
-            else playRandom();
-
-        } else if (settingsController.autoplayOn) {
-            controlBarController.mouseEventTracker.move();
-
-            // if user is inside the playedvideos list, play the next video in that arraylist
-            // if its the last video, then play next song in normal videolist, if its at the end of videolist, play first song on videolist
-
         }
+        else if (settingsController.shuffleOn || settingsController.autoplayOn) playNext();
 
     }
 
@@ -318,6 +299,28 @@ public class MediaInterface {
 
     }
 
+    public void playNext(){
+        controlBarController.mouseEventTracker.move();
+
+        int temp = currentVideoIndex; // saves the currentVideoIndex to a temporary variable because the next line resets currentVideoIndex to -1
+        resetMediaPlayer();
+
+        if(playedVideoIndex != -1 && playedVideoIndex < playedVideoList.size() - 1){
+            // play next video inside playedVideoList
+            playedVideoIndex+=1;
+            createMediaPlayer(playedVideoList.get(playedVideoIndex));
+        }
+        else {
+            playedVideoIndex = -1;
+            if(settingsController.shuffleOn) playRandom();
+            else if(settingsController.autoplayOn) autoplay(temp); // pass the copy of currentVideoIndex to autplay method
+        }
+    }
+
+    public void playPrevious(){
+
+    }
+
     public void playRandom() {
         if(unplayedVideoList.isEmpty()){
             for(Media media : videoList){
@@ -327,6 +330,16 @@ public class MediaInterface {
         Random random = new Random();
         int randomIndex = random.nextInt(unplayedVideoList.size());
         createMediaPlayer(unplayedVideoList.get(randomIndex));
+    }
+
+    public void autoplay(int wasCurrentVideoIndex){
+        if(videoList.size() > wasCurrentVideoIndex + 1){ // get next video inside the videoList and play it
+            createMediaPlayer(videoList.get(wasCurrentVideoIndex + 1));
+        }
+        else if(videoList.size() > 0 && videoList.size() <= wasCurrentVideoIndex + 1){ // current video is last inside the videoList
+                                                                                    // get the first video inside videoList and play it
+            createMediaPlayer(videoList.get(0));
+        }
     }
 
 }

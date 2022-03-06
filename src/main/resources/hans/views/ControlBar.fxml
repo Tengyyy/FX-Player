@@ -71,7 +71,7 @@
                     <children>
                   <StackPane fx:id="previousVideoPane" prefWidth="52.0">
                      <children>
-                        <Button fx:id="previousVideoButton" mnemonicParsing="false" prefHeight="36.0" prefWidth="52.0" styleClass="controlButton">
+                        <Button fx:id="previousVideoButton" mnemonicParsing="false" onAction="#playPreviousMedia" prefHeight="36.0" prefWidth="52.0" styleClass="controlButton">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>

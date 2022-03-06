@@ -82,6 +82,9 @@ public class ControlBarController implements Initializable {
     @FXML
     public Region previousVideoIcon;
 
+    @FXML
+            public HBox settingsBox1;
+
 
     MainController mainController;
     SettingsController settingsController;
@@ -179,6 +182,8 @@ public class ControlBarController implements Initializable {
             nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, false, controlBar, 0);
             previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P)", previousVideoButton, false, controlBar, 0);
             captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, false, controlBar, 0);
+
+            settingsBox1.getChildren().removeAll(previousVideoPane,nextVideoPane);
         });
 
 
@@ -231,6 +236,7 @@ public class ControlBarController implements Initializable {
 
         nextVideoButton.setBackground(Background.EMPTY);
         nextVideoIcon.setImage(nextVideo);
+
 
         playButton.setOnAction((e) -> playButtonClick1());
 
@@ -706,12 +712,19 @@ public class ControlBarController implements Initializable {
         volumeSlider.setValue(volumeValue); // sets volume back to the value it was at before muting
     }
 
+    public void playPreviousMedia(){
+        if (settingsController.settingsOpen) {
+            settingsController.closeSettings();
+        } else {
+            mediaInterface.playPrevious();
+        }
+    }
 
     public void playNextMedia() {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         } else {
-
+            mediaInterface.playNext();
         }
     }
 
@@ -849,6 +862,22 @@ public class ControlBarController implements Initializable {
 
     public void exitSettingsButton() {
         settingsButtonHover = false;
+    }
+
+    public void removePreviousVideoButton(){
+        settingsBox1.getChildren().remove(previousVideoPane);
+    }
+
+    public void addPreviousVideoButton(){
+        if(!settingsBox1.getChildren().contains(previousVideoPane)) settingsBox1.getChildren().add(0, previousVideoPane);
+    }
+
+    public void removeNextVideoButton(){
+        settingsBox1.getChildren().remove(nextVideoPane);
+    }
+
+    public void addNextVideoButton(){
+        if(!settingsBox1.getChildren().contains(nextVideoPane)) settingsBox1.getChildren().add(1, nextVideoPane);
     }
 
 }

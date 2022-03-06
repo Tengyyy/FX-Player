@@ -2,7 +2,11 @@ package hans;
 
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -18,13 +22,14 @@ public class MediaInterface {
     SettingsController settingsController;
 
     // all videos that have been added to the queue or directly to the player
-    List<Media> videoList = new ArrayList<Media>();
+    ObservableList<Media> videoList = FXCollections.observableList(new ArrayList<Media>());
+
 
     // videoList minus the videos that have already been played
     List<Media> unplayedVideoList = new ArrayList<Media>();
 
     // contains all the videos that have been played, in the order that they were played (necessary to navigate videos with the control arrows)
-    List<Media> playedVideoList = new ArrayList<Media>();
+    ObservableList<Media> playedVideoList = FXCollections.observableList(new ArrayList<Media>());
 
     /*
     When removing items from the playedVideoList,
@@ -52,11 +57,21 @@ public class MediaInterface {
     public boolean seekedToEnd = false; // true = video was seeked to the end; false = video naturally reached the end or the video is still playing
     ////////////////////////////////////////////////
 
-    MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController){
+    MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController) {
         this.mainController = mainController;
         this.controlBarController = controlBarController;
         this.settingsController = settingsController;
-    }
+
+        videoList.addListener((ListChangeListener<Media>) change -> {
+            if(videoList.isEmpty()) controlBarController.removeNextVideoButton();
+            else if(videoList.size() == 1) controlBarController.addNextVideoButton();
+        });
+
+        playedVideoList.addListener((ListChangeListener<Media>) change -> {
+            if(playedVideoList.isEmpty()) controlBarController.removePreviousVideoButton();
+            else if(playedVideoList.size() == 1) controlBarController.addPreviousVideoButton();
+        });
+    };
 
     public void updateMedia(double newValue) {
 

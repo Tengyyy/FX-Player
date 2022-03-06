@@ -701,10 +701,9 @@ public class SettingsController implements Initializable {
 
         if (selectedFile != null) {
 
-            // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
-            //AnimationsClass.stopMarquee(videoNameText);
-
             mediaInterface.resetMediaPlayer();
+            mediaInterface.playedVideoIndex = -1;
+
 
             Media temp = new Media(selectedFile.toURI().toString());
 

@@ -267,6 +267,7 @@ public class QueueItem extends GridPane {
             playButton.setOnAction((e) -> {
                 if(mediaInterface.currentVideo != this.videoItem){
                     mediaInterface.resetMediaPlayer();
+                    mediaInterface.playedVideoIndex = -1; // moves out of the playedVideoList
                     mediaInterface.createMediaPlayer(this.videoItem);
                 }
                 else {

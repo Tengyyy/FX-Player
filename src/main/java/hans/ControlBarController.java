@@ -183,7 +183,6 @@ public class ControlBarController implements Initializable {
             previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P)", previousVideoButton, false, controlBar, 0);
             captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, false, controlBar, 0);
 
-            settingsBox1.getChildren().removeAll(previousVideoPane,nextVideoPane);
         });
 
 
@@ -716,6 +715,7 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         } else {
+            if(mediaInterface.playedVideoIndex == 0 || mediaInterface.playedVideoList.isEmpty()) return;
             mediaInterface.playPrevious();
         }
     }
@@ -724,6 +724,7 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         } else {
+            if(mediaInterface.videoList.size() < 2) return;
             mediaInterface.playNext();
         }
     }
@@ -864,20 +865,5 @@ public class ControlBarController implements Initializable {
         settingsButtonHover = false;
     }
 
-    public void removePreviousVideoButton(){
-        settingsBox1.getChildren().remove(previousVideoPane);
-    }
-
-    public void addPreviousVideoButton(){
-        if(!settingsBox1.getChildren().contains(previousVideoPane)) settingsBox1.getChildren().add(0, previousVideoPane);
-    }
-
-    public void removeNextVideoButton(){
-        settingsBox1.getChildren().remove(nextVideoPane);
-    }
-
-    public void addNextVideoButton(){
-        if(!settingsBox1.getChildren().contains(nextVideoPane)) settingsBox1.getChildren().add(1, nextVideoPane);
-    }
 
 }

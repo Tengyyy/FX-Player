@@ -170,7 +170,7 @@ public class MainController implements Initializable {
                     }
                 });
 
-        mediaInterface.createMediaPlayer(new Media(file.toURI().toString()));
+        // mediaInterface.createMediaPlayer(new Media(file.toURI().toString()));
 
     }
 
@@ -440,6 +440,7 @@ public class MainController implements Initializable {
         if(settingsController.marqueeTimeline != null && settingsController.marqueeTimeline.getStatus() == Animation.Status.RUNNING) settingsController.videoNameText.setLayoutX(0);
 
         mediaInterface.resetMediaPlayer();
+        mediaInterface.playedVideoIndex = -1;
 
         Media temp = new Media(file.toURI().toString());
         if(menuController != null) {

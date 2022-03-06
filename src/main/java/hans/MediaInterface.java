@@ -22,14 +22,14 @@ public class MediaInterface {
     SettingsController settingsController;
 
     // all videos that have been added to the queue or directly to the player
-    ObservableList<Media> videoList = FXCollections.observableList(new ArrayList<Media>());
+    List<Media> videoList = new ArrayList<>();
 
 
     // videoList minus the videos that have already been played
-    List<Media> unplayedVideoList = new ArrayList<Media>();
+    List<Media> unplayedVideoList = new ArrayList<>();
 
     // contains all the videos that have been played, in the order that they were played (necessary to navigate videos with the control arrows)
-    ObservableList<Media> playedVideoList = FXCollections.observableList(new ArrayList<Media>());
+    List<Media> playedVideoList = new ArrayList<>();
 
     /*
     When removing items from the playedVideoList,
@@ -61,16 +61,6 @@ public class MediaInterface {
         this.mainController = mainController;
         this.controlBarController = controlBarController;
         this.settingsController = settingsController;
-
-        videoList.addListener((ListChangeListener<Media>) change -> {
-            if(videoList.isEmpty()) controlBarController.removeNextVideoButton();
-            else if(videoList.size() == 1) controlBarController.addNextVideoButton();
-        });
-
-        playedVideoList.addListener((ListChangeListener<Media>) change -> {
-            if(playedVideoList.isEmpty()) controlBarController.removePreviousVideoButton();
-            else if(playedVideoList.size() == 1) controlBarController.addPreviousVideoButton();
-        });
     };
 
     public void updateMedia(double newValue) {
@@ -270,14 +260,14 @@ public class MediaInterface {
 
     public void resetMediaPlayer(){
         if(playedVideoIndex == -1) {
-            playedVideoList.add(currentVideo);
+            if(currentVideo != null) playedVideoList.add(currentVideo);
         }
 
         currentVideo = null;
 
         currentVideoIndex = -1;
 
-        mediaPlayer.dispose();
+        if(mediaPlayer != null) mediaPlayer.dispose();
         mainController.mediaView.setMediaPlayer(null);
 
         controlBarController.durationSlider.setValue(0);
@@ -328,12 +318,22 @@ public class MediaInterface {
         else {
             playedVideoIndex = -1;
             if(settingsController.shuffleOn) playRandom();
-            else if(settingsController.autoplayOn) autoplay(temp); // pass the copy of currentVideoIndex to autplay method
+            else autoplay(temp); // pass the copy of currentVideoIndex to autplay method
         }
     }
 
     public void playPrevious(){
+        controlBarController.mouseEventTracker.move();
+        System.out.println(playedVideoList.size());
 
+        resetMediaPlayer();
+
+        if(playedVideoIndex == -1){
+            playedVideoList.remove(playedVideoList.size() - 1);
+            playedVideoIndex = playedVideoList.size() - 1;
+        }
+        else playedVideoIndex--;
+        createMediaPlayer(playedVideoList.get(playedVideoIndex));
     }
 
     public void playRandom() {

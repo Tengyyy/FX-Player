@@ -529,11 +529,9 @@ public class SettingsController implements Initializable {
 
 
     public void openSettings() {
-        /*
-        controlBarController.settingsEnter = new Image(controlBarController.settingsEnterFile.toURI().toString());
-        controlBarController.settingsIcon.setImage(controlBarController.settingsEnter);
-         */
-        //TODO: create method to rotate settings icon
+
+        AnimationsClass.rotateTransition(100, controlBarController.settingsIcon, 0, 45, false, 1, true);
+
 
         settingsOpen = true;
         settingsHomeOpen = true;
@@ -557,11 +555,8 @@ public class SettingsController implements Initializable {
     }
 
     public void closeSettings() {
-        /*
-        controlBarController.settingsExit = new Image(controlBarController.settingsExitFile.toURI().toString());
-        controlBarController.settingsIcon.setImage(controlBarController.settingsExit);
-        */
-        // TODO: create method to rotate settings icon
+
+        AnimationsClass.rotateTransition(100, controlBarController.settingsIcon, 45, 0, false, 1, true);
 
         settingsOpen = false;
 

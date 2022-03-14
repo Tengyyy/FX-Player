@@ -643,6 +643,19 @@ public class AnimationsClass {
         return scaleTransition;
     }
 
+    public static RotateTransition rotateTransition(double duration, Node node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
+        RotateTransition rotateTransition = new RotateTransition();
+        rotateTransition.setDuration(Duration.millis(duration));
+        rotateTransition.setNode(node);
+        rotateTransition.setFromAngle(fromValue);
+        rotateTransition.setToAngle(toValue);
+        rotateTransition.setAutoReverse(autoReverse);
+        rotateTransition.setCycleCount(cycleCount);
+        if(play) rotateTransition.play();
+
+        return rotateTransition;
+    }
+
     public static ParallelTransition parallelAnimation(boolean play, Transition... transitions){
         ParallelTransition parallelTransition = new ParallelTransition();
         for(Transition transition :  transitions){

@@ -133,7 +133,7 @@ public class App extends Application {
                         }
                         fullScreen = false;
 
-                        controlBarController.fullScreenIcon.setImage(controlBarController.maximize);
+                        controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
                         primaryStage.setFullScreen(false);
 
                         if (!mainController.captionsOpen && !settingsController.settingsOpen)

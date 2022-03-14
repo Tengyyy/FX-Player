@@ -24,6 +24,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class QueueItem extends GridPane {
@@ -79,7 +80,12 @@ public class QueueItem extends GridPane {
     int itemHeight = 64;
     double textHeight = 21.09375;
 
-    SVGPath playSVG, pauseSVG;
+    String playPath = "M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M10,16.5L16,12L10,7.5V16.5Z";
+    String pausePath = "M13,16V8H15V16H13M9,16V8H11V16H9M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z";
+    String removePath = "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z";
+    String optionsPath = "M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z";
+
+    SVGPath playSVG, pauseSVG, removeSVG, optionsSVG;
 
     QueueItem(Media videoItem, MenuController menuController, MediaInterface mediaInterface) {
 
@@ -116,10 +122,16 @@ public class QueueItem extends GridPane {
 
 
         playSVG = new SVGPath();
-        playSVG.setContent("M 94.585,67.086 63.001,44.44 c -3.369,-2.416 -8.059,-0.008 -8.059,4.138 v 45.293 c 0,4.146 4.69,6.554 8.059,4.138 L 94.584,75.362 c 2.834,-2.031 2.834,-6.244 10e-4,-8.276 z M 142.411,68.9 C 141.216,31.48 110.968,1.233 73.549,0.038 53.188,-0.608 34.139,7.142 20.061,21.677 6.527,35.65 -0.584,54.071 0.038,73.549 c 1.194,37.419 31.442,67.667 68.861,68.861 0.779,0.025 1.551,0.037 2.325,0.037 19.454,0 37.624,-7.698 51.163,-21.676 13.534,-13.972 20.646,-32.394 20.024,-51.871 z m -30.798,41.436 c -10.688,11.035 -25.032,17.112 -40.389,17.112 -0.614,0 -1.228,-0.01 -1.847,-0.029 C 39.845,126.476 15.973,102.604 15.029,73.071 14.538,57.689 20.151,43.143 30.835,32.113 41.523,21.078 55.867,15.001 71.224,15.001 c 0.614,0 1.228,0.01 1.847,0.029 29.532,0.943 53.404,24.815 54.348,54.348 0.491,15.382 -5.123,29.928 -15.806,40.958 z");
+        playSVG.setContent(playPath);
 
         pauseSVG = new SVGPath();
-        pauseSVG.setContent("M256,0C114.842,0,0,114.842,0,256s114.842,256,256,256s256-114.842,256-256S397.158,0,256,0z M256,465.455c-115.493,0-209.455-93.961-209.455-209.455S140.507,46.545,256,46.545S465.455,140.507,465.455,256S371.493,465.455,256,465.455z M318.061,139.636c-12.853,0-23.273,10.42-23.273,23.273v186.182c0,12.853,10.42,23.273,23.273,23.273c12.853,0,23.273-10.42,23.273-23.273V162.909C341.333,150.056,330.913,139.636,318.061,139.636z M193.939,139.636c-12.853,0-23.273,10.42-23.273,23.273v186.182c0,12.853,10.42,23.273,23.273,23.273c12.853,0,23.273-10.42,23.273-23.273V162.909C217.212,150.056,206.792,139.636,193.939,139.636z");
+        pauseSVG.setContent(pausePath);
+
+        removeSVG = new SVGPath();
+        removeSVG.setContent(removePath);
+
+        optionsSVG = new SVGPath();
+        optionsSVG.setContent(optionsPath);
 
         playIcon = new Region();
         playIcon.setShape(playSVG);
@@ -157,10 +169,6 @@ public class QueueItem extends GridPane {
             removeButton.setCursor(Cursor.HAND);
             removeButton.setOpacity(0);
 
-
-            SVGPath removeSVG = new SVGPath();
-            removeSVG.setContent("M55.931,47.463L94.306,9.09c0.826-0.827,0.826-2.167,0-2.994L88.833,0.62C88.436,0.224,87.896,0,87.335,0c-0.562,0-1.101,0.224-1.498,0.62L47.463,38.994L9.089,0.62c-0.795-0.795-2.202-0.794-2.995,0L0.622,6.096c-0.827,0.827-0.827,2.167,0,2.994l38.374,38.373L0.622,85.836c-0.827,0.827-0.827,2.167,0,2.994l5.473,5.476c0.397,0.396,0.936,0.62,1.498,0.62s1.1-0.224,1.497-0.62l38.374-38.374l38.374,38.374c0.397,0.396,0.937,0.62,1.498,0.62s1.101-0.224,1.498-0.62l5.473-5.476c0.826-0.827,0.826-2.167,0-2.994L55.931,47.463z");
-
             removeIcon = new Region();
             removeIcon.setShape(removeSVG);
             removeIcon.setMinSize(20, 20);
@@ -177,9 +185,6 @@ public class QueueItem extends GridPane {
             optionsButton.getStyleClass().add("optionsButton");
             optionsButton.setCursor(Cursor.HAND);
             optionsButton.setOpacity(0);
-
-            SVGPath optionsSVG = new SVGPath();
-            optionsSVG.setContent("m 36.3,86.3 a 13.7,13.7 0 1 0 27.4,0 13.7,13.7 0 1 0 -27.4,0 m 0,-36.3 a 13.7,13.7 0 1 0 27.4,0 13.7,13.7 0 1 0 -27.4,0 m 0,-36.3 a 13.7,13.7 0 1 0 27.4,0 13.7,13.7 0 1 0 -27.4,0");
 
             optionsIcon = new Region();
             optionsIcon.setShape(optionsSVG);
@@ -296,10 +301,39 @@ public class QueueItem extends GridPane {
             removeButton.setOnAction((e) -> {
                 if(menuController.activeItem == this) menuController.activeItem = null;
 
-                if(mediaInterface.currentVideo == this.videoItem) mediaInterface.resetMediaPlayer();
+                if(mediaInterface.currentVideo == this.videoItem) {
+                    mediaInterface.resetMediaPlayer();
+                    mediaInterface.playedVideoList.remove(mediaInterface.playedVideoList.size() - 1);
+                }
+
+                /*
+                    When removing items from the playedVideoList,
+                    create an array of the indexes of the items that will be removed and decrement playedVideoIndex by the amount of indexes
+                    that are smaller than playedVideoIndex,
+                    meaning those videos were added before the active item inside playedVideoList
+                */
 
                 mediaInterface.videoList.removeAll(Collections.singletonList(videoItem));
                 mediaInterface.unplayedVideoList.removeAll(Collections.singletonList(videoItem));
+
+                if(mediaInterface.playedVideoIndex > 0){
+                    ArrayList<Integer> removedVideoIndexes = new ArrayList<>();
+                    for(int i = 0; i < mediaInterface.playedVideoList.size(); i++){
+                        if(mediaInterface.playedVideoList.get(i).equals(videoItem)){
+                            removedVideoIndexes.add(i);
+                        }
+                    }
+
+                    int playedVideoIndexCorrectionCounter = 0;
+
+                    for(Integer i : removedVideoIndexes){
+                        if(i < mediaInterface.playedVideoIndex){
+                            playedVideoIndexCorrectionCounter++;
+                        }
+                    }
+                    mediaInterface.playedVideoIndex-=playedVideoIndexCorrectionCounter;
+                }
+
                 mediaInterface.playedVideoList.removeAll(Collections.singletonList(videoItem));
 
                 menuController.queue.remove(this);

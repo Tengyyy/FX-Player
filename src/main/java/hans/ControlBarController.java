@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import javafx.animation.Animation;
 import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,114 +32,47 @@ public class ControlBarController implements Initializable {
     @FXML
     Button fullScreenButton, playButton, volumeButton, settingsButton, nextVideoButton, captionsButton, previousVideoButton;
 
+    @FXML
+    public Slider volumeSlider, durationSlider;
 
     @FXML
-    ImageView settingsIcon;
+    public ProgressBar volumeTrack, durationTrack;
 
     @FXML
-    ImageView nextVideoIcon;
-
-    @FXML
-    ImageView captionsIcon;
-
-    @FXML
-    public Slider volumeSlider;
-
-    @FXML
-    public ProgressBar volumeTrack;
-
-    @FXML
-    public Slider durationSlider;
-
-    @FXML
-    public ProgressBar durationTrack;
-
-    @FXML
-    StackPane volumeSliderPane, durationPane;
+    StackPane volumeSliderPane, previousVideoPane, playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, fullScreenButtonPane;
 
     @FXML
     Label durationLabel;
 
     @FXML
-    Line captionLine;
+    Line captionsButtonLine;
 
     @FXML
-    ImageView playLogo;
+    public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, captionsIcon, settingsIcon, fullScreenIcon;
 
     @FXML
-    public ImageView fullScreenIcon;
+    public HBox settingsBox1;
 
-    @FXML
-    public ImageView volumeIcon;
+    String previousVideoPath = "M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z";
+    String playPath = "M8,5.14V19.14L19,12.14L8,5.14Z";
+    String pausePath = "M14,19H18V5H14M6,19H10V5H6V19Z";
+    String replayPath = "M12,5V1L7,6L12,11V7A6,6 0 0,1 18,13A6,6 0 0,1 12,19A6,6 0 0,1 6,13H4A8,8 0 0,0 12,21A8,8 0 0,0 20,13A8,8 0 0,0 12,5Z";
+    String nextVideoPath = "M16,18H18V6H16M6,18L14.5,12L6,6V18Z";
+    String highVolumePath = "M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z";
+    String lowVolumePath = "M5,9V15H9L14,20V4L9,9M18.5,12C18.5,10.23 17.5,8.71 16,7.97V16C17.5,15.29 18.5,13.76 18.5,12Z";
+    String volumeMutedPath = "M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L12,10.73M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.5,12.43 16.5,12.21 16.5,12Z";
+    String captionsPath = "M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-9 6H8v4h3v2H8c-1.103 0-2-.897-2-2v-4c0-1.103.897-2 2-2h3v2zm7 0h-3v4h3v2h-3c-1.103 0-2-.897-2-2v-4c0-1.103.897-2 2-2h3v2z";
+    String settingsPath = "M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z";
+    String maximizePath = "M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z";
+    String minimizePath = "M14,14H19V16H16V19H14V14M5,14H10V19H8V16H5V14M8,5H10V10H5V8H8V5M19,8V10H14V5H16V8H19Z";
 
-    @FXML
-    public Pane playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, fullScreenButtonPane;
-
-    @FXML
-    public StackPane previousVideoPane;
-
-    @FXML
-    public Region previousVideoIcon;
-
-    @FXML
-            public HBox settingsBox1;
-
+    SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG;
 
     MainController mainController;
     SettingsController settingsController;
 
 
-    public Image maximize;
-
-    Image minimize;
-
-    public Image volumeUp;
-
-    Image volumeDown;
-
-    public Image volumeMute;
-
-    Image settingsEnter;
-
-    Image settingsExit;
-
-    Image settingsImage;
-
-    Image nextVideo;
-
-    Image captionsImage;
-
     public double volumeValue;
-
-
-    private File maximizeFile, minimizeFile;
-
-    File playFile;
-
-    File pauseFile;
-
-
-    private File volumeUpFile;
-    private File volumeDownFile;
-    private File volumeMuteFile;
-
-    Image playImage;
-    Image pauseImage;
-
-    Image replayImage;
-
-    File settingsEnterFile;
-
-    File settingsExitFile;
-
-    private File settingsImageFile;
-
-    private File captionsFile;
-
-    File replayFile;
-
-    private File nextVideoFile;
-
 
     public boolean muted = false;
     boolean isExited = true;
@@ -182,9 +114,43 @@ public class ControlBarController implements Initializable {
             nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, false, controlBar, 0);
             previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P)", previousVideoButton, false, controlBar, 0);
             captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, false, controlBar, 0);
-
         });
 
+        previousVideoSVG = new SVGPath();
+        previousVideoSVG.setContent(previousVideoPath);
+
+        playSVG = new SVGPath();
+        playSVG.setContent(playPath);
+
+        pauseSVG = new SVGPath();
+        pauseSVG.setContent(pausePath);
+
+        replaySVG = new SVGPath();
+        replaySVG.setContent(replayPath);
+
+        nextVideoSVG = new SVGPath();
+        nextVideoSVG.setContent(nextVideoPath);
+
+        highVolumeSVG = new SVGPath();
+        highVolumeSVG.setContent(highVolumePath);
+
+        lowVolumeSVG = new SVGPath();
+        lowVolumeSVG.setContent(lowVolumePath);
+
+        volumeMutedSVG = new SVGPath();
+        volumeMutedSVG.setContent(volumeMutedPath);
+
+        captionsSVG = new SVGPath();
+        captionsSVG.setContent(captionsPath);
+
+        settingsSVG = new SVGPath();
+        settingsSVG.setContent(settingsPath);
+
+        maximizeSVG = new SVGPath();
+        maximizeSVG.setContent(maximizePath);
+
+        minimizeSVG = new SVGPath();
+        minimizeSVG.setContent(minimizePath);
 
         volumeSliderPane.setClip(new Rectangle(60, 38.666666664));
 
@@ -197,59 +163,28 @@ public class ControlBarController implements Initializable {
 
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
 
-
-        maximizeFile = new File("src/main/resources/hans/images/maximizeFile.png");
-        minimizeFile = new File("src/main/resources/hans/images/minimizeFile.png");
-        playFile = new File("src/main/resources/hans/images/play.png");
-        volumeUpFile = new File("src/main/resources/hans/images/volumeUpFile.png");
-        volumeDownFile = new File("src/main/resources/hans/images/volumeDownFile.png");
-        volumeMuteFile = new File("src/main/resources/hans/images/volumeMuteFile.png");
-        replayFile = new File("src/main/resources/hans/images/replay.png");
-        pauseFile = new File("src/main/resources/hans/images/pause.png");
-        settingsImageFile = new File("src/main/resources/hans/images/settingsImageFile.png");
-        captionsFile = new File("src/main/resources/hans/images/captionsFile.png");
-        nextVideoFile = new File("src/main/resources/hans/images/nextVideoFile.png");
-
-        settingsEnterFile = new File("src/main/resources/hans/images/settingsEnterFile.gif");
-        settingsExitFile = new File("src/main/resources/hans/images/settingsExitFile.gif");
-
-
-        nextVideo = new Image(nextVideoFile.toURI().toString());
-        maximize = new Image(maximizeFile.toURI().toString());
-        minimize = new Image(minimizeFile.toURI().toString());
-        playImage = new Image(playFile.toURI().toString());
-        pauseImage = new Image(pauseFile.toURI().toString());
-        replayImage = new Image(replayFile.toURI().toString());
-        volumeUp = new Image(volumeUpFile.toURI().toString());
-        volumeDown = new Image(volumeDownFile.toURI().toString());
-        volumeMute = new Image(volumeMuteFile.toURI().toString());
-        settingsImage = new Image(settingsImageFile.toURI().toString());
-        captionsImage = new Image(captionsFile.toURI().toString());
-
-        SVGPath previousVideoSVG = new SVGPath();
-        previousVideoSVG.setContent("M 5.188,0.033 H 2.53 c -0.172,0 -0.315,0.182 -0.315,0.401 V 17.37 c 0,0.221 0.143,0.403 0.315,0.403 h 2.657 c 0.174,0 0.315,-0.183 0.315,-0.403 V 0.434 C 5.503,0.215 5.361,0.033 5.188,0.033 Z M 15.363,0.042 C 15.224,-0.028 15.06,-0.009 14.939,0.085 L 4.163,8.587 C 4.069,8.664 4.01,8.78 4.01,8.9 c 0,0.119 0.059,0.24 0.153,0.314 l 10.776,8.502 c 0.071,0.057 0.162,0.086 0.249,0.086 l 0.175,-0.039 c 0.139,-0.064 0.225,-0.207 0.225,-0.361 V 0.403 c 0,-0.154 -0.086,-0.296 -0.225,-0.361 z");
         previousVideoIcon.setShape(previousVideoSVG);
+        playIcon.setShape(playSVG);
+        nextVideoIcon.setShape(nextVideoSVG);
+        volumeIcon.setShape(highVolumeSVG);
+        captionsIcon.setShape(captionsSVG);
+        settingsIcon.setShape(settingsSVG);
+        fullScreenIcon.setShape(maximizeSVG);
 
-        playLogo.setImage(playImage);
         playButton.setBackground(Background.EMPTY);
 
         nextVideoButton.setBackground(Background.EMPTY);
-        nextVideoIcon.setImage(nextVideo);
 
 
         playButton.setOnAction((e) -> playButtonClick1());
 
-        fullScreenIcon.setImage(maximize);
         fullScreenButton.setBackground(Background.EMPTY);
 
         settingsButton.setBackground(Background.EMPTY);
-        settingsIcon.setImage(settingsImage);
 
         volumeButton.setBackground(Background.EMPTY);
-        volumeIcon.setImage(volumeUp);
 
         captionsButton.setBackground(Background.EMPTY);
-        captionsIcon.setImage(captionsImage);
 
 
         volumeSlider.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> volumeSlider.setValueChanging(true));
@@ -272,7 +207,7 @@ public class ControlBarController implements Initializable {
             volumeTrack.setProgress(volumeSlider.getValue() / 100);
 
             if (volumeSlider.getValue() == 0) {
-                volumeIcon.setImage(volumeMute);
+                volumeIcon.setShape(volumeMutedSVG);
                 muted = true;
 
                 if (mute.isShowing()) {
@@ -285,7 +220,7 @@ public class ControlBarController implements Initializable {
                 }
 
             } else if (volumeSlider.getValue() < 50) {
-                volumeIcon.setImage(volumeDown);
+                volumeIcon.setShape(lowVolumeSVG);
                 muted = false;
 
                 if (mute.isShowing() || unmute.isShowing()) {
@@ -297,7 +232,7 @@ public class ControlBarController implements Initializable {
                     mute = new ControlTooltip("Mute (m)", volumeButton, false, controlBar, 0);
                 }
             } else {
-                volumeIcon.setImage(volumeUp);
+                volumeIcon.setShape(highVolumeSVG);
                 muted = false;
 
                 if (mute.isShowing() || unmute.isShowing()) {
@@ -357,7 +292,7 @@ public class ControlBarController implements Initializable {
         durationSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
             if (newValue) { // pause video when user starts seeking
-                playLogo.setImage(playImage);
+                playIcon.setShape(pauseSVG);
                 if(mediaInterface.currentVideo != null) {
                     mediaInterface.mediaPlayer.pause();
                     mediaInterface.playing = false;
@@ -382,7 +317,7 @@ public class ControlBarController implements Initializable {
                 }
 
                 if (mediaInterface.atEnd) { // if user drags the duration slider to the end turn play button to replay button
-                    playLogo.setImage(replayImage);
+                    playIcon.setShape(replaySVG);
                     playButton.setOnAction((e) -> playButtonClick2());
 
                     if (play.isShowing() || pause.isShowing()) {
@@ -404,7 +339,7 @@ public class ControlBarController implements Initializable {
                         mediaInterface.playing = true;
                     }
 
-                    playLogo.setImage(pauseImage);
+                    playIcon.setShape(pauseSVG);
 
                     if (play.isShowing() || replay.isShowing()) {
                         play.hide();
@@ -547,7 +482,7 @@ public class ControlBarController implements Initializable {
                 mainController.menuController.activeItem.play.updateText("Pause video");
             }
         }
-        playLogo.setImage(pauseImage);
+        playIcon.setShape(pauseSVG);
         mediaInterface.playing = true;
 
         if (play.isShowing()) {
@@ -573,7 +508,7 @@ public class ControlBarController implements Initializable {
                 mainController.menuController.activeItem.play.updateText("Play video");
             }
         }
-        playLogo.setImage(playImage);
+        playIcon.setShape(playSVG);
         mediaInterface.playing = false;
 
         if (pause.isShowing()) {
@@ -609,7 +544,7 @@ public class ControlBarController implements Initializable {
         }
         mediaInterface.playing = true;
         mediaInterface.atEnd = false;
-        playLogo.setImage(pauseImage);
+        playIcon.setShape(pauseSVG);
         mediaInterface.seekedToEnd = false;
         playButton.setOnAction((e) -> playButtonClick1());
 
@@ -642,7 +577,7 @@ public class ControlBarController implements Initializable {
         App.stage.setFullScreen(!App.stage.isFullScreen());
 
         if (App.stage.isFullScreen()) {
-            fullScreenIcon.setImage(minimize);
+            fullScreenIcon.setShape(minimizeSVG);
             App.fullScreen = true;
 
             if (!mainController.captionsOpen && !settingsController.settingsOpen) {
@@ -655,7 +590,7 @@ public class ControlBarController implements Initializable {
                 }
             }
         } else {
-            fullScreenIcon.setImage(maximize);
+            fullScreenIcon.setShape(maximizeSVG);
             App.fullScreen = false;
 
             if (!mainController.captionsOpen && !settingsController.settingsOpen) {
@@ -697,7 +632,7 @@ public class ControlBarController implements Initializable {
 
     public void mute() {
         muted = true;
-        volumeIcon.setImage(volumeMute);
+        volumeIcon.setShape(volumeMutedSVG);
         if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.setVolume(0);
         volumeValue = volumeSlider.getValue(); //stores the value of the volumeslider before setting it to 0
 
@@ -706,7 +641,7 @@ public class ControlBarController implements Initializable {
 
     public void unmute() {
         muted = false;
-        volumeIcon.setImage(volumeUp);
+        volumeIcon.setShape(highVolumeSVG);
         if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.setVolume(volumeValue);
         volumeSlider.setValue(volumeValue); // sets volume back to the value it was at before muting
     }
@@ -737,7 +672,7 @@ public class ControlBarController implements Initializable {
             settingsController.closeSettings();
         }
 
-        AnimationsClass.scaleAnimation(100, captionLine, 0, 1, 1, 1, false, 1, true);
+        AnimationsClass.scaleAnimation(100, captionsButtonLine, 0, 1, 1, 1, false, 1, true);
 
         if (captions.isShowing() || settings.isShowing() || fullScreen.isShowing() || exitFullScreen.isShowing()) {
             captions.hide();
@@ -794,7 +729,7 @@ public class ControlBarController implements Initializable {
         }
 
         //AnimationsClass.closeCaptions(captionLine);
-        AnimationsClass.scaleAnimation(100, captionLine, 1, 0, 1, 1, false, 1, true);
+        AnimationsClass.scaleAnimation(100, captionsButtonLine, 1, 0, 1, 1, false, 1, true);
 
     }
 

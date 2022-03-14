@@ -34,12 +34,14 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Background;
 
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.media.SubtitleTrack;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -57,12 +59,11 @@ public class MainController implements Initializable {
     @FXML
     Button menuButton;
 
+    @FXML
+    StackPane pane, menuButtonPane;
 
     @FXML
-    ImageView menuIcon;
-
-    @FXML
-    StackPane pane;
+    Region menuIcon;
 
     @FXML
     private ControlBarController controlBarController;
@@ -81,12 +82,6 @@ public class MainController implements Initializable {
 
     DoubleProperty mediaViewWidth;
     DoubleProperty mediaViewHeight;
-
-    Image menuImage;
-
-    Image menuCloseImage;
-
-    private File menuFile, menuCloseFile;
 
     boolean running = false; // media running status
 
@@ -108,6 +103,8 @@ public class MainController implements Initializable {
     Image addVideoImage = new Image(new File("src/main/resources/hans/images/addVideo.png").toURI().toString());
     ImageView addVideo;
 
+    String menuPath = "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z";
+    SVGPath menuSVG;
 
 
     @Override
@@ -121,11 +118,8 @@ public class MainController implements Initializable {
         file = new File("src/main/resources/hans/hey.mp4");
 
         // declaring media control images
-        menuFile = new File("src/main/resources/hans/images/menuFile.png");
-        menuCloseFile = new File("src/main/resources/hans/images/menuCloseFile.png");
-
-        menuImage = new Image(menuFile.toURI().toString());
-        menuCloseImage = new Image(menuCloseFile.toURI().toString());
+        menuSVG = new SVGPath();
+        menuSVG.setContent(menuPath);
 
         // Make mediaView adjust to frame size
         mediaViewWidth = mediaView.fitWidthProperty();
@@ -142,7 +136,7 @@ public class MainController implements Initializable {
         menuButton.setVisible(false);
 
 
-        menuIcon.setImage(menuImage);
+        menuIcon.setShape(menuSVG);
 
         Platform.runLater(new Runnable() {
             @Override

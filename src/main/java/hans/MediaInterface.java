@@ -31,12 +31,7 @@ public class MediaInterface {
     // contains all the videos that have been played, in the order that they were played (necessary to navigate videos with the control arrows)
     List<Media> playedVideoList = new ArrayList<>();
 
-    /*
-    When removing items from the playedVideoList,
-    create an array of the indexes of the items that will be removed and decrement playedVideoIndex by the amount of indexes
-    that are smaller than playedVideoIndex,
-    meaning those videos were added before the active item inside playedVideoList
-    */
+
 
     // keeps track of position inside the video history list, if -1 the user is not currently inside the played video list (hasnt used the back arrow to play previous videos)
     int playedVideoIndex = -1;
@@ -82,7 +77,7 @@ public class MediaInterface {
 
                 if (!controlBarController.durationSlider.isValueChanging()) {
 
-                    controlBarController.playLogo.setImage(controlBarController.pauseImage);
+                    controlBarController.playIcon.setShape(controlBarController.pauseSVG);
 
                     playing = true;
                     mediaPlayer.play();
@@ -103,7 +98,7 @@ public class MediaInterface {
 
                 }
             } else {
-                controlBarController.playLogo.setImage(controlBarController.playImage);
+                controlBarController.playIcon.setShape(controlBarController.playSVG);
                 playing = false;
 
                 if (controlBarController.pause.isShowing() || controlBarController.replay.isShowing()) {
@@ -156,7 +151,7 @@ public class MediaInterface {
             controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(currentVideo.getDuration()));
 
 
-            controlBarController.playLogo.setImage(new Image(controlBarController.replayFile.toURI().toString()));
+            controlBarController.playIcon.setShape(controlBarController.replaySVG);
 
             if(mainController.menuController != null){
                 mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.playSVG);

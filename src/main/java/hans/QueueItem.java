@@ -87,12 +87,17 @@ public class QueueItem extends GridPane {
 
     SVGPath playSVG, pauseSVG, removeSVG, optionsSVG;
 
+    // the options popup for this queue item
+    QueueItemOptionsPopUp optionsPopUp;
+
     QueueItem(Media videoItem, MenuController menuController, MediaInterface mediaInterface) {
 
         this.videoItem = videoItem;
         this.menuController = menuController;
 
         videoIndex = menuController.queue.size() + 1;
+
+        optionsPopUp = new QueueItemOptionsPopUp();
 
         column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) to take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4);
@@ -185,6 +190,13 @@ public class QueueItem extends GridPane {
             optionsButton.getStyleClass().add("optionsButton");
             optionsButton.setCursor(Cursor.HAND);
             optionsButton.setOpacity(0);
+            optionsButton.setOnAction((e) -> {
+                optionsPopUp.show(this, optionsButton.localToScreen(optionsButton.getBoundsInLocal()).getMinX(), optionsButton.localToScreen(optionsButton.getBoundsInLocal()).getMaxY());
+            });
+
+            this.setOnContextMenuRequested(e ->
+                optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
+            //optionsButton.setContextMenu(new QueueItemOptionsPopUp());
 
             optionsIcon = new Region();
             optionsIcon.setShape(optionsSVG);

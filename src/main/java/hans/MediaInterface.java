@@ -28,6 +28,11 @@ public class MediaInterface {
     // videoList minus the videos that have already been played
     List<Media> unplayedVideoList = new ArrayList<>();
 
+
+    //if this is null, mediainterface will select a video from unplayedvideolist to play next, else this video will be played
+    Media nextMedia;
+
+
     // contains all the videos that have been played, in the order that they were played (necessary to navigate videos with the control arrows)
     List<Media> playedVideoList = new ArrayList<>();
 

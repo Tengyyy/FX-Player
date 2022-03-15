@@ -16,14 +16,14 @@
         </MediaView>
         <fx:include fx:id="controlBar" source="ControlBar.fxml" />
         <fx:include fx:id="settings" source="Settings.fxml" />
-      <StackPane fx:id="menuButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="60.0" prefWidth="60.0" StackPane.alignment="TOP_LEFT">
+      <StackPane fx:id="menuButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="60.0" prefWidth="70.0" StackPane.alignment="TOP_LEFT">
          <children>
-              <Button fx:id="menuButton" mnemonicParsing="false" onAction="#openMenu" prefHeight="60.0" prefWidth="60.0" style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="TOP_LEFT">
+              <Button fx:id="menuButton" mnemonicParsing="false" onAction="#openMenu" prefHeight="60.0" prefWidth="70.0" style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="TOP_LEFT">
                   <cursor>
                       <Cursor fx:constant="HAND" />
                   </cursor>
               </Button>
-            <Region fx:id="menuIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="60.0" prefWidth="60.0" />
+            <Region fx:id="menuIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="40.0" prefWidth="50.0" styleClass="controlIcon" />
          </children>
       </StackPane>
     </children>

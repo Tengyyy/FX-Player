@@ -9,10 +9,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
+import javafx.geometry.*;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
@@ -97,7 +94,7 @@ public class QueueItem extends GridPane {
 
         videoIndex = menuController.queue.size() + 1;
 
-        optionsPopUp = new QueueItemOptionsPopUp();
+        Platform.runLater(() -> optionsPopUp = new QueueItemOptionsPopUp(this));
 
         column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) to take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4);
@@ -190,13 +187,13 @@ public class QueueItem extends GridPane {
             optionsButton.getStyleClass().add("optionsButton");
             optionsButton.setCursor(Cursor.HAND);
             optionsButton.setOpacity(0);
+
             optionsButton.setOnAction((e) -> {
-                optionsPopUp.show(this, optionsButton.localToScreen(optionsButton.getBoundsInLocal()).getMinX(), optionsButton.localToScreen(optionsButton.getBoundsInLocal()).getMaxY());
+                optionsPopUp.showOptions();
             });
 
             this.setOnContextMenuRequested(e ->
                 optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
-            //optionsButton.setContextMenu(new QueueItemOptionsPopUp());
 
             optionsIcon = new Region();
             optionsIcon.setShape(optionsSVG);
@@ -388,5 +385,13 @@ public class QueueItem extends GridPane {
             playText.setVisible(false);
             playIcon.setVisible(true);
         }
+    }
+    
+    public void showMetadata(){
+        System.out.println("Showing metadata");
+    }
+
+    public void playNext(){
+        System.out.println("Playing next");
     }
 }

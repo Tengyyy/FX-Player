@@ -67,17 +67,17 @@
                   <Insets />
                </GridPane.margin>
                <children>
-                  <AnchorPane fx:id="queuePane" prefHeight="200.0" prefWidth="200.0" styleClass="menuItemPane">
+                  <StackPane fx:id="queuePane">
                      <children>
-                        <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                        <StackPane fx:id="nextVideoNotification" maxHeight="-Infinity" maxWidth="-Infinity" pickOnBounds="false" prefHeight="50.0" prefWidth="500.0" style="-fx-background-color: #303030; -fx-background-radius: 7; -fx-border-color: #404040; -fx-border-width: 1; -fx-border-radius: 7;" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+                        <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" />
+                        <StackPane fx:id="nextVideoNotification" maxHeight="-Infinity" maxWidth="-Infinity" pickOnBounds="false" prefHeight="50.0" prefWidth="500.0" style="-fx-background-color: #303030; -fx-background-radius: 7; -fx-border-color: #404040; -fx-border-width: 1; -fx-border-radius: 7;" StackPane.alignment="BOTTOM_CENTER">
                            <children>
                               <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Video will play next" StackPane.alignment="CENTER_LEFT">
                                  <font>
                                     <Font name="Roboto Medium" size="18.0" />
                                  </font>
                                  <StackPane.margin>
-                                    <Insets left="30.0" right="30.0" />
+                                    <Insets />
                                  </StackPane.margin>
                               </Text>
                            </children>
@@ -88,9 +88,15 @@
                                  </color>
                               </DropShadow>
                            </effect>
+                           <padding>
+                              <Insets left="30.0" right="30.0" />
+                           </padding>
+                           <StackPane.margin>
+                              <Insets bottom="30.0" left="50.0" right="50.0" />
+                           </StackPane.margin>
                         </StackPane>
                      </children>
-                  </AnchorPane>
+                  </StackPane>
                   <AnchorPane fx:id="addPane" onDragDropped="#addPaneDragDropped" onDragEntered="#addPaneDragEntered" onDragExited="#addPaneDragExited" onDragOver="#addPaneDragOver" prefHeight="200.0" prefWidth="200.0" styleClass="menuItemPane">
                      <children>
                         <Pane id="addBackground" fx:id="addBackground" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />

@@ -16,19 +16,12 @@ import com.jfoenix.controls.JFXButton;
 import eu.iamgio.animated.AnimationPair;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -44,6 +37,7 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import eu.iamgio.animated.AnimatedVBox;
 import animatefx.animation.FadeInUp;
+import javafx.util.Duration;
 
 
 public class MenuController implements Initializable {
@@ -55,13 +49,13 @@ public class MenuController implements Initializable {
     JFXButton queueButton, addButton;
 
     @FXML
-    StackPane menuContent;
+    StackPane menuContent, queuePane, nextVideoNotification;
 
     @FXML
     Pane queueLine, addLine, addBackground;
 
     @FXML
-    AnchorPane addPane, queuePane;
+    AnchorPane addPane;
 
     @FXML
     VBox addBox;
@@ -110,6 +104,9 @@ public class MenuController implements Initializable {
 
     //Animations//
     FadeTransition queueNotificationFade;
+
+    boolean nextVideoNotificationOpen = false;
+    PauseTransition closeTimer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -160,6 +157,12 @@ public class MenuController implements Initializable {
                 }
             }
         });
+
+        nextVideoNotification.setTranslateY(80);
+        nextVideoNotification.setOpacity(0);
+
+        closeTimer = new PauseTransition(Duration.millis(3000));
+        closeTimer.setOnFinished((e) -> AnimationsClass.closeNextVideoNotification(this));
 
     }
 

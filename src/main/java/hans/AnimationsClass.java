@@ -28,6 +28,9 @@ public class AnimationsClass {
     static ParallelTransition addPaneDragEntered;
     static ParallelTransition addPaneDragDropped;
 
+    static TranslateTransition nextVideoNotificationOnTransition;
+    static FadeTransition nextVideoNotificationOffTransition;
+
 
 
     public static void openSettings(StackPane bufferPane) {
@@ -488,7 +491,7 @@ public class AnimationsClass {
     }
 
 
-    public static void openQueueTab(AnchorPane addPane, AnchorPane queuePane, MenuController menuController){
+    public static void openQueueTab(AnchorPane addPane, StackPane queuePane, MenuController menuController){
         addPane.translateXProperty().unbind();
         queuePane.translateXProperty().unbind();
 
@@ -515,7 +518,7 @@ public class AnimationsClass {
         parallelTransition.play();
     }
 
-    public static void openAddVideosTab(AnchorPane addPane, AnchorPane queuePane, MenuController menuController){
+    public static void openAddVideosTab(AnchorPane addPane, StackPane queuePane, MenuController menuController){
         addPane.translateXProperty().unbind();
         queuePane.translateXProperty().unbind();
 
@@ -665,6 +668,42 @@ public class AnimationsClass {
         if(play) parallelTransition.play();
 
         return parallelTransition;
+    }
+
+
+    public static void openNextVideoNotification(MenuController menuController){
+
+        menuController.nextVideoNotificationOpen = true;
+
+        if(nextVideoNotificationOffTransition != null && nextVideoNotificationOffTransition.getStatus() == Animation.Status.RUNNING){
+            nextVideoNotificationOffTransition.stop();
+        }
+
+        menuController.nextVideoNotification.setOpacity(1);
+
+        nextVideoNotificationOnTransition = new TranslateTransition(Duration.millis(300), menuController.nextVideoNotification);
+        nextVideoNotificationOnTransition.setFromY(80);
+        nextVideoNotificationOnTransition.setToY(0);
+        nextVideoNotificationOnTransition.setCycleCount(1);
+        nextVideoNotificationOnTransition.setInterpolator(Interpolator.EASE_OUT);
+        nextVideoNotificationOnTransition.setOnFinished((e) -> {
+            menuController.closeTimer.playFromStart();
+        });
+        nextVideoNotificationOnTransition.playFromStart();
+
+    }
+
+    public static void closeNextVideoNotification(MenuController menuController){
+        menuController.nextVideoNotificationOpen = false;
+        nextVideoNotificationOffTransition = new FadeTransition(Duration.millis(400), menuController.nextVideoNotification);
+        nextVideoNotificationOffTransition.setFromValue(1);
+        nextVideoNotificationOffTransition.setToValue(0);
+        nextVideoNotificationOnTransition.setCycleCount(1);
+        nextVideoNotificationOnTransition.setInterpolator(Interpolator.EASE_OUT);
+        nextVideoNotificationOffTransition.setOnFinished((e) -> {
+            menuController.nextVideoNotification.setTranslateY(80);
+        });
+        nextVideoNotificationOffTransition.playFromStart();
     }
 
 }

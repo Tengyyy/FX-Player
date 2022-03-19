@@ -393,6 +393,7 @@ public class QueueItem extends GridPane {
 
     public void playNext(){
         menuController.mediaInterface.setNextMedia(this.videoItem);
-        System.out.println(videoFile.getName() + " will play next.");
+
+            AnimationsClass.openNextVideoNotification(menuController);
     }
 }

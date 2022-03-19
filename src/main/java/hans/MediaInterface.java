@@ -310,7 +310,11 @@ public class MediaInterface {
         int temp = currentVideoIndex; // saves the currentVideoIndex to a temporary variable because the next line resets currentVideoIndex to -1
         resetMediaPlayer();
 
-        if(playedVideoIndex != -1 && playedVideoIndex < playedVideoList.size() - 1){
+        if(nextMedia != null){
+            createMediaPlayer(nextMedia);
+            nextMedia = null;
+        }
+        else if(playedVideoIndex != -1 && playedVideoIndex < playedVideoList.size() - 1){
             // play next video inside playedVideoList
             playedVideoIndex+=1;
             createMediaPlayer(playedVideoList.get(playedVideoIndex));
@@ -355,6 +359,10 @@ public class MediaInterface {
                                                                                     // get the first video inside videoList and play it
             createMediaPlayer(videoList.get(0));
         }
+    }
+
+    public void setNextMedia(Media media){
+        nextMedia = media;
     }
 
 }

@@ -5,6 +5,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,113 +14,140 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<GridPane id="menuPane" fx:id="menuPane" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="572.0" styleClass="root" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MenuController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="50.0" prefWidth="0.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="50.0" prefWidth="0.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints maxHeight="0.0" minHeight="0.0" percentHeight="12.0" prefHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="0.0" percentHeight="88.0" prefHeight="0.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-  </rowConstraints>
+
+<StackPane fx:id="wrapperPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MenuController">
    <children>
-      <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+      <GridPane id="menuPane" fx:id="menuPane" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="400.0" styleClass="root" stylesheets="@../styles/menu.css">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="50.0" prefWidth="0.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="50.0" prefWidth="0.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="0.0" minHeight="0.0" percentHeight="12.0" prefHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="0.0" percentHeight="88.0" prefHeight="0.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+        </rowConstraints>
          <children>
-            <JFXButton fx:id="queueButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#openQueueTab" ripplerFill="GREY" styleClass="menuButton" text="Queue" textFill="WHITE">
-
-               <StackPane.margin>
+            <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+               <children>
+                  <JFXButton fx:id="queueButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#openQueueTab" ripplerFill="GREY" styleClass="menuButton" text="Queue" textFill="WHITE">
+      
+                                 <StackPane.margin>
+                        <Insets />
+                     </StackPane.margin>
+                  </JFXButton>
+                  <Pane fx:id="queueLine" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mouseTransparent="true" prefWidth="200.0" styleClass="buttonLine" StackPane.alignment="BOTTOM_CENTER" />
+                  <Label fx:id="queueNotification" alignment="CENTER" mouseTransparent="true" prefHeight="31.2" prefWidth="31.2" style="-fx-background-color: red; -fx-padding: 2; -fx-background-radius: 50;" text="1" textAlignment="CENTER" textFill="WHITE" StackPane.alignment="CENTER_RIGHT">
+                     <StackPane.margin>
+                        <Insets right="5.0" />
+                     </StackPane.margin>
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+            </StackPane>
+            <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+               <GridPane.margin>
                   <Insets />
-               </StackPane.margin>
-            </JFXButton>
-            <Pane fx:id="queueLine" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mouseTransparent="true" prefWidth="200.0" styleClass="buttonLine" StackPane.alignment="BOTTOM_CENTER" />
-            <Label fx:id="queueNotification" alignment="CENTER" mouseTransparent="true" prefHeight="31.2" prefWidth="31.2" style="-fx-background-color: red; -fx-padding: 2; -fx-background-radius: 50;" text="1" textAlignment="CENTER" textFill="WHITE" StackPane.alignment="CENTER_RIGHT">
-               <StackPane.margin>
-                  <Insets right="5.0" />
-               </StackPane.margin>
-               <font>
-                  <Font size="17.0" />
-               </font>
-            </Label>
-         </children>
-      </StackPane>
-      <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
-         <GridPane.margin>
-            <Insets />
-         </GridPane.margin>
-         <children>
-            <JFXButton fx:id="addButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#openAddVideosTab" ripplerFill="GREY" styleClass="menuButton" text="Add Videos" textFill="WHITE">
+               </GridPane.margin>
+               <children>
+                  <JFXButton fx:id="addButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#openAddVideosTab" ripplerFill="GREY" styleClass="menuButton" text="Add Videos" textFill="WHITE">
 
             </JFXButton>
-            <Pane fx:id="addLine" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mouseTransparent="true" prefWidth="200.0" styleClass="buttonLine" StackPane.alignment="BOTTOM_CENTER" />
-         </children>
-      </StackPane>
-      <StackPane id="menuContent" fx:id="menuContent" GridPane.columnSpan="2" GridPane.rowIndex="1">
-         <GridPane.margin>
-            <Insets />
-         </GridPane.margin>
-         <children>
-            <AnchorPane fx:id="queuePane" prefHeight="200.0" prefWidth="200.0" styleClass="menuItemPane">
-               <children>
-                  <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Pane fx:id="addLine" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mouseTransparent="true" prefWidth="200.0" styleClass="buttonLine" StackPane.alignment="BOTTOM_CENTER" />
                </children>
-            </AnchorPane>
-            <AnchorPane fx:id="addPane" onDragDropped="#addPaneDragDropped" onDragEntered="#addPaneDragEntered" onDragExited="#addPaneDragExited" onDragOver="#addPaneDragOver" prefHeight="200.0" prefWidth="200.0" styleClass="menuItemPane">
+            </StackPane>
+            <StackPane id="menuContent" fx:id="menuContent" GridPane.columnSpan="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
                <children>
-                  <Pane id="addBackground" fx:id="addBackground" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
-                  <VBox fx:id="addBox" alignment="CENTER" onMouseClicked="#openVideoChooser" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                  <AnchorPane fx:id="queuePane" prefHeight="200.0" prefWidth="200.0" styleClass="menuItemPane">
                      <children>
-                        <Region fx:id="svgShape" prefHeight="200.0" prefWidth="200.0" />
-                        <TextFlow fx:id="addVideosText" textAlignment="CENTER">
+                        <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <StackPane fx:id="nextVideoNotification" maxHeight="-Infinity" maxWidth="-Infinity" pickOnBounds="false" prefHeight="50.0" prefWidth="500.0" style="-fx-background-color: #303030; -fx-background-radius: 7; -fx-border-color: #404040; -fx-border-width: 1; -fx-border-radius: 7;" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
                            <children>
-                              <Text id="addVideosBoldText" fx:id="addVideosBoldText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose a video">
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Video will play next" StackPane.alignment="CENTER_LEFT">
                                  <font>
-                                    <Font name="Roboto Bold" size="22.0" />
+                                    <Font name="Roboto Medium" size="18.0" />
                                  </font>
-                              </Text>
-                              <Text id="addVideosNormalText" fx:id="addVideosNormalText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text=" or drag it here.">
-                                 <font>
-                                    <Font name="Roboto" size="20.0" />
-                                 </font>
+                                 <StackPane.margin>
+                                    <Insets left="30.0" right="30.0" />
+                                 </StackPane.margin>
                               </Text>
                            </children>
-                           <VBox.margin>
-                              <Insets left="40.0" right="40.0" top="30.0" />
-                           </VBox.margin>
-                        </TextFlow>
-                        <TextFlow fx:id="addedVideosText1" textAlignment="CENTER">
-                           <children>
-                              <Text id="addedVideosNormalText" fx:id="addedVideosNormalText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Added 2 videos to the queue." textAlignment="CENTER">
-                                 <font>
-                                    <Font name="Roboto" size="20.0" />
-                                 </font>
-                              </Text>
-                           </children>
-                           <VBox.margin>
-                              <Insets left="35.0" right="35.0" top="30.0" />
-                           </VBox.margin>
-                        </TextFlow>
-                        <TextFlow fx:id="addedVideosText2" textAlignment="CENTER">
-                           <children>
-                              <Text id="addedVideosBoldText" fx:id="addedVideosBoldText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Add more?">
-                                 <font>
-                                    <Font name="Roboto Bold" size="20.0" />
-                                 </font>
-                              </Text>
-                           </children>
-                           <VBox.margin>
-                              <Insets left="40.0" right="40.0" />
-                           </VBox.margin>
-                        </TextFlow>
+                           <effect>
+                              <DropShadow blurType="GAUSSIAN" height="93.55" radius="58.182500000000005" spread="0.37" width="141.18">
+                                 <color>
+                                    <Color red="0.03947368264198303" green="0.03801169618964195" blue="0.03801169618964195" />
+                                 </color>
+                              </DropShadow>
+                           </effect>
+                        </StackPane>
                      </children>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></VBox>
+                  </AnchorPane>
+                  <AnchorPane fx:id="addPane" onDragDropped="#addPaneDragDropped" onDragEntered="#addPaneDragEntered" onDragExited="#addPaneDragExited" onDragOver="#addPaneDragOver" prefHeight="200.0" prefWidth="200.0" styleClass="menuItemPane">
+                     <children>
+                        <Pane id="addBackground" fx:id="addBackground" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
+                        <VBox fx:id="addBox" alignment="CENTER" onMouseClicked="#openVideoChooser" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                           <children>
+                              <Region fx:id="svgShape" prefHeight="200.0" prefWidth="200.0" />
+                              <TextFlow fx:id="addVideosText" textAlignment="CENTER">
+                                 <children>
+                                    <Text id="addVideosBoldText" fx:id="addVideosBoldText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose a video">
+                                       <font>
+                                          <Font name="Roboto Bold" size="22.0" />
+                                       </font>
+                                    </Text>
+                                    <Text id="addVideosNormalText" fx:id="addVideosNormalText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text=" or drag it here.">
+                                       <font>
+                                          <Font name="Roboto" size="20.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="40.0" right="40.0" top="30.0" />
+                                 </VBox.margin>
+                              </TextFlow>
+                              <TextFlow fx:id="addedVideosText1" textAlignment="CENTER">
+                                 <children>
+                                    <Text id="addedVideosNormalText" fx:id="addedVideosNormalText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Added 2 videos to the queue." textAlignment="CENTER">
+                                       <font>
+                                          <Font name="Roboto" size="20.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="35.0" right="35.0" top="30.0" />
+                                 </VBox.margin>
+                              </TextFlow>
+                              <TextFlow fx:id="addedVideosText2" textAlignment="CENTER">
+                                 <children>
+                                    <Text id="addedVideosBoldText" fx:id="addedVideosBoldText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Add more?">
+                                       <font>
+                                          <Font name="Roboto Bold" size="20.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="40.0" right="40.0" />
+                                 </VBox.margin>
+                              </TextFlow>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
                </children>
-            </AnchorPane>
-         </children></StackPane>
+            </StackPane>
+         </children>
+      </GridPane>
    </children>
-</GridPane>
+</StackPane>

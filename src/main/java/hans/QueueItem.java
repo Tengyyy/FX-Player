@@ -392,6 +392,7 @@ public class QueueItem extends GridPane {
     }
 
     public void playNext(){
-        System.out.println("Playing next");
+        menuController.mediaInterface.setNextMedia(this.videoItem);
+        System.out.println(videoFile.getName() + " will play next.");
     }
 }

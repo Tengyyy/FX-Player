@@ -314,6 +314,21 @@ public class App extends Application {
 
                         mainController.openMenu();
                     }
+                    break;
+
+                    case P: {
+                        // take screenshot of the video if shift is not down
+                        if(event.isShiftDown()){
+                            controlBarController.playPreviousMedia();
+                        }
+                    }
+                    break;
+
+                    case N: {
+                        if(event.isShiftDown()){
+                            controlBarController.playNextMedia();
+                        }
+                    }
 
                     default:
                         break;

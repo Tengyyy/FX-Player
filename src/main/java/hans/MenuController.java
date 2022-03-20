@@ -130,7 +130,6 @@ public class MenuController implements Initializable {
             queuePane.translateXProperty().unbind();
             addPane.translateXProperty().unbind();
             queuePane.translateXProperty().bind(queuePane.getScene().widthProperty().multiply(-1));
-
         });
 
         addBox.setSpacing(10);
@@ -138,7 +137,7 @@ public class MenuController implements Initializable {
 
        queueNotification.setOpacity(0);
 
-        queueBox.setSpacing(10);
+       queueBox.setSpacing(10);
        queueBox.setPadding(new Insets(20, 20, 20, 20));
        queueBox.setId("queueBox");
        queueBox.setAlignment(Pos.TOP_CENTER);
@@ -230,6 +229,7 @@ public class MenuController implements Initializable {
             //play notification animation (blink 3 times)
             queueNotification.setOpacity(1);
 
+            if(queueNotificationFade != null && queueNotificationFade.getStatus() == Animation.Status.RUNNING) queueNotificationFade.stop();
             queueNotificationFade =  AnimationsClass.fadeAnimation(500, queueNotification, 1, 0, true, 4, true);
 
             addedVideosNormalText.setText("Added 1 video to the queue.");
@@ -293,6 +293,7 @@ public class MenuController implements Initializable {
 
         queueNotification.setOpacity(1);
        // AnimationsClass.queueNotificationBlink(queueNotification);
+        if(queueNotificationFade != null && queueNotificationFade.getStatus() == Animation.Status.RUNNING) queueNotificationFade.stop();
         queueNotificationFade = AnimationsClass.fadeAnimation(500, queueNotification, 1, 0, true, 4, true);
 
 

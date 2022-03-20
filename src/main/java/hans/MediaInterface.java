@@ -45,8 +45,10 @@ public class MediaInterface {
 
     Media currentVideo;
     File currentFile; // create file-type object of the video aswell to get name of the video
+
     int currentVideoIndex = -1;
 
+    int lastVideoIndex = -1; // will be set only if loading a video from the nextMedia variable (to store the position the queue was at before jumping to nextMedia
 
     MediaPlayer mediaPlayer;
 
@@ -307,12 +309,14 @@ public class MediaInterface {
     public void playNext(){
         controlBarController.mouseEventTracker.move();
 
-        int temp = currentVideoIndex; // saves the currentVideoIndex to a temporary variable because the next line resets currentVideoIndex to -1
+        int temp = currentVideoIndex; // saves the currentVideoIndex to a temporary variable because the next line resets currentVideoIndex to null
         resetMediaPlayer();
 
         if(nextMedia != null){
+            lastVideoIndex = temp;
             createMediaPlayer(nextMedia);
             nextMedia = null;
+            return;
         }
         else if(playedVideoIndex != -1 && playedVideoIndex < playedVideoList.size() - 1){
             // play next video inside playedVideoList
@@ -322,8 +326,11 @@ public class MediaInterface {
         else {
             playedVideoIndex = -1;
             if(settingsController.shuffleOn) playRandom();
-            else autoplay(temp); // pass the copy of currentVideoIndex to autplay method
+            else if(lastVideoIndex != -1) autoplay(lastVideoIndex); // pass the copy of currentVideoIndex to autplay method
+            else autoplay(temp);
         }
+
+        lastVideoIndex = -1;
     }
 
     public void playPrevious(){
@@ -351,11 +358,11 @@ public class MediaInterface {
         createMediaPlayer(unplayedVideoList.get(randomIndex));
     }
 
-    public void autoplay(int wasCurrentVideoIndex){
-        if(videoList.size() > wasCurrentVideoIndex + 1){ // get next video inside the videoList and play it
-            createMediaPlayer(videoList.get(wasCurrentVideoIndex + 1));
+    public void autoplay(int wasCurrentVideo){
+        if(videoList.size() > wasCurrentVideo + 1){ // get next video inside the videoList and play it
+            createMediaPlayer(videoList.get(wasCurrentVideo + 1));
         }
-        else if(videoList.size() > 0 && videoList.size() <= wasCurrentVideoIndex + 1){ // current video is last inside the videoList
+        else { // current video is last inside the videoList
                                                                                     // get the first video inside videoList and play it
             createMediaPlayer(videoList.get(0));
         }

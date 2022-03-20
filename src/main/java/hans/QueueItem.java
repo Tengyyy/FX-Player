@@ -312,7 +312,7 @@ public class QueueItem extends GridPane {
 
                 if(mediaInterface.currentVideo == this.videoItem) {
                     mediaInterface.resetMediaPlayer();
-                    mediaInterface.playedVideoList.remove(mediaInterface.playedVideoList.size() - 1);
+                    if(mediaInterface.playedVideoIndex == -1) mediaInterface.playedVideoList.remove(mediaInterface.playedVideoList.size() - 1);
                 }
 
                 /*
@@ -349,6 +349,7 @@ public class QueueItem extends GridPane {
                 menuController.queueBox.getChildren().remove(this);
 
                 mediaInterface.currentVideoIndex = mediaInterface.videoList.indexOf(mediaInterface.currentVideo);
+                if(mediaInterface.lastVideoIndex != -1) mediaInterface.lastVideoIndex = mediaInterface.videoList.indexOf(mediaInterface.currentVideo);
 
                 // updates video indexes
                 for(QueueItem queueItem : menuController.queue){

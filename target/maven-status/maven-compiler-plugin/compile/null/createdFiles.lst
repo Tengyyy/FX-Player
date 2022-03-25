@@ -1,5 +1,6 @@
 hans\QueueItemOptionsPopUp.class
 hans\MainController.class
+hans\MediaItem.class
 hans\MenuController.class
 hans\SettingsController$2.class
 hans\FocusTraversalEngine.class

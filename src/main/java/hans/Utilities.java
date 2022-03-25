@@ -1,6 +1,8 @@
 package hans;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.concurrent.Callable;
 
 import javafx.beans.binding.Bindings;
@@ -72,15 +74,10 @@ public class Utilities {
 
     }
 
-    public static void clipChildren(Region region) {
-        final Rectangle clipPane = new Rectangle();
-        region.setClip(clipPane);
-
-        region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
-            clipPane.setWidth(newValue.getWidth());
-            clipPane.setHeight(newValue.getHeight());
-            System.out.println("su ema");
-        });
+    // Turns four-character-code into a string
+    public static String fourccToString(int key) {
+        byte[] bytes = new byte[4];
+        ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).putInt(key);
+        return org.jcodec.platform.Platform.stringFromCharset(bytes, "iso8859-1");
     }
-
 }

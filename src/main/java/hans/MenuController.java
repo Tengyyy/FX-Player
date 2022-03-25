@@ -2,16 +2,22 @@ package hans;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 
-import animatefx.animation.FadeIn;
-import animatefx.animation.SlideInLeft;
 import animatefx.animation.SlideOutLeft;
+
+
 import com.jfoenix.controls.JFXButton;
 import eu.iamgio.animated.AnimationPair;
 import javafx.animation.Animation;
@@ -24,20 +30,29 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import eu.iamgio.animated.AnimatedVBox;
 import animatefx.animation.FadeInUp;
 import javafx.util.Duration;
+import org.jcodec.api.FrameGrab;
+import org.jcodec.api.JCodecException;
+import org.jcodec.codecs.mpa.Mp3Decoder;
+import org.jcodec.common.AudioUtil;
+import org.jcodec.common.DemuxerTrack;
+import org.jcodec.common.io.NIOUtils;
+import org.jcodec.containers.mp4.MP4Util;
+import org.jcodec.containers.mp4.boxes.*;
+import org.jcodec.containers.mp4.demuxer.MP4Demuxer;
+import org.jcodec.movtool.MetadataEditor;
+
 
 
 public class MenuController implements Initializable {
@@ -113,6 +128,7 @@ public class MenuController implements Initializable {
 
         fileChooser.setTitle("Open video");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audio", "*.mp3"));
 
         addLine.setStyle(activeLine);
         queueLine.setStyle(inactiveLine);
@@ -241,7 +257,6 @@ public class MenuController implements Initializable {
                 addBox.getChildren().addAll(addedVideosText1, addedVideosText2);
             }
         }
-
     }
 
     public void addPaneDragEntered(DragEvent e) {
@@ -249,6 +264,7 @@ public class MenuController implements Initializable {
 
        for(File file : dragBoardFiles){
            if(Utilities.getFileExtension(file).equals("mp4")){
+
                dragBoardVideos.add(new Media(file.toURI().toString()));
            }
        }
@@ -277,6 +293,7 @@ public class MenuController implements Initializable {
         mediaInterface.unplayedVideoList.addAll(dragBoardVideos);
 
         for(Media vid : dragBoardVideos){
+
             new QueueItem(vid, this, mediaInterface);
         }
 

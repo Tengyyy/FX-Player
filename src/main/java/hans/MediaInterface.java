@@ -2,12 +2,7 @@ package hans;
 
 
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableList;
-import javafx.scene.image.Image;
+
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -40,8 +35,6 @@ public class MediaInterface {
 
     // keeps track of position inside the video history list, if -1 the user is not currently inside the played video list (hasnt used the back arrow to play previous videos)
     int playedVideoIndex = -1;
-
-
 
     Media currentVideo;
     File currentFile; // create file-type object of the video aswell to get name of the video
@@ -195,6 +188,7 @@ public class MediaInterface {
     public void createMediaPlayer(Media media) {
 
         this.currentVideo = media;
+
         currentVideoIndex = videoList.indexOf(media);
 
         if(mainController.menuController != null){
@@ -212,6 +206,7 @@ public class MediaInterface {
         if (unplayedVideoList.contains(currentVideo)) unplayedVideoList.remove(currentVideo);
 
         mediaPlayer = new MediaPlayer(currentVideo);
+
 
         mainController.mediaView.setMediaPlayer(mediaPlayer);
 
@@ -236,7 +231,8 @@ public class MediaInterface {
 
 
         mediaPlayer.setOnReady(() -> {
-            // TODO Auto-generated method stub
+
+            //System.out.println(mediaPlayer.getMedia().getMetadata());
 
             mediaPlayer.setVolume(controlBarController.volumeSlider.getValue() / 100);
 
@@ -362,8 +358,8 @@ public class MediaInterface {
         if(videoList.size() > wasCurrentVideo + 1){ // get next video inside the videoList and play it
             createMediaPlayer(videoList.get(wasCurrentVideo + 1));
         }
-        else { // current video is last inside the videoList
-                                                                                    // get the first video inside videoList and play it
+        else { // current video is last inside the videoLis
+               // get the first video inside videoList and play it
             createMediaPlayer(videoList.get(0));
         }
     }

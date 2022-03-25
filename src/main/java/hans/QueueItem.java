@@ -3,7 +3,6 @@ package hans;
 
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -21,6 +20,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -87,12 +87,17 @@ public class QueueItem extends GridPane {
     // the options popup for this queue item
     QueueItemOptionsPopUp optionsPopUp;
 
+
+
     QueueItem(Media videoItem, MenuController menuController, MediaInterface mediaInterface) {
 
         this.videoItem = videoItem;
         this.menuController = menuController;
 
         videoIndex = menuController.queue.size() + 1;
+        videoFile = new File(videoItem.getSource().replaceAll("%20", " "));
+
+
 
         Platform.runLater(() -> optionsPopUp = new QueueItemOptionsPopUp(this));
 
@@ -148,7 +153,6 @@ public class QueueItem extends GridPane {
 
         videoTitle.getStyleClass().add("videoTitle");
 
-        videoFile = new File(videoItem.getSource().replaceAll("%20", " "));
         videoTitle.setText(videoFile.getName());
         videoTitle.setManaged(false);
         videoTitle.setLayoutY(32 + 21.09375 / 4);
@@ -188,12 +192,9 @@ public class QueueItem extends GridPane {
             optionsButton.setCursor(Cursor.HAND);
             optionsButton.setOpacity(0);
 
-            optionsButton.setOnAction((e) -> {
-                optionsPopUp.showOptions();
-            });
+            optionsButton.setOnAction((e) -> optionsPopUp.showOptions());
 
-            this.setOnContextMenuRequested(e ->
-                optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
+            this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
 
             optionsIcon = new Region();
             optionsIcon.setShape(optionsSVG);
@@ -389,7 +390,9 @@ public class QueueItem extends GridPane {
     }
     
     public void showMetadata(){
-        System.out.println("Showing metadata");
+
+        System.out.println("Showing metadata\n");
+
     }
 
     public void playNext(){

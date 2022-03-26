@@ -17,27 +17,26 @@ public class MediaInterface {
     SettingsController settingsController;
 
     // all videos that have been added to the queue or directly to the player
-    List<Media> videoList = new ArrayList<>();
+    List<MediaItem> videoList = new ArrayList<>();
 
 
     // videoList minus the videos that have already been played
-    List<Media> unplayedVideoList = new ArrayList<>();
+    List<MediaItem> unplayedVideoList = new ArrayList<>();
 
 
     //if this is null, mediainterface will select a video from unplayedvideolist to play next, else this video will be played
-    Media nextMedia;
+    MediaItem nextMedia;
 
 
     // contains all the videos that have been played, in the order that they were played (necessary to navigate videos with the control arrows)
-    List<Media> playedVideoList = new ArrayList<>();
+    List<MediaItem> playedVideoList = new ArrayList<>();
 
 
 
     // keeps track of position inside the video history list, if -1 the user is not currently inside the played video list (hasnt used the back arrow to play previous videos)
     int playedVideoIndex = -1;
 
-    Media currentVideo;
-    File currentFile; // create file-type object of the video aswell to get name of the video
+    MediaItem currentVideo;
 
     int currentVideoIndex = -1;
 
@@ -61,9 +60,9 @@ public class MediaInterface {
     public void updateMedia(double newValue) {
 
         if (!controlBarController.showingTimeLeft)
-            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, currentVideo);
+            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, currentVideo.getMedia());
         else
-            Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, currentVideo);
+            Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, currentVideo.getMedia());
 
         if (atEnd) {
             atEnd = false;
@@ -148,7 +147,7 @@ public class MediaInterface {
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
 
             controlBarController.durationLabel.textProperty().unbind();
-            controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(currentVideo.getDuration()));
+            controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(currentVideo.getMedia().getDuration()));
 
 
             controlBarController.playIcon.setShape(controlBarController.replaySVG);
@@ -185,11 +184,11 @@ public class MediaInterface {
 
     }
 
-    public void createMediaPlayer(Media media) {
+    public void createMediaPlayer(MediaItem mediaItem) {
 
-        this.currentVideo = media;
+        this.currentVideo = mediaItem;
 
-        currentVideoIndex = videoList.indexOf(media);
+        currentVideoIndex = videoList.indexOf(mediaItem);
 
         if(mainController.menuController != null){
             mainController.menuController.queue.get(currentVideoIndex).setActive();
@@ -205,23 +204,22 @@ public class MediaInterface {
 
         if (unplayedVideoList.contains(currentVideo)) unplayedVideoList.remove(currentVideo);
 
-        mediaPlayer = new MediaPlayer(currentVideo);
+        mediaPlayer = new MediaPlayer(currentVideo.getMedia());
 
 
         mainController.mediaView.setMediaPlayer(mediaPlayer);
 
         // update video name field in settings pane and the stage title with the new video
         Platform.runLater(() -> {
-            currentFile = new File(currentVideo.getSource().replaceAll("%20", " "));
-            settingsController.videoNameText.setText(currentFile.getName()); // updates video name text in settings pane and window title with filename
-            App.stage.setTitle(currentFile.getName());
+            settingsController.videoNameText.setText(currentVideo.getFile().getName()); // updates video name text in settings pane and window title with filename
+            App.stage.setTitle(currentVideo.getFile().getName());
         });
 
         mediaPlayer.currentTimeProperty().addListener((observableValue, oldTime, newTime) -> {
             if (!controlBarController.showingTimeLeft)
-                Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, currentVideo);
+                Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, currentVideo.getMedia());
             else
-                Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, currentVideo);
+                Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, currentVideo.getMedia());
 
             if (!controlBarController.durationSlider.isValueChanging()) {
                 controlBarController.durationSlider.setValue(newTime.toSeconds());
@@ -238,7 +236,7 @@ public class MediaInterface {
 
             controlBarController.play();
 
-            controlBarController.durationSlider.setMax(Math.floor(currentVideo.getDuration().toSeconds()));
+            controlBarController.durationSlider.setMax(Math.floor(currentVideo.getMedia().getDuration().toSeconds()));
 
             TimerTask setRate = new TimerTask() {
 
@@ -345,8 +343,8 @@ public class MediaInterface {
 
     public void playRandom() {
         if(unplayedVideoList.isEmpty()){
-            for(Media media : videoList){
-                unplayedVideoList.add(media);
+            for(MediaItem mediaItem : videoList){
+                unplayedVideoList.add(mediaItem);
             }
         }
         Random random = new Random();
@@ -364,8 +362,8 @@ public class MediaInterface {
         }
     }
 
-    public void setNextMedia(Media media){
-        nextMedia = media;
+    public void setNextMedia(MediaItem mediaItem){
+        nextMedia = mediaItem;
     }
 
 }

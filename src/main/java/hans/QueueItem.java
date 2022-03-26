@@ -43,8 +43,7 @@ public class QueueItem extends GridPane {
 
     JFXButton removeButton = new JFXButton();
 
-    Media videoItem;
-    File videoFile;// the video file that the above media object represents
+    MediaItem videoItem;
 
     MenuController menuController;
 
@@ -89,15 +88,12 @@ public class QueueItem extends GridPane {
 
 
 
-    QueueItem(Media videoItem, MenuController menuController, MediaInterface mediaInterface) {
+    QueueItem(MediaItem videoItem, MenuController menuController, MediaInterface mediaInterface) {
 
         this.videoItem = videoItem;
         this.menuController = menuController;
 
         videoIndex = menuController.queue.size() + 1;
-        videoFile = new File(videoItem.getSource().replaceAll("%20", " "));
-
-
 
         Platform.runLater(() -> optionsPopUp = new QueueItemOptionsPopUp(this));
 
@@ -153,7 +149,7 @@ public class QueueItem extends GridPane {
 
         videoTitle.getStyleClass().add("videoTitle");
 
-        videoTitle.setText(videoFile.getName());
+        videoTitle.setText(videoItem.getFile().getName());
         videoTitle.setManaged(false);
         videoTitle.setLayoutY(32 + 21.09375 / 4);
 

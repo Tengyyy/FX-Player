@@ -164,6 +164,7 @@ public class SettingsController implements Initializable {
         fileChooser = new FileChooser();
         fileChooser.setTitle("Open video");
         fileChooser.getExtensionFilters().add(new ExtensionFilter("Videos", "*.mp4"));
+        fileChooser.getExtensionFilters().add(new ExtensionFilter("Audio", "*.mp3"));
 
         playbackSpeedBoxesArray = new HBox[]{playbackSpeed1, playbackSpeed2, playbackSpeed3, playbackSpeed4, playbackSpeed5, playbackSpeed6, playbackSpeed7, playbackSpeed8};
         playbackSpeedCheckBoxesArray = new Label[]{checkBox1, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6, checkBox7, checkBox8};
@@ -705,8 +706,11 @@ public class SettingsController implements Initializable {
             mediaInterface.resetMediaPlayer();
             mediaInterface.playedVideoIndex = -1;
 
+            MediaItem temp = null;
 
-            Media temp = new Media(selectedFile.toURI().toString());
+            if(Utilities.getFileExtension(selectedFile).equals("mp4")) temp = new Mp4Item(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("mp3")) temp = new Mp3Item(selectedFile);
+
 
             if(mainController.menuController != null) {
                 new QueueItem(temp, mainController.menuController, mediaInterface);

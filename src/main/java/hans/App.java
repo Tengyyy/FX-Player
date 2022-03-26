@@ -29,6 +29,8 @@ public class App extends Application {
 
     MediaInterface mediaInterface;
 
+    double frameRate = 30;
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -171,55 +173,55 @@ public class App extends Application {
                     case DIGIT1: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getDuration().toSeconds() * 1 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 1 / 10);
                     }
                     break;
                     case DIGIT2: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getDuration().toSeconds() * 2 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 2 / 10);
                     }
                     break;
                     case DIGIT3: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getDuration().toSeconds() * 3 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 3 / 10);
                     }
                     break;
                     case DIGIT4: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getDuration().toSeconds() * 4 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 4 / 10);
                     }
                     break;
                     case DIGIT5: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getDuration().toSeconds() * 5 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 5 / 10);
                     }
                     break;
                     case DIGIT6: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getDuration().toSeconds() * 6 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 6 / 10);
                     }
                     break;
                     case DIGIT7: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getDuration().toSeconds() * 7 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 7 / 10);
                     }
                     break;
                     case DIGIT8: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getDuration().toSeconds() * 8 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 8 / 10);
                     }
                     break;
                     case DIGIT9: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getDuration().toSeconds() * 9 / 10);
+                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 9 / 10);
                     }
                     break;
                     case DIGIT0: {

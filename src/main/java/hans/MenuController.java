@@ -2,16 +2,11 @@ package hans;
 
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.channels.SeekableByteChannel;
+
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 
@@ -33,7 +28,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
@@ -42,16 +36,7 @@ import javafx.stage.FileChooser;
 import eu.iamgio.animated.AnimatedVBox;
 import animatefx.animation.FadeInUp;
 import javafx.util.Duration;
-import org.jcodec.api.FrameGrab;
-import org.jcodec.api.JCodecException;
-import org.jcodec.codecs.mpa.Mp3Decoder;
-import org.jcodec.common.AudioUtil;
-import org.jcodec.common.DemuxerTrack;
-import org.jcodec.common.io.NIOUtils;
-import org.jcodec.containers.mp4.MP4Util;
-import org.jcodec.containers.mp4.boxes.*;
-import org.jcodec.containers.mp4.demuxer.MP4Demuxer;
-import org.jcodec.movtool.MetadataEditor;
+
 
 
 
@@ -109,7 +94,7 @@ public class MenuController implements Initializable {
     FileChooser fileChooser = new FileChooser();
 
     ArrayList<File> dragBoardFiles;
-    ArrayList<Media> dragBoardVideos = new ArrayList<Media>();
+    ArrayList<File> dragBoardMedia = new ArrayList<File>();
 
     ArrayList<QueueItem> queue = new ArrayList<QueueItem>();
 
@@ -161,8 +146,8 @@ public class MenuController implements Initializable {
 
        // creates queue items for all the items in the videolist when opening the menu
         Platform.runLater(() -> {
-            for(Media media : mediaInterface.videoList){
-                QueueItem queueItem = new QueueItem(media, this, mediaInterface);
+            for(MediaItem mediaItem : mediaInterface.videoList){
+                QueueItem queueItem = new QueueItem(mediaItem, this, mediaInterface);
                 if(queueItem.videoIndex - 1 == mediaInterface.currentVideoIndex){
                     queueItem.setActive();
                     if(mediaInterface.playing){
@@ -231,7 +216,11 @@ public class MenuController implements Initializable {
 
         if(selectedFile != null){
 
-            Media temp = new Media(selectedFile.toURI().toString());
+            MediaItem temp = null;
+
+            if(Utilities.getFileExtension(selectedFile).equals("mp4")) temp = new Mp4Item(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("mp3")) temp = new Mp3Item(selectedFile);
+
 
             mediaInterface.videoList.add(temp);
             mediaInterface.unplayedVideoList.add(temp);
@@ -263,43 +252,49 @@ public class MenuController implements Initializable {
        dragBoardFiles = (ArrayList<File>) e.getDragboard().getFiles();
 
        for(File file : dragBoardFiles){
-           if(Utilities.getFileExtension(file).equals("mp4")){
+           if(Utilities.getFileExtension(file).equals("mp4") || Utilities.getFileExtension(file).equals("mp3")){
 
-               dragBoardVideos.add(new Media(file.toURI().toString()));
+               dragBoardMedia.add(file);
            }
        }
 
-       if(dragBoardVideos.isEmpty()) return;
+       if(dragBoardMedia.isEmpty()) return;
 
-       //if the dragboard contains mp4 files, play the file adding animation
+       //if the dragboard contains mp4 or mp3 files, play the file adding animation
 
         AnimationsClass.addPaneDragEntered(addBackground, addPane);
 
     }
 
     public void addPaneDragOver(DragEvent e){
-        if(!dragBoardVideos.isEmpty()){
+        if(!dragBoardMedia.isEmpty()){
             e.acceptTransferModes(TransferMode.COPY);
         }
     }
 
     public void addPaneDragDropped(DragEvent e){
 
-        if(dragBoardVideos.isEmpty()) return;
+        if(dragBoardMedia.isEmpty()) return;
 
-        // add mp4 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
+        // add mp4 and mp3 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
 
-        mediaInterface.videoList.addAll(dragBoardVideos);
-        mediaInterface.unplayedVideoList.addAll(dragBoardVideos);
 
-        for(Media vid : dragBoardVideos){
+        for(File file : dragBoardMedia){
+            MediaItem temp = null;
 
-            new QueueItem(vid, this, mediaInterface);
+            if(Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
+            else if(Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
+
+            mediaInterface.videoList.add(temp);
+            mediaInterface.unplayedVideoList.add(temp);
+
+            new QueueItem(temp, this, mediaInterface);
         }
 
 
-        int dragVideosAdded = dragBoardVideos.size();
-        dragBoardVideos.clear();
+
+        int dragVideosAdded = dragBoardMedia.size();
+        dragBoardMedia.clear();
 
         videosAddedCounter += dragVideosAdded;
 
@@ -328,7 +323,7 @@ public class MenuController implements Initializable {
 
     public void addPaneDragExited(){
 
-        dragBoardVideos.clear();
+        dragBoardMedia.clear();
 
         if(AnimationsClass.addPaneDragEntered != null){
             AnimationsClass.addPaneDragEntered.stop();
@@ -348,5 +343,6 @@ public class MenuController implements Initializable {
         this.mediaInterface = mediaInterface;
     }
 }
+
 
 

@@ -440,10 +440,10 @@ public class ControlBarController implements Initializable {
 
     public void toggleDurationLabel() {
         if (showingTimeLeft && mediaInterface.currentVideo != null) {
-            Utilities.setCurrentTimeLabel(durationLabel, mediaInterface.mediaPlayer, mediaInterface.currentVideo);
+            Utilities.setCurrentTimeLabel(durationLabel, mediaInterface.mediaPlayer, mediaInterface.currentVideo.getMedia());
             showingTimeLeft = false;
         } else if(!showingTimeLeft && mediaInterface.currentVideo != null){
-            Utilities.setTimeLeftLabel(durationLabel, mediaInterface.mediaPlayer, mediaInterface.currentVideo);
+            Utilities.setTimeLeftLabel(durationLabel, mediaInterface.mediaPlayer, mediaInterface.currentVideo.getMedia());
             showingTimeLeft = true;
         }
     }

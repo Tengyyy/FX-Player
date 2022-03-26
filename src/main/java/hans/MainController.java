@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -384,7 +385,8 @@ public class MainController implements Initializable {
     }
 
     public void handleDragEntered(DragEvent e){
-        if(!Utilities.getFileExtension(e.getDragboard().getFiles().get(0)).equals("mp4")) return;
+        File file = e.getDragboard().getFiles().get(0);
+        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3")) return;
 
         mediaView.setEffect(new GaussianBlur(30));
 
@@ -413,7 +415,8 @@ public class MainController implements Initializable {
     }
 
     public void handleDragOver(DragEvent e){
-        if(!Utilities.getFileExtension(e.getDragboard().getFiles().get(0)).equals("mp4")) return;
+        File file = e.getDragboard().getFiles().get(0);
+        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3")) return;
 
         e.acceptTransferModes(TransferMode.COPY);
     }
@@ -423,7 +426,7 @@ public class MainController implements Initializable {
         File file = e.getDragboard().getFiles().get(0);
 
         /* return statement */
-        if(!Utilities.getFileExtension(file).equals("mp4")) return;
+        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3")) return;
 
 
         if(pane.getChildren().size() == 5){
@@ -436,7 +439,11 @@ public class MainController implements Initializable {
         mediaInterface.resetMediaPlayer();
         mediaInterface.playedVideoIndex = -1;
 
-        Media temp = new Media(file.toURI().toString());
+        MediaItem temp = null;
+
+        if(Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
+        else if(Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
+
         if(menuController != null) {
             new QueueItem(temp, menuController, mediaInterface);
         }

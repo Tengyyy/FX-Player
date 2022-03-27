@@ -188,8 +188,14 @@ public class QueueItem extends GridPane {
             optionsButton.setCursor(Cursor.HAND);
             optionsButton.setOpacity(0);
 
-            optionsButton.setOnAction((e) -> optionsPopUp.showOptions());
+            optionsButton.setOnAction((e) -> {
+                if(optionsPopUp.isShowing()) optionsPopUp.hide();
+                else optionsPopUp.showOptions();
+            });
 
+            this.setOnMouseClicked(e -> {
+               if(optionsPopUp.isShowing()) optionsPopUp.hide();
+            });
             this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
 
             optionsIcon = new Region();

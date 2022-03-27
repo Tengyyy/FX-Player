@@ -101,7 +101,7 @@ public class App extends Application {
                     case RIGHT: {
 
                         controlBarController.mouseEventTracker.move();
-                        if (!mainController.getControlBarController().volumeSlider.isFocused()) {
+                        if (!mainController.getControlBarController().volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
 
                             if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
                                 mediaInterface.seekedToEnd = true;
@@ -118,7 +118,7 @@ public class App extends Application {
 
                         controlBarController.mouseEventTracker.move();
 
-                        if (!controlBarController.volumeSlider.isFocused()) {
+                        if (!controlBarController.volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
                             mediaInterface.seekedToEnd = false;
 
                             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
@@ -148,7 +148,7 @@ public class App extends Application {
                     case L: {
 
                         controlBarController.mouseEventTracker.move();
-                        if (!controlBarController.volumeSlider.isFocused()) {
+                        if (!controlBarController.volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
 
 
                             if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 10 >= controlBarController.durationSlider.getMax()) {
@@ -165,7 +165,7 @@ public class App extends Application {
                     case J: {
 
                         controlBarController.mouseEventTracker.move();
-                        if (!controlBarController.volumeSlider.isFocused()) {
+                        if (!controlBarController.volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
                             mediaInterface.seekedToEnd = false;
                             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);
                         }

@@ -10,12 +10,14 @@ hans\ControlBarController.class
 hans\App.class
 hans\CustomSpeedTab.class
 hans\ControlTooltip.class
+hans\Mp4Item.class
 hans\AnimationsClass.class
 hans\AnimationsClass$2.class
 hans\SettingsController$1.class
 hans\QueueItem.class
 hans\MediaInterface$1.class
 hans\AnimationsClass$1.class
+hans\Mp3Item.class
 hans\Utilities.class
 hans\MainController$1.class
 hans\AnimationsClass$3.class

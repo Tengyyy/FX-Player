@@ -28,6 +28,7 @@ public class Mp4Item implements MediaItem{
 
     // technical details of the media object (TODO: separate audio and video)
     double frameRate = 30;
+    float frameDuration = (float) (1 / frameRate);
     double width;
     double height;
 
@@ -65,7 +66,7 @@ public class Mp4Item implements MediaItem{
             int frameCount = vt.getMeta().getTotalFrames();
             double duration = vt.getMeta().getTotalDuration();
             frameRate = frameCount / duration;
-            System.out.println(frameRate);
+            frameDuration = (float) (1 / frameRate);
 
         } catch (IOException | JCodecException e) {
             throw new RuntimeException(e);
@@ -75,8 +76,8 @@ public class Mp4Item implements MediaItem{
 
 
     @Override
-    public double getFrameRate() {
-        return this.frameRate;
+    public float getFrameDuration() {
+        return this.frameDuration;
     }
 
     @Override

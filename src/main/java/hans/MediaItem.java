@@ -9,7 +9,7 @@ import java.util.Map;
 public interface MediaItem {
 
 
-    public  double getFrameRate();
+    public  float getFrameDuration();
 
     public  Map getMediaInformation();
 

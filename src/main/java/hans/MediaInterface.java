@@ -208,6 +208,7 @@ public class MediaInterface {
 
 
         mainController.mediaView.setMediaPlayer(mediaPlayer);
+        App.setFrameDuration(currentVideo.getFrameDuration());
 
         // update video name field in settings pane and the stage title with the new video
         Platform.runLater(() -> {
@@ -268,6 +269,7 @@ public class MediaInterface {
 
         controlBarController.durationSlider.setValue(0);
 
+        App.setFrameDuration(1 / 30);
         App.stage.setTitle("MP4 Player");
 
         settingsController.videoNameText.setLayoutX(0);

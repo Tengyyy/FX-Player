@@ -8,6 +8,7 @@ import java.util.Map;
 public class Mp3Item implements MediaItem{
 
     double frameRate = 30;
+    float frameDuration = (float) (1 / frameRate);
 
     File file;
     Media media;
@@ -24,8 +25,8 @@ public class Mp3Item implements MediaItem{
     }
 
     @Override
-    public double getFrameRate() {
-        return frameRate;
+    public float getFrameDuration() {
+        return frameDuration;
     }
 
     @Override

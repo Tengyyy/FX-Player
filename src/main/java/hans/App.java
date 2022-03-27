@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Duration;
 
 
 public class App extends Application {
@@ -29,7 +30,7 @@ public class App extends Application {
 
     MediaInterface mediaInterface;
 
-    double frameRate = 30;
+    public static float frameDuration = (float)1 / 30;
 
 
     @Override
@@ -332,6 +333,30 @@ public class App extends Application {
                         }
                     }
 
+                    case COMMA: {
+                        // seek backwards by 1 frame
+
+
+                        if(!mediaInterface.playing && mediaInterface.mediaPlayer != null) {
+                            mediaInterface.seekedToEnd = false;
+                            mediaInterface.mediaPlayer.seek(mediaInterface.mediaPlayer.getCurrentTime().subtract(Duration.seconds(frameDuration)));                            System.out.println(frameDuration);
+                        }
+                        event.consume();
+                    }
+                    break;
+
+                    case PERIOD: {
+                        // seek forward by 1 frame
+                        if(!mediaInterface.playing && mediaInterface.mediaPlayer != null){
+                            if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + frameDuration >= controlBarController.durationSlider.getMax()) {
+                                mediaInterface.seekedToEnd = true;
+                            }
+
+                            mediaInterface.mediaPlayer.seek(mediaInterface.mediaPlayer.getCurrentTime().add(Duration.seconds(frameDuration)));
+                        }
+                        event.consume();
+                    }
+
                     default:
                         break;
                 }
@@ -365,5 +390,8 @@ public class App extends Application {
         launch(args);
     }
 
+    public static void setFrameDuration(float duration){
+        frameDuration = duration;
+    }
 
 }

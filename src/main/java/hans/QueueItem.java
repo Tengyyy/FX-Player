@@ -400,6 +400,6 @@ public class QueueItem extends GridPane {
     public void playNext(){
         menuController.mediaInterface.setNextMedia(this.videoItem);
 
-            AnimationsClass.openNextVideoNotification(menuController);
+            AnimationsClass.openMenuNotification(menuController);
     }
 }

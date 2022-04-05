@@ -15,6 +15,7 @@ public class MediaInterface {
     MainController mainController;
     ControlBarController controlBarController;
     SettingsController settingsController;
+    MenuController menuController;
 
     // all videos that have been added to the queue or directly to the player
     List<MediaItem> videoList = new ArrayList<>();
@@ -51,10 +52,13 @@ public class MediaInterface {
     public boolean seekedToEnd = false; // true = video was seeked to the end; false = video naturally reached the end or the video is still playing
     ////////////////////////////////////////////////
 
-    MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController) {
+
+
+    MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController) {
         this.mainController = mainController;
         this.controlBarController = controlBarController;
         this.settingsController = settingsController;
+        this.menuController = menuController;
     };
 
     public void updateMedia(double newValue) {
@@ -69,10 +73,8 @@ public class MediaInterface {
             seekedToEnd = false;
 
             if (wasPlaying) {
-                if(mainController.menuController != null) {
-                    mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.pauseSVG);
-                    mainController.menuController.activeItem.play.updateText("Pause video");
-                }
+                    menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
+                    menuController.activeItem.play.updateText("Pause video");
 
                 if (!controlBarController.durationSlider.isValueChanging()) {
 
@@ -90,10 +92,8 @@ public class MediaInterface {
                         controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
                     }
 
-                    if(mainController.menuController != null){
-                        mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.pauseSVG);
-                        mainController.menuController.activeItem.play.updateText("Pause video");
-                    }
+                        menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
+                        menuController.activeItem.play.updateText("Pause video");
 
                 }
             } else {
@@ -109,10 +109,8 @@ public class MediaInterface {
                     controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
                 }
 
-                if(mainController.menuController != null){
-                    mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.playSVG);
-                    mainController.menuController.activeItem.play.updateText("Play video");
-                }
+                    menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
+                    menuController.activeItem.play.updateText("Play video");
 
             }
             controlBarController.playButton.setOnAction((e) -> {
@@ -152,10 +150,8 @@ public class MediaInterface {
 
             controlBarController.playIcon.setShape(controlBarController.replaySVG);
 
-            if(mainController.menuController != null){
-                mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.playSVG);
-                mainController.menuController.activeItem.play.updateText("Play video");
-            }
+                menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
+                menuController.activeItem.play.updateText("Play video");
 
             if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
                 controlBarController.play.hide();
@@ -190,9 +186,7 @@ public class MediaInterface {
 
         currentVideoIndex = videoList.indexOf(mediaItem);
 
-        if(mainController.menuController != null){
-            mainController.menuController.queue.get(currentVideoIndex).setActive();
-        }
+            menuController.queue.get(currentVideoIndex).setActive();
 
         // resets all media state variables before creating a new player
         atEnd = false;

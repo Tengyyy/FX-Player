@@ -18,7 +18,6 @@ public class App extends Application {
 
     public static Stage stage;
 
-    public static Stage menuStage;
 
     public EventHandler<KeyEvent> eventHandler;
 
@@ -27,6 +26,7 @@ public class App extends Application {
 
     ControlBarController controlBarController;
     SettingsController settingsController;
+    MenuController menuController;
 
     MediaInterface mediaInterface;
 
@@ -47,6 +47,8 @@ public class App extends Application {
             controlBarController = mainController.getControlBarController();
 
             settingsController = mainController.getSettingsController();
+
+            menuController = mainController.getMenuController();
 
             mediaInterface = mainController.getMediaInterface();
 

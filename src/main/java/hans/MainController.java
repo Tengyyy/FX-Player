@@ -35,6 +35,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Background;
 
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 
@@ -61,7 +62,10 @@ public class MainController implements Initializable {
     Button menuButton;
 
     @FXML
-    StackPane pane, menuButtonPane;
+    StackPane outerPane, menuButtonPane, mediaViewWrapper;
+
+    @FXML
+    BorderPane mainPane;
 
     @FXML
     Region menuIcon;
@@ -72,12 +76,11 @@ public class MainController implements Initializable {
     @FXML
     private SettingsController settingsController;
 
-    MenuController menuController;
+    @FXML
+    private MenuController menuController;
 
     MediaInterface mediaInterface;
 
-
-    // custom playback speed selection box that will be created if the user selects a custom speed using the slider
 
     private File file;
 
@@ -89,7 +92,6 @@ public class MainController implements Initializable {
 
     boolean captionsOpen = false;
 
-    boolean menuOpen = false;
 
 
     // counter to keep track of the current node that has focus (used for focus traversing with tab and shift+tab)
@@ -99,7 +101,6 @@ public class MainController implements Initializable {
 
     ControlTooltip menuTooltip;
 
-    Stage menuStage = new Stage();
 
     Image addVideoImage = new Image(new File("src/main/resources/hans/images/addVideo.png").toURI().toString());
     ImageView addVideo;
@@ -111,10 +112,12 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
-        mediaInterface = new MediaInterface(this, controlBarController, settingsController);
+        mediaInterface = new MediaInterface(this, controlBarController, settingsController, menuController);
 
-        controlBarController.init(this, settingsController, mediaInterface); // shares references of all the controllers between eachother
-        settingsController.init(this, controlBarController, mediaInterface);
+        controlBarController.init(this, settingsController, menuController, mediaInterface); // shares references of all the controllers between eachother
+        settingsController.init(this, controlBarController, menuController, mediaInterface);
+        menuController.init(this, controlBarController, settingsController, mediaInterface);
+
 
         file = new File("src/main/resources/hans/hey.mp4");
 
@@ -123,14 +126,25 @@ public class MainController implements Initializable {
         menuSVG.setContent(menuPath);
 
         // Make mediaView adjust to frame size
+
         mediaViewWidth = mediaView.fitWidthProperty();
         mediaViewHeight = mediaView.fitHeightProperty();
-        mediaViewWidth.bind(Bindings.selectDouble(mediaView.sceneProperty(), "width"));
-        mediaViewHeight.bind(Bindings.selectDouble(mediaView.sceneProperty(), "height"));
+        mediaViewWidth.bind(mediaViewWrapper.widthProperty());
+        Platform.runLater(() -> mediaViewHeight.bind(mediaViewWrapper.getScene().heightProperty()));
+
         mediaView.setPreserveRatio(true);
 
 
-        pane.setStyle("-fx-background-color: rgb(0,0,0)");
+        //video expands to take up entire window if menu is not open
+        Platform.runLater(() ->{
+            if(!menuController.menuOpen){
+                mediaViewWrapper.prefWidthProperty().bind(mediaViewWrapper.getScene().widthProperty());
+            }
+        });
+
+
+
+        mediaViewWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
 
 
         menuButton.setBackground(Background.EMPTY);
@@ -166,6 +180,8 @@ public class MainController implements Initializable {
                 });
 
         // mediaInterface.createMediaPlayer(new Media(file.toURI().toString()));
+
+        //menuController.menu.setOpacity(0);
 
     }
 
@@ -339,49 +355,21 @@ public class MainController implements Initializable {
 
     public void openMenu() {
 
+            menuController.menuOpen = true;
+            //menuController.menu.translateXProperty().unbind();
+            //mediaViewWrapper.prefWidthProperty().unbind();
+            AnimationsClass.openMenu(this, menuController);
 
-        if (!menuOpen) {
-            Parent root;
-            menuOpen = true;
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("views/Menu.fxml"));
-                root = loader.load();
+    }
 
-                menuController = loader.getController();
+    public void closeMenu(){
+        menuController.menuOpen = false;
+        AnimationsClass.closeMenu(this, menuController);
+    }
 
-                menuController.init(this, controlBarController, settingsController, mediaInterface);
-
-                if (menuStage == null) {
-                    menuStage = new Stage();
-                }
-
-                menuStage.setTitle("Media Player Menu");
-                menuStage.setX(10);
-                menuStage.setY(30);
-
-                Scene menuScene = new Scene(root, 400, 600);
-                menuScene.getStylesheets().add(getClass().getResource("styles/menu.css").toExternalForm());
-
-                menuStage.setScene(menuScene);
-                menuStage.show();
-
-                menuStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-                    @Override
-                    public void handle(WindowEvent event) {
-                        menuOpen = false;
-                        menuStage = null;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (!menuStage.isIconified()) { // brings the menu to the front if its behind another window
-            menuStage.requestFocus();
-        } else {
-            menuStage.setIconified(false); // Restores the window if its iconified (hidden)
-        }
+    public void menuButtonClick(){
+        if(menuController.menuOpen) closeMenu();
+        else openMenu();
     }
 
     public void handleDragEntered(DragEvent e){
@@ -400,17 +388,20 @@ public class MainController implements Initializable {
         addVideo.setFitWidth(150);
         addVideo.setFitHeight(150);
         addVideo.setEffect(new DropShadow());
-        if(pane.getChildren().size() == 4){
-            pane.getChildren().add(addVideo);
+        if(!mediaViewWrapper.getChildren().contains(addVideo)){
+            mediaViewWrapper.getChildren().add(addVideo);
         }
 
     }
 
     public void handleDragExited(DragEvent e){
+
+        System.out.println("test");
+
         mediaView.setEffect(null);
 
-        if(pane.getChildren().size() == 5){
-            pane.getChildren().remove(4);
+        if(mediaViewWrapper.getChildren().contains(addVideo)){
+            mediaViewWrapper.getChildren().remove(addVideo);
         }
     }
 
@@ -429,8 +420,8 @@ public class MainController implements Initializable {
         if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3")) return;
 
 
-        if(pane.getChildren().size() == 5){
-            pane.getChildren().remove(4);
+        if(mediaViewWrapper.getChildren().contains(addVideo)){
+            mediaViewWrapper.getChildren().remove(addVideo);
         }
 
         // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
@@ -444,13 +435,11 @@ public class MainController implements Initializable {
         if(Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
         else if(Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
 
-        if(menuController != null) {
-            new QueueItem(temp, menuController, mediaInterface);
-        }
+        new QueueItem(temp, menuController, mediaInterface);
+
         mediaInterface.videoList.add(temp);
         mediaInterface.unplayedVideoList.add(temp);
         mediaInterface.createMediaPlayer(temp);
-
     }
 
 
@@ -461,6 +450,8 @@ public class MainController implements Initializable {
     public ControlBarController getControlBarController() {
         return controlBarController;
     }
+
+    public MenuController getMenuController(){ return menuController;}
 
     public MediaInterface getMediaInterface() {
         return mediaInterface;

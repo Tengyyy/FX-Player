@@ -16,21 +16,6 @@
 	-fx-font-size: 15;
 }
 
-#addVideosBoldText, #addedVideosBoldText {
-    -fx-font-family: "Roboto Bold";
-	-fx-font-size: 22;
-}
-
-#addVideosNormalText, #addedVideosNormalText {
-    -fx-font-family: "Roboto";
-	-fx-font-size: 20;
-}
-
-.menuButton {
-    -fx-background-color: #303030;
-    -fx-background-radius: 0;
-    -fx-font-size: 1.2em;
-}
 
 #queueScroll {
     -fx-background-insets: 0;
@@ -96,19 +81,6 @@
 
 #queueBox {
     -fx-background-color: #202020;
-}
-
-#addBackground {
-    -fx-border-style: dashed;
-    -fx-border-width: 3;
-    -fx-border-color: white;
-    -fx-background-color: transparent;
-}
-
-
-
-.buttonLine {
-    -fx-pref-height: 0.5em;
 }
 
 

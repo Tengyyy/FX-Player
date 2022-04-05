@@ -100,6 +100,7 @@ public class SettingsController implements Initializable {
 
     MainController mainController;
     ControlBarController controlBarController;
+    MenuController menuController;
 
 
     CustomSpeedTab playbackCustom;
@@ -522,9 +523,10 @@ public class SettingsController implements Initializable {
 
     }
 
-    public void init(MainController mainController, ControlBarController controlBarController, MediaInterface mediaInterface) {
+    public void init(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface) {
         this.mainController = mainController;
         this.controlBarController = controlBarController;
+        this.menuController = menuController;
         this.mediaInterface = mediaInterface;
     }
 
@@ -712,9 +714,7 @@ public class SettingsController implements Initializable {
             else if(Utilities.getFileExtension(selectedFile).equals("mp3")) temp = new Mp3Item(selectedFile);
 
 
-            if(mainController.menuController != null) {
-                new QueueItem(temp, mainController.menuController, mediaInterface);
-            }
+                new QueueItem(temp, menuController, mediaInterface);
 
             mediaInterface.videoList.add(temp);
             mediaInterface.unplayedVideoList.add(temp);

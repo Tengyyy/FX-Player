@@ -70,6 +70,7 @@ public class ControlBarController implements Initializable {
 
     MainController mainController;
     SettingsController settingsController;
+    MenuController menuController;
 
 
     public double volumeValue;
@@ -328,10 +329,8 @@ public class ControlBarController implements Initializable {
                     } else {
                         replay = new ControlTooltip("Replay (k)", playButton, false, controlBar, 0);
                     }
-                    if(mainController.menuController != null){
-                        mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.playSVG);
-                        mainController.menuController.activeItem.play.updateText("Play video");
-                    }
+                        menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
+                        menuController.activeItem.play.updateText("Play video");
 
                 } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
                     if(mediaInterface.currentVideo != null) {
@@ -429,9 +428,10 @@ public class ControlBarController implements Initializable {
 
     }
 
-    public void init(MainController mainController, SettingsController settingsController, MediaInterface mediaInterface) {
+    public void init(MainController mainController, SettingsController settingsController, MenuController menuController, MediaInterface mediaInterface) {
         this.mainController = mainController;
         this.settingsController = settingsController;
+        this.menuController = menuController;
         this.mediaInterface = mediaInterface;
 
         mouseEventTracker = new MouseEventTracker(4, mainController, this, settingsController); // creates instance of the MouseEventTracker class which keeps track of when to hide and show the control-bar
@@ -477,10 +477,8 @@ public class ControlBarController implements Initializable {
         if(mediaInterface.currentVideo != null) {
             mediaInterface.mediaPlayer.play();
 
-            if(mainController.menuController != null){
-                mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.pauseSVG);
-                mainController.menuController.activeItem.play.updateText("Pause video");
-            }
+                menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
+                menuController.activeItem.play.updateText("Pause video");
         }
         playIcon.setShape(pauseSVG);
         mediaInterface.playing = true;
@@ -503,10 +501,8 @@ public class ControlBarController implements Initializable {
         if(mediaInterface.currentVideo != null) {
             mediaInterface.mediaPlayer.pause();
 
-            if(mainController.menuController != null){
-                mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.playSVG);
-                mainController.menuController.activeItem.play.updateText("Play video");
-            }
+                menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
+                menuController.activeItem.play.updateText("Play video");
         }
         playIcon.setShape(playSVG);
         mediaInterface.playing = false;
@@ -537,10 +533,8 @@ public class ControlBarController implements Initializable {
             mediaInterface.mediaPlayer.seek(Duration.ZERO);
             mediaInterface.mediaPlayer.play();
 
-            if(mainController.menuController != null){
-                mainController.menuController.activeItem.playIcon.setShape(mainController.menuController.activeItem.pauseSVG);
-                mainController.menuController.activeItem.play.updateText("Pause video");
-            }
+                menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
+                menuController.activeItem.play.updateText("Pause video");
         }
         mediaInterface.playing = true;
         mediaInterface.atEnd = false;

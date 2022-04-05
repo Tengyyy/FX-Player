@@ -491,133 +491,6 @@ public class AnimationsClass {
     }
 
 
-    public static void openQueueTab(AnchorPane addPane, StackPane queuePane, MenuController menuController){
-        addPane.translateXProperty().unbind();
-        queuePane.translateXProperty().unbind();
-
-        TranslateTransition translateTransition1 = new TranslateTransition(Duration.millis(200), addPane);
-        translateTransition1.setFromX(0);
-        translateTransition1.setToX(addPane.getWidth());
-        translateTransition1.setCycleCount(1);
-        translateTransition1.setInterpolator(Interpolator.LINEAR);
-
-        TranslateTransition translateTransition2 = new TranslateTransition(Duration.millis(200), queuePane);
-        translateTransition2.setFromX(queuePane.getTranslateX());
-        translateTransition2.setToX(0);
-        translateTransition2.setCycleCount(1);
-        translateTransition2.setInterpolator(Interpolator.LINEAR);
-
-        ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.getChildren().addAll(translateTransition1, translateTransition2);
-        parallelTransition.setCycleCount(1);
-        parallelTransition.setOnFinished((e) -> {
-            addPane.translateXProperty().bind(addPane.getScene().widthProperty());
-            menuController.queueTabOpen = true;
-            menuController.tabAnimationInProgress = false;
-        });
-        parallelTransition.play();
-    }
-
-    public static void openAddVideosTab(AnchorPane addPane, StackPane queuePane, MenuController menuController){
-        addPane.translateXProperty().unbind();
-        queuePane.translateXProperty().unbind();
-
-        TranslateTransition translateTransition1 = new TranslateTransition(Duration.millis(200), addPane);
-        translateTransition1.setFromX(addPane.getTranslateX());
-        translateTransition1.setToX(0);
-        translateTransition1.setCycleCount(1);
-        translateTransition1.setInterpolator(Interpolator.LINEAR);
-
-        TranslateTransition translateTransition2 = new TranslateTransition(Duration.millis(200), queuePane);
-        translateTransition2.setFromX(0);
-        translateTransition2.setToX(-queuePane.getWidth());
-        translateTransition2.setCycleCount(1);
-        translateTransition2.setInterpolator(Interpolator.LINEAR);
-
-        ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.getChildren().addAll(translateTransition1, translateTransition2);
-        parallelTransition.setCycleCount(1);
-        parallelTransition.setOnFinished((e) -> {
-            queuePane.translateXProperty().bind(queuePane.getScene().widthProperty().multiply(-1));
-            menuController.queueTabOpen = false;
-            menuController.tabAnimationInProgress = false;
-        });
-        parallelTransition.play();
-    }
-
-    public static void addPaneDragEntered(Pane addBackground, AnchorPane addPane){
-
-        if(addPaneDragDropped != null){
-            addPaneDragDropped.stop();
-        }
-
-
-
-        ScaleTransition addPaneScaleEntered = new ScaleTransition(Duration.millis(200), addBackground);
-        addPaneScaleEntered.setCycleCount(1);
-        addPaneScaleEntered.setAutoReverse(false);
-
-        addPaneScaleEntered.setFromX(addBackground.getScaleX());
-        addPaneScaleEntered.setToX((addBackground.getWidth() - 50) / addBackground.getWidth());
-        addPaneScaleEntered.setFromY(addBackground.getScaleY());
-        addPaneScaleEntered.setToY((addBackground.getWidth() - 50) / addBackground.getWidth());
-
-        Rectangle rect = new Rectangle();
-        rect.setFill(Color.web("#202020"));
-        FillTransition tr = new FillTransition();
-        tr.setShape(rect);
-        tr.setDuration(Duration.millis(200));
-        tr.setFromValue(Color.web("#202020"));
-        tr.setToValue(Color.web("#292929"));
-
-        tr.setInterpolator(new Interpolator() {
-            @Override
-            protected double curve(double t) {
-                addPane.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, Insets.EMPTY)));
-                return t;
-            }
-        });
-
-        addPaneDragEntered = new ParallelTransition(addPaneScaleEntered, tr);
-        addPaneDragEntered.play();
-    }
-
-    public static void addPaneDragDropped(Pane addBackground, AnchorPane addPane){
-
-        if(addPaneDragEntered != null){
-            addPaneDragEntered.stop();
-        }
-
-        ScaleTransition addPaneScaleDropped = new ScaleTransition(Duration.millis(200), addBackground);
-        addPaneScaleDropped.setCycleCount(1);
-        addPaneScaleDropped.setAutoReverse(false);
-
-        addPaneScaleDropped.setFromX(addBackground.getScaleX());
-        addPaneScaleDropped.setToX(1);
-        addPaneScaleDropped.setFromY(addBackground.getScaleY());
-        addPaneScaleDropped.setToY(1);
-
-        Rectangle rect = new Rectangle();
-        rect.setFill(Color.web("#292929"));
-        FillTransition tr = new FillTransition();
-        tr.setShape(rect);
-        tr.setDuration(Duration.millis(200));
-        tr.setFromValue(Color.web("#292929"));
-        tr.setToValue(Color.web("#202020"));
-
-        tr.setInterpolator(new Interpolator() {
-            @Override
-            protected double curve(double t) {
-                addPane.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, Insets.EMPTY)));
-                return t;
-            }
-        });
-
-        addPaneDragDropped = new ParallelTransition(addPaneScaleDropped, tr);
-        addPaneDragDropped.play();
-    }
-
-
     public static FadeTransition fadeAnimation(double duration, Region node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
         FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setDuration(Duration.millis(duration));
@@ -671,17 +544,17 @@ public class AnimationsClass {
     }
 
 
-    public static void openNextVideoNotification(MenuController menuController){
+    public static void openMenuNotification(MenuController menuController){
 
-        menuController.nextVideoNotificationOpen = true;
+        menuController.menuNotificationOpen = true;
 
         if(nextVideoNotificationOffTransition != null && nextVideoNotificationOffTransition.getStatus() == Animation.Status.RUNNING){
             nextVideoNotificationOffTransition.stop();
         }
 
-        menuController.nextVideoNotification.setOpacity(1);
+        menuController.notificationPane.setOpacity(1);
 
-        nextVideoNotificationOnTransition = new TranslateTransition(Duration.millis(300), menuController.nextVideoNotification);
+        nextVideoNotificationOnTransition = new TranslateTransition(Duration.millis(300), menuController.notificationPane);
         nextVideoNotificationOnTransition.setFromY(80);
         nextVideoNotificationOnTransition.setToY(0);
         nextVideoNotificationOnTransition.setCycleCount(1);
@@ -693,17 +566,37 @@ public class AnimationsClass {
 
     }
 
-    public static void closeNextVideoNotification(MenuController menuController){
-        menuController.nextVideoNotificationOpen = false;
-        nextVideoNotificationOffTransition = new FadeTransition(Duration.millis(400), menuController.nextVideoNotification);
+    public static void closeMenuNotification(MenuController menuController){
+        menuController.menuNotificationOpen = false;
+        nextVideoNotificationOffTransition = new FadeTransition(Duration.millis(400), menuController.notificationPane);
         nextVideoNotificationOffTransition.setFromValue(1);
         nextVideoNotificationOffTransition.setToValue(0);
         nextVideoNotificationOnTransition.setCycleCount(1);
         nextVideoNotificationOnTransition.setInterpolator(Interpolator.EASE_OUT);
         nextVideoNotificationOffTransition.setOnFinished((e) -> {
-            menuController.nextVideoNotification.setTranslateY(80);
+            menuController.notificationPane.setTranslateY(80);
         });
         nextVideoNotificationOffTransition.playFromStart();
     }
 
+
+    public static void openMenu(MainController mainController, MenuController menuController){
+        Timeline timeline = new Timeline();
+
+        timeline.setCycleCount(1);
+        timeline.setAutoReverse(false);
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(200), new KeyValue(menuController.menu.prefWidthProperty(), menuController.prefWidth, Interpolator.LINEAR)));
+        timeline.play();
+    }
+
+    public static void closeMenu(MainController mainController, MenuController menuController) {
+
+        Timeline timeline = new Timeline();
+
+        timeline.setCycleCount(1);
+        timeline.setAutoReverse(false);
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(200), new KeyValue(menuController.menu.prefWidthProperty(), 0, Interpolator.LINEAR)));
+        timeline.play();
+
+    }
 }

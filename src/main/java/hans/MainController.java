@@ -101,13 +101,12 @@ public class MainController implements Initializable {
 
     ControlTooltip menuTooltip;
 
-
-    Image addVideoImage = new Image(new File("src/main/resources/hans/images/addVideo.png").toURI().toString());
-    ImageView addVideo;
-
     String menuPath = "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z";
     SVGPath menuSVG;
 
+    Region addVideo;
+    String addVideoPath;
+    SVGPath addVideoSVG;
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -124,6 +123,15 @@ public class MainController implements Initializable {
         // declaring media control images
         menuSVG = new SVGPath();
         menuSVG.setContent(menuPath);
+
+        addVideoSVG = new SVGPath();
+
+        addVideo = new Region();
+        addVideo.setMinSize(150,150);
+        addVideo.setPrefSize(150,150);
+        addVideo.setMaxSize(150,150);
+        addVideo.setEffect(new DropShadow());
+        addVideo.setId("addVideoIcon");
 
         // Make mediaView adjust to frame size
 
@@ -146,7 +154,7 @@ public class MainController implements Initializable {
 
         mediaViewWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
 
-
+        menuButtonPane.translateXProperty().bind(menuController.menu.prefWidthProperty().multiply(-1));
         menuButton.setBackground(Background.EMPTY);
         menuButton.setVisible(false);
 
@@ -355,21 +363,11 @@ public class MainController implements Initializable {
 
     public void openMenu() {
 
-            menuController.menuOpen = true;
-            //menuController.menu.translateXProperty().unbind();
-            //mediaViewWrapper.prefWidthProperty().unbind();
-            AnimationsClass.openMenu(this, menuController);
-
-    }
-
-    public void closeMenu(){
-        menuController.menuOpen = false;
-        AnimationsClass.closeMenu(this, menuController);
-    }
-
-    public void menuButtonClick(){
-        if(menuController.menuOpen) closeMenu();
-        else openMenu();
+        menuController.menuOpen = true;
+        //menuController.menu.translateXProperty().unbind();
+        //mediaViewWrapper.prefWidthProperty().unbind();
+        menuController.menu.setMouseTransparent(false);
+        AnimationsClass.openMenu(this, menuController);
     }
 
     public void handleDragEntered(DragEvent e){
@@ -384,10 +382,12 @@ public class MainController implements Initializable {
        if(mediaInterface.playing)controlBarController.mouseEventTracker.hide();
        else AnimationsClass.hideControls(controlBarController);
 
-        addVideo = new ImageView(addVideoImage);
-        addVideo.setFitWidth(150);
-        addVideo.setFitHeight(150);
-        addVideo.setEffect(new DropShadow());
+       if(Utilities.getFileExtension(file).equals("mp4")) addVideoPath = "M20.84 2.18L16.91 2.96L19.65 6.5L21.62 6.1L20.84 2.18M13.97 3.54L12 3.93L14.75 7.46L16.71 7.07L13.97 3.54M9.07 4.5L7.1 4.91L9.85 8.44L11.81 8.05L9.07 4.5M4.16 5.5L3.18 5.69A2 2 0 0 0 1.61 8.04L2 10L6.9 9.03L4.16 5.5M2 10V20C2 21.11 2.9 22 4 22H20C21.11 22 22 21.11 22 20V10H2Z";
+       else if(Utilities.getFileExtension(file).equals("mp3")) addVideoPath = "M21,3V15.5A3.5,3.5 0 0,1 17.5,19A3.5,3.5 0 0,1 14,15.5A3.5,3.5 0 0,1 17.5,12C18.04,12 18.55,12.12 19,12.34V6.47L9,8.6V17.5A3.5,3.5 0 0,1 5.5,21A3.5,3.5 0 0,1 2,17.5A3.5,3.5 0 0,1 5.5,14C6.04,14 6.55,14.12 7,14.34V6L21,3Z";
+
+       addVideoSVG.setContent(addVideoPath);
+       addVideo.setShape(addVideoSVG);
+
         if(!mediaViewWrapper.getChildren().contains(addVideo)){
             mediaViewWrapper.getChildren().add(addVideo);
         }
@@ -395,8 +395,6 @@ public class MainController implements Initializable {
     }
 
     public void handleDragExited(DragEvent e){
-
-        System.out.println("test");
 
         mediaView.setEffect(null);
 

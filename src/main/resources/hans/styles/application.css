@@ -175,6 +175,6 @@
     -fx-background-color: transparent;
 }
 
-.controlIcon {
+.controlIcon, #addVideoIcon {
     -fx-background-color: white;
 }

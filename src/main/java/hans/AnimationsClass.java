@@ -585,7 +585,7 @@ public class AnimationsClass {
 
         timeline.setCycleCount(1);
         timeline.setAutoReverse(false);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(200), new KeyValue(menuController.menu.prefWidthProperty(), menuController.prefWidth, Interpolator.LINEAR)));
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(3000), new KeyValue(menuController.menu.prefWidthProperty(), menuController.prefWidth, Interpolator.EASE_OUT)));
         timeline.play();
     }
 
@@ -595,8 +595,7 @@ public class AnimationsClass {
 
         timeline.setCycleCount(1);
         timeline.setAutoReverse(false);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(200), new KeyValue(menuController.menu.prefWidthProperty(), 0, Interpolator.LINEAR)));
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(3000), new KeyValue(menuController.menu.prefWidthProperty(), 0, Interpolator.EASE_OUT)));
         timeline.play();
-
     }
 }

@@ -29,6 +29,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -97,6 +98,13 @@ public class MenuController implements Initializable {
         closeTimer = new PauseTransition(Duration.millis(3000));
         closeTimer.setOnFinished((e) -> AnimationsClass.closeMenuNotification(this));
 
+        notificationPane.setOpacity(0);
+        menu.setMouseTransparent(true);
+        Rectangle menuClip = new Rectangle();
+        menuClip.widthProperty().bind(menu.widthProperty());
+        menuClip.heightProperty().bind(menu.heightProperty());
+        menu.setClip(menuClip);
+
 
     }
 
@@ -119,6 +127,14 @@ public class MenuController implements Initializable {
             new QueueItem(temp, this, mediaInterface);
 
         }
+    }
+
+
+    public void closeMenu(){
+        menuOpen = false;
+        notificationPane.setOpacity(0);
+        menu.setMouseTransparent(true);
+        AnimationsClass.closeMenu(mainController, this);
     }
 
 

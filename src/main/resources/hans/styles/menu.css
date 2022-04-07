@@ -20,11 +20,11 @@
 #queueScroll {
     -fx-background-insets: 0;
     -fx-padding: 0;
-    -fx-background-color: #202020;
+    -fx-background-color: #191919;
 }
 
 #queueScroll > .viewPort {
-    -fx-background-color: #202020;
+    -fx-background-color: #191919;
 }
 
 #queueScroll .scroll-bar:horizontal .track,
@@ -79,8 +79,12 @@
     -fx-background-insets: 0;
 }
 
-#queueBox {
-    -fx-background-color: #202020;
+#queueBox, #menuContent {
+    -fx-background-color: #191919;
+}
+
+#menuBar {
+    -fx-background-color: #232323;
 }
 
 
@@ -92,12 +96,8 @@
     -fx-background-color: #303030;
 }
 
-#menuContent {
-    -fx-background-color: #202020;
-}
-
 .menuItemPane{
-    -fx-background-color: #202020;
+    -fx-background-color: #191919;
 }
 
 

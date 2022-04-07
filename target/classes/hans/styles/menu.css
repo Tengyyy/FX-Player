@@ -16,30 +16,15 @@
 	-fx-font-size: 15;
 }
 
-#addVideosBoldText, #addedVideosBoldText {
-    -fx-font-family: "Roboto Bold";
-	-fx-font-size: 22;
-}
-
-#addVideosNormalText, #addedVideosNormalText {
-    -fx-font-family: "Roboto";
-	-fx-font-size: 20;
-}
-
-.menuButton {
-    -fx-background-color: #303030;
-    -fx-background-radius: 0;
-    -fx-font-size: 1.2em;
-}
 
 #queueScroll {
     -fx-background-insets: 0;
     -fx-padding: 0;
-    -fx-background-color: #202020;
+    -fx-background-color: #191919;
 }
 
 #queueScroll > .viewPort {
-    -fx-background-color: #202020;
+    -fx-background-color: #191919;
 }
 
 #queueScroll .scroll-bar:horizontal .track,
@@ -94,21 +79,12 @@
     -fx-background-insets: 0;
 }
 
-#queueBox {
-    -fx-background-color: #202020;
+#queueBox, #menuContent {
+    -fx-background-color: #191919;
 }
 
-#addBackground {
-    -fx-border-style: dashed;
-    -fx-border-width: 3;
-    -fx-border-color: white;
-    -fx-background-color: transparent;
-}
-
-
-
-.buttonLine {
-    -fx-pref-height: 0.5em;
+#menuBar {
+    -fx-background-color: #232323;
 }
 
 
@@ -120,12 +96,8 @@
     -fx-background-color: #303030;
 }
 
-#menuContent {
-    -fx-background-color: #202020;
-}
-
 .menuItemPane{
-    -fx-background-color: #202020;
+    -fx-background-color: #191919;
 }
 
 

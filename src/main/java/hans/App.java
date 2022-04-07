@@ -317,7 +317,8 @@ public class App extends Application {
                     case Q: {
                         controlBarController.mouseEventTracker.move();
 
-                        mainController.openMenu();
+                        if(menuController.menuOpen) menuController.closeMenu();
+                        else mainController.openMenu();
                     }
                     break;
 

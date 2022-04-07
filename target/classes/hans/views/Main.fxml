@@ -12,15 +12,25 @@
    <children>
       <BorderPane fx:id="mainPane">
          <center>
-            <StackPane fx:id="mediaViewWrapper" minWidth="500.0" prefWidth="600.0" BorderPane.alignment="CENTER_RIGHT">
+            <StackPane fx:id="mediaViewWrapper" minWidth="500.0" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefWidth="600.0" BorderPane.alignment="CENTER_RIGHT">
                <children>
-                    <MediaView fx:id="mediaView" focusTraversable="true" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" onMouseClicked="#mediaClick" styleClass="focusableProperty" StackPane.alignment="CENTER">
+                    <MediaView fx:id="mediaView" focusTraversable="true" onMouseClicked="#mediaClick" styleClass="focusableProperty" StackPane.alignment="CENTER">
                         <viewport>
                             <Rectangle2D />
                         </viewport>
                     </MediaView>
                     <fx:include fx:id="controlBar" source="ControlBar.fxml" StackPane.alignment="BOTTOM_CENTER" />
                     <fx:include fx:id="settings" source="Settings.fxml" />
+                  <StackPane fx:id="menuButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="50.0" prefWidth="70.0" StackPane.alignment="TOP_LEFT">
+                     <children>
+                          <Button fx:id="menuButton" mnemonicParsing="false" onAction="#openMenu" prefHeight="50.0" prefWidth="70.0" style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="CENTER">
+                              <cursor>
+                                  <Cursor fx:constant="HAND" />
+                              </cursor>
+                          </Button>
+                        <Region fx:id="menuIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="30.0" prefWidth="40.0" styleClass="controlIcon" StackPane.alignment="CENTER" />
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
          </center>
@@ -28,15 +38,5 @@
               <fx:include fx:id="menu" minWidth="0.0" prefWidth="0.0" source="Menu.fxml" BorderPane.alignment="CENTER_LEFT" StackPane.alignment="CENTER_LEFT" />
          </left>
       </BorderPane>
-      <StackPane fx:id="menuButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="50.0" prefWidth="70.0" StackPane.alignment="TOP_LEFT">
-         <children>
-              <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuButtonClick" prefHeight="50.0" prefWidth="70.0" style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="CENTER">
-                  <cursor>
-                      <Cursor fx:constant="HAND" />
-                  </cursor>
-              </Button>
-            <Region fx:id="menuIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="30.0" prefWidth="40.0" styleClass="controlIcon" StackPane.alignment="CENTER" />
-         </children>
-      </StackPane>
    </children>
 </StackPane>

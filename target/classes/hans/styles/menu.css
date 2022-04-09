@@ -88,6 +88,14 @@
 }
 
 
+.menuActionButton{
+    -fx-background-color: #ff5447;
+}
+
+.menuButton{
+    -fx-background-color: #303030;
+}
+
 .menuButton:hover {
     -fx-background-color: #404040;
 }
@@ -124,13 +132,12 @@
     -fx-background-color: #454545;
 }
 
-#optionsIcon, #removeIcon {
+.menuIcon {
     -fx-background-color: white;
 }
 
-
-#playIcon {
-    -fx-background-color: white;
+.menuBarIcon {
+    -fx-background-color: red;
 }
 
 #playText {

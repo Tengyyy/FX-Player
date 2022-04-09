@@ -73,13 +73,9 @@ public class QueueItem extends GridPane {
     boolean isActive = false;
     boolean mouseHover = false;
 
-    int itemHeight = 64;
-    double textHeight = 21.09375;
+    int itemHeight = 64;    double textHeight = 21.09375;
 
-    String playPath = "M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M10,16.5L16,12L10,7.5V16.5Z";
-    String pausePath = "M13,16V8H15V16H13M9,16V8H11V16H9M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z";
-    String removePath = "M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z";
-    String optionsPath = "M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z";
+    //TODO: create enum for all the svg paths
 
     SVGPath playSVG, pauseSVG, removeSVG, optionsSVG;
 
@@ -125,16 +121,16 @@ public class QueueItem extends GridPane {
 
 
         playSVG = new SVGPath();
-        playSVG.setContent(playPath);
+        playSVG.setContent(App.svgMap.get(SVG.PLAY_CIRCLE));
 
         pauseSVG = new SVGPath();
-        pauseSVG.setContent(pausePath);
+        pauseSVG.setContent(App.svgMap.get(SVG.PAUSE_CIRCLE));
 
         removeSVG = new SVGPath();
-        removeSVG.setContent(removePath);
+        removeSVG.setContent(App.svgMap.get(SVG.REMOVE));
 
         optionsSVG = new SVGPath();
-        optionsSVG.setContent(optionsPath);
+        optionsSVG.setContent(App.svgMap.get(SVG.OPTIONS));
 
         playIcon = new Region();
         playIcon.setShape(playSVG);
@@ -142,7 +138,7 @@ public class QueueItem extends GridPane {
         playIcon.setPrefSize(40, 40);
         playIcon.setMaxSize(40, 40);
         playIcon.setMouseTransparent(true);
-        playIcon.setId("playIcon");
+        playIcon.getStyleClass().add("menuIcon");
         playIcon.setVisible(false);
 
         playButtonWrapper.getChildren().addAll(playText, playButton, playIcon);
@@ -177,7 +173,7 @@ public class QueueItem extends GridPane {
             removeIcon.setPrefSize(20, 20);
             removeIcon.setMaxSize(20, 20);
             removeIcon.setMouseTransparent(true);
-            removeIcon.setId("removeIcon");
+            removeIcon.getStyleClass().add("menuIcon");
 
             removeButtonWrapper.getChildren().addAll(removeButton, removeIcon);
 
@@ -204,7 +200,7 @@ public class QueueItem extends GridPane {
             optionsIcon.setPrefSize(6, 23);
             optionsIcon.setMaxSize(6, 23);
             optionsIcon.setMouseTransparent(true);
-            optionsIcon.setId("optionsIcon");
+            optionsIcon.getStyleClass().add("menuIcon");
 
             optionsButtonWrapper.getChildren().addAll(optionsButton, optionsIcon);
 
@@ -364,9 +360,9 @@ public class QueueItem extends GridPane {
             menuController.queue.add(this);
             menuController.queueBox.getChildren().add(this);
 
-            play = new ControlTooltip("Play video", playButton, false, new VBox(), 1000);
-            remove = new ControlTooltip("Remove video", removeButton, false, new VBox(), 1000);
-            options = new ControlTooltip("Options", optionsButton, false, new VBox(), 1000);
+            play = new ControlTooltip("Play video", playButton, new VBox(), 1000);
+            remove = new ControlTooltip("Remove video", removeButton, new VBox(), 1000);
+            options = new ControlTooltip("Options", optionsButton, new VBox(), 1000);
 
 
         }

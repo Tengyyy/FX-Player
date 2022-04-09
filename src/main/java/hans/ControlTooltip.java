@@ -21,8 +21,6 @@ public class ControlTooltip extends Tooltip {
     double nodeMiddleX;
     double nodeMiddleY;
 
-    boolean menuTooltip;
-
     VBox controlBar;
 
     int delay;
@@ -30,11 +28,10 @@ public class ControlTooltip extends Tooltip {
     BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
     PauseTransition countdown;
 
-    ControlTooltip(String tooltipText, Button tooltipParent, boolean menuTooltip, VBox controlBar, int delay) {
+    ControlTooltip(String tooltipText, Button tooltipParent, VBox controlBar, int delay) {
 
         this.tooltipText = tooltipText;
         this.tooltipParent = tooltipParent;
-        this.menuTooltip = menuTooltip;
         this.controlBar = controlBar;
         this.delay = delay;
 
@@ -72,10 +69,8 @@ public class ControlTooltip extends Tooltip {
 
         double translation = this.delay == 0 ? controlBar.getTranslateY() : 0;
 
-        if (!menuTooltip)
-            this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight - translation);
-        else
-            this.show(tooltipParent, bounds.getMaxX() + 10, bounds.getMinY() + nodeMiddleY - ((tooltipHeight - 18) / 2));
+        this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight - translation);
+
     }
 
    /* public void reposition(){

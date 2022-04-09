@@ -585,8 +585,9 @@ public class AnimationsClass {
 
         timeline.setCycleCount(1);
         timeline.setAutoReverse(false);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(3000), new KeyValue(menuController.menu.prefWidthProperty(), menuController.prefWidth, Interpolator.EASE_OUT)));
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(), menuController.prefWidth, Interpolator.EASE_OUT)));
         timeline.play();
+
     }
 
     public static void closeMenu(MainController mainController, MenuController menuController) {
@@ -595,7 +596,7 @@ public class AnimationsClass {
 
         timeline.setCycleCount(1);
         timeline.setAutoReverse(false);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(3000), new KeyValue(menuController.menu.prefWidthProperty(), 0, Interpolator.EASE_OUT)));
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(), 0, Interpolator.EASE_OUT)));
         timeline.play();
     }
 }

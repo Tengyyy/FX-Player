@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 
 import javafx.animation.Animation;
@@ -17,19 +14,13 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+
 
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
@@ -39,19 +30,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+
 import javafx.scene.media.MediaView;
 import javafx.scene.media.SubtitleTrack;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Font;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
-import javafx.util.Duration;
+
+import static hans.SVG.*;
+
 
 public class MainController implements Initializable {
 
@@ -99,14 +84,14 @@ public class MainController implements Initializable {
 
     SubtitleTrack subtitles;
 
-    ControlTooltip menuTooltip;
+    ControlTooltip openMenuTooltip;
 
-    String menuPath = "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z";
     SVGPath menuSVG;
 
     Region addVideo;
     String addVideoPath;
     SVGPath addVideoSVG;
+
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -117,12 +102,11 @@ public class MainController implements Initializable {
         settingsController.init(this, controlBarController, menuController, mediaInterface);
         menuController.init(this, controlBarController, settingsController, mediaInterface);
 
-
         file = new File("src/main/resources/hans/hey.mp4");
 
         // declaring media control images
         menuSVG = new SVGPath();
-        menuSVG.setContent(menuPath);
+        menuSVG.setContent(App.svgMap.get(MENU));
 
         addVideoSVG = new SVGPath();
 
@@ -161,12 +145,9 @@ public class MainController implements Initializable {
 
         menuIcon.setShape(menuSVG);
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
-                menuTooltip = new ControlTooltip("Open menu (q)", menuButton, true, controlBarController.controlBar, 0);
-            }
+        Platform.runLater(() -> {
+            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
+            openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBar, 1000);
         });
 
         mediaView.focusedProperty()
@@ -385,7 +366,8 @@ public class MainController implements Initializable {
        if(Utilities.getFileExtension(file).equals("mp4")) addVideoPath = "M20.84 2.18L16.91 2.96L19.65 6.5L21.62 6.1L20.84 2.18M13.97 3.54L12 3.93L14.75 7.46L16.71 7.07L13.97 3.54M9.07 4.5L7.1 4.91L9.85 8.44L11.81 8.05L9.07 4.5M4.16 5.5L3.18 5.69A2 2 0 0 0 1.61 8.04L2 10L6.9 9.03L4.16 5.5M2 10V20C2 21.11 2.9 22 4 22H20C21.11 22 22 21.11 22 20V10H2Z";
        else if(Utilities.getFileExtension(file).equals("mp3")) addVideoPath = "M21,3V15.5A3.5,3.5 0 0,1 17.5,19A3.5,3.5 0 0,1 14,15.5A3.5,3.5 0 0,1 17.5,12C18.04,12 18.55,12.12 19,12.34V6.47L9,8.6V17.5A3.5,3.5 0 0,1 5.5,21A3.5,3.5 0 0,1 2,17.5A3.5,3.5 0 0,1 5.5,14C6.04,14 6.55,14.12 7,14.34V6L21,3Z";
 
-       addVideoSVG.setContent(addVideoPath);
+       if(Utilities.getFileExtension(file).equals("mp4")) addVideoSVG.setContent(App.svgMap.get(FILM));
+       else if(Utilities.getFileExtension(file).equals("mp3")) addVideoSVG.setContent(App.svgMap.get(MUSIC));
        addVideo.setShape(addVideoSVG);
 
         if(!mediaViewWrapper.getChildren().contains(addVideo)){

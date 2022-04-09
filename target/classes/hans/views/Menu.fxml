@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
@@ -12,17 +14,70 @@
 
 <StackPane id="menuContent" fx:id="menu" minWidth="250.0" prefWidth="350.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MenuController">
    <children>
-      <HBox fx:id="menuBar" alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="50.0" prefWidth="200.0" spacing="10.0" StackPane.alignment="TOP_CENTER">
+      <StackPane fx:id="menuBar" maxHeight="-Infinity" minWidth="350.0" prefHeight="60.0" StackPane.alignment="TOP_CENTER">
          <children>
-            <Button mnemonicParsing="false" text="Button" />
-            <Button mnemonicParsing="false" text="Button" />
-            <Button mnemonicParsing="false" text="Button" />
+            <StackPane fx:id="closeButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="60.0" StackPane.alignment="CENTER_LEFT">
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+               <children>
+                  <JFXButton fx:id="closeButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#closeMenu" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-background-radius: 5;" styleClass="menuButton">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </JFXButton>
+                  <Region fx:id="closeIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="30.0" prefWidth="30.0" styleClass="menuIcon" StackPane.alignment="CENTER" />
+               </children>
+            </StackPane>
+            <HBox id="menuBar" fx:id="menuButtonBar" alignment="CENTER_RIGHT" fillHeight="false" maxHeight="-Infinity" prefHeight="60.0" prefWidth="200.0" spacing="10.0" StackPane.alignment="CENTER">
+               <children>
+                  <StackPane fx:id="addVideoButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="40.0">
+                     <children>
+                        <JFXButton fx:id="addVideoButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#openVideoChooser" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-background-radius: 5;" styleClass="menuActionButton" StackPane.alignment="CENTER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </JFXButton>
+                        <Region fx:id="addVideoIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: white;" styleClass="menuBarIcon" StackPane.alignment="CENTER" />
+                     </children>
+                  </StackPane>
+                  <StackPane fx:id="clearQueueButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="40.0">
+                     <children>
+                        <JFXButton fx:id="clearQueueButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#clearQueue" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-background-radius: 5;" styleClass="menuActionButton">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </JFXButton>
+                        <Region fx:id="clearQueueIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="17.0" prefWidth="20.0" style="-fx-background-color: white;" styleClass="menuBarIcon" translateX="3.0" translateY="2.0" StackPane.alignment="CENTER" />
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </StackPane>
+                  <StackPane fx:id="appSettingsButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="40.0">
+                     <children>
+                        <JFXButton fx:id="appSettingsButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-border-color: white; -fx-border-radius: 5; -fx-background-radius: 5;" styleClass="menuButton">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </JFXButton>
+                        <Region fx:id="appSettingsIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="menuIcon" StackPane.alignment="CENTER" />
+                     </children>
+                  </StackPane>
+               </children>
+               <padding>
+                  <Insets right="20.0" />
+               </padding>
+               <StackPane.margin>
+                  <Insets left="60.0" />
+               </StackPane.margin>
+            </HBox>
          </children>
-         <padding>
-            <Insets right="20.0" />
-         </padding>
-      </HBox>
-      <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0">
+      </StackPane>
+      <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minWidth="350.0" prefHeight="200.0" prefWidth="350.0">
          <StackPane.margin>
             <Insets top="60.0" />
          </StackPane.margin></ScrollPane>

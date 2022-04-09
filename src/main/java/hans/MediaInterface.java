@@ -86,10 +86,10 @@ public class MediaInterface {
                     if (controlBarController.play.isShowing() || controlBarController.replay.isShowing()) {
                         controlBarController.play.hide();
                         controlBarController.replay.hide();
-                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
+                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, controlBarController.controlBar, 0);
                         controlBarController.pause.showTooltip();
                     } else {
-                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
+                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, controlBarController.controlBar, 0);
                     }
 
                         menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
@@ -103,10 +103,10 @@ public class MediaInterface {
                 if (controlBarController.pause.isShowing() || controlBarController.replay.isShowing()) {
                     controlBarController.pause.hide();
                     controlBarController.replay.hide();
-                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
+                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, controlBarController.controlBar, 0);
                     controlBarController.play.showTooltip();
                 } else {
-                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
+                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, controlBarController.controlBar, 0);
                 }
 
                     menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
@@ -156,10 +156,10 @@ public class MediaInterface {
             if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
                 controlBarController.play.hide();
                 controlBarController.pause.hide();
-                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
+                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, controlBarController.controlBar, 0);
                 controlBarController.replay.showTooltip();
             } else {
-                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, false, controlBarController.controlBar, 0);
+                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, controlBarController.controlBar, 0);
             }
 
             controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());

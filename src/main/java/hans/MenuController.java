@@ -10,29 +10,26 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 
+import animatefx.animation.FadeIn;
+import animatefx.animation.FadeOut;
 import animatefx.animation.SlideOutLeft;
-
-
 import com.jfoenix.controls.JFXButton;
 import eu.iamgio.animated.AnimationPair;
+
+
 import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import eu.iamgio.animated.AnimatedVBox;
 import animatefx.animation.FadeInUp;
@@ -44,10 +41,13 @@ import javafx.util.Duration;
 public class MenuController implements Initializable {
 
     @FXML
-    JFXButton addButton;
+    JFXButton addVideoButton, clearQueueButton, appSettingsButton;
 
     @FXML
-    StackPane menu, notificationPane;
+    Button closeButton;
+
+    @FXML
+    StackPane menu, notificationPane, addVideoButtonPane, clearQueueButtonPane, appSettingsButtonPane, closeButtonPane;
 
     @FXML
     Text notificationText;
@@ -55,9 +55,19 @@ public class MenuController implements Initializable {
     @FXML
     ScrollPane queueScroll;
 
+    @FXML
+    Region addVideoIcon, clearQueueIcon, appSettingsIcon, closeIcon;
+
+    SVGPath addVideoIconSVG;
+
+    SVGPath clearQueueIconSVG;
+
+    SVGPath appSettingsIconSVG;
+
+    SVGPath closeIconSVG;
 
 
-    AnimatedVBox queueBox = new AnimatedVBox(new AnimationPair(new FadeInUp(), new SlideOutLeft()).setSpeed(3, 3));
+    AnimatedVBox queueBox = new AnimatedVBox(new AnimationPair(new FadeIn(), new FadeOut()).setSpeed(3, 3));
 
 
     MainController mainController;
@@ -76,6 +86,8 @@ public class MenuController implements Initializable {
     PauseTransition closeTimer;
 
     double prefWidth = 350;
+
+    ControlTooltip addMediaTooltip, clearQueueTooltip, closeMenuTooltip, appSettingsTooltip;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -105,6 +117,28 @@ public class MenuController implements Initializable {
         menuClip.heightProperty().bind(menu.heightProperty());
         menu.setClip(menuClip);
 
+        addVideoIconSVG = new SVGPath();
+        addVideoIconSVG.setContent(App.svgMap.get(SVG.PLUS));
+        addVideoIcon.setShape(addVideoIconSVG);
+
+        clearQueueIconSVG = new SVGPath();
+        clearQueueIconSVG.setContent(App.svgMap.get(SVG.CLEAR_QUEUE));
+        clearQueueIcon.setShape(clearQueueIconSVG);
+
+        appSettingsIconSVG = new SVGPath();
+        appSettingsIconSVG.setContent(App.svgMap.get(SVG.SETTINGS));
+        appSettingsIcon.setShape(appSettingsIconSVG);
+
+        closeIconSVG = new SVGPath();
+        closeIconSVG.setContent(App.svgMap.get(SVG.CLOSE));
+        closeIcon.setShape(closeIconSVG);
+
+        Platform.runLater(() -> {
+            closeMenuTooltip = new ControlTooltip("Close menu (q)", closeButton, new VBox(), 1000);
+            addMediaTooltip = new ControlTooltip("Add media", addVideoButton, new VBox(), 1000);
+            clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, new VBox(), 1000);
+            appSettingsTooltip = new ControlTooltip("App settings", appSettingsButton, new VBox(), 1000);
+        });
 
     }
 
@@ -129,11 +163,17 @@ public class MenuController implements Initializable {
         }
     }
 
+    public void clearQueue(){
+        queue.clear();
+        queueBox.getChildren().clear();
+    }
+
 
     public void closeMenu(){
         menuOpen = false;
         notificationPane.setOpacity(0);
         menu.setMouseTransparent(true);
+        if(closeMenuTooltip.countdown.getStatus() == Animation.Status.RUNNING) closeMenuTooltip.countdown.stop();
         AnimationsClass.closeMenu(mainController, this);
     }
 

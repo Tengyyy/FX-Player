@@ -97,13 +97,11 @@ public class MenuController implements Initializable {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audio", "*.mp3"));
 
 
-       queueBox.setSpacing(10);
-       queueBox.setPadding(new Insets(20, 20, 20, 20));
+       queueBox.setPadding(new Insets(10, 0, 0, 0));
        queueBox.setId("queueBox");
        queueBox.setAlignment(Pos.TOP_CENTER);
        queueScroll.setContent(queueBox);
 
-       // creates queue items for all the items in the videolist when opening the menu
 
 
 

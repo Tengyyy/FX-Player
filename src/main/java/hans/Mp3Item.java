@@ -1,6 +1,8 @@
 package hans;
 
+import javafx.scene.image.Image;
 import javafx.scene.media.Media;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.Map;
@@ -46,4 +48,24 @@ public class Mp3Item implements MediaItem{
 
     @Override
     public File getFile() {return this.file;}
+
+    @Override
+    public Duration getDuration() {
+        return null;
+    }
+
+    @Override
+    public String getArtist() {
+        return null;
+    }
+
+    @Override
+    public String getTitle() {
+        return null;
+    }
+
+    @Override
+    public Image getCover() {
+        return null;
+    }
 }

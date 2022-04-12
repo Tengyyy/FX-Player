@@ -1,7 +1,9 @@
 package hans;
 
 
+import javafx.scene.image.Image;
 import javafx.scene.media.Media;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.Map;
@@ -9,14 +11,21 @@ import java.util.Map;
 public interface MediaItem {
 
 
-    public  float getFrameDuration();
+    float getFrameDuration();
 
-    public  Map getMediaInformation();
+    Map getMediaInformation();
 
-    public  Map getMediaDetails();
+    Map getMediaDetails();
 
-    public Media getMedia();
+    Media getMedia();
 
-    public File getFile();
+    File getFile();
 
+    Duration getDuration();
+
+    String getArtist();
+
+    String getTitle();
+
+    Image getCover();
 }

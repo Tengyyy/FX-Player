@@ -92,17 +92,17 @@ public class ControlBarController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         Platform.runLater(() -> {
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0);
-            replay = new ControlTooltip("Replay (k)", playButton, controlBar, 0);
-            play = new ControlTooltip("Play (k)", playButton, controlBar, 0);
-            unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0);
-            mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0);
-            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0);
-            exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0);
-            fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0);
-            nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, controlBar, 0);
-            previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P)", previousVideoButton, controlBar, 0);
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0);
+            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
+            replay = new ControlTooltip("Replay (k)", playButton, controlBar, 0, false);
+            play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
+            unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0, false);
+            mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
+            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
+            exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
+            fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
+            nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, controlBar, 0, false);
+            previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P)", previousVideoButton, controlBar, 0, false);
+            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0, false);
         });
 
         previousVideoSVG = new SVGPath();
@@ -202,10 +202,10 @@ public class ControlBarController implements Initializable {
                 if (mute.isShowing()) {
                     mute.hide();
                     unmute.hide();
-                    unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0);
+                    unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0, false);
                     unmute.showTooltip();
                 } else {
-                    unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0);
+                    unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0, false);
                 }
 
             } else if (volumeSlider.getValue() < 50) {
@@ -215,10 +215,10 @@ public class ControlBarController implements Initializable {
                 if (mute.isShowing() || unmute.isShowing()) {
                     mute.hide();
                     unmute.hide();
-                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0);
+                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
                     mute.showTooltip();
                 } else {
-                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0);
+                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
                 }
             } else {
                 volumeIcon.setShape(highVolumeSVG);
@@ -227,10 +227,10 @@ public class ControlBarController implements Initializable {
                 if (mute.isShowing() || unmute.isShowing()) {
                     mute.hide();
                     unmute.hide();
-                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0);
+                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
                     mute.showTooltip();
                 } else {
-                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0);
+                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
                 }
             }
         });
@@ -288,10 +288,10 @@ public class ControlBarController implements Initializable {
                 }
                 if (pause.isShowing()) {
                     pause.hide();
-                    play = new ControlTooltip("Play (k)", playButton, controlBar, 0);
+                    play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
                     play.showTooltip();
                 } else {
-                    play = new ControlTooltip("Play (k)", playButton, controlBar, 0);
+                    play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
                 }
             } else {
 
@@ -312,10 +312,10 @@ public class ControlBarController implements Initializable {
                     if (play.isShowing() || pause.isShowing()) {
                         play.hide();
                         pause.hide();
-                        replay = new ControlTooltip("Replay (k)", playButton, controlBar, 0);
+                        replay = new ControlTooltip("Replay (k)", playButton, controlBar, 0, false);
                         replay.showTooltip();
                     } else {
-                        replay = new ControlTooltip("Replay (k)", playButton, controlBar, 0);
+                        replay = new ControlTooltip("Replay (k)", playButton, controlBar, 0, false);
                     }
                         menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
                         menuController.activeItem.play.updateText("Play video");
@@ -331,10 +331,10 @@ public class ControlBarController implements Initializable {
                     if (play.isShowing() || replay.isShowing()) {
                         play.hide();
                         replay.hide();
-                        pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0);
+                        pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
                         pause.showTooltip();
                     } else {
-                        pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0);
+                        pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
                     }
                 }
             }
@@ -473,10 +473,10 @@ public class ControlBarController implements Initializable {
 
         if (play.isShowing()) {
             play.hide();
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0);
+            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
             pause.showTooltip();
         } else {
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0);
+            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
         }
 
         mediaInterface.wasPlaying = mediaInterface.playing; // updates the value of wasPlaying variable - when this method is called the
@@ -497,10 +497,10 @@ public class ControlBarController implements Initializable {
 
         if (pause.isShowing()) {
             pause.hide();
-            play = new ControlTooltip("Play (k)", playButton, controlBar, 0);
+            play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
             play.showTooltip();
         } else {
-            play = new ControlTooltip("Play (k)", playButton, controlBar, 0);
+            play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
         }
 
         mediaInterface.wasPlaying = mediaInterface.playing;
@@ -511,10 +511,10 @@ public class ControlBarController implements Initializable {
 
         if (replay.isShowing()) {
             replay.hide();
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0);
+            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
             pause.showTooltip();
         } else {
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0);
+            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
         }
 
         if(mediaInterface.currentVideo != null){
@@ -565,10 +565,10 @@ public class ControlBarController implements Initializable {
             if (!mainController.captionsOpen && !settingsController.settingsOpen) {
                 if (fullScreen.isShowing()) {
                     fullScreen.hide();
-                    exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0);
+                    exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
                     exitFullScreen.showTooltip();
                 } else {
-                    exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0);
+                    exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
                 }
             }
         } else {
@@ -578,10 +578,10 @@ public class ControlBarController implements Initializable {
             if (!mainController.captionsOpen && !settingsController.settingsOpen) {
                 if (exitFullScreen.isShowing()) {
                     exitFullScreen.hide();
-                    fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0);
+                    fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
                     fullScreen.showTooltip();
                 } else {
-                    fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0);
+                    fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
                 }
             }
         }
@@ -671,43 +671,43 @@ public class ControlBarController implements Initializable {
         mainController.captionsOpen = false;
 
         if (captionsButtonHover) {
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0);
+            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0, false);
             captions.showTooltip();
 
-            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0);
+            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
 
             if (App.fullScreen)
-                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0);
-            else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0);
+                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
+            else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
         } else if (settingsButtonHover) {
-            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0);
+            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
             settings.showTooltip();
 
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0);
+            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0, false);
 
             if (App.fullScreen)
-                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0);
-            else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0);
+                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
+            else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
         } else if (fullScreenButtonHover) {
             if (App.fullScreen) {
-                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0);
+                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
                 exitFullScreen.showTooltip();
             } else {
-                fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0);
+                fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
                 fullScreen.showTooltip();
             }
 
-            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0);
+            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
 
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0);
+            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0, false);
         } else {
-            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0);
+            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
 
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0);
+            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0, false);
 
             if (App.fullScreen)
-                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0);
-            else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0);
+                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
+            else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
         }
 
         //AnimationsClass.closeCaptions(captionLine);

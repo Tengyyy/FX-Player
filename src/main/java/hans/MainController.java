@@ -147,7 +147,7 @@ public class MainController implements Initializable {
 
         Platform.runLater(() -> {
             // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
-            openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBar, 1000);
+            openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBar, 1000, true);
         });
 
         mediaView.focusedProperty()

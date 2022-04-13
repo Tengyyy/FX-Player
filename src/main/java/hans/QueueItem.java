@@ -384,9 +384,9 @@ public class QueueItem extends GridPane {
             menuController.queue.add(this);
             menuController.queueBox.getChildren().add(this);
 
-            play = new ControlTooltip("Play video", playButton, new VBox(), 1000);
-            remove = new ControlTooltip("Remove video", removeButton, new VBox(), 1000);
-            options = new ControlTooltip("Options", optionsButton, new VBox(), 1000);
+            play = new ControlTooltip("Play video", playButton, new VBox(), 1000, false);
+            remove = new ControlTooltip("Remove video", removeButton, new VBox(), 1000, false);
+            options = new ControlTooltip("Options", optionsButton, new VBox(), 1000, false);
 
         }
 

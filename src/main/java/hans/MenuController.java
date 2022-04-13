@@ -132,10 +132,10 @@ public class MenuController implements Initializable {
         closeIcon.setShape(closeIconSVG);
 
         Platform.runLater(() -> {
-            closeMenuTooltip = new ControlTooltip("Close menu (q)", closeButton, new VBox(), 1000);
-            addMediaTooltip = new ControlTooltip("Add media", addVideoButton, new VBox(), 1000);
-            clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, new VBox(), 1000);
-            appSettingsTooltip = new ControlTooltip("App settings", appSettingsButton, new VBox(), 1000);
+            closeMenuTooltip = new ControlTooltip("Close menu (q)", closeButton, new VBox(), 1000, true);
+            addMediaTooltip = new ControlTooltip("Add media", addVideoButton, new VBox(), 1000, true);
+            clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, new VBox(), 1000, true);
+            appSettingsTooltip = new ControlTooltip("App settings", appSettingsButton, new VBox(), 1000, true);
         });
 
     }

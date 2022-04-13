@@ -12,6 +12,7 @@ import javafx.geometry.*;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -118,9 +119,14 @@ public class QueueItem extends GridPane {
         coverImage.setImage(videoItem.getCover());
         coverImage.setPreserveRatio(true);
 
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius(15);
+        dropShadow.setSpread(0.5);
+
         playText.setText(String.valueOf(videoIndex));
         playText.setId("playText");
         playText.setMouseTransparent(true);
+        playText.setEffect(dropShadow);
 
         playButton.setPrefWidth(40);
         playButton.setPrefHeight(40);
@@ -148,6 +154,7 @@ public class QueueItem extends GridPane {
         playIcon.setMouseTransparent(true);
         playIcon.getStyleClass().add("menuIcon");
         playIcon.setVisible(false);
+        playIcon.setEffect(dropShadow);
 
         playButtonWrapper.getChildren().addAll(coverImage, playText, playButton, playIcon);
 

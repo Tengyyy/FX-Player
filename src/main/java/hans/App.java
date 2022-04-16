@@ -68,6 +68,7 @@ public class App extends Application {
             svgMap.put(FILM, "M20.84 2.18L16.91 2.96L19.65 6.5L21.62 6.1L20.84 2.18M13.97 3.54L12 3.93L14.75 7.46L16.71 7.07L13.97 3.54M9.07 4.5L7.1 4.91L9.85 8.44L11.81 8.05L9.07 4.5M4.16 5.5L3.18 5.69A2 2 0 0 0 1.61 8.04L2 10L6.9 9.03L4.16 5.5M2 10V20C2 21.11 2.9 22 4 22H20C21.11 22 22 21.11 22 20V10H2Z");
             svgMap.put(MUSIC, "M21,3V15.5A3.5,3.5 0 0,1 17.5,19A3.5,3.5 0 0,1 14,15.5A3.5,3.5 0 0,1 17.5,12C18.04,12 18.55,12.12 19,12.34V6.47L9,8.6V17.5A3.5,3.5 0 0,1 5.5,21A3.5,3.5 0 0,1 2,17.5A3.5,3.5 0 0,1 5.5,14C6.04,14 6.55,14.12 7,14.34V6L21,3Z");
 
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("views/Main.fxml"));
 
             Parent root = loader.load();
@@ -272,11 +273,20 @@ public class App extends Application {
                         if (!controlBarController.durationSlider.isValueChanging()) {  // wont let user play/pause video while media slider is seeking
                             if (mediaInterface.atEnd) {
                                 controlBarController.replayMedia();
+                                mainController.actionIndicator.setIcon(PLAY);
+                                mainController.actionIndicator.setVisible(true);
+                                mainController.actionIndicator.animate();
                             } else {
                                 if (mediaInterface.playing) {
                                     controlBarController.pause();
+                                    mainController.actionIndicator.setIcon(PAUSE);
+                                    mainController.actionIndicator.setVisible(true);
+                                    mainController.actionIndicator.animate();
                                 } else {
                                     controlBarController.play();
+                                    mainController.actionIndicator.setIcon(PLAY);
+                                    mainController.actionIndicator.setVisible(true);
+                                    mainController.actionIndicator.animate();
                                 }
                             }
                         }
@@ -289,8 +299,14 @@ public class App extends Application {
                         controlBarController.mouseEventTracker.move();
                         if (!controlBarController.muted) {
                             controlBarController.mute();
+                            mainController.actionIndicator.setIcon(VOLUME_MUTED);
+                            mainController.actionIndicator.setVisible(true);
+                            mainController.actionIndicator.animate();
                         } else {
                             controlBarController.unmute();
+                            mainController.actionIndicator.setIcon(VOLUME_HIGH);
+                            mainController.actionIndicator.setVisible(true);
+                            mainController.actionIndicator.animate();
                         }
                     }
                     break;
@@ -309,11 +325,20 @@ public class App extends Application {
                         if (!controlBarController.durationSlider.isValueChanging()) { // wont let user play/pause video while media slider is seeking
                             if (mediaInterface.atEnd) {
                                 controlBarController.replayMedia();
+                                mainController.actionIndicator.setIcon(PLAY);
+                                mainController.actionIndicator.setVisible(true);
+                                mainController.actionIndicator.animate();
                             } else {
                                 if (mediaInterface.playing) {
                                     controlBarController.pause();
+                                    mainController.actionIndicator.setIcon(PAUSE);
+                                    mainController.actionIndicator.setVisible(true);
+                                    mainController.actionIndicator.animate();
                                 } else {
                                     controlBarController.play();
+                                    mainController.actionIndicator.setIcon(PLAY);
+                                    mainController.actionIndicator.setVisible(true);
+                                    mainController.actionIndicator.animate();
                                 }
                             }
 

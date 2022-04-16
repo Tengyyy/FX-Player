@@ -9,6 +9,7 @@ hans\App$1.class
 hans\ControlBarController.class
 hans\App.class
 hans\CustomSpeedTab.class
+hans\ActionIndicator.class
 hans\ControlTooltip.class
 hans\Mp4Item.class
 hans\DragResizer.class

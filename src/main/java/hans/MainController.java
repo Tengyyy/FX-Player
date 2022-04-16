@@ -200,11 +200,20 @@ public class MainController implements Initializable {
         } else {
             if (mediaInterface.atEnd) {
                 controlBarController.replayMedia();
+                actionIndicator.setIcon(PLAY);
+                actionIndicator.setVisible(true);
+                actionIndicator.animate();
             } else {
                 if (mediaInterface.playing) {
                     controlBarController.pause();
+                    actionIndicator.setIcon(PAUSE);
+                    actionIndicator.setVisible(true);
+                    actionIndicator.animate();
                 } else {
                     controlBarController.play();
+                    actionIndicator.setIcon(PLAY);
+                    actionIndicator.setVisible(true);
+                    actionIndicator.animate();
                 }
             }
         }

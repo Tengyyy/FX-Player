@@ -183,19 +183,15 @@ public class MainController implements Initializable {
                     }
                 });
 
-        PauseTransition singlePressPause = new PauseTransition(Duration.millis(200));
-        singlePressPause.setOnFinished(e -> {
-            mediaClick();
-        });
 
         mediaView.setOnMouseClicked(e -> {
 
             if (e.getClickCount() == 1) {
-                singlePressPause.play();
+                mediaClick();
             }
 
             if (e.getClickCount() == 2) {
-                singlePressPause.stop();
+                mediaClick();
                 controlBarController.fullScreen();
             }
         });

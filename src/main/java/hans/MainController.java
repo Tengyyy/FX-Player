@@ -8,6 +8,7 @@ import java.util.*;
 
 
 import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -16,6 +17,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -25,6 +28,7 @@ import javafx.scene.effect.GaussianBlur;
 
 
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Background;
 
@@ -36,6 +40,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaView;
 import javafx.scene.media.SubtitleTrack;
 import javafx.scene.shape.SVGPath;
+import javafx.util.Duration;
 
 import static hans.SVG.*;
 
@@ -177,6 +182,24 @@ public class MainController implements Initializable {
                         focusNodeTracker = 8;
                     }
                 });
+
+        PauseTransition singlePressPause = new PauseTransition(Duration.millis(200));
+        singlePressPause.setOnFinished(e -> {
+            mediaClick();
+        });
+
+        mediaView.setOnMouseClicked(e -> {
+
+            if (e.getClickCount() == 1) {
+                singlePressPause.play();
+            }
+
+            if (e.getClickCount() == 2) {
+                singlePressPause.stop();
+                controlBarController.fullScreen();
+            }
+        });
+
 
     }
 

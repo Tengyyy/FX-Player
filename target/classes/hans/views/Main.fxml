@@ -16,7 +16,7 @@
                <children>
                   <StackPane fx:id="mediaViewInnerWrapper" minWidth="526.0" StackPane.alignment="CENTER_RIGHT">
                      <children>
-                          <MediaView fx:id="mediaView" focusTraversable="true" onMouseClicked="#mediaClick" styleClass="focusableProperty">
+                          <MediaView fx:id="mediaView" focusTraversable="true" styleClass="focusableProperty">
                               <viewport>
                                   <Rectangle2D />
                               </viewport>

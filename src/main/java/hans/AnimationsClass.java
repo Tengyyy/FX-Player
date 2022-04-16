@@ -6,9 +6,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -585,8 +587,14 @@ public class AnimationsClass {
 
         timeline.setCycleCount(1);
         timeline.setAutoReverse(false);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(), menuController.prefWidth, Interpolator.EASE_OUT)));
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(),Double.min(menuController.prefWidth, menuController.menu.getMaxWidth()), Interpolator.EASE_OUT)));
         timeline.play();
+        timeline.setOnFinished((e) -> {
+            menuController.menu.setMinWidth(350);
+            menuController.prefWidth = menuController.menu.getWidth();
+            menuController.menu.setMouseTransparent(false);
+            menuController.menuInTransition = false;
+        });
 
     }
 
@@ -598,5 +606,8 @@ public class AnimationsClass {
         timeline.setAutoReverse(false);
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(), 0, Interpolator.EASE_OUT)));
         timeline.play();
+        timeline.setOnFinished((e) -> {
+            menuController.menuInTransition = false;
+        });
     }
 }

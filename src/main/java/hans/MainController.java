@@ -11,7 +11,9 @@ import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -47,7 +49,7 @@ public class MainController implements Initializable {
     Button menuButton;
 
     @FXML
-    StackPane outerPane, menuButtonPane, mediaViewWrapper;
+    StackPane outerPane, menuButtonPane, mediaViewWrapper, mediaViewInnerWrapper;
 
     @FXML
     BorderPane mainPane;
@@ -121,8 +123,8 @@ public class MainController implements Initializable {
 
         mediaViewWidth = mediaView.fitWidthProperty();
         mediaViewHeight = mediaView.fitHeightProperty();
-        mediaViewWidth.bind(mediaViewWrapper.widthProperty());
-        Platform.runLater(() -> mediaViewHeight.bind(mediaViewWrapper.getScene().heightProperty()));
+        mediaViewWidth.bind(mediaViewInnerWrapper.widthProperty());
+        Platform.runLater(() -> mediaViewHeight.bind(mediaViewInnerWrapper.getScene().heightProperty()));
 
         mediaView.setPreserveRatio(true);
 
@@ -137,8 +139,9 @@ public class MainController implements Initializable {
 
 
         mediaViewWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
+        mediaViewInnerWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
 
-        menuButtonPane.translateXProperty().bind(menuController.menu.prefWidthProperty().multiply(-1));
+        menuButtonPane.translateXProperty().bind(menuController.menu.widthProperty().multiply(-1));
         menuButton.setBackground(Background.EMPTY);
         menuButton.setVisible(false);
 
@@ -148,6 +151,13 @@ public class MainController implements Initializable {
         Platform.runLater(() -> {
             // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBar, 1000, true);
+
+            mediaViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
+                if(newValue.doubleValue() < menuController.menu.getPrefWidth()){
+                    menuController.menu.setPrefWidth(newValue.doubleValue());
+                    menuController.prefWidth = newValue.doubleValue();
+                }
+            });
         });
 
         mediaView.focusedProperty()
@@ -167,10 +177,6 @@ public class MainController implements Initializable {
                         focusNodeTracker = 8;
                     }
                 });
-
-        // mediaInterface.createMediaPlayer(new Media(file.toURI().toString()));
-
-        //menuController.menu.setOpacity(0);
 
     }
 
@@ -343,12 +349,13 @@ public class MainController implements Initializable {
     }
 
     public void openMenu() {
-
-        menuController.menuOpen = true;
-        //menuController.menu.translateXProperty().unbind();
-        //mediaViewWrapper.prefWidthProperty().unbind();
-        menuController.menu.setMouseTransparent(false);
-        AnimationsClass.openMenu(this, menuController);
+        if(!menuController.menuInTransition) {
+            menuController.menuInTransition = true;
+            menuController.menuOpen = true;
+            //menuController.menu.translateXProperty().unbind();
+            //mediaViewWrapper.prefWidthProperty().unbind();
+            AnimationsClass.openMenu(this, menuController);
+        }
     }
 
     public void handleDragEntered(DragEvent e){

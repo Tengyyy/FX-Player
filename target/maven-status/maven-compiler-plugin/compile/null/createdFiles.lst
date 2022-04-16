@@ -11,6 +11,7 @@ hans\App.class
 hans\CustomSpeedTab.class
 hans\ControlTooltip.class
 hans\Mp4Item.class
+hans\DragResizer.class
 hans\AnimationsClass.class
 hans\SettingsController$1.class
 hans\QueueItem.class

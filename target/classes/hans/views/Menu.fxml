@@ -12,9 +12,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane id="menuContent" fx:id="menu" minWidth="250.0" prefWidth="350.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MenuController">
+<StackPane id="menuContent" fx:id="menu" minWidth="350.0" prefWidth="350.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MenuController">
    <children>
-      <StackPane fx:id="menuBar" maxHeight="-Infinity" minWidth="350.0" prefHeight="60.0" StackPane.alignment="TOP_CENTER">
+      <StackPane fx:id="menuBar" maxHeight="-Infinity" minWidth="345.0" prefHeight="60.0" StackPane.alignment="TOP_CENTER">
          <children>
             <StackPane fx:id="closeButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="60.0" StackPane.alignment="CENTER_LEFT">
                <StackPane.margin>
@@ -76,10 +76,13 @@
                </StackPane.margin>
             </HBox>
          </children>
-      </StackPane>
-      <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minWidth="350.0" prefHeight="200.0" prefWidth="350.0">
          <StackPane.margin>
-            <Insets top="60.0" />
+            <Insets right="5.0" />
+         </StackPane.margin>
+      </StackPane>
+      <ScrollPane id="queueScroll" fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minWidth="345.0" prefHeight="200.0" prefWidth="350.0">
+         <StackPane.margin>
+            <Insets right="5.0" top="60.0" />
          </StackPane.margin></ScrollPane>
       <StackPane fx:id="notificationPane" maxHeight="-Infinity" maxWidth="-Infinity" pickOnBounds="false" prefHeight="50.0" prefWidth="500.0" style="-fx-background-color: #303030; -fx-background-radius: 7; -fx-border-color: #404040; -fx-border-width: 1; -fx-border-radius: 7;" StackPane.alignment="BOTTOM_CENTER">
          <children>
@@ -105,6 +108,14 @@
          <StackPane.margin>
             <Insets bottom="30.0" left="50.0" right="50.0" />
          </StackPane.margin>
+      </StackPane>
+      <StackPane fx:id="dragPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="5.0" style="-fx-background-color: #313131;" StackPane.alignment="CENTER_RIGHT">
+         <children>
+            <Region fx:id="dragIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="13.0" prefWidth="3.0" style="-fx-background-color: white;" StackPane.alignment="CENTER" />
+         </children>
+         <cursor>
+            <Cursor fx:constant="H_RESIZE" />
+         </cursor>
       </StackPane>
    </children>
 </StackPane>

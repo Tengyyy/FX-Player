@@ -96,6 +96,9 @@ public class MainController implements Initializable {
     SVGPath menuSVG;
 
     ActionIndicator actionIndicator;
+    SeekIndicator forwardsIndicator, backwardsIndicator;
+
+    SimpleDoubleProperty sizeMultiplier = new SimpleDoubleProperty();
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -112,7 +115,12 @@ public class MainController implements Initializable {
         menuSVG = new SVGPath();
         menuSVG.setContent(App.svgMap.get(MENU));
 
+        sizeMultiplier.set(0.7);
+
         actionIndicator = new ActionIndicator(this);
+        forwardsIndicator = new SeekIndicator(this, true);
+        backwardsIndicator = new SeekIndicator(this, false);
+
 
         // Make mediaView adjust to frame size
 
@@ -153,6 +161,21 @@ public class MainController implements Initializable {
                     menuController.prefWidth = newValue.doubleValue();
                 }
             });
+
+                mediaViewInnerWrapper.widthProperty().addListener((observableValue, oldValue, newValue) -> {
+                    if(oldValue.doubleValue() < 1200 && newValue.doubleValue() >= 1200){
+                        sizeMultiplier.set(1);
+                        if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                        forwardsIndicator.resize();
+                        backwardsIndicator.resize();
+                    }
+                    else if(oldValue.doubleValue() >= 1200 & newValue.doubleValue() < 1200){
+                        sizeMultiplier.set(0.7);
+                        if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                        forwardsIndicator.resize();
+                        backwardsIndicator.resize();
+                    }
+                });
         });
 
         mediaView.focusedProperty()

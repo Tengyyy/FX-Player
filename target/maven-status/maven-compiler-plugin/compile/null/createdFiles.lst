@@ -16,6 +16,7 @@ hans\DragResizer.class
 hans\AnimationsClass.class
 hans\SettingsController$1.class
 hans\QueueItem.class
+hans\SeekIndicator.class
 hans\MediaInterface$1.class
 hans\AnimationsClass$1.class
 hans\Mp3Item.class

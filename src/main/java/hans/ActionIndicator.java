@@ -23,16 +23,13 @@ import static hans.SVG.*;
 public class ActionIndicator {
 
     MainController mainController;
-    StackPane background;
-    StackPane wrapper;
+    StackPane background, wrapper;
     Region icon;
     SVGPath iconPath;
 
     ScaleTransition scaleTransition;
     FadeTransition fadeTransition1, fadeTransition2;
     ParallelTransition parallelTransition;
-
-    SimpleDoubleProperty sizeMultiplier = new SimpleDoubleProperty();
 
     ActionIndicator(MainController mainController){
 
@@ -44,25 +41,10 @@ public class ActionIndicator {
         wrapper.setVisible(false);
         StackPane.setAlignment(wrapper, Pos.CENTER);
 
-        sizeMultiplier.set(0.7);
-
-        Platform.runLater(() -> {
-            mainController.mediaViewWrapper.widthProperty().addListener((observableValue, oldValue, newValue) -> {
-                if(oldValue.doubleValue() < 1200 && newValue.doubleValue() >= 1200){
-                    sizeMultiplier.set(1);
-                    if(wrapper.isVisible()) updateSize();
-                }
-                else if(oldValue.doubleValue() >= 1200 & newValue.doubleValue() < 1200){
-                    sizeMultiplier.set(0.7);
-                    if(wrapper.isVisible()) updateSize();
-                }
-            });
-        });
-
         background = new StackPane();
-        background.setMinSize(100 * sizeMultiplier.doubleValue(),100 * sizeMultiplier.doubleValue());
-        background.setPrefSize(100 * sizeMultiplier.doubleValue(),100 * sizeMultiplier.doubleValue());
-        background.setMaxSize(100 * sizeMultiplier.doubleValue(),100 * sizeMultiplier.doubleValue());
+        background.setMinSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
+        background.setPrefSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
+        background.setMaxSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
         background.setEffect(new DropShadow());
         background.setOpacity(0.6);
         background.setStyle("-fx-background-color: black; -fx-background-radius: 500;");
@@ -71,16 +53,16 @@ public class ActionIndicator {
         iconPath = new SVGPath();
 
         icon = new Region();
-        icon.setMinSize(50 * sizeMultiplier.doubleValue(),50 * sizeMultiplier.doubleValue());
-        icon.setPrefSize(50 * sizeMultiplier.doubleValue(),50 * sizeMultiplier.doubleValue());
-        icon.setMaxSize(50 * sizeMultiplier.doubleValue(),50 * sizeMultiplier.doubleValue());
+        icon.setMinSize(50 * mainController.sizeMultiplier.doubleValue(),50 * mainController.sizeMultiplier.doubleValue());
+        icon.setPrefSize(50 * mainController.sizeMultiplier.doubleValue(),50 * mainController.sizeMultiplier.doubleValue());
+        icon.setMaxSize(50 * mainController.sizeMultiplier.doubleValue(),50 * mainController.sizeMultiplier.doubleValue());
         icon.setStyle("-fx-background-color: white;");
         icon.setOpacity(1);
         StackPane.setAlignment(icon, Pos.CENTER);
 
         wrapper.getChildren().addAll(background, icon);
 
-        mainController.mediaViewWrapper.getChildren().add(wrapper);
+        mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
 
         scaleTransition = AnimationsClass.scaleAnimation(800, wrapper, 1, 1.5, 1, 1.5, false, 1, false);
         fadeTransition1 = AnimationsClass.fadeAnimation(800, background, 0.6, 0, false, 1, false);
@@ -104,27 +86,27 @@ public class ActionIndicator {
 
     public void updateSize(){
 
-        background.setMinSize(100 * sizeMultiplier.doubleValue(),100 * sizeMultiplier.doubleValue());
-        background.setPrefSize(100 * sizeMultiplier.doubleValue(),100 * sizeMultiplier.doubleValue());
-        background.setMaxSize(100 * sizeMultiplier.doubleValue(),100 * sizeMultiplier.doubleValue());
+        background.setMinSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
+        background.setPrefSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
+        background.setMaxSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
 
         if(iconPath.getContent() == App.svgMap.get(PLAY)){
-            icon.setMinSize(30 * sizeMultiplier.doubleValue(), 30 * sizeMultiplier.doubleValue());
-            icon.setPrefSize(30 * sizeMultiplier.doubleValue(), 30 * sizeMultiplier.doubleValue());
-            icon.setMaxSize(30 * sizeMultiplier.doubleValue(), 30 * sizeMultiplier.doubleValue());
+            icon.setMinSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
+            icon.setPrefSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
+            icon.setMaxSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setTranslateX(icon.getWidth() / 10);
         }
         else if(iconPath.getContent() == App.svgMap.get(PAUSE) || iconPath.getContent() == App.svgMap.get(VOLUME_MUTED) || iconPath.getContent() == App.svgMap.get(VOLUME_HIGH)){
-            icon.setMinSize(30 * sizeMultiplier.doubleValue(), 30 * sizeMultiplier.doubleValue());
-            icon.setPrefSize(30 * sizeMultiplier.doubleValue(), 30 * sizeMultiplier.doubleValue());
-            icon.setMaxSize(30 * sizeMultiplier.doubleValue(), 30 * sizeMultiplier.doubleValue());
+            icon.setMinSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
+            icon.setPrefSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
+            icon.setMaxSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setTranslateX(0);
         }
         else {
             System.out.println("test");
-            icon.setMinSize(40 * sizeMultiplier.doubleValue(), 40 * sizeMultiplier.doubleValue());
-            icon.setPrefSize(40 * sizeMultiplier.doubleValue(), 40 * sizeMultiplier.doubleValue());
-            icon.setMaxSize(40 * sizeMultiplier.doubleValue(), 40 * sizeMultiplier.doubleValue());
+            icon.setMinSize(40 * mainController.sizeMultiplier.doubleValue(), 40 * mainController.sizeMultiplier.doubleValue());
+            icon.setPrefSize(40 * mainController.sizeMultiplier.doubleValue(), 40 * mainController.sizeMultiplier.doubleValue());
+            icon.setMaxSize(40 * mainController.sizeMultiplier.doubleValue(), 40 * mainController.sizeMultiplier.doubleValue());
             icon.setTranslateX(0);
         }
     }

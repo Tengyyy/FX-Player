@@ -135,6 +135,15 @@ public class App extends Application {
                     case RIGHT: {
 
                         controlBarController.mouseEventTracker.move();
+
+                        if(mainController.backwardsIndicator.wrapper.isVisible()){
+                            mainController.backwardsIndicator.setVisible(false);
+                        }
+                        mainController.forwardsIndicator.setText("5 seconds");
+                        mainController.forwardsIndicator.reset();
+                        mainController.forwardsIndicator.setVisible(true);
+                        mainController.forwardsIndicator.animate();
+
                         if (!mainController.getControlBarController().volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
 
                             if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
@@ -142,8 +151,8 @@ public class App extends Application {
                             }
 
                             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
-                            event.consume();
 
+                            event.consume();
 
                         }
                     }
@@ -151,6 +160,14 @@ public class App extends Application {
                     case LEFT: {
 
                         controlBarController.mouseEventTracker.move();
+
+                        if(mainController.forwardsIndicator.wrapper.isVisible()){
+                            mainController.forwardsIndicator.setVisible(false);
+                        }
+                        mainController.backwardsIndicator.setText("5 seconds");
+                        mainController.backwardsIndicator.reset();
+                        mainController.backwardsIndicator.setVisible(true);
+                        mainController.backwardsIndicator.animate();
 
                         if (!controlBarController.volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
                             mediaInterface.seekedToEnd = false;
@@ -182,6 +199,15 @@ public class App extends Application {
                     case L: {
 
                         controlBarController.mouseEventTracker.move();
+
+                        if(mainController.backwardsIndicator.wrapper.isVisible()){
+                            mainController.backwardsIndicator.setVisible(false);
+                        }
+                        mainController.forwardsIndicator.setText("10 seconds");
+                        mainController.forwardsIndicator.reset();
+                        mainController.forwardsIndicator.setVisible(true);
+                        mainController.forwardsIndicator.animate();
+
                         if (!controlBarController.volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
 
 
@@ -199,6 +225,14 @@ public class App extends Application {
                     case J: {
 
                         controlBarController.mouseEventTracker.move();
+                        if(mainController.forwardsIndicator.wrapper.isVisible()){
+                            mainController.forwardsIndicator.setVisible(false);
+                        }
+                        mainController.backwardsIndicator.setText("10 seconds");
+                        mainController.backwardsIndicator.reset();
+                        mainController.backwardsIndicator.setVisible(true);
+                        mainController.backwardsIndicator.animate();
+
                         if (!controlBarController.volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
                             mediaInterface.seekedToEnd = false;
                             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);

@@ -545,6 +545,17 @@ public class AnimationsClass {
         return parallelTransition;
     }
 
+    public static SequentialTransition sequentialAnimation(boolean play, Transition... transitions){
+        SequentialTransition sequentialTransition = new SequentialTransition();
+        for(Transition transition :  transitions){
+            sequentialTransition.getChildren().add(transition);
+        }
+
+        if(play) sequentialTransition.play();
+
+        return sequentialTransition;
+    }
+
 
     public static void openMenuNotification(MenuController menuController){
 

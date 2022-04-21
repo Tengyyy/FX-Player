@@ -64,9 +64,9 @@ public class ActionIndicator {
 
         mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
 
-        scaleTransition = AnimationsClass.scaleAnimation(800, wrapper, 1, 1.5, 1, 1.5, false, 1, false);
-        fadeTransition1 = AnimationsClass.fadeAnimation(800, background, 0.6, 0, false, 1, false);
-        fadeTransition2 = AnimationsClass.fadeAnimation(800, icon, 1, 0, false, 1, false);
+        scaleTransition = AnimationsClass.scaleAnimation(600, wrapper, 1, 1.5, 1, 1.5, false, 1, false);
+        fadeTransition1 = AnimationsClass.fadeAnimation(600, background, 0.3, 0, false, 1, false);
+        fadeTransition2 = AnimationsClass.fadeAnimation(600, icon, 0.8, 0, false, 1, false);
         parallelTransition = AnimationsClass.parallelAnimation(false, scaleTransition, fadeTransition1, fadeTransition2);
         parallelTransition.setOnFinished((e) -> {
             wrapper.setVisible(false);

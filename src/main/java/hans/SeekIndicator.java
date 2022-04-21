@@ -49,7 +49,7 @@ public class SeekIndicator {
         background.setPrefSize(150 * mainController.sizeMultiplier.doubleValue(),150 * mainController.sizeMultiplier.doubleValue());
         background.setMaxSize(150 * mainController.sizeMultiplier.doubleValue(),150 * mainController.sizeMultiplier.doubleValue());
         background.setEffect(new DropShadow());
-        background.setOpacity(0.6);
+        background.setOpacity(0.3);
         background.setStyle("-fx-background-color: black; -fx-background-radius: 500;");
         StackPane.setAlignment(background, Pos.CENTER);
 
@@ -100,13 +100,13 @@ public class SeekIndicator {
 
         wrapper.getChildren().addAll(background, arrowContainer, time);
 
-        arrow1on = AnimationsClass.fadeAnimation(333, arrow1, 0.6, 1, false, 1, false);
-        arrow1off = AnimationsClass.fadeAnimation(333, arrow1, 1, 0.6, false, 1, false);
+        arrow1on = AnimationsClass.fadeAnimation(300, arrow1, 0.6, 1, false, 1, false);
+        arrow1off = AnimationsClass.fadeAnimation(300, arrow1, 1, 0.6, false, 1, false);
 
-        arrow2on = AnimationsClass.fadeAnimation(333, arrow2, 0.6, 1, false, 1, false);
-        arrow2off = AnimationsClass.fadeAnimation(333, arrow2, 1, 0.6, false, 1, false);
+        arrow2on = AnimationsClass.fadeAnimation(300, arrow2, 0.6, 1, false, 1, false);
+        arrow2off = AnimationsClass.fadeAnimation(300, arrow2, 1, 0.6, false, 1, false);
 
-        arrow3on = AnimationsClass.fadeAnimation(333, arrow3, 0.6, 1, false, 1, false);
+        arrow3on = AnimationsClass.fadeAnimation(300, arrow3, 0.6, 1, false, 1, false);
 
         arrows1and2 = AnimationsClass.parallelAnimation(false, arrow1off, arrow2on);
         arrows2and3 = AnimationsClass.parallelAnimation(false, arrow2off, arrow3on);

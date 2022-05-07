@@ -73,9 +73,6 @@ public class MainController implements Initializable {
 
     MediaInterface mediaInterface;
 
-
-    private File file;
-
     DoubleProperty mediaViewWidth;
     DoubleProperty mediaViewHeight;
 
@@ -108,8 +105,6 @@ public class MainController implements Initializable {
         controlBarController.init(this, settingsController, menuController, mediaInterface); // shares references of all the controllers between eachother
         settingsController.init(this, controlBarController, menuController, mediaInterface);
         menuController.init(this, controlBarController, settingsController, mediaInterface);
-
-        file = new File("src/main/resources/hans/hey.mp4");
 
         // declaring media control images
         menuSVG = new SVGPath();
@@ -151,8 +146,7 @@ public class MainController implements Initializable {
 
         menuIcon.setShape(menuSVG);
 
-        Platform.runLater(() -> {
-            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
+        Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBar, 1000, true);
 
             mediaViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -220,25 +214,22 @@ public class MainController implements Initializable {
 
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
-        } else {
+        }
+        else {
             if (mediaInterface.atEnd) {
                 controlBarController.replayMedia();
                 actionIndicator.setIcon(PLAY);
-                actionIndicator.setVisible(true);
-                actionIndicator.animate();
             } else {
                 if (mediaInterface.playing) {
                     controlBarController.pause();
                     actionIndicator.setIcon(PAUSE);
-                    actionIndicator.setVisible(true);
-                    actionIndicator.animate();
                 } else {
                     controlBarController.play();
                     actionIndicator.setIcon(PLAY);
-                    actionIndicator.setVisible(true);
-                    actionIndicator.animate();
                 }
             }
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
         }
 
         mediaView.requestFocus();
@@ -442,19 +433,15 @@ public class MainController implements Initializable {
         // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
         if(settingsController.marqueeTimeline != null && settingsController.marqueeTimeline.getStatus() == Animation.Status.RUNNING) settingsController.videoNameText.setLayoutX(0);
 
-        mediaInterface.resetMediaPlayer();
-        mediaInterface.playedVideoIndex = -1;
 
         MediaItem temp = null;
 
         if(Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
         else if(Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
 
-        new QueueItem(temp, menuController, mediaInterface);
+        ActiveItem activeItem = new ActiveItem(temp, menuController, mediaInterface, menuController.activeBox);
+        activeItem.play(true);
 
-        mediaInterface.videoList.add(temp);
-        mediaInterface.unplayedVideoList.add(temp);
-        mediaInterface.createMediaPlayer(temp);
     }
 
 

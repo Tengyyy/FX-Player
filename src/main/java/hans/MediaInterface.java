@@ -1,6 +1,7 @@
 package hans;
 
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 
 import javafx.scene.media.Media;
@@ -17,32 +18,6 @@ public class MediaInterface {
     SettingsController settingsController;
     MenuController menuController;
 
-    // all videos that have been added to the queue or directly to the player
-    List<MediaItem> videoList = new ArrayList<>();
-
-
-    // videoList minus the videos that have already been played
-    List<MediaItem> unplayedVideoList = new ArrayList<>();
-
-
-    //if this is null, mediainterface will select a video from unplayedvideolist to play next, else this video will be played
-    MediaItem nextMedia;
-
-
-    // contains all the videos that have been played, in the order that they were played (necessary to navigate videos with the control arrows)
-    List<MediaItem> playedVideoList = new ArrayList<>();
-
-
-
-    // keeps track of position inside the video history list, if -1 the user is not currently inside the played video list (hasnt used the back arrow to play previous videos)
-    int playedVideoIndex = -1;
-
-    MediaItem currentVideo;
-
-    int currentVideoIndex = -1;
-
-    int lastVideoIndex = -1; // will be set only if loading a video from the nextMedia variable (to store the position the queue was at before jumping to nextMedia
-
     MediaPlayer mediaPlayer;
 
     // Variables to keep track of mediaplayer status:
@@ -52,6 +27,8 @@ public class MediaInterface {
     public boolean seekedToEnd = false; // true = video was seeked to the end; false = video naturally reached the end or the video is still playing
     ////////////////////////////////////////////////
 
+
+    PauseTransition transitionTimer;
 
 
     MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController) {
@@ -64,9 +41,9 @@ public class MediaInterface {
     public void updateMedia(double newValue) {
 
         if (!controlBarController.showingTimeLeft)
-            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, currentVideo.getMedia());
+            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, menuController.activeItem.mediaItem.getMedia());
         else
-            Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, currentVideo.getMedia());
+            Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, menuController.activeItem.mediaItem.getMedia());
 
         if (atEnd) {
             atEnd = false;
@@ -142,32 +119,8 @@ public class MediaInterface {
 
 
         if ((!settingsController.shuffleOn && !settingsController.loopOn && !settingsController.autoplayOn) || (settingsController.loopOn && seekedToEnd)) {
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
 
-            controlBarController.durationLabel.textProperty().unbind();
-            controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(currentVideo.getMedia().getDuration()));
-
-
-            controlBarController.playIcon.setShape(controlBarController.replaySVG);
-
-                menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
-                menuController.activeItem.play.updateText("Play video");
-
-            if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
-                controlBarController.play.hide();
-                controlBarController.pause.hide();
-                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
-                controlBarController.replay.showTooltip();
-            } else {
-                controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
-            }
-
-            controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());
-
-            if (!controlBarController.controlBarOpen) {
-                controlBarController.displayControls();
-            }
-
+            defaultEnd();
 
         } else if (settingsController.loopOn) {
             controlBarController.mouseEventTracker.move();
@@ -176,17 +129,13 @@ public class MediaInterface {
             mediaPlayer.stop();
 
         }
-        else if (settingsController.shuffleOn || settingsController.autoplayOn) playNext();
+        else if (settingsController.shuffleOn || settingsController.autoplayOn) requestNext();
 
     }
 
-    public void createMediaPlayer(MediaItem mediaItem) {
+    public void createMediaPlayer(MenuObject menuObject) {
 
-        this.currentVideo = mediaItem;
-
-        currentVideoIndex = videoList.indexOf(mediaItem);
-
-            menuController.queue.get(currentVideoIndex).setActive();
+        MediaItem mediaItem = menuObject.getMediaItem();
 
         // resets all media state variables before creating a new player
         atEnd = false;
@@ -196,25 +145,24 @@ public class MediaInterface {
 
         controlBarController.durationSlider.setValue(0);
 
-        if (unplayedVideoList.contains(currentVideo)) unplayedVideoList.remove(currentVideo);
 
-        mediaPlayer = new MediaPlayer(currentVideo.getMedia());
+        mediaPlayer = new MediaPlayer(mediaItem.getMedia());
 
 
         mainController.mediaView.setMediaPlayer(mediaPlayer);
-        App.setFrameDuration(currentVideo.getFrameDuration());
+        App.setFrameDuration(mediaItem.getFrameDuration());
 
         // update video name field in settings pane and the stage title with the new video
         Platform.runLater(() -> {
-            settingsController.videoNameText.setText(currentVideo.getFile().getName()); // updates video name text in settings pane and window title with filename
-            App.stage.setTitle(currentVideo.getFile().getName());
+            settingsController.videoNameText.setText(mediaItem.getFile().getName()); // updates video name text in settings pane and window title with filename
+            App.stage.setTitle(mediaItem.getFile().getName());
         });
 
         mediaPlayer.currentTimeProperty().addListener((observableValue, oldTime, newTime) -> {
             if (!controlBarController.showingTimeLeft)
-                Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, currentVideo.getMedia());
+                Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, mediaItem.getMedia());
             else
-                Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, currentVideo.getMedia());
+                Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, mediaItem.getMedia());
 
             if (!controlBarController.durationSlider.isValueChanging()) {
                 controlBarController.durationSlider.setValue(newTime.toSeconds());
@@ -225,13 +173,11 @@ public class MediaInterface {
 
         mediaPlayer.setOnReady(() -> {
 
-            //System.out.println(mediaPlayer.getMedia().getMetadata());
-
             mediaPlayer.setVolume(controlBarController.volumeSlider.getValue() / 100);
 
             controlBarController.play();
 
-            controlBarController.durationSlider.setMax(Math.floor(currentVideo.getMedia().getDuration().toSeconds()));
+            controlBarController.durationSlider.setMax(Math.floor(mediaItem.getMedia().getDuration().toSeconds()));
 
             TimerTask setRate = new TimerTask() {
 
@@ -250,13 +196,6 @@ public class MediaInterface {
     }
 
     public void resetMediaPlayer(){
-        if(playedVideoIndex == -1) {
-            if(currentVideo != null) playedVideoList.add(currentVideo);
-        }
-
-        currentVideo = null;
-
-        currentVideoIndex = -1;
 
         if(mediaPlayer != null) mediaPlayer.dispose();
         mainController.mediaView.setMediaPlayer(null);
@@ -296,70 +235,88 @@ public class MediaInterface {
 
     }
 
-    public void playNext(){
-        controlBarController.mouseEventTracker.move();
 
-        int temp = currentVideoIndex; // saves the currentVideoIndex to a temporary variable because the next line resets currentVideoIndex to null
-        resetMediaPlayer();
+    public void requestNext(){
+        // called when current video reaches the end
+        // if animationsInProgress list is empty, play next video, otherwise start a 1 second timer, at the end of which
+        // check again if any animations are in progress, if there are, just end the video.
+        // stop timer if user changes video while pausetransition is playing
 
-        if(nextMedia != null){
-            lastVideoIndex = temp;
-            createMediaPlayer(nextMedia);
-            nextMedia = null;
-            return;
-        }
-        else if(playedVideoIndex != -1 && playedVideoIndex < playedVideoList.size() - 1){
-            // play next video inside playedVideoList
-            playedVideoIndex+=1;
-            createMediaPlayer(playedVideoList.get(playedVideoIndex));
+        if(menuController.animationsInProgress.isEmpty()){
+            playNext();
         }
         else {
-            playedVideoIndex = -1;
-            if(settingsController.shuffleOn) playRandom();
-            else if(lastVideoIndex != -1) autoplay(lastVideoIndex); // pass the copy of currentVideoIndex to autplay method
-            else autoplay(temp);
-        }
+            transitionTimer = new PauseTransition(Duration.millis(1000));
+            transitionTimer.setOnFinished((e) -> {
+                if(menuController.animationsInProgress.isEmpty()) playNext();
+                else defaultEnd();
+            });
 
-        lastVideoIndex = -1;
+            transitionTimer.playFromStart();
+        }
+    }
+
+    public void playNext(){
+
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1){
+            // play next video inside history
+            HistoryItem historyItem =  menuController.history.get(menuController.historyBox.index + 1);
+            historyItem.play();
+
+        }
+        else if((menuController.historyBox.index == menuController.history.size() -1 || menuController.historyBox.index == -1) && !menuController.queue.isEmpty()) {
+            // play first item in queue
+
+            QueueItem queueItem = menuController.queue.get(0);
+            queueItem.play(true);
+
+        }
     }
 
     public void playPrevious(){
+
         controlBarController.mouseEventTracker.move();
-        System.out.println(playedVideoList.size());
 
-        resetMediaPlayer();
-
-        if(playedVideoIndex == -1){
-            playedVideoList.remove(playedVideoList.size() - 1);
-            playedVideoIndex = playedVideoList.size() - 1;
+        if(!menuController.history.isEmpty() && menuController.historyBox.index == -1){
+            // play most recent item in history
+            HistoryItem historyItem = menuController.history.get(menuController.history.size() -1);
+            historyItem.play();
         }
-        else playedVideoIndex--;
-        createMediaPlayer(playedVideoList.get(playedVideoIndex));
-    }
-
-    public void playRandom() {
-        if(unplayedVideoList.isEmpty()){
-            for(MediaItem mediaItem : videoList){
-                unplayedVideoList.add(mediaItem);
-            }
-        }
-        Random random = new Random();
-        int randomIndex = random.nextInt(unplayedVideoList.size());
-        createMediaPlayer(unplayedVideoList.get(randomIndex));
-    }
-
-    public void autoplay(int wasCurrentVideo){
-        if(videoList.size() > wasCurrentVideo + 1){ // get next video inside the videoList and play it
-            createMediaPlayer(videoList.get(wasCurrentVideo + 1));
-        }
-        else { // current video is last inside the videoLis
-               // get the first video inside videoList and play it
-            createMediaPlayer(videoList.get(0));
+        else if(menuController.historyBox.index > 0){
+            // play previous item
+            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index -1);
+            historyItem.play();
         }
     }
 
-    public void setNextMedia(MediaItem mediaItem){
-        nextMedia = mediaItem;
-    }
+    public void defaultEnd(){
+        controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
 
+        controlBarController.durationLabel.textProperty().unbind();
+        controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(menuController.activeItem.mediaItem.getMedia().getDuration()));
+
+
+        controlBarController.playIcon.setShape(controlBarController.replaySVG);
+
+        menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
+        menuController.activeItem.play.updateText("Play video");
+
+        if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
+            controlBarController.play.hide();
+            controlBarController.pause.hide();
+            controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
+            controlBarController.replay.showTooltip();
+        } else {
+            controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
+        }
+
+        controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());
+
+        if (!controlBarController.controlBarOpen) {
+            controlBarController.displayControls();
+        }
+
+    }
 }

@@ -242,62 +242,62 @@ public class App extends Application {
                     case DIGIT1: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 1 / 10);
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 1 / 10);
                     }
                     break;
                     case DIGIT2: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 2 / 10);
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 2 / 10);
                     }
                     break;
                     case DIGIT3: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 3 / 10);
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 3 / 10);
                     }
                     break;
                     case DIGIT4: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 4 / 10);
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 4 / 10);
                     }
                     break;
                     case DIGIT5: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 5 / 10);
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 5 / 10);
                     }
                     break;
                     case DIGIT6: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 6 / 10);
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 6 / 10);
                     }
                     break;
                     case DIGIT7: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 7 / 10);
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 7 / 10);
                     }
                     break;
                     case DIGIT8: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 8 / 10);
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 8 / 10);
                     }
                     break;
                     case DIGIT9: {
 
                         controlBarController.mouseEventTracker.move();
-                        controlBarController.durationSlider.setValue(mediaInterface.currentVideo.getMedia().getDuration().toSeconds() * 9 / 10);
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 9 / 10);
                     }
                     break;
                     case DIGIT0: {
 
                         controlBarController.mouseEventTracker.move();
                         mediaInterface.seekedToEnd = true;
-                        controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
                     }
                     break;
 
@@ -415,14 +415,14 @@ public class App extends Application {
                     case P: {
                         // take screenshot of the video if shift is not down
                         if(event.isShiftDown()){
-                            controlBarController.playPreviousMedia();
+                            mediaInterface.playPrevious();
                         }
                     }
                     break;
 
                     case N: {
                         if(event.isShiftDown()){
-                            controlBarController.playNextMedia();
+                            mediaInterface.playNext();
                         }
                     }
 

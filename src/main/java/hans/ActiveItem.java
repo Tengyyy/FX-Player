@@ -1,16 +1,18 @@
 package hans;
 
-
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.geometry.*;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -19,9 +21,9 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
+import java.net.PasswordAuthentication;
 
-public class QueueItem extends GridPane implements MenuObject{
+public class ActiveItem extends GridPane implements MenuObject {
 
     // layout constraints for the video item
     ColumnConstraints column1 = new ColumnConstraints(70,70,70);
@@ -49,21 +51,14 @@ public class QueueItem extends GridPane implements MenuObject{
 
     MenuController menuController;
 
-    Region optionsIcon;
+    Region optionsIcon, playIcon, removeIcon;
 
-    Region playIcon;
     ImageView coverImage = new ImageView();
 
-    Region removeIcon;
 
     StackPane playButtonWrapper = new StackPane();
     StackPane removeButtonWrapper = new StackPane();
     StackPane optionsButtonWrapper = new StackPane();
-
-
-    Text playText = new Text();
-
-    int videoIndex;
 
     ControlTooltip play, remove, options;
 
@@ -71,26 +66,27 @@ public class QueueItem extends GridPane implements MenuObject{
 
 
 
-    SVGPath playSVG, removeSVG, optionsSVG;
+    SVGPath playSVG, pauseSVG, removeSVG, optionsSVG;
 
+    // the options popup for this queue item
     MenuItemOptionsPopUp optionsPopUp;
 
     MediaInterface mediaInterface;
 
-    static double height = 70;
+    ActiveBox activeBox;
 
-    QueueBox queueBox;
-
-    QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, QueueBox queueBox) {
-
+    ActiveItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, ActiveBox activeBox){
         this.mediaItem = mediaItem;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
-        this.queueBox = queueBox;
+        this.activeBox = activeBox;
+
 
         column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) to take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4);
         this.getRowConstraints().addAll(row1);
+
+        this.setOpacity(0);
 
         GridPane.setValignment(playButtonWrapper, VPos.CENTER);
         GridPane.setValignment(textWrapper, VPos.CENTER);
@@ -102,24 +98,14 @@ public class QueueItem extends GridPane implements MenuObject{
         GridPane.setHalignment(optionsButtonWrapper, HPos.CENTER);
         GridPane.setHalignment(removeButtonWrapper, HPos.CENTER);
 
-
         this.getStyleClass().add("queueItem");
-        this.setOpacity(0);
+
 
         coverImage.setFitHeight(50);
         coverImage.setFitWidth(50);
         coverImage.setSmooth(true);
         coverImage.setImage(mediaItem.getCover());
         coverImage.setPreserveRatio(true);
-
-        DropShadow dropShadow = new DropShadow();
-        dropShadow.setRadius(15);
-        dropShadow.setSpread(0.5);
-
-        playText.setText(String.valueOf(videoIndex));
-        playText.setId("playText");
-        playText.setMouseTransparent(true);
-        playText.setEffect(dropShadow);
 
         playButton.setPrefWidth(40);
         playButton.setPrefHeight(40);
@@ -148,11 +134,12 @@ public class QueueItem extends GridPane implements MenuObject{
         // TODO: create semi-transparent dark background for the playicon
 
 
-        playButtonWrapper.getChildren().addAll(coverImage, playText, playButton, playIcon);
+        playButtonWrapper.getChildren().addAll(coverImage, playButton, playIcon);
 
-        videoTitle.getStyleClass().add("videoTitle");
 
-       if(mediaItem.getTitle() == null){
+        videoTitle.getStyleClass().add("activeVideoTitle");
+
+        if(mediaItem.getTitle() == null){
             videoTitle.setText(mediaItem.getFile().getName());
         }
         else {
@@ -207,6 +194,7 @@ public class QueueItem extends GridPane implements MenuObject{
         optionsButton.setCursor(Cursor.HAND);
         optionsButton.setOpacity(0);
 
+
         optionsButton.setOnAction((e) -> {
             if(optionsPopUp.isShowing()) optionsPopUp.hide();
             else optionsPopUp.showOptions();
@@ -215,7 +203,6 @@ public class QueueItem extends GridPane implements MenuObject{
         this.setOnMouseClicked(e -> {
             if(optionsPopUp.isShowing()) optionsPopUp.hide();
         });
-
         this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
 
         optionsIcon = new Region();
@@ -235,20 +222,12 @@ public class QueueItem extends GridPane implements MenuObject{
         this.add(removeButtonWrapper, 2, 0);
         this.add(optionsButtonWrapper, 3, 0);
 
-
-        if(!menuController.queueBox.getChildren().isEmpty()){
-            this.setBorder(new Border(new BorderStroke(Color.web("#BFBBBB"), Color.web("#BFBBBB"), Color.web("#BFBBBB"), Color.web("#BFBBBB"),
-                    BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE,
-                    CornerRadii.EMPTY, new BorderWidths(1), Insets.EMPTY)));
-            }
-        else this.setBorder(Border.EMPTY);
-
-
+        this.getStyleClass().add("activeItem");
 
         this.setOnMouseEntered((e) -> {
             mouseHover = true;
 
-            playText.setVisible(false);
+            // hide the bouncing columns thingy and stop animation
             playIcon.setVisible(true);
 
             this.setStyle("-fx-background-color: #2C2C2C;");
@@ -259,7 +238,7 @@ public class QueueItem extends GridPane implements MenuObject{
         this.setOnMouseExited((e) -> {
             mouseHover = false;
 
-            playText.setVisible(true);
+            // show bouncing columns and start animation
             playIcon.setVisible(false);
 
             this.setStyle("-fx-background-color: transparent;");
@@ -268,9 +247,9 @@ public class QueueItem extends GridPane implements MenuObject{
 
 
         playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-               // AnimationsClass.queuePlayHoverOn(playButtonWrapper);
+            // AnimationsClass.queuePlayHoverOn(playButtonWrapper);
 
-                AnimationsClass.parallelAnimation(true,AnimationsClass.scaleAnimation(100, playIcon, 1, 1.1, 1, 1.1, false, 1, false),AnimationsClass.scaleAnimation(100, playButton, 1, 1.1, 1, 1.1, false, 1, false));
+            AnimationsClass.parallelAnimation(true,AnimationsClass.scaleAnimation(100, playIcon, 1, 1.1, 1, 1.1, false, 1, false),AnimationsClass.scaleAnimation(100, playButton, 1, 1.1, 1, 1.1, false, 1, false));
 
         });
 
@@ -282,8 +261,9 @@ public class QueueItem extends GridPane implements MenuObject{
         });
 
         playButton.setOnAction((e) -> {
-            if(!menuController.animationsInProgress.isEmpty()) return;
-            this.play(true);
+            if(mediaInterface.atEnd) menuController.controlBarController.replayMedia();
+            else if (mediaInterface.playing) menuController.controlBarController.pause();
+            else menuController.controlBarController.play();
         });
 
         optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
@@ -303,23 +283,35 @@ public class QueueItem extends GridPane implements MenuObject{
         });
 
         removeButton.setOnAction((e) -> {
-
-            if(!menuController.animationsInProgress.isEmpty()) return;
-
-            queueBox.remove(this);
-
-            //TODO: update queue indexes via a listener to the queue observablelist object
-
+            remove();
         });
 
     }
 
-    public void updateIndex(int i){
-        videoIndex = i + 1;
-        playText.setText(String.valueOf(videoIndex));
+    public void remove() {
+        if (menuController.historyBox.index == -1 && !menuController.queue.isEmpty()) {
+            // play next item from queue
+            QueueItem queueItem = menuController.queue.get(0);
+            queueItem.play(false);
+        } else if (menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() - 1) {
+            // play next item from history
+            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index + 1);
+            historyItem.play();
+        } else if (menuController.historyBox.index == menuController.historyBox.getChildren().size() - 1 && !menuController.queueBox.getChildren().isEmpty()) {
+            // play next item from queue, set last item in history inactive
+            QueueItem queueItem = menuController.queue.get(0);
+            queueItem.play(true);
+        } else {
+            mediaInterface.resetMediaPlayer();
+            activeBox.clear();
+        }
+
     }
 
+
     public void play(boolean addToHistory){
+
+        // called only if this media item is added straight to the mediaplayer, and therefore made active, either by dragging and dropping to the mediaview or via the settings tab
 
         if(mediaInterface.transitionTimer != null && mediaInterface.transitionTimer.getStatus() == Animation.Status.RUNNING){
             mediaInterface.transitionTimer.stop();
@@ -333,42 +325,29 @@ public class QueueItem extends GridPane implements MenuObject{
 
             menuController.historyBox.add(historyItem);
         }
-        else if(addToHistory && menuController.historyBox.index != -1){
+        else if(addToHistory){
             HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
             historyItem.setInactive();
         }
 
-        ActiveItem activeItem = new ActiveItem(getMediaItem(), menuController, mediaInterface, menuController.activeBox);
-
-        menuController.activeBox.set(activeItem, true);
+        activeBox.set(this, true);
 
         if(menuController.activeItem != null) mediaInterface.resetMediaPlayer();
 
-        if(menuController.settingsController.shuffleOn){
-            queueBox.remove(this);
-        }
-        else {
-            queueBox.removeAndMove(queueBox.getChildren().indexOf(this));
-        }
     }
 
+
     @Override
-    public void showMetadata(){
-
-        System.out.println("Showing metadata\n");
-
+    public MediaItem getMediaItem() {
+        return mediaItem;
     }
 
-    @Override
-    public MenuController getMenuController() {
-        return menuController;
-    }
 
     @Override
-    public void playNext(){
-        if(videoIndex > 1) queueBox.move(videoIndex -1, 0);
-
-        AnimationsClass.openMenuNotification(menuController);
+    public void playNext() {
+        // create new queueitem and insert it at index 0
+        QueueItem temp = new QueueItem(this.mediaItem, this.menuController, this.mediaInterface, menuController.queueBox);
+        menuController.queueBox.add(0, temp);
     }
 
     @Override
@@ -377,8 +356,12 @@ public class QueueItem extends GridPane implements MenuObject{
     }
 
     @Override
-    public MediaItem getMediaItem() {
-        return this.mediaItem;
+    public void showMetadata() {
+        System.out.println("Showing metadata\n");
     }
 
+    @Override
+    public MenuController getMenuController() {
+        return menuController;
+    }
 }

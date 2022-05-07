@@ -79,7 +79,7 @@
     -fx-background-insets: 0;
 }
 
-#queueBox, #menuContent {
+#queueBox, #queueContent, #historyBox, #currentItemBox {
     -fx-background-color: #191919;
 }
 
@@ -109,7 +109,7 @@
 }
 
 
-.queueItem {
+.queueItem, .activeItem, .historyItem {
     -fx-background-color: transparent;
 }
 
@@ -124,6 +124,13 @@
     -fx-font-family: "Roboto Bold";
     -fx-background-color: transparent;
     -fx-text-fill: white;
+}
+
+.activeVideoTitle {
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto Bold";
+    -fx-background-color: transparent;
+    -fx-text-fill: red;
 }
 
 .subText {

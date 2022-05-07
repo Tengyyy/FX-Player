@@ -185,13 +185,12 @@ public class ControlBarController implements Initializable {
             if (!newValue && settingsController.settingsOpen) {
                 settingsController.closeSettings();
             }
-
         });
 
 
         volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 
-            if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.setVolume(volumeSlider.getValue() / 100);
+            if(menuController.activeItem != null) mediaInterface.mediaPlayer.setVolume(volumeSlider.getValue() / 100);
 
             volumeTrack.setProgress(volumeSlider.getValue() / 100);
 
@@ -273,16 +272,15 @@ public class ControlBarController implements Initializable {
         });
 
         durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(mediaInterface.currentVideo != null) mediaInterface.updateMedia(newValue.doubleValue());
+            if(menuController.activeItem != null) mediaInterface.updateMedia(newValue.doubleValue());
             durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
         });
 
-        // vaja ära fixida see jama
         durationSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
             if (newValue) { // pause video when user starts seeking
                 playIcon.setShape(pauseSVG);
-                if(mediaInterface.currentVideo != null) {
+                if(menuController.activeItem != null) {
                     mediaInterface.mediaPlayer.pause();
                     mediaInterface.playing = false;
                 }
@@ -299,7 +297,7 @@ public class ControlBarController implements Initializable {
                     durationSliderHoverOff();
                 }
 
-                if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
+                if(menuController.activeItem != null) mediaInterface.mediaPlayer.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
 
                 if (settingsController.settingsOpen) { // close settings pane after user finishes seeking media (if its open)
                     settingsController.closeSettings();
@@ -321,7 +319,7 @@ public class ControlBarController implements Initializable {
                         menuController.activeItem.play.updateText("Play video");
 
                 } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
-                    if(mediaInterface.currentVideo != null) {
+                    if(menuController.activeItem != null) {
                         mediaInterface.mediaPlayer.play();
                         mediaInterface.playing = true;
                     }
@@ -427,11 +425,11 @@ public class ControlBarController implements Initializable {
     }
 
     public void toggleDurationLabel() {
-        if (showingTimeLeft && mediaInterface.currentVideo != null) {
-            Utilities.setCurrentTimeLabel(durationLabel, mediaInterface.mediaPlayer, mediaInterface.currentVideo.getMedia());
+        if (showingTimeLeft && menuController.activeItem != null) {
+            Utilities.setCurrentTimeLabel(durationLabel, mediaInterface.mediaPlayer, menuController.activeItem.getMediaItem().getMedia());
             showingTimeLeft = false;
-        } else if(!showingTimeLeft && mediaInterface.currentVideo != null){
-            Utilities.setTimeLeftLabel(durationLabel, mediaInterface.mediaPlayer, mediaInterface.currentVideo.getMedia());
+        } else if(!showingTimeLeft && menuController.activeItem != null){
+            Utilities.setTimeLeftLabel(durationLabel, mediaInterface.mediaPlayer, menuController.activeItem.getMediaItem().getMedia());
             showingTimeLeft = true;
         }
     }
@@ -462,11 +460,11 @@ public class ControlBarController implements Initializable {
 
     public void play() {
 
-        if(mediaInterface.currentVideo != null) {
+        if(menuController.activeItem != null) {
             mediaInterface.mediaPlayer.play();
 
-                menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
-                menuController.activeItem.play.updateText("Pause video");
+            menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
+            menuController.activeItem.play.updateText("Pause video");
         }
         playIcon.setShape(pauseSVG);
         mediaInterface.playing = true;
@@ -486,11 +484,11 @@ public class ControlBarController implements Initializable {
 
     public void pause() {
 
-        if(mediaInterface.currentVideo != null) {
+        if(menuController.activeItem != null) {
             mediaInterface.mediaPlayer.pause();
 
-                menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
-                menuController.activeItem.play.updateText("Play video");
+            menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
+            menuController.activeItem.play.updateText("Play video");
         }
         playIcon.setShape(playSVG);
         mediaInterface.playing = false;
@@ -517,12 +515,12 @@ public class ControlBarController implements Initializable {
             pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
         }
 
-        if(mediaInterface.currentVideo != null){
+        if(menuController.activeItem != null){
             mediaInterface.mediaPlayer.seek(Duration.ZERO);
             mediaInterface.mediaPlayer.play();
 
-                menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
-                menuController.activeItem.play.updateText("Pause video");
+            menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
+            menuController.activeItem.play.updateText("Pause video");
         }
         mediaInterface.playing = true;
         mediaInterface.atEnd = false;
@@ -615,7 +613,7 @@ public class ControlBarController implements Initializable {
     public void mute() {
         muted = true;
         volumeIcon.setShape(volumeMutedSVG);
-        if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.setVolume(0);
+        if(menuController.activeItem != null) mediaInterface.mediaPlayer.setVolume(0);
         volumeValue = volumeSlider.getValue(); //stores the value of the volumeslider before setting it to 0
 
         volumeSlider.setValue(0);
@@ -624,7 +622,7 @@ public class ControlBarController implements Initializable {
     public void unmute() {
         muted = false;
         volumeIcon.setShape(highVolumeSVG);
-        if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.setVolume(volumeValue);
+        if(menuController.activeItem != null) mediaInterface.mediaPlayer.setVolume(volumeValue);
         volumeSlider.setValue(volumeValue); // sets volume back to the value it was at before muting
     }
 
@@ -632,8 +630,8 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         } else {
-            if(mediaInterface.playedVideoIndex == 0 || mediaInterface.playedVideoList.isEmpty()) return;
-            mediaInterface.playPrevious();
+            if(!menuController.animationsInProgress.isEmpty()) return;
+            mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition etc
         }
     }
 
@@ -641,7 +639,7 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         } else {
-            if(mediaInterface.videoList.size() < 2) return;
+            if(!menuController.animationsInProgress.isEmpty()) return;
             mediaInterface.playNext();
         }
     }

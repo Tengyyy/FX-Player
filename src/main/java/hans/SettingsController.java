@@ -294,6 +294,11 @@ public class SettingsController implements Initializable {
         shuffleSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) { // ON
                 shuffleOn = true;
+
+                if(!menuController.animationsInProgress.isEmpty()) return;
+
+                if(!menuController.queue.isEmpty()) menuController.queueBox.shuffle();
+
             } else { // OFF
                 shuffleOn = false;
             }
@@ -325,42 +330,34 @@ public class SettingsController implements Initializable {
             customSpeedSlider.setValueChanging(false);
         });
 
-        customSpeedSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (!newValue) {
-                    if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.setRate(formattedValue);
-                }
+        customSpeedSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if(menuController.activeItem != null) mediaInterface.mediaPlayer.setRate(formattedValue);
             }
         });
 
-        customSpeedSlider.valueProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        customSpeedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 
 
-                formattedValue = Math.floor(newValue.doubleValue() * 20) / 20; // floors it to .05 precision
+            formattedValue = Math.floor(newValue.doubleValue() * 20) / 20; // floors it to .05 precision
 
-                double progress = (newValue.doubleValue() - 0.25) * 1 / 1.75; // adjust the slider scale ( 0.25 - 2 ) to
-                // match with the progress bar scale ( 0 - 1 )
+            double progress = (newValue.doubleValue() - 0.25) * 1 / 1.75; // adjust the slider scale ( 0.25 - 2 ) to
+            // match with the progress bar scale ( 0 - 1 )
 
-                customSpeedTrack.setProgress(progress);
+            customSpeedTrack.setProgress(progress);
 
-                customSpeedLabel.setText(df.format(formattedValue) + "x");
+            customSpeedLabel.setText(df.format(formattedValue) + "x");
 
-                isDefaultValue = true;
+            isDefaultValue = true;
 
-                if (formattedValue * 4 != Math.round(formattedValue * 4)) { // filters out all default playback speed values that could be selected from the selection pane (0.25, 0.75, 1.5 etc), so that this int could only be an actual customly selected value
-                    formattedValue2 = formattedValue;
+            if (formattedValue * 4 != Math.round(formattedValue * 4)) { // filters out all default playback speed values that could be selected from the selection pane (0.25, 0.75, 1.5 etc), so that this int could only be an actual customly selected value
+                formattedValue2 = formattedValue;
 
 
-                    loadCustomSpeed = true; // whether the custom speed has to be created/updated or not
-                    isDefaultValue = false; // when the user finishes seeking the custom speed slider and isDefaultValue stays true then it means that the slider landed on one of the default values (1,25; 1,5 etc) and therefore the according playback speed tab must be made active
-                }
-
+                loadCustomSpeed = true; // whether the custom speed has to be created/updated or not
+                isDefaultValue = false; // when the user finishes seeking the custom speed slider and isDefaultValue stays true then it means that the slider landed on one of the default values (1,25; 1,5 etc) and therefore the according playback speed tab must be made active
             }
+
         });
 
 
@@ -475,7 +472,7 @@ public class SettingsController implements Initializable {
             playbackSpeedBoxesArray[i].setOnMouseClicked((e) -> {
                 updatePlaybackSpeed((int) I, I / 4, playbackSpeedCheckBoxesArray[(int) I - 1], false);
 
-                if(mediaInterface.currentVideo != null) mediaInterface.mediaPlayer.setRate(I / 4);
+                if(menuController.activeItem != null) mediaInterface.mediaPlayer.setRate(I / 4);
             });
         }
 
@@ -705,20 +702,14 @@ public class SettingsController implements Initializable {
 
         if (selectedFile != null) {
 
-            mediaInterface.resetMediaPlayer();
-            mediaInterface.playedVideoIndex = -1;
-
             MediaItem temp = null;
 
             if(Utilities.getFileExtension(selectedFile).equals("mp4")) temp = new Mp4Item(selectedFile);
             else if(Utilities.getFileExtension(selectedFile).equals("mp3")) temp = new Mp3Item(selectedFile);
 
 
-                new QueueItem(temp, menuController, mediaInterface);
-
-            mediaInterface.videoList.add(temp);
-            mediaInterface.unplayedVideoList.add(temp);
-            mediaInterface.createMediaPlayer(temp);
+            ActiveItem activeItem = new ActiveItem(temp, menuController, mediaInterface, menuController.activeBox);
+            activeItem.play(true);
 
         }
     }

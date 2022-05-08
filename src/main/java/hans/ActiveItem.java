@@ -325,7 +325,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
             menuController.historyBox.add(historyItem);
         }
-        else if(addToHistory){
+        else if(addToHistory && menuController.historyBox.index != -1){
             HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
             historyItem.setInactive();
         }

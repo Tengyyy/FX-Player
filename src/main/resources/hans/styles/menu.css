@@ -79,8 +79,23 @@
     -fx-background-insets: 0;
 }
 
-#queueBox, #queueContent, #historyBox, #currentItemBox {
+.menuBox, #menuContent {
     -fx-background-color: #191919;
+}
+
+.menuBoxHeader {
+    -fx-padding: 10 10 10 10;
+    -fx-background-color: #191919;
+}
+
+#historyHeader {
+    -fx-background-color: #353535;
+}
+
+.menuBoxTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Bold";
+    -fx-font-size: 16;
 }
 
 #menuBar {
@@ -109,8 +124,12 @@
 }
 
 
-.queueItem, .activeItem, .historyItem {
+.queueItem, .activeItem {
     -fx-background-color: transparent;
+}
+
+.historyItem {
+    -fx-background-color: #353535
 }
 
 .playButton {
@@ -143,7 +162,20 @@
 .optionsButton, .removeButton {
     -fx-background-radius: 100;
     -fx-padding: 0;
-    -fx-background-color: #454545;
+    -fx-background-color: #656565;
+}
+
+#historyButton {
+    -fx-background-radius: 100;
+    -fx-padding: 0;
+    -fx-background-color: #505050;
+    -fx-border-radius: 100;
+    -fx-border-width: 1;
+    -fx-border-color: #BFBFBF;
+}
+
+#historyIcon {
+    -fx-background-color: #EFEFEF;
 }
 
 .menuIcon {

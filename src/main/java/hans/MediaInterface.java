@@ -129,7 +129,10 @@ public class MediaInterface {
             mediaPlayer.stop();
 
         }
-        else if (settingsController.shuffleOn || settingsController.autoplayOn) requestNext();
+        else if (settingsController.shuffleOn || settingsController.autoplayOn) {
+            if((menuController.historyBox.index == -1 || menuController.historyBox.index >= menuController.history.size() -1) && menuController.queue.isEmpty()) defaultEnd();
+            else requestNext();
+        }
 
     }
 

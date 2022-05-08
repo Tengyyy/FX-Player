@@ -16,9 +16,9 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
@@ -58,7 +58,7 @@ public class MenuController implements Initializable {
     SVGPath addVideoIconSVG, clearQueueIconSVG, appSettingsIconSVG, closeIconSVG, dragSVG;
 
 
-    VBox queueContent = new VBox();
+    VBox menuContent = new VBox();
 
     MainController mainController;
     ControlBarController controlBarController;
@@ -80,7 +80,7 @@ public class MenuController implements Initializable {
 
     DragResizer dragResizer;
 
-    StackPane historyHeader, currentHeader, queueHeader, historyWrapper; // valmis teha kunagi
+    StackPane historyHeader, currentHeader, queueHeader, historyWrapper, historyButtonWrapper; // valmis teha kunagi
     Label historyText, currentVideoText, queueText;
 
     ArrayList<Animation> animationsInProgress = new ArrayList<>();
@@ -93,13 +93,22 @@ public class MenuController implements Initializable {
     ArrayList<HistoryItem> history = new ArrayList<>();
     ActiveItem activeItem = null;
 
+    JFXButton historyButton = new JFXButton();
+    Region historyIcon = new Region();
+
+    SVGPath historyIconPath = new SVGPath();
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-
         historyWrapper = new StackPane();
-
+        Rectangle rectangle = new Rectangle();
+        rectangle.heightProperty().bind(historyWrapper.heightProperty());
+        rectangle.widthProperty().bind(historyWrapper.widthProperty());
+        historyWrapper.setClip(rectangle);
+        historyWrapper.setMinHeight(0);
+        historyWrapper.setMaxHeight(0);
 
         queueBox = new QueueBox(this);
         historyBox = new HistoryBox(this, historyWrapper);
@@ -117,41 +126,98 @@ public class MenuController implements Initializable {
 
        historyText = new Label();
        historyText.setText("History");
+       historyText.getStyleClass().add("menuBoxTitle");
        StackPane.setAlignment(historyText, Pos.CENTER_LEFT);
 
-       historyHeader = new StackPane();
-       historyHeader.getChildren().add(historyText);
+        historyButton.setMinSize(40, 40);
+        historyButton.setPrefSize(40, 40);
+        historyButton.setMaxSize(40, 40);
+        historyButton.setRipplerFill(Color.WHITE);
+        historyButton.setId("historyButton");
+        historyButton.setCursor(Cursor.HAND);
+        historyButton.setButtonType(JFXButton.ButtonType.RAISED);
+        StackPane.setAlignment(historyButton, Pos.CENTER);
 
-        //historyWrapper.setPadding(new Insets(10, 0, 0, 0));
-        historyWrapper.getChildren().add(historyBox);
-        historyBox.setId("historyBox");
+        historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
+            historyButton.setStyle("-fx-background-color: #606060");
+        });
+
+        historyButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
+            historyButton.setStyle("-fx-background-color: #505050");
+        });
+
+        historyButton.setOnAction((e) -> {
+            if(historyBox.open) historyBox.close();
+            else historyBox.open();
+        });
+
+
+        historyIcon.setMinSize(15, 10);
+        historyIcon.setPrefSize(15, 10);
+        historyIcon.setMaxSize(15, 10);
+        historyIcon.setMouseTransparent(true);
+        historyIcon.setId("historyIcon");
+
+        StackPane.setAlignment(historyIcon, Pos.CENTER);
+        historyIconPath.setContent(App.svgMap.get(SVG.CHEVRON_DOWN));
+        historyIcon.setShape(historyIconPath);
+
+        historyButtonWrapper = new StackPane();
+        historyButtonWrapper.setMinSize(40, 40);
+        historyButtonWrapper.setPrefSize(40, 40);
+        historyButtonWrapper.setMaxSize(40, 40);
+        historyButtonWrapper.getChildren().addAll(historyButton, historyIcon);
+        StackPane.setAlignment(historyButtonWrapper, Pos.CENTER_RIGHT);
+
+
+        historyHeader = new StackPane();
+        historyHeader.getChildren().addAll(historyText, historyButtonWrapper);
+       historyHeader.setMinHeight(58);
+       historyHeader.setPrefHeight(58);
+       historyHeader.setMaxHeight(58);
+       historyHeader.getStyleClass().add("menuBoxHeader");
+       historyHeader.setId("historyHeader");
+
+        historyHeader.setBorder(new Border(new BorderStroke(Color.web("#909090"), Color.web("#909090"), Color.web("#909090"), Color.web("#909090"),
+                BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+                CornerRadii.EMPTY, new BorderWidths(1), new Insets(0, 1,0,1))));
+
+
+        historyWrapper.getChildren().addAll(historyBox);
         historyBox.setAlignment(Pos.TOP_CENTER);
 
         currentVideoText = new Label();
         currentVideoText.setText("Now Playing");
+        currentVideoText.getStyleClass().add("menuBoxTitle");
         StackPane.setAlignment(currentVideoText, Pos.CENTER_LEFT);
 
         currentHeader = new StackPane();
         currentHeader.getChildren().add(currentVideoText);
+        currentHeader.setMinHeight(60);
+        currentHeader.setPrefHeight(60);
+        currentHeader.setMaxHeight(60);
+        currentHeader.getStyleClass().add("menuBoxHeader");
 
-        //activeBox.setPadding(new Insets(10, 0, 0, 0));
-        activeBox.setId("activeBox");
+
         activeBox.setAlignment(Pos.CENTER_LEFT);
 
         queueText = new Label();
         queueText.setText("Next in Queue");
+        queueText.getStyleClass().add("menuBoxTitle");
         StackPane.setAlignment(queueText, Pos.CENTER_LEFT);
 
         queueHeader = new StackPane();
         queueHeader.getChildren().add(queueText);
+        queueHeader.setMinHeight(60);
+        queueHeader.setPrefHeight(60);
+        queueHeader.setMaxHeight(60);
+        queueHeader.getStyleClass().add("menuBoxHeader");
 
-        //queueBox.setPadding(new Insets(10, 0, 0, 0));
-        queueBox.setId("queueBox");
         queueBox.setAlignment(Pos.TOP_CENTER);
 
-        queueContent.setId("queueContent");
-        queueContent.getChildren().addAll(historyHeader, historyWrapper, currentHeader, activeBox, queueHeader, queueBox);
-        queueScroll.setContent(queueContent);
+        menuContent.setId("menuContent");
+        menuContent.getChildren().addAll(historyHeader, historyWrapper, currentHeader, activeBox, queueHeader, queueBox);
+        queueScroll.setContent(menuContent);
 
         menu.setMinWidth(0);
 

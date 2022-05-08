@@ -24,8 +24,7 @@ public class QueueBox extends VBox {
     QueueBox(MenuController menuController){
         this.menuController = menuController;
         this.setAlignment(Pos.TOP_CENTER);
-        this.setStyle("-fx-background-color: white;");
-
+        this.getStyleClass().add("menuBox");
         this.setFillWidth(true);
     }
 
@@ -85,7 +84,14 @@ public class QueueBox extends VBox {
         Timeline heightAnimation = AnimationsClass.animateMinHeight(height, this);
         heightAnimation.setOnFinished((e) -> {
             // add item with opacity 0, then fade it in
-            this.getChildren().add(child);
+            if(getChildren().isEmpty()) {
+                this.getChildren().add(child);
+                Platform.runLater(() -> {
+                    QueueItem.height = child.getHeight();
+                    height = QueueItem.height * getChildren().size();
+                });
+            }
+            else this.getChildren().add(child);
             initialize(child);
             FadeTransition fadeTransition = AnimationsClass.fadeIn(child);
             menuController.animationsInProgress.remove(heightAnimation);
@@ -529,6 +535,7 @@ public class QueueBox extends VBox {
             queueItem.remove = new ControlTooltip("Remove video", queueItem.removeButton, new VBox(), 1000, false);
             queueItem.options = new ControlTooltip("Options", queueItem.optionsButton, new VBox(), 1000, false);
             queueItem.optionsPopUp = new MenuItemOptionsPopUp(queueItem);
+            System.out.println(queueItem.getHeight());
         });
     }
 

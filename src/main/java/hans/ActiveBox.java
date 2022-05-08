@@ -18,10 +18,10 @@ public class ActiveBox extends StackPane {
     ActiveBox(MenuController menuController){
         this.menuController = menuController;
         this.setAlignment(Pos.BOTTOM_CENTER);
-        this.setStyle("-fx-background-color: white");
         this.setMinHeight(70);
         this.setPrefHeight(70);
         this.setMaxHeight(70);
+        this.getStyleClass().add("menuBox");
     }
 
     public void clear(){

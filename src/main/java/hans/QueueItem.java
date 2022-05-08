@@ -236,15 +236,6 @@ public class QueueItem extends GridPane implements MenuObject{
         this.add(optionsButtonWrapper, 3, 0);
 
 
-        if(!menuController.queueBox.getChildren().isEmpty()){
-            this.setBorder(new Border(new BorderStroke(Color.web("#BFBBBB"), Color.web("#BFBBBB"), Color.web("#BFBBBB"), Color.web("#BFBBBB"),
-                    BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE,
-                    CornerRadii.EMPTY, new BorderWidths(1), Insets.EMPTY)));
-            }
-        else this.setBorder(Border.EMPTY);
-
-
-
         this.setOnMouseEntered((e) -> {
             mouseHover = true;
 

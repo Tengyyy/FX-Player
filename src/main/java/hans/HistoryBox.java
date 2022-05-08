@@ -2,11 +2,11 @@ package hans;
 
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -18,7 +18,7 @@ public class HistoryBox extends VBox {
     double height = 0;
     MenuController menuController;
 
-    boolean open = true;
+    boolean open = false;
     int index = -1;
     final int CAPACITY = 20;
 
@@ -32,8 +32,7 @@ public class HistoryBox extends VBox {
         this.historyWrapper = historyWrapper;
         this.menuController = menuController;
         this.setAlignment(Pos.TOP_CENTER);
-        this.setStyle("-fx-background-color: white;");
-
+        this.getStyleClass().add("menuBox");
         this.setFillWidth(true);
 
         this.setAlignment(Pos.TOP_LEFT);
@@ -42,6 +41,7 @@ public class HistoryBox extends VBox {
     public void add(HistoryItem historyItem){
 
         if(menuController.history.size() >= CAPACITY) menuController.history.remove(0);
+
         menuController.history.add(historyItem);
 
         if(!open){
@@ -168,6 +168,8 @@ public class HistoryBox extends VBox {
         });
 
         openHistory.playFromStart();
+        menuController.historyIconPath.setContent(App.svgMap.get(SVG.CHEVRON_UP));
+        menuController.historyIcon.setShape(menuController.historyIconPath);
     }
 
     public void close(){
@@ -175,7 +177,6 @@ public class HistoryBox extends VBox {
         if(openHistory != null && openHistory.getStatus() == Animation.Status.RUNNING) return;
 
         open = false;
-        System.out.println("Closing history");
 
         historyWrapper.setMinHeight(0);
 
@@ -188,6 +189,8 @@ public class HistoryBox extends VBox {
         });
 
         closeHistory.playFromStart();
+        menuController.historyIconPath.setContent(App.svgMap.get(SVG.CHEVRON_DOWN));
+        menuController.historyIcon.setShape(menuController.historyIconPath);
     }
 
 }

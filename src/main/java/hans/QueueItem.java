@@ -147,8 +147,30 @@ public class QueueItem extends GridPane implements MenuObject{
         playIcon.setVisible(false);
         // TODO: create semi-transparent dark background for the playicon
 
+        StackPane iconBackground = new StackPane();
 
-        playButtonWrapper.getChildren().addAll(coverImage, playText, playButton, playIcon);
+        if(mediaItem.getCover() != null) {
+            double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
+            double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
+            double realHeight = Math.min(coverImage.getFitHeight(), coverImage.getFitWidth() / aspectRatio);
+
+            iconBackground.setMinSize(realWidth, realHeight);
+            iconBackground.setPrefSize(realWidth, realHeight);
+            iconBackground.setMaxSize(realWidth, realHeight);
+        }
+        else {
+            iconBackground.setMinSize(0, 0);
+            iconBackground.setPrefSize(0, 0);
+            iconBackground.setMaxSize(0, 0);
+        }
+
+        iconBackground.getStyleClass().add("iconBackground");
+        iconBackground.setMouseTransparent(true);
+
+        iconBackground.visibleProperty().bind(playIcon.visibleProperty());
+
+
+        playButtonWrapper.getChildren().addAll(coverImage,iconBackground, playText, playButton, playIcon);
 
         videoTitle.getStyleClass().add("videoTitle");
 
@@ -179,7 +201,6 @@ public class QueueItem extends GridPane implements MenuObject{
 
 
         textWrapper.setAlignment(Pos.CENTER_LEFT);
-        //videoTitleWrapper.setClip(clip);
         textWrapper.setPrefHeight(70);
         textWrapper.getChildren().addAll(videoTitle,subTextWrapper);
 
@@ -299,8 +320,6 @@ public class QueueItem extends GridPane implements MenuObject{
 
             queueBox.remove(this);
 
-            //TODO: update queue indexes via a listener to the queue observablelist object
-
         });
 
     }
@@ -331,11 +350,11 @@ public class QueueItem extends GridPane implements MenuObject{
 
         ActiveItem activeItem = new ActiveItem(getMediaItem(), menuController, mediaInterface, menuController.activeBox);
 
-        menuController.activeBox.set(activeItem, true);
-
         if(menuController.activeItem != null) mediaInterface.resetMediaPlayer();
 
-        if(menuController.settingsController.shuffleOn){
+        menuController.activeBox.set(activeItem, true);
+
+        if(menuController.settingsController.shuffleOn || menuController.queue.indexOf(this) == menuController.queue.size() -1){
             queueBox.remove(this);
         }
         else {

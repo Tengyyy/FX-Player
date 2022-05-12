@@ -50,8 +50,16 @@ public class MediaInterface {
             seekedToEnd = false;
 
             if (wasPlaying) {
+                if(menuController.activeItem != null) {
                     menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
                     menuController.activeItem.play.updateText("Pause video");
+
+                    if(menuController.historyBox.index != -1){
+                        HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+                        historyItem.playIcon.setShape(historyItem.pauseSVG);
+                        historyItem.play.updateText("Pause video");
+                    }
+                }
 
                 if (!controlBarController.durationSlider.isValueChanging()) {
 
@@ -69,8 +77,8 @@ public class MediaInterface {
                         controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
                     }
 
-                        menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
-                        menuController.activeItem.play.updateText("Pause video");
+                       // menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
+                       // menuController.activeItem.play.updateText("Pause video");
 
                 }
             } else {
@@ -86,8 +94,16 @@ public class MediaInterface {
                     controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
                 }
 
+                if(menuController.activeItem != null) {
                     menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
                     menuController.activeItem.play.updateText("Play video");
+
+                    if(menuController.historyBox.index != -1){
+                        HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+                        historyItem.playIcon.setShape(historyItem.playSVG);
+                        historyItem.play.updateText("Play video");
+                    }
+                }
 
             }
             controlBarController.playButton.setOnAction((e) -> {
@@ -305,6 +321,12 @@ public class MediaInterface {
 
         menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
         menuController.activeItem.play.updateText("Play video");
+
+        if(menuController.historyBox.index != -1){
+            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+            historyItem.playIcon.setShape(historyItem.playSVG);
+            historyItem.play.updateText("Play video");
+        }
 
         if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
             controlBarController.play.hide();

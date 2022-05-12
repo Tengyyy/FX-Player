@@ -465,6 +465,13 @@ public class ControlBarController implements Initializable {
 
             menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
             menuController.activeItem.play.updateText("Pause video");
+            menuController.activeItem.columns.play();
+
+            if(menuController.historyBox.index != -1){
+                HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+                historyItem.playIcon.setShape(historyItem.pauseSVG);
+                historyItem.play.updateText("Pause video");
+            }
         }
         playIcon.setShape(pauseSVG);
         mediaInterface.playing = true;
@@ -489,6 +496,13 @@ public class ControlBarController implements Initializable {
 
             menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
             menuController.activeItem.play.updateText("Play video");
+            menuController.activeItem.columns.pause();
+
+            if(menuController.historyBox.index != -1){
+                HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+                historyItem.playIcon.setShape(historyItem.playSVG);
+                historyItem.play.updateText("Play video");
+            }
         }
         playIcon.setShape(playSVG);
         mediaInterface.playing = false;

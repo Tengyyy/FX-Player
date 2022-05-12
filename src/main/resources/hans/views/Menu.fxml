@@ -44,19 +44,6 @@
                         <Region fx:id="addVideoIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: white;" styleClass="menuBarIcon" StackPane.alignment="CENTER" />
                      </children>
                   </StackPane>
-                  <StackPane fx:id="clearQueueButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="40.0">
-                     <children>
-                        <JFXButton fx:id="clearQueueButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#clearQueue" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-background-radius: 5;" styleClass="menuActionButton">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </JFXButton>
-                        <Region fx:id="clearQueueIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="17.0" prefWidth="20.0" style="-fx-background-color: white;" styleClass="menuBarIcon" translateX="3.0" translateY="2.0" StackPane.alignment="CENTER" />
-                     </children>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </StackPane>
                   <StackPane fx:id="appSettingsButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="40.0">
                      <children>
                         <JFXButton fx:id="appSettingsButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-border-color: white; -fx-border-radius: 5; -fx-background-radius: 5;" styleClass="menuButton">

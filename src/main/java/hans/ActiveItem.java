@@ -75,6 +75,8 @@ public class ActiveItem extends GridPane implements MenuObject {
 
     ActiveBox activeBox;
 
+    Columns columns = new Columns();
+
     ActiveItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, ActiveBox activeBox){
         this.mediaItem = mediaItem;
         this.menuController = menuController;
@@ -107,6 +109,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         coverImage.setImage(mediaItem.getCover());
         coverImage.setPreserveRatio(true);
 
+
         playButton.setPrefWidth(40);
         playButton.setPrefHeight(40);
         playButton.getStyleClass().add("playButton");
@@ -115,6 +118,9 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         playSVG = new SVGPath();
         playSVG.setContent(App.svgMap.get(SVG.PLAY_CIRCLE));
+
+        pauseSVG = new SVGPath();
+        pauseSVG.setContent(App.svgMap.get(SVG.PAUSE_CIRCLE));
 
 
         removeSVG = new SVGPath();
@@ -134,10 +140,32 @@ public class ActiveItem extends GridPane implements MenuObject {
         // TODO: create semi-transparent dark background for the playicon
 
 
-        playButtonWrapper.getChildren().addAll(coverImage, playButton, playIcon);
+
+        StackPane iconBackground = new StackPane();
+
+        if(mediaItem.getCover() != null) {
+            double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
+            double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
+            double realHeight = Math.min(coverImage.getFitHeight(), coverImage.getFitWidth() / aspectRatio);
+
+            iconBackground.setMinSize(realWidth, realHeight);
+            iconBackground.setPrefSize(realWidth, realHeight);
+            iconBackground.setMaxSize(realWidth, realHeight);
+        }
+        else {
+            iconBackground.setMinSize(0, 0);
+            iconBackground.setPrefSize(0, 0);
+            iconBackground.setMaxSize(0, 0);
+        }
+
+        iconBackground.getStyleClass().add("iconBackground");
+        iconBackground.setMouseTransparent(true);
 
 
-        videoTitle.getStyleClass().add("activeVideoTitle");
+        playButtonWrapper.getChildren().addAll(coverImage, iconBackground, playButton, playIcon, columns);
+
+
+        videoTitle.getStyleClass().add("videoTitle");
 
         if(mediaItem.getTitle() == null){
             videoTitle.setText(mediaItem.getFile().getName());
@@ -166,7 +194,6 @@ public class ActiveItem extends GridPane implements MenuObject {
 
 
         textWrapper.setAlignment(Pos.CENTER_LEFT);
-        //videoTitleWrapper.setClip(clip);
         textWrapper.setPrefHeight(70);
         textWrapper.getChildren().addAll(videoTitle,subTextWrapper);
 
@@ -229,6 +256,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
             // hide the bouncing columns thingy and stop animation
             playIcon.setVisible(true);
+            columns.setVisible(false);
 
             this.setStyle("-fx-background-color: #2C2C2C;");
 
@@ -240,6 +268,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
             // show bouncing columns and start animation
             playIcon.setVisible(false);
+            columns.setVisible(true);
 
             this.setStyle("-fx-background-color: transparent;");
 
@@ -302,6 +331,9 @@ public class ActiveItem extends GridPane implements MenuObject {
             QueueItem queueItem = menuController.queue.get(0);
             queueItem.play(true);
         } else {
+
+            if(menuController.historyBox.index != -1) menuController.history.get(menuController.historyBox.index).setInactive();
+
             mediaInterface.resetMediaPlayer();
             activeBox.clear();
         }
@@ -330,9 +362,9 @@ public class ActiveItem extends GridPane implements MenuObject {
             historyItem.setInactive();
         }
 
+        if(menuController.activeItem != null) mediaInterface.resetMediaPlayer();
         activeBox.set(this, true);
 
-        if(menuController.activeItem != null) mediaInterface.resetMediaPlayer();
 
     }
 

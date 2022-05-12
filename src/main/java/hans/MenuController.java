@@ -37,13 +37,13 @@ import java.util.ResourceBundle;
 public class MenuController implements Initializable {
 
     @FXML
-    JFXButton addVideoButton, clearQueueButton, appSettingsButton;
+    JFXButton addVideoButton, appSettingsButton;
 
     @FXML
     Button closeButton;
 
     @FXML
-    StackPane menu, notificationPane, addVideoButtonPane, clearQueueButtonPane, appSettingsButtonPane, closeButtonPane, dragPane;
+    StackPane menu, notificationPane, addVideoButtonPane, appSettingsButtonPane, closeButtonPane, dragPane;
 
     @FXML
     Text notificationText;
@@ -52,10 +52,10 @@ public class MenuController implements Initializable {
     ScrollPane queueScroll;
 
     @FXML
-    Region addVideoIcon, clearQueueIcon, appSettingsIcon, closeIcon, dragIcon;
+    Region addVideoIcon, appSettingsIcon, closeIcon, dragIcon;
 
 
-    SVGPath addVideoIconSVG, clearQueueIconSVG, appSettingsIconSVG, closeIconSVG, dragSVG;
+    SVGPath addVideoIconSVG, appSettingsIconSVG, closeIconSVG, dragSVG;
 
 
     VBox menuContent = new VBox();
@@ -94,6 +94,8 @@ public class MenuController implements Initializable {
     ActiveItem activeItem = null;
 
     JFXButton historyButton = new JFXButton();
+    JFXButton clearQueueButton = new JFXButton();
+
     Region historyIcon = new Region();
 
     SVGPath historyIconPath = new SVGPath();
@@ -115,6 +117,10 @@ public class MenuController implements Initializable {
         activeBox = new ActiveBox(this);
 
         queue.addListener((ListChangeListener<QueueItem>) change -> {
+
+            if(queue.isEmpty()) clearQueueButton.setDisable(true);
+            else clearQueueButton.setDisable(false);
+
             for(QueueItem queueItem : queue){
                 queueItem.updateIndex(queue.indexOf(queueItem));
             }
@@ -206,8 +212,19 @@ public class MenuController implements Initializable {
         queueText.getStyleClass().add("menuBoxTitle");
         StackPane.setAlignment(queueText, Pos.CENTER_LEFT);
 
+        clearQueueButton.setId("clearQueueButton");
+        clearQueueButton.setRipplerFill(Color.WHITE);
+        clearQueueButton.setCursor(Cursor.HAND);
+        clearQueueButton.setText("Clear queue");
+        clearQueueButton.setDisable(true);
+        StackPane.setAlignment(clearQueueButton, Pos.CENTER_RIGHT);
+
+        clearQueueButton.setOnAction((e) -> {
+            clearQueue();
+        });
+
         queueHeader = new StackPane();
-        queueHeader.getChildren().add(queueText);
+        queueHeader.getChildren().addAll(queueText, clearQueueButton);
         queueHeader.setMinHeight(60);
         queueHeader.setPrefHeight(60);
         queueHeader.setMaxHeight(60);
@@ -235,10 +252,6 @@ public class MenuController implements Initializable {
         addVideoIconSVG.setContent(App.svgMap.get(SVG.PLUS));
         addVideoIcon.setShape(addVideoIconSVG);
 
-        clearQueueIconSVG = new SVGPath();
-        clearQueueIconSVG.setContent(App.svgMap.get(SVG.CLEAR_QUEUE));
-        clearQueueIcon.setShape(clearQueueIconSVG);
-
         appSettingsIconSVG = new SVGPath();
         appSettingsIconSVG.setContent(App.svgMap.get(SVG.SETTINGS));
         appSettingsIcon.setShape(appSettingsIconSVG);
@@ -257,7 +270,7 @@ public class MenuController implements Initializable {
             menu.maxWidthProperty().bind(menu.sceneProperty().get().widthProperty());
             closeMenuTooltip = new ControlTooltip("Close menu (q)", closeButton, new VBox(), 1000, true);
             addMediaTooltip = new ControlTooltip("Add media", addVideoButton, new VBox(), 1000, true);
-            clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, new VBox(), 1000, true);
+            clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, new VBox(), 1000, false);
             appSettingsTooltip = new ControlTooltip("App settings", appSettingsButton, new VBox(), 1000, true);
         });
 }
@@ -287,7 +300,7 @@ public class MenuController implements Initializable {
 
     public void clearQueue(){
 
-        if(!queueBox.getChildren().isEmpty()) {
+        if(animationsInProgress.isEmpty()) {
             queueBox.clear();
         }
     }

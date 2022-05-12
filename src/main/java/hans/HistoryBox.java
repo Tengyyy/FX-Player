@@ -2,12 +2,8 @@ package hans;
 
 import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -26,7 +22,6 @@ public class HistoryBox extends VBox {
 
     Timeline openHistory, closeHistory;
 
-
     HistoryBox(MenuController menuController, StackPane historyWrapper){
 
         this.historyWrapper = historyWrapper;
@@ -41,34 +36,31 @@ public class HistoryBox extends VBox {
     public void add(HistoryItem historyItem){
 
         if(menuController.history.size() >= CAPACITY) menuController.history.remove(0);
-
         menuController.history.add(historyItem);
 
         if(!open){
-
-            historyItem.setOpacity(1);
-
             if(getChildren().size() < CAPACITY){
                 height += HistoryItem.height;
 
-                if(getChildren().isEmpty()) {
-                    this.getChildren().add(historyItem);
-                    initialize(historyItem);
+                if(getChildren().size() == 1) {
                     Platform.runLater(() -> {
-                        HistoryItem.height = historyItem.getHeight();
+                        HistoryItem.height = menuController.history.get(0).getHeight();
+                        System.out.println(historyItem.getHeight());
                         height = HistoryItem.height * getChildren().size();
                     });
                 }
-                else {
-                    this.getChildren().add(historyItem);
-                    initialize(historyItem);
-                }
 
+                getChildren().add(historyItem);
+                initialize(historyItem);
             }
+
             else {
                 getChildren().remove(0);
                 getChildren().add(historyItem);
             }
+
+            historyItem.setOpacity(1);
+
         }
         else {
 
@@ -130,8 +122,6 @@ public class HistoryBox extends VBox {
 
                         menuController.animationsInProgress.remove(parallelTranslate);
                         fadeIn.playFromStart();
-
-
                     });
 
                     menuController.animationsInProgress.remove(fadeOut);

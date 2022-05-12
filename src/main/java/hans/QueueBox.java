@@ -167,10 +167,6 @@ public class QueueBox extends VBox {
         ArrayList<QueueItem> itemsToBeTranslated = new ArrayList<>();
         ArrayList<QueueItem> itemsToBeMoved = new ArrayList<>();
 
-        menuController.queue.remove(index);
-        menuController.queue.removeAll(itemsToBeMoved);
-        menuController.queue.addAll(itemsToBeMoved);
-
         FadeTransition fade = AnimationsClass.fadeOut(this.getChildren().get(index));
         parallelFadeOut.getChildren().add(fade);
 
@@ -179,6 +175,10 @@ public class QueueBox extends VBox {
             parallelFadeOut.getChildren().add(fadeTransition);
             itemsToBeMoved.add((QueueItem) getChildren().get(i));
         }
+
+        menuController.queue.remove(index);
+        menuController.queue.removeAll(itemsToBeMoved);
+        menuController.queue.addAll(itemsToBeMoved);
 
         parallelFadeOut.setOnFinished(e -> {
 

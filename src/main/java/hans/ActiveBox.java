@@ -40,10 +40,10 @@ public class ActiveBox extends StackPane {
         fadeTransition.playFromStart();
     }
 
+
     public void set(ActiveItem activeItem, boolean pause){
 
         menuController.activeItem = activeItem;
-
 
         if(this.getChildren().isEmpty()){
             // add new item

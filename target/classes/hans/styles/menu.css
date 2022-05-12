@@ -103,8 +103,13 @@
 }
 
 
-.menuActionButton{
+.menuActionButton, #clearQueueButton{
     -fx-background-color: #ff5447;
+}
+
+#clearQueueButton {
+    -fx-text-fill: white;
+    -fx-background-radius: 50;
 }
 
 .menuButton{
@@ -145,12 +150,6 @@
     -fx-text-fill: white;
 }
 
-.activeVideoTitle {
-    -fx-font-size: 15;
-    -fx-font-family: "Roboto Bold";
-    -fx-background-color: transparent;
-    -fx-text-fill: red;
-}
 
 .subText {
     -fx-font-size: 14;
@@ -163,6 +162,11 @@
     -fx-background-radius: 100;
     -fx-padding: 0;
     -fx-background-color: #656565;
+}
+
+.iconBackground {
+    -fx-background-color: black;
+    -fx-opacity: 0.5;
 }
 
 #historyButton {
@@ -190,5 +194,9 @@
     -fx-font-size: 24;
     -fx-font-family: "Roboto";
     -fx-fill: white;
+}
+
+.column {
+    -fx-background-color: white;
 }
 

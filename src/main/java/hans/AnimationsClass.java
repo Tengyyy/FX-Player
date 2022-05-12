@@ -670,4 +670,28 @@ public class AnimationsClass {
                 new KeyValue(region.maxHeightProperty(),newHeight, Interpolator.EASE_BOTH)));
         return maxTimeline;
     }
+
+
+    public static void AnimateBackgroundColor(Region icon, Color fromColor,Color toColor,int duration)
+    {
+
+        Rectangle rect = new Rectangle();
+        rect.setFill(fromColor);
+
+        FillTransition tr = new FillTransition();
+        tr.setShape(rect);
+        tr.setDuration(Duration.millis(duration));
+        tr.setFromValue(fromColor);
+        tr.setToValue(toColor);
+
+        tr.setInterpolator(new Interpolator() {
+            @Override
+            protected double curve(double t) {
+                icon.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, Insets.EMPTY)));
+                return t;
+            }
+        });
+
+        tr.play();
+    }
 }

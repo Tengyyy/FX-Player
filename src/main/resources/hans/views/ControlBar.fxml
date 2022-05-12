@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Region?>
@@ -78,7 +79,10 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Region fx:id="previousVideoIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="18.0" prefWidth="18.0" styleClass="controlIcon" />
+                  <Region fx:id="previousVideoIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="18.0" prefWidth="18.0" styleClass="controlIcon">
+                     <effect>
+                        <DropShadow height="10.0" radius="4.5" width="10.0" />
+                     </effect></Region>
                </children>
             </StackPane>
             <StackPane fx:id="playButtonPane" minWidth="45.0" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="2">
@@ -88,7 +92,10 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Region fx:id="playIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon" />
+                  <Region fx:id="playIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon">
+                     <effect>
+                        <DropShadow height="10.0" radius="4.5" width="10.0" />
+                     </effect></Region>
                </children>
             </StackPane>
             <StackPane fx:id="nextVideoPane" minWidth="45.0" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="3">
@@ -98,7 +105,10 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Region fx:id="nextVideoIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="18.0" prefWidth="18.0" styleClass="controlIcon" />
+                  <Region fx:id="nextVideoIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="18.0" prefWidth="18.0" styleClass="controlIcon">
+                     <effect>
+                        <DropShadow height="10.0" radius="4.5" width="10.0" />
+                     </effect></Region>
                </children>
             </StackPane>
             <StackPane fx:id="volumeButtonPane" minWidth="45.0" onMouseEntered="#enterArea" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="4">
@@ -108,7 +118,10 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Region fx:id="volumeIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon" />
+                  <Region fx:id="volumeIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon">
+                     <effect>
+                        <DropShadow height="10.0" radius="4.5" width="10.0" />
+                     </effect></Region>
                </children>
             </StackPane>
                   <StackPane fx:id="volumeSliderPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="60.0" stylesheets="@../styles/application.css" GridPane.columnIndex="5">
@@ -137,7 +150,10 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Region fx:id="captionsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="15.0" prefWidth="20.0" styleClass="controlIcon" />
+                  <Region fx:id="captionsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="15.0" prefWidth="20.0" styleClass="controlIcon">
+                     <effect>
+                        <DropShadow height="10.0" radius="4.5" width="10.0" />
+                     </effect></Region>
                   <Line fx:id="captionsButtonLine" endX="10.0" scaleX="0.0" startX="-10.0" stroke="RED" strokeLineCap="ROUND" strokeWidth="3.0" StackPane.alignment="BOTTOM_CENTER">
                      <StackPane.margin>
                         <Insets bottom="3.0" />
@@ -152,7 +168,10 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Region fx:id="settingsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon" />
+                  <Region fx:id="settingsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon">
+                     <effect>
+                        <DropShadow height="10.0" radius="4.5" width="10.0" />
+                     </effect></Region>
                </children>
             </StackPane>
             <StackPane fx:id="fullScreenButtonPane" minWidth="45.0" onMouseEntered="#fullScreenButtonHoverOn" onMouseExited="#fullScreenButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="9">
@@ -162,7 +181,10 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Region fx:id="fullScreenIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="18.0" prefWidth="18.0" styleClass="controlIcon" />
+                  <Region fx:id="fullScreenIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="18.0" prefWidth="18.0" styleClass="controlIcon">
+                     <effect>
+                        <DropShadow height="10.0" radius="4.5" width="10.0" />
+                     </effect></Region>
                </children>
             </StackPane>
             </children>

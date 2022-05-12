@@ -19,10 +19,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import org.jcodec.containers.mp4.boxes.SampleSizesBox;
 
 public class ControlBarController implements Initializable {
 
@@ -160,6 +162,8 @@ public class ControlBarController implements Initializable {
         settingsIcon.setShape(settingsSVG);
         fullScreenIcon.setShape(maximizeSVG);
 
+
+
         playButton.setBackground(Background.EMPTY);
 
         nextVideoButton.setBackground(Background.EMPTY);
@@ -178,6 +182,29 @@ public class ControlBarController implements Initializable {
 
         volumeSlider.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> volumeSlider.setValueChanging(true));
         volumeSlider.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> volumeSlider.setValueChanging(false));
+
+
+        previousVideoPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(previousVideoPane));
+        previousVideoPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(previousVideoPane));
+
+        playButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(playButtonPane));
+        playButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(playButtonPane));
+
+        nextVideoPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(nextVideoPane));
+        nextVideoPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(nextVideoPane));
+
+        volumeButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(volumeButtonPane));
+        volumeButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(volumeButtonPane));
+
+        captionsButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(captionsButtonPane));
+        captionsButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(captionsButtonPane));
+
+        settingsButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(settingsButtonPane));
+        settingsButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(settingsButtonPane));
+
+        fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(fullScreenButtonPane));
+        fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(fullScreenButtonPane));
+
 
 
         volumeSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
@@ -793,6 +820,25 @@ public class ControlBarController implements Initializable {
     public void exitSettingsButton() {
         settingsButtonHover = false;
     }
+
+
+    public void controlButtonHoverOn(StackPane stackPane){
+        Region icon = (Region) stackPane.getChildren().get(1);
+        System.out.println(icon.getBackground().getFills().get(0).getFill());
+
+        AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+    }
+
+
+    public void controlButtonHoverOff(StackPane stackPane){
+        System.out.println("test");
+        Region icon = (Region) stackPane.getChildren().get(1);
+
+        // 219
+        AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+
+    }
+
 
 
 }

@@ -143,6 +143,13 @@ public class MainController implements Initializable {
         menuButton.setBackground(Background.EMPTY);
         menuButton.setVisible(false);
 
+        menuButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+            controlBarController.controlButtonHoverOn(menuButtonPane);
+        });
+
+        menuButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+            controlBarController.controlButtonHoverOff(menuButtonPane);
+        });
 
         menuIcon.setShape(menuSVG);
 

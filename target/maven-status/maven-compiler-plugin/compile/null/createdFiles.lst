@@ -16,6 +16,7 @@ hans\Mp4Item.class
 hans\ActiveItem.class
 hans\DragResizer.class
 hans\AnimationsClass.class
+hans\AnimationsClass$2.class
 hans\MenuItemOptionsPopUp.class
 hans\QueueItem.class
 hans\SeekIndicator.class

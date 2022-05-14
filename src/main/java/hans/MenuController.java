@@ -3,19 +3,27 @@ package hans;
 
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -100,6 +108,12 @@ public class MenuController implements Initializable {
 
     SVGPath historyIconPath = new SVGPath();
 
+    // the lower bound of the bottom drag detection area
+    DoubleProperty lowerBottomBound = new SimpleDoubleProperty();
+
+    private Timeline scrollTimeline = new Timeline();
+    private double scrollVelocity = 0;
+    private int scrollSpeed = 200;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -248,6 +262,9 @@ public class MenuController implements Initializable {
         menuClip.heightProperty().bind(menu.heightProperty());
         menu.setClip(menuClip);
 
+        scrollTimeline.setCycleCount(Timeline.INDEFINITE);
+        scrollTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(20), (ActionEvent) -> { dragScroll();}));
+
 
         menu.setOnMouseEntered(e -> {
             queueScroll.lookup(".scroll-bar:vertical").lookup(".thumb").setStyle("-fx-background-color: derive(black, 90%);");
@@ -256,6 +273,34 @@ public class MenuController implements Initializable {
         menu.setOnMouseExited(e -> {
             queueScroll.lookup(".scroll-bar:vertical").lookup(".thumb").setStyle("-fx-background-color: transparent;");
         });
+
+
+        menu.addEventHandler(DragEvent.DRAG_OVER, e -> {
+            // play scroll-up animation if Y coordinate is in range of 0 to 60
+            // play scroll-down animation if Y coordinate is in range of max-60 to max
+
+            if(e.getY() <= 60){
+                scrollVelocity = -1.0 / scrollSpeed;
+            }
+            else if(e.getY() >= lowerBottomBound.get()){
+                scrollVelocity = 1.0 / scrollSpeed;
+            }
+            else scrollVelocity = 0;
+
+            if(scrollTimeline.getStatus() != Animation.Status.RUNNING) scrollTimeline.play();
+
+        });
+
+        menu.addEventHandler(DragEvent.DRAG_EXITED, e -> {
+            scrollTimeline.stop();
+        });
+
+        menu.addEventHandler(DragEvent.DRAG_DROPPED, e -> {
+            scrollTimeline.stop();
+        });
+
+
+        lowerBottomBound.bind(menu.heightProperty().subtract(60));
 
         addVideoIconSVG = new SVGPath();
         addVideoIconSVG.setContent(App.svgMap.get(SVG.PLUS));
@@ -328,6 +373,30 @@ public class MenuController implements Initializable {
             if (closeMenuTooltip.countdown.getStatus() == Animation.Status.RUNNING) closeMenuTooltip.countdown.stop();
             AnimationsClass.closeMenu(mainController, this);
         }
+    }
+
+
+    private void dragScroll() {
+        ScrollBar sb = getVerticalScrollbar();
+        if (sb != null) {
+            double newValue = sb.getValue() + scrollVelocity;
+            newValue = Math.min(newValue, 1.0);
+            newValue = Math.max(newValue, 0.0);
+            sb.setValue(newValue);
+        }
+    }
+
+    private ScrollBar getVerticalScrollbar() {
+        ScrollBar result = null;
+        for (Node n : queueScroll.lookupAll(".scroll-bar")) {
+            if (n instanceof ScrollBar) {
+                ScrollBar bar = (ScrollBar) n;
+                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                    result = bar;
+                }
+            }
+        }
+        return result;
     }
 
 

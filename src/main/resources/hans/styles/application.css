@@ -25,22 +25,30 @@
 	-fx-font-size: 18;
 }
 
-.playbackSpeedScroll {
-       -fx-background-color: transparent;
-}
+
 
 .playbackSpeedScroll > .viewport {
-   -fx-background-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.playbackSpeedScroll {
+    -fx-background-color: transparent;
+}
+
+.playbackSpeedScroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
 }
 
 .playbackSpeedScroll .scroll-bar:horizontal .track,
 .playbackSpeedScroll .scroll-bar:vertical .track{
-    -fx-background-color :rgba(30,30,30,0.8);
-    -fx-border-color :rgba(30,30,30,1);
+    -fx-opacity: 0;
     -fx-background-radius : 0.0em;
     -fx-border-radius :0.0em;
 }
 
+.playbackSpeedScroll .scroll-bar:vertical .track-background {
+    -fx-opacity: 0;
+}
 
 .playbackSpeedScroll .scroll-bar:horizontal .increment-button ,
 .playbackSpeedScroll .scroll-bar:horizontal .decrement-button {
@@ -140,9 +148,7 @@
 }
 
 
-
 .durationSlider .track {
-	
 	-fx-background-color: null;
 	-fx-pref-height: 50px;
 }

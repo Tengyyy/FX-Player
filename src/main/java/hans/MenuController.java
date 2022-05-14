@@ -248,6 +248,15 @@ public class MenuController implements Initializable {
         menuClip.heightProperty().bind(menu.heightProperty());
         menu.setClip(menuClip);
 
+
+        menu.setOnMouseEntered(e -> {
+            queueScroll.lookup(".scroll-bar:vertical").lookup(".thumb").setStyle("-fx-background-color: derive(black, 90%);");
+        });
+
+        menu.setOnMouseExited(e -> {
+            queueScroll.lookup(".scroll-bar:vertical").lookup(".thumb").setStyle("-fx-background-color: transparent;");
+        });
+
         addVideoIconSVG = new SVGPath();
         addVideoIconSVG.setContent(App.svgMap.get(SVG.PLUS));
         addVideoIcon.setShape(addVideoIconSVG);

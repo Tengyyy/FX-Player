@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -266,6 +267,24 @@ public class QueueItem extends GridPane implements MenuObject{
             this.setStyle("-fx-background-color: #2C2C2C;");
 
 
+        });
+
+        this.addEventHandler(DragEvent.DRAG_OVER, e -> {
+            if(!queueBox.dragActive) return;
+
+            if(e.getY() > height/2){
+                // position queueline below this item
+                if(queueBox.getChildren().indexOf(queueBox.queueLine) != menuController.queue.indexOf(this) + 1){
+                    queueBox.queueLine.setPosition(menuController.queue.indexOf(this) + 1);
+                }
+            }
+            else {
+
+
+                if(queueBox.getChildren().indexOf(queueBox.queueLine) != menuController.queue.indexOf(this)){
+                    queueBox.queueLine.setPosition(menuController.queue.indexOf(this));
+                }
+            }
         });
 
         this.setOnMouseExited((e) -> {

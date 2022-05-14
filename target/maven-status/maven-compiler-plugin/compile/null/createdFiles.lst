@@ -19,6 +19,7 @@ hans\AnimationsClass.class
 hans\AnimationsClass$2.class
 hans\MenuItemOptionsPopUp.class
 hans\QueueItem.class
+hans\QueueLine.class
 hans\SeekIndicator.class
 hans\Columns.class
 hans\MediaInterface$1.class

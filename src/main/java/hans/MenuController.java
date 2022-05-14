@@ -118,8 +118,7 @@ public class MenuController implements Initializable {
 
         queue.addListener((ListChangeListener<QueueItem>) change -> {
 
-            if(queue.isEmpty()) clearQueueButton.setDisable(true);
-            else clearQueueButton.setDisable(false);
+            clearQueueButton.setDisable(queue.isEmpty());
 
             for(QueueItem queueItem : queue){
                 queueItem.updateIndex(queue.indexOf(queueItem));
@@ -242,6 +241,7 @@ public class MenuController implements Initializable {
         closeTimer.setOnFinished((e) -> AnimationsClass.closeMenuNotification(this));
 
         notificationPane.setOpacity(0);
+        notificationPane.setMouseTransparent(true);
         menu.setMouseTransparent(true);
         Rectangle menuClip = new Rectangle();
         menuClip.widthProperty().bind(menu.widthProperty());
@@ -276,7 +276,7 @@ public class MenuController implements Initializable {
 }
 
 
-    public void openVideoChooser() throws IOException {
+    public void openVideoChooser() {
 
         File selectedFile = fileChooser.showOpenDialog(menu.getScene().getWindow());
 

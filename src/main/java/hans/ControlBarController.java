@@ -824,17 +824,14 @@ public class ControlBarController implements Initializable {
 
     public void controlButtonHoverOn(StackPane stackPane){
         Region icon = (Region) stackPane.getChildren().get(1);
-        System.out.println(icon.getBackground().getFills().get(0).getFill());
 
         AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
     }
 
 
     public void controlButtonHoverOff(StackPane stackPane){
-        System.out.println("test");
         Region icon = (Region) stackPane.getChildren().get(1);
 
-        // 219
         AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
 
     }

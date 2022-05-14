@@ -6,8 +6,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,33 +22,50 @@ import java.util.Random;
 public class QueueBox extends VBox {
 
     double animationSpeed = 200;
-    double height = 0;
     MenuController menuController;
+
+
+    ArrayList<File> dragBoardFiles = new ArrayList<>();
+    ArrayList<File> dragBoardMedia = new ArrayList<>();
+
+    boolean dragActive = false;
+
+    QueueLine queueLine;
 
 
     QueueBox(MenuController menuController){
         this.menuController = menuController;
         this.setAlignment(Pos.TOP_CENTER);
         this.getStyleClass().add("menuBox");
+        this.setId("queueBox");
         this.setFillWidth(true);
+        VBox.setVgrow(this, Priority.ALWAYS);
+
+
+        this.setOnDragEntered(e -> handleDragEntered(e));
+        this.setOnDragOver(e -> handleDragOver(e));
+        this.setOnDragDropped(e -> handleDragDropped(e));
+        this.setOnDragExited(e -> handleDragExited());
+
+        queueLine = new QueueLine(this);
     }
 
     public void add(int index, QueueItem child){
+
+
         if(index < 0) return;
         else if(index >= this.getChildren().size()){
             this.add(child);
             return;
         }
 
+        cancelDrag();
+
         menuController.queue.add(index, child);
 
-        height+= QueueItem.height;
-        this.setMaxHeight(height);
-        Timeline heightAnimation = AnimationsClass.animateMinHeight(height, this);
 
         ArrayList<Node> childrenToBeMoved = new ArrayList<>();
         ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.getChildren().add(heightAnimation);
 
         for(int i = index; i < this.getChildren().size(); i++){
             childrenToBeMoved.add(this.getChildren().get(i));
@@ -77,54 +99,44 @@ public class QueueBox extends VBox {
 
     public void add(QueueItem child){
 
+        cancelDrag();
+
         menuController.queue.add(child);
 
-        height+= QueueItem.height;
-        this.setMaxHeight(height);
-        Timeline heightAnimation = AnimationsClass.animateMinHeight(height, this);
-        heightAnimation.setOnFinished((e) -> {
-            // add item with opacity 0, then fade it in
-            if(getChildren().isEmpty()) {
-                this.getChildren().add(child);
-                Platform.runLater(() -> {
-                    QueueItem.height = child.getHeight();
-                    height = QueueItem.height * getChildren().size();
-                });
-            }
-            else this.getChildren().add(child);
-            initialize(child);
-            FadeTransition fadeTransition = AnimationsClass.fadeIn(child);
-            menuController.animationsInProgress.remove(heightAnimation);
-            fadeTransition.playFromStart();
-        });
-        menuController.animationsInProgress.add(heightAnimation);
-        heightAnimation.playFromStart();
+        // add item with opacity 0, then fade it in
+        if(getChildren().isEmpty()) {
+            this.getChildren().add(child);
+        }
+        else this.getChildren().add(child);
+
+        initialize(child);
+        FadeTransition fadeTransition = AnimationsClass.fadeIn(child);
+        fadeTransition.playFromStart();
     }
 
     public void remove(QueueItem child){
-        if(this.getChildren().contains(child)){
-            this.remove(this.getChildren().indexOf(child));
+        if(menuController.queue.contains(child)){
+            this.remove(menuController.queue.indexOf(child));
         }
     }
 
     public void remove(int index){
+
+        cancelDrag();
+
         if(index >= 0 && !this.getChildren().isEmpty() && index < this.getChildren().size()) {
 
             menuController.queue.remove(index);
 
-            height -= QueueItem.height;
-            this.setMinHeight(height);
 
             FadeTransition fadeTransition = AnimationsClass.fadeOut(this.getChildren().get(index));
 
             SequentialTransition sequentialTransition = new SequentialTransition();
             sequentialTransition.getChildren().add(fadeTransition);
 
-            Timeline timeline = AnimationsClass.animateMaxHeight(height, this);
             ArrayList<Node> childrenToBeMoved = new ArrayList<>();
 
             ParallelTransition parallelTransition = new ParallelTransition();
-            parallelTransition.getChildren().add(timeline);
 
             if (index < this.getChildren().size() - 1) {
                 // removed child was not the last inside the vbox, have to translate upwards all nodes that were below
@@ -151,15 +163,15 @@ public class QueueBox extends VBox {
         }
     }
     public void removeAndMove(int index){
+
+        cancelDrag();
+
         // removes item at index from the queuebox, moves all previous items to the bottom
         if(index < 0 || index >= getChildren().size()) return;
         if(index ==0){
             remove(index);
             return;
         }
-
-        height -= QueueItem.height;
-        this.setMinHeight(height);
 
         ParallelTransition parallelFadeOut = new ParallelTransition();
         ParallelTransition parallelTranslate = new ParallelTransition();
@@ -182,7 +194,6 @@ public class QueueBox extends VBox {
 
         parallelFadeOut.setOnFinished(e -> {
 
-            parallelTranslate.getChildren().add(AnimationsClass.animateMaxHeight(height, this));
             for(int i = index + 1; i < getChildren().size(); i++){
                 itemsToBeTranslated.add((QueueItem) getChildren().get(i));
                 parallelTranslate.getChildren().add(AnimationsClass.animateUp(getChildren().get(i), itemsToBeMoved.size() * QueueItem.height + QueueItem.height));
@@ -218,6 +229,9 @@ public class QueueBox extends VBox {
     }
 
     public void moveAll(int firstBound, int secondBound, int newIndex){
+
+        cancelDrag();
+
         if(this.getChildren().size() < 3 ||
                 firstBound == newIndex ||
                 firstBound < 0 ||
@@ -291,45 +305,39 @@ public class QueueBox extends VBox {
     }
 
     public void addAll(Collection<? extends QueueItem> collection){
-        height += (collection.size() * QueueItem.height);
-        this.setMaxHeight(height);
+
+        cancelDrag();
 
         menuController.queue.addAll(collection);
 
-        Timeline heightAnimation = AnimationsClass.animateMinHeight(height, this);
-        heightAnimation.setOnFinished(e -> {
-            this.getChildren().addAll(collection);
-            for(QueueItem queueItem : collection){
-                initialize(queueItem);
-            }
-            ParallelTransition parallelTransition = new ParallelTransition();
-            for(QueueItem queueItem : collection){
-                parallelTransition.getChildren().add(AnimationsClass.fadeIn(queueItem));
-            }
+        this.getChildren().addAll(collection);
 
-            parallelTransition.playFromStart();
-            menuController.animationsInProgress.remove(heightAnimation);
-        });
+        for(QueueItem queueItem : collection){
+            initialize(queueItem);
+        }
+        ParallelTransition parallelTransition = new ParallelTransition();
+        for(QueueItem queueItem : collection){
+            parallelTransition.getChildren().add(AnimationsClass.fadeIn(queueItem));
+        }
 
-        menuController.animationsInProgress.add(heightAnimation);
-        heightAnimation.playFromStart();
+        parallelTransition.playFromStart();
 
     }
 
     public void addAll(int index, Collection<? extends QueueItem> collection) {
-        if (index < 0) return;
-        else if(index >= this.getChildren().size()){
+
+        cancelDrag();
+
+
+        if (index < -1) return;
+        else if(index >= this.getChildren().size() || index == -1){
             addAll(collection);
             return;
         }
-        height += (collection.size() * QueueItem.height);
-        this.setMaxHeight(height);
 
         menuController.queue.addAll(index, collection);
 
         ParallelTransition parallelTransition = new ParallelTransition();
-        Timeline heightAnimation = AnimationsClass.animateMinHeight(height, this);
-        parallelTransition.getChildren().add(heightAnimation);
 
         ArrayList<QueueItem> itemsToBeMoved = new ArrayList<>();
 
@@ -366,9 +374,10 @@ public class QueueBox extends VBox {
     }
 
     public void clear(){
+
+        cancelDrag();
+
         if(!this.getChildren().isEmpty()){
-            height = 0;
-            this.setMinHeight(height);
 
             menuController.queue.clear();
 
@@ -378,23 +387,21 @@ public class QueueBox extends VBox {
                 parallelFadeOut.getChildren().add(fadeTransition);
             }
 
-            Timeline timeline = AnimationsClass.animateMaxHeight(height, this);
-
-            SequentialTransition sequentialTransition = new SequentialTransition();
-            sequentialTransition.getChildren().addAll(parallelFadeOut, timeline);
-
-            sequentialTransition.setOnFinished(e -> {
+            parallelFadeOut.setOnFinished(e -> {
                 this.getChildren().clear();
-                menuController.animationsInProgress.remove(sequentialTransition);
+                menuController.animationsInProgress.remove(parallelFadeOut);
             });
 
-            menuController.animationsInProgress.add(sequentialTransition);
-            sequentialTransition.playFromStart();
+            menuController.animationsInProgress.add(parallelFadeOut);
+            parallelFadeOut.playFromStart();
 
         }
     }
 
     public void move(int oldIndex, int newIndex){
+
+        cancelDrag();
+
         // move to bottom if newIndex = -1
 
         // massive guard clause
@@ -489,6 +496,8 @@ public class QueueBox extends VBox {
 
 
     public void shuffle(){
+
+        cancelDrag();
         // fade out, shuffle, fade in
 
         ObservableList<QueueItem> workingCollection = FXCollections.observableArrayList(menuController.queue);
@@ -529,13 +538,78 @@ public class QueueBox extends VBox {
     }
 
 
+    public void handleDragEntered(DragEvent e) {
+
+        dragBoardFiles = (ArrayList<File>) e.getDragboard().getFiles();
+
+        for(File file : dragBoardFiles){
+            if(Utilities.getFileExtension(file).equals("mp4") || Utilities.getFileExtension(file).equals("mp3")){
+
+                dragBoardMedia.add(file);
+            }
+        }
+
+        if(dragBoardMedia.isEmpty()) return;
+
+        dragActive = true;
+        if(!menuController.queue.isEmpty()){
+            queueLine.setPosition(-1);
+        }
+
+    }
+
+    public void handleDragOver(DragEvent e){
+        if(!dragBoardMedia.isEmpty()){
+            e.acceptTransferModes(TransferMode.COPY);
+        }
+    }
+
+    public void handleDragDropped(DragEvent e){
+
+        dragActive = false;
+
+        if(dragBoardMedia.isEmpty()) return;
+
+        // add mp4 and mp3 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
+
+        ArrayList<QueueItem> newItems = new ArrayList<>();
+
+        for(File file : dragBoardMedia){
+            MediaItem temp = null;
+
+            if(Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
+            else if(Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
+
+            newItems.add(new QueueItem(temp, menuController, menuController.mediaInterface, this));
+        }
+
+        addAll(getChildren().indexOf(queueLine), newItems);
+
+
+        dragBoardMedia.clear();
+
+    }
+
+    public void handleDragExited(){
+        cancelDrag();
+    }
+
+
+    public void cancelDrag(){
+        dragActive = false;
+        dragBoardMedia.clear();
+        dragBoardFiles.clear();
+
+        getChildren().remove(queueLine);
+    }
+
+
     public void initialize(QueueItem queueItem){
         Platform.runLater(() -> {
             queueItem.play = new ControlTooltip("Play video", queueItem.playButton, new VBox(), 1000, false);
             queueItem.remove = new ControlTooltip("Remove video", queueItem.removeButton, new VBox(), 1000, false);
             queueItem.options = new ControlTooltip("Options", queueItem.optionsButton, new VBox(), 1000, false);
             queueItem.optionsPopUp = new MenuItemOptionsPopUp(queueItem);
-            System.out.println(queueItem.getHeight());
         });
     }
 

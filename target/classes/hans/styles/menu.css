@@ -79,9 +79,14 @@
     -fx-background-insets: 0;
 }
 
+#queueLine {
+    -fx-background-color: red;
+}
+
 .menuBox, #menuContent {
     -fx-background-color: #191919;
 }
+
 
 .menuBoxHeader {
     -fx-padding: 10 10 10 10;

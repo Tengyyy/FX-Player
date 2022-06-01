@@ -68,14 +68,7 @@ public class MediaInterface {
                     playing = true;
                     mediaPlayer.play();
 
-                    if (controlBarController.play.isShowing() || controlBarController.replay.isShowing()) {
-                        controlBarController.play.hide();
-                        controlBarController.replay.hide();
-                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
-                        controlBarController.pause.showTooltip();
-                    } else {
-                        controlBarController.pause = new ControlTooltip("Pause (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
-                    }
+                    controlBarController.play.updateText("Pause (k)");
 
                        // menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
                        // menuController.activeItem.play.updateText("Pause video");
@@ -85,14 +78,7 @@ public class MediaInterface {
                 controlBarController.playIcon.setShape(controlBarController.playSVG);
                 playing = false;
 
-                if (controlBarController.pause.isShowing() || controlBarController.replay.isShowing()) {
-                    controlBarController.pause.hide();
-                    controlBarController.replay.hide();
-                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
-                    controlBarController.play.showTooltip();
-                } else {
-                    controlBarController.play = new ControlTooltip("Play (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
-                }
+                controlBarController.play.updateText("Play (k)");
 
                 if(menuController.activeItem != null) {
                     menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
@@ -328,14 +314,7 @@ public class MediaInterface {
             historyItem.play.updateText("Play video");
         }
 
-        if (controlBarController.play.isShowing() || controlBarController.pause.isShowing()) {
-            controlBarController.play.hide();
-            controlBarController.pause.hide();
-            controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
-            controlBarController.replay.showTooltip();
-        } else {
-            controlBarController.replay = new ControlTooltip("Replay (k)", controlBarController.playButton, controlBarController.controlBar, 0, false);
-        }
+        controlBarController.play.updateText("Replay (k)");
 
         controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());
 

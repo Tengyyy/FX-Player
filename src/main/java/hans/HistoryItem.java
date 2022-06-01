@@ -300,6 +300,8 @@ public class HistoryItem extends GridPane implements MenuObject{
             HistoryItem historyItem = menuController.history.get(historyBox.index);
             historyItem.isActive.set(false);
             historyItem.videoTitle.setStyle("-fx-text-fill: white;");
+            historyItem.playIcon.setShape(playSVG);
+
         }
 
         this.isActive.set(true);

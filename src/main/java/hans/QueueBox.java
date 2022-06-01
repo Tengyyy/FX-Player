@@ -162,6 +162,8 @@ public class QueueBox extends VBox {
             // decrease max height by 50, apply translate of -50 to all nodes below the one that will be removed and on end actually remove the node and reset translate
         }
     }
+
+    //TODO: implement Collections.rotate instead of removing and adding
     public void removeAndMove(int index){
 
         cancelDrag();
@@ -192,6 +194,7 @@ public class QueueBox extends VBox {
         menuController.queue.removeAll(itemsToBeMoved);
         menuController.queue.addAll(itemsToBeMoved);
 
+
         parallelFadeOut.setOnFinished(e -> {
 
             for(int i = index + 1; i < getChildren().size(); i++){
@@ -208,7 +211,11 @@ public class QueueBox extends VBox {
                     queueItem.setTranslateY(0);
                 }
 
+
                 getChildren().addAll(itemsToBeMoved);
+
+
+
                 for(QueueItem queueItem : itemsToBeMoved){
                     parallelFadeIn.getChildren().add(AnimationsClass.fadeIn(queueItem));
                 }

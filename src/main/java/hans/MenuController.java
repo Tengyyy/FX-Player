@@ -279,6 +279,10 @@ public class MenuController implements Initializable {
             // play scroll-up animation if Y coordinate is in range of 0 to 60
             // play scroll-down animation if Y coordinate is in range of max-60 to max
 
+
+            // maybe make scrolling speed static and not depend on the amount of media items
+
+
             if(e.getY() <= 60){
                 scrollVelocity = -1.0 / scrollSpeed;
             }

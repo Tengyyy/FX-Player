@@ -81,6 +81,9 @@ public class ControlTooltip extends Tooltip {
 
 
     public void updateText(String newText){
+
+        if(this.getText() == newText) return;
+
         this.setText(newText);
         if(this.isShowing()){
             this.hide();

@@ -84,7 +84,7 @@ public class ControlBarController implements Initializable {
 
     MouseEventTracker mouseEventTracker;
 
-    ControlTooltip play, pause, replay, mute, unmute, settings, fullScreen, exitFullScreen, captions, nextVideoTooltip, previousVideoTooltip;
+    ControlTooltip play, mute, unmute, settings, fullScreen, exitFullScreen, captions, nextVideoTooltip, previousVideoTooltip;
 
     MediaInterface mediaInterface;
 
@@ -94,8 +94,6 @@ public class ControlBarController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         Platform.runLater(() -> {
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
-            replay = new ControlTooltip("Replay (k)", playButton, controlBar, 0, false);
             play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
             unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0, false);
             mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
@@ -311,13 +309,8 @@ public class ControlBarController implements Initializable {
                     mediaInterface.mediaPlayer.pause();
                     mediaInterface.playing = false;
                 }
-                if (pause.isShowing()) {
-                    pause.hide();
-                    play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
-                    play.showTooltip();
-                } else {
-                    play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
-                }
+                play.updateText("Play (k)");
+
             } else {
 
                 if (!durationSliderHover) {
@@ -334,16 +327,10 @@ public class ControlBarController implements Initializable {
                     playIcon.setShape(replaySVG);
                     playButton.setOnAction((e) -> playButtonClick2());
 
-                    if (play.isShowing() || pause.isShowing()) {
-                        play.hide();
-                        pause.hide();
-                        replay = new ControlTooltip("Replay (k)", playButton, controlBar, 0, false);
-                        replay.showTooltip();
-                    } else {
-                        replay = new ControlTooltip("Replay (k)", playButton, controlBar, 0, false);
-                    }
-                        menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
-                        menuController.activeItem.play.updateText("Play video");
+                    play.updateText("Replay (k)");
+
+                    menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
+                    menuController.activeItem.play.updateText("Play video");
 
                 } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
                     if(menuController.activeItem != null) {
@@ -353,14 +340,7 @@ public class ControlBarController implements Initializable {
 
                     playIcon.setShape(pauseSVG);
 
-                    if (play.isShowing() || replay.isShowing()) {
-                        play.hide();
-                        replay.hide();
-                        pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
-                        pause.showTooltip();
-                    } else {
-                        pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
-                    }
+                    play.updateText("Pause (k)");
                 }
             }
         });
@@ -503,13 +483,7 @@ public class ControlBarController implements Initializable {
         playIcon.setShape(pauseSVG);
         mediaInterface.playing = true;
 
-        if (play.isShowing()) {
-            play.hide();
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
-            pause.showTooltip();
-        } else {
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
-        }
+        play.updateText("Pause (k)");
 
         mediaInterface.wasPlaying = mediaInterface.playing; // updates the value of wasPlaying variable - when this method is called the
         // user really wants to play or pause the video and therefore the previous
@@ -534,13 +508,7 @@ public class ControlBarController implements Initializable {
         playIcon.setShape(playSVG);
         mediaInterface.playing = false;
 
-        if (pause.isShowing()) {
-            pause.hide();
-            play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
-            play.showTooltip();
-        } else {
-            play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
-        }
+        play.updateText("Play (k)");
 
         mediaInterface.wasPlaying = mediaInterface.playing;
     }
@@ -548,13 +516,7 @@ public class ControlBarController implements Initializable {
 
     public void replayMedia() {
 
-        if (replay.isShowing()) {
-            replay.hide();
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
-            pause.showTooltip();
-        } else {
-            pause = new ControlTooltip("Pause (k)", playButton, controlBar, 0, false);
-        }
+        play.updateText("Pause (k)");
 
         if(menuController.activeItem != null){
             mediaInterface.mediaPlayer.seek(Duration.ZERO);

@@ -4,10 +4,8 @@ module hans {
     requires javafx.graphics;
     requires javafx.media;
     requires javafx.base;
-    requires com.jfoenix;
-    requires animated;
-    requires AnimateFX;
     requires jcodec;
+    requires MaterialFX;
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXToggleButton?>
+<?import io.github.palexdev.materialfx.controls.MFXToggleButton?>
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <Pane fx:id="settingsBackgroundPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="170.0" minWidth="0.0" prefHeight="170.0" prefWidth="235.0" stylesheets="@../styles/application.css" StackPane.alignment="BOTTOM_RIGHT" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.SettingsController">
     <StackPane.margin>
@@ -26,16 +26,16 @@
                     <children>
                         <VBox fx:id="settingsHome" alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="170.0" minWidth="235.0" prefHeight="170.0" prefWidth="235.0" StackPane.alignment="BOTTOM_CENTER">
                             <children>
-                                <HBox fx:id="playbackOptionsBox" prefHeight="50.0" prefWidth="235.0">
+                                <HBox fx:id="playbackOptionsBox" prefHeight="50.0" prefWidth="235.0" styleClass="settingsPaneTab">
                                     <children>
-                                        <Label focusTraversable="false" maxWidth="-Infinity" prefHeight="50.0" prefWidth="125.0" text="Playback options" textFill="WHITE">
+                                        <Label focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneText" text="Playback options" textFill="WHITE">
 
                                         </Label>
-                                        <Label fx:id="playbackOptionsArrow" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" prefHeight="50.0" prefWidth="90.0" textFill="WHITE">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
+                              <StackPane fx:id="playbackOptionsArrowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="15.0">
+                                 <children>
+                                    <Region fx:id="playbackOptionsArrowIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="13.0" prefWidth="8.0" styleClass="settingsPaneIcon" />
+                                 </children>
+                              </StackPane>
                                     </children>
                                     <padding>
                                         <Insets left="10.0" right="10.0" />
@@ -44,35 +44,44 @@
                                         <Cursor fx:constant="HAND" />
                                     </cursor>
                                 </HBox>
-                                <HBox fx:id="videoBox" alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="235.0">
+                                <HBox fx:id="videoBox" alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="235.0" styleClass="settingsPaneTab">
                                     <cursor>
                                         <Cursor fx:constant="HAND" />
                                     </cursor>
                                     <children>
-                                        <HBox fx:id="videoNameBox" alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="195.0">
-                                            <children>
-                                                <Text fx:id="videoNameText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a video">
-
-                                                </Text>
-                                            </children>
-                                            <HBox.margin>
-                                                <Insets right="6.0" />
-                                            </HBox.margin>
-                                        </HBox>
-                                        <Label fx:id="videoArrowLabel" contentDisplay="GRAPHIC_ONLY" prefHeight="50.0" prefWidth="14.0" />
+                              <Label fx:id="videoNameLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneText" text="Select a video" />
+                              <StackPane fx:id="videoArrowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="15.0">
+                                 <children>
+                                    <Region fx:id="videoArrowIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="13.0" prefWidth="8.0" styleClass="settingsPaneIcon" />
+                                 </children>
+                              </StackPane>
                                     </children>
                                     <padding>
                                         <Insets left="10.0" right="10.0" />
                                     </padding>
                                 </HBox>
-                                <HBox fx:id="playbackSpeedBox" alignment="CENTER_LEFT" onMouseClicked="#openPlaybackSpeedPage" prefHeight="50.0" prefWidth="235.0">
+                                <HBox fx:id="playbackSpeedBox" alignment="CENTER_LEFT" onMouseClicked="#openPlaybackSpeedPage" prefHeight="50.0" prefWidth="235.0" styleClass="settingsPaneTab">
                                     <children>
-                                        <Label focusTraversable="false" prefHeight="50.0" prefWidth="125.0" text="Playback speed" textFill="WHITE" HBox.hgrow="ALWAYS">
+                                        <Label focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="125.0" styleClass="settingsPaneText" text="Playback speed" textFill="WHITE" HBox.hgrow="ALWAYS">
 
                                         </Label>
-                                        <Label fx:id="playbackValueLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" prefHeight="50.0" prefWidth="90.0" text="Normal" textFill="WHITE" HBox.hgrow="ALWAYS">
-
-                                        </Label>
+                              <Label fx:id="playbackValueLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="75.0" text="Normal" textFill="#c8c8c8">
+                                 <styleClass>
+                                    <String fx:value="settingsPaneText" />
+                                    <String fx:value="settingsPaneSubText" />
+                                 </styleClass>
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets right="10.0" />
+                                 </padding>
+                              </Label>
+                              <StackPane fx:id="playbackValueArrowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="15.0">
+                                 <children>
+                                    <Region fx:id="playbackValueArrowIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="13.0" prefWidth="8.0" styleClass="settingsPaneIcon" />
+                                 </children>
+                              </StackPane>
                                     </children>
                                     <cursor>
                                         <Cursor fx:constant="HAND" />
@@ -93,59 +102,63 @@
                 </StackPane>
             </children>
         </StackPane>
-        <ScrollPane fx:id="playbackSpeedScroll" focusTraversable="false" hbarPolicy="NEVER" maxHeight="537.0" maxWidth="235.0" minHeight="170.0" minWidth="235.0" prefHeight="487.0" prefWidth="235.0" styleClass="playbackSpeedScroll" stylesheets="@../styles/application.css">
+        <ScrollPane fx:id="playbackSpeedScroll" focusTraversable="false" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="170.0" minWidth="-Infinity" prefHeight="486.0" prefWidth="235.0" styleClass="playbackSpeedScroll" stylesheets="@../styles/application.css">
             <content>
-                <VBox fx:id="playbackSpeedPage" alignment="BOTTOM_LEFT" maxHeight="537.0" minHeight="170.0" minWidth="235.0" prefHeight="484.0" prefWidth="235.0">
+                <VBox fx:id="playbackSpeedPage" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="170.0" minWidth="-Infinity" prefWidth="235.0">
                     <padding>
                         <Insets bottom="10.0" top="10.0" />
                     </padding>
                     <children>
-                        <HBox fx:id="playbackSpeedTitle" maxWidth="-Infinity" prefHeight="50.0" prefWidth="235.0">
+                        <HBox fx:id="playbackSpeedTitle" maxWidth="-Infinity" prefHeight="50.0" prefWidth="235.0" style="-fx-border-color: rgb(70,70,70); -fx-border-width: 0 0 1 0; -fx-border-insets: 0 0 -1 0;">
                             <padding>
                                 <Insets left="10.0" right="10.0" />
                             </padding>
                             <children>
-                                <Label fx:id="playbackSpeedArrow" alignment="CENTER" focusTraversable="false" onMouseClicked="#closePlaybackSpeedPage" prefHeight="50.0" prefWidth="24.0">
-                                    <cursor>
-                                        <Cursor fx:constant="HAND" />
-                                    </cursor>
-                                </Label>
-                                <Label fx:id="playbackSpeedTitleLabel" focusTraversable="false" onMouseClicked="#closePlaybackSpeedPage" prefHeight="50.0" prefWidth="106.0" text="Playback speed" textFill="WHITE">
+                        <StackPane fx:id="playbackSpeedBackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#closePlaybackSpeedPage" prefHeight="50.0" prefWidth="24.0">
+                           <children>
+                              <Region fx:id="playbackSpeedBackIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="13.0" prefWidth="8.0" styleClass="settingsPaneIcon" />
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </StackPane>
+                                <Label fx:id="playbackSpeedTitleLabel" focusTraversable="false" onMouseClicked="#closePlaybackSpeedPage" prefHeight="50.0" styleClass="settingsPaneText" text="Playback speed" textFill="WHITE">
 
                                     <cursor>
                                         <Cursor fx:constant="HAND" />
                                     </cursor>
                                 </Label>
-                                <Label prefHeight="50.0" prefWidth="20.0" />
-                                <Label id="playbackSpeedCustom" fx:id="playbackSpeedCustom" alignment="CENTER_RIGHT" focusTraversable="false" maxWidth="-Infinity" onMouseClicked="#openCustomSpeed" prefHeight="50.0" prefWidth="65.0" text="Custom" textFill="WHITE" underline="true">
-                                    <padding>
-                                        <Insets right="20.0" />
-                                    </padding>
+                                <Label fx:id="playbackSpeedCustom" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" maxWidth="-Infinity" onMouseClicked="#openCustomSpeed" prefHeight="50.0" text="Custom" textFill="WHITE" underline="true">
                                     <cursor>
                                         <Cursor fx:constant="HAND" />
                                     </cursor>
+                           <HBox.margin>
+                              <Insets left="35.0" />
+                           </HBox.margin>
+                           <styleClass>
+                              <String fx:value="settingsPaneText" />
+                              <String fx:value="settingsPaneSubText" />
+                           </styleClass>
                                 </Label>
                             </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
                         </HBox>
-                        <Separator prefWidth="200.0">
-                            <VBox.margin>
-                                <Insets bottom="5.0" top="5.0" />
-                            </VBox.margin>
-                        </Separator>
-                        <HBox fx:id="playbackSpeed1" prefHeight="50.0" prefWidth="200.0">
+                        <HBox fx:id="playbackSpeed1" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneTab">
                             <padding>
                                 <Insets left="10.0" right="10.0" />
                             </padding>
                             <children>
-                                <Label fx:id="checkBox1" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                    <padding>
-                                        <Insets right="5.0" />
-                                    </padding>
-                                </Label>
-                                <Label prefHeight="50.0" prefWidth="186.0" text="0.25" textFill="WHITE">
+                        <StackPane fx:id="checkBox1Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="30.0">
+                           <padding>
+                              <Insets right="5.0" />
+                           </padding>
+                           <children>
+                              <Region fx:id="checkBox1Icon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="11.0" prefWidth="14.0" styleClass="settingsPaneIcon" />
+                           </children>
+                        </StackPane>
+                                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="185.0" styleClass="settingsPaneText" text="0.25" textFill="WHITE">
 
                                 </Label>
                             </children>
@@ -153,20 +166,20 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </HBox>
-                        <HBox fx:id="playbackSpeed2" prefHeight="50.0" prefWidth="200.0">
+                        <HBox fx:id="playbackSpeed2" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneTab">
                             <padding>
                                 <Insets left="10.0" right="10.0" />
                             </padding>
                             <children>
-                                <Label fx:id="checkBox2" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                    <padding>
-                                        <Insets right="5.0" />
-                                    </padding>
-                                </Label>
-                                <Label prefHeight="50.0" prefWidth="186.0" text="0.5" textFill="WHITE">
+                        <StackPane fx:id="checkBox2Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="30.0">
+                           <padding>
+                              <Insets right="5.0" />
+                           </padding>
+                           <children>
+                              <Region fx:id="checkBox2Icon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="11.0" prefWidth="14.0" styleClass="settingsPaneIcon" />
+                           </children>
+                        </StackPane>
+                                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="185.0" styleClass="settingsPaneText" text="0.5" textFill="WHITE">
 
                                 </Label>
                             </children>
@@ -174,20 +187,20 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </HBox>
-                        <HBox fx:id="playbackSpeed3" prefHeight="50.0" prefWidth="200.0">
+                        <HBox fx:id="playbackSpeed3" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneTab">
                             <padding>
                                 <Insets left="10.0" right="10.0" />
                             </padding>
                             <children>
-                                <Label fx:id="checkBox3" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                    <padding>
-                                        <Insets right="5.0" />
-                                    </padding>
-                                </Label>
-                                <Label prefHeight="50.0" prefWidth="186.0" text="0.75" textFill="WHITE">
+                        <StackPane fx:id="checkBox3Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="30.0">
+                           <padding>
+                              <Insets right="5.0" />
+                           </padding>
+                           <children>
+                              <Region fx:id="checkBox3Icon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="11.0" prefWidth="14.0" styleClass="settingsPaneIcon" />
+                           </children>
+                        </StackPane>
+                                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="185.0" styleClass="settingsPaneText" text="0.75" textFill="WHITE">
 
                                 </Label>
                             </children>
@@ -195,20 +208,20 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </HBox>
-                        <HBox fx:id="playbackSpeed4" prefHeight="50.0" prefWidth="200.0">
+                        <HBox fx:id="playbackSpeed4" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneTab">
                             <padding>
-                                <Insets left="5.0" right="10.0" />
+                                <Insets left="10.0" right="10.0" />
                             </padding>
                             <children>
-                                <Label fx:id="checkBox4" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                    <padding>
-                                        <Insets right="5.0" />
-                                    </padding>
-                                </Label>
-                                <Label prefHeight="50.0" prefWidth="186.0" text="Normal" textFill="WHITE">
+                        <StackPane fx:id="checkBox4Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="30.0">
+                           <padding>
+                              <Insets right="5.0" />
+                           </padding>
+                           <children>
+                              <Region fx:id="checkBox4Icon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="11.0" prefWidth="14.0" styleClass="settingsPaneIcon" />
+                           </children>
+                        </StackPane>
+                                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="185.0" styleClass="settingsPaneText" text="Normal" textFill="WHITE">
 
                                 </Label>
                             </children>
@@ -216,20 +229,20 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </HBox>
-                        <HBox fx:id="playbackSpeed5" prefHeight="50.0" prefWidth="200.0">
+                        <HBox fx:id="playbackSpeed5" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneTab">
                             <padding>
                                 <Insets left="10.0" right="10.0" />
                             </padding>
                             <children>
-                                <Label fx:id="checkBox5" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                    <padding>
-                                        <Insets right="5.0" />
-                                    </padding>
-                                </Label>
-                                <Label prefHeight="50.0" prefWidth="186.0" text="1.25" textFill="WHITE">
+                        <StackPane fx:id="checkBox5Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="30.0">
+                           <padding>
+                              <Insets right="5.0" />
+                           </padding>
+                           <children>
+                              <Region fx:id="checkBox5Icon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="11.0" prefWidth="14.0" styleClass="settingsPaneIcon" />
+                           </children>
+                        </StackPane>
+                                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="185.0" styleClass="settingsPaneText" text="1.25" textFill="WHITE">
 
                                 </Label>
                             </children>
@@ -237,20 +250,20 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </HBox>
-                        <HBox fx:id="playbackSpeed6" prefHeight="50.0" prefWidth="200.0">
+                        <HBox fx:id="playbackSpeed6" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneTab">
                             <padding>
                                 <Insets left="10.0" right="10.0" />
                             </padding>
                             <children>
-                                <Label fx:id="checkBox6" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                    <padding>
-                                        <Insets right="5.0" />
-                                    </padding>
-                                </Label>
-                        <Label prefHeight="50.0" prefWidth="186.0" text="1.5" textFill="WHITE">
+                        <StackPane fx:id="checkBox6Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="30.0">
+                           <padding>
+                              <Insets right="5.0" />
+                           </padding>
+                           <children>
+                              <Region fx:id="checkBox6Icon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="11.0" prefWidth="14.0" styleClass="settingsPaneIcon" />
+                           </children>
+                        </StackPane>
+                        <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="185.0" styleClass="settingsPaneText" text="1.5" textFill="WHITE">
 
                         </Label>
                             </children>
@@ -258,20 +271,20 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </HBox>
-                        <HBox fx:id="playbackSpeed7" prefHeight="50.0" prefWidth="200.0">
+                        <HBox fx:id="playbackSpeed7" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneTab">
                             <padding>
                                 <Insets left="10.0" right="10.0" />
                             </padding>
                             <children>
-                                <Label fx:id="checkBox7" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                    <padding>
-                                        <Insets right="5.0" />
-                                    </padding>
-                                </Label>
-                                <Label prefHeight="50.0" prefWidth="186.0" text="1.75" textFill="WHITE">
+                        <StackPane fx:id="checkBox7Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="30.0">
+                           <padding>
+                              <Insets right="5.0" />
+                           </padding>
+                           <children>
+                              <Region fx:id="checkBox7Icon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="11.0" prefWidth="14.0" styleClass="settingsPaneIcon" />
+                           </children>
+                        </StackPane>
+                                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="185.0" styleClass="settingsPaneText" text="1.75" textFill="WHITE">
 
                                 </Label>
                             </children>
@@ -279,20 +292,20 @@
                                 <Cursor fx:constant="HAND" />
                             </cursor>
                         </HBox>
-                        <HBox fx:id="playbackSpeed8" prefHeight="50.0" prefWidth="200.0">
+                        <HBox fx:id="playbackSpeed8" prefHeight="50.0" prefWidth="200.0" styleClass="settingsPaneTab">
                             <padding>
                                 <Insets left="10.0" right="10.0" />
                             </padding>
                             <children>
-                                <Label fx:id="checkBox8" alignment="CENTER" prefHeight="50.0" prefWidth="29.0">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                    <padding>
-                                        <Insets right="5.0" />
-                                    </padding>
-                                </Label>
-                                <Label prefHeight="50.0" prefWidth="186.0" text="2" textFill="WHITE">
+                        <StackPane fx:id="checkBox8Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="30.0">
+                           <padding>
+                              <Insets right="5.0" />
+                           </padding>
+                           <children>
+                              <Region fx:id="checkBox8Icon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="11.0" prefWidth="14.0" styleClass="settingsPaneIcon" />
+                           </children>
+                        </StackPane>
+                                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="185.0" styleClass="settingsPaneText" text="2" textFill="WHITE">
 
                                 </Label>
                             </children>
@@ -310,40 +323,40 @@
                     <children>
                         <VBox fx:id="customSpeedBox" alignment="TOP_CENTER" prefHeight="130.0" prefWidth="235.0">
                             <children>
-                                <HBox fx:id="customSpeedTitle" prefHeight="50.0" prefWidth="235.0">
+                                <HBox fx:id="customSpeedTitle" prefHeight="50.0" prefWidth="235.0" style="-fx-border-color: rgb(70,70,70); -fx-border-width: 0 0 1 0; -fx-border-insets: 0 0 -1 0;">
                                     <padding>
                                         <Insets left="10.0" right="10.0" />
                                     </padding>
                                     <children>
-                                        <Label fx:id="customSpeedArrow" onMouseClicked="#closeCustomSpeed" prefHeight="50.0" prefWidth="24.0">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                            <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                            </cursor>
-                                        </Label>
-                                        <Label fx:id="customSpeedTitleLabel" onMouseClicked="#closeCustomSpeed" prefHeight="50.0" prefWidth="60.0" text="Custom" textFill="WHITE">
+                              <StackPane fx:id="customSpeedBackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#closeCustomSpeed" prefHeight="50.0" prefWidth="24.0">
+                                 <children>
+                                    <Region fx:id="customSpeedBackIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="13.0" prefWidth="8.0" styleClass="settingsPaneIcon" />
+                                 </children>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </StackPane>
+                                        <Label fx:id="customSpeedTitleLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#closeCustomSpeed" prefHeight="50.0" styleClass="settingsPaneText" text="Custom" textFill="WHITE">
 
                                             <cursor>
                                                 <Cursor fx:constant="HAND" />
                                             </cursor>
                                         </Label>
                                     </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
                                 </HBox>
-                                <Separator prefWidth="200.0">
-                                    <VBox.margin>
-                                        <Insets bottom="5.0" top="5.0" />
-                                    </VBox.margin>
-                                </Separator>
                                 <StackPane prefHeight="30.0" prefWidth="235.0">
                                     <children>
                                         <ProgressBar fx:id="customSpeedTrack" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="7.0" prefWidth="138.0" progress="0.45" styleClass="customSpeedTrack" />
                                         <Slider fx:id="customSpeedSlider" blockIncrement="0.05" majorTickUnit="0.05" max="2.0" maxWidth="-Infinity" min="0.25" minWidth="-Infinity" minorTickCount="0" prefWidth="150.0" styleClass="customSpeedSlider" value="1.0" />
                                     </children>
                                 </StackPane>
-                                <Label id="customSpeedValue" fx:id="customSpeedLabel" text="1x" textFill="WHITE">
-                                </Label>
+                                <Label id="customSpeedValue" fx:id="customSpeedLabel" styleClass="settingsPaneText" text="1x" textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="5.0" />
+                           </VBox.margin></Label>
                             </children>
                         </VBox>
                     </children>
@@ -356,88 +369,52 @@
                     <children>
                         <VBox fx:id="playbackOptionsVBox" prefHeight="230.0" prefWidth="235.0">
                             <children>
-                                <HBox fx:id="playbackOptionsTitle" prefHeight="50.0" prefWidth="235.0">
+                                <HBox fx:id="playbackOptionsTitle" prefHeight="50.0" prefWidth="235.0" style="-fx-border-color: rgb(70,70,70); -fx-border-width: 0 0 1 0; -fx-border-insets: 0 0 -1 0;">
                                     <children>
-                                        <Label fx:id="playbackOptionsTitleArrow" prefHeight="50.0" prefWidth="24.0" textFill="WHITE">
-
-                                        </Label>
-                                        <Label fx:id="playbackOptionsTitleText" prefHeight="50.0" prefWidth="191.0" text="Playback options" textFill="WHITE">
-
-                                        </Label>
+                              <StackPane fx:id="playbackOptionsBackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#closePlaybackOptions" prefHeight="50.0" prefWidth="24.0">
+                                 <children>
+                                    <Region fx:id="playbackOptionsBackIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="13.0" prefWidth="8.0" styleClass="settingsPaneIcon" />
+                                 </children>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </StackPane>
+                                        <Label fx:id="playbackOptionsTitleText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#closePlaybackOptions" prefHeight="50.0" styleClass="settingsPaneText" text="Playback options" textFill="WHITE">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Label>
                                     </children>
                                     <padding>
                                         <Insets left="10.0" right="10.0" />
                                     </padding>
-                                    <cursor>
-                                        <Cursor fx:constant="HAND" />
-                                    </cursor>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
                                 </HBox>
-                                <Separator prefWidth="200.0">
-                                    <VBox.margin>
-                                        <Insets bottom="3.3333333333333" top="3.333333333" />
-                                    </VBox.margin>
-                                </Separator>
-                                <HBox fx:id="shuffleBox" prefHeight="50.0" prefWidth="235.0">
+                                <HBox fx:id="shuffleBox" prefHeight="50.0" prefWidth="235.0" styleClass="settingsPaneTab">
                                     <children>
-                                        <Label fx:id="shuffleLabel" prefHeight="50.0" prefWidth="165.0" text="Shuffle" textFill="WHITE">
+                                        <Label fx:id="shuffleLabel" prefHeight="50.0" prefWidth="165.0" styleClass="settingsPaneText" text="Shuffle" textFill="WHITE">
 
                                         </Label>
-                                        <JFXToggleButton fx:id="shuffleSwitch" alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxHeight="50.0" prefHeight="50.0" prefWidth="50.0" style="-fx-padding: 0;" textFill="WHITE" toggleColor="RED" toggleLineColor="#be4040" unToggleLineColor="#535151">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </JFXToggleButton>
-                                    </children>
-                                    <padding>
-                                        <Insets left="10.0" right="10.0" />
-                                    </padding>
-                                    <cursor>
-                                        <Cursor fx:constant="HAND" />
-                                    </cursor>
-                                </HBox>
-                                <HBox fx:id="loopBox" prefHeight="50.0" prefWidth="235.0">
-                                    <children>
-                                        <Label fx:id="loopLabel" prefHeight="50.0" prefWidth="165.0" text="Loop video" textFill="WHITE">
-
-                                            <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                            </cursor>
-                                        </Label>
-                                        <JFXToggleButton fx:id="loopSwitch" contentDisplay="RIGHT" prefHeight="50.0" prefWidth="50.0" style="-fx-padding: 0;" textFill="WHITE" toggleColor="RED" toggleLineColor="#be4040" unToggleLineColor="#535151">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                            <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                            </cursor>
-                                        </JFXToggleButton>
+                              <MFXToggleButton fx:id="shuffleSwitch" contentDisposition="CENTER" length="38.0" prefHeight="50.0" />
                                     </children>
                                     <padding>
                                         <Insets left="10.0" right="10.0" />
                                     </padding>
                                 </HBox>
-                                <HBox fx:id="autoplayBox" prefHeight="50.0" prefWidth="235.0">
+                                <HBox fx:id="loopBox" prefHeight="50.0" prefWidth="235.0" styleClass="settingsPaneTab">
                                     <children>
-                                        <Label fx:id="autoplayLabel" prefHeight="50.0" prefWidth="165.0" text="Autoplay" textFill="WHITE">
-
-                                            <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                            </cursor>
-                                        </Label>
-                                        <JFXToggleButton fx:id="autoplaySwitch" contentDisplay="RIGHT" maxWidth="124.0" prefHeight="50.0" prefWidth="50.0" style="-fx-padding: 0;" textFill="WHITE" toggleColor="RED" toggleLineColor="#be4040" unToggleLineColor="#535151">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                            <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                            </cursor>
-                                        </JFXToggleButton>
+                                        <Label fx:id="loopLabel" prefHeight="50.0" prefWidth="165.0" styleClass="settingsPaneText" text="Loop video" textFill="WHITE" />
+                              <MFXToggleButton fx:id="loopSwitch" contentDisposition="CENTER" length="38.0" />
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                </HBox>
+                                <HBox fx:id="autoplayBox" prefHeight="50.0" prefWidth="235.0" styleClass="settingsPaneTab">
+                                    <children>
+                                        <Label fx:id="autoplayLabel" prefHeight="50.0" prefWidth="165.0" styleClass="settingsPaneText" text="Autoplay" textFill="WHITE" />
+                              <MFXToggleButton fx:id="autoplaySwitch" contentDisposition="CENTER" length="38.0" />
                                     </children>
                                     <padding>
                                         <Insets left="10.0" right="10.0" />

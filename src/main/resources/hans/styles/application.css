@@ -1,7 +1,16 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
+
+@font-face {
+    src: url('../fonts/Roboto-Bold.ttf');
+}
+
 @font-face {
     src: url('../fonts/Roboto-Medium.ttf');
+}
+
+@font-face {
+    src: url('../fonts/Roboto-Regular.ttf');
 }
 
 .root {
@@ -16,7 +25,7 @@
 }
 
 #playbackSpeedCustom {
-    -fx-font-family: "Roboto Medium";
+    -fx-font-family: "Roboto";
 	-fx-font-size: 12;
 }
 
@@ -185,6 +194,45 @@
     -fx-background-color: white;
 }
 
-.controlIcon {
+.controlIcon, .settingsPaneIcon {
     -fx-background-color: rgb(200, 200, 200);
+}
+
+.settingsPaneTab {
+    -fx-background-color: rgba(73,73,73,0);
+}
+
+.settingsPaneTab:hover {
+    -fx-background-color: rgba(73,73,73,0.8);
+}
+
+.settingsPaneText {
+    -fx-text-fill: rgb(200,200,200);
+    -fx-font-family: "Roboto Bold";
+}
+
+.settingsPaneSubText {
+    -fx-font-family: "Roboto";
+    -fx-font-size: 14;
+}
+
+.tooltip {
+    -fx-background-radius: 2;
+}
+
+.mfx-toggle-button {
+    -mfx-main: red;
+    -mfx-secondary: rgb(107,107,107);
+}
+
+.mfx-toggle-button .circle {
+	-fx-fill: rgb(200,200,200);
+}
+
+.mfx-toggle-button:selected .circle {
+	-fx-fill: white;
+}
+
+.mfx-toggle-button .line {
+	-fx-opacity: 1;
 }

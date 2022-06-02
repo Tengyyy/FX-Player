@@ -8,8 +8,6 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.jfoenix.controls.JFXToggleButton;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -34,19 +32,18 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Duration;
+
+import io.github.palexdev.materialfx.controls.MFXToggleButton;
 
 public class SettingsController implements Initializable {
 
@@ -55,19 +52,10 @@ public class SettingsController implements Initializable {
     VBox settingsHome, playbackSpeedPage, customSpeedBox, playbackOptionsVBox;
 
     @FXML
-    StackPane bufferPane;
+    StackPane bufferPane, customSpeedBuffer, customSpeedPane, playbackOptionsBuffer, playbackOptionsPane, settingsPane, playbackOptionsArrowPane, videoArrowPane, playbackValueArrowPane, playbackSpeedBackPane, checkBox1Pane, checkBox2Pane, checkBox3Pane, checkBox4Pane, checkBox5Pane, checkBox6Pane, checkBox7Pane, checkBox8Pane, customSpeedBackPane, playbackOptionsBackPane;
 
     @FXML
-    StackPane customSpeedBuffer;
-
-    @FXML
-    StackPane customSpeedPane;
-
-    @FXML
-    StackPane playbackOptionsBuffer;
-
-    @FXML
-    StackPane playbackOptionsPane;
+    Region playbackOptionsArrowIcon, videoArrowIcon, playbackValueArrowIcon, playbackSpeedBackIcon, checkBox1Icon, checkBox2Icon, checkBox3Icon, checkBox4Icon, checkBox5Icon, checkBox6Icon, checkBox7Icon, checkBox8Icon, customSpeedBackIcon, playbackOptionsBackIcon;
 
     @FXML
     Pane settingsBackgroundPane;
@@ -79,23 +67,19 @@ public class SettingsController implements Initializable {
     ProgressBar customSpeedTrack;
 
     @FXML
-    StackPane settingsPane;
-
-    @FXML
-    Label playbackValueLabel, playbackOptionsArrow, playbackSpeedArrow, playbackSpeedTitleLabel, playbackSpeedCustom, checkBox1, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6, checkBox7, checkBox8, customSpeedArrow, customSpeedTitleLabel, customSpeedLabel, playbackOptionsTitleArrow, playbackOptionsTitleText, shuffleLabel, loopLabel, autoplayLabel, videoArrowLabel;
+    Label playbackValueLabel, playbackSpeedTitleLabel, playbackSpeedCustom, customSpeedTitleLabel, customSpeedLabel, playbackOptionsTitleText, shuffleLabel, loopLabel, autoplayLabel;
 
 
     @FXML
     ScrollPane playbackSpeedScroll;
 
     @FXML
-    JFXToggleButton shuffleSwitch, loopSwitch, autoplaySwitch;
+    MFXToggleButton shuffleSwitch, loopSwitch, autoplaySwitch;
+
 
     @FXML
-    HBox playbackSpeedBox, playbackOptionsBox, videoBox, videoNameBox, playbackSpeedTitle, playbackSpeed1, playbackSpeed2, playbackSpeed3, playbackSpeed4, playbackSpeed5, playbackSpeed6, playbackSpeed7, playbackSpeed8, customSpeedTitle, shuffleBox, loopBox, autoplayBox, playbackOptionsTitle;
+    HBox playbackSpeedBox, playbackOptionsBox, videoBox, playbackSpeedTitle, playbackSpeed1, playbackSpeed2, playbackSpeed3, playbackSpeed4, playbackSpeed5, playbackSpeed6, playbackSpeed7, playbackSpeed8, customSpeedTitle, shuffleBox, loopBox, autoplayBox, playbackOptionsTitle;
 
-    @FXML
-    Text videoNameText;
 
 
     MainController mainController;
@@ -111,13 +95,6 @@ public class SettingsController implements Initializable {
     boolean loopOn = false;
     boolean autoplayOn = false;
     /////////////////////////////////////////////////////
-
-
-    Image rightArrow;
-
-    Image leftArrow;
-
-    Image check;
 
     double formattedValue;
     double formattedValue2;
@@ -140,11 +117,8 @@ public class SettingsController implements Initializable {
     boolean loadCustomSpeed = false; // if true the custom speed value pane needs to be rendered when entering the speed selection menu
     boolean isDefaultValue = false;
 
-    private File rightArrowFile, leftArrowFile, checkFile;
-
 
     HBox[] playbackSpeedBoxesArray; // array containing playback speed selection tabs
-    Label[] playbackSpeedCheckBoxesArray; // array containing checkmark fields inside playback speed tabs
 
     MediaInterface mediaInterface;
 
@@ -152,10 +126,11 @@ public class SettingsController implements Initializable {
 
     BooleanProperty titleHover = new SimpleBooleanProperty(false);
 
-    BooleanProperty firstLoad = new SimpleBooleanProperty(true);
-    DoubleProperty titleWidth = new SimpleDoubleProperty();
-
     PauseTransition countdown;
+
+    SVGPath leftArrowSVG = new SVGPath();
+    SVGPath rightArrowSVG = new SVGPath();
+    SVGPath checkSVG = new SVGPath();
 
 
     @Override
@@ -168,16 +143,6 @@ public class SettingsController implements Initializable {
         fileChooser.getExtensionFilters().add(new ExtensionFilter("Audio", "*.mp3"));
 
         playbackSpeedBoxesArray = new HBox[]{playbackSpeed1, playbackSpeed2, playbackSpeed3, playbackSpeed4, playbackSpeed5, playbackSpeed6, playbackSpeed7, playbackSpeed8};
-        playbackSpeedCheckBoxesArray = new Label[]{checkBox1, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6, checkBox7, checkBox8};
-
-
-        rightArrowFile = new File("src/main/resources/hans/images/rightArrowFile.png");
-        leftArrowFile = new File("src/main/resources/hans/images/leftArrowFile.png");
-        checkFile = new File("src/main/resources/hans/images/checkFile.png");
-
-        rightArrow = new Image(rightArrowFile.toURI().toString());
-        leftArrow = new Image(leftArrowFile.toURI().toString());
-        check = new Image(checkFile.toURI().toString());
 
         bufferPane.setBackground(Background.EMPTY);
         settingsPane.setBackground(Background.EMPTY);
@@ -192,28 +157,29 @@ public class SettingsController implements Initializable {
 
         playbackOptionsPane.setStyle("-fx-background-color: rgba(35,35,35,0.8)");
 
+        leftArrowSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
+        rightArrowSVG.setContent(App.svgMap.get(SVG.CHEVRON_RIGHT));
+        checkSVG.setContent(App.svgMap.get(SVG.CHECK));
 
-        playbackValueLabel.setGraphic(new ImageView(rightArrow));
 
-        videoArrowLabel.setGraphic(new ImageView(rightArrow));
-
-        playbackOptionsArrow.setGraphic(new ImageView(rightArrow));
-
-        playbackSpeedArrow.setGraphic(new ImageView(leftArrow));
-
-        playbackOptionsTitleArrow.setGraphic(new ImageView(leftArrow));
-
-        checkBox4.setGraphic(new ImageView(check));
-
-        customSpeedArrow.setGraphic(new ImageView(leftArrow));
+        playbackOptionsArrowIcon.setShape(rightArrowSVG);
+        videoArrowIcon.setShape(rightArrowSVG);
+        playbackValueArrowIcon.setShape(rightArrowSVG);
+        playbackSpeedBackIcon.setShape(leftArrowSVG);
+        checkBox1Icon.setShape(checkSVG);
+        checkBox2Icon.setShape(checkSVG);
+        checkBox3Icon.setShape(checkSVG);
+        checkBox4Icon.setShape(checkSVG);
+        checkBox5Icon.setShape(checkSVG);
+        checkBox6Icon.setShape(checkSVG);
+        checkBox7Icon.setShape(checkSVG);
+        checkBox8Icon.setShape(checkSVG);
+        customSpeedBackIcon.setShape(leftArrowSVG);
+        playbackOptionsBackIcon.setShape(leftArrowSVG);
 
 
         playbackOptionsBox.setOnMouseClicked((e) -> {
             openPlaybackOptions();
-        });
-
-        playbackOptionsTitle.setOnMouseClicked((e) -> {
-            closePlaybackOptions();
         });
 
         videoBox.setOnMouseClicked((e) -> {
@@ -361,68 +327,6 @@ public class SettingsController implements Initializable {
         });
 
 
-        // On-hover effect for setting tab items
-        //////////////////////////////////////////////////
-        playbackSpeedBox.setOnMouseEntered((e) -> {
-            Utilities.hoverEffectOn(playbackSpeedBox);
-        });
-        playbackSpeedBox.setOnMouseExited((e) -> {
-            Utilities.hoverEffectOff(playbackSpeedBox);
-        });
-
-        playbackOptionsBox.setOnMouseEntered((e) -> {
-            Utilities.hoverEffectOn(playbackOptionsBox);
-        });
-        playbackOptionsBox.setOnMouseExited((e) -> {
-            Utilities.hoverEffectOff(playbackOptionsBox);
-        });
-
-
-        // On-hover effect for playback speed items
-        //////////////////////////////////////////////////
-
-        for (int i = 0; i < playbackSpeedBoxesArray.length; i++) {
-
-            final int j = i;
-
-            playbackSpeedBoxesArray[i].setOnMouseEntered((e) -> {
-                Utilities.hoverEffectOn(playbackSpeedBoxesArray[j]);
-            });
-
-            playbackSpeedBoxesArray[i].setOnMouseExited((e) -> {
-                Utilities.hoverEffectOff(playbackSpeedBoxesArray[j]);
-            });
-
-        }
-
-
-        /////////////////////////////////////////////////////////////
-        ////// Hover effect for playback options page ///////////////
-        shuffleBox.setOnMouseEntered((e) -> {
-            Utilities.hoverEffectOn(shuffleBox);
-        });
-
-        shuffleBox.setOnMouseExited((e) -> {
-            Utilities.hoverEffectOff(shuffleBox);
-        });
-
-        loopBox.setOnMouseEntered((e) -> {
-            Utilities.hoverEffectOn(loopBox);
-        });
-
-        loopBox.setOnMouseExited((e) -> {
-            Utilities.hoverEffectOff(loopBox);
-        });
-
-        autoplayBox.setOnMouseEntered((e) -> {
-            Utilities.hoverEffectOn(autoplayBox);
-        });
-
-        autoplayBox.setOnMouseExited((e) -> {
-            Utilities.hoverEffectOff(autoplayBox);
-        });
-
-
         settingsBackgroundPane.setPickOnBounds(false);
 
         bufferPane.prefWidthProperty().bind(settingsBackgroundPane.widthProperty());
@@ -438,11 +342,7 @@ public class SettingsController implements Initializable {
 
         Platform.runLater(() -> {
 
-            if (playbackCustom != null) {
-                playbackSpeedScroll.prefHeightProperty().bind(Bindings.min(537, Bindings.subtract(mainController.mediaViewHeight, 100)));
-            } else {
-                playbackSpeedScroll.prefHeightProperty().bind(Bindings.min(487, Bindings.subtract(mainController.mediaViewHeight, 100)));
-            }
+            playbackSpeedScroll.maxHeightProperty().bind(Bindings.subtract(mainController.mediaViewHeight, 100));
 
             //this can surely be improved
             playbackOptionsBuffer.setTranslateX(settingsBackgroundPane.getWidth());
@@ -469,27 +369,22 @@ public class SettingsController implements Initializable {
 
             final double I = i + 1;
 
+            if(i != 3) {
+                StackPane pane1 = (StackPane) playbackSpeedBoxesArray[(int) (I - 1)].getChildren().get(0);
+                Region region1 = (Region) pane1.getChildren().get(0);
+                region1.setVisible(false);
+            }
+
             playbackSpeedBoxesArray[i].setOnMouseClicked((e) -> {
-                updatePlaybackSpeed((int) I, I / 4, playbackSpeedCheckBoxesArray[(int) I - 1], false);
+
+                StackPane pane = (StackPane) playbackSpeedBoxesArray[(int) (I - 1)].getChildren().get(0);
+                Region region = (Region) pane.getChildren().get(0);
+
+                updatePlaybackSpeed((int) I, I / 4, region, false);
 
                 if(menuController.activeItem != null) mediaInterface.mediaPlayer.setRate(I / 4);
             });
         }
-
-        videoNameText.setManaged(false);
-        videoNameText.setLayoutY(30);
-        //videoNameText.setLayoutX(0);
-
-        titleHover.addListener((obs,wasHover, isHover) -> {
-            if(isHover){
-                if (marqueeTimeline == null) {
-                    marqueeTimeline = new Timeline();
-                    AnimationsClass.marquee(videoNameText, videoNameBox, 0.5, marqueeTimeline, titleHover, 10);
-                } else if (marqueeTimeline.getStatus() != Animation.Status.RUNNING && videoNameText.getLayoutBounds().getWidth() > videoNameBox.getWidth()) {
-                    marqueeTimeline.play();
-                }
-            }
-        });
 
         countdown = new PauseTransition(Duration.millis(1000));
         countdown.setOnFinished((e) -> {
@@ -497,25 +392,18 @@ public class SettingsController implements Initializable {
         });
 
         Rectangle videoNameClip = new Rectangle(195, 50);
-        videoNameBox.setClip(videoNameClip);
-
 
         videoBox.setOnMouseEntered((e) -> {
-            Utilities.hoverEffectOn(videoBox);
 
-            //TODO: implement new universal marquee animation
             if(marqueeTimeline != null && marqueeTimeline.getStatus() == Animation.Status.RUNNING) titleHover.set(true);
             else countdown.playFromStart();
         });
 
         videoBox.setOnMouseExited((e) -> {
-            Utilities.hoverEffectOff(videoBox);
-
             titleHover.set(false);
             if(countdown.getStatus() == Animation.Status.RUNNING) {
                 countdown.stop();
             }
-
         });
 
     }
@@ -563,8 +451,13 @@ public class SettingsController implements Initializable {
         if (loadCustomSpeed) createCustomSpeedTab();
 
         // this part will be run if the custom speed tab doesnt need to be updated but the rest of the tabs do
-        if (isDefaultValue)
-            updatePlaybackSpeed((int) formattedValue * 4, formattedValue, playbackSpeedCheckBoxesArray[(int) (formattedValue * 4 - 1)], true);
+        if (isDefaultValue){
+
+            StackPane pane = (StackPane) playbackSpeedBoxesArray[(int) (formattedValue * 4 -1)].getChildren().get(0);
+            Region region = (Region) pane.getChildren().get(0);
+
+            updatePlaybackSpeed((int) formattedValue * 4, formattedValue, region, true);
+        }
 
 
         if (controlBarController.settingsButtonHover) {
@@ -666,7 +559,10 @@ public class SettingsController implements Initializable {
         if (loadCustomSpeed) createCustomSpeedTab();
 
         if (isDefaultValue) {
-            updatePlaybackSpeed((int) formattedValue * 4, formattedValue, playbackSpeedCheckBoxesArray[(int) (formattedValue * 4 - 1)], true);
+            StackPane pane = (StackPane) playbackSpeedBoxesArray[(int) (formattedValue * 4 -1)].getChildren().get(0);
+            Region region = (Region) pane.getChildren().get(0);
+
+            updatePlaybackSpeed((int) formattedValue * 4, formattedValue, region, true);
         }
 
         double toHeight;
@@ -722,7 +618,7 @@ public class SettingsController implements Initializable {
         playbackCustom = new CustomSpeedTab(this, formattedValue == formattedValue2 ? true : false);
     }
 
-    public void updatePlaybackSpeed(int trackerValue, double speedValue, Label activeCheckBox, boolean updateScroll) {
+    public void updatePlaybackSpeed(int trackerValue, double speedValue, Region activeCheckBox, boolean updateScroll) {
 
         isDefaultValue = false;
 
@@ -737,16 +633,19 @@ public class SettingsController implements Initializable {
             if (trackerValue == 1) scrollValue = 150;
             else scrollValue += 60;
 
-            playbackCustom.playbackCustomCheck.setGraphic(null);
+            playbackCustom.playbackCustomCheckIcon.setVisible(false);
         }
 
         if(updateScroll) playbackSpeedScroll.setVvalue(scrollValue / playbackSpeedPage.getHeight());
 
-        for (Label checkBox : playbackSpeedCheckBoxesArray) {
-            checkBox.setGraphic(null);
+        for (HBox hbox : playbackSpeedBoxesArray) {
+            StackPane pane = (StackPane) hbox.getChildren().get(0);
+            Region region = (Region) pane.getChildren().get(0);
+
+            region.setVisible(false);
         }
 
-        activeCheckBox.setGraphic(new ImageView(check));
+        activeCheckBox.setVisible(true);
 
         if (speedValue == 1) playbackValueLabel.setText("Normal");
         else playbackValueLabel.setText(df.format(speedValue));

@@ -159,7 +159,6 @@ public class MediaInterface {
 
         // update video name field in settings pane and the stage title with the new video
         Platform.runLater(() -> {
-            settingsController.videoNameText.setText(mediaItem.getFile().getName()); // updates video name text in settings pane and window title with filename
             App.stage.setTitle(mediaItem.getFile().getName());
         });
 
@@ -209,9 +208,6 @@ public class MediaInterface {
 
         App.setFrameDuration(1 / 30);
         App.stage.setTitle("MP4 Player");
-
-        settingsController.videoNameText.setLayoutX(0);
-        settingsController.videoNameText.setText("Select a video");
 
         if(controlBarController.showingTimeLeft) controlBarController.durationLabel.setText("−00:00/00:00");
         else controlBarController.durationLabel.setText("00:00/00:00");

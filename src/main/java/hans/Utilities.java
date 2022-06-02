@@ -50,17 +50,6 @@ public class Utilities {
     }
 
 
-    // makes HBox's background lighter and less transparent on hovering
-    public static void hoverEffectOn(HBox setting) {
-        setting.setStyle("-fx-background-color: rgba(73,73,73,0.8)");
-    }
-
-    // turns HBox background back to normal
-    public static void hoverEffectOff(HBox setting) {
-        setting.setStyle("-fx-background-color: rgba(83,83,83,0)");
-    }
-
-
     // gets file extension
     public static String getFileExtension(File file) {
         String fileName = file.getName();

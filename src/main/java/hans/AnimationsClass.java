@@ -435,65 +435,6 @@ public class AnimationsClass {
         controlBarController.mainController.menuButton.setVisible(false);
     }
 
-    public static void marquee(Text text, Region parent, double speed, Timeline timeline, BooleanProperty textHover, double offset){
-
-        KeyFrame updateFrame = new KeyFrame(Duration.seconds(1 / 60d), new EventHandler<ActionEvent>() {
-                private boolean rightMovement = false;
-
-                @Override
-                public void handle(ActionEvent actionEvent) {
-
-                    double tW = text.getLayoutBounds().getWidth();
-                    double pW = parent.getWidth();
-                    double layoutX = text.getLayoutX();
-
-                    if (tW <= pW && layoutX >= 0) {
-                        // stop, if the pane is large enough and the position is correct
-                        text.setLayoutX(0);
-                        timeline.stop();
-                        rightMovement = false;
-                    } else {
-                        if(layoutX >= 0 && !textHover.getValue()){
-                            //stops the marquee animation if it reaches the left bound and the user isnt hovering the text
-                            text.setLayoutX(0);
-                            timeline.stop();
-                            rightMovement = false;
-                        }
-
-                        // invert movement direction if bounds are reached
-                        if (rightMovement && layoutX >= offset) {
-                            rightMovement = false;
-                        }
-                        else if(!rightMovement && layoutX + tW + offset <= pW){
-                            rightMovement = true;
-                        }
-
-                        // update position
-                        if(textHover.getValue()) {
-                            if (rightMovement) layoutX += speed;
-                            else layoutX -= speed;
-                        }
-                        else {
-                            if(layoutX > 0){
-                                layoutX -= 2*speed;
-                            }
-                            else {
-                                layoutX += 2 * speed;
-                            }
-                        }
-                        text.setLayoutX(layoutX);
-                    }
-                }
-            });
-
-            timeline.getKeyFrames().add(updateFrame);
-            timeline.setCycleCount(Animation.INDEFINITE);
-
-            if(text.getLayoutBounds().getWidth() > parent.getWidth()){
-                timeline.play();
-            }
-    }
-
 
     public static FadeTransition fadeAnimation(double duration, Region node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
         FadeTransition fadeTransition = new FadeTransition();

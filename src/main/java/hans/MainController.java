@@ -437,10 +437,6 @@ public class MainController implements Initializable {
         actionIndicator.animate();
 
 
-        // resets video name text in the settings tab if the animations had not finished before the user already selected a new video to play
-        if(settingsController.marqueeTimeline != null && settingsController.marqueeTimeline.getStatus() == Animation.Status.RUNNING) settingsController.videoNameText.setLayoutX(0);
-
-
         MediaItem temp = null;
 
         if(Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);

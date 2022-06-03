@@ -404,7 +404,7 @@ public class AnimationsClass {
 
     public static void displayControls(ControlBarController controlBarController) {
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), controlBarController.controlBar);
-        translateTransition.setFromY(50);
+        translateTransition.setFromY(40);
         translateTransition.setToY(0);
         translateTransition.setCycleCount(1);
         translateTransition.setInterpolator(Interpolator.LINEAR);
@@ -421,7 +421,7 @@ public class AnimationsClass {
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), controlBarController.controlBar);
         translateTransition.setFromY(controlBarController.controlBar.getTranslateY());
-        translateTransition.setToY(50);
+        translateTransition.setToY(40);
         translateTransition.setCycleCount(1);
         translateTransition.setInterpolator(Interpolator.LINEAR);
 

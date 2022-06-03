@@ -148,7 +148,7 @@ public class ControlBarController implements Initializable {
 
         durationLabel.setTranslateX(-60);
 
-        controlBar.setTranslateY(50);
+        controlBar.setTranslateY(40);
 
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
 

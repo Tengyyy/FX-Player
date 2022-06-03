@@ -307,8 +307,15 @@ public class App extends Application {
                         if(menuController.activeItem != null) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 9 / 10);
                     }
                     break;
-                    case DIGIT0: {
+                    case DIGIT0:
+                    case HOME: {
+                        controlBarController.mouseEventTracker.move();
+                        mediaInterface.seekedToEnd = false;
+                        if(menuController.activeItem != null) controlBarController.durationSlider.setValue(0);
+                    }
+                    break;
 
+                    case END: {
                         controlBarController.mouseEventTracker.move();
                         mediaInterface.seekedToEnd = true;
                         if(menuController.activeItem != null) controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());

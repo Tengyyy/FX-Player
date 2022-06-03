@@ -2,6 +2,8 @@ package hans;
 
 
 import com.jfoenix.controls.JFXButton;
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.enums.ButtonType;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -84,7 +86,7 @@ public class MenuController implements Initializable {
 
     double prefWidth = 350;
 
-    ControlTooltip addMediaTooltip, clearQueueTooltip, closeMenuTooltip, appSettingsTooltip;
+    ControlTooltip addMediaTooltip, clearQueueTooltip, closeMenuTooltip, appSettingsTooltip, historyTooltip;
 
     DragResizer dragResizer;
 
@@ -155,6 +157,7 @@ public class MenuController implements Initializable {
         historyButton.setId("historyButton");
         historyButton.setCursor(Cursor.HAND);
         historyButton.setButtonType(JFXButton.ButtonType.RAISED);
+        historyButton.setText(null);
         StackPane.setAlignment(historyButton, Pos.CENTER);
 
         historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
@@ -330,6 +333,7 @@ public class MenuController implements Initializable {
             addMediaTooltip = new ControlTooltip("Add media", addVideoButton, new VBox(), 1000, true);
             clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, new VBox(), 1000, false);
             appSettingsTooltip = new ControlTooltip("App settings", appSettingsButton, new VBox(), 1000, true);
+            historyTooltip = new ControlTooltip("Open history", historyButton, new VBox(), 1000, false);
         });
 }
 

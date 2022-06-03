@@ -42,7 +42,10 @@ import javafx.scene.media.SubtitleTrack;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
-import static hans.SVG.*;
+import static hans.SVG.MENU;
+import static hans.SVG.PLAY;
+import static hans.SVG.PLUS;
+import static hans.SVG.PAUSE;
 
 
 public class MainController implements Initializable {

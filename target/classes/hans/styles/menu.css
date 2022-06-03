@@ -115,6 +115,7 @@
 #clearQueueButton {
     -fx-text-fill: white;
     -fx-background-radius: 50;
+    -fx-font-family: "Roboto Medium";
 }
 
 .menuButton{

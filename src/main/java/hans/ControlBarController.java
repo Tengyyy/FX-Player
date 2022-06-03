@@ -304,7 +304,7 @@ public class ControlBarController implements Initializable {
         durationSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
             if (newValue) { // pause video when user starts seeking
-                playIcon.setShape(pauseSVG);
+                playIcon.setShape(playSVG);
                 if(menuController.activeItem != null) {
                     mediaInterface.mediaPlayer.pause();
                     mediaInterface.playing = false;

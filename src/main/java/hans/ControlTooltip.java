@@ -5,9 +5,11 @@ import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Bounds;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
@@ -15,7 +17,7 @@ import javafx.util.Duration;
 public class ControlTooltip extends Tooltip {
 
     String tooltipText;
-    Button tooltipParent;
+    Region tooltipParent;
 
     double tooltipMiddle;
     double tooltipHeight;
@@ -32,7 +34,7 @@ public class ControlTooltip extends Tooltip {
     BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
     PauseTransition countdown;
 
-    ControlTooltip(String tooltipText, Button tooltipParent, VBox controlBar, int delay, boolean isMenu) {
+    ControlTooltip(String tooltipText, Region tooltipParent, VBox controlBar, int delay, boolean isMenu) {
 
         this.tooltipText = tooltipText;
         this.tooltipParent = tooltipParent;
@@ -69,7 +71,7 @@ public class ControlTooltip extends Tooltip {
     }
 
     public void showTooltip() {
-        Bounds bounds = tooltipParent.localToScreen(tooltipParent.getBoundsInLocal());
+        Bounds bounds = tooltipParent.localToScreen(tooltipParent.getLayoutBounds());
         nodeMiddleX = tooltipParent.getWidth() / 2;
         nodeMiddleY = tooltipParent.getHeight() / 2;
 

@@ -218,6 +218,7 @@
 
 .tooltip {
     -fx-background-radius: 2;
+    -fx-font-family: "Roboto Medium"
 }
 
 .mfx-toggle-button {

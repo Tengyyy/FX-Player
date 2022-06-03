@@ -1,6 +1,7 @@
 package hans;
 
 import com.jfoenix.controls.JFXButton;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -20,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import org.jcodec.containers.mp4.boxes.ColorExtension;
 
 public class HistoryItem extends GridPane implements MenuObject{
 
@@ -202,6 +204,7 @@ public class HistoryItem extends GridPane implements MenuObject{
         optionsButton.getStyleClass().add("optionsButton");
         optionsButton.setCursor(Cursor.HAND);
         optionsButton.setOpacity(0);
+        optionsButton.setText(null);
 
 
         this.setBorder(new Border(new BorderStroke(Color.web("#909090"), Color.web("#909090"), Color.web("#909090"), Color.web("#909090"),

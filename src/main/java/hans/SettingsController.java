@@ -613,7 +613,8 @@ public class SettingsController implements Initializable {
     public void createCustomSpeedTab() {
         loadCustomSpeed = false;
 
-        if (playbackCustom != null) playbackSpeedPage.getChildren().remove(2);
+        if (playbackCustom != null) playbackSpeedPage.getChildren().remove(playbackCustom);
+        else playbackSpeedScroll.setPrefHeight(537);
 
         playbackCustom = new CustomSpeedTab(this, formattedValue == formattedValue2 ? true : false);
     }

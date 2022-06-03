@@ -1,6 +1,7 @@
 package hans;
 
 import com.jfoenix.controls.JFXButton;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
@@ -203,6 +204,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         removeButton.getStyleClass().add("removeButton");
         removeButton.setCursor(Cursor.HAND);
         removeButton.setOpacity(0);
+        removeButton.setText(null);
 
         removeIcon = new Region();
         removeIcon.setShape(removeSVG);
@@ -220,6 +222,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         optionsButton.getStyleClass().add("optionsButton");
         optionsButton.setCursor(Cursor.HAND);
         optionsButton.setOpacity(0);
+        optionsButton.setText(null);
 
 
         optionsButton.setOnAction((e) -> {

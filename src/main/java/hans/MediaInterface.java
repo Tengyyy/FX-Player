@@ -101,6 +101,8 @@ public class MediaInterface {
                 seekedToEnd = true;
             }
 
+            if(menuController.activeItem != null) menuController.activeItem.columns.pause();
+
             atEnd = true;
             playing = false;
             mediaPlayer.pause();
@@ -148,11 +150,9 @@ public class MediaInterface {
         playing = false;
         wasPlaying = false;
 
-        controlBarController.durationSlider.setValue(0);
-
-
         mediaPlayer = new MediaPlayer(mediaItem.getMedia());
 
+        controlBarController.durationSlider.setValue(0);
 
         mainController.mediaView.setMediaPlayer(mediaPlayer);
         App.setFrameDuration(mediaItem.getFrameDuration());

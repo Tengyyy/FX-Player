@@ -150,13 +150,13 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Region fx:id="captionsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="15.0" prefWidth="20.0" styleClass="controlIcon">
+                  <Region fx:id="captionsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="17.0" prefWidth="21.0" styleClass="controlIcon">
                      <effect>
                         <DropShadow height="10.0" radius="4.5" width="10.0" />
                      </effect></Region>
                   <Line fx:id="captionsButtonLine" endX="10.0" scaleX="0.0" startX="-10.0" stroke="RED" strokeLineCap="ROUND" strokeWidth="3.0" StackPane.alignment="BOTTOM_CENTER">
                      <StackPane.margin>
-                        <Insets bottom="3.0" />
+                        <Insets />
                      </StackPane.margin>
                   </Line>
                </children>

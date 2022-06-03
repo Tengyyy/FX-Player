@@ -148,6 +148,8 @@ public class HistoryBox extends VBox {
 
         if(closeHistory != null && closeHistory.getStatus() == Animation.Status.RUNNING) return;
 
+        menuController.historyTooltip.updateText("Close history");
+
         openHistory = new Timeline(new KeyFrame(Duration.millis(300),
                 new KeyValue(historyWrapper.minHeightProperty(), height, Interpolator.EASE_BOTH)));
 
@@ -165,6 +167,8 @@ public class HistoryBox extends VBox {
     public void close(){
 
         if(openHistory != null && openHistory.getStatus() == Animation.Status.RUNNING) return;
+
+        menuController.historyTooltip.updateText("Open history");
 
         open = false;
 

@@ -42,10 +42,7 @@ import javafx.scene.media.SubtitleTrack;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
-import static hans.SVG.MENU;
-import static hans.SVG.PLAY;
-import static hans.SVG.PLUS;
-import static hans.SVG.PAUSE;
+import static hans.SVG.*;
 
 
 public class MainController implements Initializable {
@@ -227,10 +224,10 @@ public class MainController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         }
-        else {
+        else if(mediaInterface.mediaPlayer != null){
             if (mediaInterface.atEnd) {
                 controlBarController.replayMedia();
-                actionIndicator.setIcon(PLAY);
+                actionIndicator.setIcon(REPLAY);
             } else {
                 if (mediaInterface.playing) {
                     controlBarController.pause();

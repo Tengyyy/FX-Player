@@ -115,7 +115,7 @@ public class ControlBarController implements Initializable {
         pauseSVG.setContent(App.svgMap.get(SVG.PAUSE));
 
         replaySVG = new SVGPath();
-        replaySVG.setContent(App.svgMap.get(SVG.PREVIOUS_VIDEO));
+        replaySVG.setContent(App.svgMap.get(SVG.REPLAY));
 
         nextVideoSVG = new SVGPath();
         nextVideoSVG.setContent(App.svgMap.get(SVG.NEXT_VIDEO));
@@ -345,79 +345,6 @@ public class ControlBarController implements Initializable {
             }
         });
 
-        // this will all go to FocusTraversalEngine.java
-        durationSlider.focusedProperty()
-                .addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    if (!newValue) {
-                        durationSlider.setStyle("-fx-border-color: transparent;");
-                    } else {
-                        mainController.focusNodeTracker = 1;
-                    }
-                });
-
-        playButton.focusedProperty()
-                .addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    if (!newValue) {
-                        playButton.setStyle("-fx-border-color: transparent;");
-                    } else {
-                        mainController.focusNodeTracker = 2;
-                    }
-                });
-
-        nextVideoButton.focusedProperty()
-                .addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    if (!newValue) {
-                        nextVideoButton.setStyle("-fx-border-color: transparent;");
-                    } else {
-                        mainController.focusNodeTracker = 3;
-                    }
-                });
-
-        volumeButton.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if (!newValue) {
-                volumeButton.setStyle("-fx-border-color: transparent;");
-            } else {
-                mainController.focusNodeTracker = 4;
-            }
-        });
-
-        volumeSlider.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-
-            sliderFocus = newValue;
-
-            if (!newValue) {
-                if (isExited) {
-                    volumeSliderExit();
-                }
-                volumeSlider.setStyle("-fx-border-color: transparent;");
-
-            } else {
-                if (isExited) {
-                    volumeSliderEnter();
-                }
-                mainController.focusNodeTracker = 5;
-            }
-
-        });
-
-        settingsButton.focusedProperty()
-                .addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    if (!newValue) {
-                        settingsButton.setStyle("-fx-border-color: transparent;");
-                    } else {
-                        mainController.focusNodeTracker = 6;
-                    }
-                });
-
-        fullScreenButton.focusedProperty()
-                .addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    if (!newValue) {
-                        fullScreenButton.setStyle("-fx-border-color: transparent;");
-                    } else {
-                        mainController.focusNodeTracker = 7;
-                    }
-                });
-        //////////////////////////////////////////////////////////////////////////
 
     }
 
@@ -474,20 +401,21 @@ public class ControlBarController implements Initializable {
             menuController.activeItem.play.updateText("Pause video");
             menuController.activeItem.columns.play();
 
-            if(menuController.historyBox.index != -1){
+            if (menuController.historyBox.index != -1) {
                 HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
                 historyItem.playIcon.setShape(historyItem.pauseSVG);
                 historyItem.play.updateText("Pause video");
             }
+
+            playIcon.setShape(pauseSVG);
+            mediaInterface.playing = true;
+
+            play.updateText("Pause (k)");
+
+            mediaInterface.wasPlaying = mediaInterface.playing; // updates the value of wasPlaying variable - when this method is called the
+            // user really wants to play or pause the video and therefore the previous
+            // wasPlaying state no longer needs to be tracked
         }
-        playIcon.setShape(pauseSVG);
-        mediaInterface.playing = true;
-
-        play.updateText("Pause (k)");
-
-        mediaInterface.wasPlaying = mediaInterface.playing; // updates the value of wasPlaying variable - when this method is called the
-        // user really wants to play or pause the video and therefore the previous
-        // wasPlaying state no longer needs to be tracked
     }
 
     public void pause() {
@@ -499,37 +427,40 @@ public class ControlBarController implements Initializable {
             menuController.activeItem.play.updateText("Play video");
             menuController.activeItem.columns.pause();
 
-            if(menuController.historyBox.index != -1){
+            if (menuController.historyBox.index != -1) {
                 HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
                 historyItem.playIcon.setShape(historyItem.playSVG);
                 historyItem.play.updateText("Play video");
             }
+
+            playIcon.setShape(playSVG);
+            mediaInterface.playing = false;
+
+            play.updateText("Play (k)");
+
+            mediaInterface.wasPlaying = mediaInterface.playing;
         }
-        playIcon.setShape(playSVG);
-        mediaInterface.playing = false;
-
-        play.updateText("Play (k)");
-
-        mediaInterface.wasPlaying = mediaInterface.playing;
     }
 
 
     public void replayMedia() {
 
-        play.updateText("Pause (k)");
 
-        if(menuController.activeItem != null){
+        if(menuController.activeItem != null) {
             mediaInterface.mediaPlayer.seek(Duration.ZERO);
             mediaInterface.mediaPlayer.play();
 
             menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
             menuController.activeItem.play.updateText("Pause video");
+
+            mediaInterface.playing = true;
+            mediaInterface.atEnd = false;
+            playIcon.setShape(pauseSVG);
+            mediaInterface.seekedToEnd = false;
+            playButton.setOnAction((e) -> playButtonClick1());
+
+            play.updateText("Pause (k)");
         }
-        mediaInterface.playing = true;
-        mediaInterface.atEnd = false;
-        playIcon.setShape(pauseSVG);
-        mediaInterface.seekedToEnd = false;
-        playButton.setOnAction((e) -> playButtonClick1());
 
     }
 

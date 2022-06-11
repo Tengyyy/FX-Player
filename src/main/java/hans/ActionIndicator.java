@@ -64,9 +64,9 @@ public class ActionIndicator {
 
         mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
 
-        scaleTransition = AnimationsClass.scaleAnimation(60000, wrapper, 1, 1.5, 1, 1.5, false, 1, false);
-        fadeTransition1 = AnimationsClass.fadeAnimation(60000, background, 0.3, 0, false, 1, false);
-        fadeTransition2 = AnimationsClass.fadeAnimation(60000, icon, 0.8, 0, false, 1, false);
+        scaleTransition = AnimationsClass.scaleAnimation(600, wrapper, 1, 1.5, 1, 1.5, false, 1, false);
+        fadeTransition1 = AnimationsClass.fadeAnimation(600, background, 0.3, 0, false, 1, false);
+        fadeTransition2 = AnimationsClass.fadeAnimation(600, icon, 0.8, 0, false, 1, false);
         parallelTransition = AnimationsClass.parallelAnimation(false, scaleTransition, fadeTransition1, fadeTransition2);
         parallelTransition.setOnFinished((e) -> {
             wrapper.setVisible(false);
@@ -96,7 +96,7 @@ public class ActionIndicator {
             icon.setMaxSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setTranslateX(icon.getWidth() / 10);
         }
-        else if(iconPath.getContent() == App.svgMap.get(PAUSE) || iconPath.getContent() == App.svgMap.get(VOLUME_MUTED) || iconPath.getContent() == App.svgMap.get(VOLUME_HIGH)){
+        else if(iconPath.getContent() == App.svgMap.get(PAUSE) || iconPath.getContent() == App.svgMap.get(VOLUME_MUTED) || iconPath.getContent() == App.svgMap.get(VOLUME_HIGH) || iconPath.getContent() == App.svgMap.get(PREVIOUS_VIDEO) || iconPath.getContent() == App.svgMap.get(NEXT_VIDEO)){
             icon.setMinSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setPrefSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setMaxSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());

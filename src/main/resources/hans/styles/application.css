@@ -198,8 +198,12 @@
     -fx-background-color: rgb(200, 200, 200);
 }
 
+.settingsHomeIcon {
+    -fx-background-color: white;
+}
+
 .settingsPaneTab {
-    -fx-background-color: rgba(73,73,73,0);
+    -fx-background-color: transparent;
 }
 
 .settingsPaneTab:hover {
@@ -213,7 +217,7 @@
 
 .settingsPaneSubText {
     -fx-font-family: "Roboto";
-    -fx-font-size: 14;
+    -fx-font-size: 13;
 }
 
 .tooltip {
@@ -224,6 +228,7 @@
 .mfx-toggle-button {
     -mfx-main: red;
     -mfx-secondary: rgb(107,107,107);
+    -fx-padding: 0;
 }
 
 .mfx-toggle-button .circle {
@@ -236,4 +241,10 @@
 
 .mfx-toggle-button .line {
 	-fx-opacity: 1;
+}
+
+.settingsPaneTitle {
+    -fx-border-color: rgb(70,70,70);
+    -fx-border-width: 0 0 1 0;
+    -fx-border-insets: 0 0 -1 0;
 }

@@ -376,7 +376,7 @@ public class QueueItem extends GridPane implements MenuObject{
 
         menuController.activeBox.set(activeItem, true);
 
-        if(menuController.settingsController.shuffleOn || menuController.queue.indexOf(this) == menuController.queue.size() -1){
+        if(menuController.settingsController.playbackOptionsController.shuffleOn || menuController.queue.indexOf(this) == menuController.queue.size() -1){
             queueBox.remove(this);
         }
         else {

@@ -69,10 +69,9 @@ public class MainController implements Initializable {
     private ControlBarController controlBarController;
 
     @FXML
-    private SettingsController settingsController;
-
-    @FXML
     private MenuController menuController;
+
+    SettingsController settingsController;
 
     MediaInterface mediaInterface;
 
@@ -82,14 +81,12 @@ public class MainController implements Initializable {
     boolean running = false; // media running status
 
 
-    boolean captionsOpen = false;
+    boolean captionsOn = false;
 
 
 
     // counter to keep track of the current node that has focus (used for focus traversing with tab and shift+tab)
     public int focusNodeTracker = 0;
-
-    SubtitleTrack subtitles;
 
     ControlTooltip openMenuTooltip;
 
@@ -103,11 +100,16 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
+        settingsController = new SettingsController(this, controlBarController, menuController);
+
         mediaInterface = new MediaInterface(this, controlBarController, settingsController, menuController);
 
         controlBarController.init(this, settingsController, menuController, mediaInterface); // shares references of all the controllers between eachother
-        settingsController.init(this, controlBarController, menuController, mediaInterface);
         menuController.init(this, controlBarController, settingsController, mediaInterface);
+        settingsController.init(mediaInterface);
+
+        mediaViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
+        System.out.println(mediaViewWrapper.getChildren().size());
 
         // declaring media control images
         menuSVG = new SVGPath();
@@ -246,157 +248,11 @@ public class MainController implements Initializable {
     }
 
 
-    public void traverseFocusForwards() {
-
-        switch (focusNodeTracker) {
-
-            // mediaView
-            case 0: {
-
-                mediaView.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // durationSlider
-            case 1: {
-                mediaView.setStyle("-fx-border-color: transparent;");
-                controlBarController.durationSlider.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // playButton
-            case 2: {
-                controlBarController.durationSlider.setStyle("-fx-border-color: transparent;");
-                controlBarController.playButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // nextVideoButton
-            case 3: {
-                controlBarController.playButton.setStyle("-fx-border-color: transparent;");
-                controlBarController.nextVideoButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // muteButton
-            case 4: {
-                controlBarController.nextVideoButton.setStyle("-fx-border-color: transparent;");
-                controlBarController.volumeButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // volumeSlider
-            case 5: {
-                controlBarController.volumeButton.setStyle("-fx-border-color: transparent;");
-                controlBarController.volumeSlider.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // settingsButton
-            case 6: {
-                controlBarController.volumeSlider.setStyle("-fx-border-color: transparent;");
-                controlBarController.settingsButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // fullscreenButton
-            case 7: {
-                controlBarController.settingsButton.setStyle("-fx-border-color: transparent;");
-                controlBarController.fullScreenButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // menuButton
-            case 8: {
-                controlBarController.fullScreenButton.setStyle("-fx-border-color: transparent;");
-            }
-            break;
-
-            default:
-                break;
-
-        }
-
-    }
-
-    public void traverseFocusBackwards() {
-
-        switch (focusNodeTracker) {
-
-            // mediaView
-            case 0: {
-                controlBarController.durationSlider.setStyle("-fx-border-color: transparent;");
-                mediaView.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // durationSlider
-            case 1: {
-                controlBarController.playButton.setStyle("-fx-border-color: transparent;");
-                controlBarController.durationSlider.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // playButton
-            case 2: {
-                controlBarController.nextVideoButton.setStyle("-fx-border-color: transparent;");
-                controlBarController.playButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // nextVideoButton
-            case 3: {
-                controlBarController.volumeButton.setStyle("-fx-border-color: transparent;");
-                controlBarController.nextVideoButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // muteButton
-            case 4: {
-                controlBarController.volumeSlider.setStyle("-fx-border-color: transparent;");
-                controlBarController.volumeButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // volumeSlider
-            case 5: {
-                controlBarController.settingsButton.setStyle("-fx-border-color: transparent;");
-                controlBarController.volumeSlider.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // settingsButton
-            case 6: {
-                controlBarController.fullScreenButton.setStyle("-fx-border-color: transparent;");
-                controlBarController.settingsButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // fullscreenButton
-            case 7: {
-                controlBarController.fullScreenButton.setStyle("-fx-border-color: blue;");
-            }
-            break;
-
-            // menuButton
-            case 8: {
-                mediaView.setStyle("-fx-border-color: transparent;");
-            }
-            break;
-
-            default:
-                break;
-
-        }
-
-    }
-
     public void openMenu() {
         if(!menuController.menuInTransition) {
             menuController.menuInTransition = true;
             menuController.menuOpen = true;
-            //menuController.menu.translateXProperty().unbind();
-            //mediaViewWrapper.prefWidthProperty().unbind();
+
             AnimationsClass.openMenu(this, menuController);
         }
     }
@@ -410,7 +266,6 @@ public class MainController implements Initializable {
         actionIndicator.setVisible(true);
 
         if(settingsController.settingsOpen) settingsController.closeSettings();
-        else if(captionsOpen) controlBarController.closeCaptions();
 
        if(mediaInterface.playing)controlBarController.mouseEventTracker.hide();
        else AnimationsClass.hideControls(controlBarController);
@@ -419,7 +274,6 @@ public class MainController implements Initializable {
 
     public void handleDragExited(DragEvent e){
 
-        //mediaView.setEffect(null);
         if(actionIndicator.parallelTransition.getStatus() != Animation.Status.RUNNING) actionIndicator.setVisible(false);
     }
 

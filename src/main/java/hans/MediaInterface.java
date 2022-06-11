@@ -122,18 +122,18 @@ public class MediaInterface {
     public void endMedia() {
 
 
-        if ((!settingsController.shuffleOn && !settingsController.loopOn && !settingsController.autoplayOn) || (settingsController.loopOn && seekedToEnd)) {
+        if ((!settingsController.playbackOptionsController.shuffleOn && !settingsController.playbackOptionsController.loopOn && !settingsController.playbackOptionsController.autoplayOn) || (settingsController.playbackOptionsController.loopOn && seekedToEnd)) {
 
             defaultEnd();
 
-        } else if (settingsController.loopOn) {
+        } else if (settingsController.playbackOptionsController.loopOn) {
             controlBarController.mouseEventTracker.move();
 
             // restart current video
             mediaPlayer.stop();
 
         }
-        else if (settingsController.shuffleOn || settingsController.autoplayOn) {
+        else if (settingsController.playbackOptionsController.shuffleOn || settingsController.playbackOptionsController.autoplayOn) {
             if((menuController.historyBox.index == -1 || menuController.historyBox.index >= menuController.history.size() -1) && menuController.queue.isEmpty()) defaultEnd();
             else requestNext();
         }
@@ -187,8 +187,7 @@ public class MediaInterface {
 
                 @Override
                 public void run() {
-                    if(settingsController.playbackSpeedTracker == 0) mediaPlayer.setRate(settingsController.formattedValue);
-                    else mediaPlayer.setRate(settingsController.playbackSpeedTracker / 4);
+                    mediaPlayer.setRate(settingsController.playbackSpeedController.speed);
                 }
             };
 

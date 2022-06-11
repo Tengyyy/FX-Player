@@ -563,7 +563,7 @@ public class ControlBarController implements Initializable {
             fullScreenIcon.setShape(minimizeSVG);
             App.fullScreen = true;
 
-            if (!mainController.captionsOpen && !settingsController.settingsOpen) {
+            if (!settingsController.settingsOpen) {
                 if (fullScreen.isShowing()) {
                     fullScreen.hide();
                     exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
@@ -576,7 +576,7 @@ public class ControlBarController implements Initializable {
             fullScreenIcon.setShape(maximizeSVG);
             App.fullScreen = false;
 
-            if (!mainController.captionsOpen && !settingsController.settingsOpen) {
+            if (!settingsController.settingsOpen) {
                 if (exitFullScreen.isShowing()) {
                     exitFullScreen.hide();
                     fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
@@ -649,7 +649,7 @@ public class ControlBarController implements Initializable {
 
 
     public void openCaptions() {
-        mainController.captionsOpen = true;
+        mainController.captionsOn = true;
 
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
@@ -657,61 +657,11 @@ public class ControlBarController implements Initializable {
 
         AnimationsClass.scaleAnimation(100, captionsButtonLine, 0, 1, 1, 1, false, 1, true);
 
-        if (captions.isShowing() || settings.isShowing() || fullScreen.isShowing() || exitFullScreen.isShowing()) {
-            captions.hide();
-            settings.hide();
-            fullScreen.hide();
-            exitFullScreen.hide();
-        }
-        captionsButton.setOnMouseEntered(null);
-        settingsButton.setOnMouseEntered(null);
-        fullScreenButton.setOnMouseEntered(null);
     }
 
     public void closeCaptions() {
-        mainController.captionsOpen = false;
+        mainController.captionsOn = false;
 
-        if (captionsButtonHover) {
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0, false);
-            captions.showTooltip();
-
-            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
-
-            if (App.fullScreen)
-                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
-            else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
-        } else if (settingsButtonHover) {
-            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
-            settings.showTooltip();
-
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0, false);
-
-            if (App.fullScreen)
-                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
-            else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
-        } else if (fullScreenButtonHover) {
-            if (App.fullScreen) {
-                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
-                exitFullScreen.showTooltip();
-            } else {
-                fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
-                fullScreen.showTooltip();
-            }
-
-            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
-
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0, false);
-        } else {
-            settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
-
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBar, 0, false);
-
-            if (App.fullScreen)
-                exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
-            else fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBar, 0, false);
-        }
-
-        //AnimationsClass.closeCaptions(captionLine);
         AnimationsClass.scaleAnimation(100, captionsButtonLine, 1, 0, 1, 1, false, 1, true);
 
     }
@@ -739,7 +689,7 @@ public class ControlBarController implements Initializable {
     }
 
     public void captionsButtonClick() {
-        if (!mainController.captionsOpen)
+        if (!mainController.captionsOn)
             openCaptions();
         else
             closeCaptions();

@@ -64,9 +64,9 @@ public class ActionIndicator {
 
         mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
 
-        scaleTransition = AnimationsClass.scaleAnimation(600, wrapper, 1, 1.5, 1, 1.5, false, 1, false);
-        fadeTransition1 = AnimationsClass.fadeAnimation(600, background, 0.3, 0, false, 1, false);
-        fadeTransition2 = AnimationsClass.fadeAnimation(600, icon, 0.8, 0, false, 1, false);
+        scaleTransition = AnimationsClass.scaleAnimation(60000, wrapper, 1, 1.5, 1, 1.5, false, 1, false);
+        fadeTransition1 = AnimationsClass.fadeAnimation(60000, background, 0.3, 0, false, 1, false);
+        fadeTransition2 = AnimationsClass.fadeAnimation(60000, icon, 0.8, 0, false, 1, false);
         parallelTransition = AnimationsClass.parallelAnimation(false, scaleTransition, fadeTransition1, fadeTransition2);
         parallelTransition.setOnFinished((e) -> {
             wrapper.setVisible(false);
@@ -102,8 +102,14 @@ public class ActionIndicator {
             icon.setMaxSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setTranslateX(0);
         }
+        else if(iconPath.getContent() == App.svgMap.get(FORWARD) || iconPath.getContent() == App.svgMap.get(REWIND)){
+            icon.setMinSize(35 * mainController.sizeMultiplier.doubleValue(), 23 * mainController.sizeMultiplier.doubleValue());
+            icon.setPrefSize(35 * mainController.sizeMultiplier.doubleValue(), 23 * mainController.sizeMultiplier.doubleValue());
+            icon.setMaxSize(35 * mainController.sizeMultiplier.doubleValue(), 23 * mainController.sizeMultiplier.doubleValue());
+            if(iconPath.getContent() == App.svgMap.get(FORWARD)) icon.setTranslateX(icon.getWidth() / 10);
+            else icon.setTranslateX(-icon.getWidth() / 10);
+        }
         else {
-            System.out.println("test");
             icon.setMinSize(40 * mainController.sizeMultiplier.doubleValue(), 40 * mainController.sizeMultiplier.doubleValue());
             icon.setPrefSize(40 * mainController.sizeMultiplier.doubleValue(), 40 * mainController.sizeMultiplier.doubleValue());
             icon.setMaxSize(40 * mainController.sizeMultiplier.doubleValue(), 40 * mainController.sizeMultiplier.doubleValue());

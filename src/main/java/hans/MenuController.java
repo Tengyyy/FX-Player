@@ -351,7 +351,7 @@ public class MenuController implements Initializable {
 
             QueueItem item = new QueueItem(temp, this, mediaInterface, queueBox);
 
-            if(settingsController.shuffleOn){
+            if(settingsController.playbackOptionsController.shuffleOn){
                 // add new media item to random position in queue
                 queueBox.addRand(item);
             }

@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.scene.Parent;
@@ -80,7 +81,9 @@ public class App extends Application {
             svgMap.put(CAPTIONS_OUTLINE, "M5,4C4.45,4 4,4.18 3.59,4.57C3.2,4.96 3,5.44 3,6V18C3,18.56 3.2,19.04 3.59,19.43C4,19.82 4.45,20 5,20H19C19.5,20 20,19.81 20.39,19.41C20.8,19 21,18.53 21,18V6C21,5.47 20.8,5 20.39,4.59C20,4.19 19.5,4 19,4H5M4.5,5.5H19.5V18.5H4.5V5.5M7,9C6.7,9 6.47,9.09 6.28,9.28C6.09,9.47 6,9.7 6,10V14C6,14.3 6.09,14.53 6.28,14.72C6.47,14.91 6.7,15 7,15H10C10.27,15 10.5,14.91 10.71,14.72C10.91,14.53 11,14.3 11,14V13H9.5V13.5H7.5V10.5H9.5V11H11V10C11,9.7 10.91,9.47 10.71,9.28C10.5,9.09 10.27,9 10,9H7M14,9C13.73,9 13.5,9.09 13.29,9.28C13.09,9.47 13,9.7 13,10V14C13,14.3 13.09,14.53 13.29,14.72C13.5,14.91 13.73,15 14,15H17C17.3,15 17.53,14.91 17.72,14.72C17.91,14.53 18,14.3 18,14V13H16.5V13.5H14.5V10.5H16.5V11H18V10C18,9.7 17.91,9.47 17.72,9.28C17.53,9.09 17.3,9 17,9H14Z");
             svgMap.put(DOUBLE_RIGHT, "M13,6V18L21.5,12M4,18L12.5,12L4,6V18Z");
             svgMap.put(DOUBLE_LEFT, "M11.5,12L20,18V6M11,18V6L2.5,12L11,18Z");
-
+            svgMap.put(TUNE, "M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z");
+            svgMap.put(FORWARD, "M13,6V18L21.5,12M4,18L12.5,12L4,6V18Z");
+            svgMap.put(REWIND, "M11.5,12L20,18V6M11,18V6L2.5,12L11,18Z");
 
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("views/Main.fxml"));
@@ -122,27 +125,7 @@ public class App extends Application {
 
                 switch (event.getCode()) {
                     case TAB: {
-
                         controlBarController.mouseEventTracker.move();
-
-                        if (event.isShiftDown()) {
-                            // user pressed SHIFT + TAB which means focus should traverse backwards
-                            if (mainController.focusNodeTracker == 0) {
-                                mainController.focusNodeTracker = 8;
-                            } else {
-                                mainController.focusNodeTracker--;
-                            }
-                            mainController.traverseFocusBackwards();
-                        } else {
-                            if (mainController.focusNodeTracker == 8) {
-                                mainController.focusNodeTracker = 0;
-                            } else {
-                                mainController.focusNodeTracker++;
-                            }
-                            // user pressed TAB which means focus should traverse forwards
-
-                            mainController.traverseFocusForwards();
-                        }
                     }
                     break;
 
@@ -150,15 +133,23 @@ public class App extends Application {
 
                         controlBarController.mouseEventTracker.move();
 
-                        if(mainController.backwardsIndicator.wrapper.isVisible()){
-                            mainController.backwardsIndicator.setVisible(false);
+                        if(settingsController.customSpeedPaneOpen){
+                            // if custom speed pane is open, dont seek video with arrows
+                            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+                            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
+                            event.consume();
+                            return;
                         }
-                        mainController.forwardsIndicator.setText("5 seconds");
-                        mainController.forwardsIndicator.reset();
-                        mainController.forwardsIndicator.setVisible(true);
-                        mainController.forwardsIndicator.animate();
 
                         if (!mainController.getControlBarController().volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
+
+                            if(mainController.backwardsIndicator.wrapper.isVisible()){
+                                mainController.backwardsIndicator.setVisible(false);
+                            }
+                            mainController.forwardsIndicator.setText("5 seconds");
+                            mainController.forwardsIndicator.reset();
+                            mainController.forwardsIndicator.setVisible(true);
+                            mainController.forwardsIndicator.animate();
 
                             if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
                                 mediaInterface.seekedToEnd = true;
@@ -175,15 +166,24 @@ public class App extends Application {
 
                         controlBarController.mouseEventTracker.move();
 
-                        if(mainController.forwardsIndicator.wrapper.isVisible()){
-                            mainController.forwardsIndicator.setVisible(false);
+                        if(settingsController.customSpeedPaneOpen){
+                            // if custom speed pane is open, dont seek video with arrows
+                            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+                            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
+                            event.consume();
+                            return;
                         }
-                        mainController.backwardsIndicator.setText("5 seconds");
-                        mainController.backwardsIndicator.reset();
-                        mainController.backwardsIndicator.setVisible(true);
-                        mainController.backwardsIndicator.animate();
 
                         if (!controlBarController.volumeSlider.isFocused() && mediaInterface.mediaPlayer != null) {
+
+                            if(mainController.forwardsIndicator.wrapper.isVisible()){
+                                mainController.forwardsIndicator.setVisible(false);
+                            }
+                            mainController.backwardsIndicator.setText("5 seconds");
+                            mainController.backwardsIndicator.reset();
+                            mainController.backwardsIndicator.setVisible(true);
+                            mainController.backwardsIndicator.animate();
+
                             mediaInterface.seekedToEnd = false;
 
                             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
@@ -204,7 +204,7 @@ public class App extends Application {
                         controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
                         primaryStage.setFullScreen(false);
 
-                        if (!mainController.captionsOpen && !settingsController.settingsOpen)
+                        if (!!settingsController.settingsOpen)
                             controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBar, 0, false);
 
                     }
@@ -329,21 +329,17 @@ public class App extends Application {
                             if (mediaInterface.atEnd) {
                                 controlBarController.replayMedia();
                                 mainController.actionIndicator.setIcon(PLAY);
-                                mainController.actionIndicator.setVisible(true);
-                                mainController.actionIndicator.animate();
                             } else {
                                 if (mediaInterface.playing) {
                                     controlBarController.pause();
                                     mainController.actionIndicator.setIcon(PAUSE);
-                                    mainController.actionIndicator.setVisible(true);
-                                    mainController.actionIndicator.animate();
                                 } else {
                                     controlBarController.play();
                                     mainController.actionIndicator.setIcon(PLAY);
-                                    mainController.actionIndicator.setVisible(true);
-                                    mainController.actionIndicator.animate();
                                 }
                             }
+                            mainController.actionIndicator.setVisible(true);
+                            mainController.actionIndicator.animate();
                         }
 
                     }
@@ -355,14 +351,12 @@ public class App extends Application {
                         if (!controlBarController.muted) {
                             controlBarController.mute();
                             mainController.actionIndicator.setIcon(VOLUME_MUTED);
-                            mainController.actionIndicator.setVisible(true);
-                            mainController.actionIndicator.animate();
                         } else {
                             controlBarController.unmute();
                             mainController.actionIndicator.setIcon(VOLUME_HIGH);
-                            mainController.actionIndicator.setVisible(true);
-                            mainController.actionIndicator.animate();
                         }
+                        mainController.actionIndicator.setVisible(true);
+                        mainController.actionIndicator.animate();
                     }
                     break;
 
@@ -387,14 +381,12 @@ public class App extends Application {
                                 if (mediaInterface.playing) {
                                     controlBarController.pause();
                                     mainController.actionIndicator.setIcon(PAUSE);
-                                    mainController.actionIndicator.setVisible(true);
-                                    mainController.actionIndicator.animate();
                                 } else {
                                     controlBarController.play();
                                     mainController.actionIndicator.setIcon(PLAY);
-                                    mainController.actionIndicator.setVisible(true);
-                                    mainController.actionIndicator.animate();
                                 }
+                                mainController.actionIndicator.setVisible(true);
+                                mainController.actionIndicator.animate();
                             }
 
                             event.consume(); // might have to add a check to consume the space event only if any controlbar buttons are focused (might use space bar to navigate settings or menu)
@@ -406,7 +398,7 @@ public class App extends Application {
                     case C: {
                         controlBarController.mouseEventTracker.move();
 
-                        if (mainController.captionsOpen) {
+                        if (mainController.captionsOn) {
                             controlBarController.closeCaptions();
                         } else {
                             controlBarController.openCaptions();
@@ -448,18 +440,48 @@ public class App extends Application {
                     }
 
                     case COMMA: {
+
+                        if(event.isShiftDown()){ // decrease playback speed by 0.25
+                            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+                            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.25);
+
+                            mainController.actionIndicator.setIcon(REWIND);
+                            mainController.actionIndicator.setVisible(true);
+                            mainController.actionIndicator.animate();
+
+
+                            // also show new playback speed as a label top center of the mediaviewpane
+
+                            event.consume();
+                            return;
+                        }
+
                         // seek backwards by 1 frame
-
-
                         if(!mediaInterface.playing && mediaInterface.mediaPlayer != null) {
                             mediaInterface.seekedToEnd = false;
-                            mediaInterface.mediaPlayer.seek(mediaInterface.mediaPlayer.getCurrentTime().subtract(Duration.seconds(frameDuration)));                            System.out.println(frameDuration);
+                            mediaInterface.mediaPlayer.seek(mediaInterface.mediaPlayer.getCurrentTime().subtract(Duration.seconds(frameDuration)));
                         }
                         event.consume();
                     }
                     break;
 
                     case PERIOD: {
+
+                        if(event.isShiftDown()){ // increase playback speed by 0.25
+                            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+                            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.25);
+
+                            mainController.actionIndicator.setIcon(FORWARD);
+                            mainController.actionIndicator.setVisible(true);
+                            mainController.actionIndicator.animate();
+
+
+                            // also show new playback speed as a label top center of the mediaviewpane
+
+                            event.consume();
+                            return;
+                        }
+
                         // seek forward by 1 frame
                         if(!mediaInterface.playing && mediaInterface.mediaPlayer != null){
                             if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + frameDuration >= controlBarController.durationSlider.getMax()) {
@@ -476,21 +498,21 @@ public class App extends Application {
                 }
             });
 
+            primaryStage.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
+                if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.COMMA || event.getCode() == KeyCode.PERIOD){
+                    settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(false);
+                }
+            });
+
 
             primaryStage.setScene(scene);
             primaryStage.setTitle("MP4 Player");
             primaryStage.show();
 
-            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            primaryStage.setOnCloseRequest(event -> {
 
-                @Override
-                public void handle(WindowEvent event) {
-                    // TODO Auto-generated method stub
-
-                    Platform.exit();
-                    System.exit(0);
-
-                }
+                Platform.exit();
+                System.exit(0);
 
             });
 

@@ -54,11 +54,18 @@ public class PlaybackSpeedController {
             playbackSpeedPane.scrollPane.setVvalue(0);
         }
         else { // make one of the default tabs active
-            if(playbackSpeedPane.customSpeedTab != null) playbackSpeedPane.speedTabs.get((int) (speed * 4 -1) + 1).checkIcon.setVisible(true);
-            else playbackSpeedPane.speedTabs.get((int) (speed * 4 -1)).checkIcon.setVisible(true);
 
-            playbackSpeedPane.scrollPane.setVvalue(1 / (speed * 4 -1));
-            if(playbackSpeedPane.customSpeedTab != null) playbackSpeedPane.scrollPane.setVvalue(playbackSpeedPane.scrollPane.getVvalue() + 1/9);
+            System.out.println("test");
+
+            if(playbackSpeedPane.customSpeedTab != null){
+                playbackSpeedPane.speedTabs.get((int) (speed * 4 -1) + 1).checkIcon.setVisible(true);
+                playbackSpeedPane.scrollPane.setVvalue((speed * 4)/9 + 0.2);
+            }
+            else {
+                playbackSpeedPane.speedTabs.get((int) (speed * 4 -1)).checkIcon.setVisible(true);
+                playbackSpeedPane.scrollPane.setVvalue(speed / 2 + 0.1);
+            }
+
         }
 
     }

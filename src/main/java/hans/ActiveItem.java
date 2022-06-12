@@ -294,7 +294,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         playButton.setOnAction((e) -> {
             if(mediaInterface.atEnd) menuController.controlBarController.replayMedia();
-            else if (mediaInterface.playing) menuController.controlBarController.pause();
+            else if (mediaInterface.playing.get()) menuController.controlBarController.pause();
             else menuController.controlBarController.play();
         });
 
@@ -353,7 +353,7 @@ public class ActiveItem extends GridPane implements MenuObject {
             mediaInterface.transitionTimer = null;
         }
 
-        if(menuController.historyBox.index == -1 && menuController.activeItem != null && addToHistory){
+        if(menuController.historyBox.index == -1 && menuController.mediaActive.get() && addToHistory){
             // add active item to history
 
             HistoryItem historyItem = new HistoryItem(menuController.activeItem.getMediaItem(), menuController, mediaInterface, menuController.historyBox);
@@ -365,7 +365,7 @@ public class ActiveItem extends GridPane implements MenuObject {
             historyItem.setInactive();
         }
 
-        if(menuController.activeItem != null) mediaInterface.resetMediaPlayer();
+        if(menuController.mediaActive.get()) mediaInterface.resetMediaPlayer();
         activeBox.set(this, true);
 
 

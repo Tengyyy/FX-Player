@@ -3,6 +3,7 @@ package hans;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -26,6 +27,7 @@ public class PlaybackOptionsTab extends HBox {
         this.setPadding(new Insets(0, 10, 0, 10));
         this.setAlignment(Pos.CENTER_LEFT);
         this.getChildren().addAll(titleLabel, toggle);
+        this.setCursor(Cursor.HAND);
 
         titleLabel.setMinSize(165, 35);
         titleLabel.setPrefSize(165, 35);

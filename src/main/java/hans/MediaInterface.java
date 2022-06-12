@@ -4,6 +4,10 @@ package hans;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -21,7 +25,7 @@ public class MediaInterface {
     MediaPlayer mediaPlayer;
 
     // Variables to keep track of mediaplayer status:
-    boolean playing = false; // is mediaplayer currently playing
+    BooleanProperty playing = new SimpleBooleanProperty(false); // is mediaplayer currently playing
     boolean wasPlaying = false; // was mediaplayer playing before a seeking action occurred
     public boolean atEnd = false; // is mediaplayer at the end of the video
     public boolean seekedToEnd = false; // true = video was seeked to the end; false = video naturally reached the end or the video is still playing
@@ -36,6 +40,14 @@ public class MediaInterface {
         this.controlBarController = controlBarController;
         this.settingsController = settingsController;
         this.menuController = menuController;
+
+        
+        playing.addListener((observableValue, oldValue, newValue) -> {
+            if(!menuController.mediaActive.get()) return;
+
+            if(newValue) menuController.activeItem.columns.play();
+            else menuController.activeItem.columns.pause();
+        });
     };
 
     public void updateMedia(double newValue) {
@@ -50,7 +62,7 @@ public class MediaInterface {
             seekedToEnd = false;
 
             if (wasPlaying) {
-                if(menuController.activeItem != null) {
+                if(menuController.mediaActive.get()) {
                     menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
                     menuController.activeItem.play.updateText("Pause video");
 
@@ -65,22 +77,19 @@ public class MediaInterface {
 
                     controlBarController.playIcon.setShape(controlBarController.pauseSVG);
 
-                    playing = true;
+                    playing.set(true);
                     mediaPlayer.play();
 
                     controlBarController.play.updateText("Pause (k)");
 
-                       // menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
-                       // menuController.activeItem.play.updateText("Pause video");
-
                 }
             } else {
                 controlBarController.playIcon.setShape(controlBarController.playSVG);
-                playing = false;
+                playing.set(false);
 
                 controlBarController.play.updateText("Play (k)");
 
-                if(menuController.activeItem != null) {
+                if(menuController.mediaActive.get()) {
                     menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
                     menuController.activeItem.play.updateText("Play video");
 
@@ -101,11 +110,10 @@ public class MediaInterface {
                 seekedToEnd = true;
             }
 
-            if(menuController.activeItem != null) menuController.activeItem.columns.pause();
-
             atEnd = true;
-            playing = false;
+            playing.set(false);
             mediaPlayer.pause();
+
             if (!controlBarController.durationSlider.isValueChanging()) {
                 endMedia();
             }
@@ -123,7 +131,6 @@ public class MediaInterface {
 
 
         if ((!settingsController.playbackOptionsController.shuffleOn && !settingsController.playbackOptionsController.loopOn && !settingsController.playbackOptionsController.autoplayOn) || (settingsController.playbackOptionsController.loopOn && seekedToEnd)) {
-
             defaultEnd();
 
         } else if (settingsController.playbackOptionsController.loopOn) {
@@ -136,6 +143,7 @@ public class MediaInterface {
         else if (settingsController.playbackOptionsController.shuffleOn || settingsController.playbackOptionsController.autoplayOn) {
             if((menuController.historyBox.index == -1 || menuController.historyBox.index >= menuController.history.size() -1) && menuController.queue.isEmpty()) defaultEnd();
             else requestNext();
+
         }
 
     }
@@ -147,7 +155,7 @@ public class MediaInterface {
         // resets all media state variables before creating a new player
         atEnd = false;
         seekedToEnd = false;
-        playing = false;
+        playing.set(false);
         wasPlaying = false;
 
         mediaPlayer = new MediaPlayer(mediaItem.getMedia());
@@ -241,6 +249,9 @@ public class MediaInterface {
         // if animationsInProgress list is empty, play next video, otherwise start a 1 second timer, at the end of which
         // check again if any animations are in progress, if there are, just end the video.
         // stop timer if user changes video while pausetransition is playing
+
+
+
 
         if(menuController.animationsInProgress.isEmpty()){
             playNext();

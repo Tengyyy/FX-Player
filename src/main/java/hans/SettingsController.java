@@ -66,8 +66,7 @@ public class SettingsController {
         settingsBuffer.setMaxWidth(235);
         settingsBuffer.setClip(clip);
         settingsBuffer.getChildren().add(settingsBackground);
-
-        settingsBackground.setStyle("-fx-background-color: rgba(30,30,30,0.8);");
+        settingsBackground.setId("settingsBackground");
         settingsBackground.setVisible(false);
         settingsBackground.setMouseTransparent(true);
         StackPane.setMargin(settingsBuffer, new Insets(0, 20, 60, 0));

@@ -28,6 +28,7 @@ public class ActiveBox extends StackPane {
         if(this.getChildren().isEmpty()) return;
 
         menuController.activeItem = null;
+        menuController.mediaActive.set(false);
 
         ActiveItem child = (ActiveItem) this.getChildren().get(0);
         FadeTransition fadeTransition = AnimationsClass.fadeOut(child);
@@ -44,6 +45,7 @@ public class ActiveBox extends StackPane {
     public void set(ActiveItem activeItem, boolean pause){
 
         menuController.activeItem = activeItem;
+        menuController.mediaActive.set(true);
 
         if(this.getChildren().isEmpty()){
             // add new item

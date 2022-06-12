@@ -358,7 +358,7 @@ public class QueueItem extends GridPane implements MenuObject{
             mediaInterface.transitionTimer = null;
         }
 
-        if(menuController.historyBox.index == -1 && menuController.activeItem != null && addToHistory){
+        if(menuController.historyBox.index == -1 && menuController.mediaActive.get() && addToHistory){
             // add active item to history
 
             HistoryItem historyItem = new HistoryItem(menuController.activeItem.getMediaItem(), menuController, mediaInterface, menuController.historyBox);
@@ -372,7 +372,7 @@ public class QueueItem extends GridPane implements MenuObject{
 
         ActiveItem activeItem = new ActiveItem(getMediaItem(), menuController, mediaInterface, menuController.activeBox);
 
-        if(menuController.activeItem != null) mediaInterface.resetMediaPlayer();
+        if(menuController.mediaActive.get()) mediaInterface.resetMediaPlayer();
 
         menuController.activeBox.set(activeItem, true);
 

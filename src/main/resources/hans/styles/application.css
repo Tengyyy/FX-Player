@@ -248,3 +248,13 @@
     -fx-border-width: 0 0 1 0;
     -fx-border-insets: 0 0 -1 0;
 }
+
+#settingsBackground {
+    -fx-background-color: rgba(30,30,30,0.8);
+    -fx-background-radius: 2;
+}
+
+#valueIndicatorBackground {
+    -fx-background-color: rgba(30,30,30, 0.6);
+    -fx-background-radius: 5;
+}

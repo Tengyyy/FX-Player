@@ -9,8 +9,12 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -103,6 +107,8 @@ public class MenuController implements Initializable {
     ArrayList<HistoryItem> history = new ArrayList<>();
     ActiveItem activeItem = null;
 
+    BooleanProperty mediaActive = new SimpleBooleanProperty(false);
+
     JFXButton historyButton = new JFXButton();
     JFXButton clearQueueButton = new JFXButton();
 
@@ -139,6 +145,13 @@ public class MenuController implements Initializable {
             for(QueueItem queueItem : queue){
                 queueItem.updateIndex(queue.indexOf(queueItem));
             }
+        });
+
+
+
+        mediaActive.addListener((observableValue, oldValue, newValue) -> {
+            if(!newValue) controlBarController.durationPane.setMouseTransparent(true);
+            else controlBarController.durationPane.setMouseTransparent(false);
         });
 
         fileChooser.setTitle("Open video");

@@ -278,7 +278,7 @@ public class HistoryItem extends GridPane implements MenuObject{
         playButton.setOnAction((e) -> {
             if(this.isActive.getValue()){
                 if(mediaInterface.atEnd) menuController.controlBarController.replayMedia();
-                else if (mediaInterface.playing) menuController.controlBarController.pause();
+                else if (mediaInterface.playing.get()) menuController.controlBarController.pause();
                 else menuController.controlBarController.play();
             }
             else {
@@ -328,7 +328,7 @@ public class HistoryItem extends GridPane implements MenuObject{
             mediaInterface.transitionTimer = null;
         }
 
-        if(historyBox.index == -1 && menuController.activeItem != null){
+        if(historyBox.index == -1 && menuController.mediaActive.get()){
             // add active item to history
 
             HistoryItem historyItem = new HistoryItem(menuController.activeItem.getMediaItem(), menuController, mediaInterface, historyBox);
@@ -338,7 +338,7 @@ public class HistoryItem extends GridPane implements MenuObject{
 
         ActiveItem newActive = new ActiveItem(this.getMediaItem(), menuController, mediaInterface, menuController.activeBox);
 
-        if(menuController.activeItem != null) mediaInterface.resetMediaPlayer();
+        if(menuController.mediaActive.get()) mediaInterface.resetMediaPlayer();
 
         menuController.activeBox.set(newActive, true);
 

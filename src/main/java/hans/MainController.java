@@ -91,6 +91,7 @@ public class MainController implements Initializable {
 
     ActionIndicator actionIndicator;
     SeekIndicator forwardsIndicator, backwardsIndicator;
+    ValueIndicator valueIndicator;
 
     SimpleDoubleProperty sizeMultiplier = new SimpleDoubleProperty();
 
@@ -117,6 +118,7 @@ public class MainController implements Initializable {
         actionIndicator = new ActionIndicator(this);
         forwardsIndicator = new SeekIndicator(this, true);
         backwardsIndicator = new SeekIndicator(this, false);
+        valueIndicator = new ValueIndicator(this);
 
 
         // Make mediaView adjust to frame size
@@ -171,12 +173,14 @@ public class MainController implements Initializable {
                         if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
                         forwardsIndicator.resize();
                         backwardsIndicator.resize();
+                        valueIndicator.resize();
                     }
                     else if(oldValue.doubleValue() >= 1200 & newValue.doubleValue() < 1200){
                         sizeMultiplier.set(0.7);
                         if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
                         forwardsIndicator.resize();
                         backwardsIndicator.resize();
+                        valueIndicator.resize();
                     }
                 });
         });
@@ -229,7 +233,7 @@ public class MainController implements Initializable {
                 controlBarController.replayMedia();
                 actionIndicator.setIcon(REPLAY);
             } else {
-                if (mediaInterface.playing) {
+                if (mediaInterface.playing.get()) {
                     controlBarController.pause();
                     actionIndicator.setIcon(PAUSE);
                 } else {
@@ -264,7 +268,7 @@ public class MainController implements Initializable {
 
         if(settingsController.settingsOpen) settingsController.closeSettings();
 
-       if(mediaInterface.playing)controlBarController.mouseEventTracker.hide();
+       if(mediaInterface.playing.get())controlBarController.mouseEventTracker.hide();
        else AnimationsClass.hideControls(controlBarController);
 
     }

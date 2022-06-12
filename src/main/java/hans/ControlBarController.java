@@ -24,7 +24,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-import org.jcodec.containers.mp4.boxes.SampleSizesBox;
 
 public class ControlBarController implements Initializable {
 
@@ -41,7 +40,7 @@ public class ControlBarController implements Initializable {
     public ProgressBar volumeTrack, durationTrack;
 
     @FXML
-    StackPane volumeSliderPane, previousVideoPane, playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, fullScreenButtonPane;
+    StackPane volumeSliderPane, previousVideoPane, playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, fullScreenButtonPane, durationPane;
 
     @FXML
     Label durationLabel;
@@ -150,6 +149,8 @@ public class ControlBarController implements Initializable {
 
         controlBar.setTranslateY(40);
 
+        durationPane.setMouseTransparent(true);
+
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
 
         previousVideoIcon.setShape(previousVideoSVG);
@@ -215,7 +216,7 @@ public class ControlBarController implements Initializable {
 
         volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 
-            if(menuController.activeItem != null) mediaInterface.mediaPlayer.setVolume(volumeSlider.getValue() / 100);
+            if(menuController.mediaActive.get()) mediaInterface.mediaPlayer.setVolume(volumeSlider.getValue() / 100);
 
             volumeTrack.setProgress(volumeSlider.getValue() / 100);
 
@@ -297,7 +298,22 @@ public class ControlBarController implements Initializable {
         });
 
         durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(menuController.activeItem != null) mediaInterface.updateMedia(newValue.doubleValue());
+            if(menuController.mediaActive.get()){
+
+                if(oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5){
+                    previousVideoTooltip.updateText("Replay");
+
+                    previousVideoButton.setOnAction((e) -> replayMedia());
+                }
+                else if(oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5){
+                    previousVideoTooltip.updateText("Previous video (SHIFT + P)");
+
+                    previousVideoButton.setOnAction((e) -> playPreviousMedia());
+                }
+
+
+                mediaInterface.updateMedia(newValue.doubleValue());
+            }
             durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
         });
 
@@ -305,9 +321,9 @@ public class ControlBarController implements Initializable {
 
             if (newValue) { // pause video when user starts seeking
                 playIcon.setShape(playSVG);
-                if(menuController.activeItem != null) {
+                if(menuController.mediaActive.get()) {
                     mediaInterface.mediaPlayer.pause();
-                    mediaInterface.playing = false;
+                    mediaInterface.playing.set(false);
                 }
                 play.updateText("Play (k)");
 
@@ -317,7 +333,7 @@ public class ControlBarController implements Initializable {
                     durationSliderHoverOff();
                 }
 
-                if(menuController.activeItem != null) mediaInterface.mediaPlayer.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
+                if(menuController.mediaActive.get()) mediaInterface.mediaPlayer.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
 
                 if (settingsController.settingsOpen) { // close settings pane after user finishes seeking media (if its open)
                     settingsController.closeSettings();
@@ -333,9 +349,9 @@ public class ControlBarController implements Initializable {
                     menuController.activeItem.play.updateText("Play video");
 
                 } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
-                    if(menuController.activeItem != null) {
+                    if(menuController.mediaActive.get()) {
                         mediaInterface.mediaPlayer.play();
-                        mediaInterface.playing = true;
+                        mediaInterface.playing.set(true);
                     }
 
                     playIcon.setShape(pauseSVG);
@@ -359,10 +375,10 @@ public class ControlBarController implements Initializable {
     }
 
     public void toggleDurationLabel() {
-        if (showingTimeLeft && menuController.activeItem != null) {
+        if (showingTimeLeft && menuController.mediaActive.get()) {
             Utilities.setCurrentTimeLabel(durationLabel, mediaInterface.mediaPlayer, menuController.activeItem.getMediaItem().getMedia());
             showingTimeLeft = false;
-        } else if(!showingTimeLeft && menuController.activeItem != null){
+        } else if(!showingTimeLeft && menuController.mediaActive.get()){
             Utilities.setTimeLeftLabel(durationLabel, mediaInterface.mediaPlayer, menuController.activeItem.getMediaItem().getMedia());
             showingTimeLeft = true;
         }
@@ -373,7 +389,7 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsOpen) {
             settingsController.closeSettings();
         } else {
-            if (mediaInterface.playing) {
+            if (mediaInterface.playing.get()) {
                 pause();
             } else {
                 play();
@@ -394,12 +410,11 @@ public class ControlBarController implements Initializable {
 
     public void play() {
 
-        if(menuController.activeItem != null) {
+        if(menuController.mediaActive.get()) {
             mediaInterface.mediaPlayer.play();
 
             menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
             menuController.activeItem.play.updateText("Pause video");
-            menuController.activeItem.columns.play();
 
             if (menuController.historyBox.index != -1) {
                 HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
@@ -408,11 +423,11 @@ public class ControlBarController implements Initializable {
             }
 
             playIcon.setShape(pauseSVG);
-            mediaInterface.playing = true;
+            mediaInterface.playing.set(true);
 
             play.updateText("Pause (k)");
 
-            mediaInterface.wasPlaying = mediaInterface.playing; // updates the value of wasPlaying variable - when this method is called the
+            mediaInterface.wasPlaying = mediaInterface.playing.get(); // updates the value of wasPlaying variable - when this method is called the
             // user really wants to play or pause the video and therefore the previous
             // wasPlaying state no longer needs to be tracked
         }
@@ -420,12 +435,11 @@ public class ControlBarController implements Initializable {
 
     public void pause() {
 
-        if(menuController.activeItem != null) {
+        if(menuController.mediaActive.get()) {
             mediaInterface.mediaPlayer.pause();
 
             menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
             menuController.activeItem.play.updateText("Play video");
-            menuController.activeItem.columns.pause();
 
             if (menuController.historyBox.index != -1) {
                 HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
@@ -434,11 +448,11 @@ public class ControlBarController implements Initializable {
             }
 
             playIcon.setShape(playSVG);
-            mediaInterface.playing = false;
+            mediaInterface.playing.set(false);
 
             play.updateText("Play (k)");
 
-            mediaInterface.wasPlaying = mediaInterface.playing;
+            mediaInterface.wasPlaying = mediaInterface.playing.get();
         }
     }
 
@@ -446,14 +460,14 @@ public class ControlBarController implements Initializable {
     public void replayMedia() {
 
 
-        if(menuController.activeItem != null) {
+        if(menuController.mediaActive.get()) {
             mediaInterface.mediaPlayer.seek(Duration.ZERO);
             mediaInterface.mediaPlayer.play();
 
             menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
             menuController.activeItem.play.updateText("Pause video");
 
-            mediaInterface.playing = true;
+            mediaInterface.playing.set(true);
             mediaInterface.atEnd = false;
             playIcon.setShape(pauseSVG);
             mediaInterface.seekedToEnd = false;
@@ -547,7 +561,7 @@ public class ControlBarController implements Initializable {
     public void mute() {
         muted = true;
         volumeIcon.setShape(volumeMutedSVG);
-        if(menuController.activeItem != null) mediaInterface.mediaPlayer.setVolume(0);
+        if(menuController.mediaActive.get()) mediaInterface.mediaPlayer.setVolume(0);
         volumeValue = volumeSlider.getValue(); //stores the value of the volumeslider before setting it to 0
 
         volumeSlider.setValue(0);
@@ -556,7 +570,7 @@ public class ControlBarController implements Initializable {
     public void unmute() {
         muted = false;
         volumeIcon.setShape(highVolumeSVG);
-        if(menuController.activeItem != null) mediaInterface.mediaPlayer.setVolume(volumeValue);
+        if(menuController.mediaActive.get()) mediaInterface.mediaPlayer.setVolume(volumeValue);
         volumeSlider.setValue(volumeValue); // sets volume back to the value it was at before muting
     }
 
@@ -627,15 +641,15 @@ public class ControlBarController implements Initializable {
     }
 
     public void durationSliderHoverOn() {
-        ScaleTransition sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), 0, 1, 0, 1, false, 1, false);
-        ScaleTransition sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, durationTrack, 1, 1, 1, 1.6, false, 1, false);
+        ScaleTransition sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1, durationSlider.lookup(".thumb").getScaleY(), 1, false, 1, false);
+        ScaleTransition sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, durationTrack, 1, 1, durationTrack.getScaleY(), 1.6, false, 1, false);
         AnimationsClass.parallelAnimation(true, sliderThumbHoverOn, sliderTrackHoverOn);
     }
 
 
     public void durationSliderHoverOff() {
-        ScaleTransition sliderThumbHoverOff = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), 1, 0, 1, 0, false, 1, false);
-        ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, durationTrack, 1, 1, 1.6, 1, false, 1, false);
+        ScaleTransition sliderThumbHoverOff = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0, durationSlider.lookup(".thumb").getScaleY(), 0, false, 1, false);
+        ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, durationTrack, 1, 1, durationTrack.getScaleY(), 1, false, 1, false);
         AnimationsClass.parallelAnimation(true, sliderThumbHoverOff, sliderTrackHoverOff);
     }
 

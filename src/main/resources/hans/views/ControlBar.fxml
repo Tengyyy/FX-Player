@@ -118,13 +118,13 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Region fx:id="volumeIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon">
+                  <Region fx:id="volumeIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon" StackPane.alignment="CENTER">
                      <effect>
                         <DropShadow height="10.0" radius="4.5" width="10.0" />
                      </effect></Region>
                </children>
             </StackPane>
-                  <StackPane fx:id="volumeSliderPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="60.0" stylesheets="@../styles/application.css" GridPane.columnIndex="5">
+                  <StackPane fx:id="volumeSliderPane" maxHeight="-Infinity" maxWidth="-Infinity" onMouseEntered="#enterArea" prefHeight="30.0" prefWidth="60.0" stylesheets="@../styles/application.css" GridPane.columnIndex="5">
                       <children>
                           <ProgressBar fx:id="volumeTrack" pickOnBounds="false" prefHeight="4.0" prefWidth="48.0" progress="0.5" styleClass="volumeTrack" />
                           <Slider fx:id="volumeSlider" blockIncrement="5.0" maxHeight="-Infinity" maxWidth="60.0" minHeight="-Infinity" minWidth="0.0" pickOnBounds="false" prefHeight="8.0" prefWidth="60.0" value="50.0">

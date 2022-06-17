@@ -102,6 +102,12 @@ public class ActionIndicator {
             icon.setMaxSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setTranslateX(0);
         }
+        else if(iconPath.getContent() == App.svgMap.get(VOLUME_LOW)){
+            icon.setMinSize(22 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
+            icon.setPrefSize(22 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
+            icon.setMaxSize(22 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
+            icon.setTranslateX(-4 * mainController.sizeMultiplier.doubleValue());
+        }
         else if(iconPath.getContent() == App.svgMap.get(FORWARD) || iconPath.getContent() == App.svgMap.get(REWIND)){
             icon.setMinSize(35 * mainController.sizeMultiplier.doubleValue(), 23 * mainController.sizeMultiplier.doubleValue());
             icon.setPrefSize(35 * mainController.sizeMultiplier.doubleValue(), 23 * mainController.sizeMultiplier.doubleValue());

@@ -323,7 +323,6 @@ public class QueueItem extends GridPane implements MenuObject{
             maximumY = queueBox.getChildren().get(queueBox.getChildren().size() - 1).getBoundsInParent().getMinY(); // the top border of the last element inside the vbox, dragged node cant move below that
 
             newPosition = videoIndex - 1;
-            System.out.println("Current position: " + newPosition);
 
             this.startFullDrag();
         });

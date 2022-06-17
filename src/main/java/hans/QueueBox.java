@@ -61,7 +61,6 @@ public class QueueBox extends VBox {
                 else draggedNode.setTranslateY(e.getY() - draggedNode.minimumY - draggedNode.dragPosition);
 
                 draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
-                System.out.println(draggedNode.runningTranslate);
 
                 if(draggedNode.runningTranslate >= QueueItem.height){
 
@@ -91,7 +90,6 @@ public class QueueBox extends VBox {
 
                     draggedNode.newPosition+=1;
                     draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
-                    System.out.println("New position: " + draggedNode.newPosition);
                 }
                 else if(draggedNode.runningTranslate <= -QueueItem.height){
 
@@ -123,7 +121,6 @@ public class QueueBox extends VBox {
 
                     draggedNode.newPosition-=1;
                     draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
-                    System.out.println("New position: " + draggedNode.newPosition);
                 }
                 else {
                     if(draggedNode.getTranslateY() == -draggedNode.minimumY && draggedNode.newPosition != 0){
@@ -156,7 +153,6 @@ public class QueueBox extends VBox {
 
                         draggedNode.newPosition = 0;
                         draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
-                        System.out.println("New position: " + draggedNode.newPosition);
                     }
                     else if(draggedNode.getTranslateY() == draggedNode.maximumY - draggedNode.minimumY && draggedNode.newPosition != menuController.queue.size() -1){
 
@@ -187,7 +183,7 @@ public class QueueBox extends VBox {
 
                         draggedNode.newPosition = menuController.queue.size() -1;
                         draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
-                        System.out.println("New position: " + draggedNode.newPosition);
+
                     }
                 }
 
@@ -805,7 +801,7 @@ public class QueueBox extends VBox {
             queueItem.optionsPopUp = new MenuItemOptionsPopUp(queueItem);
 
             QueueItem.height = queueItem.getBoundsInParent().getHeight();
-            System.out.println(QueueItem.height);
+
         });
     }
 

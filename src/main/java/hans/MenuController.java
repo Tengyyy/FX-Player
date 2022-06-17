@@ -353,7 +353,6 @@ public class MenuController implements Initializable {
 
                     queueBox.draggedNode.newPosition = 0;
                     queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex-1)) * QueueItem.height;
-                    System.out.println("New position: " + queueBox.draggedNode.newPosition);
                 }
             }
         });
@@ -550,7 +549,6 @@ public class MenuController implements Initializable {
 
                 if(scrollVelocity != 0) {
                     queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
-                    System.out.println(queueBox.draggedNode.runningTranslate);
 
                     if (queueBox.draggedNode.runningTranslate >= QueueItem.height) {
 
@@ -579,7 +577,6 @@ public class MenuController implements Initializable {
 
                         queueBox.draggedNode.newPosition += 1;
                         queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
-                        System.out.println("New position: " + queueBox.draggedNode.newPosition);
                     } else if (queueBox.draggedNode.runningTranslate <= -QueueItem.height) {
 
                         if (queue.get(queueBox.draggedNode.newPosition).getTranslateY() < 0 && !queue.get(queueBox.draggedNode.newPosition).equals(queueBox.draggedNode)) {
@@ -609,7 +606,6 @@ public class MenuController implements Initializable {
 
                         queueBox.draggedNode.newPosition -= 1;
                         queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
-                        System.out.println("New position: " + queueBox.draggedNode.newPosition);
                     } else {
                         if (queueBox.draggedNode.getTranslateY() == -queueBox.draggedNode.minimumY && queueBox.draggedNode.newPosition != 0) {
 
@@ -640,7 +636,6 @@ public class MenuController implements Initializable {
 
                             queueBox.draggedNode.newPosition = 0;
                             queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
-                            System.out.println("New position: " + queueBox.draggedNode.newPosition);
                         } else if (queueBox.draggedNode.getTranslateY() == queueBox.draggedNode.maximumY - queueBox.draggedNode.minimumY && queueBox.draggedNode.newPosition != queue.size() - 1) {
 
                             if (queue.get(queueBox.draggedNode.newPosition).getTranslateY() > 0 && !queue.get(queueBox.draggedNode.newPosition).equals(queueBox.draggedNode)) {
@@ -669,7 +664,6 @@ public class MenuController implements Initializable {
 
                             queueBox.draggedNode.newPosition = queue.size() - 1;
                             queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
-                            System.out.println("New position: " + queueBox.draggedNode.newPosition);
                         }
                     }
                 }

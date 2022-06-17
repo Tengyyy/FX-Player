@@ -83,7 +83,7 @@ public class ControlBarController implements Initializable {
 
     MouseEventTracker mouseEventTracker;
 
-    ControlTooltip play, mute, unmute, settings, fullScreen, exitFullScreen, captions, nextVideoTooltip, previousVideoTooltip;
+    ControlTooltip play, mute, settings, fullScreen, exitFullScreen, captions, nextVideoTooltip, previousVideoTooltip;
 
     MediaInterface mediaInterface;
 
@@ -94,7 +94,6 @@ public class ControlBarController implements Initializable {
 
         Platform.runLater(() -> {
             play = new ControlTooltip("Play (k)", playButton, controlBar, 0, false);
-            unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0, false);
             mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
             settings = new ControlTooltip("Settings (s)", settingsButton, controlBar, 0, false);
             exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBar, 0, false);
@@ -123,7 +122,7 @@ public class ControlBarController implements Initializable {
         highVolumeSVG.setContent(App.svgMap.get(SVG.VOLUME_HIGH));
 
         lowVolumeSVG = new SVGPath();
-        lowVolumeSVG.setContent(App.svgMap.get(SVG.VOLUME_MUTED));
+        lowVolumeSVG.setContent(App.svgMap.get(SVG.VOLUME_LOW));
 
         volumeMutedSVG = new SVGPath();
         volumeMutedSVG.setContent(App.svgMap.get(SVG.VOLUME_MUTED));
@@ -156,7 +155,11 @@ public class ControlBarController implements Initializable {
         previousVideoIcon.setShape(previousVideoSVG);
         playIcon.setShape(playSVG);
         nextVideoIcon.setShape(nextVideoSVG);
-        volumeIcon.setShape(highVolumeSVG);
+        volumeIcon.setShape(lowVolumeSVG);
+
+        volumeIcon.setPrefSize(15, 18);
+        volumeIcon.setTranslateX(-2.5);
+
         captionsIcon.setShape(captionsSVG);
         settingsIcon.setShape(settingsSVG);
         fullScreenIcon.setShape(maximizeSVG);
@@ -208,8 +211,10 @@ public class ControlBarController implements Initializable {
 
         volumeSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
-            if (!newValue && settingsController.settingsOpen) {
-                settingsController.closeSettings();
+            if (!newValue) {
+                if(settingsController.settingsOpen) settingsController.closeSettings();
+
+                if(isExited) volumeSliderExit();
             }
         });
 
@@ -222,41 +227,24 @@ public class ControlBarController implements Initializable {
 
             if (volumeSlider.getValue() == 0) {
                 volumeIcon.setShape(volumeMutedSVG);
+                volumeIcon.setPrefSize(20, 20);
+                volumeIcon.setTranslateX(0);
                 muted = true;
-
-                if (mute.isShowing()) {
-                    mute.hide();
-                    unmute.hide();
-                    unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0, false);
-                    unmute.showTooltip();
-                } else {
-                    unmute = new ControlTooltip("Unmute (m)", volumeButton, controlBar, 0, false);
-                }
-
-            } else if (volumeSlider.getValue() < 50) {
+                mute.updateText("Unmute (m)");
+            }
+            else if (volumeSlider.getValue() < 50) {
                 volumeIcon.setShape(lowVolumeSVG);
+                volumeIcon.setPrefSize(15, 18);
+                volumeIcon.setTranslateX(-2.5);
                 muted = false;
-
-                if (mute.isShowing() || unmute.isShowing()) {
-                    mute.hide();
-                    unmute.hide();
-                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
-                    mute.showTooltip();
-                } else {
-                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
-                }
-            } else {
+                mute.updateText("Mute (m)");
+            }
+            else {
                 volumeIcon.setShape(highVolumeSVG);
+                volumeIcon.setPrefSize(20, 20);
+                volumeIcon.setTranslateX(0);
                 muted = false;
-
-                if (mute.isShowing() || unmute.isShowing()) {
-                    mute.hide();
-                    unmute.hide();
-                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
-                    mute.showTooltip();
-                } else {
-                    mute = new ControlTooltip("Mute (m)", volumeButton, controlBar, 0, false);
-                }
+                mute.updateText("Mute (m)");
             }
         });
 
@@ -299,6 +287,8 @@ public class ControlBarController implements Initializable {
 
         durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(menuController.mediaActive.get()){
+
+                // update subtitles here
 
                 if(oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5){
                     previousVideoTooltip.updateText("Replay");
@@ -479,14 +469,14 @@ public class ControlBarController implements Initializable {
     }
 
     public void enterArea() {
-        if (isExited && !sliderFocus) {
+        if (isExited && !volumeSlider.isValueChanging()) {
             volumeSliderEnter();
         }
         isExited = false;
     }
 
     public void exitArea() {
-        if (!sliderFocus && !isExited) {
+        if (!volumeSlider.isValueChanging() && !isExited) {
             volumeSliderExit();
         }
         isExited = true;
@@ -560,17 +550,12 @@ public class ControlBarController implements Initializable {
 
     public void mute() {
         muted = true;
-        volumeIcon.setShape(volumeMutedSVG);
-        if(menuController.mediaActive.get()) mediaInterface.mediaPlayer.setVolume(0);
         volumeValue = volumeSlider.getValue(); //stores the value of the volumeslider before setting it to 0
-
         volumeSlider.setValue(0);
     }
 
     public void unmute() {
         muted = false;
-        volumeIcon.setShape(highVolumeSVG);
-        if(menuController.mediaActive.get()) mediaInterface.mediaPlayer.setVolume(volumeValue);
         volumeSlider.setValue(volumeValue); // sets volume back to the value it was at before muting
     }
 

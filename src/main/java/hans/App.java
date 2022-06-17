@@ -194,6 +194,35 @@ public class App extends Application {
                     }
                     break;
 
+                    case UP: {
+                        controlBarController.mouseEventTracker.move();
+
+                        controlBarController.volumeSlider.setValue(Math.min(controlBarController.volumeSlider.getValue() + 5, 100));
+                        mainController.valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+
+                        mainController.valueIndicator.play();
+
+                        mainController.actionIndicator.setIcon(VOLUME_HIGH);
+                        mainController.actionIndicator.setVisible(true);
+                        mainController.actionIndicator.animate();
+                    }
+                    break;
+
+                    case DOWN: {
+                        controlBarController.mouseEventTracker.move();
+
+                        controlBarController.volumeSlider.setValue(Math.max(controlBarController.volumeSlider.getValue() - 5, 0));
+                        mainController.valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+
+                        mainController.valueIndicator.play();
+
+                        if(controlBarController.volumeSlider.getValue() == 0) mainController.actionIndicator.setIcon(VOLUME_MUTED);
+                        else mainController.actionIndicator.setIcon(VOLUME_LOW);
+                        mainController.actionIndicator.setVisible(true);
+                        mainController.actionIndicator.animate();
+                    }
+                    break;
+
                     case ESCAPE: {
 
                         controlBarController.mouseEventTracker.move();

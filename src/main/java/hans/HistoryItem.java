@@ -357,6 +357,7 @@ public class HistoryItem extends GridPane implements MenuObject{
         QueueItem queueItem = new QueueItem(getMediaItem(), menuController, mediaInterface, menuController.queueBox);
         menuController.queueBox.add(0, queueItem);
 
+        menuController.notificationText.setText("Video will play next");
         AnimationsClass.openMenuNotification(menuController);
     }
 

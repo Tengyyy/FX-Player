@@ -482,6 +482,9 @@ public class MenuController implements Initializable {
 
         if(selectedFile != null){
 
+            notificationText.setText("Added 1 video to the queue");
+            AnimationsClass.openMenuNotification(this);
+
             MediaItem temp = null;
 
             if(Utilities.getFileExtension(selectedFile).equals("mp4")) temp = new Mp4Item(selectedFile);

@@ -728,22 +728,30 @@ public class QueueBox extends VBox {
 
     public void handleDragDropped(DragEvent e){
 
-            dragAndDropActive = false;
-            if (dragBoardMedia.isEmpty()) return;
+        dragAndDropActive = false;
+        if (dragBoardMedia.isEmpty()) return;
 
-            // add mp4 and mp3 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
-            ArrayList<QueueItem> newItems = new ArrayList<>();
+        if(dragBoardMedia.size() == 1) menuController.notificationText.setText("Added 1 video to the queue");
+        else menuController.notificationText.setText("Added " + dragBoardMedia.size() + " videos to the queue");
+        AnimationsClass.openMenuNotification(menuController);
 
-            for (File file : dragBoardMedia) {
-                MediaItem temp = null;
-                if (Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
-                else if (Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
-                assert temp != null;
-                newItems.add(new QueueItem(temp, menuController, menuController.mediaInterface, this));
-            }
 
-            addAll(getChildren().indexOf(queueLine), newItems);
-            dragBoardMedia.clear();
+        // add mp4 and mp3 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
+        ArrayList<QueueItem> newItems = new ArrayList<>();
+
+        for (File file : dragBoardMedia) {
+            MediaItem temp = null;
+            if (Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
+            else if (Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
+            assert temp != null;
+            newItems.add(new QueueItem(temp, menuController, menuController.mediaInterface, this));
+        }
+
+        addAll(getChildren().indexOf(queueLine), newItems);
+
+
+
+        dragBoardMedia.clear();
     }
 
     public void handleDragExited(){

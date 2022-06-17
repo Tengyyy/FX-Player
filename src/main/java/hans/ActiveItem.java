@@ -383,6 +383,9 @@ public class ActiveItem extends GridPane implements MenuObject {
         // create new queueitem and insert it at index 0
         QueueItem temp = new QueueItem(this.mediaItem, this.menuController, this.mediaInterface, menuController.queueBox);
         menuController.queueBox.add(0, temp);
+
+        menuController.notificationText.setText("Video will play next");
+        AnimationsClass.openMenuNotification(menuController);
     }
 
     @Override

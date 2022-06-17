@@ -55,8 +55,6 @@ public class PlaybackSpeedController {
         }
         else { // make one of the default tabs active
 
-            System.out.println("test");
-
             if(playbackSpeedPane.customSpeedTab != null){
                 playbackSpeedPane.speedTabs.get((int) (speed * 4 -1) + 1).checkIcon.setVisible(true);
                 playbackSpeedPane.scrollPane.setVvalue((speed * 4)/9 + 0.2);

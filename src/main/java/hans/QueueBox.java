@@ -28,8 +28,12 @@ public class QueueBox extends VBox {
     ArrayList<File> dragBoardFiles = new ArrayList<>();
     ArrayList<File> dragBoardMedia = new ArrayList<>();
 
+    ArrayList<Animation> dragAnimationsInProgress = new ArrayList<>();
+
+    boolean dragAndDropActive = false;
     boolean dragActive = false;
 
+    QueueItem draggedNode;
     QueueLine queueLine;
 
 
@@ -47,6 +51,149 @@ public class QueueBox extends VBox {
         this.setOnDragDropped(e -> handleDragDropped(e));
         this.setOnDragExited(e -> handleDragExited());
 
+        this.setOnMouseDragOver((e) -> {
+            if(dragActive){
+                // update draggedNode translateY
+
+
+                if((e.getY() - draggedNode.dragPosition) <= 0) draggedNode.setTranslateY(-draggedNode.minimumY);
+                else if((e.getY() - draggedNode.dragPosition) > (draggedNode.maximumY)) draggedNode.setTranslateY(draggedNode.maximumY - draggedNode.minimumY);
+                else draggedNode.setTranslateY(e.getY() - draggedNode.minimumY - draggedNode.dragPosition);
+
+                draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
+                System.out.println(draggedNode.runningTranslate);
+
+                if(draggedNode.runningTranslate >= QueueItem.height){
+
+                    if(menuController.queue.get(draggedNode.newPosition).getTranslateY() > 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
+                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition));
+                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                        translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition).getTranslateY());
+                        translateTransition.setToY(0);
+                        translateTransition.setOnFinished(ev -> {
+                            dragAnimationsInProgress.remove(translateTransition);
+                        });
+                        dragAnimationsInProgress.add(translateTransition);
+                        translateTransition.play();
+                    }
+                    else {
+                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition + 1));
+                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                        translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition + 1).getTranslateY());
+                        translateTransition.setToY(-QueueItem.height);
+                        translateTransition.setOnFinished(ev -> {
+                            dragAnimationsInProgress.remove(translateTransition);
+                        });
+                        dragAnimationsInProgress.add(translateTransition);
+                        translateTransition.play();
+                    }
+
+
+                    draggedNode.newPosition+=1;
+                    draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
+                    System.out.println("New position: " + draggedNode.newPosition);
+                }
+                else if(draggedNode.runningTranslate <= -QueueItem.height){
+
+                    if(menuController.queue.get(draggedNode.newPosition).getTranslateY() < 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
+
+                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition));
+                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                        translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition).getTranslateY());
+                        translateTransition.setToY(0);
+                        translateTransition.setOnFinished(ev -> {
+                            dragAnimationsInProgress.remove(translateTransition);
+                        });
+                        dragAnimationsInProgress.add(translateTransition);
+                        translateTransition.play();
+                    }
+                    else {
+
+                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition -1));
+                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                        translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition - 1).getTranslateY());
+                        translateTransition.setToY(QueueItem.height);
+                        translateTransition.setOnFinished(ev -> {
+                            dragAnimationsInProgress.remove(translateTransition);
+                        });
+                        dragAnimationsInProgress.add(translateTransition);
+                        translateTransition.play();
+                    }
+
+
+                    draggedNode.newPosition-=1;
+                    draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
+                    System.out.println("New position: " + draggedNode.newPosition);
+                }
+                else {
+                    if(draggedNode.getTranslateY() == -draggedNode.minimumY && draggedNode.newPosition != 0){
+
+                        if(menuController.queue.get(draggedNode.newPosition).getTranslateY() < 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
+
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition));
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition).getTranslateY());
+                            translateTransition.setToY(0);
+                            translateTransition.setOnFinished(ev -> {
+                                dragAnimationsInProgress.remove(translateTransition);
+                            });
+                            dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+                        else {
+
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition - 1));
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition - 1).getTranslateY());
+                            translateTransition.setToY(QueueItem.height);
+                            translateTransition.setOnFinished(ev -> {
+                                dragAnimationsInProgress.remove(translateTransition);
+                            });
+                            dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+
+
+                        draggedNode.newPosition = 0;
+                        draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
+                        System.out.println("New position: " + draggedNode.newPosition);
+                    }
+                    else if(draggedNode.getTranslateY() == draggedNode.maximumY - draggedNode.minimumY && draggedNode.newPosition != menuController.queue.size() -1){
+
+                        if(menuController.queue.get(draggedNode.newPosition).getTranslateY() > 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
+
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition));
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition).getTranslateY());
+                            translateTransition.setToY(0);
+                            translateTransition.setOnFinished(ev -> {
+                                dragAnimationsInProgress.remove(translateTransition);
+                            });
+                            dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+                        else {
+
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition + 1));
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition + 1).getTranslateY());
+                            translateTransition.setToY(-QueueItem.height);
+                            translateTransition.setOnFinished(ev -> {
+                                dragAnimationsInProgress.remove(translateTransition);
+                            });
+                            dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+
+                        draggedNode.newPosition = menuController.queue.size() -1;
+                        draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
+                        System.out.println("New position: " + draggedNode.newPosition);
+                    }
+                }
+
+            }
+        });
+
         queueLine = new QueueLine(this);
     }
 
@@ -58,6 +205,8 @@ public class QueueBox extends VBox {
             this.add(child);
             return;
         }
+
+        cancelDragAndDrop();
 
         cancelDrag();
 
@@ -99,15 +248,14 @@ public class QueueBox extends VBox {
 
     public void add(QueueItem child){
 
+        cancelDragAndDrop();
+
         cancelDrag();
 
         menuController.queue.add(child);
 
         // add item with opacity 0, then fade it in
-        if(getChildren().isEmpty()) {
-            this.getChildren().add(child);
-        }
-        else this.getChildren().add(child);
+        this.getChildren().add(child);
 
         initialize(child);
         FadeTransition fadeTransition = AnimationsClass.fadeIn(child);
@@ -121,6 +269,8 @@ public class QueueBox extends VBox {
     }
 
     public void remove(int index){
+
+        cancelDragAndDrop();
 
         cancelDrag();
 
@@ -165,6 +315,8 @@ public class QueueBox extends VBox {
 
     //TODO: implement Collections.rotate instead of removing and adding
     public void removeAndMove(int index){
+
+        cancelDragAndDrop();
 
         cancelDrag();
 
@@ -236,6 +388,8 @@ public class QueueBox extends VBox {
     }
 
     public void moveAll(int firstBound, int secondBound, int newIndex){
+
+        cancelDragAndDrop();
 
         cancelDrag();
 
@@ -313,7 +467,7 @@ public class QueueBox extends VBox {
 
     public void addAll(Collection<? extends QueueItem> collection){
 
-        cancelDrag();
+        cancelDragAndDrop();
 
         menuController.queue.addAll(collection);
 
@@ -332,6 +486,8 @@ public class QueueBox extends VBox {
     }
 
     public void addAll(int index, Collection<? extends QueueItem> collection) {
+
+        cancelDragAndDrop();
 
         cancelDrag();
 
@@ -382,6 +538,8 @@ public class QueueBox extends VBox {
 
     public void clear(){
 
+        cancelDragAndDrop();
+
         cancelDrag();
 
         if(!this.getChildren().isEmpty()){
@@ -407,6 +565,8 @@ public class QueueBox extends VBox {
 
     public void move(int oldIndex, int newIndex){
 
+        cancelDragAndDrop();
+
         cancelDrag();
 
         // move to bottom if newIndex = -1
@@ -425,9 +585,9 @@ public class QueueBox extends VBox {
         menuController.queue.remove(oldIndex);
         menuController.queue.add(newIndex, child);
 
+        FadeTransition fadeTransition = AnimationsClass.fadeOut(child);
         if(newIndex == -1 || newIndex > oldIndex){
 
-            FadeTransition fadeTransition = AnimationsClass.fadeOut(child);
             fadeTransition.setOnFinished((e) -> {
                 ArrayList<QueueItem> childrenToBeMoved = new ArrayList<>();
                 ParallelTransition parallelTransition = new ParallelTransition();
@@ -456,16 +616,11 @@ public class QueueBox extends VBox {
                 menuController.animationsInProgress.add(parallelTransition);
                 parallelTransition.playFromStart();
             });
-
-            menuController.animationsInProgress.add(fadeTransition);
-            fadeTransition.playFromStart();
-
         }
 
         else {
             // move item up
 
-            FadeTransition fadeTransition = AnimationsClass.fadeOut(child);
             fadeTransition.setOnFinished((e) -> {
                 ArrayList<QueueItem> childrenToBeMoved = new ArrayList<>();
                 ParallelTransition parallelTransition = new ParallelTransition();
@@ -494,17 +649,19 @@ public class QueueBox extends VBox {
                 menuController.animationsInProgress.add(parallelTransition);
                 parallelTransition.playFromStart();
             });
-
-            menuController.animationsInProgress.add(fadeTransition);
-            fadeTransition.playFromStart();
         }
 
+        menuController.animationsInProgress.add(fadeTransition);
+        fadeTransition.playFromStart();
     }
 
 
     public void shuffle(){
 
+        cancelDragAndDrop();
+
         cancelDrag();
+
         // fade out, shuffle, fade in
 
         ObservableList<QueueItem> workingCollection = FXCollections.observableArrayList(menuController.queue);
@@ -558,7 +715,7 @@ public class QueueBox extends VBox {
 
         if(dragBoardMedia.isEmpty()) return;
 
-        dragActive = true;
+        dragAndDropActive = true;
         if(!menuController.queue.isEmpty()){
             queueLine.setPosition(-1);
         }
@@ -566,48 +723,77 @@ public class QueueBox extends VBox {
     }
 
     public void handleDragOver(DragEvent e){
-        if(!dragBoardMedia.isEmpty()){
-            e.acceptTransferModes(TransferMode.COPY);
+        if(dragAndDropActive) {
+            if (!dragBoardMedia.isEmpty()) {
+                e.acceptTransferModes(TransferMode.COPY);
+            }
         }
     }
 
     public void handleDragDropped(DragEvent e){
 
-        dragActive = false;
+            dragAndDropActive = false;
+            if (dragBoardMedia.isEmpty()) return;
 
-        if(dragBoardMedia.isEmpty()) return;
+            // add mp4 and mp3 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
+            ArrayList<QueueItem> newItems = new ArrayList<>();
 
-        // add mp4 and mp3 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
+            for (File file : dragBoardMedia) {
+                MediaItem temp = null;
+                if (Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
+                else if (Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
+                assert temp != null;
+                newItems.add(new QueueItem(temp, menuController, menuController.mediaInterface, this));
+            }
 
-        ArrayList<QueueItem> newItems = new ArrayList<>();
-
-        for(File file : dragBoardMedia){
-            MediaItem temp = null;
-
-            if(Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
-            else if(Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
-
-            newItems.add(new QueueItem(temp, menuController, menuController.mediaInterface, this));
-        }
-
-        addAll(getChildren().indexOf(queueLine), newItems);
-
-
-        dragBoardMedia.clear();
-
+            addAll(getChildren().indexOf(queueLine), newItems);
+            dragBoardMedia.clear();
     }
 
     public void handleDragExited(){
-        cancelDrag();
+        cancelDragAndDrop();
     }
 
 
-    public void cancelDrag(){
-        dragActive = false;
+    public void cancelDragAndDrop(){
+        dragAndDropActive = false;
         dragBoardMedia.clear();
         dragBoardFiles.clear();
 
         getChildren().remove(queueLine);
+    }
+
+
+    public void cancelDrag(){
+
+        for(Animation animation : dragAnimationsInProgress){
+            animation.stop();
+        }
+
+        dragAnimationsInProgress.clear();
+        
+        for(QueueItem queueItem : menuController.queue){
+            queueItem.setTranslateY(0);
+        }
+
+        if(draggedNode != null){
+            draggedNode.setMouseTransparent(false);
+            draggedNode.setViewOrder(1);
+            draggedNode.setStyle("-fx-background-color: transparent;");
+
+            if(menuController.queue.indexOf(draggedNode) != draggedNode.newPosition){
+                menuController.queue.remove(draggedNode);
+                getChildren().remove(draggedNode);
+
+                menuController.queue.add(draggedNode.newPosition, draggedNode);
+                getChildren().add(draggedNode.newPosition, draggedNode);
+
+            }
+
+            draggedNode = null;
+        }
+
+        dragActive = false;
     }
 
 
@@ -617,6 +803,9 @@ public class QueueBox extends VBox {
             queueItem.remove = new ControlTooltip("Remove video", queueItem.removeButton, new VBox(), 1000, false);
             queueItem.options = new ControlTooltip("Options", queueItem.optionsButton, new VBox(), 1000, false);
             queueItem.optionsPopUp = new MenuItemOptionsPopUp(queueItem);
+
+            QueueItem.height = queueItem.getBoundsInParent().getHeight();
+            System.out.println(QueueItem.height);
         });
     }
 

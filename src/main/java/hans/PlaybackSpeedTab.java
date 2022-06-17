@@ -64,8 +64,6 @@ public class PlaybackSpeedTab extends HBox {
         if(isCustom) speedValue = playbackSpeedController.customSpeedPane.lastCustomValue;
         else speedValue = (double) (playbackSpeedPane.speedTabs.size() + 1) / 4;
 
-        System.out.println(speedValue);
-
         if(isCustom) valueLabel.setText("Custom (" + playbackSpeedController.df.format(speedValue) + ")");
         else if(playbackSpeedPane.speedTabs.size() == 3) valueLabel.setText("Normal");
         else valueLabel.setText(String.valueOf(speedValue));

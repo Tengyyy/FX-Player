@@ -8,18 +8,24 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.geometry.*;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import org.jcodec.codecs.common.biari.BitIO;
 
 import java.util.ArrayList;
 
@@ -67,6 +73,10 @@ public class QueueItem extends GridPane implements MenuObject{
 
     int videoIndex;
 
+
+    int newPosition; // keeps track of the position where the queueitem should move to when being dragged
+    double runningTranslate; // mirrors draggable nodes translateY value and if it goes over QueueItem.height or below -QueueItem.height will update the visual order of queueitems
+
     ControlTooltip play, remove, options;
 
     boolean mouseHover = false;
@@ -82,6 +92,10 @@ public class QueueItem extends GridPane implements MenuObject{
     static double height = 70;
 
     QueueBox queueBox;
+
+    double dragPosition = 0;
+    double minimumY = 0;
+    double maximumY = 0;
 
     QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, QueueBox queueBox) {
 
@@ -260,6 +274,8 @@ public class QueueItem extends GridPane implements MenuObject{
         this.add(removeButtonWrapper, 2, 0);
         this.add(optionsButtonWrapper, 3, 0);
 
+        this.setViewOrder(1);
+
 
         this.setOnMouseEntered((e) -> {
             mouseHover = true;
@@ -273,22 +289,46 @@ public class QueueItem extends GridPane implements MenuObject{
         });
 
         this.addEventHandler(DragEvent.DRAG_OVER, e -> {
-            if(!queueBox.dragActive) return;
 
-            if(e.getY() > height/2){
-                // position queueline below this item
-                if(queueBox.getChildren().indexOf(queueBox.queueLine) != menuController.queue.indexOf(this) + 1){
-                    queueBox.queueLine.setPosition(menuController.queue.indexOf(this) + 1);
-                }
-            }
-            else {
-
-
-                if(queueBox.getChildren().indexOf(queueBox.queueLine) != menuController.queue.indexOf(this)){
-                    queueBox.queueLine.setPosition(menuController.queue.indexOf(this));
+            if(queueBox.dragAndDropActive) {
+                //code to handle adding items to queue
+                if (e.getY() > height / 2) {
+                    // position queueline below this item
+                    if (queueBox.getChildren().indexOf(queueBox.queueLine) != menuController.queue.indexOf(this) + 1) {
+                        queueBox.queueLine.setPosition(menuController.queue.indexOf(this) + 1);
+                    }
+                } else {
+                    if (queueBox.getChildren().indexOf(queueBox.queueLine) != menuController.queue.indexOf(this)) {
+                        queueBox.queueLine.setPosition(menuController.queue.indexOf(this));
+                    }
                 }
             }
         });
+
+
+        this.setOnDragDetected((e) -> {
+            if(!queueBox.dragAnimationsInProgress.isEmpty()) return;
+
+            this.setMouseTransparent(true);
+            queueBox.dragActive = true;
+            queueBox.draggedNode = this;
+
+            this.setViewOrder(0);
+            this.setStyle("-fx-background-color: #2C2C2C;");
+
+            if (optionsPopUp.isShowing()) optionsPopUp.hide();
+
+            dragPosition = e.getY();
+            minimumY = this.getBoundsInParent().getMinY(); // this is the maximum negative translation that can be applied
+            maximumY = queueBox.getChildren().get(queueBox.getChildren().size() - 1).getBoundsInParent().getMinY(); // the top border of the last element inside the vbox, dragged node cant move below that
+
+            newPosition = videoIndex - 1;
+            System.out.println("Current position: " + newPosition);
+
+            this.startFullDrag();
+        });
+
+
 
         this.setOnMouseExited((e) -> {
             mouseHover = false;
@@ -296,8 +336,7 @@ public class QueueItem extends GridPane implements MenuObject{
             playText.setVisible(true);
             playIcon.setVisible(false);
 
-            this.setStyle("-fx-background-color: transparent;");
-
+            if(!queueBox.dragActive) this.setStyle("-fx-background-color: transparent;");
         });
 
 

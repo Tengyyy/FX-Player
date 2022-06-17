@@ -91,17 +91,13 @@ public class Mp4Item implements MediaItem{
 
         Map<Integer, MetaValue> itunesMeta = mediaMeta.getItunesMeta();
         if (itunesMeta != null) {
-            //System.out.println("ITunes metadata:");
             for (Map.Entry<Integer, MetaValue> entry : itunesMeta.entrySet()) {
                 String keyString = Utilities.fourccToString(entry.getKey());
-                //System.out.println(keyString + ": " + entry.getValue());
 
                 switch(keyString){
                     case "©nam": title = String.valueOf(entry.getValue());
-                        System.out.println("title: " + title);
                         break;
                     case "©ART": artist = String.valueOf(entry.getValue());
-                        System.out.println("artist: " + artist);
                         break;
                     case "stik":
                         // WARNING!!! Ugly nested switch, proceed at your own caution
@@ -116,7 +112,6 @@ public class Mp4Item implements MediaItem{
                             break;
                             default: mediaType = "Home video";
                         }
-                        System.out.println("Media type: " + mediaType);
                         break;
                     case "covr": cover = new Image(new ByteArrayInputStream(entry.getValue().getData()));
                         break;
@@ -137,8 +132,6 @@ public class Mp4Item implements MediaItem{
             frameDuration = (float) (1 / frameRate);
 
             duration = Duration.seconds(seconds);
-
-            System.out.println("DURATION: " + duration);
 
         } catch (IOException | JCodecException e) {
             throw new RuntimeException(e);

@@ -2,19 +2,12 @@ package hans;
 
 
 import com.jfoenix.controls.JFXButton;
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.enums.ButtonType;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -30,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -40,7 +34,6 @@ import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -121,7 +114,7 @@ public class MenuController implements Initializable {
 
     private Timeline scrollTimeline = new Timeline();
     private double scrollVelocity = 0;
-    private int scrollSpeed = 200;
+    private int scrollSpeed = 4;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -149,10 +142,7 @@ public class MenuController implements Initializable {
 
 
 
-        mediaActive.addListener((observableValue, oldValue, newValue) -> {
-            if(!newValue) controlBarController.durationPane.setMouseTransparent(true);
-            else controlBarController.durationPane.setMouseTransparent(false);
-        });
+        mediaActive.addListener((observableValue, oldValue, newValue) -> controlBarController.durationPane.setMouseTransparent(!newValue));
 
         fileChooser.setTitle("Open video");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4"));
@@ -173,13 +163,9 @@ public class MenuController implements Initializable {
         historyButton.setText(null);
         StackPane.setAlignment(historyButton, Pos.CENTER);
 
-        historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-            historyButton.setStyle("-fx-background-color: #606060");
-        });
+        historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> historyButton.setStyle("-fx-background-color: #606060"));
 
-        historyButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-            historyButton.setStyle("-fx-background-color: #505050");
-        });
+        historyButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> historyButton.setStyle("-fx-background-color: #505050"));
 
         historyButton.setOnAction((e) -> {
             if(historyBox.open) historyBox.close();
@@ -248,9 +234,7 @@ public class MenuController implements Initializable {
         clearQueueButton.setDisable(true);
         StackPane.setAlignment(clearQueueButton, Pos.CENTER_RIGHT);
 
-        clearQueueButton.setOnAction((e) -> {
-            clearQueue();
-        });
+        clearQueueButton.setOnAction((e) -> clearQueue());
 
         queueHeader = new StackPane();
         queueHeader.getChildren().addAll(queueText, clearQueueButton);
@@ -279,19 +263,39 @@ public class MenuController implements Initializable {
         menu.setClip(menuClip);
 
         scrollTimeline.setCycleCount(Timeline.INDEFINITE);
-        scrollTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(20), (ActionEvent) -> { dragScroll();}));
-
-
-        menu.setOnMouseEntered(e -> {
-            queueScroll.lookup(".scroll-bar:vertical").lookup(".thumb").setStyle("-fx-background-color: derive(black, 90%);");
-        });
-
-        menu.setOnMouseExited(e -> {
-            queueScroll.lookup(".scroll-bar:vertical").lookup(".thumb").setStyle("-fx-background-color: transparent;");
-        });
+        scrollTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(20), (ActionEvent) -> dragScroll()));
 
 
         menu.addEventHandler(DragEvent.DRAG_OVER, e -> {
+            // play scroll-up animation if Y coordinate is in range of 0 to 60
+            // play scroll-down animation if Y coordinate is in range of max-60 to max
+
+
+
+            // maybe make scrolling speed static and not depend on the amount of media items
+
+
+            if(e.getY() <= 60){
+                scrollVelocity = - scrollSpeed * (1/(menuContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
+
+                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < menuContent.getHeight() && queueScroll.getVvalue() != 0.0) scrollTimeline.play();
+            }
+            else if(e.getY() >= lowerBottomBound.get()){
+                scrollVelocity = scrollSpeed * (1/(menuContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
+
+                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < menuContent.getHeight() && queueScroll.getVvalue() != 1.0) scrollTimeline.play();
+            }
+            else scrollVelocity = 0;
+
+
+        });
+
+        menu.addEventHandler(DragEvent.DRAG_EXITED, e -> scrollTimeline.stop());
+
+        menu.addEventHandler(DragEvent.DRAG_DROPPED, e -> scrollTimeline.stop());
+
+
+        menu.addEventHandler(MouseDragEvent.MOUSE_DRAG_OVER, e -> {
             // play scroll-up animation if Y coordinate is in range of 0 to 60
             // play scroll-down animation if Y coordinate is in range of max-60 to max
 
@@ -300,23 +304,145 @@ public class MenuController implements Initializable {
 
 
             if(e.getY() <= 60){
-                scrollVelocity = -1.0 / scrollSpeed;
+                scrollVelocity = - scrollSpeed * (1/(menuContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
+
+                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < menuContent.getHeight() && queueScroll.getVvalue() != 0.0) scrollTimeline.play();
             }
             else if(e.getY() >= lowerBottomBound.get()){
-                scrollVelocity = 1.0 / scrollSpeed;
+                scrollVelocity = scrollSpeed * (1/(menuContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
+
+                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < menuContent.getHeight() && queueScroll.getVvalue() != 1.0) scrollTimeline.play();
             }
+
             else scrollVelocity = 0;
 
-            if(scrollTimeline.getStatus() != Animation.Status.RUNNING) scrollTimeline.play();
-
         });
 
-        menu.addEventHandler(DragEvent.DRAG_EXITED, e -> {
-            scrollTimeline.stop();
+
+        menuContent.addEventHandler(MouseDragEvent.MOUSE_DRAG_OVER, e -> {
+            if(queueBox.dragActive && e.getY() <= queueBox.getBoundsInParent().getMinY()){
+                queueBox.draggedNode.setTranslateY(-queueBox.draggedNode.minimumY);
+
+                if(queueBox.draggedNode.newPosition != 0){
+
+                    if(queue.get(queueBox.draggedNode.newPosition).getTranslateY() < 0 && !queue.get(queueBox.draggedNode.newPosition).equals(queueBox.draggedNode)){
+
+                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition));
+                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                        translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition).getTranslateY());
+                        translateTransition.setToY(0);
+                        translateTransition.setOnFinished(ev -> {
+                            queueBox.dragAnimationsInProgress.remove(translateTransition);
+                        });
+                        queueBox.dragAnimationsInProgress.add(translateTransition);
+                        translateTransition.play();
+                    }
+                    else {
+
+                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition - 1));
+                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                        translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition - 1).getTranslateY());
+                        translateTransition.setToY(QueueItem.height);
+                        translateTransition.setOnFinished(ev -> {
+                            queueBox.dragAnimationsInProgress.remove(translateTransition);
+                        });
+                        queueBox.dragAnimationsInProgress.add(translateTransition);
+                        translateTransition.play();
+                    }
+
+
+                    queueBox.draggedNode.newPosition = 0;
+                    queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex-1)) * QueueItem.height;
+                    System.out.println("New position: " + queueBox.draggedNode.newPosition);
+                }
+            }
         });
 
-        menu.addEventHandler(DragEvent.DRAG_DROPPED, e -> {
+        menu.addEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED, e -> {
             scrollTimeline.stop();
+
+            if(queueBox.dragActive) {
+                queueBox.draggedNode.setViewOrder(0);
+                queueBox.draggedNode.setStyle("-fx-background-color: #2C2C2C;");
+                queueBox.draggedNode.dragPosition = 0;
+                queueBox.draggedNode.minimumY = 0;
+                queueBox.draggedNode.maximumY = 0;
+                queueBox.dragActive = false;
+
+
+                TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueBox.draggedNode);
+                translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                translateTransition.setFromY(queueBox.draggedNode.getTranslateY());
+                translateTransition.setToY(queueBox.draggedNode.getTranslateY() - queueBox.draggedNode.runningTranslate);
+                translateTransition.setOnFinished(event -> {
+                    queueBox.draggedNode.setMouseTransparent(false);
+                    queueBox.draggedNode.setViewOrder(1);
+                    queueBox.draggedNode.setStyle("-fx-background-color: transparent;");
+
+                    if(queue.indexOf(queueBox.draggedNode) != queueBox.draggedNode.newPosition){
+                        queue.remove(queueBox.draggedNode);
+                        queueBox.getChildren().remove(queueBox.draggedNode);
+
+                        queue.add(queueBox.draggedNode.newPosition, queueBox.draggedNode);
+                        queueBox.getChildren().add(queueBox.draggedNode.newPosition, queueBox.draggedNode);
+
+                        for(QueueItem queueItem : queue){
+                            queueItem.setTranslateY(0);
+                        }
+                    }
+
+                    queueBox.dragAnimationsInProgress.remove(translateTransition);
+                    queueBox.draggedNode = null;
+                });
+
+                translateTransition.play();
+                queueBox.dragAnimationsInProgress.add(translateTransition);
+
+            }
+        });
+
+        menu.addEventHandler(MouseDragEvent.MOUSE_DRAG_RELEASED, e -> {
+            scrollTimeline.stop();
+
+            if(queueBox.dragActive) {
+                queueBox.draggedNode.setViewOrder(0);
+                queueBox.draggedNode.setStyle("-fx-background-color: #2C2C2C;");
+                queueBox.draggedNode.dragPosition = 0;
+                queueBox.draggedNode.minimumY = 0;
+                queueBox.draggedNode.maximumY = 0;
+                queueBox.dragActive = false;
+
+                TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueBox.draggedNode);
+                translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                translateTransition.setFromY(queueBox.draggedNode.getTranslateY());
+                translateTransition.setToY(queueBox.draggedNode.getTranslateY() - queueBox.draggedNode.runningTranslate);
+                translateTransition.setOnFinished(event -> {
+                    queueBox.draggedNode.setMouseTransparent(false);
+                    queueBox.draggedNode.setViewOrder(1);
+                    queueBox.draggedNode.setStyle("-fx-background-color: transparent;");
+
+                    if(queue.indexOf(queueBox.draggedNode) != queueBox.draggedNode.newPosition){
+                        queue.remove(queueBox.draggedNode);
+                        queueBox.getChildren().remove(queueBox.draggedNode);
+
+                        queue.add(queueBox.draggedNode.newPosition, queueBox.draggedNode);
+                        queueBox.getChildren().add(queueBox.draggedNode.newPosition, queueBox.draggedNode);
+
+                        for(QueueItem queueItem : queue){
+                            queueItem.setTranslateY(0);
+                        }
+                    }
+
+                    queueBox.dragAnimationsInProgress.remove(translateTransition);
+                    queueBox.draggedNode = null;
+
+                });
+
+                translateTransition.play();
+                queueBox.dragAnimationsInProgress.add(translateTransition);
+
+
+            }
         });
 
 
@@ -362,6 +488,7 @@ public class MenuController implements Initializable {
             if(Utilities.getFileExtension(selectedFile).equals("mp4")) temp = new Mp4Item(selectedFile);
             else if(Utilities.getFileExtension(selectedFile).equals("mp3")) temp = new Mp3Item(selectedFile);
 
+            assert temp != null;
             QueueItem item = new QueueItem(temp, this, mediaInterface, queueBox);
 
             if(settingsController.playbackOptionsController.shuffleOn){
@@ -382,7 +509,7 @@ public class MenuController implements Initializable {
 
     public void closeMenu(){
         if(!menuInTransition) {
-            if(dragResizer.dragging == true) {
+            if(dragResizer.dragging) {
                 dragResizer.dragging = false;
                 dragPane.setCursor(Cursor.DEFAULT);
             }
@@ -403,7 +530,151 @@ public class MenuController implements Initializable {
             double newValue = sb.getValue() + scrollVelocity;
             newValue = Math.min(newValue, 1.0);
             newValue = Math.max(newValue, 0.0);
+
+
             sb.setValue(newValue);
+
+            if(queueBox.dragActive){
+
+
+                if(scrollVelocity > 0){
+                    queueBox.draggedNode.setTranslateY(Math.min(queueBox.draggedNode.getTranslateY() + scrollSpeed, queueBox.draggedNode.maximumY - queueBox.draggedNode.minimumY));
+
+                    if(queueBox.draggedNode.getTranslateY() == queueBox.draggedNode.maximumY - queueBox.draggedNode.minimumY && newValue == 1.0) scrollTimeline.stop();
+                }
+                else if(scrollVelocity < 0){
+                    queueBox.draggedNode.setTranslateY(Math.max(queueBox.draggedNode.getTranslateY() - scrollSpeed, -queueBox.draggedNode.minimumY));
+
+                    if(queueBox.draggedNode.getTranslateY() == -queueBox.draggedNode.minimumY && newValue == 0.0) scrollTimeline.stop();
+                }
+
+                if(scrollVelocity != 0) {
+                    queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
+                    System.out.println(queueBox.draggedNode.runningTranslate);
+
+                    if (queueBox.draggedNode.runningTranslate >= QueueItem.height) {
+
+                        if (queue.get(queueBox.draggedNode.newPosition).getTranslateY() > 0 && !queue.get(queueBox.draggedNode.newPosition).equals(queueBox.draggedNode)) {
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition));
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition).getTranslateY());
+                            translateTransition.setToY(0);
+                            translateTransition.setOnFinished(ev -> {
+                                queueBox.dragAnimationsInProgress.remove(translateTransition);
+                            });
+                            queueBox.dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        } else {
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition + 1));
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition + 1).getTranslateY());
+                            translateTransition.setToY(-QueueItem.height);
+                            translateTransition.setOnFinished(ev -> {
+                                queueBox.dragAnimationsInProgress.remove(translateTransition);
+                            });
+                            queueBox.dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+
+
+                        queueBox.draggedNode.newPosition += 1;
+                        queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
+                        System.out.println("New position: " + queueBox.draggedNode.newPosition);
+                    } else if (queueBox.draggedNode.runningTranslate <= -QueueItem.height) {
+
+                        if (queue.get(queueBox.draggedNode.newPosition).getTranslateY() < 0 && !queue.get(queueBox.draggedNode.newPosition).equals(queueBox.draggedNode)) {
+
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition));
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition).getTranslateY());
+                            translateTransition.setToY(0);
+                            translateTransition.setOnFinished(ev -> {
+                                queueBox.dragAnimationsInProgress.remove(translateTransition);
+                            });
+                            queueBox.dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        } else {
+
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition - 1));
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition - 1).getTranslateY());
+                            translateTransition.setToY(QueueItem.height);
+                            translateTransition.setOnFinished(ev -> {
+                                queueBox.dragAnimationsInProgress.remove(translateTransition);
+                            });
+                            queueBox.dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+
+
+                        queueBox.draggedNode.newPosition -= 1;
+                        queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
+                        System.out.println("New position: " + queueBox.draggedNode.newPosition);
+                    } else {
+                        if (queueBox.draggedNode.getTranslateY() == -queueBox.draggedNode.minimumY && queueBox.draggedNode.newPosition != 0) {
+
+                            if (queue.get(queueBox.draggedNode.newPosition).getTranslateY() < 0 && !queue.get(queueBox.draggedNode.newPosition).equals(queueBox.draggedNode)) {
+
+                                TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition));
+                                translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                                translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition).getTranslateY());
+                                translateTransition.setToY(0);
+                                translateTransition.setOnFinished(ev -> {
+                                    queueBox.dragAnimationsInProgress.remove(translateTransition);
+                                });
+                                queueBox.dragAnimationsInProgress.add(translateTransition);
+                                translateTransition.play();
+                            } else {
+
+                                TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition - 1));
+                                translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                                translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition - 1).getTranslateY());
+                                translateTransition.setToY(QueueItem.height);
+                                translateTransition.setOnFinished(ev -> {
+                                    queueBox.dragAnimationsInProgress.remove(translateTransition);
+                                });
+                                queueBox.dragAnimationsInProgress.add(translateTransition);
+                                translateTransition.play();
+                            }
+
+
+                            queueBox.draggedNode.newPosition = 0;
+                            queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
+                            System.out.println("New position: " + queueBox.draggedNode.newPosition);
+                        } else if (queueBox.draggedNode.getTranslateY() == queueBox.draggedNode.maximumY - queueBox.draggedNode.minimumY && queueBox.draggedNode.newPosition != queue.size() - 1) {
+
+                            if (queue.get(queueBox.draggedNode.newPosition).getTranslateY() > 0 && !queue.get(queueBox.draggedNode.newPosition).equals(queueBox.draggedNode)) {
+
+                                TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition));
+                                translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                                translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition).getTranslateY());
+                                translateTransition.setToY(0);
+                                translateTransition.setOnFinished(ev -> {
+                                    queueBox.dragAnimationsInProgress.remove(translateTransition);
+                                });
+                                queueBox.dragAnimationsInProgress.add(translateTransition);
+                                translateTransition.play();
+                            } else {
+
+                                TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition + 1));
+                                translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                                translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition + 1).getTranslateY());
+                                translateTransition.setToY(-QueueItem.height);
+                                translateTransition.setOnFinished(ev -> {
+                                    queueBox.dragAnimationsInProgress.remove(translateTransition);
+                                });
+                                queueBox.dragAnimationsInProgress.add(translateTransition);
+                                translateTransition.play();
+                            }
+
+                            queueBox.draggedNode.newPosition = queue.size() - 1;
+                            queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex - 1)) * QueueItem.height;
+                            System.out.println("New position: " + queueBox.draggedNode.newPosition);
+                        }
+                    }
+                }
+            }
+            else if((scrollVelocity > 0 && newValue == 1.0) || (scrollVelocity < 0 && newValue == 0.0)) scrollTimeline.stop();
         }
     }
 

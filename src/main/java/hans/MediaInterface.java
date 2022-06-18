@@ -77,6 +77,8 @@ public class MediaInterface {
                 if (!controlBarController.durationSlider.isValueChanging()) {
 
                     controlBarController.playIcon.setShape(controlBarController.pauseSVG);
+                    controlBarController.playIcon.setPrefSize(20, 20);
+
 
                     playing.set(true);
                     mediaPlayer.play();
@@ -86,6 +88,8 @@ public class MediaInterface {
                 }
             } else {
                 controlBarController.playIcon.setShape(controlBarController.playSVG);
+                controlBarController.playIcon.setPrefSize(20, 20);
+
                 playing.set(false);
 
                 controlBarController.play.updateText("Play (k)");
@@ -311,6 +315,8 @@ public class MediaInterface {
 
 
         controlBarController.playIcon.setShape(controlBarController.replaySVG);
+        controlBarController.playIcon.setPrefSize(24, 24);
+
 
         menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
         menuController.activeItem.play.updateText("Play video");

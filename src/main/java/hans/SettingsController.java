@@ -66,15 +66,16 @@ public class SettingsController {
         settingsBuffer.setMaxWidth(235);
         settingsBuffer.setClip(clip);
         settingsBuffer.getChildren().add(settingsBackground);
+        settingsBuffer.setMouseTransparent(true);
         settingsBackground.setId("settingsBackground");
         settingsBackground.setVisible(false);
         settingsBackground.setMouseTransparent(true);
-        StackPane.setMargin(settingsBuffer, new Insets(0, 20, 60, 0));
+        StackPane.setMargin(settingsBuffer, new Insets(0, 20, 80, 0));
         StackPane.setAlignment(settingsBackground, Pos.BOTTOM_CENTER);
 
 
         Platform.runLater(() -> {
-            settingsBuffer.maxHeightProperty().bind(Bindings.subtract(mainController.mediaViewHeight, 100));
+            settingsBuffer.maxHeightProperty().bind(Bindings.subtract(mainController.mediaViewHeight, 120));
             clip.setWidth(settingsBuffer.getWidth());
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.translateYProperty().bind(Bindings.subtract(settingsBuffer.heightProperty(), clip.heightProperty()));
@@ -117,6 +118,7 @@ public class SettingsController {
         controlBarController.settingsButton.setOnMouseEntered(null);
         controlBarController.fullScreenButton.setOnMouseEntered(null);
 
+        settingsBuffer.setMouseTransparent(false);
         settingsBackground.setVisible(true);
         settingsBackground.setMouseTransparent(false);
         settingsHomeController.settingsHome.setVisible(true);
@@ -148,46 +150,46 @@ public class SettingsController {
 
 
         if (controlBarController.settingsButtonHover) {
-            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBar, 0, false);
+            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBarWrapper, 0, false);
             controlBarController.settings.showTooltip();
 
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBar, 0, false);
+            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
 
             if (App.fullScreen)
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBar, 0, false);
+                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             else
-                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBar, 0, false);
+                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
         } else if (controlBarController.captionsButtonHover) {
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBar, 0, false);
+            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
             controlBarController.captions.showTooltip();
 
-            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBar, 0, false);
+            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBarWrapper, 0, false);
 
             if (App.fullScreen)
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBar, 0, false);
+                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             else
-                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBar, 0, false);
+                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
         } else if (controlBarController.fullScreenButtonHover) {
             if (App.fullScreen) {
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBar, 0, false);
+                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
                 controlBarController.exitFullScreen.showTooltip();
             } else {
-                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBar, 0, false);
+                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
                 controlBarController.fullScreen.showTooltip();
             }
 
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBar, 0, false);
+            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
 
-            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBar, 0, false);
+            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBarWrapper, 0, false);
         } else {
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBar, 0, false);
+            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
 
-            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBar, 0, false);
+            controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBarWrapper, 0, false);
 
             if (App.fullScreen)
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBar, 0, false);
+                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             else
-                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBar, 0, false);
+                controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
         }
 
         if(settingsHomeOpen){
@@ -205,6 +207,7 @@ public class SettingsController {
             parallelTransition.setOnFinished((e) -> {
                 animating.set(false);
 
+                settingsBuffer.setMouseTransparent(true);
                 settingsBackground.setVisible(false);
                 settingsBackground.setMouseTransparent(true);
                 settingsHomeController.settingsHome.setVisible(false);
@@ -229,6 +232,7 @@ public class SettingsController {
             parallelTransition.setOnFinished((e) -> {
                 animating.set(false);
 
+                settingsBuffer.setMouseTransparent(true);
                 settingsBackground.setVisible(false);
                 settingsBackground.setMouseTransparent(true);
                 playbackOptionsController.playbackOptionsBox.setVisible(false);
@@ -256,6 +260,7 @@ public class SettingsController {
             parallelTransition.setOnFinished((e) -> {
                 animating.set(false);
 
+                settingsBuffer.setMouseTransparent(true);
                 settingsBackground.setVisible(false);
                 settingsBackground.setMouseTransparent(true);
                 playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(false);
@@ -283,6 +288,7 @@ public class SettingsController {
             parallelTransition.setOnFinished((e) -> {
                 animating.set(false);
 
+                settingsBuffer.setMouseTransparent(true);
                 settingsBackground.setVisible(false);
                 settingsBackground.setMouseTransparent(true);
                 playbackSpeedController.customSpeedPane.customSpeedBox.setVisible(false);

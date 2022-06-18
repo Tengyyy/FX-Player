@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
@@ -27,14 +28,14 @@ public class ControlTooltip extends Tooltip {
 
     boolean isMenu;
 
-    VBox controlBar;
+    Region controlBar;
 
     int delay;
 
     BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
     PauseTransition countdown;
 
-    ControlTooltip(String tooltipText, Region tooltipParent, VBox controlBar, int delay, boolean isMenu) {
+    ControlTooltip(String tooltipText, Region tooltipParent, Region controlBar, int delay, boolean isMenu) {
 
         this.tooltipText = tooltipText;
         this.tooltipParent = tooltipParent;

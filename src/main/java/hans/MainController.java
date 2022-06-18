@@ -158,7 +158,7 @@ public class MainController implements Initializable {
         menuIcon.setShape(menuSVG);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
-            openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBar, 1000, true);
+            openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBarWrapper, 1000, true);
 
             mediaViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 if(newValue.doubleValue() < menuController.menu.getPrefWidth()){

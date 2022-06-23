@@ -20,6 +20,8 @@ public class Mp3Item implements MediaItem{
     String album;
     String artist;
 
+    File subtitles;
+
     Mp3Item(File file){
         this.file = file;
 
@@ -50,6 +52,12 @@ public class Mp3Item implements MediaItem{
     public File getFile() {return this.file;}
 
     @Override
+    public File getSubtitles() {
+        return subtitles;
+    }
+
+
+    @Override
     public Duration getDuration() {
         return null;
     }
@@ -67,5 +75,10 @@ public class Mp3Item implements MediaItem{
     @Override
     public Image getCover() {
         return null;
+    }
+
+    @Override
+    public void setSubtitles(File file){
+        this.subtitles = file;
     }
 }

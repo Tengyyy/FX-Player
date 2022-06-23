@@ -59,6 +59,7 @@ public class ControlBarController implements Initializable {
     MainController mainController;
     SettingsController settingsController;
     MenuController menuController;
+    CaptionsController captionsController;
 
 
     public double volumeValue;
@@ -98,7 +99,7 @@ public class ControlBarController implements Initializable {
             fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBarWrapper, 0, false);
             nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, controlBarWrapper, 0, false);
             previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P)", previousVideoButton, controlBarWrapper, 0, false);
-            captions = new ControlTooltip("Subtitles/closed captions (c)", captionsButton, controlBarWrapper, 0, false);
+            captions = new ControlTooltip("Subtitles/CC not selected", captionsButton, controlBarWrapper, 0, false);
         });
 
         previousVideoSVG = new SVGPath();
@@ -162,6 +163,7 @@ public class ControlBarController implements Initializable {
         settingsIcon.setShape(settingsSVG);
         fullScreenIcon.setShape(maximizeSVG);
 
+        captionsIcon.getStyleClass().add("controlIconDisabled");
 
 
         playButton.setBackground(Background.EMPTY);
@@ -355,11 +357,12 @@ public class ControlBarController implements Initializable {
 
     }
 
-    public void init(MainController mainController, SettingsController settingsController, MenuController menuController, MediaInterface mediaInterface) {
+    public void init(MainController mainController, SettingsController settingsController, MenuController menuController, MediaInterface mediaInterface, CaptionsController captionsController) {
         this.mainController = mainController;
         this.settingsController = settingsController;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
+        this.captionsController = captionsController;
 
         mouseEventTracker = new MouseEventTracker(4, mainController, this, settingsController); // creates instance of the MouseEventTracker class which keeps track of when to hide and show the control-bar
 
@@ -586,21 +589,18 @@ public class ControlBarController implements Initializable {
 
 
     public void openCaptions() {
-        mainController.captionsOn = true;
 
-        if (settingsController.settingsOpen) {
-            settingsController.closeSettings();
-        }
+        if(!captionsController.captionsSelected) return;
+
+        captionsController.captionsOn = true;
 
         AnimationsClass.scaleAnimation(100, captionsButtonLine, 0, 1, 1, 1, false, 1, true);
-
     }
 
     public void closeCaptions() {
-        mainController.captionsOn = false;
+        captionsController.captionsOn = false;
 
         AnimationsClass.scaleAnimation(100, captionsButtonLine, 1, 0, 1, 1, false, 1, true);
-
     }
 
     public void settingsButtonClick() {
@@ -626,10 +626,20 @@ public class ControlBarController implements Initializable {
     }
 
     public void captionsButtonClick() {
-        if (!mainController.captionsOn)
+
+        if(settingsController.settingsOpen) {
+            settingsController.closeSettings();
+            return;
+        }
+
+        if(!captionsController.captionsSelected) return;
+
+        if (!captionsController.captionsOn)
             openCaptions();
         else
             closeCaptions();
+
+        captionsController.captionsPane.captionsToggle.fire();
     }
 
     public void durationSliderHoverOn() {
@@ -674,17 +684,17 @@ public class ControlBarController implements Initializable {
     public void controlButtonHoverOn(StackPane stackPane){
         Region icon = (Region) stackPane.getChildren().get(1);
 
-        AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+        if((stackPane.equals(captionsButtonPane) && captionsController.captionsSelected) || !stackPane.equals(captionsButtonPane)) AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+        else AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
     }
 
 
     public void controlButtonHoverOff(StackPane stackPane){
         Region icon = (Region) stackPane.getChildren().get(1);
 
-        AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
-
+        if((stackPane.equals(captionsButtonPane) && captionsController.captionsSelected) || !stackPane.equals(captionsButtonPane)) AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+        else AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
     }
-
 
 
 }

@@ -33,6 +33,7 @@ public class App extends Application {
     ControlBarController controlBarController;
     SettingsController settingsController;
     MenuController menuController;
+    CaptionsController captionsController;
 
     MediaInterface mediaInterface;
 
@@ -99,6 +100,8 @@ public class App extends Application {
             settingsController = mainController.getSettingsController();
 
             menuController = mainController.getMenuController();
+
+            captionsController = mainController.getCaptionsController();
 
             mediaInterface = mainController.getMediaInterface();
 
@@ -440,11 +443,15 @@ public class App extends Application {
                     case C: {
                         controlBarController.mouseEventTracker.move();
 
-                        if (mainController.captionsOn) {
+                        if(!captionsController.captionsSelected) return;
+
+                        if (captionsController.captionsOn) {
                             controlBarController.closeCaptions();
                         } else {
                             controlBarController.openCaptions();
                         }
+
+                        captionsController.captionsPane.captionsToggle.fire();
                     }
                     break;
 

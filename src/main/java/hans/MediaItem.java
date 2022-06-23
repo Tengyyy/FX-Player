@@ -21,6 +21,8 @@ public interface MediaItem {
 
     File getFile();
 
+    File getSubtitles();
+
     Duration getDuration();
 
     String getArtist();
@@ -28,4 +30,6 @@ public interface MediaItem {
     String getTitle();
 
     Image getCover();
+
+    void setSubtitles(File file);
 }

@@ -45,6 +45,7 @@ public class SettingsController {
     boolean playbackSpeedPaneOpen = false;
     boolean customSpeedPaneOpen = false;
     boolean playbackOptionsPaneOpen = false;
+    boolean captionsPaneOpen = false;
 
     Rectangle clip = new Rectangle();
 
@@ -91,12 +92,12 @@ public class SettingsController {
         settingsHomeController = new SettingsHomeController(this);
         playbackOptionsController = new PlaybackOptionsController(this);
         playbackSpeedController = new PlaybackSpeedController(this);
-        captionsController = new CaptionsController(this);
     }
 
 
-    public void init(MediaInterface mediaInterface){
+    public void init(MediaInterface mediaInterface, CaptionsController captionsController){
         this.mediaInterface = mediaInterface;
+        this.captionsController = captionsController;
     }
 
     public void openSettings(){
@@ -153,14 +154,17 @@ public class SettingsController {
             controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBarWrapper, 0, false);
             controlBarController.settings.showTooltip();
 
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
+            if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
+            else controlBarController.captions = new ControlTooltip("Subtitles/CC not selected", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
 
             if (App.fullScreen)
                 controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             else
                 controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
         } else if (controlBarController.captionsButtonHover) {
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
+            if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
+            else controlBarController.captions = new ControlTooltip("Subtitles/CC not selected", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
+
             controlBarController.captions.showTooltip();
 
             controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBarWrapper, 0, false);
@@ -178,11 +182,13 @@ public class SettingsController {
                 controlBarController.fullScreen.showTooltip();
             }
 
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
+            if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
+            else controlBarController.captions = new ControlTooltip("Subtitles/CC not selected", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
 
             controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBarWrapper, 0, false);
         } else {
-            controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
+            if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
+            else controlBarController.captions = new ControlTooltip("Subtitles/CC not selected", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
 
             controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBarWrapper, 0, false);
 
@@ -294,6 +300,34 @@ public class SettingsController {
                 playbackSpeedController.customSpeedPane.customSpeedBox.setVisible(false);
                 playbackSpeedController.customSpeedPane.customSpeedBox.setMouseTransparent(true);
                 playbackSpeedController.customSpeedPane.customSpeedBox.setTranslateY(0);
+                clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            });
+
+            parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+            parallelTransition.play();
+            animating.set(true);
+        }
+        else if(captionsPaneOpen){
+            captionsPaneOpen = false;
+
+            TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+            backgroundTranslate.setFromY(0);
+            backgroundTranslate.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
+
+            TranslateTransition captionsPaneTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsPane.captionsBox);
+            captionsPaneTranslate.setFromY(0);
+            captionsPaneTranslate.setToY(captionsController.captionsPane.captionsBox.getHeight());
+
+            ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, captionsPaneTranslate);
+            parallelTransition.setOnFinished((e) -> {
+                animating.set(false);
+
+                settingsBuffer.setMouseTransparent(true);
+                settingsBackground.setVisible(false);
+                settingsBackground.setMouseTransparent(true);
+                captionsController.captionsPane.captionsBox.setVisible(false);
+                captionsController.captionsPane.captionsBox.setMouseTransparent(true);
+                captionsController.captionsPane.captionsBox.setTranslateY(0);
                 clip.setHeight(settingsHomeController.settingsHome.getHeight());
             });
 

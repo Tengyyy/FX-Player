@@ -20,6 +20,9 @@ public class Mp4Item implements MediaItem{
     File file;
     Media media;
 
+
+    File subtitles;
+
     // class to retrieve and edit movie information (apple tags)
     MetadataEditor mediaMeta;
 
@@ -138,6 +141,11 @@ public class Mp4Item implements MediaItem{
         }
     }
 
+    @Override
+    public void setSubtitles(File file){
+        this.subtitles = file;
+    }
+
 
 
     @Override
@@ -163,6 +171,11 @@ public class Mp4Item implements MediaItem{
     @Override
     public File getFile() {
         return this.file;
+    }
+
+    @Override
+    public File getSubtitles() {
+        return subtitles;
     }
 
     @Override

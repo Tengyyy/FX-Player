@@ -1,30 +1,20 @@
 package hans;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import java.util.*;
 
 
 import javafx.animation.Animation;
-import javafx.animation.PauseTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.GaussianBlur;
 
 
 import javafx.scene.input.DragEvent;
@@ -38,9 +28,7 @@ import javafx.scene.layout.StackPane;
 
 
 import javafx.scene.media.MediaView;
-import javafx.scene.media.SubtitleTrack;
 import javafx.scene.shape.SVGPath;
-import javafx.util.Duration;
 
 import static hans.SVG.*;
 
@@ -69,6 +57,7 @@ public class MainController implements Initializable {
     private MenuController menuController;
 
     SettingsController settingsController;
+    CaptionsController captionsController;
 
     MediaInterface mediaInterface;
 
@@ -76,10 +65,6 @@ public class MainController implements Initializable {
     DoubleProperty mediaViewHeight;
 
     boolean running = false; // media running status
-
-
-    boolean captionsOn = false;
-
 
 
     // counter to keep track of the current node that has focus (used for focus traversing with tab and shift+tab)
@@ -99,12 +84,13 @@ public class MainController implements Initializable {
     public void initialize(URL arg0, ResourceBundle arg1) {
 
         settingsController = new SettingsController(this, controlBarController, menuController);
-
         mediaInterface = new MediaInterface(this, controlBarController, settingsController, menuController);
+        captionsController = new CaptionsController(settingsController, this, mediaInterface, controlBarController, menuController);
 
-        controlBarController.init(this, settingsController, menuController, mediaInterface); // shares references of all the controllers between eachother
-        menuController.init(this, controlBarController, settingsController, mediaInterface);
-        settingsController.init(mediaInterface);
+
+        controlBarController.init(this, settingsController, menuController, mediaInterface, captionsController); // shares references of all the controllers between eachother
+        menuController.init(this, controlBarController, settingsController, mediaInterface, captionsController);
+        settingsController.init(mediaInterface, captionsController);
 
         mediaViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
         System.out.println(mediaViewWrapper.getChildren().size());
@@ -318,5 +304,9 @@ public class MainController implements Initializable {
 
     public MediaInterface getMediaInterface() {
         return mediaInterface;
+    }
+
+    public CaptionsController getCaptionsController(){
+        return captionsController;
     }
 }

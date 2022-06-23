@@ -16,7 +16,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-
 <StackPane fx:id="controlBarWrapper" maxHeight="-Infinity" minHeight="-Infinity" pickOnBounds="false" prefHeight="70.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.ControlBarController">
    <children>
       <StackPane fx:id="shadowBox" mouseTransparent="true" pickOnBounds="false" prefHeight="70.0" style="-fx-background-color: black;" translateY="70.0">
@@ -165,7 +164,7 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </Button>
-                        <Region fx:id="captionsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="17.0" prefWidth="21.0" styleClass="controlIcon">
+                        <Region fx:id="captionsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="17.0" prefWidth="21.0">
                            <effect>
                               <DropShadow height="10.0" radius="4.5" width="10.0" />
                            </effect>

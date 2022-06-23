@@ -27,6 +27,10 @@ public class ActiveBox extends StackPane {
     public void clear(){
         if(this.getChildren().isEmpty()) return;
 
+        if(menuController.activeItem != null && menuController.captionsController.captionsSelected){
+            menuController.captionsController.removeCaptions();
+        }
+
         menuController.activeItem = null;
         menuController.mediaActive.set(false);
 
@@ -43,6 +47,10 @@ public class ActiveBox extends StackPane {
 
 
     public void set(ActiveItem activeItem, boolean pause){
+
+        if(menuController.activeItem != null && menuController.captionsController.captionsSelected){
+            menuController.captionsController.removeCaptions();
+        }
 
         menuController.activeItem = activeItem;
         menuController.mediaActive.set(true);

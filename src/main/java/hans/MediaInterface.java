@@ -165,6 +165,13 @@ public class MediaInterface {
 
         mediaPlayer = new MediaPlayer(mediaItem.getMedia());
 
+        if(settingsController.captionsController.captionsSelected){
+            mediaItem.setSubtitles(settingsController.captionsController.captionsFile);
+        }
+        else if(mediaItem.getSubtitles() != null){
+            settingsController.captionsController.loadCaptions(mediaItem.getSubtitles());
+        }
+
         controlBarController.durationSlider.setValue(0);
 
         mainController.mediaView.setMediaPlayer(mediaPlayer);

@@ -142,7 +142,37 @@ public class SettingsHomeController {
     }
 
     public void openCaptionsPane(){
+        if(settingsController.animating.get()) return;
 
+        settingsController.settingsHomeOpen = false;
+        settingsController.captionsPaneOpen = true;
+
+        settingsController.captionsController.captionsPane.captionsBox.setVisible(true);
+        settingsController.captionsController.captionsPane.captionsBox.setMouseTransparent(false);
+
+        Timeline clipTimeline = new Timeline();
+        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(settingsController.clip.heightProperty(), settingsController.captionsController.captionsPane.captionsBox.getHeight())));
+
+        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), settingsHome);
+        homeTransition.setFromX(0);
+        homeTransition.setToX(-settingsHome.getWidth());
+
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), settingsController.captionsController.captionsPane.captionsBox);
+        captionsTransition.setFromX(settingsHome.getWidth());
+        captionsTransition.setToX(0);
+
+
+        ParallelTransition parallelTransition = new ParallelTransition(clipTimeline, homeTransition, captionsTransition);
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.setOnFinished((e) -> {
+            settingsController.animating.set(false);
+            settingsHome.setVisible(false);
+            settingsHome.setMouseTransparent(true);
+            settingsHome.setTranslateX(0);
+        });
+
+        parallelTransition.play();
+        settingsController.animating.set(true);
     }
 
     public void openVideoChooser(){

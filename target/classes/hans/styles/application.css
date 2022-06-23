@@ -183,7 +183,7 @@
 
 .durationSlider > .thumb {
 	-fx-background-color: red;
-	-fx-padding: 10; /* hides thumb by default */
+	-fx-padding: 8; /* hides thumb by default */
 }
 
 .controlButton {
@@ -198,11 +198,17 @@
     -fx-background-color: rgb(200, 200, 200);
 }
 
-.settingsHomeIcon {
+
+.controlIconDisabled {
+    -fx-background-color: rgb(100, 100, 100);
+}
+
+
+.settingsHomeIcon, #captionsSearchIcon {
     -fx-background-color: white;
 }
 
-.settingsPaneTab {
+.settingsPaneTab, #captionsFileTab {
     -fx-background-color: transparent;
 }
 

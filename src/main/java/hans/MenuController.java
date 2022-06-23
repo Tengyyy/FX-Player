@@ -70,6 +70,7 @@ public class MenuController implements Initializable {
     MainController mainController;
     ControlBarController controlBarController;
     SettingsController settingsController;
+    CaptionsController captionsController;
     MediaInterface mediaInterface;
 
     FileChooser fileChooser = new FileChooser();
@@ -689,11 +690,12 @@ public class MenuController implements Initializable {
     }
 
 
-    public void init(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MediaInterface mediaInterface){
+    public void init(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MediaInterface mediaInterface, CaptionsController captionsController){
         this.mainController = mainController;
         this.controlBarController = controlBarController;
         this.settingsController = settingsController;
         this.mediaInterface = mediaInterface;
+        this.captionsController = captionsController;
     }
 }
 

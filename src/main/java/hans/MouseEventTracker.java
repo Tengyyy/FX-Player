@@ -30,14 +30,14 @@ public class MouseEventTracker {
                 if (mainController.mediaInterface.playing.get() && !settingsController.settingsOpen && !controlBarController.volumeSlider.isValueChanging() && !controlBarController.durationSlider.isValueChanging() && controlBarController.controlBarOpen) {
                     mainController.menuButtonPane.setVisible(false);
                     controlBarController.controlBarWrapper.setMouseTransparent(true);
-                    AnimationsClass.hideControls(controlBarController); // hides controlbar if no mouse or other relevant events have not occurred in the last 4 seconds and the video is not paused, settings page and captions page are not open and user is not seeking video or changing volume
+                    AnimationsClass.hideControls(controlBarController, controlBarController.captionsController); // hides controlbar if no mouse or other relevant events have not occurred in the last 4 seconds and the video is not paused, settings page and captions page are not open and user is not seeking video or changing volume
                 }
             } else if (isNowMoving) {
 
                 if (!controlBarController.controlBarOpen) {
                     mainController.menuButtonPane.setVisible(true);
                     controlBarController.controlBarWrapper.setMouseTransparent(false);
-                    AnimationsClass.displayControls(controlBarController); // displays controlbar if the mouse starts moving or any relevant key is pressed
+                    AnimationsClass.displayControls(controlBarController, controlBarController.captionsController); // displays controlbar if the mouse starts moving or any relevant key is pressed
                 }
             }
         });

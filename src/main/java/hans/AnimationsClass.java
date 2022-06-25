@@ -6,6 +6,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -80,35 +81,61 @@ public class AnimationsClass {
         volumeSliderTranslateTransition3.play();
     }
 
-    public static void displayControls(ControlBarController controlBarController) {
+    public static void displayControls(ControlBarController controlBarController, CaptionsController captionsController) {
+
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox);
+        captionsTransition.setCycleCount(1);
+        captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
+
+        if(captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+            captionsTransition.setToY(-120);
+        }
+        else {
+            captionsTransition.setToY(captionsController.captionsBox.getTranslateY());
+        }
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), controlBarController.controlBarWrapper);
-        translateTransition.setFromY(70);
+        translateTransition.setFromY(controlBarController.controlBarWrapper.getTranslateY());
         translateTransition.setToY(0);
         translateTransition.setCycleCount(1);
-        translateTransition.setInterpolator(Interpolator.LINEAR);
-        translateTransition.play();
-        translateTransition.setOnFinished((e) -> {
+
+
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition);
+        parallelTransition.setInterpolator(Interpolator.LINEAR);
+        parallelTransition.setOnFinished((e) -> {
             controlBarController.controlBarOpen = true;
 
         });
 
+        parallelTransition.play();
+
         controlBarController.mainController.menuButton.setVisible(true);
     }
 
-    public static void hideControls(ControlBarController controlBarController) {
+    public static void hideControls(ControlBarController controlBarController, CaptionsController captionsController) {
+
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox);
+        captionsTransition.setCycleCount(1);
+        captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
+
+        if(captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+            captionsTransition.setToY(-50);
+        }
+        else {
+            captionsTransition.setToY(captionsController.captionsBox.getTranslateY());
+        }
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), controlBarController.controlBarWrapper);
         translateTransition.setFromY(controlBarController.controlBarWrapper.getTranslateY());
         translateTransition.setToY(70);
         translateTransition.setCycleCount(1);
-        translateTransition.setInterpolator(Interpolator.LINEAR);
 
-        translateTransition.play();
-
-        translateTransition.setOnFinished((e) -> {
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition);
+        parallelTransition.setInterpolator(Interpolator.LINEAR);
+        parallelTransition.setOnFinished((e) -> {
             controlBarController.controlBarOpen = false;
             controlBarController.mouseEventTracker.mouseMoving.set(false);
         });
+        parallelTransition.play();
 
         controlBarController.mainController.menuButton.setVisible(false);
     }

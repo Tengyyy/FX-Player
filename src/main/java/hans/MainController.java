@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 
 
@@ -93,7 +94,7 @@ public class MainController implements Initializable {
         settingsController.init(mediaInterface, captionsController);
 
         mediaViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
-        System.out.println(mediaViewWrapper.getChildren().size());
+
 
         // declaring media control images
         menuSVG = new SVGPath();
@@ -255,7 +256,7 @@ public class MainController implements Initializable {
         if(settingsController.settingsOpen) settingsController.closeSettings();
 
        if(mediaInterface.playing.get())controlBarController.mouseEventTracker.hide();
-       else AnimationsClass.hideControls(controlBarController);
+       else AnimationsClass.hideControls(controlBarController, captionsController);
 
     }
 

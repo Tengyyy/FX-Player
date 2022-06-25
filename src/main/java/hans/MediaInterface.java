@@ -192,6 +192,32 @@ public class MediaInterface {
                 controlBarController.durationSlider.setValue(newTime.toSeconds());
             }
 
+
+            //////////////////////             SUBTITLES              //////////////////////
+            if(!menuController.captionsController.subtitles.isEmpty() &&
+                    menuController.captionsController.captionsPosition >= 0 &&
+                    menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size()){
+
+
+                if(newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && newTime.toMillis() <= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && !menuController.captionsController.showedCurrentCaption){
+                    String text = menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).text;
+                    System.out.println(text);
+
+                    // if the subtitle contains a new line character then split the subtitle into two and add the part after the new line onto another label
+                    System.out.println(text.contains("\n"));
+                    menuController.captionsController.showedCurrentCaption = true;
+                }
+                else if(newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition > 0){
+                    menuController.captionsController.captionsPosition--;
+                    menuController.captionsController.showedCurrentCaption = false;
+                }
+                else if(menuController.captionsController.captionsPosition <  menuController.captionsController.subtitles.size() - 1 && newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut){
+                    menuController.captionsController.captionsPosition++;
+                    menuController.captionsController.showedCurrentCaption = false;
+                }
+
+            }
+
         });
 
 

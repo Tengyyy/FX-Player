@@ -7,6 +7,7 @@ module hans {
     requires jcodec;
     requires MaterialFX;
     requires com.jfoenix;
+    requires org.apache.logging.log4j;
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;

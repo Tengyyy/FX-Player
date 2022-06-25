@@ -656,11 +656,11 @@ public class ControlBarController implements Initializable {
     }
 
     public void displayControls() {
-        AnimationsClass.displayControls(this);
+        AnimationsClass.displayControls(this, captionsController);
     }
 
     public void hideControls() {
-        AnimationsClass.hideControls(this);
+        AnimationsClass.hideControls(this, captionsController);
     }
 
 

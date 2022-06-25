@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
@@ -68,5 +69,9 @@ public class Utilities {
         byte[] bytes = new byte[4];
         ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).putInt(key);
         return org.jcodec.platform.Platform.stringFromCharset(bytes, "iso8859-1");
+    }
+
+    public static String[] splitLines(String str) {
+        return str.split("\\R", 2);
     }
 }

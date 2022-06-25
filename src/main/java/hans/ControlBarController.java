@@ -592,13 +592,13 @@ public class ControlBarController implements Initializable {
 
         if(!captionsController.captionsSelected) return;
 
-        captionsController.captionsOn = true;
+        captionsController.captionsOn.set(true);
 
         AnimationsClass.scaleAnimation(100, captionsButtonLine, 0, 1, 1, 1, false, 1, true);
     }
 
     public void closeCaptions() {
-        captionsController.captionsOn = false;
+        captionsController.captionsOn.set(false);
 
         AnimationsClass.scaleAnimation(100, captionsButtonLine, 1, 0, 1, 1, false, 1, true);
     }
@@ -634,7 +634,7 @@ public class ControlBarController implements Initializable {
 
         if(!captionsController.captionsSelected) return;
 
-        if (!captionsController.captionsOn)
+        if (!captionsController.captionsOn.get())
             openCaptions();
         else
             closeCaptions();

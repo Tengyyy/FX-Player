@@ -445,7 +445,7 @@ public class App extends Application {
 
                         if(!captionsController.captionsSelected) return;
 
-                        if (captionsController.captionsOn) {
+                        if (captionsController.captionsOn.get()) {
                             controlBarController.closeCaptions();
                         } else {
                             controlBarController.openCaptions();

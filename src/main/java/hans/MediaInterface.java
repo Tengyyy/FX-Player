@@ -199,25 +199,46 @@ public class MediaInterface {
                     menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size()){
 
 
-                if(newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && newTime.toMillis() <= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && !menuController.captionsController.showedCurrentCaption){
+                if(newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && !menuController.captionsController.showedCurrentCaption){
                     String text = menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).text;
-                    System.out.println(text);
 
                     // if the subtitle contains a new line character then split the subtitle into two and add the part after the new line onto another label
-                    System.out.println(text.contains("\n"));
+
+                    String[] subtitleLines = Utilities.splitLines(text);
+
+                    if(subtitleLines.length == 2){
+                        menuController.captionsController.captionsLabel1.setOpacity(1);
+                        menuController.captionsController.captionsLabel2.setOpacity(1);
+                        menuController.captionsController.captionsLabel1.setText(subtitleLines[0]);
+                        menuController.captionsController.captionsLabel2.setText(subtitleLines[1]);
+                    }
+                    else {
+                        menuController.captionsController.captionsLabel1.setOpacity(0);
+                        menuController.captionsController.captionsLabel2.setOpacity(1);
+                        menuController.captionsController.captionsLabel2.setText(subtitleLines[0]);
+                    }
+
                     menuController.captionsController.showedCurrentCaption = true;
                 }
+                else if((newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && menuController.captionsController.captionsPosition >= menuController.captionsController.subtitles.size() - 1) || (newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn)){
+                    menuController.captionsController.captionsLabel1.setOpacity(0);
+                    menuController.captionsController.captionsLabel2.setOpacity(0);
+                }
                 else if(newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition > 0){
-                    menuController.captionsController.captionsPosition--;
-                    menuController.captionsController.showedCurrentCaption = false;
+                    do {
+                        menuController.captionsController.captionsPosition--;
+                        menuController.captionsController.showedCurrentCaption = false;
+                    }
+                    while (newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn);
                 }
-                else if(menuController.captionsController.captionsPosition <  menuController.captionsController.subtitles.size() - 1 && newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut){
-                    menuController.captionsController.captionsPosition++;
-                    menuController.captionsController.showedCurrentCaption = false;
+                else if(menuController.captionsController.captionsPosition <  menuController.captionsController.subtitles.size() - 1 && newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn){
+                    do {
+                        menuController.captionsController.captionsPosition++;
+                        menuController.captionsController.showedCurrentCaption = false;
+                    }
+                    while (menuController.captionsController.captionsPosition <  menuController.captionsController.subtitles.size() - 1 && newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn);
                 }
-
             }
-
         });
 
 

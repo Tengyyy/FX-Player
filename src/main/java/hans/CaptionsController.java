@@ -4,6 +4,10 @@ package hans;
 import hans.SRTParser.srt.SRTParser;
 import hans.SRTParser.srt.Subtitle;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -31,7 +35,7 @@ public class CaptionsController {
     int captionsPosition = 0;
 
     boolean captionsSelected = false;
-    boolean captionsOn = false;
+    BooleanProperty captionsOn = new SimpleBooleanProperty();
     boolean showedCurrentCaption = false;
 
 
@@ -50,7 +54,6 @@ public class CaptionsController {
 
     static Color background = Color.rgb(red, green, blue, backgroundOpacity);
 
-    double captionsMaxY = 0;
 
     Pos captionsLocation = Pos.BOTTOM_CENTER;
 
@@ -63,12 +66,15 @@ public class CaptionsController {
 
         captionsPane = new CaptionsPane(this);
 
+        captionsOn.set(false);
+
 
         captionsLabel1.setBackground(new Background(new BackgroundFill(background, CornerRadii.EMPTY, Insets.EMPTY)));
         captionsLabel1.setTextFill(textFill);
         captionsLabel1.setText("Test TEST Test");
         captionsLabel1.getStyleClass().add("captionsLabel");
         captionsLabel1.setStyle("-fx-font-family: " + fontFamily + "; -fx-font-size: " + fontSize);
+        captionsLabel1.setOpacity(0);
 
 
         captionsLabel2.setBackground(new Background(new BackgroundFill(background, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -76,6 +82,7 @@ public class CaptionsController {
         captionsLabel2.setText("Halloosss!");
         captionsLabel2.getStyleClass().add("captionsLabel");
         captionsLabel2.setStyle("-fx-font-family: " + fontFamily + "; -fx-font-size: " + fontSize);
+        captionsLabel2.setOpacity(0);
 
 
         captionsBox.setSpacing(spacing);
@@ -84,9 +91,21 @@ public class CaptionsController {
         captionsBox.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         captionsBox.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         captionsBox.getChildren().addAll(captionsLabel1, captionsLabel2);
+        captionsBox.setAlignment(Pos.CENTER);
+        captionsBox.setVisible(false);
 
         StackPane.setAlignment(captionsBox, Pos.BOTTOM_CENTER);
         mainController.mediaViewInnerWrapper.getChildren().add(1, captionsBox);
+
+
+        captionsOn.addListener((observableValue, aBoolean, t1) -> {
+            if(t1){
+                captionsBox.setVisible(true);
+            }
+            else {
+                captionsBox.setVisible(false);
+            }
+        });
 
     }
 
@@ -133,7 +152,7 @@ public class CaptionsController {
             captionsPosition = 0;
             showedCurrentCaption = false;
 
-            if(captionsOn) controlBarController.closeCaptions();
+            if(captionsOn.get()) controlBarController.closeCaptions();
 
             controlBarController.captionsIcon.getStyleClass().clear();
             controlBarController.captionsIcon.getStyleClass().add("controlIconDisabled");

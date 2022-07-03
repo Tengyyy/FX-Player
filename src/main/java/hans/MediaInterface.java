@@ -169,7 +169,7 @@ public class MediaInterface {
             mediaItem.setSubtitles(settingsController.captionsController.captionsFile);
         }
         else if(mediaItem.getSubtitles() != null){
-            settingsController.captionsController.loadCaptions(mediaItem.getSubtitles());
+            settingsController.captionsController.loadCaptions(mediaItem.getSubtitles(), mediaItem.getSubtitlesOn());
         }
 
         controlBarController.durationSlider.setValue(0);
@@ -196,7 +196,8 @@ public class MediaInterface {
             //////////////////////             SUBTITLES              //////////////////////
             if(!menuController.captionsController.subtitles.isEmpty() &&
                     menuController.captionsController.captionsPosition >= 0 &&
-                    menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size()){
+                    menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size() &&
+                    menuController.captionsController.captionsOn.get()){
 
 
                 if(newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && !menuController.captionsController.showedCurrentCaption){

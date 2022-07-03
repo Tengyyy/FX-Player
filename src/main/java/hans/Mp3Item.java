@@ -21,6 +21,7 @@ public class Mp3Item implements MediaItem{
     String artist;
 
     File subtitles;
+    boolean subtitlesOn = false;
 
     Mp3Item(File file){
         this.file = file;
@@ -54,6 +55,16 @@ public class Mp3Item implements MediaItem{
     @Override
     public File getSubtitles() {
         return subtitles;
+    }
+
+    @Override
+    public boolean getSubtitlesOn() {
+        return subtitlesOn;
+    }
+
+    @Override
+    public void setSubtitlesOn(boolean value) {
+        subtitlesOn = value;
     }
 
 

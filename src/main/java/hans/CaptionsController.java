@@ -3,6 +3,8 @@ package hans;
 
 import hans.SRTParser.srt.SRTParser;
 import hans.SRTParser.srt.Subtitle;
+import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -16,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -83,6 +86,8 @@ public class CaptionsController {
 
     Pos captionsLocation = Pos.BOTTOM_CENTER;
 
+    PauseTransition showCaptionsTimer;
+
     CaptionsController(SettingsController settingsController, MainController mainController, MediaInterface mediaInterface, ControlBarController controlBarController, MenuController menuController){
         this.settingsController = settingsController;
         this.mainController = mainController;
@@ -132,9 +137,20 @@ public class CaptionsController {
         captionsOn.addListener((observableValue, aBoolean, t1) -> {
             if(t1){
                 captionsBox.setVisible(true);
+
+                if(menuController.activeItem != null && captionsSelected && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
+                    showCaptionsTimer.stop();
+                }
+
+                captionsLabel1.setOpacity(0);
+                captionsLabel2.setOpacity(0);
             }
             else {
-                captionsBox.setVisible(false);
+                if(showCaptionsTimer == null || showCaptionsTimer.getStatus() != Animation.Status.RUNNING) captionsBox.setVisible(false);
+            }
+
+            if(menuController.activeItem != null){
+                menuController.activeItem.getMediaItem().setSubtitlesOn(t1);
             }
         });
 
@@ -142,7 +158,7 @@ public class CaptionsController {
 
 
 
-    public void loadCaptions(File file){
+    public void loadCaptions(File file, boolean toggleOn){
 
         if(!captionsSelected){
             // enable captions button
@@ -162,6 +178,7 @@ public class CaptionsController {
             captionsPane.currentCaptionsNameLabel.setText(file.getName());
         }
 
+
         if(menuController.activeItem != null){
             menuController.activeItem.getMediaItem().setSubtitles(file);
         }
@@ -171,7 +188,12 @@ public class CaptionsController {
         subtitles = SRTParser.getSubtitlesFromFile(file.getPath(), true);
 
         captionsSelected = true;
+
+        if(!captionsOn.get() && toggleOn){
+            captionsPane.captionsToggle.fire();
+        }
     }
+
 
 
     public void removeCaptions(){
@@ -183,7 +205,17 @@ public class CaptionsController {
             captionsPosition = 0;
             showedCurrentCaption = false;
 
+            boolean temp = false;
+            if(menuController.activeItem != null){
+                temp = menuController.activeItem.getMediaItem().getSubtitlesOn();
+                System.out.println(temp);
+            }
+
+
             if(captionsOn.get()) controlBarController.closeCaptions();
+
+            captionsLabel1.setOpacity(0);
+            captionsLabel2.setOpacity(0);
 
             controlBarController.captionsIcon.getStyleClass().clear();
             controlBarController.captionsIcon.getStyleClass().add("controlIconDisabled");
@@ -194,6 +226,10 @@ public class CaptionsController {
 
             captionsPane.captionsToggle.setSelected(false);
             captionsPane.captionsToggle.setDisable(true);
+
+            if(temp && menuController.activeItem != null){
+                menuController.activeItem.getMediaItem().setSubtitlesOn(true);
+            }
 
         }
     }
@@ -210,6 +246,29 @@ public class CaptionsController {
 
     public void showCaptions(){
         // if necessary, show captions with text "Captions look like this"
+
+        if(menuController.activeItem != null && captionsSelected && captionsOn.get()) return;
+
+        if(showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
+            showCaptionsTimer.playFromStart();
+        }
+        else {
+
+            captionsBox.setVisible(true);
+            captionsLabel1.setOpacity(0);
+
+            captionsLabel2.setOpacity(1);
+            captionsLabel2.setText("Captions look like this");
+
+            showCaptionsTimer = new PauseTransition(Duration.millis(4000));
+            showCaptionsTimer.setOnFinished(e -> {
+                captionsBox.setVisible(false);
+                captionsLabel1.setOpacity(0);
+                captionsLabel2.setOpacity(0);
+            });
+
+            showCaptionsTimer.playFromStart();
+        }
     }
 
 }

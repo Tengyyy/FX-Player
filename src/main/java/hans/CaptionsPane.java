@@ -277,6 +277,6 @@ public class CaptionsPane {
         }
         File selectedFile = fileChooser.showOpenDialog(App.stage);
 
-        if (selectedFile != null) captionsController.loadCaptions(selectedFile);
+        if (selectedFile != null) captionsController.loadCaptions(selectedFile, true);
     }
 }

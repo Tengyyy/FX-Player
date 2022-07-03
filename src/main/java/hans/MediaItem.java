@@ -23,6 +23,10 @@ public interface MediaItem {
 
     File getSubtitles();
 
+    boolean getSubtitlesOn();
+
+    void setSubtitlesOn(boolean value);
+
     Duration getDuration();
 
     String getArtist();

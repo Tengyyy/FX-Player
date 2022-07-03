@@ -229,7 +229,7 @@ public class MediaInterface {
                         menuController.captionsController.captionsPosition--;
                         menuController.captionsController.showedCurrentCaption = false;
                     }
-                    while (newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn);
+                    while (newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition > 0);
                 }
                 else if(menuController.captionsController.captionsPosition <  menuController.captionsController.subtitles.size() - 1 && newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn){
                     do {

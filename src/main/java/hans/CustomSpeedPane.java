@@ -44,12 +44,11 @@ public class CustomSpeedPane {
 
         backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
 
-        customSpeedBox.setMinSize(235, 150);
         customSpeedBox.setPrefSize(235, 150);
         customSpeedBox.setMaxSize(235, 150);
         customSpeedBox.getChildren().addAll(customSpeedTitle, sliderPane, customSpeedLabel);
         customSpeedBox.setAlignment(Pos.BOTTOM_CENTER);
-        StackPane.setAlignment(customSpeedBox, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(customSpeedBox, Pos.BOTTOM_RIGHT);
 
         customSpeedBox.setVisible(false);
         customSpeedBox.setMouseTransparent(true);
@@ -150,8 +149,7 @@ public class CustomSpeedPane {
     public void closeCustomSpeed(){
         if(playbackSpeedController.settingsController.animating.get()) return;
 
-        playbackSpeedController.settingsController.customSpeedPaneOpen = false;
-        playbackSpeedController.settingsController.playbackSpeedPaneOpen = true;
+        playbackSpeedController.settingsController.settingsState = SettingsState.PLAYBACK_SPEED_OPEN;
 
         playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(true);
         playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(false);

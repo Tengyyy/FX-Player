@@ -41,19 +41,18 @@ public class PlaybackSpeedPane{
         backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.getStyleClass().add("playbackSpeedScroll");
-        scrollPane.setMinSize(235, 170);
+        scrollPane.getStyleClass().add("settingsScroll");
         scrollPane.setPrefSize(235, 349);
         scrollPane.setMaxSize(235, 349);
         scrollPane.setContent(playbackSpeedBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
 
-        StackPane.setAlignment(scrollPane, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         playbackSpeedBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        playbackSpeedBox.setMinSize(235, 170);
+        playbackSpeedBox.setMinSize(235, 346);
         playbackSpeedBox.setPrefSize(235, 346);
         playbackSpeedBox.setMaxSize(235, 346);
         playbackSpeedBox.setPadding(new Insets(8, 0, 8, 0));
@@ -110,8 +109,7 @@ public class PlaybackSpeedPane{
     public void closePlaybackSpeedPane(){
         if(playbackSpeedController.settingsController.animating.get()) return;
 
-        playbackSpeedController.settingsController.playbackSpeedPaneOpen = false;
-        playbackSpeedController.settingsController.settingsHomeOpen = true;
+        playbackSpeedController.settingsController.settingsState = SettingsState.HOME_OPEN;
 
         playbackSpeedController.settingsController.settingsHomeController.settingsHome.setVisible(true);
         playbackSpeedController.settingsController.settingsHomeController.settingsHome.setMouseTransparent(false);
@@ -145,8 +143,7 @@ public class PlaybackSpeedPane{
     public void openCustomSpeedPane(){
         if(playbackSpeedController.settingsController.animating.get()) return;
 
-        playbackSpeedController.settingsController.playbackSpeedPaneOpen = false;
-        playbackSpeedController.settingsController.customSpeedPaneOpen = true;
+        playbackSpeedController.settingsController.settingsState = SettingsState.CUSTOM_SPEED_OPEN;
 
         playbackSpeedController.customSpeedPane.customSpeedBox.setVisible(true);
         playbackSpeedController.customSpeedPane.customSpeedBox.setMouseTransparent(false);

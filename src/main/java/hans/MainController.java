@@ -100,7 +100,7 @@ public class MainController implements Initializable {
         menuSVG = new SVGPath();
         menuSVG.setContent(App.svgMap.get(MENU));
 
-        sizeMultiplier.set(0.7);
+        sizeMultiplier.set(0.65);
 
         actionIndicator = new ActionIndicator(this);
         forwardsIndicator = new SeekIndicator(this, true);
@@ -154,22 +154,57 @@ public class MainController implements Initializable {
                 }
             });
 
-                mediaViewInnerWrapper.widthProperty().addListener((observableValue, oldValue, newValue) -> {
-                    if(oldValue.doubleValue() < 1200 && newValue.doubleValue() >= 1200){
-                        sizeMultiplier.set(1);
-                        if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
-                        forwardsIndicator.resize();
-                        backwardsIndicator.resize();
-                        valueIndicator.resize();
-                    }
-                    else if(oldValue.doubleValue() >= 1200 & newValue.doubleValue() < 1200){
-                        sizeMultiplier.set(0.7);
-                        if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
-                        forwardsIndicator.resize();
-                        backwardsIndicator.resize();
-                        valueIndicator.resize();
-                    }
-                });
+            mediaViewInnerWrapper.widthProperty().addListener((observableValue, oldValue, newValue) -> {
+
+                if(oldValue.doubleValue() >= 800 && newValue.doubleValue() < 800){
+                    captionsController.mediaWidthMultiplier.set(0.4);
+                    captionsController.resizeCaptions();
+                }
+                else if((oldValue.doubleValue() < 800 || oldValue.doubleValue() >= 1200) && (newValue.doubleValue() >= 800 && newValue.doubleValue() < 1200)){
+                    captionsController.mediaWidthMultiplier.set(0.6);
+                    captionsController.resizeCaptions();
+
+                    sizeMultiplier.set(0.65);
+                    if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                    forwardsIndicator.resize();
+                    backwardsIndicator.resize();
+                    valueIndicator.resize();
+
+                }
+                else if((oldValue.doubleValue() < 1200 || oldValue.doubleValue() >= 1800) && (newValue.doubleValue() >= 1200 && newValue.doubleValue() < 1800)){
+                    captionsController.mediaWidthMultiplier.set(0.8);
+                    captionsController.resizeCaptions();
+
+                    sizeMultiplier.set(0.8);
+                    if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                    forwardsIndicator.resize();
+                    backwardsIndicator.resize();
+                    valueIndicator.resize();
+
+                }
+                else if((oldValue.doubleValue() < 1800 || oldValue.doubleValue() >= 2400) && (newValue.doubleValue() >= 1800 && newValue.doubleValue() < 2400)){
+                    captionsController.mediaWidthMultiplier.set(1.0);
+                    captionsController.resizeCaptions();
+
+
+                    sizeMultiplier.set(1);
+                    if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                    forwardsIndicator.resize();
+                    backwardsIndicator.resize();
+                    valueIndicator.resize();
+
+                }
+                else if(oldValue.doubleValue() < 2400 && newValue.doubleValue() >= 2400){
+                    captionsController.mediaWidthMultiplier.set(1.2);
+                    captionsController.resizeCaptions();
+
+                    sizeMultiplier.set(1.2);
+                    if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                    forwardsIndicator.resize();
+                    backwardsIndicator.resize();
+                    valueIndicator.resize();
+                }
+            });
         });
 
         mediaView.focusedProperty()
@@ -212,7 +247,7 @@ public class MainController implements Initializable {
         // Clicking on the mediaview node will close the settings tab if its open or
         // otherwise play/pause/replay the video
 
-        if (settingsController.settingsOpen) {
+        if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         }
         else if(mediaInterface.mediaPlayer != null){
@@ -253,7 +288,7 @@ public class MainController implements Initializable {
         actionIndicator.setIcon(PLUS);
         actionIndicator.setVisible(true);
 
-        if(settingsController.settingsOpen) settingsController.closeSettings();
+        if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 
        if(mediaInterface.playing.get())controlBarController.mouseEventTracker.hide();
        else AnimationsClass.hideControls(controlBarController, captionsController);

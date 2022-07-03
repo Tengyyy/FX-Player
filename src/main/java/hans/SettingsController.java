@@ -1,6 +1,5 @@
 package hans;
 
-import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -10,17 +9,9 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-
-import java.util.ArrayList;
 
 public class SettingsController {
 
@@ -40,17 +31,12 @@ public class SettingsController {
     StackPane settingsBackground = new StackPane();
 
 
-    boolean settingsOpen = false;
-    boolean settingsHomeOpen = false;
-    boolean playbackSpeedPaneOpen = false;
-    boolean customSpeedPaneOpen = false;
-    boolean playbackOptionsPaneOpen = false;
-    boolean captionsPaneOpen = false;
-
     Rectangle clip = new Rectangle();
 
     BooleanProperty animating = new SimpleBooleanProperty(); // animating state of the settings pane
 
+
+    SettingsState settingsState = SettingsState.CLOSED;
 
     static final int ANIMATION_SPEED = 200;
 
@@ -63,8 +49,7 @@ public class SettingsController {
         animating.set(false);
 
         settingsBuffer.setPrefSize(235, 156);
-        settingsBuffer.setMinSize(235, 156);
-        settingsBuffer.setMaxWidth(235);
+        settingsBuffer.setMaxWidth(260);
         settingsBuffer.setClip(clip);
         settingsBuffer.getChildren().add(settingsBackground);
         settingsBuffer.setMouseTransparent(true);
@@ -72,15 +57,18 @@ public class SettingsController {
         settingsBackground.setVisible(false);
         settingsBackground.setMouseTransparent(true);
         StackPane.setMargin(settingsBuffer, new Insets(0, 20, 80, 0));
-        StackPane.setAlignment(settingsBackground, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(settingsBackground, Pos.BOTTOM_RIGHT);
 
 
         Platform.runLater(() -> {
             settingsBuffer.maxHeightProperty().bind(Bindings.subtract(mainController.mediaViewHeight, 120));
-            clip.setWidth(settingsBuffer.getWidth());
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.translateYProperty().bind(Bindings.subtract(settingsBuffer.heightProperty(), clip.heightProperty()));
             settingsBackground.maxHeightProperty().bind(clip.heightProperty());
+
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+            clip.translateXProperty().bind(Bindings.subtract(settingsBuffer.widthProperty(), clip.widthProperty()));
+            settingsBackground.maxWidthProperty().bind(clip.widthProperty());
         });
 
         settingsBuffer.setPickOnBounds(false);
@@ -106,8 +94,7 @@ public class SettingsController {
 
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 0, 45, false, 1, true);
 
-        settingsOpen = true;
-        settingsHomeOpen = true;
+        settingsState = SettingsState.HOME_OPEN;
 
         if (controlBarController.captions.isShowing() || controlBarController.settings.isShowing() || controlBarController.fullScreen.isShowing() || controlBarController.exitFullScreen.isShowing()) {
             controlBarController.captions.hide();
@@ -145,9 +132,6 @@ public class SettingsController {
         if(animating.get()) return;
 
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 45, 0, false, 1, true);
-
-
-        settingsOpen = false;
 
 
         if (controlBarController.settingsButtonHover) {
@@ -198,144 +182,394 @@ public class SettingsController {
                 controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
         }
 
-        if(settingsHomeOpen){
-            settingsHomeOpen = false;
-
-            TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-            backgroundTranslate.setFromY(0);
-            backgroundTranslate.setToY(settingsHomeController.settingsHome.getHeight());
-
-            TranslateTransition homeTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsHomeController.settingsHome);
-            homeTranslate.setFromY(0);
-            homeTranslate.setToY(settingsHomeController.settingsHome.getHeight());
-
-            ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, homeTranslate);
-            parallelTransition.setOnFinished((e) -> {
-                animating.set(false);
-
-                settingsBuffer.setMouseTransparent(true);
-                settingsBackground.setVisible(false);
-                settingsBackground.setMouseTransparent(true);
-                settingsHomeController.settingsHome.setVisible(false);
-                settingsHomeController.settingsHome.setMouseTransparent(true);
-            });
-            parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-            parallelTransition.play();
-            animating.set(true);
-        }
-        else if(playbackOptionsPaneOpen){
-            playbackOptionsPaneOpen = false;
-
-            TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-            backgroundTranslate.setFromY(0);
-            backgroundTranslate.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
-
-            TranslateTransition playbackOptionsTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), playbackOptionsController.playbackOptionsBox);
-            playbackOptionsTranslate.setFromY(0);
-            playbackOptionsTranslate.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
-
-            ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, playbackOptionsTranslate);
-            parallelTransition.setOnFinished((e) -> {
-                animating.set(false);
-
-                settingsBuffer.setMouseTransparent(true);
-                settingsBackground.setVisible(false);
-                settingsBackground.setMouseTransparent(true);
-                playbackOptionsController.playbackOptionsBox.setVisible(false);
-                playbackOptionsController.playbackOptionsBox.setMouseTransparent(true);
-                playbackOptionsController.playbackOptionsBox.setTranslateY(0);
-                clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            });
-
-            parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-            parallelTransition.play();
-            animating.set(true);
-        }
-        else if(playbackSpeedPaneOpen){
-            playbackSpeedPaneOpen = false;
-
-            TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-            backgroundTranslate.setFromY(0);
-            backgroundTranslate.setToY(playbackSpeedController.playbackSpeedPane.scrollPane.getHeight());
-
-            TranslateTransition playbackSpeedTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), playbackSpeedController.playbackSpeedPane.scrollPane);
-            playbackSpeedTranslate.setFromY(0);
-            playbackSpeedTranslate.setToY(playbackSpeedController.playbackSpeedPane.scrollPane.getHeight());
-
-            ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, playbackSpeedTranslate);
-            parallelTransition.setOnFinished((e) -> {
-                animating.set(false);
-
-                settingsBuffer.setMouseTransparent(true);
-                settingsBackground.setVisible(false);
-                settingsBackground.setMouseTransparent(true);
-                playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(false);
-                playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(true);
-                playbackSpeedController.playbackSpeedPane.scrollPane.setTranslateY(0);
-                clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            });
-
-            parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-            parallelTransition.play();
-            animating.set(true);
-        }
-        else if(customSpeedPaneOpen){
-            customSpeedPaneOpen = false;
-
-            TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-            backgroundTranslate.setFromY(0);
-            backgroundTranslate.setToY(playbackSpeedController.customSpeedPane.customSpeedBox.getHeight());
-
-            TranslateTransition customTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), playbackSpeedController.customSpeedPane.customSpeedBox);
-            customTranslate.setFromY(0);
-            customTranslate.setToY(playbackSpeedController.customSpeedPane.customSpeedBox.getHeight());
-
-            ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, customTranslate);
-            parallelTransition.setOnFinished((e) -> {
-                animating.set(false);
-
-                settingsBuffer.setMouseTransparent(true);
-                settingsBackground.setVisible(false);
-                settingsBackground.setMouseTransparent(true);
-                playbackSpeedController.customSpeedPane.customSpeedBox.setVisible(false);
-                playbackSpeedController.customSpeedPane.customSpeedBox.setMouseTransparent(true);
-                playbackSpeedController.customSpeedPane.customSpeedBox.setTranslateY(0);
-                clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            });
-
-            parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-            parallelTransition.play();
-            animating.set(true);
-        }
-        else if(captionsPaneOpen){
-            captionsPaneOpen = false;
-
-            TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-            backgroundTranslate.setFromY(0);
-            backgroundTranslate.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
-
-            TranslateTransition captionsPaneTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsPane.captionsBox);
-            captionsPaneTranslate.setFromY(0);
-            captionsPaneTranslate.setToY(captionsController.captionsPane.captionsBox.getHeight());
-
-            ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, captionsPaneTranslate);
-            parallelTransition.setOnFinished((e) -> {
-                animating.set(false);
-
-                settingsBuffer.setMouseTransparent(true);
-                settingsBackground.setVisible(false);
-                settingsBackground.setMouseTransparent(true);
-                captionsController.captionsPane.captionsBox.setVisible(false);
-                captionsController.captionsPane.captionsBox.setMouseTransparent(true);
-                captionsController.captionsPane.captionsBox.setTranslateY(0);
-                clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            });
-
-            parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-            parallelTransition.play();
-            animating.set(true);
+        switch(settingsState){
+            case HOME_OPEN: closeSettingsFromHome();
+            break;
+            case PLAYBACK_SPEED_OPEN: closeSettingsFromPlaybackSpeed();
+            break;
+            case PLAYBACK_OPTIONS_OPEN: closeSettingsFromPlaybackOptions();
+            break;
+            case CUSTOM_SPEED_OPEN: closeSettingsFromCustomSpeed();
+            break;
+            case CAPTIONS_PANE_OPEN: closeSettingsFromCaptions();
+            break;
+            case CAPTIONS_OPTIONS_OPEN: closeSettingsFromCaptionsOptions();
+            break;
+            case FONT_FAMILY_OPEN: closeSettingsFromFontFamily();
+            break;
+            case FONT_COLOR_OPEN: closeSettingsFromFontColor();
+            break;
+            case FONT_SIZE_OPEN: closeSettingsFromFontSize();
+            break;
+            case BACKGROUND_COLOR_OPEN: closeSettingsFromBackgroundColor();
+            break;
+            case BACKGROUND_OPACITY_OPEN: closeSettingsFromBackgroundOpacity();
+            break;
+            case LINE_SPACING_OPEN: closeSettingsFromLineSpacing();
+            break;
+            case OPACITY_OPEN: closeSettingsFromOpacity();
+            break;
+            default: break;
         }
 
+        settingsState = SettingsState.CLOSED;
+    }
+
+
+    public void closeSettingsFromHome(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(settingsHomeController.settingsHome.getHeight());
+
+        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsHomeController.settingsHome);
+        homeTransition.setFromY(0);
+        homeTransition.setToY(settingsHomeController.settingsHome.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, homeTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            settingsHomeController.settingsHome.setVisible(false);
+            settingsHomeController.settingsHome.setMouseTransparent(true);
+        });
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromPlaybackOptions(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
+
+        TranslateTransition playbackOptionsTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), playbackOptionsController.playbackOptionsBox);
+        playbackOptionsTransition.setFromY(0);
+        playbackOptionsTransition.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, playbackOptionsTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            playbackOptionsController.playbackOptionsBox.setVisible(false);
+            playbackOptionsController.playbackOptionsBox.setMouseTransparent(true);
+            playbackOptionsController.playbackOptionsBox.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromPlaybackSpeed(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(playbackSpeedController.playbackSpeedPane.scrollPane.getHeight());
+
+        TranslateTransition playbackSpeedTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), playbackSpeedController.playbackSpeedPane.scrollPane);
+        playbackSpeedTransition.setFromY(0);
+        playbackSpeedTransition.setToY(playbackSpeedController.playbackSpeedPane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, playbackSpeedTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(false);
+            playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(true);
+            playbackSpeedController.playbackSpeedPane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromCustomSpeed(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(playbackSpeedController.customSpeedPane.customSpeedBox.getHeight());
+
+        TranslateTransition customTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), playbackSpeedController.customSpeedPane.customSpeedBox);
+        customTransition.setFromY(0);
+        customTransition.setToY(playbackSpeedController.customSpeedPane.customSpeedBox.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, customTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            playbackSpeedController.customSpeedPane.customSpeedBox.setVisible(false);
+            playbackSpeedController.customSpeedPane.customSpeedBox.setMouseTransparent(true);
+            playbackSpeedController.customSpeedPane.customSpeedBox.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromCaptions(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
+
+        TranslateTransition captionsPaneTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsPane.captionsBox);
+        captionsPaneTransition.setFromY(0);
+        captionsPaneTransition.setToY(captionsController.captionsPane.captionsBox.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, captionsPaneTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsPane.captionsBox.setVisible(false);
+            captionsController.captionsPane.captionsBox.setMouseTransparent(true);
+            captionsController.captionsPane.captionsBox.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromCaptionsOptions(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(captionsController.captionsOptionsPane.scrollPane.getHeight());
+
+        TranslateTransition captionsOptionsTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.scrollPane);
+        captionsOptionsTransition.setFromY(0);
+        captionsOptionsTransition.setToY(captionsController.captionsOptionsPane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, captionsOptionsTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.scrollPane.setVisible(false);
+            captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromFontFamily(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.getHeight());
+
+        TranslateTransition fontFamilyTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontFamilyPane.scrollPane);
+        fontFamilyTransition.setFromY(0);
+        fontFamilyTransition.setToY(captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, fontFamilyTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setVisible(false);
+            captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromFontColor(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(captionsController.captionsOptionsPane.fontColorPane.scrollPane.getHeight());
+
+        TranslateTransition fontColorTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontColorPane.scrollPane);
+        fontColorTransition.setFromY(0);
+        fontColorTransition.setToY(captionsController.captionsOptionsPane.fontColorPane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, fontColorTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.fontColorPane.scrollPane.setVisible(false);
+            captionsController.captionsOptionsPane.fontColorPane.scrollPane.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.fontColorPane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromFontSize(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(captionsController.captionsOptionsPane.fontSizePane.scrollPane.getHeight());
+
+        TranslateTransition fontSizeTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontSizePane.scrollPane);
+        fontSizeTransition.setFromY(0);
+        fontSizeTransition.setToY(captionsController.captionsOptionsPane.fontSizePane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, fontSizeTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.fontSizePane.scrollPane.setVisible(false);
+            captionsController.captionsOptionsPane.fontSizePane.scrollPane.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.fontSizePane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromBackgroundColor(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.getHeight());
+
+        TranslateTransition backgroundColorTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.backgroundColorPane.scrollPane);
+        backgroundColorTransition.setFromY(0);
+        backgroundColorTransition.setToY(captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, backgroundColorTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setVisible(false);
+            captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromBackgroundOpacity(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.getHeight());
+
+        TranslateTransition backgroundOpacityTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane);
+        backgroundOpacityTransition.setFromY(0);
+        backgroundOpacityTransition.setToY(captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, backgroundOpacityTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setVisible(false);
+            captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromLineSpacing(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.getHeight());
+
+        TranslateTransition lineSpacingTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.lineSpacingPane.scrollPane);
+        lineSpacingTransition.setFromY(0);
+        lineSpacingTransition.setToY(captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, lineSpacingTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setVisible(false);
+            captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromOpacity(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.getHeight());
+
+        TranslateTransition opacityTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontOpacityPane.scrollPane);
+        opacityTransition.setFromY(0);
+        opacityTransition.setToY(captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, opacityTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setVisible(false);
+            captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
     }
 
 }

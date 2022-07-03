@@ -13,6 +13,22 @@
     src: url('../fonts/Roboto-Regular.ttf');
 }
 
+@font-face {
+    src: url('../fonts/AlegreyaSansSC-Regular.ttf');
+}
+
+@font-face {
+    src: url('../fonts/ComicNeue-Regular.ttf');
+}
+
+@font-face {
+    src: url('../fonts/EBGaramond-Regular.ttf');
+}
+
+@font-face {
+    src: url('../fonts/Kalam-Regular.ttf');
+}
+
 .root {
 	-fx-font-family: "Roboto Medium";
 	-fx-font-size: 15;
@@ -36,59 +52,59 @@
 
 
 
-.playbackSpeedScroll > .viewport {
+.settingsScroll > .viewport {
     -fx-background-color: transparent;
 }
 
-.playbackSpeedScroll {
+.settingsScroll {
     -fx-background-color: transparent;
 }
 
-.playbackSpeedScroll .scroll-bar:vertical {
+.settingsScroll .scroll-bar:vertical {
     -fx-background-color: transparent;
 }
 
-.playbackSpeedScroll .scroll-bar:horizontal .track,
-.playbackSpeedScroll .scroll-bar:vertical .track{
+.settingsScroll .scroll-bar:horizontal .track,
+.settingsScroll .scroll-bar:vertical .track{
     -fx-opacity: 0;
     -fx-background-radius : 0.0em;
     -fx-border-radius :0.0em;
 }
 
-.playbackSpeedScroll .scroll-bar:vertical .track-background {
+.settingsScroll .scroll-bar:vertical .track-background {
     -fx-opacity: 0;
 }
 
-.playbackSpeedScroll .scroll-bar:horizontal .increment-button ,
-.playbackSpeedScroll .scroll-bar:horizontal .decrement-button {
+.settingsScroll .scroll-bar:horizontal .increment-button ,
+.settingsScroll .scroll-bar:horizontal .decrement-button {
     -fx-background-color :transparent;
     -fx-background-radius : 0.0em;
     -fx-padding :0.0 0.0 0.0 0.0;
 
 }
 
-.playbackSpeedScroll .scroll-bar:vertical .increment-button ,
-.playbackSpeedScroll .scroll-bar:vertical .decrement-button {
+.settingsScroll .scroll-bar:vertical .increment-button ,
+.settingsScroll .scroll-bar:vertical .decrement-button {
     -fx-background-color : transparent;
     -fx-background-radius : 0.0em;
     -fx-padding :0.0 0.0 0.0 0.0;
 
 }
 
- .playbackSpeedScroll .scroll-bar .increment-arrow,
- .playbackSpeedScroll .scroll-bar .decrement-arrow{
+ .settingsScroll .scroll-bar .increment-arrow,
+ .settingsScroll .scroll-bar .decrement-arrow{
     -fx-shape : " ";    
     -fx-padding :0.0em 0.0;
 }
 
- .playbackSpeedScroll .scroll-bar:vertical .increment-arrow,
- .playbackSpeedScroll .scroll-bar:vertical .decrement-arrow{
+ .settingsScroll .scroll-bar:vertical .increment-arrow,
+ .settingsScroll .scroll-bar:vertical .decrement-arrow{
     -fx-shape : " ";    
     -fx-padding :0.0 0.0em;
 }
 
-.playbackSpeedScroll .scroll-bar:horizontal .thumb,
-.playbackSpeedScroll .scroll-bar:vertical .thumb {
+.settingsScroll .scroll-bar:horizontal .thumb,
+.settingsScroll .scroll-bar:vertical .thumb {
     -fx-background-color :derive(black,90.0%);
     -fx-background-insets : 2.0, 0.0, 0.0;
     -fx-background-radius : 2.0em;

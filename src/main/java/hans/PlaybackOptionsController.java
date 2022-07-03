@@ -36,12 +36,12 @@ public class PlaybackOptionsController {
 
         backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
 
-        playbackOptionsBox.setMinSize(235, 171);
+        //playbackOptionsBox.setMinSize(235, 171);
         playbackOptionsBox.setPrefSize(235, 171);
         playbackOptionsBox.setMaxSize(235, 171);
         playbackOptionsBox.setPadding(new Insets(8, 0, 8, 0));
         playbackOptionsBox.getChildren().add(titleBox);
-        StackPane.setAlignment(playbackOptionsBox, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(playbackOptionsBox, Pos.BOTTOM_RIGHT);
 
         playbackOptionsBox.setVisible(false);
         playbackOptionsBox.setMouseTransparent(true);
@@ -204,8 +204,7 @@ public class PlaybackOptionsController {
     public void closePlaybackOptions(){
         if(settingsController.animating.get()) return;
 
-        settingsController.settingsHomeOpen = true;
-        settingsController.playbackOptionsPaneOpen = false;
+        settingsController.settingsState = SettingsState.HOME_OPEN;
 
         settingsController.settingsHomeController.settingsHome.setVisible(true);
         settingsController.settingsHomeController.settingsHome.setMouseTransparent(false);

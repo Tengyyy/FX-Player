@@ -212,7 +212,7 @@ public class ControlBarController implements Initializable {
         volumeSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
             if (!newValue) {
-                if(settingsController.settingsOpen) settingsController.closeSettings();
+                if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 
                 if(isExited) volumeSliderExit();
             }
@@ -256,7 +256,7 @@ public class ControlBarController implements Initializable {
         durationSlider.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> durationSlider.setValueChanging(false));
 
         durationSlider.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (settingsController.settingsOpen) {
+            if (settingsController.settingsState != SettingsState.CLOSED) {
                 settingsController.closeSettings();
             }
         });
@@ -326,7 +326,7 @@ public class ControlBarController implements Initializable {
 
                 if(menuController.mediaActive.get()) mediaInterface.mediaPlayer.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
 
-                if (settingsController.settingsOpen) { // close settings pane after user finishes seeking media (if its open)
+                if (settingsController.settingsState != SettingsState.CLOSED) { // close settings pane after user finishes seeking media (if its open)
                     settingsController.closeSettings();
                 }
 
@@ -380,7 +380,7 @@ public class ControlBarController implements Initializable {
 
 
     public void playButtonClick1() {
-        if (settingsController.settingsOpen) {
+        if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         } else {
             if (mediaInterface.playing.get()) {
@@ -393,7 +393,7 @@ public class ControlBarController implements Initializable {
 
 
     public void playButtonClick2() {
-        if (settingsController.settingsOpen) {
+        if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         } else {
             replayMedia();
@@ -508,7 +508,7 @@ public class ControlBarController implements Initializable {
             fullScreenIcon.setShape(minimizeSVG);
             App.fullScreen = true;
 
-            if (!settingsController.settingsOpen) {
+            if (settingsController.settingsState == SettingsState.CLOSED) {
                 if (fullScreen.isShowing()) {
                     fullScreen.hide();
                     exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBarWrapper, 0, false);
@@ -521,7 +521,7 @@ public class ControlBarController implements Initializable {
             fullScreenIcon.setShape(maximizeSVG);
             App.fullScreen = false;
 
-            if (!settingsController.settingsOpen) {
+            if (settingsController.settingsState == SettingsState.CLOSED) {
                 if (exitFullScreen.isShowing()) {
                     exitFullScreen.hide();
                     fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBarWrapper, 0, false);
@@ -548,7 +548,7 @@ public class ControlBarController implements Initializable {
 
 
     public void volumeButtonClick() {
-        if (settingsController.settingsOpen) {
+        if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         } else {
             if (!muted)
@@ -570,7 +570,7 @@ public class ControlBarController implements Initializable {
     }
 
     public void playPreviousMedia(){
-        if (settingsController.settingsOpen) {
+        if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         } else {
             if(!menuController.animationsInProgress.isEmpty()) return;
@@ -579,7 +579,7 @@ public class ControlBarController implements Initializable {
     }
 
     public void playNextMedia() {
-        if (settingsController.settingsOpen) {
+        if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         } else {
             if(!menuController.animationsInProgress.isEmpty()) return;
@@ -604,7 +604,7 @@ public class ControlBarController implements Initializable {
     }
 
     public void settingsButtonClick() {
-        if (settingsController.settingsOpen)
+        if (settingsController.settingsState != SettingsState.CLOSED)
             settingsController.closeSettings();
         else
             settingsController.openSettings();
@@ -612,7 +612,7 @@ public class ControlBarController implements Initializable {
 
 
     public void fullScreenButtonClick() {
-        if (settingsController.settingsOpen)
+        if (settingsController.settingsState != SettingsState.CLOSED)
             settingsController.closeSettings();
         else
             fullScreen();
@@ -620,14 +620,14 @@ public class ControlBarController implements Initializable {
 
 
     public void controlBarClick() {
-        if (settingsController.settingsOpen) {
+        if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         }
     }
 
     public void captionsButtonClick() {
 
-        if(settingsController.settingsOpen) {
+        if(settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
             return;
         }

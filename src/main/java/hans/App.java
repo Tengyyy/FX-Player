@@ -137,7 +137,7 @@ public class App extends Application {
 
                         controlBarController.mouseEventTracker.move();
 
-                        if(settingsController.customSpeedPaneOpen){
+                        if(settingsController.settingsState == SettingsState.CUSTOM_SPEED_OPEN){
                             // if custom speed pane is open, dont seek video with arrows
                             settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
                             settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
@@ -170,7 +170,7 @@ public class App extends Application {
 
                         controlBarController.mouseEventTracker.move();
 
-                        if(settingsController.customSpeedPaneOpen){
+                        if(settingsController.settingsState == SettingsState.CUSTOM_SPEED_OPEN){
                             // if custom speed pane is open, dont seek video with arrows
                             settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
                             settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
@@ -229,7 +229,7 @@ public class App extends Application {
                     case ESCAPE: {
 
                         controlBarController.mouseEventTracker.move();
-                        if (settingsController.settingsOpen && !fullScreen) {
+                        if (settingsController.settingsState != SettingsState.CLOSED && !fullScreen) {
                             settingsController.closeSettings();
                         }
                         fullScreen = false;
@@ -237,7 +237,7 @@ public class App extends Application {
                         controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
                         primaryStage.setFullScreen(false);
 
-                        if (!!settingsController.settingsOpen)
+                        if (settingsController.settingsState == SettingsState.CLOSED)
                             controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
 
                     }
@@ -458,7 +458,7 @@ public class App extends Application {
                     case S: {
                         controlBarController.mouseEventTracker.move();
 
-                        if (settingsController.settingsOpen) {
+                        if (settingsController.settingsState != SettingsState.CLOSED) {
                             settingsController.closeSettings();
                         } else {
                             settingsController.openSettings();

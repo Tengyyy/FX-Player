@@ -46,7 +46,6 @@ public class SettingsHomeController {
         tuneSVG.setContent(App.svgMap.get(SVG.TUNE));
 
         settingsController.settingsPane.getChildren().add(settingsHome);
-        settingsHome.setMinSize(235, 156);
         settingsHome.setPrefSize(235, 156);
         settingsHome.setMaxSize(235, 156);
         settingsHome.setPadding(new Insets(8, 0, 8, 0));
@@ -54,7 +53,7 @@ public class SettingsHomeController {
         settingsHome.setVisible(false);
         settingsHome.setMouseTransparent(true);
 
-        StackPane.setAlignment(settingsHome, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(settingsHome, Pos.BOTTOM_RIGHT);
 
 
         playbackOptionsTab = new SettingsHomeTab(this, false, tuneSVG, "Playback options", null);
@@ -73,8 +72,7 @@ public class SettingsHomeController {
     public void openPlaybackOptionsPane(){
         if(settingsController.animating.get()) return;
 
-        settingsController.settingsHomeOpen = false;
-        settingsController.playbackOptionsPaneOpen = true;
+        settingsController.settingsState = SettingsState.PLAYBACK_OPTIONS_OPEN;
 
         settingsController.playbackOptionsController.playbackOptionsBox.setVisible(true);
         settingsController.playbackOptionsController.playbackOptionsBox.setMouseTransparent(false);
@@ -108,8 +106,7 @@ public class SettingsHomeController {
     public void openPlaybackSpeedPane(){
         if(settingsController.animating.get()) return;
 
-        settingsController.settingsHomeOpen = false;
-        settingsController.playbackSpeedPaneOpen = true;
+        settingsController.settingsState = SettingsState.PLAYBACK_SPEED_OPEN;
 
         settingsController.playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(true);
         settingsController.playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(false);
@@ -144,8 +141,7 @@ public class SettingsHomeController {
     public void openCaptionsPane(){
         if(settingsController.animating.get()) return;
 
-        settingsController.settingsHomeOpen = false;
-        settingsController.captionsPaneOpen = true;
+        settingsController.settingsState = SettingsState.CAPTIONS_PANE_OPEN;
 
         settingsController.captionsController.captionsPane.captionsBox.setVisible(true);
         settingsController.captionsController.captionsPane.captionsBox.setMouseTransparent(false);

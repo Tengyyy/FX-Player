@@ -14,19 +14,19 @@
 }
 
 @font-face {
-    src: url('../fonts/AlegreyaSansSC-Regular.ttf');
+    src: url('../fonts/AlegreyaSansSC-Medium.ttf');
 }
 
 @font-face {
-    src: url('../fonts/ComicNeue-Regular.ttf');
+    src: url('../fonts/ComicNeue-Bold.ttf');
 }
 
 @font-face {
-    src: url('../fonts/EBGaramond-Regular.ttf');
+    src: url('../fonts/EBGaramond-Medium.ttf');
 }
 
 @font-face {
-    src: url('../fonts/Kalam-Regular.ttf');
+    src: url('../fonts/Kalam-Bold.ttf');
 }
 
 .root {

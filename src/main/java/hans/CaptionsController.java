@@ -181,6 +181,14 @@ public class CaptionsController {
 
         if(menuController.activeItem != null){
             menuController.activeItem.getMediaItem().setSubtitles(file);
+            if(!menuController.activeItem.subTextWrapper.getChildren().contains(menuController.activeItem.captionsPane)) menuController.activeItem.subTextWrapper.getChildren().add(0, menuController.activeItem.captionsPane);
+        }
+
+        if(menuController.historyBox.index > -1){
+            HistoryItem activeHistoryItem = menuController.history.get(menuController.historyBox.index);
+            activeHistoryItem.getMediaItem().setSubtitles(file);
+            if(toggleOn) activeHistoryItem.getMediaItem().setSubtitlesOn(true);
+            if(!activeHistoryItem.subTextWrapper.getChildren().contains(activeHistoryItem.captionsPane)) activeHistoryItem.subTextWrapper.getChildren().add(0, activeHistoryItem.captionsPane);
         }
 
         this.captionsFile = file;
@@ -208,7 +216,6 @@ public class CaptionsController {
             boolean temp = false;
             if(menuController.activeItem != null){
                 temp = menuController.activeItem.getMediaItem().getSubtitlesOn();
-                System.out.println(temp);
             }
 
 

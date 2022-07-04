@@ -165,11 +165,13 @@ public class MediaInterface {
 
         mediaPlayer = new MediaPlayer(mediaItem.getMedia());
 
-        if(settingsController.captionsController.captionsSelected){
-            mediaItem.setSubtitles(settingsController.captionsController.captionsFile);
-        }
-        else if(mediaItem.getSubtitles() != null){
+        if(mediaItem.getSubtitles() != null){
             settingsController.captionsController.loadCaptions(mediaItem.getSubtitles(), mediaItem.getSubtitlesOn());
+        }
+        else if(settingsController.captionsController.captionsSelected){
+            mediaItem.setSubtitles(settingsController.captionsController.captionsFile);
+            if(menuController.captionsController.captionsOn.get()) mediaItem.setSubtitlesOn(true);
+            if(menuController.activeItem != null && !menuController.activeItem.subTextWrapper.getChildren().contains(menuController.activeItem.captionsPane)) menuController.activeItem.subTextWrapper.getChildren().add(0, menuController.activeItem.captionsPane);
         }
 
         controlBarController.durationSlider.setValue(0);

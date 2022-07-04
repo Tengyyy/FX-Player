@@ -6,6 +6,8 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.*;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -27,6 +29,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.jcodec.codecs.common.biari.BitIO;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class QueueItem extends GridPane implements MenuObject{
@@ -97,6 +100,10 @@ public class QueueItem extends GridPane implements MenuObject{
     double minimumY = 0;
     double maximumY = 0;
 
+    StackPane captionsPane;
+    Region captionsIcon;
+    SVGPath captionsPath;
+
     QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, QueueBox queueBox) {
 
         this.mediaItem = mediaItem;
@@ -104,7 +111,7 @@ public class QueueItem extends GridPane implements MenuObject{
         this.mediaInterface = mediaInterface;
         this.queueBox = queueBox;
 
-        column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) to take up all available space
+        column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4);
         this.getRowConstraints().addAll(row1);
 
@@ -117,7 +124,6 @@ public class QueueItem extends GridPane implements MenuObject{
         GridPane.setHalignment(textWrapper, HPos.LEFT);
         GridPane.setHalignment(optionsButtonWrapper, HPos.CENTER);
         GridPane.setHalignment(removeButtonWrapper, HPos.CENTER);
-
 
         this.getStyleClass().add("queueItem");
         this.setOpacity(0);
@@ -201,7 +207,26 @@ public class QueueItem extends GridPane implements MenuObject{
 
         artist.setText(mediaItem.getArtist());
         artist.getStyleClass().add("subText");
-        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
+
+        captionsPane = new StackPane();
+        captionsPane.setMinSize(21, 14);
+        captionsPane.setPrefSize(21, 14);
+        captionsPane.setMaxSize(21, 14);
+        captionsPane.setPadding(new Insets(1, 6, 1, 0));
+        captionsPane.setMouseTransparent(true);
+
+        captionsIcon = new Region();
+        captionsIcon.setId("captionsSelectedIcon");
+        captionsIcon.setMinSize(15, 12);
+        captionsIcon.setPrefSize(15,12);
+        captionsIcon.setMaxSize(15, 12);
+
+        captionsPath = new SVGPath();
+        captionsPath.setContent(App.svgMap.get(SVG.CAPTIONS));
+
+        captionsIcon.setShape(captionsPath);
+        captionsPane.getChildren().add(captionsIcon);
+
 
         String formattedDuration = Utilities.getTime(mediaItem.getDuration());
 
@@ -212,13 +237,17 @@ public class QueueItem extends GridPane implements MenuObject{
         if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
         duration.getStyleClass().add("subText");
 
-        subTextWrapper.setAlignment(Pos.TOP_LEFT);
+        subTextWrapper.setAlignment(Pos.CENTER_LEFT);
         subTextWrapper.getChildren().addAll(artist, duration);
+
+        if(mediaItem.getSubtitles() != null) subTextWrapper.getChildren().add(0, captionsPane);
 
 
         textWrapper.setAlignment(Pos.CENTER_LEFT);
         textWrapper.setPrefHeight(70);
         textWrapper.getChildren().addAll(videoTitle,subTextWrapper);
+
+        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
 
         removeButton.setPrefWidth(30);
         removeButton.setPrefHeight(30);
@@ -427,6 +456,15 @@ public class QueueItem extends GridPane implements MenuObject{
 
         System.out.println("Showing metadata\n");
 
+    }
+
+    @Override
+    public void addSubtitles(File file) {
+        this.getMediaItem().setSubtitles(file);
+        this.getMediaItem().setSubtitlesOn(true);
+
+        if(!subTextWrapper.getChildren().contains(captionsPane))subTextWrapper.getChildren().add(0, captionsPane);
+        //make subtitles selected icon active
     }
 
     @Override

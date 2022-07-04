@@ -22,6 +22,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.net.PasswordAuthentication;
 
 public class ActiveItem extends GridPane implements MenuObject {
@@ -52,7 +53,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
     MenuController menuController;
 
-    Region optionsIcon, playIcon, removeIcon;
+    Region optionsIcon, playIcon, removeIcon, captionsIcon;
 
     ImageView coverImage = new ImageView();
 
@@ -61,13 +62,15 @@ public class ActiveItem extends GridPane implements MenuObject {
     StackPane removeButtonWrapper = new StackPane();
     StackPane optionsButtonWrapper = new StackPane();
 
+    StackPane captionsPane;
+
     ControlTooltip play, remove, options;
 
     boolean mouseHover = false;
 
 
 
-    SVGPath playSVG, pauseSVG, removeSVG, optionsSVG;
+    SVGPath playSVG, pauseSVG, removeSVG, optionsSVG, captionsPath;
 
     // the options popup for this queue item
     MenuItemOptionsPopUp optionsPopUp;
@@ -180,6 +183,25 @@ public class ActiveItem extends GridPane implements MenuObject {
         artist.setText(mediaItem.getArtist());
         artist.getStyleClass().add("subText");
         artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
+
+        captionsPane = new StackPane();
+        captionsPane.setMinSize(21, 14);
+        captionsPane.setPrefSize(21, 14);
+        captionsPane.setMaxSize(21, 14);
+        captionsPane.setPadding(new Insets(1, 6, 1, 0));
+        captionsPane.setMouseTransparent(true);
+
+        captionsIcon = new Region();
+        captionsIcon.setId("captionsSelectedIcon");
+        captionsIcon.setMinSize(15, 12);
+        captionsIcon.setPrefSize(15,12);
+        captionsIcon.setMaxSize(15, 12);
+
+        captionsPath = new SVGPath();
+        captionsPath.setContent(App.svgMap.get(SVG.CAPTIONS));
+
+        captionsIcon.setShape(captionsPath);
+        captionsPane.getChildren().add(captionsIcon);
 
         String formattedDuration = Utilities.getTime(mediaItem.getDuration());
 
@@ -396,6 +418,12 @@ public class ActiveItem extends GridPane implements MenuObject {
     @Override
     public void showMetadata() {
         System.out.println("Showing metadata\n");
+    }
+
+    @Override
+    public void addSubtitles(File file) {
+        menuController.captionsController.loadCaptions(file, true);
+
     }
 
     @Override

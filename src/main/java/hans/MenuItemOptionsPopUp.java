@@ -6,6 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser;
+
+import java.io.File;
 
 public class MenuItemOptionsPopUp extends ContextMenu {
 
@@ -13,6 +16,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
 
     MenuItem playNext = new MenuItem("Play next");
     MenuItem metadata = new MenuItem("Show metadata");
+    MenuItem addSubtitles = new MenuItem("Add subtitles");
 
     double buttonWidth;
     final double popUpWidth = 127; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
@@ -37,11 +41,16 @@ public class MenuItemOptionsPopUp extends ContextMenu {
             menuObject.showMetadata();
         });
 
+        addSubtitles.setOnAction((e) -> {
+            openSubtitleChooser();
+        });
+
 
 
 
         this.getItems().add(playNext);
         this.getItems().add(metadata);
+        this.getItems().add(addSubtitles);
 
         buttonWidth = menuObject.getOptionsButton().getWidth();
 
@@ -51,7 +60,20 @@ public class MenuItemOptionsPopUp extends ContextMenu {
         this.show(menuObjectNode, // might not work
                 menuObject.getOptionsButton().localToScreen(menuObject.getOptionsButton().getBoundsInLocal()).getMinX() + buttonWidth/2 - popUpWidth/2,
                 menuObject.getOptionsButton().localToScreen(menuObject.getOptionsButton().getBoundsInLocal()).getMaxY() + 5);
+    }
 
+
+    public void openSubtitleChooser(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select subtitles");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Subtitles", "*.srt"));
+        fileChooser.setInitialDirectory(menuObject.getMediaItem().getFile().getParentFile());
+
+        File selectedFile = fileChooser.showOpenDialog(App.stage);
+
+        if(selectedFile != null){
+            menuObject.addSubtitles(selectedFile);
+        }
     }
 
 }

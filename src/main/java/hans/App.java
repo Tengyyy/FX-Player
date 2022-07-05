@@ -443,7 +443,7 @@ public class App extends Application {
                     case C: {
                         controlBarController.mouseEventTracker.move();
 
-                        if(!captionsController.captionsSelected) return;
+                        if(!captionsController.captionsSelected || captionsController.captionsDragActive) return;
 
                         if (captionsController.captionsOn.get()) {
                             controlBarController.closeCaptions();

@@ -199,7 +199,8 @@ public class MediaInterface {
             if(!menuController.captionsController.subtitles.isEmpty() &&
                     menuController.captionsController.captionsPosition >= 0 &&
                     menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size() &&
-                    menuController.captionsController.captionsOn.get()){
+                    menuController.captionsController.captionsOn.get() &&
+                    !menuController.captionsController.captionsDragActive){
 
 
                 if(newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && !menuController.captionsController.showedCurrentCaption){

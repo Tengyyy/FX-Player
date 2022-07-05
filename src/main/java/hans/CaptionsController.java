@@ -14,6 +14,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -88,6 +89,25 @@ public class CaptionsController {
 
     PauseTransition showCaptionsTimer;
 
+    boolean captionsDragActive = false;
+    boolean captionsAnimating = false;
+
+    double dragPositionY = 0;
+    double dragPositionX = 0;
+
+    double minimumY = 0;
+    double maximumY = 0;
+
+    double minimumX = 0;
+    double maximumX = 0;
+
+    double startY = 0;
+    double startX = 0;
+
+    double startTranslateY = 0;
+    double startTranslateX = 0;
+
+
     CaptionsController(SettingsController settingsController, MainController mainController, MediaInterface mediaInterface, ControlBarController controlBarController, MenuController menuController){
         this.settingsController = settingsController;
         this.mainController = mainController;
@@ -129,6 +149,66 @@ public class CaptionsController {
         captionsBox.setVisible(false);
         captionsBox.setPadding(new Insets(5, 10, 5, 10));
         captionsBox.setOpacity(defaultTextOpacity);
+        captionsBox.setCursor(Cursor.OPEN_HAND);
+
+
+        captionsBox.setOnMousePressed(e -> {
+            captionsBox.setCursor(Cursor.CLOSED_HAND);
+            captionsBox.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
+            captionsDragActive = true;
+
+            controlBarController.controlBarWrapper.setMouseTransparent(true);
+            settingsController.settingsBuffer.setMouseTransparent(true);
+            mainController.menuButtonPane.setMouseTransparent(true);
+
+            if(showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING) showCaptionsTimer.pause();
+
+        });
+
+        captionsBox.setOnMouseReleased(e -> {
+            captionsBox.setCursor(Cursor.OPEN_HAND);
+            captionsBox.setStyle("-fx-background-color: transparent;");
+            captionsDragActive = false;
+
+            controlBarController.controlBarWrapper.setMouseTransparent(false);
+            settingsController.settingsBuffer.setMouseTransparent(false);
+            mainController.menuButtonPane.setMouseTransparent(false);
+
+            dragPositionY = 0;
+            dragPositionX = 0;
+            minimumY = 0;
+            minimumX = 0;
+            maximumY = 0;
+            maximumX = 0;
+            startY = 0;
+            startX = 0;
+            startTranslateY = 0;
+            startTranslateX = 0;
+
+            if(showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.PAUSED) showCaptionsTimer.playFromStart();
+        });
+
+        captionsBox.setOnDragDetected(e -> {
+
+            dragPositionY = e.getY();
+            dragPositionX = e.getX();
+
+            minimumY = 30; // maximum negative translation that can be applied (30px margin from top edge)
+            minimumX = 70; // 70px from left edge due to the button in top left corner
+
+            maximumY = mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - 120;
+            maximumX = mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - 30;
+
+            startX = captionsBox.getBoundsInParent().getMinX();
+            startY = captionsBox.getBoundsInParent().getMinY();
+
+            startTranslateY = captionsBox.getTranslateY();
+            startTranslateX = captionsBox.getTranslateX();
+
+
+            captionsBox.startFullDrag();
+        });
+
 
         StackPane.setAlignment(captionsBox, Pos.BOTTOM_CENTER);
         mainController.mediaViewInnerWrapper.getChildren().add(1, captionsBox);

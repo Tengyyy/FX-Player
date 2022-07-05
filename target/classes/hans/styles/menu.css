@@ -164,6 +164,10 @@
     -fx-text-fill: #cfcfcf;
 }
 
+#captionsSelectedIcon {
+    -fx-background-color: #cfcfcf;
+}
+
 .optionsButton, .removeButton {
     -fx-background-radius: 100;
     -fx-padding: 0;

@@ -502,6 +502,8 @@ public class ControlBarController implements Initializable {
 
     public void fullScreen() {
         // got to move some of this logic to the main class
+
+        captionsController.cancelDrag();
         App.stage.setFullScreen(!App.stage.isFullScreen());
 
         if (App.stage.isFullScreen()) {

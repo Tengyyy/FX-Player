@@ -5,6 +5,7 @@ import hans.SRTParser.srt.SRTParser;
 import hans.SRTParser.srt.Subtitle;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -12,7 +13,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -91,6 +94,7 @@ public class CaptionsController {
 
     boolean captionsDragActive = false;
     boolean captionsAnimating = false;
+    TranslateTransition captionsTransition;
 
     double dragPositionY = 0;
     double dragPositionX = 0;
@@ -157,6 +161,8 @@ public class CaptionsController {
             captionsBox.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
             captionsDragActive = true;
 
+            if(captionsTransition != null && captionsTransition.getStatus() == Animation.Status.RUNNING) captionsTransition.stop();
+
             controlBarController.controlBarWrapper.setMouseTransparent(true);
             settingsController.settingsBuffer.setMouseTransparent(true);
             mainController.menuButtonPane.setMouseTransparent(true);
@@ -166,12 +172,17 @@ public class CaptionsController {
         });
 
         captionsBox.setOnMouseReleased(e -> {
+
+            if(!captionsDragActive) return;
+
             captionsBox.setCursor(Cursor.OPEN_HAND);
-            captionsBox.setStyle("-fx-background-color: transparent;");
             captionsDragActive = false;
+            captionsAnimating = true;
 
             controlBarController.controlBarWrapper.setMouseTransparent(false);
-            settingsController.settingsBuffer.setMouseTransparent(false);
+
+            if(settingsController.settingsState != SettingsState.CLOSED) settingsController.settingsBuffer.setMouseTransparent(false);
+
             mainController.menuButtonPane.setMouseTransparent(false);
 
             dragPositionY = 0;
@@ -186,6 +197,24 @@ public class CaptionsController {
             startTranslateX = 0;
 
             if(showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.PAUSED) showCaptionsTimer.playFromStart();
+
+            Pos newPosition = findClosestCaptionsPosition(captionsBox.getBoundsInParent().getMinX() + captionsBox.getLayoutBounds().getMaxX()/2, captionsBox.getBoundsInParent().getMinY() + captionsBox.getLayoutBounds().getMaxY()/2);
+
+            Point2D translation = getTranslation(newPosition);
+
+            captionsLocation = newPosition;
+            StackPane.setAlignment(captionsBox, newPosition);
+            captionsBox.setTranslateX(translation.getX());
+            captionsBox.setTranslateY(translation.getY());
+
+            captionsTransition = createTranslateTransition(newPosition);
+            captionsTransition.setOnFinished(ev -> {
+                captionsAnimating = false;
+                captionsBox.setStyle("-fx-background-color: transparent;");
+            });
+
+            captionsTransition.play();
+
         });
 
         captionsBox.setOnDragDetected(e -> {
@@ -356,6 +385,165 @@ public class CaptionsController {
 
             showCaptionsTimer.playFromStart();
         }
+    }
+
+    public Pos findClosestCaptionsPosition( double x, double y){
+
+        Point2D topLeft = new Point2D(70, 30);
+        Point2D topCenter = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX()/2, 30);
+        Point2D topRight = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - 30, 30);
+        Point2D centerRight = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - 30, mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY()/2);
+        Point2D bottomRight = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - 30,mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
+        Point2D bottomCenter = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX()/2, mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
+        Point2D bottomLeft = new Point2D(70, mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
+        Point2D centerLeft = new Point2D(70, mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY()/2);
+
+        ArrayList<Point2D> captionsPositions = new ArrayList<>();
+        captionsPositions.add(topLeft);
+        captionsPositions.add(topCenter);
+        captionsPositions.add(topRight);
+        captionsPositions.add(centerRight);
+        captionsPositions.add(bottomRight);
+        captionsPositions.add(bottomCenter);
+        captionsPositions.add(bottomLeft);
+        captionsPositions.add(centerLeft);
+
+        double currentShortestDistance = Double.MAX_VALUE;
+        Pos currentClosestPosition = null;
+
+        for(int i = 0; i < captionsPositions.size(); i++){
+            double distance = Math.hypot(captionsPositions.get(i).getX() - x, captionsPositions.get(i).getY() - y);
+            if(distance < currentShortestDistance){
+                currentShortestDistance = distance;
+
+                switch (i){
+                    case 0: currentClosestPosition = Pos.TOP_LEFT;
+                        break;
+                    case 1: currentClosestPosition = Pos.TOP_CENTER;
+                        break;
+                    case 2: currentClosestPosition = Pos.TOP_RIGHT;
+                        break;
+                    case 3: currentClosestPosition = Pos.CENTER_RIGHT;
+                        break;
+                    case 4: currentClosestPosition = Pos.BOTTOM_RIGHT;
+                        break;
+                    case 5: currentClosestPosition = Pos.BOTTOM_CENTER;
+                        break;
+                    case 6: currentClosestPosition = Pos.BOTTOM_LEFT;
+                        break;
+                    case 7: currentClosestPosition = Pos.CENTER_LEFT;
+                        break;
+                    default: currentClosestPosition = null;
+                        break;
+                }
+            }
+        }
+
+        return currentClosestPosition;
+    }
+
+    public Point2D getTranslation(Pos position){
+
+        Bounds bounds = captionsBox.getBoundsInParent();
+        Bounds layoutBounds = captionsBox.getLayoutBounds();
+
+        Point2D translation = null;
+
+        switch(position){
+            case TOP_LEFT: translation = new Point2D(bounds.getMinX(), bounds.getMinY());
+                break;
+            case TOP_CENTER: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX()/2 - layoutBounds.getMaxX()/2), bounds.getMinY());
+                break;
+            case TOP_RIGHT: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - layoutBounds.getMaxX()), bounds.getMinY());
+                break;
+            case CENTER_RIGHT: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - layoutBounds.getMaxX()), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY()/2 - layoutBounds.getMaxY()/2));
+                break;
+            case BOTTOM_RIGHT: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - layoutBounds.getMaxX()), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - layoutBounds.getMaxY()));
+                break;
+            case BOTTOM_CENTER: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX()/2 - layoutBounds.getMaxX()/2), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - layoutBounds.getMaxY()));
+                break;
+            case BOTTOM_LEFT: translation = new Point2D(bounds.getMinX(), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - layoutBounds.getMaxY()));
+                break;
+            case CENTER_LEFT: translation = new Point2D(bounds.getMinX(), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY()/2 - layoutBounds.getMaxY()/2));
+                break;
+            default: break;
+        }
+
+        return translation;
+    }
+
+
+    public TranslateTransition createTranslateTransition(Pos position){
+
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(300), captionsBox);
+
+        translateTransition.setFromX(captionsBox.getTranslateX());
+        translateTransition.setFromY(captionsBox.getTranslateY());
+
+        if(position == Pos.CENTER_LEFT || position == Pos.TOP_LEFT || position == Pos.BOTTOM_LEFT){
+            translateTransition.setToX(70);
+        }
+        else if(position == Pos.TOP_RIGHT || position == Pos.CENTER_RIGHT || position == Pos.BOTTOM_RIGHT){
+            translateTransition.setToX(-30);
+        }
+        else {
+            translateTransition.setToX(0);
+        }
+
+        if(position == Pos.TOP_LEFT || position == Pos.TOP_CENTER || position == Pos.TOP_RIGHT){
+            translateTransition.setToY(30);
+        }
+        else if(position == Pos.BOTTOM_LEFT || position == Pos.BOTTOM_CENTER || position == Pos.BOTTOM_RIGHT){
+            translateTransition.setToY(-120);
+        }
+        else {
+            translateTransition.setToY(0);
+        }
+
+        return translateTransition;
+    }
+
+    public void cancelDrag(){
+        if(!captionsDragActive) return;
+
+        captionsBox.setCursor(Cursor.OPEN_HAND);
+        captionsDragActive = false;
+
+        controlBarController.controlBarWrapper.setMouseTransparent(false);
+
+        if(settingsController.settingsState != SettingsState.CLOSED) settingsController.settingsBuffer.setMouseTransparent(false);
+
+        mainController.menuButtonPane.setMouseTransparent(false);
+
+        dragPositionY = 0;
+        dragPositionX = 0;
+        minimumY = 0;
+        minimumX = 0;
+        maximumY = 0;
+        maximumX = 0;
+        startY = 0;
+        startX = 0;
+        startTranslateY = 0;
+        startTranslateX = 0;
+
+        if(showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.PAUSED) showCaptionsTimer.playFromStart();
+
+        Pos newPosition = findClosestCaptionsPosition(captionsBox.getBoundsInParent().getMinX() + captionsBox.getLayoutBounds().getMaxX()/2, captionsBox.getBoundsInParent().getMinY() + captionsBox.getLayoutBounds().getMaxY()/2);
+
+        Point2D translation = getTranslation(newPosition);
+
+        captionsLocation = newPosition;
+        StackPane.setAlignment(captionsBox, newPosition);
+        captionsBox.setTranslateX(translation.getX());
+        captionsBox.setTranslateY(translation.getY());
+
+        captionsTransition = createTranslateTransition(newPosition);
+        captionsTransition.setOnFinished(ev -> {
+            captionsAnimating = false;
+            captionsBox.setStyle("-fx-background-color: transparent;");
+        });
+
+        captionsTransition.play();
     }
 
 }

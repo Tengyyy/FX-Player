@@ -285,6 +285,9 @@ public class MainController implements Initializable {
 
     public void openMenu() {
         if(!menuController.menuInTransition) {
+
+            captionsController.cancelDrag();
+
             menuController.menuInTransition = true;
             menuController.menuOpen = true;
 

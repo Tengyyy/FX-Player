@@ -512,6 +512,9 @@ public class MenuController implements Initializable {
 
     public void closeMenu(){
         if(!menuInTransition) {
+
+            captionsController.cancelDrag();
+
             if(dragResizer.dragging) {
                 dragResizer.dragging = false;
                 dragPane.setCursor(Cursor.DEFAULT);

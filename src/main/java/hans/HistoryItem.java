@@ -212,7 +212,7 @@ public class HistoryItem extends GridPane implements MenuObject{
         if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
         duration.getStyleClass().add("subText");
 
-        subTextWrapper.setAlignment(Pos.TOP_LEFT);
+        subTextWrapper.setAlignment(Pos.CENTER_LEFT);
         subTextWrapper.getChildren().addAll(artist, duration);
 
         if(mediaItem.getSubtitles() != null) subTextWrapper.getChildren().add(0, captionsPane);

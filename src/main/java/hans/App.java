@@ -228,6 +228,8 @@ public class App extends Application {
 
                     case ESCAPE: {
 
+                        captionsController.cancelDrag();
+
                         controlBarController.mouseEventTracker.move();
                         if (settingsController.settingsState != SettingsState.CLOSED && !fullScreen) {
                             settingsController.closeSettings();

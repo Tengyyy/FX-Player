@@ -201,6 +201,8 @@ public class SettingsController {
             break;
             case FONT_SIZE_OPEN: closeSettingsFromFontSize();
             break;
+            case TEXT_ALIGNMENT_OPEN: closeSettingsFromTextAlignment();
+            break;
             case BACKGROUND_COLOR_OPEN: closeSettingsFromBackgroundColor();
             break;
             case BACKGROUND_OPACITY_OPEN: closeSettingsFromBackgroundOpacity();
@@ -451,6 +453,34 @@ public class SettingsController {
             captionsController.captionsOptionsPane.fontSizePane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.fontSizePane.scrollPane.setMouseTransparent(true);
             captionsController.captionsOptionsPane.fontSizePane.scrollPane.setTranslateY(0);
+            clip.setHeight(settingsHomeController.settingsHome.getHeight());
+            clip.setWidth(settingsHomeController.settingsHome.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeSettingsFromTextAlignment(){
+        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromY(0);
+        backgroundTranslate.setToY(captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.getHeight());
+
+        TranslateTransition textAlignmentTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.textAlignmentPane.scrollPane);
+        textAlignmentTransition.setFromY(0);
+        textAlignmentTransition.setToY(captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, textAlignmentTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            settingsBuffer.setMouseTransparent(true);
+            settingsBackground.setVisible(false);
+            settingsBackground.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setVisible(false);
+            captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setMouseTransparent(true);
+            captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setTranslateY(0);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });

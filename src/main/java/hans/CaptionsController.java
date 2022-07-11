@@ -67,6 +67,7 @@ public class CaptionsController {
     int defaultBackgroundGreen = 0;
     int defaultBackgroundBlue = 0;
     double defaultBackgroundOpacity = 0.75;
+    Pos defaultTextAlignment = Pos.CENTER;
 
     Color defaultBackground = Color.rgb(defaultBackgroundRed, defaultBackgroundGreen, defaultBackgroundBlue, defaultBackgroundOpacity);
 
@@ -84,6 +85,7 @@ public class CaptionsController {
     int currentBackgroundGreen = defaultBackgroundGreen;
     int currentBackgroundBlue = defaultBackgroundBlue;
     double currentBackgroundOpacity = defaultBackgroundOpacity;
+    Pos currentTextAlignment = defaultTextAlignment;
 
     Color currentBackground = defaultBackground;
 
@@ -133,7 +135,6 @@ public class CaptionsController {
         captionsLabel1.setOpacity(0);
         captionsLabel1.setPadding(new Insets(2, 4, 2, 4));
 
-
         captionsLabel2.setBackground(new Background(new BackgroundFill(defaultBackground, CornerRadii.EMPTY, Insets.EMPTY)));
         captionsLabel2.setTextFill(defaultTextFill);
         captionsLabel2.setText("Subtitles look like this");
@@ -149,7 +150,7 @@ public class CaptionsController {
         captionsBox.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         captionsBox.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         captionsBox.getChildren().addAll(captionsLabel1, captionsLabel2);
-        captionsBox.setAlignment(Pos.CENTER);
+        captionsBox.setAlignment(defaultTextAlignment);
         captionsBox.setVisible(false);
         captionsBox.setPadding(new Insets(5, 10, 5, 10));
         captionsBox.setOpacity(defaultTextOpacity);

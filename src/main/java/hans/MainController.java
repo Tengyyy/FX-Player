@@ -1,35 +1,43 @@
 package hans;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import java.util.*;
 
 
+//import io.github.palexdev.materialfx.utils.SwingFXUtils;
+import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 
 
-
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Background;
-
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 
 
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.FileChooser;
+import javafx.util.Duration;
+
+import javax.imageio.ImageIO;
 
 import static hans.SVG.*;
 
@@ -80,6 +88,8 @@ public class MainController implements Initializable {
     ValueIndicator valueIndicator;
 
     SimpleDoubleProperty sizeMultiplier = new SimpleDoubleProperty();
+
+    StackPane whitePane = new StackPane();
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -143,6 +153,14 @@ public class MainController implements Initializable {
         });
 
         menuIcon.setShape(menuSVG);
+
+        whitePane.setPrefSize(StackPane.USE_COMPUTED_SIZE, StackPane.USE_COMPUTED_SIZE);
+        whitePane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        whitePane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        whitePane.setMouseTransparent(true);
+        whitePane.setOpacity(0);
+
+        mediaViewWrapper.getChildren().add(whitePane);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBarWrapper, 1000, true);
@@ -340,6 +358,49 @@ public class MainController implements Initializable {
         ActiveItem activeItem = new ActiveItem(temp, menuController, mediaInterface, menuController.activeBox);
         activeItem.play(true);
 
+    }
+
+    public void takeScreenshot(){
+        if(menuController.activeItem == null) return;
+
+        FileChooser fileChooser = new FileChooser();
+
+        //Set extension filter
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG file (*.png)", "*.png"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JPG file (*.jpg)", "*.jpg"));
+
+        double width = menuController.activeItem.getMediaItem().getMedia().getWidth();
+        double height = menuController.activeItem.getMediaItem().getMedia().getHeight();
+        double aspectRatio = width / height;
+
+        double realWidth = Math.min(mediaView.getFitWidth(), mediaView.getFitHeight() * aspectRatio);
+        double realHeight = Math.min(mediaView.getFitHeight(), mediaView.getFitWidth() / aspectRatio);
+
+        WritableImage writableImage = new WritableImage((int) realWidth, (int)realHeight);
+
+        mediaView.snapshot(null, writableImage);
+
+        // Flashing screen animation
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), whitePane);
+        fadeTransition.setFromValue(0);
+        fadeTransition.setToValue(1);
+        fadeTransition.setAutoReverse(true);
+        fadeTransition.setCycleCount(2);
+        fadeTransition.playFromStart();
+
+
+        //Prompt user to select a file
+        File file = fileChooser.showSaveDialog(App.stage);
+
+        if(file != null){
+            try {
+                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, new BufferedImage((int) writableImage.getWidth(), (int) writableImage.getHeight(), BufferedImage.TYPE_INT_RGB));
+
+                //Write the snapshot to the chosen file
+                ImageIO.write(renderedImage, Utilities.getFileExtension(file), file);
+
+            } catch (IOException ex) { ex.printStackTrace(); }
+        }
     }
 
 

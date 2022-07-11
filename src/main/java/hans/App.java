@@ -417,6 +417,12 @@ public class App extends Application {
                     }
                     break;
 
+                    case F12: {
+                        mainController.takeScreenshot();
+                        controlBarController.mouseEventTracker.move();
+                    }
+                    break;
+
                     case SPACE: {
 
                         controlBarController.mouseEventTracker.move();

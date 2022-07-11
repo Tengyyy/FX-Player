@@ -26,12 +26,13 @@ public class CaptionsOptionsPane {
 
     Label captionsOptionsTitleLabel = new Label();
 
-    CaptionsOptionsTab fontFamilyTab, fontColorTab, fontSizeTab, backgroundColorTab, backgroundOpacityTab, lineSpacingTab, fontOpacityTab, resetTab;
+    CaptionsOptionsTab fontFamilyTab, fontColorTab, fontSizeTab, textAlignmentTab, backgroundColorTab, backgroundOpacityTab, lineSpacingTab, fontOpacityTab, resetTab;
 
 
     FontFamilyPane fontFamilyPane;
     FontColorPane fontColorPane;
     FontSizePane fontSizePane;
+    TextAlignmentPane textAlignmentPane;
     BackgroundColorPane backgroundColorPane;
     BackgroundOpacityPane backgroundOpacityPane;
     LineSpacingPane lineSpacingPane;
@@ -45,8 +46,8 @@ public class CaptionsOptionsPane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(265, 349);
-        scrollPane.setMaxSize(265, 349);
+        scrollPane.setPrefSize(265, 384);
+        scrollPane.setMaxSize(265, 384);
         scrollPane.setContent(captionsOptionsBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
@@ -55,9 +56,9 @@ public class CaptionsOptionsPane {
 
 
         captionsOptionsBox.setAlignment(Pos.BOTTOM_CENTER);
-        captionsOptionsBox.setMinSize(265, 346);
-        captionsOptionsBox.setPrefSize(265, 346);
-        captionsOptionsBox.setMaxSize(265, 346);
+        captionsOptionsBox.setMinSize(265, 381);
+        captionsOptionsBox.setPrefSize(265, 381);
+        captionsOptionsBox.setMaxSize(265, 381);
         captionsOptionsBox.setPadding(new Insets(8, 5, 8, 0));
         captionsOptionsBox.getChildren().add(captionsOptionsTitle);
 
@@ -98,6 +99,7 @@ public class CaptionsOptionsPane {
         fontFamilyTab = new CaptionsOptionsTab(this, captionsController, true, true, "Font family", "Sans-Serif Medium");
         fontColorTab = new CaptionsOptionsTab(this, captionsController, true, true, "Font color", "White");
         fontSizeTab = new CaptionsOptionsTab(this, captionsController, true, true, "Font size", "100%");
+        textAlignmentTab = new CaptionsOptionsTab(this, captionsController, true, true, "Text alignment", "Center");
         backgroundColorTab = new CaptionsOptionsTab(this, captionsController, true, true, "Background color", "Black");
         backgroundOpacityTab = new CaptionsOptionsTab(this, captionsController, true, true, "Background opacity", "75%");
         lineSpacingTab = new CaptionsOptionsTab(this, captionsController, true, true, "Line spacing", "100%");
@@ -108,6 +110,7 @@ public class CaptionsOptionsPane {
         fontFamilyPane = new FontFamilyPane(captionsController, this);
         fontColorPane = new FontColorPane(captionsController, this);
         fontSizePane = new FontSizePane(captionsController, this);
+        textAlignmentPane = new TextAlignmentPane(captionsController, this);
         backgroundColorPane = new BackgroundColorPane(captionsController, this);
         backgroundOpacityPane = new BackgroundOpacityPane(captionsController, this);
         lineSpacingPane = new LineSpacingPane(captionsController, this);
@@ -117,6 +120,7 @@ public class CaptionsOptionsPane {
         fontFamilyTab.setOnMouseClicked(e -> openFontFamilyPane());
         fontColorTab.setOnMouseClicked(e -> openFontColorPane());
         fontSizeTab.setOnMouseClicked(e -> openFontSizePane());
+        textAlignmentTab.setOnMouseClicked(e -> openTextAlignmentPane());
         backgroundColorTab.setOnMouseClicked(e -> openBackgroundColorPane());
         backgroundOpacityTab.setOnMouseClicked(e -> openBackgroundOpacityPane());
         lineSpacingTab.setOnMouseClicked(e -> openLineSpacingPane());
@@ -285,6 +289,46 @@ public class CaptionsOptionsPane {
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
             captionsController.settingsController.clip.setHeight(fontSizePane.scrollPane.getPrefHeight());
+        });
+
+        parallelTransition.play();
+        captionsController.settingsController.animating.set(true);
+    }
+
+    public void openTextAlignmentPane(){
+        if(captionsController.settingsController.animating.get()) return;
+
+        captionsController.settingsController.settingsState = SettingsState.TEXT_ALIGNMENT_OPEN;
+
+        textAlignmentPane.scrollPane.setVisible(true);
+        textAlignmentPane.scrollPane.setMouseTransparent(false);
+
+        Timeline clipHeightTimeline = new Timeline();
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.heightProperty(), textAlignmentPane.scrollPane.getHeight())));
+
+
+        Timeline clipWidthTimeline = new Timeline();
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.widthProperty(), textAlignmentPane.scrollPane.getWidth())));
+
+
+
+        TranslateTransition textAlignmentTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), textAlignmentPane.scrollPane);
+        textAlignmentTransition.setFromX(textAlignmentPane.scrollPane.getWidth());
+        textAlignmentTransition.setToX(0);
+
+        TranslateTransition captionsOptionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), scrollPane);
+        captionsOptionsTransition.setFromX(0);
+        captionsOptionsTransition.setToX(-textAlignmentPane.scrollPane.getWidth());
+
+
+        ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, textAlignmentTransition, captionsOptionsTransition);
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.setOnFinished((e) -> {
+            captionsController.settingsController.animating.set(false);
+            scrollPane.setVisible(false);
+            scrollPane.setMouseTransparent(true);
+            scrollPane.setTranslateX(0);
+            captionsController.settingsController.clip.setHeight(textAlignmentPane.scrollPane.getPrefHeight());
         });
 
         parallelTransition.play();
@@ -481,6 +525,15 @@ public class CaptionsOptionsPane {
 
         captionsController.currentFontSize = captionsController.defaultFontSize;
 
+        for(CheckTab checkTab : textAlignmentPane.checkTabs){
+            checkTab.checkIcon.setVisible(false);
+        }
+
+        textAlignmentPane.centerTab.checkIcon.setVisible(true);
+        textAlignmentTab.subText.setText("Center");
+
+        captionsController.currentTextAlignment = captionsController.defaultTextAlignment;
+
         for(CheckTab checkTab : backgroundOpacityPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
         }
@@ -522,6 +575,7 @@ public class CaptionsOptionsPane {
 
         captionsController.captionsBox.setSpacing(captionsController.defaultSpacing);
         captionsController.captionsBox.setOpacity(captionsController.defaultTextOpacity);
+        captionsController.captionsBox.setAlignment(captionsController.defaultTextAlignment);
 
         captionsController.captionsLabel1.setTextFill(captionsController.defaultTextFill);
         captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.defaultBackground, CornerRadii.EMPTY, Insets.EMPTY)));

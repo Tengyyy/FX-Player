@@ -86,6 +86,7 @@ public class App extends Application {
             svgMap.put(TUNE, "M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z");
             svgMap.put(FORWARD, "M13,6V18L21.5,12M4,18L12.5,12L4,6V18Z");
             svgMap.put(REWIND, "M11.5,12L20,18V6M11,18V6L2.5,12L11,18Z");
+            svgMap.put(MINIPLAYER, "M19,11H11V17H19V11M23,19V5C23,3.88 22.1,3 21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19M21,19H3V4.97H21V19Z");
 
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("views/Main.fxml"));
@@ -106,7 +107,7 @@ public class App extends Application {
             mediaInterface = mainController.getMediaInterface();
 
 
-            Scene scene = new Scene(root, 600, 400);
+            Scene scene = new Scene(root, 705, 400);
 
             scene.getStylesheets().add(getClass().getResource("styles/application.css").toExternalForm());
 
@@ -117,7 +118,7 @@ public class App extends Application {
 
 
             primaryStage.setMinHeight(325);
-            primaryStage.setMinWidth(400);
+            primaryStage.setMinWidth(613);
 
             App.stage = primaryStage;
 
@@ -129,6 +130,7 @@ public class App extends Application {
 
                 switch (event.getCode()) {
                     case TAB: {
+
                         controlBarController.mouseEventTracker.move();
                     }
                     break;
@@ -198,6 +200,7 @@ public class App extends Application {
                     break;
 
                     case UP: {
+
                         controlBarController.mouseEventTracker.move();
 
                         controlBarController.volumeSlider.setValue(Math.min(controlBarController.volumeSlider.getValue() + 5, 100));
@@ -212,6 +215,7 @@ public class App extends Application {
                     break;
 
                     case DOWN: {
+
                         controlBarController.mouseEventTracker.move();
 
                         controlBarController.volumeSlider.setValue(Math.max(controlBarController.volumeSlider.getValue() - 5, 0));
@@ -486,7 +490,6 @@ public class App extends Application {
 
                         controlBarController.mouseEventTracker.move();
 
-                        // take screenshot of the video if shift is not down
                         if(event.isShiftDown()){
 
                             if(menuController.mediaActive.get() && controlBarController.durationSlider.getValue() > 5){ // restart current video
@@ -510,6 +513,14 @@ public class App extends Application {
                             }
 
                         }
+                    }
+                    break;
+
+                    case I: {
+                        controlBarController.mouseEventTracker.move();
+
+                        if(mainController.miniplayerActive) mainController.closeMiniplayer();
+                        else mainController.openMiniplayer();
                     }
                     break;
 

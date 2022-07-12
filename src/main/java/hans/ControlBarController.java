@@ -30,7 +30,7 @@ public class ControlBarController implements Initializable {
     StackPane controlBarWrapper;
 
     @FXML
-    Button fullScreenButton, playButton, volumeButton, settingsButton, nextVideoButton, captionsButton, previousVideoButton;
+    Button fullScreenButton, playButton, volumeButton, settingsButton, nextVideoButton, captionsButton, previousVideoButton, miniplayerButton;
 
     @FXML
     public Slider volumeSlider, durationSlider;
@@ -39,7 +39,7 @@ public class ControlBarController implements Initializable {
     public ProgressBar volumeTrack, durationTrack;
 
     @FXML
-    StackPane volumeSliderPane, previousVideoPane, playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, fullScreenButtonPane, durationPane;
+    StackPane volumeSliderPane, previousVideoPane, playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, miniplayerButtonPane, fullScreenButtonPane, durationPane;
 
     @FXML
     Label durationLabel;
@@ -48,13 +48,13 @@ public class ControlBarController implements Initializable {
     Line captionsButtonLine;
 
     @FXML
-    public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, captionsIcon, settingsIcon, fullScreenIcon;
+    public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, captionsIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
 
     @FXML
     public HBox settingsBox1;
 
 
-    SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG;
+    SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
 
     MainController mainController;
     SettingsController settingsController;
@@ -78,11 +78,12 @@ public class ControlBarController implements Initializable {
     boolean captionsButtonHover = false;
     boolean settingsButtonHover = false;
     boolean fullScreenButtonHover = false;
+    boolean miniplayerButtonHover = false;
 
 
     MouseEventTracker mouseEventTracker;
 
-    ControlTooltip play, mute, settings, fullScreen, exitFullScreen, captions, nextVideoTooltip, previousVideoTooltip;
+    ControlTooltip play, mute, settings, fullScreen, exitFullScreen, captions, nextVideoTooltip, previousVideoTooltip, miniplayer;
 
     MediaInterface mediaInterface;
 
@@ -100,6 +101,7 @@ public class ControlBarController implements Initializable {
             nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, controlBarWrapper, 0, false);
             previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P)", previousVideoButton, controlBarWrapper, 0, false);
             captions = new ControlTooltip("Subtitles/CC not selected", captionsButton, controlBarWrapper, 0, false);
+            miniplayer = new ControlTooltip("Miniplayer (i)", miniplayerButton, controlBarWrapper, 0, false);
         });
 
         previousVideoSVG = new SVGPath();
@@ -138,6 +140,9 @@ public class ControlBarController implements Initializable {
         minimizeSVG = new SVGPath();
         minimizeSVG.setContent(App.svgMap.get(SVG.MINIMIZE));
 
+        miniplayerSVG = new SVGPath();
+        miniplayerSVG.setContent(App.svgMap.get(SVG.MINIPLAYER));
+
         volumeSliderPane.setClip(new Rectangle(68, 30));
 
         volumeSlider.setTranslateX(-60);
@@ -161,6 +166,8 @@ public class ControlBarController implements Initializable {
 
         captionsIcon.setShape(captionsSVG);
         settingsIcon.setShape(settingsSVG);
+
+        miniplayerIcon.setShape(miniplayerSVG);
         fullScreenIcon.setShape(maximizeSVG);
 
         captionsIcon.getStyleClass().add("controlIconDisabled");
@@ -173,7 +180,9 @@ public class ControlBarController implements Initializable {
 
         playButton.setOnAction((e) -> playButtonClick1());
 
+        miniplayerButton.setBackground(Background.EMPTY);
         fullScreenButton.setBackground(Background.EMPTY);
+
 
         settingsButton.setBackground(Background.EMPTY);
 
@@ -203,6 +212,9 @@ public class ControlBarController implements Initializable {
 
         settingsButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(settingsButtonPane));
         settingsButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(settingsButtonPane));
+
+        miniplayerButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(miniplayerButtonPane));
+        miniplayerButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(miniplayerButtonPane));
 
         fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(fullScreenButtonPane));
         fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(fullScreenButtonPane));
@@ -548,6 +560,14 @@ public class ControlBarController implements Initializable {
         fullScreenIcon.setScaleY(1);
     }
 
+    public void miniplayerButtonHoverOn(){
+        miniplayerButtonHover = true;
+    }
+
+    public void miniplayerButtonHoverOff(){
+        miniplayerButtonHover = false;
+    }
+
 
     public void volumeButtonClick() {
         if (settingsController.settingsState != SettingsState.CLOSED) {
@@ -618,6 +638,17 @@ public class ControlBarController implements Initializable {
             settingsController.closeSettings();
         else
             fullScreen();
+    }
+
+    public void miniplayerButtonClick(){
+
+        if(settingsController.settingsState != SettingsState.CLOSED){
+            settingsController.closeSettings();
+            return;
+        }
+
+        if(mainController.miniplayerActive) mainController.closeMiniplayer();
+        else mainController.openMiniplayer();
     }
 
 

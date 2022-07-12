@@ -9,7 +9,6 @@ import java.net.URL;
 import java.util.*;
 
 
-//import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -20,7 +19,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 
 
@@ -73,8 +71,6 @@ public class MainController implements Initializable {
     DoubleProperty mediaViewWidth;
     DoubleProperty mediaViewHeight;
 
-    boolean running = false; // media running status
-
 
     // counter to keep track of the current node that has focus (used for focus traversing with tab and shift+tab)
     public int focusNodeTracker = 0;
@@ -90,6 +86,9 @@ public class MainController implements Initializable {
     SimpleDoubleProperty sizeMultiplier = new SimpleDoubleProperty();
 
     StackPane whitePane = new StackPane();
+
+
+    boolean miniplayerActive = false;
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -401,6 +400,16 @@ public class MainController implements Initializable {
 
             } catch (IOException ex) { ex.printStackTrace(); }
         }
+    }
+
+    public void openMiniplayer(){
+        miniplayerActive = true;
+        System.out.println("Opening miniplayer");
+    }
+
+    public void closeMiniplayer(){
+        miniplayerActive = false;
+        System.out.println("Closing miniplayer");
     }
 
 

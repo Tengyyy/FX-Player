@@ -12,9 +12,9 @@
    <children>
       <BorderPane fx:id="mainPane">
          <center>
-            <StackPane fx:id="mediaViewWrapper" minWidth="0.0" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefWidth="526.0" BorderPane.alignment="CENTER_RIGHT">
+            <StackPane fx:id="mediaViewWrapper" minWidth="0.0" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefWidth="601.0" BorderPane.alignment="CENTER_RIGHT">
                <children>
-                  <StackPane fx:id="mediaViewInnerWrapper" minWidth="526.0" StackPane.alignment="CENTER_RIGHT">
+                  <StackPane fx:id="mediaViewInnerWrapper" minWidth="601.0" StackPane.alignment="CENTER_RIGHT">
                      <children>
                           <MediaView fx:id="mediaView" focusTraversable="true" styleClass="focusableProperty">
                               <viewport>
@@ -23,7 +23,7 @@
                           </MediaView>
                      </children>
                   </StackPane>
-                    <fx:include fx:id="controlBar" minWidth="526.0" source="ControlBar.fxml" StackPane.alignment="BOTTOM_RIGHT" />
+                    <fx:include fx:id="controlBar" minWidth="601.0" source="ControlBar.fxml" StackPane.alignment="BOTTOM_RIGHT" />
                   <StackPane fx:id="menuButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="60.0" StackPane.alignment="TOP_LEFT">
                      <children>
                           <Button fx:id="menuButton" mnemonicParsing="false" onAction="#openMenu" prefHeight="60.0" prefWidth="60.0" style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="CENTER">

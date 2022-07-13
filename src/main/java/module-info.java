@@ -8,6 +8,7 @@ module hans {
     requires MaterialFX;
     requires com.jfoenix;
     requires org.apache.logging.log4j;
+    requires FX.BorderlessScene;
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;

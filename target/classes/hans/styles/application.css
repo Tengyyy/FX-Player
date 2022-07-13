@@ -242,6 +242,12 @@
     -fx-font-size: 13;
 }
 
+#mediaViewText {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 20;
+}
+
 .tooltip {
     -fx-background-radius: 2;
     -fx-font-family: "Roboto Medium"

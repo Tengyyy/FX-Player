@@ -19,9 +19,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 
 
+import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
@@ -86,9 +88,11 @@ public class MainController implements Initializable {
     SimpleDoubleProperty sizeMultiplier = new SimpleDoubleProperty();
 
     StackPane whitePane = new StackPane();
+    Label miniplayerActiveText = new Label();
 
 
     boolean miniplayerActive = false;
+    Miniplayer miniplayer;
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -159,7 +163,16 @@ public class MainController implements Initializable {
         whitePane.setMouseTransparent(true);
         whitePane.setOpacity(0);
 
+
+        miniplayerActiveText.setText("Video active in miniplayer");
+        miniplayerActiveText.setId("mediaViewText");
+        miniplayerActiveText.setBackground(Background.EMPTY);
+        miniplayerActiveText.setMouseTransparent(true);
+        miniplayerActiveText.setVisible(false);
+        StackPane.setAlignment(miniplayerActiveText, Pos.CENTER);
+
         mediaViewWrapper.getChildren().add(whitePane);
+        mediaViewInnerWrapper.getChildren().add(miniplayerActiveText);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBarWrapper, 1000, true);
@@ -279,7 +292,7 @@ public class MainController implements Initializable {
         if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         }
-        else if(mediaInterface.mediaPlayer != null){
+        else if(mediaInterface.mediaPlayer != null && !miniplayerActive){
             if (mediaInterface.atEnd) {
                 controlBarController.replayMedia();
                 actionIndicator.setIcon(REPLAY);
@@ -360,7 +373,7 @@ public class MainController implements Initializable {
     }
 
     public void takeScreenshot(){
-        if(menuController.activeItem == null) return;
+        if(menuController.activeItem == null || miniplayerActive) return;
 
         FileChooser fileChooser = new FileChooser();
 
@@ -405,11 +418,25 @@ public class MainController implements Initializable {
     public void openMiniplayer(){
         miniplayerActive = true;
         System.out.println("Opening miniplayer");
+
+        miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface);
+
+        if(menuController.activeItem != null){
+            mediaView.setMediaPlayer(null);
+            miniplayerActiveText.setVisible(true);
+        }
+
+
     }
 
     public void closeMiniplayer(){
         miniplayerActive = false;
         System.out.println("Closing miniplayer");
+
+        if(menuController.activeItem != null && mediaInterface.mediaPlayer != null){
+            mediaView.setMediaPlayer(mediaInterface.mediaPlayer);
+            miniplayerActiveText.setVisible(false);
+        }
     }
 
 

@@ -16,16 +16,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<StackPane fx:id="controlBarWrapper" maxHeight="-Infinity" minHeight="-Infinity" pickOnBounds="false" prefHeight="70.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.ControlBarController">
+<StackPane fx:id="controlBarWrapper" maxHeight="-Infinity" minHeight="-Infinity" minWidth="601.0" pickOnBounds="false" prefHeight="70.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.ControlBarController">
    <children>
-      <StackPane fx:id="shadowBox" mouseTransparent="true" pickOnBounds="false" prefHeight="70.0" style="-fx-background-color: black;" translateY="70.0">
+      <StackPane fx:id="shadowBox" minWidth="601.0" mouseTransparent="true" pickOnBounds="false" prefHeight="70.0" style="-fx-background-color: black;" translateY="70.0">
          <effect>
             <DropShadow height="255.0" radius="68.5" spread="0.5" />
          </effect>
       </StackPane>
-      <VBox fx:id="controlBar" alignment="TOP_CENTER" maxHeight="70.0" minHeight="-Infinity" minWidth="556.0" onMouseClicked="#controlBarClick" onMouseExited="#exitArea" pickOnBounds="false" prefHeight="70.0" prefWidth="556.0" style="-fx-background-color: transparent;" stylesheets="@../styles/focusStyles.css">
+      <VBox fx:id="controlBar" alignment="TOP_CENTER" maxHeight="70.0" minHeight="-Infinity" minWidth="601.0" onMouseClicked="#controlBarClick" onMouseExited="#exitArea" pickOnBounds="false" prefHeight="70.0" prefWidth="601.0" style="-fx-background-color: transparent;" stylesheets="@../styles/focusStyles.css">
           <children>
-              <GridPane minWidth="556.0" prefHeight="16.0" prefWidth="556.0">
+              <GridPane minWidth="601.0" prefHeight="16.0" prefWidth="601.0">
                   <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" percentWidth="0.5" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="99.0" prefWidth="100.0" />
@@ -61,7 +61,7 @@
                       </StackPane>
                   </children>
               </GridPane>
-              <GridPane minWidth="556.0" prefWidth="556.0">
+              <GridPane minWidth="601.0" prefWidth="601.0">
                   <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="20.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
@@ -70,6 +70,7 @@
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="68.0" />
                   <ColumnConstraints hgrow="ALWAYS" minWidth="150.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
@@ -190,7 +191,17 @@
                         </Region>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="fullScreenButtonPane" minWidth="45.0" onMouseEntered="#fullScreenButtonHoverOn" onMouseExited="#fullScreenButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="9">
+                  <StackPane fx:id="miniplayerButtonPane" minWidth="45.0" onMouseEntered="#miniplayerButtonHoverOn" onMouseExited="#miniplayerButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="9">
+                     <children>
+                        <Button fx:id="miniplayerButton" minWidth="45.0" mnemonicParsing="false" onAction="#miniplayerButtonClick" prefHeight="30.0" prefWidth="52.0">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                        <Region fx:id="miniplayerIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="19.0" prefWidth="23.0" styleClass="controlIcon" />
+                     </children>
+                  </StackPane>
+                  <StackPane fx:id="fullScreenButtonPane" minWidth="45.0" onMouseEntered="#fullScreenButtonHoverOn" onMouseExited="#fullScreenButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="10">
                      <children>
                         <Button fx:id="fullScreenButton" mnemonicParsing="false" onAction="#fullScreenButtonClick" prefHeight="30.0" prefWidth="52.0">
                            <cursor>

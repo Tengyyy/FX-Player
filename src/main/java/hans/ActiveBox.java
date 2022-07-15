@@ -34,6 +34,10 @@ public class ActiveBox extends StackPane {
         menuController.activeItem = null;
         menuController.mediaActive.set(false);
 
+        if(menuController.mainController.miniplayerActive){
+            menuController.mainController.miniplayerActiveText.setVisible(false);
+        }
+
         ActiveItem child = (ActiveItem) this.getChildren().get(0);
         FadeTransition fadeTransition = AnimationsClass.fadeOut(child);
         fadeTransition.setOnFinished(e -> {

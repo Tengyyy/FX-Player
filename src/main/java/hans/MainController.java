@@ -15,6 +15,7 @@ import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -94,6 +95,8 @@ public class MainController implements Initializable {
     boolean miniplayerActive = false;
     Miniplayer miniplayer;
 
+    ChangeListener<? super Number> widthListener;
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
@@ -164,6 +167,7 @@ public class MainController implements Initializable {
         whitePane.setOpacity(0);
 
 
+
         miniplayerActiveText.setText("Video active in miniplayer");
         miniplayerActiveText.setId("mediaViewText");
         miniplayerActiveText.setBackground(Background.EMPTY);
@@ -172,7 +176,7 @@ public class MainController implements Initializable {
         StackPane.setAlignment(miniplayerActiveText, Pos.CENTER);
 
         mediaViewWrapper.getChildren().add(whitePane);
-        mediaViewInnerWrapper.getChildren().add(miniplayerActiveText);
+        mediaViewInnerWrapper.getChildren().addAll(miniplayerActiveText);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBarWrapper, 1000, true);
@@ -184,58 +188,68 @@ public class MainController implements Initializable {
                 }
             });
 
-            mediaViewInnerWrapper.widthProperty().addListener((observableValue, oldValue, newValue) -> {
 
-                if(oldValue.doubleValue() >= 800 && newValue.doubleValue() < 800){
-                    captionsController.mediaWidthMultiplier.set(0.4);
-                    captionsController.resizeCaptions();
-                }
-                else if((oldValue.doubleValue() < 800 || oldValue.doubleValue() >= 1200) && (newValue.doubleValue() >= 800 && newValue.doubleValue() < 1200)){
-                    captionsController.mediaWidthMultiplier.set(0.6);
-                    captionsController.resizeCaptions();
-
-                    sizeMultiplier.set(0.65);
-                    if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
-                    forwardsIndicator.resize();
-                    backwardsIndicator.resize();
-                    valueIndicator.resize();
-
-                }
-                else if((oldValue.doubleValue() < 1200 || oldValue.doubleValue() >= 1800) && (newValue.doubleValue() >= 1200 && newValue.doubleValue() < 1800)){
-                    captionsController.mediaWidthMultiplier.set(0.8);
-                    captionsController.resizeCaptions();
-
-                    sizeMultiplier.set(0.8);
-                    if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
-                    forwardsIndicator.resize();
-                    backwardsIndicator.resize();
-                    valueIndicator.resize();
-
-                }
-                else if((oldValue.doubleValue() < 1800 || oldValue.doubleValue() >= 2400) && (newValue.doubleValue() >= 1800 && newValue.doubleValue() < 2400)){
-                    captionsController.mediaWidthMultiplier.set(1.0);
-                    captionsController.resizeCaptions();
-
-
-                    sizeMultiplier.set(1);
-                    if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
-                    forwardsIndicator.resize();
-                    backwardsIndicator.resize();
-                    valueIndicator.resize();
-
-                }
-                else if(oldValue.doubleValue() < 2400 && newValue.doubleValue() >= 2400){
-                    captionsController.mediaWidthMultiplier.set(1.2);
-                    captionsController.resizeCaptions();
-
-                    sizeMultiplier.set(1.2);
-                    if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
-                    forwardsIndicator.resize();
-                    backwardsIndicator.resize();
-                    valueIndicator.resize();
-                }
-            });
         });
+
+        widthListener = (observableValue, oldValue, newValue) -> {
+
+            if(oldValue.doubleValue() >= 800 && newValue.doubleValue() < 800){
+                captionsController.mediaWidthMultiplier.set(0.4);
+                captionsController.resizeCaptions();
+
+                sizeMultiplier.set(0.55);
+                if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                forwardsIndicator.resize();
+                backwardsIndicator.resize();
+                valueIndicator.resize();
+            }
+            else if((oldValue.doubleValue() < 800 || oldValue.doubleValue() >= 1200) && (newValue.doubleValue() >= 800 && newValue.doubleValue() < 1200)){
+                captionsController.mediaWidthMultiplier.set(0.6);
+                captionsController.resizeCaptions();
+
+                sizeMultiplier.set(0.65);
+                if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                forwardsIndicator.resize();
+                backwardsIndicator.resize();
+                valueIndicator.resize();
+
+            }
+            else if((oldValue.doubleValue() < 1200 || oldValue.doubleValue() >= 1800) && (newValue.doubleValue() >= 1200 && newValue.doubleValue() < 1800)){
+                captionsController.mediaWidthMultiplier.set(0.8);
+                captionsController.resizeCaptions();
+
+                sizeMultiplier.set(0.8);
+                if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                forwardsIndicator.resize();
+                backwardsIndicator.resize();
+                valueIndicator.resize();
+
+            }
+            else if((oldValue.doubleValue() < 1800 || oldValue.doubleValue() >= 2400) && (newValue.doubleValue() >= 1800 && newValue.doubleValue() < 2400)){
+                captionsController.mediaWidthMultiplier.set(1.0);
+                captionsController.resizeCaptions();
+
+
+                sizeMultiplier.set(1);
+                if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                forwardsIndicator.resize();
+                backwardsIndicator.resize();
+                valueIndicator.resize();
+
+            }
+            else if(oldValue.doubleValue() < 2400 && newValue.doubleValue() >= 2400){
+                captionsController.mediaWidthMultiplier.set(1.2);
+                captionsController.resizeCaptions();
+
+                sizeMultiplier.set(1.2);
+                if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
+                forwardsIndicator.resize();
+                backwardsIndicator.resize();
+                valueIndicator.resize();
+            }
+        };
+
+        mediaViewInnerWrapper.widthProperty().addListener(widthListener);
 
         mediaViewInnerWrapper.setOnMouseDragOver(e -> {
             if(captionsController.captionsDragActive){
@@ -417,25 +431,95 @@ public class MainController implements Initializable {
 
     public void openMiniplayer(){
         miniplayerActive = true;
-        System.out.println("Opening miniplayer");
+
+        mediaView.setMediaPlayer(null);
+        // causes Concurrent Modification Exception
+        // seems to be a JavaFX bug, have to try either creating new mediaviews every opening/closing of the miniplayer or implementing vlcj library
+
+        mediaViewInnerWrapper.widthProperty().removeListener(widthListener);
 
         miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface);
 
+        miniplayer.miniplayerController.moveIndicators();
+
         if(menuController.activeItem != null){
-            mediaView.setMediaPlayer(null);
             miniplayerActiveText.setVisible(true);
         }
-
-
     }
 
     public void closeMiniplayer(){
+
+        miniplayer.miniplayerController.mediaViewInnerWrapper.widthProperty().removeListener(miniplayer.miniplayerController.widthListener);
+
+        actionIndicator.moveToMainplayer();
+        forwardsIndicator.moveToMainplayer();
+        backwardsIndicator.moveToMainplayer();
+        valueIndicator.moveToMainplayer();
+
+        if(miniplayerActive && miniplayer != null && miniplayer.stage != null){
+            miniplayer.stage.close();
+        }
+
         miniplayerActive = false;
-        System.out.println("Closing miniplayer");
+
+        resizeIndicators();
+        mediaViewInnerWrapper.widthProperty().addListener(widthListener);
 
         if(menuController.activeItem != null && mediaInterface.mediaPlayer != null){
             mediaView.setMediaPlayer(mediaInterface.mediaPlayer);
             miniplayerActiveText.setVisible(false);
+        }
+    }
+
+    public void resizeIndicators(){
+        if(mediaViewInnerWrapper.getWidth() < 800){
+            captionsController.mediaWidthMultiplier.set(0.4);
+            captionsController.resizeCaptions();
+
+            sizeMultiplier.set(0.55);
+            forwardsIndicator.resize();
+            backwardsIndicator.resize();
+            valueIndicator.resize();
+        }
+        else if(mediaViewInnerWrapper.getWidth() >= 800 && mediaViewInnerWrapper.getWidth() < 1200){
+            captionsController.mediaWidthMultiplier.set(0.6);
+            captionsController.resizeCaptions();
+
+            sizeMultiplier.set(0.65);
+            forwardsIndicator.resize();
+            backwardsIndicator.resize();
+            valueIndicator.resize();
+
+        }
+        else if(mediaViewInnerWrapper.getWidth() >= 1200 && mediaViewInnerWrapper.getWidth() < 1800){
+            captionsController.mediaWidthMultiplier.set(0.8);
+            captionsController.resizeCaptions();
+
+            sizeMultiplier.set(0.8);
+            forwardsIndicator.resize();
+            backwardsIndicator.resize();
+            valueIndicator.resize();
+
+        }
+        else if(mediaViewInnerWrapper.getWidth() >= 1800 && mediaViewInnerWrapper.getWidth() < 2400){
+            captionsController.mediaWidthMultiplier.set(1.0);
+            captionsController.resizeCaptions();
+
+
+            sizeMultiplier.set(1);
+            forwardsIndicator.resize();
+            backwardsIndicator.resize();
+            valueIndicator.resize();
+
+        }
+        else if(mediaViewInnerWrapper.getWidth() >= 2400){
+            captionsController.mediaWidthMultiplier.set(1.2);
+            captionsController.resizeCaptions();
+
+            sizeMultiplier.set(1.2);
+            forwardsIndicator.resize();
+            backwardsIndicator.resize();
+            valueIndicator.resize();
         }
     }
 

@@ -176,7 +176,14 @@ public class MediaInterface {
 
         controlBarController.durationSlider.setValue(0);
 
-        mainController.mediaView.setMediaPlayer(mediaPlayer);
+        if(mainController.miniplayerActive){
+            mainController.miniplayer.miniplayerController.mediaView.setMediaPlayer(mediaPlayer);
+            mainController.miniplayerActiveText.setVisible(true);
+        }
+        else {
+            mainController.mediaView.setMediaPlayer(mediaPlayer);
+        }
+
         App.setFrameDuration(mediaItem.getFrameDuration());
 
         // update video name field in settings pane and the stage title with the new video
@@ -273,6 +280,7 @@ public class MediaInterface {
 
         if(mediaPlayer != null) mediaPlayer.dispose();
         mainController.mediaView.setMediaPlayer(null);
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.mediaView.setMediaPlayer(null);
 
         controlBarController.durationSlider.setValue(0);
 

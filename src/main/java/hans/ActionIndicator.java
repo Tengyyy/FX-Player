@@ -57,7 +57,7 @@ public class ActionIndicator {
         icon.setPrefSize(50 * mainController.sizeMultiplier.doubleValue(),50 * mainController.sizeMultiplier.doubleValue());
         icon.setMaxSize(50 * mainController.sizeMultiplier.doubleValue(),50 * mainController.sizeMultiplier.doubleValue());
         icon.setStyle("-fx-background-color: white;");
-        icon.setOpacity(1);
+        icon.setOpacity(0.9);
         StackPane.setAlignment(icon, Pos.CENTER);
 
         wrapper.getChildren().addAll(background, icon);
@@ -65,8 +65,8 @@ public class ActionIndicator {
         mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
 
         scaleTransition = AnimationsClass.scaleAnimation(600, wrapper, 1, 1.5, 1, 1.5, false, 1, false);
-        fadeTransition1 = AnimationsClass.fadeAnimation(600, background, 0.3, 0, false, 1, false);
-        fadeTransition2 = AnimationsClass.fadeAnimation(600, icon, 0.8, 0, false, 1, false);
+        fadeTransition1 = AnimationsClass.fadeAnimation(600, background, 0.6, 0, false, 1, false);
+        fadeTransition2 = AnimationsClass.fadeAnimation(600, icon, 0.9, 0, false, 1, false);
         parallelTransition = AnimationsClass.parallelAnimation(false, scaleTransition, fadeTransition1, fadeTransition2);
         parallelTransition.setOnFinished((e) -> {
             wrapper.setVisible(false);
@@ -134,6 +134,17 @@ public class ActionIndicator {
         parallelTransition.playFromStart();
 
 
+    }
+
+
+    public void moveToMiniplayer(){
+        mainController.mediaViewInnerWrapper.getChildren().remove(wrapper);
+        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().add(wrapper);
+    }
+
+    public void moveToMainplayer(){
+        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().remove(wrapper);
+        mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
     }
 
 }

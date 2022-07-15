@@ -2,6 +2,7 @@ package hans;
 
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -59,6 +60,8 @@ public class MiniplayerController {
     DoubleProperty mediaViewWidth;
     DoubleProperty mediaViewHeight;
 
+    ChangeListener<? super Number> widthListener;
+
 
     MiniplayerController(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface, Miniplayer miniplayer){
 
@@ -92,11 +95,80 @@ public class MiniplayerController {
             mediaView.setMediaPlayer(mediaInterface.mediaPlayer);
         }
 
+        mainController.captionsController.mediaWidthMultiplier.set(0.35);
+        mainController.captionsController.resizeCaptions();
+
+
+        mainController.sizeMultiplier.set(0.6);
+        if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
+        mainController.forwardsIndicator.resize();
+        mainController.backwardsIndicator.resize();
+        mainController.valueIndicator.resize();
+
+
+        widthListener = (observableValue, oldValue, newValue) -> {
+            if(oldValue.doubleValue() >= 400 && newValue.doubleValue() < 400){
+                mainController.captionsController.mediaWidthMultiplier.set(0.2);
+                mainController.captionsController.resizeCaptions();
+
+                mainController.sizeMultiplier.set(0.35);
+                if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
+                mainController.forwardsIndicator.resize();
+                mainController.backwardsIndicator.resize();
+                mainController.valueIndicator.resize();
+            }
+            else if((oldValue.doubleValue() < 400 || oldValue.doubleValue() >= 600) && (newValue.doubleValue() >= 400 && newValue.doubleValue() < 600)){
+                mainController.captionsController.mediaWidthMultiplier.set(0.25);
+                mainController.captionsController.resizeCaptions();
+
+                mainController.sizeMultiplier.set(0.5);
+                if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
+                mainController.forwardsIndicator.resize();
+                mainController.backwardsIndicator.resize();
+                mainController.valueIndicator.resize();
+
+            }
+            else if((oldValue.doubleValue() < 600 || oldValue.doubleValue() >= 800) && (newValue.doubleValue() >= 600 && newValue.doubleValue() < 800)){
+                mainController.captionsController.mediaWidthMultiplier.set(0.35);
+                mainController.captionsController.resizeCaptions();
+
+                mainController.sizeMultiplier.set(0.6);
+                if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
+                mainController.forwardsIndicator.resize();
+                mainController.backwardsIndicator.resize();
+                mainController.valueIndicator.resize();
+
+            }
+            else if(oldValue.doubleValue() < 800 && newValue.doubleValue() >= 800){
+                mainController.captionsController.mediaWidthMultiplier.set(0.55);
+                mainController.captionsController.resizeCaptions();
+
+
+                mainController.sizeMultiplier.set(0.7);
+                if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
+                mainController.forwardsIndicator.resize();
+                mainController.backwardsIndicator.resize();
+                mainController.valueIndicator.resize();
+
+            }
+
+        };
+
+        mediaViewInnerWrapper.widthProperty().addListener(widthListener);
+
     }
 
     public void initActions(){
         miniplayer.scene.setMoveControl(mediaViewWrapper);
         miniplayer.scene.removeDefaultCSS();
         miniplayer.scene.setSnapEnabled(false);
+
+    }
+
+    public void moveIndicators(){
+        mainController.actionIndicator. moveToMiniplayer();
+        mainController.forwardsIndicator.moveToMiniplayer();
+        mainController.backwardsIndicator.moveToMiniplayer();
+        mainController.valueIndicator.moveToMiniplayer();
     }
 }

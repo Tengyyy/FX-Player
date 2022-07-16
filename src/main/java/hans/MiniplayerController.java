@@ -95,7 +95,7 @@ public class MiniplayerController {
             mediaView.setMediaPlayer(mediaInterface.mediaPlayer);
         }
 
-        mainController.captionsController.mediaWidthMultiplier.set(0.35);
+        mainController.captionsController.mediaWidthMultiplier.set(0.4);
         mainController.captionsController.resizeCaptions();
 
 
@@ -108,7 +108,8 @@ public class MiniplayerController {
 
         widthListener = (observableValue, oldValue, newValue) -> {
             if(oldValue.doubleValue() >= 400 && newValue.doubleValue() < 400){
-                mainController.captionsController.mediaWidthMultiplier.set(0.2);
+                System.out.println("1");
+                mainController.captionsController.mediaWidthMultiplier.set(0.3);
                 mainController.captionsController.resizeCaptions();
 
                 mainController.sizeMultiplier.set(0.35);
@@ -118,7 +119,8 @@ public class MiniplayerController {
                 mainController.valueIndicator.resize();
             }
             else if((oldValue.doubleValue() < 400 || oldValue.doubleValue() >= 600) && (newValue.doubleValue() >= 400 && newValue.doubleValue() < 600)){
-                mainController.captionsController.mediaWidthMultiplier.set(0.25);
+                System.out.println("2");
+                mainController.captionsController.mediaWidthMultiplier.set(0.4);
                 mainController.captionsController.resizeCaptions();
 
                 mainController.sizeMultiplier.set(0.5);
@@ -129,7 +131,8 @@ public class MiniplayerController {
 
             }
             else if((oldValue.doubleValue() < 600 || oldValue.doubleValue() >= 800) && (newValue.doubleValue() >= 600 && newValue.doubleValue() < 800)){
-                mainController.captionsController.mediaWidthMultiplier.set(0.35);
+                System.out.println("3");
+                mainController.captionsController.mediaWidthMultiplier.set(0.55);
                 mainController.captionsController.resizeCaptions();
 
                 mainController.sizeMultiplier.set(0.6);
@@ -140,7 +143,9 @@ public class MiniplayerController {
 
             }
             else if(oldValue.doubleValue() < 800 && newValue.doubleValue() >= 800){
-                mainController.captionsController.mediaWidthMultiplier.set(0.55);
+
+                System.out.println("4");
+                mainController.captionsController.mediaWidthMultiplier.set(0.65);
                 mainController.captionsController.resizeCaptions();
 
 

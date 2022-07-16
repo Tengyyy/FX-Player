@@ -87,7 +87,7 @@ public class AnimationsClass {
         captionsTransition.setCycleCount(1);
         captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
 
-        if(captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+        if((captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT) && !captionsController.mainController.miniplayerActive){
             captionsTransition.setToY(-120);
         }
         else {
@@ -117,7 +117,7 @@ public class AnimationsClass {
         captionsTransition.setCycleCount(1);
         captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
 
-        if(captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+        if((captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT) && !captionsController.mainController.miniplayerActive){
             captionsTransition.setToY(-50);
         }
         else {

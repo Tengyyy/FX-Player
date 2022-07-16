@@ -547,4 +547,105 @@ public class CaptionsController {
         captionsTransition.play();
     }
 
+    public void moveToMiniplayer(){
+        captionsBox.setMouseTransparent(true);
+
+        if(captionsTransition != null && captionsTransition.getStatus() == Animation.Status.RUNNING){
+            captionsTransition.stop();
+        }
+
+        mainController.mediaViewInnerWrapper.getChildren().remove(captionsBox);
+        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().add(captionsBox);
+
+        switch(captionsLocation){
+            case BOTTOM_RIGHT: {
+                captionsBox.setTranslateX(-10);
+                captionsBox.setTranslateY(-10);
+            }
+            break;
+            case BOTTOM_CENTER: {
+                captionsBox.setTranslateX(0);
+                captionsBox.setTranslateY(-10);
+            }
+            break;
+            case BOTTOM_LEFT: {
+                captionsBox.setTranslateX(10);
+                captionsBox.setTranslateY(-10);
+            }
+            break;
+            case CENTER_RIGHT: {
+                captionsBox.setTranslateX(-10);
+                captionsBox.setTranslateY(0);
+            }
+            break;
+            case CENTER_LEFT: {
+                captionsBox.setTranslateX(10);
+                captionsBox.setTranslateY(0);
+            }
+            break;
+            case TOP_LEFT: {
+                captionsBox.setTranslateX(10);
+                captionsBox.setTranslateY(10);
+            }
+            break;
+            case TOP_CENTER: {
+                captionsBox.setTranslateX(0);
+                captionsBox.setTranslateY(10);
+            }
+            case TOP_RIGHT: {
+                captionsBox.setTranslateX(-10);
+                captionsBox.setTranslateY(10);
+            }
+        }
+    }
+
+    public void moveToMainplayer(){
+        captionsBox.setMouseTransparent(false);
+
+
+        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().remove(captionsBox);
+        mainController.mediaViewInnerWrapper.getChildren().add(captionsBox);
+
+        switch(captionsLocation){
+            case BOTTOM_RIGHT: {
+                captionsBox.setTranslateX(-30);
+                captionsBox.setTranslateY(-120);
+            }
+            break;
+            case BOTTOM_CENTER: {
+                captionsBox.setTranslateX(0);
+                captionsBox.setTranslateY(-120);
+            }
+            break;
+            case BOTTOM_LEFT: {
+                captionsBox.setTranslateX(70);
+                captionsBox.setTranslateY(-120);
+            }
+            break;
+            case CENTER_RIGHT: {
+                captionsBox.setTranslateX(-30);
+                captionsBox.setTranslateY(0);
+            }
+            break;
+            case CENTER_LEFT: {
+                captionsBox.setTranslateX(70);
+                captionsBox.setTranslateY(0);
+            }
+            break;
+            case TOP_LEFT: {
+                captionsBox.setTranslateX(70);
+                captionsBox.setTranslateY(30);
+            }
+            break;
+            case TOP_CENTER: {
+                captionsBox.setTranslateX(0);
+                captionsBox.setTranslateY(30);
+            }
+            case TOP_RIGHT: {
+                captionsBox.setTranslateX(-30);
+                captionsBox.setTranslateY(30);
+            }
+        }
+    }
+
 }

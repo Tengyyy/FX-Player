@@ -441,6 +441,7 @@ public class MainController implements Initializable {
         miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface);
 
         miniplayer.miniplayerController.moveIndicators();
+        captionsController.moveToMiniplayer();
 
         if(menuController.activeItem != null){
             miniplayerActiveText.setVisible(true);
@@ -455,6 +456,8 @@ public class MainController implements Initializable {
         forwardsIndicator.moveToMainplayer();
         backwardsIndicator.moveToMainplayer();
         valueIndicator.moveToMainplayer();
+
+        captionsController.moveToMainplayer();
 
         if(miniplayerActive && miniplayer != null && miniplayer.stage != null){
             miniplayer.stage.close();

@@ -85,6 +85,10 @@ public class MediaInterface {
 
                     controlBarController.play.updateText("Pause (k)");
 
+                    if(mainController.miniplayerActive){
+                        mainController.miniplayer.miniplayerController.play();
+                    }
+
                 }
             } else {
                 controlBarController.playIcon.setShape(controlBarController.playSVG);
@@ -93,6 +97,10 @@ public class MediaInterface {
                 playing.set(false);
 
                 controlBarController.play.updateText("Play (k)");
+
+                if(mainController.miniplayerActive){
+                    mainController.miniplayer.miniplayerController.pause();
+                }
 
                 if(menuController.mediaActive.get()) {
                     menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
@@ -183,6 +191,30 @@ public class MediaInterface {
         else {
             mainController.mediaView.setMediaPlayer(mediaPlayer);
         }
+
+        if(mainController.miniplayerActive && !mainController.miniplayer.miniplayerController.playButtonEnabled) mainController.miniplayer.miniplayerController.enablePlayButton();
+        if(!controlBarController.playButtonEnabled) controlBarController.enablePlayButton();
+
+        if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
+            if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.disableNextVideoButton();
+            if(controlBarController.nextVideoButtonEnabled) controlBarController.disableNextVideoButton();
+        }
+        else if(menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1){
+            if(menuController.mainController.miniplayerActive && !menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.enableNextVideoButton();
+            if(!controlBarController.nextVideoButtonEnabled) controlBarController.enableNextVideoButton();
+        }
+
+
+        if(menuController.history.isEmpty() || menuController.historyBox.index == 0 && controlBarController.durationSlider.getValue() <= 5){
+            if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.previousVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
+            if(controlBarController.previousVideoButtonEnabled) controlBarController.disablePreviousVideoButton();
+        }
+        else if(!menuController.history.isEmpty() && (menuController.historyBox.index == -1 || menuController.historyBox.index > 0)){
+            if(menuController.mainController.miniplayerActive && !menuController.mainController.miniplayer.miniplayerController.previousVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.enablePreviousVideoButton();
+            if(!controlBarController.previousVideoButtonEnabled) controlBarController.enablePreviousVideoButton();
+        }
+
+
 
         App.setFrameDuration(mediaItem.getFrameDuration());
 
@@ -280,7 +312,12 @@ public class MediaInterface {
 
         if(mediaPlayer != null) mediaPlayer.dispose();
         mainController.mediaView.setMediaPlayer(null);
-        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.mediaView.setMediaPlayer(null);
+        if(mainController.miniplayerActive){
+            mainController.miniplayer.miniplayerController.mediaView.setMediaPlayer(null);
+            if(mainController.miniplayer.miniplayerController.playButtonEnabled) mainController.miniplayer.miniplayerController.disablePlayButton();
+        }
+
+        if(controlBarController.playButtonEnabled) controlBarController.disablePlayButton();
 
         controlBarController.durationSlider.setValue(0);
 
@@ -394,6 +431,8 @@ public class MediaInterface {
         }
 
         controlBarController.play.updateText("Replay (k)");
+
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.end();
 
         controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());
 

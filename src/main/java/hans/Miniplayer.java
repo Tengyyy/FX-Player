@@ -45,6 +45,8 @@ public class Miniplayer {
         stage.setMaxHeight(MAX_HEIGHT);
 
         scene = new BorderlessScene(stage, StageStyle.UNDECORATED, miniplayerController.mediaViewWrapper);
+        scene.getStylesheets().add(getClass().getResource("styles/miniplayer.css").toExternalForm());
+
 
         miniplayerController.initActions();
 

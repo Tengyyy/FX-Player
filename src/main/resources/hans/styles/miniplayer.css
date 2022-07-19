@@ -1,0 +1,20 @@
+
+
+@font-face {
+    src: url('../fonts/Roboto-Medium.ttf');
+}
+
+.miniplayerIcon {
+    -fx-background-color: rgb(200,200,200);
+}
+
+
+#controlsBackground {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
+.tooltip {
+    -fx-background-radius: 2;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 15;
+}

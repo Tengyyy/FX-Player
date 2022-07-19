@@ -233,6 +233,8 @@ public class QueueBox extends VBox {
         menuController.animationsInProgress.add(parallelTransition);
         parallelTransition.playFromStart();
 
+        if(menuController.mainController.miniplayerActive && !menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.enableNextVideoButton();
+        if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
     }
 
     public void addRand(QueueItem child){
@@ -256,6 +258,10 @@ public class QueueBox extends VBox {
         initialize(child);
         FadeTransition fadeTransition = AnimationsClass.fadeIn(child);
         fadeTransition.playFromStart();
+
+        if(menuController.mainController.miniplayerActive && !menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.enableNextVideoButton();
+        if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
+
     }
 
     public void remove(QueueItem child){
@@ -306,6 +312,11 @@ public class QueueBox extends VBox {
             sequentialTransition.playFromStart();
 
             // decrease max height by 50, apply translate of -50 to all nodes below the one that will be removed and on end actually remove the node and reset translate
+
+            if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
+                if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.disableNextVideoButton();
+                if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.disableNextVideoButton();
+            }
         }
     }
 
@@ -380,6 +391,11 @@ public class QueueBox extends VBox {
 
         menuController.animationsInProgress.add(parallelFadeOut);
         parallelFadeOut.playFromStart();
+
+        if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
+            if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.disableNextVideoButton();
+            if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.disableNextVideoButton();
+        }
 
     }
 
@@ -479,6 +495,9 @@ public class QueueBox extends VBox {
 
         parallelTransition.playFromStart();
 
+
+        if(menuController.mainController.miniplayerActive && !menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.enableNextVideoButton();
+        if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
     }
 
     public void addAll(int index, Collection<? extends QueueItem> collection) {
@@ -530,6 +549,9 @@ public class QueueBox extends VBox {
 
         menuController.animationsInProgress.add(parallelTransition);
         parallelTransition.playFromStart();
+
+        if(menuController.mainController.miniplayerActive && !menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.enableNextVideoButton();
+        if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
     }
 
     public void clear(){
@@ -555,6 +577,11 @@ public class QueueBox extends VBox {
 
             menuController.animationsInProgress.add(parallelFadeOut);
             parallelFadeOut.playFromStart();
+
+            if(menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1){
+                if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.disableNextVideoButton();
+                if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.disableNextVideoButton();
+            }
 
         }
     }

@@ -367,6 +367,8 @@ public class HistoryItem extends GridPane implements MenuObject{
         menuController.activeBox.set(newActive, true);
 
         this.setActive();
+
+        // update prev and new vid button state
     }
 
 

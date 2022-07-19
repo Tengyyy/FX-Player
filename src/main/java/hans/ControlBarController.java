@@ -24,7 +24,7 @@ import javafx.util.Duration;
 public class ControlBarController implements Initializable {
 
     @FXML
-    VBox controlBars;
+    VBox controlBar;
 
     @FXML
     StackPane controlBarWrapper;
@@ -62,9 +62,9 @@ public class ControlBarController implements Initializable {
     CaptionsController captionsController;
 
 
-    public double volumeValue;
+    double volumeValue;
 
-    public boolean muted = false;
+    boolean muted = false;
     boolean isExited = true;
     boolean showingTimeLeft = false;
     boolean durationSliderHover = false;
@@ -72,13 +72,19 @@ public class ControlBarController implements Initializable {
 
 
     // variables to keep track of whether mouse is hovering any control button
+    boolean previousVideoButtonHover = false;
     boolean playButtonHover = false;
     boolean nextVideoButtonHover = false;
+
     boolean volumeButtonHover = false;
     boolean captionsButtonHover = false;
     boolean settingsButtonHover = false;
     boolean fullScreenButtonHover = false;
     boolean miniplayerButtonHover = false;
+
+    boolean previousVideoButtonEnabled = false;
+    boolean playButtonEnabled = false;
+    boolean nextVideoButtonEnabled = false;
 
 
     MouseEventTracker mouseEventTracker;
@@ -93,13 +99,10 @@ public class ControlBarController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         Platform.runLater(() -> {
-            play = new ControlTooltip("Play (k)", playButton, controlBarWrapper, 0, false);
             mute = new ControlTooltip("Mute (m)", volumeButton, controlBarWrapper, 0, false);
             settings = new ControlTooltip("Settings (s)", settingsButton, controlBarWrapper, 0, false);
             exitFullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, controlBarWrapper, 0, false);
             fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, controlBarWrapper, 0, false);
-            nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, controlBarWrapper, 0, false);
-            previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P)", previousVideoButton, controlBarWrapper, 0, false);
             captions = new ControlTooltip("Subtitles/CC not selected", captionsButton, controlBarWrapper, 0, false);
             miniplayer = new ControlTooltip("Miniplayer (i)", miniplayerButton, controlBarWrapper, 0, false);
         });
@@ -195,14 +198,14 @@ public class ControlBarController implements Initializable {
         volumeSlider.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> volumeSlider.setValueChanging(false));
 
 
-        previousVideoPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(previousVideoPane));
-        previousVideoPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(previousVideoPane));
+        previousVideoPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> previousVideoButtonHoverOn());
+        previousVideoPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> previousVideoButtonHoverOff());
 
-        playButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(playButtonPane));
-        playButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(playButtonPane));
+        playButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> playButtonHoverOn());
+        playButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> playButtonHoverOff());
 
-        nextVideoPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(nextVideoPane));
-        nextVideoPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(nextVideoPane));
+        nextVideoPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> nextVideoButtonHoverOn());
+        nextVideoPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> nextVideoButtonHoverOff());
 
         volumeButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(volumeButtonPane));
         volumeButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(volumeButtonPane));
@@ -219,6 +222,9 @@ public class ControlBarController implements Initializable {
         fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(fullScreenButtonPane));
         fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(fullScreenButtonPane));
 
+        disablePreviousVideoButton();
+        disablePlayButton();
+        disableNextVideoButton();
 
 
         volumeSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
@@ -303,14 +309,32 @@ public class ControlBarController implements Initializable {
                 // update subtitles here
 
                 if(oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5){
-                    previousVideoTooltip.updateText("Replay");
+                    //previousVideoTooltip.updateText("Replay");
 
                     previousVideoButton.setOnAction((e) -> replayMedia());
+
+                    if(mainController.miniplayerActive){
+                        if(!mainController.miniplayer.miniplayerController.previousVideoButtonEnabled) mainController.miniplayer.miniplayerController.enablePreviousVideoButton();
+                        else mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
+                    }
+                    if(!previousVideoButtonEnabled) enablePreviousVideoButton();
+                    else previousVideoTooltip.updateText("Replay");
                 }
                 else if(oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5){
-                    previousVideoTooltip.updateText("Previous video (SHIFT + P)");
+                    //previousVideoTooltip.updateText("Previous video (SHIFT + P)");
 
                     previousVideoButton.setOnAction((e) -> playPreviousMedia());
+
+
+                    if(menuController.history.isEmpty() || menuController.historyBox.index == 0){
+                        if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.previousVideoButtonEnabled) mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
+                        if(previousVideoButtonEnabled) disablePreviousVideoButton();
+                    }
+                    else {
+                        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Previous video (SHIFT + N)");
+                        previousVideoTooltip.updateText("Previous video (SHIFT + N)");
+                    }
+
                 }
 
 
@@ -329,6 +353,10 @@ public class ControlBarController implements Initializable {
                     mediaInterface.playing.set(false);
                 }
                 play.updateText("Play (k)");
+
+                if(mainController.miniplayerActive){
+                    mainController.miniplayer.miniplayerController.pause();
+                }
 
             } else {
 
@@ -352,6 +380,10 @@ public class ControlBarController implements Initializable {
                     menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
                     menuController.activeItem.play.updateText("Play video");
 
+                    if(mainController.miniplayerActive){
+                        mainController.miniplayer.miniplayerController.end();
+                    }
+
                 } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
                     if(menuController.mediaActive.get()) {
                         mediaInterface.mediaPlayer.play();
@@ -362,6 +394,10 @@ public class ControlBarController implements Initializable {
                     playIcon.setPrefSize(20, 20);
 
                     play.updateText("Pause (k)");
+
+                    if(mainController.miniplayerActive){
+                        mainController.miniplayer.miniplayerController.play();
+                    }
                 }
             }
         });
@@ -409,7 +445,6 @@ public class ControlBarController implements Initializable {
             settingsController.closeSettings();
         } else {
             replayMedia();
-            mediaInterface.seekedToEnd = false;
         }
     }
 
@@ -426,6 +461,11 @@ public class ControlBarController implements Initializable {
                 HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
                 historyItem.playIcon.setShape(historyItem.pauseSVG);
                 historyItem.play.updateText("Pause video");
+            }
+
+
+            if(mainController.miniplayerActive){
+                mainController.miniplayer.miniplayerController.play();
             }
 
             playIcon.setShape(pauseSVG);
@@ -455,6 +495,10 @@ public class ControlBarController implements Initializable {
                 historyItem.play.updateText("Play video");
             }
 
+            if(mainController.miniplayerActive){
+                mainController.miniplayer.miniplayerController.pause();
+            }
+
             playIcon.setShape(playSVG);
             playIcon.setPrefSize(20, 20);
 
@@ -476,6 +520,10 @@ public class ControlBarController implements Initializable {
 
             menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
             menuController.activeItem.play.updateText("Pause video");
+
+            if(mainController.miniplayerActive){
+                mainController.miniplayer.miniplayerController.play();
+            }
 
             mediaInterface.playing.set(true);
             mediaInterface.atEnd = false;
@@ -513,7 +561,6 @@ public class ControlBarController implements Initializable {
     }
 
     public void fullScreen() {
-        // got to move some of this logic to the main class
 
         captionsController.cancelDrag();
         App.stage.setFullScreen(!App.stage.isFullScreen());
@@ -727,6 +774,168 @@ public class ControlBarController implements Initializable {
 
         if((stackPane.equals(captionsButtonPane) && captionsController.captionsSelected) || !stackPane.equals(captionsButtonPane)) AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
         else AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+    }
+
+    public void previousVideoButtonHoverOn(){
+        previousVideoButtonHover = true;
+
+        if(previousVideoButtonEnabled){
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+        }
+        else {
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
+        }
+    }
+
+    public void previousVideoButtonHoverOff(){
+        previousVideoButtonHover = false;
+
+        if(previousVideoButtonEnabled){
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+        }
+        else {
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+        }
+    }
+
+    public void playButtonHoverOn(){
+        playButtonHover = true;
+
+        if(playButtonEnabled){
+            AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+        }
+        else {
+            AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
+        }
+    }
+
+    public void playButtonHoverOff(){
+        playButtonHover = false;
+
+        if(playButtonEnabled){
+            AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+        }
+        else {
+            AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+        }
+    }
+
+    public void nextVideoButtonHoverOn(){
+        nextVideoButtonHover = true;
+
+        if(nextVideoButtonEnabled){
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+        }
+        else {
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
+        }
+    }
+
+    public void nextVideoButtonHoverOff(){
+        nextVideoButtonHover = false;
+
+        if(nextVideoButtonEnabled){
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+        }
+        else {
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+        }
+    }
+
+    public void enablePreviousVideoButton(){
+        previousVideoButtonEnabled = true;
+
+        if(previousVideoButtonHover){
+            previousVideoIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
+        }
+        else {
+            previousVideoIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
+        }
+
+        Platform.runLater(() -> {
+            if(durationSlider.getValue() > 5) previousVideoTooltip = new ControlTooltip("Replay", previousVideoButton, controlBarWrapper, 0, false);
+            else previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P", previousVideoButton, controlBarWrapper, 0, false);
+
+            if(previousVideoButtonHover) previousVideoTooltip.showTooltip();
+        });
+    }
+
+    public void disablePreviousVideoButton(){
+        previousVideoButtonEnabled = false;
+
+        if(previousVideoButtonHover){
+            previousVideoIcon.setStyle("-fx-background-color: rgb(130, 130, 130);");
+        }
+        else {
+            previousVideoIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
+        }
+
+        previousVideoButton.setOnMouseEntered(null);
+        if(previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.hide();
+    }
+
+    public void enablePlayButton(){
+        playButtonEnabled = true;
+
+        if(playButtonHover){
+            playIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
+        }
+        else {
+            playIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
+        }
+
+        Platform.runLater(() -> {
+            if(mediaInterface.atEnd) play = new ControlTooltip("Replay (k)", playButton, controlBarWrapper, 0 , false);
+            else if(mediaInterface.playing.get()) play = new ControlTooltip("Pause (k)", playButton, controlBarWrapper, 0, false);
+            else play = new ControlTooltip("Play (k)", playButton, controlBarWrapper, 0, false);
+
+            if(playButtonHover) play.showTooltip();
+        });
+    }
+
+    public void disablePlayButton(){
+        playButtonEnabled = false;
+
+        if(playButtonHover){
+            playIcon.setStyle("-fx-background-color: rgb(130, 130, 130);");
+        }
+        else {
+            playIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
+        }
+
+        playButton.setOnMouseEntered(null);
+        if(playButtonHover && play != null) play.hide();
+    }
+
+    public void enableNextVideoButton(){
+        nextVideoButtonEnabled = true;
+
+        if(nextVideoButtonHover){
+            nextVideoIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
+        }
+        else {
+            nextVideoIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
+        }
+
+        Platform.runLater(() -> {
+            nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, controlBarWrapper, 0, false);
+
+            if(nextVideoButtonHover) nextVideoTooltip.showTooltip();
+        });
+    }
+
+    public void disableNextVideoButton(){
+        nextVideoButtonEnabled = false;
+
+        if(nextVideoButtonHover){
+            nextVideoIcon.setStyle("-fx-background-color: rgb(130, 130, 130);");
+        }
+        else {
+            nextVideoIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
+        }
+
+        nextVideoButton.setOnMouseEntered(null);
+        if(nextVideoButtonHover && nextVideoTooltip != null) nextVideoTooltip.hide();
     }
 
 

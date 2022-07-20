@@ -27,6 +27,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
@@ -36,6 +37,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import javax.imageio.ImageIO;
@@ -438,7 +440,7 @@ public class MainController implements Initializable {
 
         mediaViewInnerWrapper.widthProperty().removeListener(widthListener);
 
-        miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface);
+        miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface, settingsController);
 
         miniplayer.miniplayerController.moveIndicators();
         captionsController.moveToMiniplayer();
@@ -525,6 +527,436 @@ public class MainController implements Initializable {
             valueIndicator.resize();
         }
     }
+
+
+    public void pressRIGHT(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(settingsController.settingsState == SettingsState.CUSTOM_SPEED_OPEN){
+            // if custom speed pane is open, dont seek video with arrows
+            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
+            e.consume();
+            return;
+        }
+
+        if (!controlBarController.volumeSlider.isFocused() && menuController.mediaActive.get()) {
+
+            if(backwardsIndicator.wrapper.isVisible()){
+                backwardsIndicator.setVisible(false);
+            }
+            forwardsIndicator.setText("5 seconds");
+            forwardsIndicator.reset();
+            forwardsIndicator.setVisible(true);
+            forwardsIndicator.animate();
+
+            if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
+                mediaInterface.seekedToEnd = true;
+            }
+
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
+
+            e.consume();
+
+        }
+    }
+
+    public void pressLEFT(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(settingsController.settingsState == SettingsState.CUSTOM_SPEED_OPEN){
+            // if custom speed pane is open, dont seek video with arrows
+            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
+            e.consume();
+            return;
+        }
+
+        if (!controlBarController.volumeSlider.isFocused() && menuController.mediaActive.get()) {
+
+            if(forwardsIndicator.wrapper.isVisible()){
+                forwardsIndicator.setVisible(false);
+            }
+            backwardsIndicator.setText("5 seconds");
+            backwardsIndicator.reset();
+            backwardsIndicator.setVisible(true);
+            backwardsIndicator.animate();
+
+            mediaInterface.seekedToEnd = false;
+
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
+            e.consume();
+
+        }
+    }
+
+    public void pressTAB(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+    }
+
+    public void pressM(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if (!controlBarController.muted) {
+            controlBarController.mute();
+            actionIndicator.setIcon(VOLUME_MUTED);
+        } else {
+            controlBarController.unmute();
+            actionIndicator.setIcon(VOLUME_HIGH);
+        }
+
+        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+        valueIndicator.play();
+
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void pressSPACE(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if (!controlBarController.durationSlider.isValueChanging() && menuController.mediaActive.get()) { // wont let user play/pause video while media slider is seeking
+            if (mediaInterface.atEnd) {
+                controlBarController.replayMedia();
+                actionIndicator.setIcon(REPLAY);
+            } else {
+                if (mediaInterface.playing.get()) {
+                    controlBarController.pause();
+                    actionIndicator.setIcon(PAUSE);
+                } else {
+                    controlBarController.play();
+                    actionIndicator.setIcon(PLAY);
+                }
+            }
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+
+            e.consume(); // might have to add a check to consume the space event only if any controlbar buttons are focused (might use space bar to navigate settings or menu)
+        }
+    }
+
+    public void pressJ(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(forwardsIndicator.wrapper.isVisible()){
+            forwardsIndicator.setVisible(false);
+        }
+        backwardsIndicator.setText("10 seconds");
+        backwardsIndicator.reset();
+        backwardsIndicator.setVisible(true);
+        backwardsIndicator.animate();
+
+        if (menuController.mediaActive.get()) {
+            mediaInterface.seekedToEnd = false;
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);
+        }
+    }
+
+    public void pressK(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if (!controlBarController.durationSlider.isValueChanging() && menuController.mediaActive.get()) {  // wont let user play/pause video while media slider is seeking
+            if (mediaInterface.atEnd) {
+                controlBarController.replayMedia();
+                actionIndicator.setIcon(REPLAY);
+            } else {
+                if (mediaInterface.playing.get()) {
+                    controlBarController.pause();
+                    actionIndicator.setIcon(PAUSE);
+                } else {
+                    controlBarController.play();
+                    actionIndicator.setIcon(PLAY);
+                }
+            }
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+        }
+    }
+
+    public void pressL(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(backwardsIndicator.wrapper.isVisible()){
+            backwardsIndicator.setVisible(false);
+        }
+        forwardsIndicator.setText("10 seconds");
+        forwardsIndicator.reset();
+        forwardsIndicator.setVisible(true);
+        forwardsIndicator.animate();
+
+        if (menuController.mediaActive.get()) {
+
+            if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 10 >= controlBarController.durationSlider.getMax()) {
+                mediaInterface.seekedToEnd = true;
+            }
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 10);
+            e.consume();
+
+        }
+    }
+
+    public void pressCOMMA(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(e.isShiftDown()){ // decrease playback speed by 0.25
+            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.25);
+
+            valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+            valueIndicator.play();
+
+            actionIndicator.setIcon(REWIND);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+
+
+            // also show new playback speed as a label top center of the mediaviewpane
+
+            e.consume();
+            return;
+        }
+
+        // seek backwards by 1 frame
+        if(!mediaInterface.playing.get() && menuController.mediaActive.get()) {
+            mediaInterface.seekedToEnd = false;
+            mediaInterface.mediaPlayer.seek(mediaInterface.mediaPlayer.getCurrentTime().subtract(Duration.seconds(App.frameDuration)));
+        }
+        e.consume();
+    }
+
+    public void pressPERIOD(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(e.isShiftDown()){ // increase playback speed by 0.25
+            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.25);
+
+            valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+            valueIndicator.play();
+
+            actionIndicator.setIcon(FORWARD);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+
+
+            // also show new playback speed as a label top center of the mediaviewpane
+
+            e.consume();
+            return;
+        }
+
+        // seek forward by 1 frame
+        if(!mediaInterface.playing.get() && menuController.mediaActive.get()){
+            if (mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + App.frameDuration >= controlBarController.durationSlider.getMax()) {
+                mediaInterface.seekedToEnd = true;
+            }
+
+            mediaInterface.mediaPlayer.seek(mediaInterface.mediaPlayer.getCurrentTime().add(Duration.seconds(App.frameDuration)));
+        }
+        e.consume();
+    }
+
+    public void pressUP(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        controlBarController.volumeSlider.setValue(Math.min(controlBarController.volumeSlider.getValue() + 5, 100));
+        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+
+        valueIndicator.play();
+
+        actionIndicator.setIcon(VOLUME_HIGH);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void pressDOWN(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        controlBarController.volumeSlider.setValue(Math.max(controlBarController.volumeSlider.getValue() - 5, 0));
+        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+
+        valueIndicator.play();
+
+        if(controlBarController.volumeSlider.getValue() == 0) actionIndicator.setIcon(VOLUME_MUTED);
+        else actionIndicator.setIcon(VOLUME_LOW);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void pressI(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(miniplayerActive) closeMiniplayer();
+        else openMiniplayer();
+    }
+
+    public void pressQ(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.menuOpen) menuController.closeMenu();
+        else openMenu();
+    }
+
+    public void pressS(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if (settingsController.settingsState != SettingsState.CLOSED) {
+            settingsController.closeSettings();
+        } else {
+            settingsController.openSettings();
+        }
+    }
+
+    public void pressN(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(e.isShiftDown()){
+
+            if((menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1) || ((menuController.historyBox.index == menuController.history.size() -1 || menuController.historyBox.index == -1) && !menuController.queue.isEmpty())){
+
+                if(!menuController.animationsInProgress.isEmpty()) return;
+
+                actionIndicator.setIcon(NEXT_VIDEO);
+                actionIndicator.setVisible(true);
+                actionIndicator.animate();
+
+                mediaInterface.playNext();
+            }
+
+        }
+    }
+
+    public void pressP(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(e.isShiftDown()){
+
+            if(menuController.mediaActive.get() && controlBarController.durationSlider.getValue() > 5){ // restart current video
+                actionIndicator.setIcon(REPLAY);
+                actionIndicator.setVisible(true);
+                actionIndicator.animate();
+
+                mediaInterface.seekedToEnd = false;
+                controlBarController.durationSlider.setValue(0);
+
+            }
+            else if((!menuController.history.isEmpty() && menuController.historyBox.index == -1) || menuController.historyBox.index > 0){ // play previous video
+
+                if(!menuController.animationsInProgress.isEmpty()) return;
+
+                actionIndicator.setIcon(PREVIOUS_VIDEO);
+                actionIndicator.setVisible(true);
+                actionIndicator.animate();
+
+                mediaInterface.playPrevious();
+            }
+
+        }
+    }
+
+    public void pressF(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        controlBarController.fullScreen();
+    }
+
+    public void pressF12(KeyEvent e){
+        takeScreenshot();
+        controlBarController.mouseEventTracker.move();
+    }
+
+    public void pressC(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if(!captionsController.captionsSelected || captionsController.captionsDragActive) return;
+
+        if (captionsController.captionsOn.get()) {
+            controlBarController.closeCaptions();
+        } else {
+            controlBarController.openCaptions();
+        }
+
+        captionsController.captionsPane.captionsToggle.fire();
+    }
+
+    public void press1(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(menuController.mediaActive.get()) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 1 / 10);
+    }
+
+    public void press2(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(menuController.mediaActive.get()) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 2 / 10);
+    }
+
+    public void press3( KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(menuController.mediaActive.get()) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 3 / 10);
+    }
+
+    public void press4(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(menuController.mediaActive.get()) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 4 / 10);
+    }
+
+    public void press5(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(menuController.mediaActive.get()) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 5 / 10);
+    }
+
+    public void press6(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(menuController.mediaActive.get()) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 6 / 10);
+    }
+
+    public void press7(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(menuController.mediaActive.get()) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 7 / 10);
+    }
+
+    public void press8(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(menuController.mediaActive.get()) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 8 / 10);
+    }
+
+    public void press9(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        if(menuController.mediaActive.get()) controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 9 / 10);
+    }
+
+    public void press0(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        mediaInterface.seekedToEnd = false;
+        if(menuController.mediaActive.get()){
+            controlBarController.durationSlider.setValue(0);
+            actionIndicator.setIcon(REPLAY);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+        }
+    }
+
+    public void pressESCAPE(KeyEvent e){
+        captionsController.cancelDrag();
+
+        controlBarController.mouseEventTracker.move();
+        if (settingsController.settingsState != SettingsState.CLOSED && !App.fullScreen) {
+            settingsController.closeSettings();
+        }
+        App.fullScreen = false;
+
+        controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
+        App.stage.setFullScreen(false);
+
+        if (settingsController.settingsState == SettingsState.CLOSED)
+            controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
+    }
+
+    public void pressEND(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+        mediaInterface.seekedToEnd = true;
+        if(menuController.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
+            actionIndicator.setIcon(NEXT_VIDEO);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+        }
+    }
+
 
 
     public SettingsController getSettingsController() {

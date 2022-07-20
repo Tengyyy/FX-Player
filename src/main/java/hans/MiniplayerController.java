@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.MediaView;
@@ -700,5 +701,50 @@ public class MiniplayerController {
 
         nextVideoButton.setOnMouseEntered(null);
         if(nextVideoButtonHover && nextVideoButtonTooltip != null) nextVideoButtonTooltip.hide();
+    }
+
+    public void pressLEFT(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if (menuController.mediaActive.get()) {
+
+            if(mainController.forwardsIndicator.wrapper.isVisible()){
+                mainController.forwardsIndicator.setVisible(false);
+            }
+            mainController.backwardsIndicator.setText("5 seconds");
+            mainController.backwardsIndicator.reset();
+            mainController.backwardsIndicator.setVisible(true);
+            mainController.backwardsIndicator.animate();
+
+            mediaInterface.seekedToEnd = false;
+
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
+            e.consume();
+
+        }
+    }
+
+    public void pressRIGHT(KeyEvent e){
+        controlBarController.mouseEventTracker.move();
+
+        if (menuController.mediaActive.get()) {
+
+            if(mainController.backwardsIndicator.wrapper.isVisible()){
+                mainController.backwardsIndicator.setVisible(false);
+            }
+            mainController.forwardsIndicator.setText("5 seconds");
+            mainController.forwardsIndicator.reset();
+            mainController.forwardsIndicator.setVisible(true);
+            mainController.forwardsIndicator.animate();
+
+            if(mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
+                mediaInterface.seekedToEnd = true;
+            }
+
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
+
+            e.consume();
+
+        }
     }
 }

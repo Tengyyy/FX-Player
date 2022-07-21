@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -113,6 +114,12 @@ public class Miniplayer {
                 case HOME: mainController.press0(event);
                 break;
                 case END: mainController.pressEND(event);
+            }
+        });
+
+        stage.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
+            if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.J || event.getCode() == KeyCode.L || event.getCode() == KeyCode.DIGIT1 || event.getCode() == KeyCode.DIGIT2 || event.getCode() == KeyCode.DIGIT3 || event.getCode() == KeyCode.DIGIT4 || event.getCode() == KeyCode.DIGIT5 || event.getCode() == KeyCode.DIGIT6 || event.getCode() == KeyCode.DIGIT7 || event.getCode() == KeyCode.DIGIT8 || event.getCode() == KeyCode.DIGIT9 || event.getCode() == KeyCode.DIGIT0 || event.getCode() == KeyCode.HOME || event.getCode() == KeyCode.END){
+                mainController.seekingWithKeys = false;
             }
         });
 

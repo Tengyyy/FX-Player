@@ -1,5 +1,7 @@
 package hans;
 
+import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -17,6 +19,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class MiniplayerController {
 
@@ -74,6 +77,10 @@ public class MiniplayerController {
     boolean previousVideoButtonHover = false, playButtonHover = false, nextVideoButtonHover = false;
     boolean previousVideoButtonEnabled = false, playButtonEnabled = false, nextVideoButtonEnabled = false;
 
+    boolean miniplayerHover = false;
+
+
+    PauseTransition progressBarTimer = new PauseTransition(Duration.millis(1000));
 
     MiniplayerController(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface, Miniplayer miniplayer){
 
@@ -86,14 +93,16 @@ public class MiniplayerController {
 
         mediaViewWrapper.setPrefSize(500, 300);
         mediaViewWrapper.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        mediaViewWrapper.getChildren().addAll(mediaViewInnerWrapper, controlsBackground, previousVideoButtonPane, nextVideoButtonPane, playButtonPane, closeButtonPane);
+        mediaViewWrapper.getChildren().addAll(mediaViewInnerWrapper, controlsBackground, previousVideoButtonPane, nextVideoButtonPane, playButtonPane, closeButtonPane, progressBar);
 
         mediaViewWrapper.setOnMouseEntered(e -> {
             showControls();
+            miniplayerHover = true;
         });
 
         mediaViewWrapper.setOnMouseExited(e -> {
             hideControls();
+            miniplayerHover = false;
         });
 
         mediaViewInnerWrapper.setBackground(Background.EMPTY);
@@ -123,6 +132,18 @@ public class MiniplayerController {
         mainController.forwardsIndicator.resize();
         mainController.backwardsIndicator.resize();
         mainController.valueIndicator.resize();
+
+        progressBar.setId("durationBar");
+        progressBar.setMouseTransparent(true);
+        progressBar.setMaxWidth(Double.MAX_VALUE);
+        progressBar.setPrefHeight(4);
+        progressBar.setProgress(0);
+        progressBar.setVisible(false);
+        StackPane.setAlignment(progressBar, Pos.BOTTOM_CENTER);
+
+        progressBarTimer.setOnFinished(e -> {
+            if(!miniplayerHover) progressBar.setVisible(false);
+        });
 
 
         widthListener = (observableValue, oldValue, newValue) -> {
@@ -546,6 +567,8 @@ public class MiniplayerController {
         previousVideoButtonPane.setVisible(true);
         playButtonPane.setVisible(true);
         nextVideoButtonPane.setVisible(true);
+
+        progressBar.setVisible(true);
     }
 
     public void hideControls(){
@@ -555,6 +578,8 @@ public class MiniplayerController {
         previousVideoButtonPane.setVisible(false);
         playButtonPane.setVisible(false);
         nextVideoButtonPane.setVisible(false);
+
+        if(!mainController.seekingWithKeys && progressBarTimer.getStatus() != Animation.Status.RUNNING) progressBar.setVisible(false);
     }
 
 
@@ -718,6 +743,9 @@ public class MiniplayerController {
 
             mediaInterface.seekedToEnd = false;
 
+            mainController.seekingWithKeys = true;
+            progressBar.setVisible(true);
+            progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
             e.consume();
 
@@ -741,6 +769,9 @@ public class MiniplayerController {
                 mediaInterface.seekedToEnd = true;
             }
 
+            mainController.seekingWithKeys = true;
+            progressBar.setVisible(true);
+            progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
 
             e.consume();

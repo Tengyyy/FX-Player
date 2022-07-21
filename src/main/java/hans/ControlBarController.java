@@ -341,6 +341,10 @@ public class ControlBarController implements Initializable {
                 mediaInterface.updateMedia(newValue.doubleValue());
             }
             durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
+
+            if(mainController.miniplayerActive){
+                mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
+            }
         });
 
         durationSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {

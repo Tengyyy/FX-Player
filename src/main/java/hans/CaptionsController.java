@@ -71,7 +71,7 @@ public class CaptionsController {
 
     Color defaultBackground = Color.rgb(defaultBackgroundRed, defaultBackgroundGreen, defaultBackgroundBlue, defaultBackgroundOpacity);
 
-    DoubleProperty mediaWidthMultiplier = new SimpleDoubleProperty(0.6);
+    DoubleProperty mediaWidthMultiplier = new SimpleDoubleProperty(0.4);
 
 
     int currentFontSize = defaultFontSize;

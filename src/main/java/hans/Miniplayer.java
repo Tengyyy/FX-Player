@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -48,7 +49,8 @@ public class Miniplayer {
         stage.setMaxWidth(MAX_WIDTH);
         stage.setMaxHeight(MAX_HEIGHT);
 
-        scene = new BorderlessScene(stage, StageStyle.UNDECORATED, miniplayerController.mediaViewWrapper);
+        scene = new BorderlessScene(stage, StageStyle.TRANSPARENT, miniplayerController.mediaViewWrapper);
+        scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets().add(getClass().getResource("styles/miniplayer.css").toExternalForm());
 
 

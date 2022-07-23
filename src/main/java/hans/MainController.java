@@ -196,7 +196,7 @@ public class MainController implements Initializable {
 
         widthListener = (observableValue, oldValue, newValue) -> {
 
-            if(oldValue.doubleValue() >= 800 && newValue.doubleValue() < 800){
+            if(newValue.doubleValue() < 800){
                 captionsController.mediaWidthMultiplier.set(0.4);
                 captionsController.resizeCaptions();
 
@@ -206,7 +206,7 @@ public class MainController implements Initializable {
                 backwardsIndicator.resize();
                 valueIndicator.resize();
             }
-            else if((oldValue.doubleValue() < 800 || oldValue.doubleValue() >= 1200) && (newValue.doubleValue() >= 800 && newValue.doubleValue() < 1200)){
+            else if((newValue.doubleValue() >= 800 && newValue.doubleValue() < 1200)){
                 captionsController.mediaWidthMultiplier.set(0.6);
                 captionsController.resizeCaptions();
 
@@ -217,7 +217,7 @@ public class MainController implements Initializable {
                 valueIndicator.resize();
 
             }
-            else if((oldValue.doubleValue() < 1200 || oldValue.doubleValue() >= 1800) && (newValue.doubleValue() >= 1200 && newValue.doubleValue() < 1800)){
+            else if((newValue.doubleValue() >= 1200 && newValue.doubleValue() < 1800)){
                 captionsController.mediaWidthMultiplier.set(0.8);
                 captionsController.resizeCaptions();
 
@@ -228,7 +228,7 @@ public class MainController implements Initializable {
                 valueIndicator.resize();
 
             }
-            else if((oldValue.doubleValue() < 1800 || oldValue.doubleValue() >= 2400) && (newValue.doubleValue() >= 1800 && newValue.doubleValue() < 2400)){
+            else if((newValue.doubleValue() >= 1800 && newValue.doubleValue() < 2400)){
                 captionsController.mediaWidthMultiplier.set(1.0);
                 captionsController.resizeCaptions();
 
@@ -240,7 +240,7 @@ public class MainController implements Initializable {
                 valueIndicator.resize();
 
             }
-            else if(oldValue.doubleValue() < 2400 && newValue.doubleValue() >= 2400){
+            else if(newValue.doubleValue() >= 2400){
                 captionsController.mediaWidthMultiplier.set(1.2);
                 captionsController.resizeCaptions();
 
@@ -435,6 +435,8 @@ public class MainController implements Initializable {
     public void openMiniplayer(){
         miniplayerActive = true;
 
+        if(App.fullScreen) controlBarController.fullScreen();
+
         mediaView.setMediaPlayer(null);
         // causes Concurrent Modification Exception
         // seems to be a JavaFX bug, have to try either creating new mediaviews every opening/closing of the miniplayer or implementing vlcj library
@@ -453,6 +455,7 @@ public class MainController implements Initializable {
 
     public void closeMiniplayer(){
 
+
         miniplayer.miniplayerController.mediaViewInnerWrapper.widthProperty().removeListener(miniplayer.miniplayerController.widthListener);
 
         actionIndicator.moveToMainplayer();
@@ -467,6 +470,8 @@ public class MainController implements Initializable {
         }
 
         miniplayerActive = false;
+
+        controlBarController.mouseEventTracker.move();
 
         resizeIndicators();
         mediaViewInnerWrapper.widthProperty().addListener(widthListener);

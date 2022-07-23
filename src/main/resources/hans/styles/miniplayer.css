@@ -8,9 +8,12 @@
     -fx-background-color: rgb(200,200,200);
 }
 
+.root { -fx-background-color: transparent; }
+
 
 #controlsBackground {
     -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-radius: 10;
 }
 
 .tooltip {
@@ -35,4 +38,9 @@
 	-fx-padding: 0px;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
+}
+
+#mediaViewWrapper {
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-radius: 10;
 }

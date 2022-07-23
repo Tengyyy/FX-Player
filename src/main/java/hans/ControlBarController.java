@@ -222,9 +222,11 @@ public class ControlBarController implements Initializable {
         fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(fullScreenButtonPane));
         fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(fullScreenButtonPane));
 
-        disablePreviousVideoButton();
-        disablePlayButton();
-        disableNextVideoButton();
+        Platform.runLater(() -> {
+            disablePreviousVideoButton();
+            disablePlayButton();
+            disableNextVideoButton();
+        });
 
 
         volumeSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
@@ -313,12 +315,12 @@ public class ControlBarController implements Initializable {
 
                     previousVideoButton.setOnAction((e) -> replayMedia());
 
-                    if(mainController.miniplayerActive){
-                        if(!mainController.miniplayer.miniplayerController.previousVideoButtonEnabled) mainController.miniplayer.miniplayerController.enablePreviousVideoButton();
-                        else mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
-                    }
+
                     if(!previousVideoButtonEnabled) enablePreviousVideoButton();
-                    else previousVideoTooltip.updateText("Replay");
+                    else {
+                        previousVideoTooltip.updateText("Replay");
+                        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
+                    }
                 }
                 else if(oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5){
                     //previousVideoTooltip.updateText("Previous video (SHIFT + P)");
@@ -327,7 +329,6 @@ public class ControlBarController implements Initializable {
 
 
                     if(menuController.history.isEmpty() || menuController.historyBox.index == 0){
-                        if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.previousVideoButtonEnabled) mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
                         if(previousVideoButtonEnabled) disablePreviousVideoButton();
                     }
                     else {
@@ -459,7 +460,7 @@ public class ControlBarController implements Initializable {
             mediaInterface.mediaPlayer.play();
 
             menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
-            menuController.activeItem.play.updateText("Pause video");
+            if(menuController.activeItem.play != null) menuController.activeItem.play.updateText("Pause video");
 
             if (menuController.historyBox.index != -1) {
                 HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
@@ -856,6 +857,8 @@ public class ControlBarController implements Initializable {
             previousVideoIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
 
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enablePreviousVideoButton();
+
         Platform.runLater(() -> {
             if(durationSlider.getValue() > 5) previousVideoTooltip = new ControlTooltip("Replay", previousVideoButton, controlBarWrapper, 0, false);
             else previousVideoTooltip = new ControlTooltip("Previous video (SHIFT + P", previousVideoButton, controlBarWrapper, 0, false);
@@ -874,6 +877,9 @@ public class ControlBarController implements Initializable {
             previousVideoIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
         }
 
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
+
+
         previousVideoButton.setOnMouseEntered(null);
         if(previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.hide();
     }
@@ -887,6 +893,8 @@ public class ControlBarController implements Initializable {
         else {
             playIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
+
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enablePlayButton();
 
         Platform.runLater(() -> {
             if(mediaInterface.atEnd) play = new ControlTooltip("Replay (k)", playButton, controlBarWrapper, 0 , false);
@@ -907,6 +915,8 @@ public class ControlBarController implements Initializable {
             playIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
         }
 
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disablePlayButton();
+
         playButton.setOnMouseEntered(null);
         if(playButtonHover && play != null) play.hide();
     }
@@ -920,6 +930,8 @@ public class ControlBarController implements Initializable {
         else {
             nextVideoIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
+
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enableNextVideoButton();
 
         Platform.runLater(() -> {
             nextVideoTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, controlBarWrapper, 0, false);
@@ -937,6 +949,8 @@ public class ControlBarController implements Initializable {
         else {
             nextVideoIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
         }
+
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disableNextVideoButton();
 
         nextVideoButton.setOnMouseEntered(null);
         if(nextVideoButtonHover && nextVideoTooltip != null) nextVideoTooltip.hide();

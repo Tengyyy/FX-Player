@@ -12,11 +12,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -75,7 +77,6 @@ public class MiniplayerController {
     ChangeListener<? super Number> widthListener;
 
     boolean previousVideoButtonHover = false, playButtonHover = false, nextVideoButtonHover = false;
-    boolean previousVideoButtonEnabled = false, playButtonEnabled = false, nextVideoButtonEnabled = false;
 
     boolean miniplayerHover = false;
 
@@ -92,8 +93,18 @@ public class MiniplayerController {
 
 
         mediaViewWrapper.setPrefSize(500, 300);
-        mediaViewWrapper.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        mediaViewWrapper.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(10), Insets.EMPTY)));
         mediaViewWrapper.getChildren().addAll(mediaViewInnerWrapper, controlsBackground, previousVideoButtonPane, nextVideoButtonPane, playButtonPane, closeButtonPane, progressBar);
+        mediaViewWrapper.setId("mediaViewWrapper");
+
+
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(mediaViewWrapper.widthProperty());
+        clip.heightProperty().bind(mediaViewWrapper.heightProperty());
+        //clip.setArcHeight(24);
+        //clip.setArcWidth(24);
+
+        mediaViewWrapper.setClip(clip);
 
         mediaViewWrapper.setOnMouseEntered(e -> {
             showControls();
@@ -108,16 +119,27 @@ public class MiniplayerController {
         mediaViewInnerWrapper.setBackground(Background.EMPTY);
         mediaViewInnerWrapper.setMouseTransparent(true);
         mediaViewInnerWrapper.getChildren().add(mediaView);
+        StackPane.setAlignment(mediaViewInnerWrapper, Pos.CENTER);
+
+        Rectangle mediaClip = new Rectangle();
+        mediaClip.setArcHeight(20);
+        mediaClip.setArcWidth(20);
+        mediaClip.widthProperty().bind(mediaViewInnerWrapper.widthProperty());
+        mediaClip.heightProperty().bind(mediaViewInnerWrapper.heightProperty());
+        mediaViewInnerWrapper.setClip(mediaClip);
+
 
         mediaView.setPreserveRatio(true);
 
         mediaViewWidth = mediaView.fitWidthProperty();
         mediaViewHeight = mediaView.fitHeightProperty();
         Platform.runLater(() -> {
-            mediaViewHeight.bind(mediaViewInnerWrapper.getScene().heightProperty());
-            mediaViewWidth.bind(mediaViewInnerWrapper.getScene().widthProperty());
+            mediaViewHeight.bind(mediaViewWrapper.heightProperty().subtract(2));
+            mediaViewWidth.bind(mediaViewWrapper.widthProperty().subtract(2));
         });
         mediaView.setMouseTransparent(true);
+
+
 
         if(menuController.activeItem != null && mediaInterface.mediaPlayer != null){
             mediaView.setMediaPlayer(mediaInterface.mediaPlayer);
@@ -136,9 +158,10 @@ public class MiniplayerController {
         progressBar.setId("durationBar");
         progressBar.setMouseTransparent(true);
         progressBar.setMaxWidth(Double.MAX_VALUE);
-        progressBar.setPrefHeight(4);
+        progressBar.setPrefHeight(5);
         progressBar.setProgress(0);
         progressBar.setVisible(false);
+        StackPane.setMargin(progressBar, new Insets(0, 5, 10, 5));
         StackPane.setAlignment(progressBar, Pos.BOTTOM_CENTER);
 
         progressBarTimer.setOnFinished(e -> {
@@ -148,14 +171,14 @@ public class MiniplayerController {
 
         widthListener = (observableValue, oldValue, newValue) -> {
 
-            if(newValue.doubleValue() < 500 && oldValue.doubleValue() >= 500){
+            if(newValue.doubleValue() < 500){
                 reduceButtons();
             }
-            else if(newValue.doubleValue() >= 500 && oldValue.doubleValue() < 500){
+            else if(newValue.doubleValue() >= 500){
                 enlargeButtons();
             }
 
-            if(oldValue.doubleValue() >= 400 && newValue.doubleValue() < 400){
+            if(newValue.doubleValue() < 400){
 
                 mainController.captionsController.mediaWidthMultiplier.set(0.3);
                 mainController.captionsController.resizeCaptions();
@@ -166,7 +189,7 @@ public class MiniplayerController {
                 mainController.backwardsIndicator.resize();
                 mainController.valueIndicator.resize();
             }
-            else if((oldValue.doubleValue() < 400 || oldValue.doubleValue() >= 600) && (newValue.doubleValue() >= 400 && newValue.doubleValue() < 600)){
+            else if((newValue.doubleValue() >= 400 && newValue.doubleValue() < 600)){
 
                 mainController.captionsController.mediaWidthMultiplier.set(0.4);
                 mainController.captionsController.resizeCaptions();
@@ -178,7 +201,7 @@ public class MiniplayerController {
                 mainController.valueIndicator.resize();
 
             }
-            else if((oldValue.doubleValue() < 600 || oldValue.doubleValue() >= 800) && (newValue.doubleValue() >= 600 && newValue.doubleValue() < 800)){
+            else if((newValue.doubleValue() >= 600 && newValue.doubleValue() < 800)){
 
                 mainController.captionsController.mediaWidthMultiplier.set(0.55);
                 mainController.captionsController.resizeCaptions();
@@ -190,7 +213,7 @@ public class MiniplayerController {
                 mainController.valueIndicator.resize();
 
             }
-            else if(oldValue.doubleValue() < 800 && newValue.doubleValue() >= 800){
+            else if(newValue.doubleValue() >= 800){
 
                 mainController.captionsController.mediaWidthMultiplier.set(0.65);
                 mainController.captionsController.resizeCaptions();
@@ -406,7 +429,7 @@ public class MiniplayerController {
     public void previousVideoButtonHoverOn(){
         previousVideoButtonHover = true;
 
-        if(previousVideoButtonEnabled){
+        if(controlBarController.previousVideoButtonEnabled){
             AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
         }
         else {
@@ -417,7 +440,7 @@ public class MiniplayerController {
     public void previousVideoButtonHoverOff(){
         previousVideoButtonHover = false;
 
-        if(previousVideoButtonEnabled){
+        if(controlBarController.previousVideoButtonEnabled){
             AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
         }
         else {
@@ -428,7 +451,7 @@ public class MiniplayerController {
     public void playButtonHoverOn(){
         playButtonHover = true;
 
-        if(playButtonEnabled){
+        if(controlBarController.playButtonEnabled){
             AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
         }
         else {
@@ -439,7 +462,7 @@ public class MiniplayerController {
     public void playButtonHoverOff(){
         playButtonHover = false;
 
-        if(playButtonEnabled){
+        if(controlBarController.playButtonEnabled){
             AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
         }
         else {
@@ -450,7 +473,7 @@ public class MiniplayerController {
     public void nextVideoButtonHoverOn(){
         nextVideoButtonHover = true;
 
-        if(nextVideoButtonEnabled){
+        if(controlBarController.nextVideoButtonEnabled){
             AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
         }
         else {
@@ -461,7 +484,7 @@ public class MiniplayerController {
     public void nextVideoButtonHoverOff(){
         nextVideoButtonHover = false;
 
-        if(nextVideoButtonEnabled){
+        if(controlBarController.nextVideoButtonEnabled){
             AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
         }
         else {
@@ -631,7 +654,6 @@ public class MiniplayerController {
 
 
     public void enablePreviousVideoButton(){
-        previousVideoButtonEnabled = true;
 
         if(previousVideoButtonHover){
             previousVideoIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
@@ -651,7 +673,6 @@ public class MiniplayerController {
     }
 
     public void disablePreviousVideoButton(){
-        previousVideoButtonEnabled = false;
 
         if(previousVideoButtonHover){
             previousVideoIcon.setStyle("-fx-background-color: rgb(130, 130, 130);");
@@ -665,7 +686,6 @@ public class MiniplayerController {
     }
 
     public void enablePlayButton(){
-        playButtonEnabled = true;
 
         if(playButtonHover){
             playIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
@@ -684,7 +704,6 @@ public class MiniplayerController {
     }
 
     public void disablePlayButton(){
-        playButtonEnabled = false;
 
         if(playButtonHover){
             playIcon.setStyle("-fx-background-color: rgb(130, 130, 130);");
@@ -698,7 +717,6 @@ public class MiniplayerController {
     }
 
     public void enableNextVideoButton(){
-        nextVideoButtonEnabled = true;
 
         if(nextVideoButtonHover){
             nextVideoIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
@@ -715,7 +733,6 @@ public class MiniplayerController {
     }
 
     public void disableNextVideoButton(){
-        nextVideoButtonEnabled = false;
 
         if(nextVideoButtonHover){
             nextVideoIcon.setStyle("-fx-background-color: rgb(130, 130, 130);");

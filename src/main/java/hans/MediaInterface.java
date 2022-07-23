@@ -192,26 +192,21 @@ public class MediaInterface {
             mainController.mediaView.setMediaPlayer(mediaPlayer);
         }
 
-        if(mainController.miniplayerActive && !mainController.miniplayer.miniplayerController.playButtonEnabled) mainController.miniplayer.miniplayerController.enablePlayButton();
         if(!controlBarController.playButtonEnabled) controlBarController.enablePlayButton();
 
-        if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
-            if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.disableNextVideoButton();
-            if(controlBarController.nextVideoButtonEnabled) controlBarController.disableNextVideoButton();
+        if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty() && controlBarController.nextVideoButtonEnabled){
+            controlBarController.disableNextVideoButton();
         }
-        else if(menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1){
-            if(menuController.mainController.miniplayerActive && !menuController.mainController.miniplayer.miniplayerController.nextVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.enableNextVideoButton();
-            if(!controlBarController.nextVideoButtonEnabled) controlBarController.enableNextVideoButton();
+        else if(menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1 && !controlBarController.nextVideoButtonEnabled){
+            controlBarController.enableNextVideoButton();
         }
 
 
-        if(menuController.history.isEmpty() || menuController.historyBox.index == 0 && controlBarController.durationSlider.getValue() <= 5){
-            if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.previousVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
-            if(controlBarController.previousVideoButtonEnabled) controlBarController.disablePreviousVideoButton();
+        if((menuController.history.isEmpty() || menuController.historyBox.index == 0) && controlBarController.durationSlider.getValue() <= 5 && controlBarController.previousVideoButtonEnabled){
+            controlBarController.disablePreviousVideoButton();
         }
-        else if(!menuController.history.isEmpty() && (menuController.historyBox.index == -1 || menuController.historyBox.index > 0)){
-            if(menuController.mainController.miniplayerActive && !menuController.mainController.miniplayer.miniplayerController.previousVideoButtonEnabled) menuController.mainController.miniplayer.miniplayerController.enablePreviousVideoButton();
-            if(!controlBarController.previousVideoButtonEnabled) controlBarController.enablePreviousVideoButton();
+        else if(!menuController.history.isEmpty() && (menuController.historyBox.index == -1 || menuController.historyBox.index > 0) && !controlBarController.previousVideoButtonEnabled){
+            controlBarController.enablePreviousVideoButton();
         }
 
 
@@ -219,9 +214,6 @@ public class MediaInterface {
         App.setFrameDuration(mediaItem.getFrameDuration());
 
         // update video name field in settings pane and the stage title with the new video
-        Platform.runLater(() -> {
-            App.stage.setTitle(mediaItem.getFile().getName());
-        });
 
         mediaPlayer.currentTimeProperty().addListener((observableValue, oldTime, newTime) -> {
             if (!controlBarController.showingTimeLeft)
@@ -314,7 +306,6 @@ public class MediaInterface {
         mainController.mediaView.setMediaPlayer(null);
         if(mainController.miniplayerActive){
             mainController.miniplayer.miniplayerController.mediaView.setMediaPlayer(null);
-            if(mainController.miniplayer.miniplayerController.playButtonEnabled) mainController.miniplayer.miniplayerController.disablePlayButton();
         }
 
         if(controlBarController.playButtonEnabled) controlBarController.disablePlayButton();

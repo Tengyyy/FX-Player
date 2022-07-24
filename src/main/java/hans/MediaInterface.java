@@ -74,7 +74,7 @@ public class MediaInterface {
                     }
                 }
 
-                if (!controlBarController.durationSlider.isValueChanging()) {
+                if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || (mainController.miniplayerActive && !mainController.miniplayer.miniplayerController.slider.isValueChanging()))) {
 
                     controlBarController.playIcon.setShape(controlBarController.pauseSVG);
                     controlBarController.playIcon.setPrefSize(20, 20);
@@ -119,7 +119,7 @@ public class MediaInterface {
             });
         } else if (newValue >= controlBarController.durationSlider.getMax()) {
 
-            if (controlBarController.durationSlider.isValueChanging()) {
+            if (controlBarController.durationSlider.isValueChanging() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
                 seekedToEnd = true;
             }
 
@@ -127,7 +127,7 @@ public class MediaInterface {
             playing.set(false);
             mediaPlayer.pause();
 
-            if (!controlBarController.durationSlider.isValueChanging()) {
+            if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || (mainController.miniplayerActive && !mainController.miniplayer.miniplayerController.slider.isValueChanging()))) {
                 endMedia();
             }
         }
@@ -284,6 +284,7 @@ public class MediaInterface {
             controlBarController.play();
 
             controlBarController.durationSlider.setMax(Math.floor(mediaItem.getMedia().getDuration().toSeconds()));
+            if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.slider.setMax(Math.floor(mediaItem.getMedia().getDuration().toSeconds()));
 
             TimerTask setRate = new TimerTask() {
 

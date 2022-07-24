@@ -2,15 +2,18 @@ package hans;
 
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.input.KeyEvent;
@@ -65,7 +68,11 @@ public class MiniplayerController {
     SVGPath nextVideoSVG = new SVGPath();
     SVGPath closeSVG = new SVGPath();
 
+    StackPane sliderPane = new StackPane();
     ProgressBar progressBar = new ProgressBar();
+    Slider slider = new Slider();
+
+    boolean sliderHover = false;
 
     ControlTooltip previousVideoButtonTooltip, playButtonTooltip, nextVideoButtonTooltip;
 
@@ -94,15 +101,13 @@ public class MiniplayerController {
 
         mediaViewWrapper.setPrefSize(500, 300);
         mediaViewWrapper.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(10), Insets.EMPTY)));
-        mediaViewWrapper.getChildren().addAll(mediaViewInnerWrapper, controlsBackground, previousVideoButtonPane, nextVideoButtonPane, playButtonPane, closeButtonPane, progressBar);
+        mediaViewWrapper.getChildren().addAll(mediaViewInnerWrapper, controlsBackground, previousVideoButtonPane, nextVideoButtonPane, playButtonPane, closeButtonPane, sliderPane);
         mediaViewWrapper.setId("mediaViewWrapper");
 
 
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(mediaViewWrapper.widthProperty());
         clip.heightProperty().bind(mediaViewWrapper.heightProperty());
-        //clip.setArcHeight(24);
-        //clip.setArcWidth(24);
 
         mediaViewWrapper.setClip(clip);
 
@@ -155,18 +160,118 @@ public class MiniplayerController {
         mainController.backwardsIndicator.resize();
         mainController.valueIndicator.resize();
 
+        sliderPane.setPrefHeight(16);
+        sliderPane.setMaxHeight(Region.USE_PREF_SIZE);
+        sliderPane.getChildren().addAll(progressBar, slider);
+        sliderPane.setVisible(false);
+        StackPane.setMargin(sliderPane, new Insets(0, 4, 10, 4));
+        StackPane.setAlignment(sliderPane, Pos.BOTTOM_CENTER);
+
         progressBar.setId("durationBar");
         progressBar.setMouseTransparent(true);
         progressBar.setMaxWidth(Double.MAX_VALUE);
-        progressBar.setPrefHeight(5);
+        progressBar.setPrefHeight(4);
         progressBar.setProgress(0);
-        progressBar.setVisible(false);
-        StackPane.setMargin(progressBar, new Insets(0, 5, 10, 5));
-        StackPane.setAlignment(progressBar, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(progressBar, new Insets(0, 11, 0, 12));
 
         progressBarTimer.setOnFinished(e -> {
-            if(!miniplayerHover) progressBar.setVisible(false);
+            if(!miniplayerHover && !slider.isValueChanging()) sliderPane.setVisible(false);
         });
+
+
+        slider.setPrefHeight(16);
+        slider.setMaxHeight(Region.USE_PREF_SIZE);
+        slider.setMinHeight(Region.USE_PREF_SIZE);
+        slider.setId("slider");
+        StackPane.setMargin(slider, new Insets(0, 4, 0, 4));
+
+        slider.addEventFilter(MouseEvent.DRAG_DETECTED, e -> {
+            slider.setValueChanging(true);
+
+        });
+        slider.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> slider.setValueChanging(false));
+
+        Platform.runLater(() -> {
+
+            slider.lookup(".thumb").setScaleX(0);
+            slider.lookup(".thumb").setScaleY(0);
+
+            slider.lookup(".track").setCursor(Cursor.HAND);
+            slider.lookup(".thumb").setCursor(Cursor.HAND);
+
+
+        });
+
+        slider.setOnMouseEntered((e) -> {
+            sliderHover = true;
+            sliderHoverOn();
+        });
+
+        slider.setOnMouseExited((e) -> {
+            sliderHover = false;
+            if (!e.isPrimaryButtonDown() && !e.isSecondaryButtonDown() && !e.isMiddleButtonDown()) {
+                sliderHoverOff();
+            }
+        });
+
+        slider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(controlBarController.durationSlider.getValue() != newValue.doubleValue()) controlBarController.durationSlider.setValue(newValue.doubleValue());
+        });
+
+        slider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
+
+            if (newValue) { // pause video when user starts seeking
+                controlBarController.playIcon.setShape(playSVG);
+                controlBarController.playIcon.setPrefSize(20, 20);
+
+                if(menuController.mediaActive.get()) {
+                    mediaInterface.mediaPlayer.pause();
+                    mediaInterface.playing.set(false);
+                }
+
+                controlBarController.play.updateText("Play (k)");
+
+                pause();
+
+            } else {
+
+                if (!sliderHover) sliderHoverOff();
+                if(!miniplayerHover) hideControls();
+
+                if(menuController.mediaActive.get()) mediaInterface.mediaPlayer.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
+
+
+                if (mediaInterface.atEnd) { // if user drags the duration slider to the end turn play button to replay button
+                    controlBarController.playIcon.setShape(replaySVG);
+                    controlBarController.playIcon.setPrefSize(24, 24);
+                    controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());
+
+                    controlBarController.play.updateText("Replay (k)");
+
+                    menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
+                    menuController.activeItem.play.updateText("Play video");
+
+                    end();
+
+                } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
+                    if(menuController.mediaActive.get()) {
+                        mediaInterface.mediaPlayer.play();
+                        mediaInterface.playing.set(true);
+                    }
+
+                    controlBarController.playIcon.setShape(pauseSVG);
+                    controlBarController.playIcon.setPrefSize(20, 20);
+
+                    controlBarController.play.updateText("Pause (k)");
+
+                    play();
+                }
+            }
+        });
+
+        slider.setMax(controlBarController.durationSlider.getMax());
+        sliderPane.setMouseTransparent(!menuController.mediaActive.get());
+
 
 
         widthListener = (observableValue, oldValue, newValue) -> {
@@ -591,18 +696,20 @@ public class MiniplayerController {
         playButtonPane.setVisible(true);
         nextVideoButtonPane.setVisible(true);
 
-        progressBar.setVisible(true);
+        sliderPane.setVisible(true);
     }
 
-    public void hideControls(){
-        controlsBackground.setVisible(false);
+    public void hideControls() {
 
-        closeButtonPane.setVisible(false);
-        previousVideoButtonPane.setVisible(false);
-        playButtonPane.setVisible(false);
-        nextVideoButtonPane.setVisible(false);
+        if (!mainController.seekingWithKeys && progressBarTimer.getStatus() != Animation.Status.RUNNING && !slider.isValueChanging()){
 
-        if(!mainController.seekingWithKeys && progressBarTimer.getStatus() != Animation.Status.RUNNING) progressBar.setVisible(false);
+            controlsBackground.setVisible(false);
+            closeButtonPane.setVisible(false);
+            previousVideoButtonPane.setVisible(false);
+            playButtonPane.setVisible(false);
+            nextVideoButtonPane.setVisible(false);
+            sliderPane.setVisible(false);
+        }
     }
 
 
@@ -761,7 +868,7 @@ public class MiniplayerController {
             mediaInterface.seekedToEnd = false;
 
             mainController.seekingWithKeys = true;
-            progressBar.setVisible(true);
+            sliderPane.setVisible(true);
             progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
             e.consume();
@@ -787,12 +894,25 @@ public class MiniplayerController {
             }
 
             mainController.seekingWithKeys = true;
-            progressBar.setVisible(true);
+            sliderPane.setVisible(true);
             progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
 
             e.consume();
 
         }
+    }
+
+    public void sliderHoverOn() {
+        ScaleTransition sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, slider.lookup(".thumb"), slider.lookup(".thumb").getScaleX(), 1, slider.lookup(".thumb").getScaleY(), 1, false, 1, false);
+        ScaleTransition sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, progressBar, 1, 1, progressBar.getScaleY(), 1.6, false, 1, false);
+        AnimationsClass.parallelAnimation(true, sliderThumbHoverOn, sliderTrackHoverOn);
+    }
+
+
+    public void sliderHoverOff() {
+        ScaleTransition sliderThumbHoverOff = AnimationsClass.scaleAnimation(100, slider.lookup(".thumb"), slider.lookup(".thumb").getScaleX(), 0, slider.lookup(".thumb").getScaleY(), 0, false, 1, false);
+        ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, progressBar, 1, 1, progressBar.getScaleY(), 1, false, 1, false);
+        AnimationsClass.parallelAnimation(true, sliderThumbHoverOff, sliderTrackHoverOff);
     }
 }

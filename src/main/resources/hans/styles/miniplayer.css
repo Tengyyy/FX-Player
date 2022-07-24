@@ -44,3 +44,13 @@
     -fx-border-color: rgba(255, 255, 255, 0.2);
     -fx-border-radius: 10;
 }
+
+#slider .track {
+	-fx-background-color: null;
+	-fx-pref-height: 30;
+}
+
+#slider > .thumb {
+	-fx-background-color: red;
+	-fx-padding: 8; /* hides thumb by default */
+}

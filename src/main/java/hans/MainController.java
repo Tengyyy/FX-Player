@@ -565,7 +565,7 @@ public class MainController implements Initializable {
 
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
 
@@ -601,7 +601,7 @@ public class MainController implements Initializable {
 
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
@@ -633,7 +633,7 @@ public class MainController implements Initializable {
 
     public void pressSPACE(KeyEvent e){
         controlBarController.mouseEventTracker.move();
-        if (!controlBarController.durationSlider.isValueChanging() && menuController.mediaActive.get()) { // wont let user play/pause video while media slider is seeking
+        if (!controlBarController.durationSlider.isValueChanging() && menuController.mediaActive.get() && (!miniplayerActive || (miniplayerActive && !miniplayer.miniplayerController.slider.isValueChanging()))) { // wont let user play/pause video while media slider is seeking
             if (mediaInterface.atEnd) {
                 controlBarController.replayMedia();
                 actionIndicator.setIcon(REPLAY);
@@ -668,7 +668,7 @@ public class MainController implements Initializable {
 
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);
@@ -677,7 +677,7 @@ public class MainController implements Initializable {
 
     public void pressK(KeyEvent e){
         controlBarController.mouseEventTracker.move();
-        if (!controlBarController.durationSlider.isValueChanging() && menuController.mediaActive.get()) {  // wont let user play/pause video while media slider is seeking
+        if (!controlBarController.durationSlider.isValueChanging() && menuController.mediaActive.get() && (!miniplayerActive || (miniplayerActive && !miniplayer.miniplayerController.slider.isValueChanging()))) {  // wont let user play/pause video while media slider is seeking
             if (mediaInterface.atEnd) {
                 controlBarController.replayMedia();
                 actionIndicator.setIcon(REPLAY);
@@ -714,7 +714,7 @@ public class MainController implements Initializable {
 
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 10);
@@ -912,7 +912,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 1 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
         }
@@ -924,7 +924,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 2 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
         }
@@ -936,7 +936,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 3 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
         }
@@ -948,7 +948,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 4 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
         }
@@ -960,7 +960,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 5 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
         }
@@ -972,7 +972,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 6 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
         }
@@ -984,7 +984,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 7 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
         }
@@ -996,7 +996,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 8 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
         }
@@ -1008,7 +1008,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 9 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
         }
@@ -1020,7 +1020,7 @@ public class MainController implements Initializable {
         if(menuController.mediaActive.get()){
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(0);
@@ -1052,7 +1052,7 @@ public class MainController implements Initializable {
         if(menuController.mediaActive.get()){
             seekingWithKeys = true;
             if(miniplayerActive) {
-                miniplayer.miniplayerController.progressBar.setVisible(true);
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());

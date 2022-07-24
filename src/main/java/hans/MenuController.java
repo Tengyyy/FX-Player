@@ -143,7 +143,10 @@ public class MenuController implements Initializable {
 
 
 
-        mediaActive.addListener((observableValue, oldValue, newValue) -> controlBarController.durationPane.setMouseTransparent(!newValue));
+        mediaActive.addListener((observableValue, oldValue, newValue) -> {
+            controlBarController.durationPane.setMouseTransparent(!newValue);
+            if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.sliderPane.setMouseTransparent(!newValue);
+        });
 
         fileChooser.setTitle("Open video");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4"));

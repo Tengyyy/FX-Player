@@ -345,6 +345,9 @@ public class ControlBarController implements Initializable {
 
             if(mainController.miniplayerActive){
                 mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
+                if(mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue()){
+                    mainController.miniplayer.miniplayerController.slider.setValue(newValue.doubleValue());
+                }
             }
         });
 

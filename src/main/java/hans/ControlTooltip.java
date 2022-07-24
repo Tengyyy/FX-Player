@@ -17,6 +17,7 @@ import javafx.util.Duration;
 
 public class ControlTooltip extends Tooltip {
 
+    String lastTextValue = "";
     String tooltipText;
     Region tooltipParent;
 
@@ -35,6 +36,8 @@ public class ControlTooltip extends Tooltip {
     BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
     PauseTransition countdown;
 
+
+
     ControlTooltip(String tooltipText, Region tooltipParent, Region controlBar, int delay, boolean isMenu) {
 
         this.tooltipText = tooltipText;
@@ -45,11 +48,6 @@ public class ControlTooltip extends Tooltip {
         this.getStyleClass().add("tooltip");
 
         this.setText(tooltipText);
-
-        this.show(tooltipParent, 0, 0);
-        tooltipMiddle = (this.getWidth() - 18) / 2; // 18 is the approximate width of the tooltip shadow
-        tooltipHeight = this.getHeight();
-        this.hide();
 
         mouseHover.addListener((obs, wasHover, isHover) -> {
             if(isHover){
@@ -72,6 +70,16 @@ public class ControlTooltip extends Tooltip {
     }
 
     public void showTooltip() {
+
+        if(this.getText() != lastTextValue){
+            this.show(tooltipParent, 0, 0);
+            tooltipMiddle = (this.getWidth() - 18) / 2;
+            tooltipHeight = this.getHeight();
+            this.hide();
+
+            lastTextValue = this.getText();
+        }
+
         Bounds bounds = tooltipParent.localToScreen(tooltipParent.getLayoutBounds());
         nodeMiddleX = tooltipParent.getWidth() / 2;
         nodeMiddleY = tooltipParent.getHeight() / 2;
@@ -89,17 +97,10 @@ public class ControlTooltip extends Tooltip {
         if(this.getText() == newText) return;
 
         this.setText(newText);
+
         if(this.isShowing()){
             this.hide();
-            this.show(tooltipParent, 0, 0);
-            tooltipMiddle = (this.getWidth() - 18) / 2;
-            this.hide();
             this.showTooltip();
-        }
-        else {
-            this.show(tooltipParent, 0, 0);
-            tooltipMiddle = (this.getWidth() - 18) / 2;
-            this.hide();
         }
     }
 

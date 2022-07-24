@@ -221,6 +221,9 @@ public class MiniplayerController {
         slider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
             if (newValue) { // pause video when user starts seeking
+
+                showControls();
+
                 controlBarController.playIcon.setShape(playSVG);
                 controlBarController.playIcon.setPrefSize(20, 20);
 

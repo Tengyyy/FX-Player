@@ -93,7 +93,9 @@ public class MenuController implements Initializable {
 
     DragResizer dragResizer;
 
-    StackPane historyHeader, currentHeader, queueHeader, historyWrapper, historyButtonWrapper;
+    StackPane currentHeader, historyWrapper, historyButtonWrapper;
+
+    HBox queueHeader, historyHeader;
 
 
     Label historyText, historySizeText, currentVideoText, queueText;
@@ -166,14 +168,16 @@ public class MenuController implements Initializable {
        historyText = new Label();
        historyText.setText("History");
        historyText.getStyleClass().add("menuBoxTitle");
-       StackPane.setAlignment(historyText, Pos.CENTER_LEFT);
+       //historyText.setPadding(new Insets(0, 10, 0, 0));
+       historyText.setPrefWidth(65);
 
 
        historySizeText = new Label();
        historySizeText.setText("(0 items)");
        historySizeText.setId("historySizeText");
-       historySizeText.setTranslateX(60);
-       StackPane.setAlignment(historySizeText, Pos.CENTER_LEFT);
+       historySizeText.setMaxWidth(Double.MAX_VALUE);
+       HBox.setHgrow(historySizeText, Priority.ALWAYS);
+
 
        historyButton.setMinSize(40, 40);
        historyButton.setPrefSize(40, 40);
@@ -184,7 +188,6 @@ public class MenuController implements Initializable {
        historyButton.setButtonType(JFXButton.ButtonType.RAISED);
        historyButton.setText(null);
 
-       StackPane.setAlignment(historyButton, Pos.CENTER);
 
         historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> historyButton.setStyle("-fx-background-color: #606060"));
 
@@ -211,11 +214,11 @@ public class MenuController implements Initializable {
         historyButtonWrapper.setPrefSize(40, 40);
         historyButtonWrapper.setMaxSize(40, 40);
         historyButtonWrapper.getChildren().addAll(historyButton, historyIcon);
-        StackPane.setAlignment(historyButtonWrapper, Pos.CENTER_RIGHT);
 
 
-        historyHeader = new StackPane();
+        historyHeader = new HBox();
         historyHeader.getChildren().addAll(historyText, historySizeText, historyButtonWrapper);
+        historyHeader.setAlignment(Pos.CENTER_LEFT);
        historyHeader.setMinHeight(58);
        historyHeader.setPrefHeight(58);
        historyHeader.setMaxHeight(58);
@@ -227,7 +230,7 @@ public class MenuController implements Initializable {
                 CornerRadii.EMPTY, new BorderWidths(1), new Insets(0, 1,0,1))));
 
 
-        historyWrapper.getChildren().addAll(historyBox);
+        historyWrapper.getChildren().add(historyBox);
         historyBox.setAlignment(Pos.TOP_CENTER);
 
         currentVideoText = new Label();
@@ -248,7 +251,8 @@ public class MenuController implements Initializable {
         queueText = new Label();
         queueText.setText("Next in Queue");
         queueText.getStyleClass().add("menuBoxTitle");
-        StackPane.setAlignment(queueText, Pos.CENTER_LEFT);
+        queueText.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(queueText, Priority.ALWAYS);
 
         shufflePath.setContent(App.svgMap.get(SVG.SHUFFLE));
         shuffleIcon.setPrefSize(20, 20);
@@ -258,15 +262,14 @@ public class MenuController implements Initializable {
 
         shuffleToggle.setSize(20);
         shuffleToggle.setGap(0);
-        shuffleToggle.setTranslateY(6);
         shuffleToggle.setGraphic(shuffleIcon);
+        shuffleToggle.setTranslateY(6);
         shuffleToggle.setCursor(Cursor.HAND);
         shuffleToggle.setId("shuffleToggle");
         shuffleToggle.setPadding(Insets.EMPTY);
         shuffleToggle.setGraphicTextGap(0);
-        shuffleToggle.setTranslateX(-120);
         shuffleToggle.setFont(new Font(0));
-        StackPane.setAlignment(shuffleToggle, Pos.CENTER_RIGHT);
+        HBox.setMargin(shuffleToggle, new Insets(0, 20, 0, 0));
 
         shuffleToggle.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
             settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(newValue);
@@ -277,11 +280,11 @@ public class MenuController implements Initializable {
         clearQueueButton.setCursor(Cursor.HAND);
         clearQueueButton.setText("Clear queue");
         clearQueueButton.setDisable(true);
-        StackPane.setAlignment(clearQueueButton, Pos.CENTER_RIGHT);
 
         clearQueueButton.setOnAction((e) -> clearQueue());
 
-        queueHeader = new StackPane();
+        queueHeader = new HBox();
+        queueHeader.setAlignment(Pos.CENTER_LEFT);
         queueHeader.getChildren().addAll(queueText, shuffleToggle, clearQueueButton);
         queueHeader.setMinHeight(60);
         queueHeader.setPrefHeight(60);

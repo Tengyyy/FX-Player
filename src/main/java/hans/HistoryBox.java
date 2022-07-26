@@ -37,8 +37,9 @@ public class HistoryBox extends VBox {
         if(menuController.history.size() >= CAPACITY) menuController.history.remove(0);
         menuController.history.add(historyItem);
 
-        if(menuController.history.size() == 1) menuController.historySizeText.setText(String.format("(%o item)", menuController.history.size()));
-        else menuController.historySizeText.setText(String.format("(%o items)", menuController.history.size()));
+        if(menuController.history.size() == 1) menuController.historySizeText.setText(String.format("(%d item)", menuController.history.size()));
+        else menuController.historySizeText.setText(String.format("(%d items)", menuController.history.size()));
+        System.out.println(menuController.history.size());
 
         if(!open){
             if(getChildren().size() < CAPACITY){
@@ -54,7 +55,6 @@ public class HistoryBox extends VBox {
                 getChildren().add(historyItem);
                 initialize(historyItem);
             }
-
             else {
                 getChildren().remove(0);
                 getChildren().add(historyItem);

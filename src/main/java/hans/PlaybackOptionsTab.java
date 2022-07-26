@@ -7,6 +7,8 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.shape.SVGPath;
 
 
 public class PlaybackOptionsTab extends HBox {
@@ -15,6 +17,7 @@ public class PlaybackOptionsTab extends HBox {
 
     Label titleLabel = new Label();
     MFXToggleButton toggle = new MFXToggleButton();
+
 
     PlaybackOptionsTab(PlaybackOptionsController playbackOptionsController, String titleText){
 

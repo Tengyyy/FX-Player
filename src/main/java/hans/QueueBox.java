@@ -1,11 +1,14 @@
 package hans;
 
+import io.github.palexdev.materialfx.controls.MFXSlider;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Slider;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Priority;
@@ -43,6 +46,7 @@ public class QueueBox extends VBox {
         this.getStyleClass().add("menuBox");
         this.setId("queueBox");
         this.setFillWidth(true);
+
         VBox.setVgrow(this, Priority.ALWAYS);
 
 

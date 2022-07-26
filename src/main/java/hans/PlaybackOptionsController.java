@@ -36,7 +36,6 @@ public class PlaybackOptionsController {
 
         backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
 
-        //playbackOptionsBox.setMinSize(235, 171);
         playbackOptionsBox.setPrefSize(235, 171);
         playbackOptionsBox.setMaxSize(235, 171);
         playbackOptionsBox.setPadding(new Insets(8, 0, 8, 0));
@@ -84,74 +83,14 @@ public class PlaybackOptionsController {
 
         settingsController.settingsPane.getChildren().add(playbackOptionsBox);
 
-        shuffleTab.setOnMouseClicked((e) -> {
-            shuffleTab.toggle.fire();
+        shuffleTab.setOnMouseClicked((e) -> shuffleTab.toggle.fire());
 
-            if (loopTab.toggle.isSelected()) {
-                loopTab.toggle.fire();
-            }
+        loopTab.setOnMouseClicked((e) -> loopTab.toggle.fire());
 
-            if (autoplayTab.toggle.isSelected()) {
-                autoplayTab.toggle.fire();
-            }
-        });
-        loopTab.setOnMouseClicked((e) -> {
-            loopTab.toggle.fire();
+        autoplayTab.setOnMouseClicked((e) -> autoplayTab.toggle.fire());
 
-            if (shuffleTab.toggle.isSelected()) {
-                shuffleTab.toggle.fire();
-            }
 
-            if (autoplayTab.toggle.isSelected()) {
-                autoplayTab.toggle.fire();
-            }
-        });
-        autoplayTab.setOnMouseClicked((e) -> {
-            autoplayTab.toggle.fire();
 
-            if (loopTab.toggle.isSelected()) {
-                loopTab.toggle.fire();
-            }
-
-            if (shuffleTab.toggle.isSelected()) {
-                shuffleTab.toggle.fire();
-            }
-        });
-
-        shuffleTab.toggle.setOnMouseClicked((e) -> { // in addition to the hbox, also add same logic to the switch itself
-            // (minus the .fire() part cause in that case the switch would
-            // toggle twice in a row)
-
-            if (loopTab.toggle.isSelected()) {
-                loopTab.toggle.fire();
-            }
-
-            if (autoplayTab.toggle.isSelected()) {
-                autoplayTab.toggle.fire();
-            }
-        });
-
-        loopTab.toggle.setOnMouseClicked((e) -> {
-
-            if (shuffleTab.toggle.isSelected()) {
-                shuffleTab.toggle.fire();
-            }
-
-            if (autoplayTab.toggle.isSelected()) {
-                autoplayTab.toggle.fire();
-            }
-        });
-
-        autoplayTab.toggle.setOnMouseClicked((e) -> {
-
-            if (loopTab.toggle.isSelected()) {
-                loopTab.toggle.fire();
-            }
-
-            if (shuffleTab.toggle.isSelected()) {
-                shuffleTab.toggle.fire();
-            }
-        });
 
         shuffleTab.toggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) { // OFF
@@ -160,24 +99,37 @@ public class PlaybackOptionsController {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.tuneSVG);
                 }
 
+
             } else { // ON
                 shuffleOn = true;
-                settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.shuffleSVG);
+
+
+                if(!loopTab.toggle.isSelected()) {
+                    settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.shuffleSVG);
+                }
 
                 if(!settingsController.menuController.animationsInProgress.isEmpty()) return;
 
                 if(!settingsController.menuController.queue.isEmpty()) settingsController.menuController.queueBox.shuffle();
             }
+
+            settingsController.menuController.shuffleToggle.setSelected(newValue);
         });
 
         loopTab.toggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) { // OFF
                 loopOn = false;
+
+                // uncheck media view right click popup
+
                 if(!autoplayTab.toggle.isSelected() && !shuffleTab.toggle.isSelected()) {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.tuneSVG);
                 }
             } else { // ON
                 loopOn = true;
+
+                // uncheck media view right click popup
+
                 settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatOnceSVG);
             }
         });
@@ -193,10 +145,14 @@ public class PlaybackOptionsController {
             } else { // ON
 
                 autoplayOn = true;
-                settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatSVG);
 
+                if(!shuffleTab.toggle.isSelected() && !loopTab.toggle.isSelected()) {
+                    settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatSVG);
+                }
             }
         });
+
+        autoplayTab.toggle.setSelected(true);
 
     }
 

@@ -23,6 +23,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -268,6 +269,7 @@ public class MiniplayerController {
                     controlBarController.play.updateText("Pause (k)");
 
                     play();
+
                 }
             }
         });

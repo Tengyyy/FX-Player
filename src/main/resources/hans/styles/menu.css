@@ -192,7 +192,7 @@
     -fx-background-color: #EFEFEF;
 }
 
-.menuIcon {
+.menuIcon, #shuffleIcon {
     -fx-background-color: white;
 }
 
@@ -208,5 +208,18 @@
 
 .column {
     -fx-background-color: white;
+}
+
+
+#shuffleToggle {
+    -mfx-unselected-color: rgb(40, 40, 40);
+    -mfx-unselected-border-color: white;
+	-mfx-selected-color: #ff5447;
+	-mfx-selected-border-color: transparent;
+}
+
+#shuffleToggle:hover  {
+    -mfx-unselected-color: rgb(60,60,60);
+    -mfx-selected-color: #ff3030;
 }
 

@@ -1,6 +1,7 @@
 package hans;
 
 
+import io.github.palexdev.materialfx.font.MFXFontIcon;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 
@@ -11,6 +12,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.SubtitleTrack;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -74,7 +77,7 @@ public class MediaInterface {
                     }
                 }
 
-                if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || (mainController.miniplayerActive && !mainController.miniplayer.miniplayerController.slider.isValueChanging()))) {
+                if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
 
                     controlBarController.playIcon.setShape(controlBarController.pauseSVG);
                     controlBarController.playIcon.setPrefSize(20, 20);
@@ -127,7 +130,7 @@ public class MediaInterface {
             playing.set(false);
             mediaPlayer.pause();
 
-            if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || (mainController.miniplayerActive && !mainController.miniplayer.miniplayerController.slider.isValueChanging()))) {
+            if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
                 endMedia();
             }
         }
@@ -301,6 +304,8 @@ public class MediaInterface {
 
     }
 
+
+
     public void resetMediaPlayer(){
 
         if(mediaPlayer != null) mediaPlayer.dispose();
@@ -318,6 +323,8 @@ public class MediaInterface {
 
         if(controlBarController.showingTimeLeft) controlBarController.durationLabel.setText("−00:00/00:00");
         else controlBarController.durationLabel.setText("00:00/00:00");
+
+        if(settingsController.playbackOptionsController.loopOn) settingsController.playbackOptionsController.loopTab.toggle.fire();
     }
 
     public void addVideo(Media media){

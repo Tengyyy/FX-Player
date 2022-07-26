@@ -12,6 +12,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -61,6 +62,9 @@ public class Miniplayer {
         stage.setScene(scene);
         stage.setWidth(700);
         stage.setHeight(500);
+
+        stage.setY(Screen.getPrimary().getBounds().getMinY());
+        stage.setX(Math.max(0, Screen.getPrimary().getBounds().getMaxX() - 700));
 
         stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             switch(event.getCode()){

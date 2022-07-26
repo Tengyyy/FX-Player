@@ -2,12 +2,16 @@ package hans;
 
 
 import com.jfoenix.controls.JFXButton;
+import io.github.palexdev.materialfx.controls.MFXCircleToggleNode;
+import io.github.palexdev.materialfx.font.MFXFontIcon;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -29,6 +33,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -84,11 +89,13 @@ public class MenuController implements Initializable {
 
     double prefWidth = 350;
 
-    ControlTooltip addMediaTooltip, clearQueueTooltip, closeMenuTooltip, appSettingsTooltip, historyTooltip;
+    ControlTooltip addMediaTooltip, clearQueueTooltip, closeMenuTooltip, appSettingsTooltip, historyTooltip, shuffleTooltip;
 
     DragResizer dragResizer;
 
-    StackPane historyHeader, currentHeader, queueHeader, historyWrapper, historyButtonWrapper; // valmis teha kunagi
+    StackPane historyHeader, currentHeader, queueHeader, historyWrapper, historyButtonWrapper;
+
+
     Label historyText, currentVideoText, queueText;
 
     ArrayList<Animation> animationsInProgress = new ArrayList<>();
@@ -106,9 +113,13 @@ public class MenuController implements Initializable {
     JFXButton historyButton = new JFXButton();
     JFXButton clearQueueButton = new JFXButton();
 
+    MFXCircleToggleNode shuffleToggle = new MFXCircleToggleNode();
+
     Region historyIcon = new Region();
+    Region shuffleIcon = new Region();
 
     SVGPath historyIconPath = new SVGPath();
+    SVGPath shufflePath = new SVGPath();
 
     // the lower bound of the bottom drag detection area
     DoubleProperty lowerBottomBound = new SimpleDoubleProperty();
@@ -231,6 +242,28 @@ public class MenuController implements Initializable {
         queueText.getStyleClass().add("menuBoxTitle");
         StackPane.setAlignment(queueText, Pos.CENTER_LEFT);
 
+        shufflePath.setContent(App.svgMap.get(SVG.SHUFFLE));
+        shuffleIcon.setPrefSize(20, 20);
+        shuffleIcon.setMaxSize(20, 20);
+        shuffleIcon.setId("shuffleIcon");
+        shuffleIcon.setShape(shufflePath);
+
+        shuffleToggle.setSize(20);
+        shuffleToggle.setGap(0);
+        shuffleToggle.setTranslateY(6);
+        shuffleToggle.setGraphic(shuffleIcon);
+        shuffleToggle.setCursor(Cursor.HAND);
+        shuffleToggle.setId("shuffleToggle");
+        shuffleToggle.setPadding(Insets.EMPTY);
+        shuffleToggle.setGraphicTextGap(0);
+        shuffleToggle.setTranslateX(-120);
+        shuffleToggle.setFont(new Font(0));
+        StackPane.setAlignment(shuffleToggle, Pos.CENTER_RIGHT);
+
+        shuffleToggle.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(newValue);
+        });
+
         clearQueueButton.setId("clearQueueButton");
         clearQueueButton.setRipplerFill(Color.WHITE);
         clearQueueButton.setCursor(Cursor.HAND);
@@ -241,7 +274,7 @@ public class MenuController implements Initializable {
         clearQueueButton.setOnAction((e) -> clearQueue());
 
         queueHeader = new StackPane();
-        queueHeader.getChildren().addAll(queueText, clearQueueButton);
+        queueHeader.getChildren().addAll(queueText, shuffleToggle, clearQueueButton);
         queueHeader.setMinHeight(60);
         queueHeader.setPrefHeight(60);
         queueHeader.setMaxHeight(60);
@@ -476,6 +509,7 @@ public class MenuController implements Initializable {
             clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, new VBox(), 1000, false);
             appSettingsTooltip = new ControlTooltip("App settings", appSettingsButton, new VBox(), 1000, true);
             historyTooltip = new ControlTooltip("Open history", historyButton, new VBox(), 1000, false);
+            shuffleTooltip = new ControlTooltip("Shuffle is off", shuffleToggle, new VBox(), 1000, false);
         });
 }
 

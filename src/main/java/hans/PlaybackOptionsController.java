@@ -99,6 +99,7 @@ public class PlaybackOptionsController {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.tuneSVG);
                 }
 
+                settingsController.menuController.shuffleTooltip.updateText("Shuffle is off");
 
             } else { // ON
                 shuffleOn = true;
@@ -107,6 +108,8 @@ public class PlaybackOptionsController {
                 if(!loopTab.toggle.isSelected()) {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.shuffleSVG);
                 }
+
+                settingsController.menuController.shuffleTooltip.updateText("Shuffle is on");
 
                 if(!settingsController.menuController.animationsInProgress.isEmpty()) return;
 

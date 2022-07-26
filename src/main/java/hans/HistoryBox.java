@@ -20,7 +20,7 @@ public class HistoryBox extends VBox {
 
     StackPane historyWrapper;
 
-    Timeline openHistory, closeHistory;
+    ParallelTransition openHistory, closeHistory;
 
     HistoryBox(MenuController menuController, StackPane historyWrapper){
 
@@ -30,13 +30,15 @@ public class HistoryBox extends VBox {
         this.getStyleClass().add("menuBox");
         this.setFillWidth(true);
 
-        this.setAlignment(Pos.TOP_LEFT);
     }
 
     public void add(HistoryItem historyItem){
 
         if(menuController.history.size() >= CAPACITY) menuController.history.remove(0);
         menuController.history.add(historyItem);
+
+        if(menuController.history.size() == 1) menuController.historySizeText.setText(String.format("(%o item)", menuController.history.size()));
+        else menuController.historySizeText.setText(String.format("(%o items)", menuController.history.size()));
 
         if(!open){
             if(getChildren().size() < CAPACITY){
@@ -45,7 +47,6 @@ public class HistoryBox extends VBox {
                 if(getChildren().size() == 1) {
                     Platform.runLater(() -> {
                         HistoryItem.height = menuController.history.get(0).getHeight();
-                        System.out.println(historyItem.getHeight());
                         height = HistoryItem.height * getChildren().size();
                     });
                 }
@@ -150,14 +151,15 @@ public class HistoryBox extends VBox {
 
         menuController.historyTooltip.updateText("Close history");
 
-        openHistory = new Timeline(new KeyFrame(Duration.millis(300),
-                new KeyValue(historyWrapper.minHeightProperty(), height, Interpolator.EASE_BOTH)));
+        open = true;
 
-        openHistory.setOnFinished(e -> {
-            historyWrapper.setMinHeight(height);
-            historyWrapper.setMaxHeight(height);
-            open = true;
-        });
+        Timeline minTimeline = new Timeline(new KeyFrame(Duration.millis(300),
+                new KeyValue(historyWrapper.minHeightProperty(), height, Interpolator.EASE_BOTH)));
+        Timeline maxTimeline = new Timeline(new KeyFrame(Duration.millis(300),
+                new KeyValue(historyWrapper.maxHeightProperty(), height, Interpolator.EASE_BOTH)));
+
+        openHistory = new ParallelTransition(minTimeline, maxTimeline);
+
 
         openHistory.playFromStart();
         menuController.historyIconPath.setContent(App.svgMap.get(SVG.CHEVRON_UP));
@@ -172,15 +174,13 @@ public class HistoryBox extends VBox {
 
         open = false;
 
-        historyWrapper.setMinHeight(0);
-
-        closeHistory = new Timeline(new KeyFrame(Duration.millis(300),
+        Timeline minTimeline = new Timeline(new KeyFrame(Duration.millis(300),
+                new KeyValue(historyWrapper.minHeightProperty(), 0, Interpolator.EASE_BOTH)));
+        Timeline maxTimeline = new Timeline(new KeyFrame(Duration.millis(300),
                 new KeyValue(historyWrapper.maxHeightProperty(), 0, Interpolator.EASE_BOTH)));
 
-        closeHistory.setOnFinished(e -> {
-            historyWrapper.setMaxHeight(0);
-            historyWrapper.setMinHeight(0);
-        });
+        closeHistory = new ParallelTransition(minTimeline, maxTimeline);
+
 
         closeHistory.playFromStart();
         menuController.historyIconPath.setContent(App.svgMap.get(SVG.CHEVRON_DOWN));

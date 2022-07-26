@@ -96,7 +96,7 @@ public class MenuController implements Initializable {
     StackPane historyHeader, currentHeader, queueHeader, historyWrapper, historyButtonWrapper;
 
 
-    Label historyText, currentVideoText, queueText;
+    Label historyText, historySizeText, currentVideoText, queueText;
 
     ArrayList<Animation> animationsInProgress = new ArrayList<>();
 
@@ -168,15 +168,23 @@ public class MenuController implements Initializable {
        historyText.getStyleClass().add("menuBoxTitle");
        StackPane.setAlignment(historyText, Pos.CENTER_LEFT);
 
-        historyButton.setMinSize(40, 40);
-        historyButton.setPrefSize(40, 40);
-        historyButton.setMaxSize(40, 40);
-        historyButton.setRipplerFill(Color.WHITE);
-        historyButton.setId("historyButton");
-        historyButton.setCursor(Cursor.HAND);
-        historyButton.setButtonType(JFXButton.ButtonType.RAISED);
-        historyButton.setText(null);
-        StackPane.setAlignment(historyButton, Pos.CENTER);
+
+       historySizeText = new Label();
+       historySizeText.setText("(0 items)");
+       historySizeText.setId("historySizeText");
+       historySizeText.setTranslateX(60);
+       StackPane.setAlignment(historySizeText, Pos.CENTER_LEFT);
+
+       historyButton.setMinSize(40, 40);
+       historyButton.setPrefSize(40, 40);
+       historyButton.setMaxSize(40, 40);
+       historyButton.setRipplerFill(Color.WHITE);
+       historyButton.setId("historyButton");
+       historyButton.setCursor(Cursor.HAND);
+       historyButton.setButtonType(JFXButton.ButtonType.RAISED);
+       historyButton.setText(null);
+
+       StackPane.setAlignment(historyButton, Pos.CENTER);
 
         historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> historyButton.setStyle("-fx-background-color: #606060"));
 
@@ -207,7 +215,7 @@ public class MenuController implements Initializable {
 
 
         historyHeader = new StackPane();
-        historyHeader.getChildren().addAll(historyText, historyButtonWrapper);
+        historyHeader.getChildren().addAll(historyText, historySizeText, historyButtonWrapper);
        historyHeader.setMinHeight(58);
        historyHeader.setPrefHeight(58);
        historyHeader.setMaxHeight(58);

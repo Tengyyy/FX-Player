@@ -26,10 +26,7 @@ import javafx.scene.control.Button;
 
 import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
 
@@ -285,14 +282,16 @@ public class MainController implements Initializable {
                 });
 
 
-        mediaView.setOnMouseClicked(e -> {
+        mediaViewInnerWrapper.setOnMouseClicked(e -> {
 
             if (e.getClickCount() == 1) {
-                mediaClick();
+                mediaClick(e);
+
+                if(e.getButton() == MouseButton.SECONDARY) e.consume();
             }
 
-            if (e.getClickCount() == 2) {
-                mediaClick();
+            if (e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY) {
+                mediaClick(e);
                 controlBarController.fullScreen();
             }
         });
@@ -301,10 +300,16 @@ public class MainController implements Initializable {
 
     }
 
-    public void mediaClick() {
+    public void mediaClick(MouseEvent e) {
 
         // Clicking on the mediaview node will close the settings tab if its open or
         // otherwise play/pause/replay the video
+
+        if(e.getButton() == MouseButton.SECONDARY){
+            // open/close loop toggle pop-up
+
+            return;
+        }
 
         if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();

@@ -1,5 +1,7 @@
 package hans;
 
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -7,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 
 import java.io.File;
 
@@ -22,6 +25,8 @@ public class MenuItemOptionsPopUp extends ContextMenu {
     final double popUpWidth = 127; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
 
     Node menuObjectNode;
+
+    FadeTransition showTransition, hideTransition;
 
 
     MenuItemOptionsPopUp(MenuObject menuObject){
@@ -41,6 +46,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
             menuObject.showMetadata();
         });
 
+
         addSubtitles.setOnAction((e) -> {
             openSubtitleChooser();
         });
@@ -54,6 +60,8 @@ public class MenuItemOptionsPopUp extends ContextMenu {
 
         buttonWidth = menuObject.getOptionsButton().getWidth();
 
+        this.getStyleableNode().setOpacity(0);
+
     }
 
     public void showOptions(){
@@ -62,6 +70,37 @@ public class MenuItemOptionsPopUp extends ContextMenu {
                 menuObject.getOptionsButton().localToScreen(menuObject.getOptionsButton().getBoundsInLocal()).getMaxY() + 5);
     }
 
+
+    @Override
+    public void show(Node node, double v, double v1) {
+
+        if(hideTransition != null && hideTransition.getStatus() == Animation.Status.RUNNING) hideTransition.stop();
+
+        this.getStyleableNode().setOpacity(0);
+
+        super.show(node, v, v1);
+        showTransition = new FadeTransition(Duration.millis(150), this.getStyleableNode());
+        showTransition.setFromValue(0);
+        showTransition.setToValue(1);
+        showTransition.playFromStart();
+
+    }
+
+    @Override
+    public void hide() {
+
+
+        if(showTransition != null && showTransition.getStatus() == Animation.Status.RUNNING) showTransition.stop();
+
+        hideTransition = new FadeTransition(Duration.millis(150), this.getStyleableNode());
+        hideTransition.setFromValue(1);
+        hideTransition.setToValue(0);
+        hideTransition.setOnFinished(e -> {
+            super.hide();
+        });
+        hideTransition.playFromStart();
+
+    }
 
     public void openSubtitleChooser(){
         FileChooser fileChooser = new FileChooser();

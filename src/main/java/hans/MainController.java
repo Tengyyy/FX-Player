@@ -97,6 +97,8 @@ public class MainController implements Initializable {
 
     ChangeListener<? super Number> widthListener;
 
+    LoopPopUp loopPopUp;
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
@@ -110,6 +112,8 @@ public class MainController implements Initializable {
         settingsController.init(mediaInterface, captionsController);
 
         mediaViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
+
+        loopPopUp = new LoopPopUp(settingsController);
 
 
         // declaring media control images
@@ -307,9 +311,13 @@ public class MainController implements Initializable {
 
         if(e.getButton() == MouseButton.SECONDARY){
             // open/close loop toggle pop-up
+            loopPopUp.show(mediaViewInnerWrapper, e.getScreenX(), e.getScreenY());
+
 
             return;
         }
+
+        if(loopPopUp.isShowing()) loopPopUp.hide();
 
         if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();

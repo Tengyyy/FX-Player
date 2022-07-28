@@ -2,6 +2,7 @@
 
     .context-menu {
         -fx-background-color: #303030;
+        -fx-background-radius: 5;
     }
 
     .menu-item .label {
@@ -10,8 +11,4 @@
 
     .menu-item:focused {
       -fx-background-color: #404040;
-    }
-
-    .context-menu {
-        -fx-background-radius: 5;
     }

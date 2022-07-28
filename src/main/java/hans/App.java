@@ -112,6 +112,8 @@ public class App extends Application {
             Scene scene = new Scene(root, 705, 400);
 
             scene.getStylesheets().add(getClass().getResource("styles/application.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("styles/loopPopUp.css").toExternalForm());
+
 
             scene.addEventFilter(MouseEvent.ANY, event -> {
                 if (controlBarController.mouseEventTracker != null)

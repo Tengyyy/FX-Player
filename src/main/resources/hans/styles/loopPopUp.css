@@ -1,0 +1,33 @@
+
+@font-face {
+    src: url('../fonts/Roboto-Medium.ttf');
+}
+
+
+.context-menu {
+    -fx-background-color: #101010;
+    -fx-background-radius: 5;
+    -fx-background-opacity: 0.7;
+}
+
+#loopPopUpLabel {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 14;
+    -fx-pref-height: 35;
+    -fx-pref-width: 190;
+    -fx-padding: 0 0 0 10;
+}
+
+.icon {
+    -fx-background-color: white;
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 0 20
+}
+
+.menu-item:hover {
+    -fx-background-color: #303030;
+}

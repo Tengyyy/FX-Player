@@ -98,6 +98,7 @@ public class PlaybackOptionsController {
                 if(!autoplayTab.toggle.isSelected() && !loopTab.toggle.isSelected()) {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.tuneSVG);
                 }
+                else if(autoplayTab.toggle.isSelected()) settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatSVG);
 
                 settingsController.menuController.shuffleTooltip.updateText("Shuffle is off");
 
@@ -123,15 +124,16 @@ public class PlaybackOptionsController {
             if (!newValue) { // OFF
                 loopOn = false;
 
-                // uncheck media view right click popup
+                settingsController.mainController.loopPopUp.checkIcon.setVisible(false);
 
-                if(!autoplayTab.toggle.isSelected() && !shuffleTab.toggle.isSelected()) {
-                    settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.tuneSVG);
-                }
+                if(shuffleTab.toggle.isSelected()) settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.shuffleSVG);
+                else if(autoplayTab.toggle.isSelected()) settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatSVG);
+                else settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.tuneSVG);
+
             } else { // ON
                 loopOn = true;
 
-                // uncheck media view right click popup
+                settingsController.mainController.loopPopUp.checkIcon.setVisible(true);
 
                 settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatOnceSVG);
             }

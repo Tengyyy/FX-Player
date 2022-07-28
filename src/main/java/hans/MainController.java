@@ -16,7 +16,6 @@ import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -25,17 +24,17 @@ import javafx.scene.control.Button;
 
 
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
 
-import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.util.Duration;
+import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
 import javax.imageio.ImageIO;
 
@@ -45,13 +44,13 @@ import static hans.SVG.*;
 public class MainController implements Initializable {
 
     @FXML
-    public MediaView mediaView;
+    public ImageView videoImageView;
 
     @FXML
     Button menuButton;
 
     @FXML
-    StackPane outerPane, menuButtonPane, mediaViewWrapper, mediaViewInnerWrapper;
+    StackPane outerPane, menuButtonPane, videoImageViewWrapper, videoImageViewInnerWrapper;
 
     @FXML
     BorderPane mainPane;
@@ -70,8 +69,8 @@ public class MainController implements Initializable {
 
     MediaInterface mediaInterface;
 
-    DoubleProperty mediaViewWidth;
-    DoubleProperty mediaViewHeight;
+    DoubleProperty videoImageViewWidth;
+    DoubleProperty videoImageViewHeight;
 
 
     // counter to keep track of the current node that has focus (used for focus traversing with tab and shift+tab)
@@ -111,7 +110,9 @@ public class MainController implements Initializable {
         menuController.init(this, controlBarController, settingsController, mediaInterface, captionsController);
         settingsController.init(mediaInterface, captionsController);
 
-        mediaViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
+        mediaInterface.init();
+
+        videoImageViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
 
         loopPopUp = new LoopPopUp(settingsController);
 
@@ -130,25 +131,25 @@ public class MainController implements Initializable {
 
         // Make mediaView adjust to frame size
 
-        mediaViewWidth = mediaView.fitWidthProperty();
-        mediaViewHeight = mediaView.fitHeightProperty();
-        mediaViewWidth.bind(mediaViewInnerWrapper.widthProperty());
-        Platform.runLater(() -> mediaViewHeight.bind(mediaViewInnerWrapper.getScene().heightProperty()));
+        videoImageViewWidth = videoImageView.fitWidthProperty();
+        videoImageViewHeight = videoImageView.fitHeightProperty();
+        videoImageViewWidth.bind(videoImageViewInnerWrapper.widthProperty());
+        Platform.runLater(() -> videoImageViewHeight.bind(videoImageViewInnerWrapper.getScene().heightProperty()));
 
-        mediaView.setPreserveRatio(true);
+        videoImageView.setPreserveRatio(true);
 
 
         //video expands to take up entire window if menu is not open
         Platform.runLater(() ->{
             if(!menuController.menuOpen){
-                mediaViewWrapper.prefWidthProperty().bind(mediaViewWrapper.getScene().widthProperty());
+                videoImageViewWrapper.prefWidthProperty().bind(videoImageViewWrapper.getScene().widthProperty());
             }
         });
 
 
 
-        mediaViewWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
-        mediaViewInnerWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
+        videoImageViewWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
+        videoImageViewInnerWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
 
         menuButtonPane.translateXProperty().bind(menuController.menu.widthProperty().multiply(-1));
         menuButton.setBackground(Background.EMPTY);
@@ -179,13 +180,13 @@ public class MainController implements Initializable {
         miniplayerActiveText.setVisible(false);
         StackPane.setAlignment(miniplayerActiveText, Pos.CENTER);
 
-        mediaViewWrapper.getChildren().add(whitePane);
-        mediaViewInnerWrapper.getChildren().addAll(miniplayerActiveText);
+        videoImageViewWrapper.getChildren().add(whitePane);
+        videoImageViewInnerWrapper.getChildren().addAll(miniplayerActiveText);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBarWrapper, 1000, true);
 
-            mediaViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
+            videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 if(newValue.doubleValue() < menuController.menu.getPrefWidth()){
                     menuController.menu.setPrefWidth(newValue.doubleValue());
                     menuController.prefWidth = newValue.doubleValue();
@@ -253,9 +254,9 @@ public class MainController implements Initializable {
             }
         };
 
-        mediaViewInnerWrapper.widthProperty().addListener(widthListener);
+        videoImageViewInnerWrapper.widthProperty().addListener(widthListener);
 
-        mediaViewInnerWrapper.setOnMouseDragOver(e -> {
+        videoImageViewInnerWrapper.setOnMouseDragOver(e -> {
             if(captionsController.captionsDragActive){
                 if(e.getY() - captionsController.dragPositionY <= captionsController.minimumY) captionsController.captionsBox.setTranslateY(((captionsController.startY - captionsController.minimumY) * -1) + captionsController.startTranslateY);
                 else if(e.getY() - captionsController.dragPositionY + captionsController.captionsBox.getLayoutBounds().getMaxY() > captionsController.maximumY) captionsController.captionsBox.setTranslateY(captionsController.maximumY - captionsController.startY - captionsController.captionsBox.getLayoutBounds().getMaxY() + captionsController.startTranslateY);
@@ -267,26 +268,9 @@ public class MainController implements Initializable {
             }
         });
 
-        mediaView.focusedProperty()
-                .addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    if (!newValue) {
-                        mediaView.setStyle("-fx-border-color: transparent;");
-                    } else {
-                        focusNodeTracker = 0;
-                    }
-                });
-
-        menuButton.focusedProperty()
-                .addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    if (!newValue) {
-                        menuButton.setStyle("-fx-border-color: transparent;");
-                    } else {
-                        focusNodeTracker = 8;
-                    }
-                });
 
 
-        mediaViewInnerWrapper.setOnMouseClicked(e -> {
+        videoImageViewInnerWrapper.setOnMouseClicked(e -> {
 
             if (e.getClickCount() == 1) {
                 mediaClick(e);
@@ -311,7 +295,7 @@ public class MainController implements Initializable {
 
         if(e.getButton() == MouseButton.SECONDARY){
             // open/close loop toggle pop-up
-            loopPopUp.show(mediaViewInnerWrapper, e.getScreenX(), e.getScreenY());
+            loopPopUp.show(videoImageViewInnerWrapper, e.getScreenX(), e.getScreenY());
 
 
             return;
@@ -339,7 +323,7 @@ public class MainController implements Initializable {
             actionIndicator.animate();
         }
 
-        mediaView.requestFocus();
+        videoImageView.requestFocus();
     }
 
 
@@ -415,12 +399,12 @@ public class MainController implements Initializable {
         double height = menuController.activeItem.getMediaItem().getMedia().getHeight();
         double aspectRatio = width / height;
 
-        double realWidth = Math.min(mediaView.getFitWidth(), mediaView.getFitHeight() * aspectRatio);
-        double realHeight = Math.min(mediaView.getFitHeight(), mediaView.getFitWidth() / aspectRatio);
+        double realWidth = Math.min(videoImageView.getFitWidth(), videoImageView.getFitHeight() * aspectRatio);
+        double realHeight = Math.min(videoImageView.getFitHeight(), videoImageView.getFitWidth() / aspectRatio);
 
         WritableImage writableImage = new WritableImage((int) realWidth, (int)realHeight);
 
-        mediaView.snapshot(null, writableImage);
+        videoImageView.snapshot(null, writableImage);
 
         // Flashing screen animation
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), whitePane);
@@ -450,13 +434,13 @@ public class MainController implements Initializable {
 
         if(App.fullScreen) controlBarController.fullScreen();
 
-        mediaView.setMediaPlayer(null);
-        // causes Concurrent Modification Exception
-        // seems to be a JavaFX bug, have to try either creating new mediaviews every opening/closing of the miniplayer or implementing vlcj library
 
-        mediaViewInnerWrapper.widthProperty().removeListener(widthListener);
+
+        videoImageViewInnerWrapper.widthProperty().removeListener(widthListener);
 
         miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface, settingsController);
+
+        mediaInterface.embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(miniplayer.miniplayerController.videoImageView));
 
         miniplayer.miniplayerController.moveIndicators();
         captionsController.moveToMiniplayer();
@@ -469,7 +453,7 @@ public class MainController implements Initializable {
     public void closeMiniplayer(){
 
 
-        miniplayer.miniplayerController.mediaViewInnerWrapper.widthProperty().removeListener(miniplayer.miniplayerController.widthListener);
+        miniplayer.miniplayerController.videoImageViewInnerWrapper.widthProperty().removeListener(miniplayer.miniplayerController.widthListener);
 
         actionIndicator.moveToMainplayer();
         forwardsIndicator.moveToMainplayer();
@@ -487,19 +471,21 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
 
         resizeIndicators();
-        mediaViewInnerWrapper.widthProperty().addListener(widthListener);
+        videoImageViewInnerWrapper.widthProperty().addListener(widthListener);
 
         if(menuController.activeItem != null && mediaInterface.mediaPlayer != null){
-            mediaView.setMediaPlayer(mediaInterface.mediaPlayer);
             miniplayerActiveText.setVisible(false);
         }
+
+        mediaInterface.embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(videoImageView));
+
 
         App.stage.setIconified(false);
         App.stage.toFront();
     }
 
     public void resizeIndicators(){
-        if(mediaViewInnerWrapper.getWidth() < 800){
+        if(videoImageViewInnerWrapper.getWidth() < 800){
             captionsController.mediaWidthMultiplier.set(0.4);
             captionsController.resizeCaptions();
 
@@ -508,7 +494,7 @@ public class MainController implements Initializable {
             backwardsIndicator.resize();
             valueIndicator.resize();
         }
-        else if(mediaViewInnerWrapper.getWidth() >= 800 && mediaViewInnerWrapper.getWidth() < 1200){
+        else if(videoImageViewInnerWrapper.getWidth() >= 800 && videoImageViewInnerWrapper.getWidth() < 1200){
             captionsController.mediaWidthMultiplier.set(0.6);
             captionsController.resizeCaptions();
 
@@ -518,7 +504,7 @@ public class MainController implements Initializable {
             valueIndicator.resize();
 
         }
-        else if(mediaViewInnerWrapper.getWidth() >= 1200 && mediaViewInnerWrapper.getWidth() < 1800){
+        else if(videoImageViewInnerWrapper.getWidth() >= 1200 && videoImageViewInnerWrapper.getWidth() < 1800){
             captionsController.mediaWidthMultiplier.set(0.8);
             captionsController.resizeCaptions();
 
@@ -528,7 +514,7 @@ public class MainController implements Initializable {
             valueIndicator.resize();
 
         }
-        else if(mediaViewInnerWrapper.getWidth() >= 1800 && mediaViewInnerWrapper.getWidth() < 2400){
+        else if(videoImageViewInnerWrapper.getWidth() >= 1800 && videoImageViewInnerWrapper.getWidth() < 2400){
             captionsController.mediaWidthMultiplier.set(1.0);
             captionsController.resizeCaptions();
 
@@ -539,7 +525,7 @@ public class MainController implements Initializable {
             valueIndicator.resize();
 
         }
-        else if(mediaViewInnerWrapper.getWidth() >= 2400){
+        else if(videoImageViewInnerWrapper.getWidth() >= 2400){
             captionsController.mediaWidthMultiplier.set(1.2);
             captionsController.resizeCaptions();
 

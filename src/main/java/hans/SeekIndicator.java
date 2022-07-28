@@ -37,8 +37,8 @@ public class SeekIndicator {
         wrapper.setVisible(false);
 
         Platform.runLater(() -> {
-            if(forward) wrapper.translateXProperty().bind(mainController.mediaViewInnerWrapper.widthProperty().divide(4));
-            else wrapper.translateXProperty().bind(mainController.mediaViewInnerWrapper.widthProperty().divide(4).multiply(-1));
+            if(forward) wrapper.translateXProperty().bind(mainController.videoImageViewInnerWrapper.widthProperty().divide(4));
+            else wrapper.translateXProperty().bind(mainController.videoImageViewInnerWrapper.widthProperty().divide(4).multiply(-1));
         });
 
 
@@ -119,7 +119,7 @@ public class SeekIndicator {
             wrapper.setVisible(false);
         });
 
-        mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
+        mainController.videoImageViewInnerWrapper.getChildren().add(wrapper);
 
     }
 
@@ -192,30 +192,30 @@ public class SeekIndicator {
     }
 
     public void moveToMiniplayer(){
-        mainController.mediaViewInnerWrapper.getChildren().remove(wrapper);
-        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().add(wrapper);
+        mainController.videoImageViewInnerWrapper.getChildren().remove(wrapper);
+        mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.getChildren().add(wrapper);
 
         time.setVisible(false);
 
         wrapper.translateXProperty().unbind();
 
         Platform.runLater(() -> {
-            if(forward) wrapper.translateXProperty().bind(mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.widthProperty().divide(4));
-            else wrapper.translateXProperty().bind(mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.widthProperty().divide(4).multiply(-1));
+            if(forward) wrapper.translateXProperty().bind(mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.widthProperty().divide(4));
+            else wrapper.translateXProperty().bind(mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.widthProperty().divide(4).multiply(-1));
         });
     }
 
     public void moveToMainplayer(){
-        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().remove(wrapper);
-        mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
+        mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.getChildren().remove(wrapper);
+        mainController.videoImageViewInnerWrapper.getChildren().add(wrapper);
 
         time.setVisible(true);
 
         wrapper.translateXProperty().unbind();
 
         Platform.runLater(() -> {
-            if(forward) wrapper.translateXProperty().bind(mainController.mediaViewInnerWrapper.widthProperty().divide(4));
-            else wrapper.translateXProperty().bind(mainController.mediaViewInnerWrapper.widthProperty().divide(4).multiply(-1));
+            if(forward) wrapper.translateXProperty().bind(mainController.videoImageViewInnerWrapper.widthProperty().divide(4));
+            else wrapper.translateXProperty().bind(mainController.videoImageViewInnerWrapper.widthProperty().divide(4).multiply(-1));
         });
     }
 }

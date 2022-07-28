@@ -62,7 +62,7 @@ public class ActionIndicator {
 
         wrapper.getChildren().addAll(background, icon);
 
-        mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
+        mainController.videoImageViewInnerWrapper.getChildren().add(wrapper);
 
         scaleTransition = AnimationsClass.scaleAnimation(600, wrapper, 1, 1.5, 1, 1.5, false, 1, false);
         fadeTransition1 = AnimationsClass.fadeAnimation(600, background, 0.6, 0, false, 1, false);
@@ -138,13 +138,13 @@ public class ActionIndicator {
 
 
     public void moveToMiniplayer(){
-        mainController.mediaViewInnerWrapper.getChildren().remove(wrapper);
+        mainController.videoImageViewInnerWrapper.getChildren().remove(wrapper);
         mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().add(wrapper);
     }
 
     public void moveToMainplayer(){
         mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().remove(wrapper);
-        mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
+        mainController.videoImageViewInnerWrapper.getChildren().add(wrapper);
     }
 
 }

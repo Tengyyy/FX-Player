@@ -16,6 +16,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -36,10 +37,10 @@ public class MiniplayerController {
     Miniplayer miniplayer;
 
 
-    MediaView mediaView = new MediaView();
+    ImageView videoImageView = new ImageView();
 
-    StackPane mediaViewWrapper = new StackPane();
-    StackPane mediaViewInnerWrapper = new StackPane();
+    StackPane videoImageViewWrapper = new StackPane();
+    StackPane videoImageViewInnerWrapper = new StackPane();
 
 
 
@@ -78,8 +79,8 @@ public class MiniplayerController {
     ControlTooltip previousVideoButtonTooltip, playButtonTooltip, nextVideoButtonTooltip;
 
 
-    DoubleProperty mediaViewWidth;
-    DoubleProperty mediaViewHeight;
+    DoubleProperty videoImageViewWidth;
+    DoubleProperty videoImageViewHeight;
 
 
     ChangeListener<? super Number> widthListener;
@@ -100,50 +101,50 @@ public class MiniplayerController {
         this.miniplayer = miniplayer;
 
 
-        mediaViewWrapper.setPrefSize(500, 300);
-        mediaViewWrapper.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(10), Insets.EMPTY)));
-        mediaViewWrapper.getChildren().addAll(mediaViewInnerWrapper, controlsBackground, previousVideoButtonPane, nextVideoButtonPane, playButtonPane, closeButtonPane, sliderPane);
-        mediaViewWrapper.setId("mediaViewWrapper");
+        videoImageViewWrapper.setPrefSize(500, 300);
+        videoImageViewWrapper.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(10), Insets.EMPTY)));
+        videoImageViewWrapper.getChildren().addAll(videoImageViewInnerWrapper, controlsBackground, previousVideoButtonPane, nextVideoButtonPane, playButtonPane, closeButtonPane, sliderPane);
+        videoImageViewWrapper.setId("mediaViewWrapper");
 
 
         Rectangle clip = new Rectangle();
-        clip.widthProperty().bind(mediaViewWrapper.widthProperty());
-        clip.heightProperty().bind(mediaViewWrapper.heightProperty());
+        clip.widthProperty().bind(videoImageViewWrapper.widthProperty());
+        clip.heightProperty().bind(videoImageViewWrapper.heightProperty());
 
-        mediaViewWrapper.setClip(clip);
+        videoImageViewWrapper.setClip(clip);
 
-        mediaViewWrapper.setOnMouseEntered(e -> {
+        videoImageViewWrapper.setOnMouseEntered(e -> {
             showControls();
             miniplayerHover = true;
         });
 
-        mediaViewWrapper.setOnMouseExited(e -> {
+        videoImageViewWrapper.setOnMouseExited(e -> {
             hideControls();
             miniplayerHover = false;
         });
 
-        mediaViewInnerWrapper.setBackground(Background.EMPTY);
-        mediaViewInnerWrapper.setMouseTransparent(true);
-        mediaViewInnerWrapper.getChildren().add(mediaView);
-        StackPane.setAlignment(mediaViewInnerWrapper, Pos.CENTER);
+        videoImageViewInnerWrapper.setBackground(Background.EMPTY);
+        videoImageViewInnerWrapper.setMouseTransparent(true);
+        videoImageViewInnerWrapper.getChildren().add(videoImageView);
+        StackPane.setAlignment(videoImageViewInnerWrapper, Pos.CENTER);
 
         Rectangle mediaClip = new Rectangle();
         mediaClip.setArcHeight(20);
         mediaClip.setArcWidth(20);
-        mediaClip.widthProperty().bind(mediaViewInnerWrapper.widthProperty());
-        mediaClip.heightProperty().bind(mediaViewInnerWrapper.heightProperty());
-        mediaViewInnerWrapper.setClip(mediaClip);
+        mediaClip.widthProperty().bind(videoImageViewInnerWrapper.widthProperty());
+        mediaClip.heightProperty().bind(videoImageViewInnerWrapper.heightProperty());
+        videoImageViewInnerWrapper.setClip(mediaClip);
 
 
-        mediaView.setPreserveRatio(true);
+        videoImageView.setPreserveRatio(true);
 
-        mediaViewWidth = mediaView.fitWidthProperty();
-        mediaViewHeight = mediaView.fitHeightProperty();
+        videoImageViewWidth = videoImageView.fitWidthProperty();
+        videoImageViewHeight = videoImageView.fitHeightProperty();
         Platform.runLater(() -> {
-            mediaViewHeight.bind(mediaViewWrapper.heightProperty().subtract(2));
-            mediaViewWidth.bind(mediaViewWrapper.widthProperty().subtract(2));
+            videoImageViewWidth.bind(videoImageViewWrapper.widthProperty().subtract(2));
+            videoImageViewHeight.bind(videoImageViewWrapper.heightProperty().subtract(2));
         });
-        mediaView.setMouseTransparent(true);
+        videoImageView.setMouseTransparent(true);
 
 
 
@@ -338,7 +339,7 @@ public class MiniplayerController {
 
         };
 
-        mediaViewInnerWrapper.widthProperty().addListener(widthListener);
+        videoImageViewInnerWrapper.widthProperty().addListener(widthListener);
 
 
         controlsBackground.setMouseTransparent(true);
@@ -383,7 +384,7 @@ public class MiniplayerController {
         previousVideoButtonPane.setMaxSize(60, 60);
         previousVideoButtonPane.setVisible(false);
 
-        previousVideoButtonPane.translateXProperty().bind(mediaViewWrapper.widthProperty().multiply(-0.25));
+        previousVideoButtonPane.translateXProperty().bind(videoImageViewWrapper.widthProperty().multiply(-0.25));
 
         previousVideoButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
             previousVideoButtonHoverOn();
@@ -475,7 +476,7 @@ public class MiniplayerController {
         nextVideoButtonPane.getChildren().addAll(nextVideoButton, nextVideoIcon);
         nextVideoButtonPane.setPrefSize(60, 60);
         nextVideoButtonPane.setMaxSize(60, 60);
-        nextVideoButtonPane.translateXProperty().bind(mediaViewWrapper.widthProperty().multiply(0.25));
+        nextVideoButtonPane.translateXProperty().bind(videoImageViewWrapper.widthProperty().multiply(0.25));
         nextVideoButtonPane.setVisible(false);
 
         nextVideoButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
@@ -515,7 +516,7 @@ public class MiniplayerController {
     }
 
     public void initActions(){
-        miniplayer.scene.setMoveControl(mediaViewWrapper);
+        miniplayer.scene.setMoveControl(videoImageViewWrapper);
         miniplayer.scene.removeDefaultCSS();
         miniplayer.scene.setSnapEnabled(false);
 
@@ -721,7 +722,7 @@ public class MiniplayerController {
     public void play(){
         playIcon.setShape(pauseSVG);
 
-        if(mediaViewInnerWrapper.getWidth() < 500){
+        if(videoImageViewInnerWrapper.getWidth() < 500){
             playIcon.setPrefSize(25, 25);
             playIcon.setMaxSize( 25, 25);
         }
@@ -737,7 +738,7 @@ public class MiniplayerController {
     public void pause(){
         playIcon.setShape(playSVG);
 
-        if(mediaViewInnerWrapper.getWidth() < 500){
+        if(videoImageViewInnerWrapper.getWidth() < 500){
             playIcon.setPrefSize(25, 25);
             playIcon.setMaxSize( 25, 25);
         }
@@ -752,7 +753,7 @@ public class MiniplayerController {
     public void end(){
         playIcon.setShape(replaySVG);
 
-        if(mediaViewInnerWrapper.getWidth() < 500){
+        if(videoImageViewInnerWrapper.getWidth() < 500){
             playIcon.setPrefSize(30, 30);
             playIcon.setMaxSize( 30, 30);
         }

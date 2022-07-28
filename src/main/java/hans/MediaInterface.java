@@ -15,9 +15,16 @@ import javafx.scene.media.SubtitleTrack;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+
+import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
+
 
 import java.io.File;
 import java.util.*;
+
+
 
 public class MediaInterface {
 
@@ -26,7 +33,9 @@ public class MediaInterface {
     SettingsController settingsController;
     MenuController menuController;
 
-    MediaPlayer mediaPlayer;
+    public MediaPlayerFactory mediaPlayerFactory;
+
+    public EmbeddedMediaPlayer embeddedMediaPlayer;
 
     // Variables to keep track of mediaplayer status:
     BooleanProperty playing = new SimpleBooleanProperty(false); // is mediaplayer currently playing
@@ -52,7 +61,15 @@ public class MediaInterface {
             if(newValue) menuController.activeItem.columns.play();
             else menuController.activeItem.columns.pause();
         });
-    };
+    }
+
+    public void init(){
+        this.mediaPlayerFactory = new MediaPlayerFactory();
+        this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
+
+        embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(mainController.videoImageView));
+
+    }
 
     public void updateMedia(double newValue) {
 

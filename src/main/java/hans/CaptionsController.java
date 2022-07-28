@@ -226,8 +226,8 @@ public class CaptionsController {
             minimumY = 30; // maximum negative translation that can be applied (30px margin from top edge)
             minimumX = 70; // 70px from left edge due to the button in top left corner
 
-            maximumY = mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - 120;
-            maximumX = mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - 30;
+            maximumY = mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 120;
+            maximumX = mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30;
 
             startX = captionsBox.getBoundsInParent().getMinX();
             startY = captionsBox.getBoundsInParent().getMinY();
@@ -241,7 +241,7 @@ public class CaptionsController {
 
 
         StackPane.setAlignment(captionsBox, Pos.BOTTOM_CENTER);
-        mainController.mediaViewInnerWrapper.getChildren().add(1, captionsBox);
+        mainController.videoImageViewInnerWrapper.getChildren().add(1, captionsBox);
 
 
         captionsOn.addListener((observableValue, aBoolean, t1) -> {
@@ -391,13 +391,13 @@ public class CaptionsController {
     public Pos findClosestCaptionsPosition( double x, double y){
 
         Point2D topLeft = new Point2D(70, 30);
-        Point2D topCenter = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX()/2, 30);
-        Point2D topRight = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - 30, 30);
-        Point2D centerRight = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - 30, mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY()/2);
-        Point2D bottomRight = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - 30,mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
-        Point2D bottomCenter = new Point2D(mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX()/2, mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
-        Point2D bottomLeft = new Point2D(70, mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
-        Point2D centerLeft = new Point2D(70, mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY()/2);
+        Point2D topCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, 30);
+        Point2D topRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30, 30);
+        Point2D centerRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
+        Point2D bottomRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30,mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
+        Point2D bottomCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
+        Point2D bottomLeft = new Point2D(70, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
+        Point2D centerLeft = new Point2D(70, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
 
         ArrayList<Point2D> captionsPositions = new ArrayList<>();
         captionsPositions.add(topLeft);
@@ -453,19 +453,19 @@ public class CaptionsController {
         switch(position){
             case TOP_LEFT: translation = new Point2D(bounds.getMinX(), bounds.getMinY());
                 break;
-            case TOP_CENTER: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX()/2 - layoutBounds.getMaxX()/2), bounds.getMinY());
+            case TOP_CENTER: translation = new Point2D(bounds.getMinX() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2 - layoutBounds.getMaxX()/2), bounds.getMinY());
                 break;
-            case TOP_RIGHT: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - layoutBounds.getMaxX()), bounds.getMinY());
+            case TOP_RIGHT: translation = new Point2D(bounds.getMinX() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - layoutBounds.getMaxX()), bounds.getMinY());
                 break;
-            case CENTER_RIGHT: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - layoutBounds.getMaxX()), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY()/2 - layoutBounds.getMaxY()/2));
+            case CENTER_RIGHT: translation = new Point2D(bounds.getMinX() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - layoutBounds.getMaxX()), bounds.getMinY() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2 - layoutBounds.getMaxY()/2));
                 break;
-            case BOTTOM_RIGHT: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX() - layoutBounds.getMaxX()), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - layoutBounds.getMaxY()));
+            case BOTTOM_RIGHT: translation = new Point2D(bounds.getMinX() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - layoutBounds.getMaxX()), bounds.getMinY() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - layoutBounds.getMaxY()));
                 break;
-            case BOTTOM_CENTER: translation = new Point2D(bounds.getMinX() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxX()/2 - layoutBounds.getMaxX()/2), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - layoutBounds.getMaxY()));
+            case BOTTOM_CENTER: translation = new Point2D(bounds.getMinX() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2 - layoutBounds.getMaxX()/2), bounds.getMinY() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - layoutBounds.getMaxY()));
                 break;
-            case BOTTOM_LEFT: translation = new Point2D(bounds.getMinX(), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY() - layoutBounds.getMaxY()));
+            case BOTTOM_LEFT: translation = new Point2D(bounds.getMinX(), bounds.getMinY() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - layoutBounds.getMaxY()));
                 break;
-            case CENTER_LEFT: translation = new Point2D(bounds.getMinX(), bounds.getMinY() - (mainController.mediaViewInnerWrapper.getLayoutBounds().getMaxY()/2 - layoutBounds.getMaxY()/2));
+            case CENTER_LEFT: translation = new Point2D(bounds.getMinX(), bounds.getMinY() - (mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2 - layoutBounds.getMaxY()/2));
                 break;
             default: break;
         }
@@ -554,7 +554,7 @@ public class CaptionsController {
             captionsTransition.stop();
         }
 
-        mainController.mediaViewInnerWrapper.getChildren().remove(captionsBox);
+        mainController.videoImageViewInnerWrapper.getChildren().remove(captionsBox);
         mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().add(captionsBox);
 
         switch(captionsLocation){
@@ -604,7 +604,7 @@ public class CaptionsController {
 
 
         mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().remove(captionsBox);
-        mainController.mediaViewInnerWrapper.getChildren().add(captionsBox);
+        mainController.videoImageViewInnerWrapper.getChildren().add(captionsBox);
 
         switch(captionsLocation){
             case BOTTOM_RIGHT: {

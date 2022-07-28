@@ -43,7 +43,7 @@ public class ValueIndicator {
         timer.setOnFinished(e -> wrapper.setVisible(false));
 
 
-        mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
+        mainController.videoImageViewInnerWrapper.getChildren().add(wrapper);
 
     }
 
@@ -93,13 +93,13 @@ public class ValueIndicator {
     }
 
     public void moveToMiniplayer(){
-        mainController.mediaViewInnerWrapper.getChildren().remove(wrapper);
-        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().add(wrapper);
+        mainController.videoImageViewInnerWrapper.getChildren().remove(wrapper);
+        mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.getChildren().add(wrapper);
     }
 
     public void moveToMainplayer(){
-        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().remove(wrapper);
-        mainController.mediaViewInnerWrapper.getChildren().add(wrapper);
+        mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.getChildren().remove(wrapper);
+        mainController.videoImageViewInnerWrapper.getChildren().add(wrapper);
     }
 
 }

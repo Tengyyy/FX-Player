@@ -63,7 +63,7 @@ public class HistoryItem extends GridPane implements MenuObject{
     StackPane playButtonWrapper = new StackPane();
     StackPane optionsButtonWrapper = new StackPane();
 
-    ControlTooltip play, options;
+    ControlTooltip playButtonTooltip, optionsButtonTooltip;
 
     boolean mouseHover = false;
     BooleanProperty isActive = new SimpleBooleanProperty(false);
@@ -301,9 +301,9 @@ public class HistoryItem extends GridPane implements MenuObject{
 
         playButton.setOnAction((e) -> {
             if(this.isActive.getValue()){
-                if(mediaInterface.atEnd) menuController.controlBarController.replayMedia();
-                else if (mediaInterface.playing.get()) menuController.controlBarController.pause();
-                else menuController.controlBarController.play();
+                if(mediaInterface.atEnd) mediaInterface.replay();
+                else if (mediaInterface.playing.get()) mediaInterface.pause();
+                else mediaInterface.play();
             }
             else {
                 if(!menuController.animationsInProgress.isEmpty()) return;
@@ -352,7 +352,7 @@ public class HistoryItem extends GridPane implements MenuObject{
             mediaInterface.transitionTimer = null;
         }
 
-        if(historyBox.index == -1 && menuController.mediaActive.get()){
+        if(historyBox.index == -1 && menuController.activeItem != null){
             // add active item to history
 
             HistoryItem historyItem = new HistoryItem(menuController.activeItem.getMediaItem(), menuController, mediaInterface, historyBox);
@@ -362,13 +362,22 @@ public class HistoryItem extends GridPane implements MenuObject{
 
         ActiveItem newActive = new ActiveItem(this.getMediaItem(), menuController, mediaInterface, menuController.activeBox);
 
-        if(menuController.mediaActive.get()) mediaInterface.resetMediaPlayer();
+        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer();
 
         menuController.activeBox.set(newActive, true);
 
         this.setActive();
 
-        // update prev and new vid button state
+    }
+
+    public void updateIconToPlay(){
+        playIcon.setShape(menuController.activeItem.playSVG);
+        playButtonTooltip.updateText("Play video");
+    }
+
+    public void updateIconToPause(){
+        playIcon.setShape(menuController.activeItem.pauseSVG);
+        playButtonTooltip.updateText("Pause video");
     }
 
 

@@ -100,7 +100,6 @@ public class SettingsController {
         if(controlBarController.settings.isShowing()) controlBarController.settings.hide();
         if(controlBarController.miniplayer.isShowing()) controlBarController.miniplayer.hide();
         if(controlBarController.fullScreen.isShowing()) controlBarController.fullScreen.hide();
-        if(controlBarController.exitFullScreen.isShowing()) controlBarController.exitFullScreen.hide();
 
 
         controlBarController.captionsButton.setOnMouseEntered(null);
@@ -146,7 +145,7 @@ public class SettingsController {
             else controlBarController.captions = new ControlTooltip("Subtitles/CC not selected", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
 
             if (App.fullScreen)
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
+                controlBarController.fullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             else
                 controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
         } else if (controlBarController.captionsButtonHover) {
@@ -159,13 +158,13 @@ public class SettingsController {
             controlBarController.settings = new ControlTooltip("Settings (s)", controlBarController.settingsButton, controlBarController.controlBarWrapper, 0, false);
 
             if (App.fullScreen)
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
+                controlBarController.fullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             else
                 controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
         }
         else if(controlBarController.miniplayerButtonHover){
             if (App.fullScreen) {
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
+                controlBarController.fullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             } else {
                 controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             }
@@ -180,12 +179,11 @@ public class SettingsController {
         }
         else if (controlBarController.fullScreenButtonHover) {
             if (App.fullScreen) {
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
-                controlBarController.exitFullScreen.showTooltip();
+                controlBarController.fullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             } else {
                 controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
-                controlBarController.fullScreen.showTooltip();
             }
+            controlBarController.fullScreen.showTooltip();
 
             if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip("Subtitles/closed captions (c)", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
             else controlBarController.captions = new ControlTooltip("Subtitles/CC not selected", controlBarController.captionsButton, controlBarController.controlBarWrapper, 0, false);
@@ -201,7 +199,7 @@ public class SettingsController {
             controlBarController.miniplayer = new ControlTooltip("Miniplayer (i)", controlBarController.miniplayerButton, controlBarController.controlBarWrapper, 0, false);
 
             if (App.fullScreen)
-                controlBarController.exitFullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
+                controlBarController.fullScreen = new ControlTooltip("Exit full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
             else
                 controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
         }

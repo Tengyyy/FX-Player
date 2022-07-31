@@ -827,9 +827,9 @@ public class QueueBox extends VBox {
 
     public void initialize(QueueItem queueItem){
         Platform.runLater(() -> {
-            queueItem.play = new ControlTooltip("Play video", queueItem.playButton, new VBox(), 1000, false);
-            queueItem.remove = new ControlTooltip("Remove video", queueItem.removeButton, new VBox(), 1000, false);
-            queueItem.options = new ControlTooltip("Options", queueItem.optionsButton, new VBox(), 1000, false);
+            queueItem.playButtonTooltip = new ControlTooltip("Play video", queueItem.playButton, new VBox(), 1000, false);
+            queueItem.removeButtonTooltip = new ControlTooltip("Remove video", queueItem.removeButton, new VBox(), 1000, false);
+            queueItem.optionsButtonTooltip = new ControlTooltip("Options", queueItem.optionsButton, new VBox(), 1000, false);
             queueItem.optionsPopUp = new MenuItemOptionsPopUp(queueItem);
 
             QueueItem.height = queueItem.getBoundsInParent().getHeight();

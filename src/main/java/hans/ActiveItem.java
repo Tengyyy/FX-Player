@@ -64,7 +64,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
     StackPane captionsPane;
 
-    ControlTooltip play, remove, options;
+    ControlTooltip playButtonTooltip, removeButtonTooltip, optionsButtonTooltip;
 
     boolean mouseHover = false;
 
@@ -315,9 +315,9 @@ public class ActiveItem extends GridPane implements MenuObject {
         });
 
         playButton.setOnAction((e) -> {
-            if(mediaInterface.atEnd) menuController.controlBarController.replayMedia();
-            else if (mediaInterface.playing.get()) menuController.controlBarController.pause();
-            else menuController.controlBarController.play();
+            if(mediaInterface.atEnd) mediaInterface.replay();
+            else if (mediaInterface.playing.get()) mediaInterface.pause();
+            else mediaInterface.play();
         });
 
         optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
@@ -375,7 +375,7 @@ public class ActiveItem extends GridPane implements MenuObject {
             mediaInterface.transitionTimer = null;
         }
 
-        if(menuController.historyBox.index == -1 && menuController.mediaActive.get() && addToHistory){
+        if(menuController.historyBox.index == -1 && mediaInterface.mediaActive.get() && addToHistory){
             // add active item to history
 
             HistoryItem historyItem = new HistoryItem(menuController.activeItem.getMediaItem(), menuController, mediaInterface, menuController.historyBox);
@@ -387,10 +387,23 @@ public class ActiveItem extends GridPane implements MenuObject {
             historyItem.setInactive();
         }
 
-        if(menuController.mediaActive.get()) mediaInterface.resetMediaPlayer();
+        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer();
         activeBox.set(this, true);
 
 
+    }
+
+
+    public void updateIconToPlay(){
+        playIcon.setShape(menuController.activeItem.playSVG);
+        playButtonTooltip.updateText("Play video");
+        columns.pause();
+    }
+
+    public void updateIconToPause(){
+        playIcon.setShape(menuController.activeItem.pauseSVG);
+        playButtonTooltip.updateText("Pause video");
+        columns.play();
     }
 
 

@@ -32,7 +32,6 @@ public class ActiveBox extends StackPane {
         }
 
         menuController.activeItem = null;
-        menuController.mediaActive.set(false);
 
         if(menuController.mainController.miniplayerActive){
             menuController.mainController.miniplayerActiveText.setVisible(false);
@@ -57,7 +56,6 @@ public class ActiveBox extends StackPane {
         }
 
         menuController.activeItem = activeItem;
-        menuController.mediaActive.set(true);
 
         if(this.getChildren().isEmpty()){
             // add new item
@@ -123,11 +121,11 @@ public class ActiveBox extends StackPane {
     public void initialize(ActiveItem activeItem){
         Platform.runLater(() -> {
             activeItem.optionsPopUp = new MenuItemOptionsPopUp(activeItem);
-            activeItem.play = new ControlTooltip("Play video", activeItem.playButton, new VBox(), 1000, false);
-            activeItem.remove = new ControlTooltip("Remove video", activeItem.removeButton, new VBox(), 1000, false);
-            activeItem.options = new ControlTooltip("Options", activeItem.optionsButton, new VBox(), 1000, false);
+            activeItem.playButtonTooltip = new ControlTooltip("Play video", activeItem.playButton, new VBox(), 1000, false);
+            activeItem.removeButtonTooltip = new ControlTooltip("Remove video", activeItem.removeButton, new VBox(), 1000, false);
+            activeItem.optionsButtonTooltip = new ControlTooltip("Options", activeItem.optionsButton, new VBox(), 1000, false);
 
-            menuController.mediaInterface.createMediaPlayer(activeItem);
+            menuController.mediaInterface.createMedia(activeItem);
         });
     }
 

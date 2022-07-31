@@ -139,8 +139,8 @@ public class HistoryBox extends VBox {
 
     public void initialize(HistoryItem historyItem){
         Platform.runLater(() -> {
-            historyItem.play = new ControlTooltip("Play video", historyItem.playButton, new VBox(), 1000, false);
-            historyItem.options = new ControlTooltip("Options", historyItem.optionsButton, new VBox(), 1000, false);
+            historyItem.playButtonTooltip = new ControlTooltip("Play video", historyItem.playButton, new VBox(), 1000, false);
+            historyItem.optionsButtonTooltip = new ControlTooltip("Options", historyItem.optionsButton, new VBox(), 1000, false);
             historyItem.optionsPopUp = new MenuItemOptionsPopUp(historyItem);
         });
     }

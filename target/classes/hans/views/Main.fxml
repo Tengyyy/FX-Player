@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.media.MediaView?>
 
 <StackPane fx:id="outerPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MainController">
    <children>
       <BorderPane fx:id="mainPane">
          <center>
-            <StackPane fx:id="mediaViewWrapper" minWidth="0.0" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefWidth="601.0" BorderPane.alignment="CENTER_RIGHT">
+            <StackPane fx:id="videoImageViewWrapper" minWidth="0.0" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefWidth="601.0" BorderPane.alignment="CENTER_RIGHT">
                <children>
-                  <StackPane fx:id="mediaViewInnerWrapper" minWidth="601.0" StackPane.alignment="CENTER_RIGHT">
+                  <StackPane fx:id="videoImageViewInnerWrapper" minWidth="601.0" StackPane.alignment="CENTER_RIGHT">
                      <children>
-                          <MediaView fx:id="mediaView" focusTraversable="true" styleClass="focusableProperty">
-                              <viewport>
-                                  <Rectangle2D />
-                              </viewport>
-                          </MediaView>
+                        <ImageView fx:id="videoImageView" fitHeight="150.0" fitWidth="200.0" preserveRatio="true" />
                      </children>
                   </StackPane>
                     <fx:include fx:id="controlBar" minWidth="601.0" source="ControlBar.fxml" StackPane.alignment="BOTTOM_RIGHT" />

@@ -555,7 +555,7 @@ public class CaptionsController {
         }
 
         mainController.videoImageViewInnerWrapper.getChildren().remove(captionsBox);
-        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().add(captionsBox);
+        mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.getChildren().add(captionsBox);
 
         switch(captionsLocation){
             case BOTTOM_RIGHT: {
@@ -603,7 +603,7 @@ public class CaptionsController {
         captionsBox.setMouseTransparent(false);
 
 
-        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().remove(captionsBox);
+        mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.getChildren().remove(captionsBox);
         mainController.videoImageViewInnerWrapper.getChildren().add(captionsBox);
 
         switch(captionsLocation){

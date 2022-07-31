@@ -42,12 +42,12 @@ public class Utilities {
     }
 
 
-    public static void setCurrentTimeLabel(Label durationLabel, MediaPlayer mediaPlayer, Media media) {
-        durationLabel.setText(getTime(mediaPlayer.getCurrentTime()) + "/" + getTime(media.getDuration()));
+    public static void setCurrentTimeLabel(Label durationLabel, MediaInterface mediaInterface, Duration duration) {
+        durationLabel.setText(getTime(mediaInterface.getCurrentTime()) + "/" + getTime(duration));
     }
 
-    public static void setTimeLeftLabel(Label durationLabel, MediaPlayer mediaPlayer, Media media) {
-        durationLabel.setText("−" + getTime(media.getDuration().subtract(mediaPlayer.getCurrentTime())) + "/" + getTime(media.getDuration()));
+    public static void setTimeLeftLabel(Label durationLabel, MediaInterface mediaInterface, Duration duration) {
+        durationLabel.setText("−" + getTime(duration.subtract(mediaInterface.getCurrentTime())) + "/" + getTime(duration));
     }
 
 

@@ -38,7 +38,7 @@ public class PlaybackSpeedController {
         if(speed == 1) settingsController.settingsHomeController.playbackSpeedTab.subText.setText("Normal");
         else settingsController.settingsHomeController.playbackSpeedTab.subText.setText(String.valueOf(speed));
 
-        if(settingsController.mediaInterface.mediaPlayer != null) settingsController.mediaInterface.mediaPlayer.setRate(speed);
+        settingsController.mediaInterface.changePlaybackSpeed(speed);
 
     }
 

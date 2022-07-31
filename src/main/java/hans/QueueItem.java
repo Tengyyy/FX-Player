@@ -80,7 +80,7 @@ public class QueueItem extends GridPane implements MenuObject{
     int newPosition; // keeps track of the position where the queueitem should move to when being dragged
     double runningTranslate; // mirrors draggable nodes translateY value and if it goes over QueueItem.height or below -QueueItem.height will update the visual order of queueitems
 
-    ControlTooltip play, remove, options;
+    ControlTooltip playButtonTooltip, removeButtonTooltip, optionsButtonTooltip;
 
     boolean mouseHover = false;
 
@@ -425,7 +425,7 @@ public class QueueItem extends GridPane implements MenuObject{
             mediaInterface.transitionTimer = null;
         }
 
-        if(menuController.historyBox.index == -1 && menuController.mediaActive.get() && addToHistory){
+        if(menuController.historyBox.index == -1 && menuController.activeItem != null && addToHistory){
             // add active item to history
 
             HistoryItem historyItem = new HistoryItem(menuController.activeItem.getMediaItem(), menuController, mediaInterface, menuController.historyBox);
@@ -439,7 +439,7 @@ public class QueueItem extends GridPane implements MenuObject{
 
         ActiveItem activeItem = new ActiveItem(getMediaItem(), menuController, mediaInterface, menuController.activeBox);
 
-        if(menuController.mediaActive.get()) mediaInterface.resetMediaPlayer();
+        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer();
 
         menuController.activeBox.set(activeItem, true);
 

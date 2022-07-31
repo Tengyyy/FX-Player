@@ -139,11 +139,11 @@ public class ActionIndicator {
 
     public void moveToMiniplayer(){
         mainController.videoImageViewInnerWrapper.getChildren().remove(wrapper);
-        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().add(wrapper);
+        mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.getChildren().add(wrapper);
     }
 
     public void moveToMainplayer(){
-        mainController.miniplayer.miniplayerController.mediaViewInnerWrapper.getChildren().remove(wrapper);
+        mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.getChildren().remove(wrapper);
         mainController.videoImageViewInnerWrapper.getChildren().add(wrapper);
     }
 

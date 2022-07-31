@@ -147,11 +147,6 @@ public class MiniplayerController {
         videoImageView.setMouseTransparent(true);
 
 
-
-        if(menuController.activeItem != null && mediaInterface.mediaPlayer != null){
-            mediaView.setMediaPlayer(mediaInterface.mediaPlayer);
-        }
-
         mainController.captionsController.mediaWidthMultiplier.set(0.4);
         mainController.captionsController.resizeCaptions();
 
@@ -226,57 +221,27 @@ public class MiniplayerController {
 
                 showControls();
 
-                controlBarController.playIcon.setShape(playSVG);
-                controlBarController.playIcon.setPrefSize(20, 20);
-
-                if(menuController.mediaActive.get()) {
-                    mediaInterface.mediaPlayer.pause();
-                    mediaInterface.playing.set(false);
-                }
-
-                controlBarController.play.updateText("Play (k)");
-
-                pause();
+                mediaInterface.pause();
 
             } else {
 
                 if (!sliderHover) sliderHoverOff();
                 if(!miniplayerHover) hideControls();
 
-                if(menuController.mediaActive.get()) mediaInterface.mediaPlayer.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
+                if(mediaInterface.mediaActive.get()) mediaInterface.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
 
 
                 if (mediaInterface.atEnd) { // if user drags the duration slider to the end turn play button to replay button
-                    controlBarController.playIcon.setShape(replaySVG);
-                    controlBarController.playIcon.setPrefSize(24, 24);
-                    controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());
-
-                    controlBarController.play.updateText("Replay (k)");
-
-                    menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
-                    menuController.activeItem.play.updateText("Play video");
-
-                    end();
+                    mediaInterface.endMedia();
 
                 } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
-                    if(menuController.mediaActive.get()) {
-                        mediaInterface.mediaPlayer.play();
-                        mediaInterface.playing.set(true);
-                    }
-
-                    controlBarController.playIcon.setShape(pauseSVG);
-                    controlBarController.playIcon.setPrefSize(20, 20);
-
-                    controlBarController.play.updateText("Pause (k)");
-
-                    play();
-
+                    mediaInterface.play();
                 }
             }
         });
 
         slider.setMax(controlBarController.durationSlider.getMax());
-        sliderPane.setMouseTransparent(!menuController.mediaActive.get());
+        sliderPane.setMouseTransparent(!mediaInterface.mediaActive.get());
 
 
 
@@ -399,7 +364,7 @@ public class MiniplayerController {
         previousVideoButton.setCursor(Cursor.HAND);
         previousVideoButton.setOnAction(e -> {
             if(controlBarController.durationSlider.getValue() > 5){
-                controlBarController.replayMedia();
+                mediaInterface.replay();
             }
             else {
                 if(!menuController.animationsInProgress.isEmpty()) return;
@@ -442,9 +407,9 @@ public class MiniplayerController {
         playButton.setBackground(Background.EMPTY);
         playButton.setCursor(Cursor.HAND);
         playButton.setOnAction(e -> {
-            if(mediaInterface.atEnd) controlBarController.replayMedia();
-            else if(mediaInterface.playing.get()) controlBarController.pause();
-            else controlBarController.play();
+            if(mediaInterface.atEnd) mediaInterface.replay();
+            else if(mediaInterface.playing.get()) mediaInterface.pause();
+            else mediaInterface.play();
         });
 
 
@@ -465,7 +430,7 @@ public class MiniplayerController {
         else if(mediaInterface.playing.get()) playIcon.setShape(pauseSVG);
         else playIcon.setShape(playSVG);
 
-        if(menuController.mediaActive.get()){
+        if(mediaInterface.mediaActive.get()){
             enablePlayButton();
         }
         else {
@@ -861,7 +826,7 @@ public class MiniplayerController {
     public void pressLEFT(KeyEvent e){
         controlBarController.mouseEventTracker.move();
 
-        if (menuController.mediaActive.get()) {
+        if (mediaInterface.mediaActive.get()) {
 
             if(mainController.forwardsIndicator.wrapper.isVisible()){
                 mainController.forwardsIndicator.setVisible(false);
@@ -885,7 +850,7 @@ public class MiniplayerController {
     public void pressRIGHT(KeyEvent e){
         controlBarController.mouseEventTracker.move();
 
-        if (menuController.mediaActive.get()) {
+        if (mediaInterface.mediaActive.get()) {
 
             if(mainController.backwardsIndicator.wrapper.isVisible()){
                 mainController.backwardsIndicator.setVisible(false);
@@ -895,7 +860,7 @@ public class MiniplayerController {
             mainController.forwardsIndicator.setVisible(true);
             mainController.forwardsIndicator.animate();
 
-            if(mediaInterface.mediaPlayer.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
+            if(mediaInterface.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
                 mediaInterface.seekedToEnd = true;
             }
 

@@ -82,7 +82,7 @@
                   <children>
                   <StackPane fx:id="previousVideoPane" minWidth="45.0" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="1">
                      <children>
-                        <Button fx:id="previousVideoButton" mnemonicParsing="false" onAction="#playPreviousMedia" prefHeight="30.0" prefWidth="52.0" styleClass="controlButton">
+                        <Button fx:id="previousVideoButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0" styleClass="controlButton">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -96,7 +96,7 @@
                   </StackPane>
                   <StackPane fx:id="playButtonPane" minWidth="45.0" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="2">
                      <children>
-                        <Button fx:id="playButton" mnemonicParsing="false" onAction="#playButtonClick1" prefHeight="30.0" prefWidth="52.0">
+                        <Button fx:id="playButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -110,7 +110,7 @@
                   </StackPane>
                   <StackPane fx:id="nextVideoPane" minWidth="45.0" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="3">
                      <children>
-                        <Button fx:id="nextVideoButton" mnemonicParsing="false" onAction="#playNextMedia" prefHeight="30.0" prefWidth="52.0">
+                        <Button fx:id="nextVideoButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -124,7 +124,7 @@
                   </StackPane>
                   <StackPane fx:id="volumeButtonPane" minWidth="52.0" onMouseEntered="#enterArea" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="4">
                      <children>
-                        <Button fx:id="volumeButton" mnemonicParsing="false" onAction="#volumeButtonClick" prefHeight="30.0" prefWidth="52.0">
+                        <Button fx:id="volumeButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -160,7 +160,7 @@
                         </Label>
                   <StackPane fx:id="captionsButtonPane" minWidth="45.0" onMouseEntered="#enterCaptionsButton" onMouseExited="#exitCaptionsButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="7">
                      <children>
-                        <Button fx:id="captionsButton" mnemonicParsing="false" onAction="#captionsButtonClick" prefHeight="30.0" prefWidth="52.0">
+                        <Button fx:id="captionsButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -179,7 +179,7 @@
                   </StackPane>
                   <StackPane fx:id="settingsButtonPane" minWidth="45.0" onMouseEntered="#enterSettingsButton" onMouseExited="#exitSettingsButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="8">
                      <children>
-                        <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settingsButtonClick" prefHeight="30.0" prefWidth="52.0">
+                        <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -193,7 +193,7 @@
                   </StackPane>
                   <StackPane fx:id="miniplayerButtonPane" minWidth="45.0" onMouseEntered="#miniplayerButtonHoverOn" onMouseExited="#miniplayerButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="9">
                      <children>
-                        <Button fx:id="miniplayerButton" minWidth="45.0" mnemonicParsing="false" onAction="#miniplayerButtonClick" prefHeight="30.0" prefWidth="52.0">
+                        <Button fx:id="miniplayerButton" minWidth="45.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -203,7 +203,7 @@
                   </StackPane>
                   <StackPane fx:id="fullScreenButtonPane" minWidth="45.0" onMouseEntered="#fullScreenButtonHoverOn" onMouseExited="#fullScreenButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="10">
                      <children>
-                        <Button fx:id="fullScreenButton" mnemonicParsing="false" onAction="#fullScreenButtonClick" prefHeight="30.0" prefWidth="52.0">
+                        <Button fx:id="fullScreenButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>

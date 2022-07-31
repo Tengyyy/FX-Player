@@ -10,12 +10,16 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.SubtitleTrack;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.media.MediaRef;
+import uk.co.caprica.vlcj.media.TrackType;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
@@ -36,8 +40,10 @@ public class MediaInterface {
     public MediaPlayerFactory mediaPlayerFactory;
 
     public EmbeddedMediaPlayer embeddedMediaPlayer;
+    public MediaItem activeMediaItem;
 
     // Variables to keep track of mediaplayer status:
+    BooleanProperty mediaActive = new SimpleBooleanProperty(false); // is the mediaplayer active (is any video currently loaded in)
     BooleanProperty playing = new SimpleBooleanProperty(false); // is mediaplayer currently playing
     boolean wasPlaying = false; // was mediaplayer playing before a seeking action occurred
     public boolean atEnd = false; // is mediaplayer at the end of the video
@@ -47,6 +53,8 @@ public class MediaInterface {
 
     PauseTransition transitionTimer;
 
+    double currentTime;
+
 
     MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController) {
         this.mainController = mainController;
@@ -54,12 +62,24 @@ public class MediaInterface {
         this.settingsController = settingsController;
         this.menuController = menuController;
 
-        
-        playing.addListener((observableValue, oldValue, newValue) -> {
-            if(!menuController.mediaActive.get()) return;
 
-            if(newValue) menuController.activeItem.columns.play();
-            else menuController.activeItem.columns.pause();
+        mediaActive.addListener((observableValue, oldValue, newValue) -> {
+            controlBarController.durationPane.setMouseTransparent(!newValue);
+            if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.sliderPane.setMouseTransparent(!newValue);
+
+
+            if(newValue){
+                if(!controlBarController.playButtonEnabled) controlBarController.enablePlayButton();
+                if(mainController.miniplayerActive){
+                    mainController.miniplayer.miniplayerController.enablePlayButton();
+                    mainController.miniplayerActiveText.setVisible(true);
+                }
+            }
+            else {
+                if(controlBarController.playButtonEnabled) controlBarController.disablePlayButton();
+                if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disablePlayButton();
+                mainController.miniplayerActiveText.setVisible(false);
+            }
         });
     }
 
@@ -69,75 +89,116 @@ public class MediaInterface {
 
         embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(mainController.videoImageView));
 
+        embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+
+
+            @Override
+            public void finished(MediaPlayer mediaPlayer) {
+
+            }
+
+            @Override
+            public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
+
+                currentTime = newTime;
+
+                Platform.runLater(() ->{
+                    controlBarController.durationSlider.setValue((double)newTime/1000);
+
+                    if(!menuController.captionsController.subtitles.isEmpty() &&
+                            menuController.captionsController.captionsPosition >= 0 &&
+                            menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size() &&
+                            menuController.captionsController.captionsOn.get() &&
+                            !menuController.captionsController.captionsDragActive){
+
+
+                        if(newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && !menuController.captionsController.showedCurrentCaption){
+                            String text = menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).text;
+
+                            // if the subtitle contains a new line character then split the subtitle into two and add the part after the new line onto another label
+
+                            String[] subtitleLines = Utilities.splitLines(text);
+
+                            if(subtitleLines.length == 2){
+                                menuController.captionsController.captionsLabel1.setOpacity(1);
+                                menuController.captionsController.captionsLabel2.setOpacity(1);
+                                menuController.captionsController.captionsLabel1.setText(subtitleLines[0]);
+                                menuController.captionsController.captionsLabel2.setText(subtitleLines[1]);
+                            }
+                            else {
+                                menuController.captionsController.captionsLabel1.setOpacity(0);
+                                menuController.captionsController.captionsLabel2.setOpacity(1);
+                                menuController.captionsController.captionsLabel2.setText(subtitleLines[0]);
+                            }
+
+                            menuController.captionsController.showedCurrentCaption = true;
+                        }
+                        else if((newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && menuController.captionsController.captionsPosition >= menuController.captionsController.subtitles.size() - 1) || (newTime) >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn){
+                            menuController.captionsController.captionsLabel1.setOpacity(0);
+                            menuController.captionsController.captionsLabel2.setOpacity(0);
+                        }
+                        else if(newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition > 0){
+                            do {
+                                menuController.captionsController.captionsPosition--;
+                                menuController.captionsController.showedCurrentCaption = false;
+                            }
+                            while (newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition > 0);
+                        }
+                        else if(menuController.captionsController.captionsPosition <  menuController.captionsController.subtitles.size() - 1 && newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn){
+                            do {
+                                menuController.captionsController.captionsPosition++;
+                                menuController.captionsController.showedCurrentCaption = false;
+                            }
+                            while (menuController.captionsController.captionsPosition <  menuController.captionsController.subtitles.size() - 1 && newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void mediaPlayerReady(MediaPlayer mediaPlayer) {
+
+                Platform.runLater(() -> {
+                    controlBarController.durationSlider.setMax((double)mediaPlayer.media().info().duration()/1000);
+                    if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.slider.setMax((double)mediaPlayer.media().info().duration()/1000);
+
+                    mediaActive.set(true);
+
+                    play();
+                });
+            }
+
+
+        });
+
     }
 
     public void updateMedia(double newValue) {
 
         if (!controlBarController.showingTimeLeft)
-            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, menuController.activeItem.mediaItem.getMedia());
+            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, this, Duration.millis(embeddedMediaPlayer.media().info().duration()));
         else
-            Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, menuController.activeItem.mediaItem.getMedia());
+            Utilities.setTimeLeftLabel(controlBarController.durationLabel, this, Duration.millis(embeddedMediaPlayer.media().info().duration() ));
 
         if (atEnd) {
             atEnd = false;
             seekedToEnd = false;
 
-            if (wasPlaying) {
-                if(menuController.mediaActive.get()) {
-                    menuController.activeItem.playIcon.setShape(menuController.activeItem.pauseSVG);
-                    menuController.activeItem.play.updateText("Pause video");
+            if (wasPlaying && (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging()))) {
 
-                    if(menuController.historyBox.index != -1){
-                        HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
-                        historyItem.playIcon.setShape(historyItem.pauseSVG);
-                        historyItem.play.updateText("Pause video");
-                    }
-                }
+                play();
 
-                if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
-
-                    controlBarController.playIcon.setShape(controlBarController.pauseSVG);
-                    controlBarController.playIcon.setPrefSize(20, 20);
-
-
-                    playing.set(true);
-                    mediaPlayer.play();
-
-                    controlBarController.play.updateText("Pause (k)");
-
-                    if(mainController.miniplayerActive){
-                        mainController.miniplayer.miniplayerController.play();
-                    }
-
-                }
             } else {
-                controlBarController.playIcon.setShape(controlBarController.playSVG);
-                controlBarController.playIcon.setPrefSize(20, 20);
 
-                playing.set(false);
-
-                controlBarController.play.updateText("Play (k)");
-
-                if(mainController.miniplayerActive){
-                    mainController.miniplayer.miniplayerController.pause();
-                }
-
-                if(menuController.mediaActive.get()) {
-                    menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
-                    menuController.activeItem.play.updateText("Play video");
-
-                    if(menuController.historyBox.index != -1){
-                        HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
-                        historyItem.playIcon.setShape(historyItem.playSVG);
-                        historyItem.play.updateText("Play video");
-                    }
-                }
+                pause();
 
             }
-            controlBarController.playButton.setOnAction((e) -> {
-                controlBarController.playButtonClick1();
-            });
-        } else if (newValue >= controlBarController.durationSlider.getMax()) {
+        }
+
+
+
+        // this final block will probably have to be modified
+        else if (newValue >= controlBarController.durationSlider.getMax()) {
 
             if (controlBarController.durationSlider.isValueChanging() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
                 seekedToEnd = true;
@@ -145,15 +206,14 @@ public class MediaInterface {
 
             atEnd = true;
             playing.set(false);
-            mediaPlayer.pause();
 
             if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
                 endMedia();
             }
         }
 
-        if (Math.abs(mediaPlayer.getCurrentTime().toSeconds() - newValue) > 0.5) {
-            mediaPlayer.seek(Duration.seconds(newValue));
+        if (Math.abs(getCurrentTime().toSeconds() - newValue) > 0.5) {
+            seek(Duration.seconds(newValue));
         }
 
 
@@ -170,7 +230,7 @@ public class MediaInterface {
             controlBarController.mouseEventTracker.move();
 
             // restart current video
-            mediaPlayer.stop();
+            seek(Duration.ZERO);
 
         }
         else if (settingsController.playbackOptionsController.shuffleOn || settingsController.playbackOptionsController.autoplayOn) {
@@ -181,7 +241,7 @@ public class MediaInterface {
 
     }
 
-    public void createMediaPlayer(MenuObject menuObject) {
+    public void createMedia(MenuObject menuObject) {
 
         MediaItem mediaItem = menuObject.getMediaItem();
 
@@ -191,7 +251,8 @@ public class MediaInterface {
         playing.set(false);
         wasPlaying = false;
 
-        mediaPlayer = new MediaPlayer(mediaItem.getMedia());
+        // play mediaItem in embeddedmediaplayer
+
 
         if(mediaItem.getSubtitles() != null){
             settingsController.captionsController.loadCaptions(mediaItem.getSubtitles(), mediaItem.getSubtitlesOn());
@@ -204,15 +265,7 @@ public class MediaInterface {
 
         controlBarController.durationSlider.setValue(0);
 
-        if(mainController.miniplayerActive){
-            mainController.miniplayer.miniplayerController.mediaView.setMediaPlayer(mediaPlayer);
-            mainController.miniplayerActiveText.setVisible(true);
-        }
-        else {
-            mainController.mediaView.setMediaPlayer(mediaPlayer);
-        }
 
-        if(!controlBarController.playButtonEnabled) controlBarController.enablePlayButton();
 
         if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty() && controlBarController.nextVideoButtonEnabled){
             controlBarController.disableNextVideoButton();
@@ -233,91 +286,7 @@ public class MediaInterface {
 
         App.setFrameDuration(mediaItem.getFrameDuration());
 
-        // update video name field in settings pane and the stage title with the new video
-
-        mediaPlayer.currentTimeProperty().addListener((observableValue, oldTime, newTime) -> {
-            if (!controlBarController.showingTimeLeft)
-                Utilities.setCurrentTimeLabel(controlBarController.durationLabel, mediaPlayer, mediaItem.getMedia());
-            else
-                Utilities.setTimeLeftLabel(controlBarController.durationLabel, mediaPlayer, mediaItem.getMedia());
-
-            if (!controlBarController.durationSlider.isValueChanging()) {
-                controlBarController.durationSlider.setValue(newTime.toSeconds());
-            }
-
-
-            //////////////////////             SUBTITLES              //////////////////////
-            if(!menuController.captionsController.subtitles.isEmpty() &&
-                    menuController.captionsController.captionsPosition >= 0 &&
-                    menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size() &&
-                    menuController.captionsController.captionsOn.get() &&
-                    !menuController.captionsController.captionsDragActive){
-
-
-                if(newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && !menuController.captionsController.showedCurrentCaption){
-                    String text = menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).text;
-
-                    // if the subtitle contains a new line character then split the subtitle into two and add the part after the new line onto another label
-
-                    String[] subtitleLines = Utilities.splitLines(text);
-
-                    if(subtitleLines.length == 2){
-                        menuController.captionsController.captionsLabel1.setOpacity(1);
-                        menuController.captionsController.captionsLabel2.setOpacity(1);
-                        menuController.captionsController.captionsLabel1.setText(subtitleLines[0]);
-                        menuController.captionsController.captionsLabel2.setText(subtitleLines[1]);
-                    }
-                    else {
-                        menuController.captionsController.captionsLabel1.setOpacity(0);
-                        menuController.captionsController.captionsLabel2.setOpacity(1);
-                        menuController.captionsController.captionsLabel2.setText(subtitleLines[0]);
-                    }
-
-                    menuController.captionsController.showedCurrentCaption = true;
-                }
-                else if((newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && menuController.captionsController.captionsPosition >= menuController.captionsController.subtitles.size() - 1) || (newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn)){
-                    menuController.captionsController.captionsLabel1.setOpacity(0);
-                    menuController.captionsController.captionsLabel2.setOpacity(0);
-                }
-                else if(newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition > 0){
-                    do {
-                        menuController.captionsController.captionsPosition--;
-                        menuController.captionsController.showedCurrentCaption = false;
-                    }
-                    while (newTime.toMillis() < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition > 0);
-                }
-                else if(menuController.captionsController.captionsPosition <  menuController.captionsController.subtitles.size() - 1 && newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn){
-                    do {
-                        menuController.captionsController.captionsPosition++;
-                        menuController.captionsController.showedCurrentCaption = false;
-                    }
-                    while (menuController.captionsController.captionsPosition <  menuController.captionsController.subtitles.size() - 1 && newTime.toMillis() >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn);
-                }
-            }
-        });
-
-
-        mediaPlayer.setOnReady(() -> {
-
-            mediaPlayer.setVolume(controlBarController.volumeSlider.getValue() / 100);
-
-            controlBarController.play();
-
-            controlBarController.durationSlider.setMax(Math.floor(mediaItem.getMedia().getDuration().toSeconds()));
-            if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.slider.setMax(Math.floor(mediaItem.getMedia().getDuration().toSeconds()));
-
-            TimerTask setRate = new TimerTask() {
-
-                @Override
-                public void run() {
-                    mediaPlayer.setRate(settingsController.playbackSpeedController.speed);
-                }
-            };
-
-            Timer timer = new Timer();
-
-            timer.schedule(setRate, 200);
-        });
+        embeddedMediaPlayer.media().play(mediaItem.getFile().getAbsolutePath());
 
     }
 
@@ -325,46 +294,23 @@ public class MediaInterface {
 
     public void resetMediaPlayer(){
 
-        if(mediaPlayer != null) mediaPlayer.dispose();
-        mainController.mediaView.setMediaPlayer(null);
+        // instead of this add a black screen to the imageview
+        /*mainController.mediaView.setMediaPlayer(null);
         if(mainController.miniplayerActive){
             mainController.miniplayer.miniplayerController.mediaView.setMediaPlayer(null);
-        }
+        }*/
 
-        if(controlBarController.playButtonEnabled) controlBarController.disablePlayButton();
 
         controlBarController.durationSlider.setValue(0);
 
         App.setFrameDuration(1 / 30);
-        App.stage.setTitle("MP4 Player");
 
         if(controlBarController.showingTimeLeft) controlBarController.durationLabel.setText("−00:00/00:00");
         else controlBarController.durationLabel.setText("00:00/00:00");
 
         if(settingsController.playbackOptionsController.loopOn) settingsController.playbackOptionsController.loopTab.toggle.fire();
-    }
 
-    public void addVideo(Media media){
-
-    }
-
-    public void addUnplayedVideo(Media media){
-
-    }
-
-    public void addPlayedVideo(Media Media){
-
-    }
-
-    public void removeVideo(Media media){
-    }
-
-    public void removePlayedVideo(Media media){
-
-    }
-
-    public void removeUnplayedVideo(Media media){
-
+        embeddedMediaPlayer.controls().stop();
     }
 
 
@@ -429,32 +375,94 @@ public class MediaInterface {
     public void defaultEnd(){
         controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
 
-        controlBarController.durationLabel.textProperty().unbind();
+        //controlBarController.durationLabel.textProperty().unbind(); // probably not necessary
         controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(menuController.activeItem.mediaItem.getMedia().getDuration()));
 
+        controlBarController.mouseEventTracker.move();
 
-        controlBarController.playIcon.setShape(controlBarController.replaySVG);
-        controlBarController.playIcon.setPrefSize(24, 24);
-
-
-        menuController.activeItem.playIcon.setShape(menuController.activeItem.playSVG);
-        menuController.activeItem.play.updateText("Play video");
-
-        if(menuController.historyBox.index != -1){
-            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
-            historyItem.playIcon.setShape(historyItem.playSVG);
-            historyItem.play.updateText("Play video");
-        }
-
-        controlBarController.play.updateText("Replay (k)");
-
+        // add logic to update all the play icons
+        controlBarController.end();
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.end();
+        menuController.activeItem.updateIconToPlay();
 
-        controlBarController.playButton.setOnAction((e) -> controlBarController.playButtonClick2());
-
-        if (!controlBarController.controlBarOpen) {
-            controlBarController.displayControls();
+        if (menuController.historyBox.index != -1) {
+            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+            historyItem.updateIconToPlay();
         }
 
+        playing.set(false);
+
+
+    }
+
+    public void play() {
+
+        embeddedMediaPlayer.controls().play();
+
+        if (menuController.historyBox.index != -1) {
+            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+            historyItem.updateIconToPause();
+        }
+
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.play();
+
+        controlBarController.play();
+
+        menuController.activeItem.updateIconToPause();
+
+        playing.set(true);
+
+        wasPlaying = playing.get();
+    }
+
+    public void pause(){
+
+        embeddedMediaPlayer.controls().pause();
+
+        if (menuController.historyBox.index != -1) {
+            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+            historyItem.updateIconToPlay();
+        }
+
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.pause();
+
+        controlBarController.pause();
+
+        menuController.activeItem.updateIconToPlay();
+
+
+        playing.set(false);
+
+        wasPlaying = playing.get();
+
+    }
+
+    public void replay(){
+
+        seek(Duration.ZERO);
+        play();
+
+        atEnd = false;
+        seekedToEnd = false;
+        wasPlaying = playing.get();
+    }
+
+
+    public void seek(Duration time){
+        embeddedMediaPlayer.controls().setTime((long) time.toMillis());
+    }
+
+    public void changeVolume(double value){
+
+        //copied from controlbarcontroller
+        embeddedMediaPlayer.audio().setVolume((int) value);
+    }
+
+    public void changePlaybackSpeed(double value){
+        embeddedMediaPlayer.controls().setRate((float) value);
+    }
+
+    public Duration getCurrentTime(){
+        return Duration.millis(currentTime);
     }
 }

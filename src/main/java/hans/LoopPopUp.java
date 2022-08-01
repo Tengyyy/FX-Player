@@ -32,6 +32,7 @@ public class LoopPopUp extends ContextMenu {
     LoopPopUp(SettingsController settingsController){
 
         this.settingsController = settingsController;
+        this.setId("loopMenu");
 
         loopSVG.setContent(App.svgMap.get(SVG.REPEAT_ONCE));
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
@@ -57,8 +58,11 @@ public class LoopPopUp extends ContextMenu {
 
 
         loopItem.setGraphic(itemWrapper);
+        loopItem.setId("loopPopUp");
 
         loopItem.setOnAction(e -> settingsController.playbackOptionsController.loopTab.toggle.fire());
+
+
 
 
         this.getItems().add(loopItem);

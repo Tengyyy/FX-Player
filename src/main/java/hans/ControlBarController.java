@@ -383,7 +383,6 @@ public class ControlBarController implements Initializable {
         this.captionsController = captionsController;
 
         mouseEventTracker = new MouseEventTracker(4, mainController, this, settingsController); // creates instance of the MouseEventTracker class which keeps track of when to hide and show the control-bar
-
     }
 
     public void toggleDurationLabel() {
@@ -404,7 +403,10 @@ public class ControlBarController implements Initializable {
             // logic to play/pause/replay
 
             if(mediaInterface.atEnd) mediaInterface.replay();
-            else if(mediaInterface.playing.get()) mediaInterface.pause();
+            else if(mediaInterface.playing.get()){
+                mediaInterface.wasPlaying = false;
+                mediaInterface.pause();
+            }
             else mediaInterface.play();
 
         }

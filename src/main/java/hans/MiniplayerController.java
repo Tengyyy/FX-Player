@@ -408,7 +408,10 @@ public class MiniplayerController {
         playButton.setCursor(Cursor.HAND);
         playButton.setOnAction(e -> {
             if(mediaInterface.atEnd) mediaInterface.replay();
-            else if(mediaInterface.playing.get()) mediaInterface.pause();
+            else if(mediaInterface.playing.get()){
+                mediaInterface.wasPlaying = false;
+                mediaInterface.pause();
+            }
             else mediaInterface.play();
         });
 

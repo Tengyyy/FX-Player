@@ -88,7 +88,7 @@ public class MediaInterface {
         this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 
         embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(mainController.videoImageView));
-        embeddedMediaPlayer.audio().setVolume(50);
+        embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
 
         embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
 
@@ -223,7 +223,7 @@ public class MediaInterface {
             }
         }
 
-        if(Math.abs(currentTime/1000 - newValue) > 0.5) {
+        if(Math.abs(currentTime/1000 - newValue) > 0.5 || (!playing.get() && Math.abs(currentTime/1000 - newValue) >= 0.1)) {
             currentTime = newValue;
             seek(Duration.seconds(newValue));
         }
@@ -304,6 +304,7 @@ public class MediaInterface {
         App.setFrameDuration(mediaItem.getFrameDuration());
 
         embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());
+        embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
 
     }
 
@@ -462,10 +463,6 @@ public class MediaInterface {
 
             if(menuController.activeItem != null)menuController.activeItem.updateIconToPlay();
         });
-
-
-        // wasPlaying has to be manually set to false when specifically pausing video not seeking
-        // wasPlaying = playing.get();
 
     }
 

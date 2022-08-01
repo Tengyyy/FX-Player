@@ -314,6 +314,7 @@ public class MainController implements Initializable {
                 actionIndicator.setIcon(REPLAY);
             } else {
                 if (mediaInterface.playing.get()) {
+                    mediaInterface.wasPlaying = false;
                     mediaInterface.pause();
                     actionIndicator.setIcon(PAUSE);
                 } else {
@@ -647,6 +648,7 @@ public class MainController implements Initializable {
                 actionIndicator.setIcon(REPLAY);
             } else {
                 if (mediaInterface.playing.get()) {
+                    mediaInterface.wasPlaying = false;
                     mediaInterface.pause();
                     actionIndicator.setIcon(PAUSE);
                 } else {
@@ -691,6 +693,7 @@ public class MainController implements Initializable {
                 actionIndicator.setIcon(REPLAY);
             } else {
                 if (mediaInterface.playing.get()) {
+                    mediaInterface.wasPlaying = false;
                     mediaInterface.pause();
                     actionIndicator.setIcon(PAUSE);
                 } else {
@@ -755,7 +758,7 @@ public class MainController implements Initializable {
         // seek backwards by 1 frame
         if(!mediaInterface.playing.get() && mediaInterface.mediaActive.get()) {
             mediaInterface.seekedToEnd = false;
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - App.frameDuration);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 0.1);
         }
         e.consume();
     }
@@ -788,7 +791,9 @@ public class MainController implements Initializable {
                 mediaInterface.seekedToEnd = true;
             }
 
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + App.frameDuration);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 0.1);
+
+
         }
         e.consume();
     }

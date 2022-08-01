@@ -490,6 +490,8 @@ public class MainController implements Initializable {
 
         App.stage.setIconified(false);
         App.stage.toFront();
+
+        System.out.println("test");
     }
 
     public void resizeIndicators(){

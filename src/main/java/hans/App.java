@@ -221,6 +221,8 @@ public class App extends Application {
 
             primaryStage.setOnCloseRequest(event -> {
 
+                mediaInterface.embeddedMediaPlayer.release();
+
                 Platform.exit();
                 System.exit(0);
 

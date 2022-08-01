@@ -88,13 +88,22 @@ public class MediaInterface {
         this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 
         embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(mainController.videoImageView));
+        embeddedMediaPlayer.audio().setVolume(50);
 
         embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
 
 
             @Override
             public void finished(MediaPlayer mediaPlayer) {
+                Platform.runLater(() -> {
+                    controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
+                });
+            }
 
+            @Override
+            public void stopped(MediaPlayer mediaPlayer){
+                System.out.println("test");
+                // mediaplayer is stoppped when opening/closing miniplayer, have to make sure this code here doesnt mess with that
             }
 
             @Override
@@ -103,7 +112,7 @@ public class MediaInterface {
                 currentTime = newTime;
 
                 Platform.runLater(() ->{
-                    controlBarController.durationSlider.setValue((double)newTime/1000);
+                    if(controlBarController.durationSlider.getValue() != (double) newTime/1000) controlBarController.durationSlider.setValue((double)newTime/1000);
 
                     if(!menuController.captionsController.subtitles.isEmpty() &&
                             menuController.captionsController.captionsPosition >= 0 &&
@@ -163,6 +172,8 @@ public class MediaInterface {
                     if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.slider.setMax((double)mediaPlayer.media().info().duration()/1000);
 
                     mediaActive.set(true);
+                    controlBarController.enablePlayButton();
+                    if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enablePlayButton();
 
                     play();
                 });
@@ -175,10 +186,13 @@ public class MediaInterface {
 
     public void updateMedia(double newValue) {
 
-        if (!controlBarController.showingTimeLeft)
-            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, this, Duration.millis(embeddedMediaPlayer.media().info().duration()));
-        else
-            Utilities.setTimeLeftLabel(controlBarController.durationLabel, this, Duration.millis(embeddedMediaPlayer.media().info().duration() ));
+        Platform.runLater(() -> {
+            if (!controlBarController.showingTimeLeft)
+                Utilities.setCurrentTimeLabel(controlBarController.durationLabel, controlBarController.durationSlider, Duration.millis(embeddedMediaPlayer.media().info().duration()));
+            else
+                Utilities.setTimeLeftLabel(controlBarController.durationLabel, controlBarController.durationSlider, Duration.millis(embeddedMediaPlayer.media().info().duration() ));
+        });
+
 
         if (atEnd) {
             atEnd = false;
@@ -208,11 +222,12 @@ public class MediaInterface {
             playing.set(false);
 
             if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
-                endMedia();
+                Platform.runLater(this::endMedia);
             }
         }
 
         if (Math.abs(getCurrentTime().toSeconds() - newValue) > 0.5) {
+            currentTime = newValue;
             seek(Duration.seconds(newValue));
         }
 
@@ -250,6 +265,7 @@ public class MediaInterface {
         seekedToEnd = false;
         playing.set(false);
         wasPlaying = false;
+        currentTime = 0;
 
         // play mediaItem in embeddedmediaplayer
 
@@ -286,7 +302,7 @@ public class MediaInterface {
 
         App.setFrameDuration(mediaItem.getFrameDuration());
 
-        embeddedMediaPlayer.media().play(mediaItem.getFile().getAbsolutePath());
+        embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());
 
     }
 
@@ -294,23 +310,26 @@ public class MediaInterface {
 
     public void resetMediaPlayer(){
 
+        embeddedMediaPlayer.controls().stop();
+
+
         // instead of this add a black screen to the imageview
         /*mainController.mediaView.setMediaPlayer(null);
         if(mainController.miniplayerActive){
             mainController.miniplayer.miniplayerController.mediaView.setMediaPlayer(null);
         }*/
 
-
         controlBarController.durationSlider.setValue(0);
 
-        App.setFrameDuration(1 / 30);
+        App.setFrameDuration((float)1 / 30);
 
         if(controlBarController.showingTimeLeft) controlBarController.durationLabel.setText("−00:00/00:00");
         else controlBarController.durationLabel.setText("00:00/00:00");
 
         if(settingsController.playbackOptionsController.loopOn) settingsController.playbackOptionsController.loopTab.toggle.fire();
 
-        embeddedMediaPlayer.controls().stop();
+
+
     }
 
 
@@ -376,14 +395,14 @@ public class MediaInterface {
         controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
 
         //controlBarController.durationLabel.textProperty().unbind(); // probably not necessary
-        controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(menuController.activeItem.mediaItem.getMedia().getDuration()));
+        controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)));
 
         controlBarController.mouseEventTracker.move();
 
         // add logic to update all the play icons
         controlBarController.end();
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.end();
-        menuController.activeItem.updateIconToPlay();
+        if(menuController.activeItem != null)menuController.activeItem.updateIconToPlay();
 
         if (menuController.historyBox.index != -1) {
             HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
@@ -397,54 +416,66 @@ public class MediaInterface {
 
     public void play() {
 
-        embeddedMediaPlayer.controls().play();
-
-        if (menuController.historyBox.index != -1) {
-            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
-            historyItem.updateIconToPause();
-        }
-
-        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.play();
-
-        controlBarController.play();
-
-        menuController.activeItem.updateIconToPause();
-
         playing.set(true);
 
-        wasPlaying = playing.get();
+
+        embeddedMediaPlayer.controls().play();
+
+        Platform.runLater(() -> {
+            if (menuController.historyBox.index != -1) {
+                HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+                historyItem.updateIconToPause();
+            }
+
+            if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.play();
+
+            controlBarController.play();
+
+            if(menuController.activeItem != null) menuController.activeItem.updateIconToPause();
+
+            wasPlaying = playing.get();
+        });
+
     }
 
     public void pause(){
 
-        embeddedMediaPlayer.controls().pause();
-
-        if (menuController.historyBox.index != -1) {
-            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
-            historyItem.updateIconToPlay();
-        }
-
-        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.pause();
-
-        controlBarController.pause();
-
-        menuController.activeItem.updateIconToPlay();
-
-
         playing.set(false);
 
-        wasPlaying = playing.get();
+        embeddedMediaPlayer.controls().pause();
+
+        Platform.runLater(() ->{
+            if (menuController.historyBox.index != -1) {
+                HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
+                historyItem.updateIconToPlay();
+            }
+
+            if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.pause();
+
+            controlBarController.pause();
+
+            if(menuController.activeItem != null)menuController.activeItem.updateIconToPlay();
+        });
+
+
+        // wasPlaying has to be manually set to false when specifically pausing video not seeking
+        // wasPlaying = playing.get();
 
     }
 
     public void replay(){
 
+        Platform.runLater(() -> {
+            controlBarController.durationSlider.setValue(0);
+        });
+
         seek(Duration.ZERO);
         play();
 
+
+
         atEnd = false;
         seekedToEnd = false;
-        wasPlaying = playing.get();
     }
 
 
@@ -453,8 +484,6 @@ public class MediaInterface {
     }
 
     public void changeVolume(double value){
-
-        //copied from controlbarcontroller
         embeddedMediaPlayer.audio().setVolume((int) value);
     }
 

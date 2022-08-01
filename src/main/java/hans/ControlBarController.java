@@ -50,8 +50,6 @@ public class ControlBarController implements Initializable {
     @FXML
     public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, captionsIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
 
-    @FXML
-    public HBox settingsBox1;
 
 
     SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
@@ -306,7 +304,6 @@ public class ControlBarController implements Initializable {
         durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(mediaInterface.mediaActive.get()){
 
-                // update subtitles here
 
                 if(oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5){
                     //previousVideoTooltip.updateText("Replay");
@@ -359,7 +356,7 @@ public class ControlBarController implements Initializable {
                     durationSliderHoverOff();
                 }
 
-                mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
+                //mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
 
                 if (settingsController.settingsState != SettingsState.CLOSED) { // close settings pane after user finishes seeking media (if its open)
                     settingsController.closeSettings();
@@ -390,10 +387,10 @@ public class ControlBarController implements Initializable {
 
     public void toggleDurationLabel() {
         if (showingTimeLeft && mediaInterface.mediaActive.get()) {
-            Utilities.setCurrentTimeLabel(durationLabel, mediaInterface, Duration.millis(mediaInterface.embeddedMediaPlayer.media().info().duration()));
+            Utilities.setCurrentTimeLabel(durationLabel, durationSlider, Duration.millis(mediaInterface.embeddedMediaPlayer.media().info().duration()));
             showingTimeLeft = false;
         } else if(!showingTimeLeft && mediaInterface.mediaActive.get()){
-            Utilities.setTimeLeftLabel(durationLabel, mediaInterface, Duration.millis(mediaInterface.embeddedMediaPlayer.media().info().duration()));
+            Utilities.setTimeLeftLabel(durationLabel, durationSlider, Duration.millis(mediaInterface.embeddedMediaPlayer.media().info().duration()));
             showingTimeLeft = true;
         }
     }
@@ -404,6 +401,11 @@ public class ControlBarController implements Initializable {
             settingsController.closeSettings();
         } else {
             // logic to play/pause/replay
+
+            if(mediaInterface.atEnd) mediaInterface.replay();
+            else if(mediaInterface.playing.get()) mediaInterface.pause();
+            else mediaInterface.play();
+
         }
     }
 

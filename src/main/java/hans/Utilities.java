@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -42,12 +43,12 @@ public class Utilities {
     }
 
 
-    public static void setCurrentTimeLabel(Label durationLabel, MediaInterface mediaInterface, Duration duration) {
-        durationLabel.setText(getTime(mediaInterface.getCurrentTime()) + "/" + getTime(duration));
+    public static void setCurrentTimeLabel(Label durationLabel, Slider slider, Duration duration) {
+        durationLabel.setText(getTime(Duration.seconds(slider.getValue())) + "/" + getTime(duration));
     }
 
-    public static void setTimeLeftLabel(Label durationLabel, MediaInterface mediaInterface, Duration duration) {
-        durationLabel.setText("−" + getTime(duration.subtract(mediaInterface.getCurrentTime())) + "/" + getTime(duration));
+    public static void setTimeLeftLabel(Label durationLabel, Slider slider, Duration duration) {
+        durationLabel.setText("−" + getTime(duration.subtract(Duration.seconds(slider.getValue()))) + "/" + getTime(duration));
     }
 
 

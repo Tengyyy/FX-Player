@@ -96,6 +96,8 @@ public class MainController implements Initializable {
 
     LoopPopUp loopPopUp;
 
+
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
@@ -148,6 +150,8 @@ public class MainController implements Initializable {
 
         videoImageViewWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
         videoImageViewInnerWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
+
+
 
         menuButtonPane.translateXProperty().bind(menuController.menu.widthProperty().multiply(-1));
         menuButton.setBackground(Background.EMPTY);
@@ -310,10 +314,10 @@ public class MainController implements Initializable {
                 actionIndicator.setIcon(REPLAY);
             } else {
                 if (mediaInterface.playing.get()) {
-                    controlBarController.pause();
+                    mediaInterface.pause();
                     actionIndicator.setIcon(PAUSE);
                 } else {
-                    controlBarController.play();
+                    mediaInterface.play();
                     actionIndicator.setIcon(PLAY);
                 }
             }
@@ -436,9 +440,14 @@ public class MainController implements Initializable {
 
         videoImageViewInnerWrapper.widthProperty().removeListener(widthListener);
 
+
         miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface, settingsController);
 
         mediaInterface.embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(miniplayer.miniplayerController.videoImageView));
+        mediaInterface.embeddedMediaPlayer.controls().stop();
+
+        videoImageView.setImage(null);
+
 
         miniplayer.miniplayerController.moveIndicators();
         captionsController.moveToMiniplayer();
@@ -473,7 +482,10 @@ public class MainController implements Initializable {
 
         miniplayerActiveText.setVisible(false);
 
+
         mediaInterface.embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(videoImageView));
+        mediaInterface.embeddedMediaPlayer.controls().stop();
+
 
 
         App.stage.setIconified(false);
@@ -628,7 +640,7 @@ public class MainController implements Initializable {
 
     public void pressSPACE(KeyEvent e){
         controlBarController.mouseEventTracker.move();
-        if (!controlBarController.durationSlider.isValueChanging() && mediaInterface.mediaActive.get() && (!miniplayerActive || (miniplayerActive && !miniplayer.miniplayerController.slider.isValueChanging()))) { // wont let user play/pause video while media slider is seeking
+        if (!controlBarController.durationSlider.isValueChanging() && mediaInterface.mediaActive.get() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())) { // wont let user play/pause video while media slider is seeking
             if (mediaInterface.atEnd) {
                 mediaInterface.replay();
                 actionIndicator.setIcon(REPLAY);
@@ -672,7 +684,7 @@ public class MainController implements Initializable {
 
     public void pressK(KeyEvent e){
         controlBarController.mouseEventTracker.move();
-        if (!controlBarController.durationSlider.isValueChanging() && mediaInterface.mediaActive.get() && (!miniplayerActive || (miniplayerActive && !miniplayer.miniplayerController.slider.isValueChanging()))) {  // wont let user play/pause video while media slider is seeking
+        if (!controlBarController.durationSlider.isValueChanging() && mediaInterface.mediaActive.get() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())) {  // wont let user play/pause video while media slider is seeking
             if (mediaInterface.atEnd) {
                 mediaInterface.replay();
                 actionIndicator.setIcon(REPLAY);
@@ -742,12 +754,13 @@ public class MainController implements Initializable {
         // seek backwards by 1 frame
         if(!mediaInterface.playing.get() && mediaInterface.mediaActive.get()) {
             mediaInterface.seekedToEnd = false;
-            mediaInterface.seek(mediaInterface.getCurrentTime().subtract(Duration.seconds(App.frameDuration)));
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - App.frameDuration);
         }
         e.consume();
     }
 
     public void pressPERIOD(KeyEvent e){
+
         controlBarController.mouseEventTracker.move();
 
         if(e.isShiftDown()){ // increase playback speed by 0.25
@@ -774,7 +787,7 @@ public class MainController implements Initializable {
                 mediaInterface.seekedToEnd = true;
             }
 
-            mediaInterface.seek(mediaInterface.getCurrentTime().add(Duration.seconds(App.frameDuration)));
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + App.frameDuration);
         }
         e.consume();
     }
@@ -904,7 +917,7 @@ public class MainController implements Initializable {
     public void press1(KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 1 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 1 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -916,7 +929,7 @@ public class MainController implements Initializable {
     public void press2(KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 2 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 2 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -928,7 +941,7 @@ public class MainController implements Initializable {
     public void press3( KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 3 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 3 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -940,7 +953,7 @@ public class MainController implements Initializable {
     public void press4(KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 4 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 4 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -952,7 +965,7 @@ public class MainController implements Initializable {
     public void press5(KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 5 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 5 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -964,7 +977,7 @@ public class MainController implements Initializable {
     public void press6(KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 6 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 6 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -976,7 +989,7 @@ public class MainController implements Initializable {
     public void press7(KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 7 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 7 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -988,7 +1001,7 @@ public class MainController implements Initializable {
     public void press8(KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 8 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 8 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1000,7 +1013,7 @@ public class MainController implements Initializable {
     public void press9(KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(menuController.activeItem.mediaItem.getMedia().getDuration().toSeconds() * 9 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 9 / 10);
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);

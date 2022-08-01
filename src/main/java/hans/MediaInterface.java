@@ -102,7 +102,6 @@ public class MediaInterface {
 
             @Override
             public void stopped(MediaPlayer mediaPlayer){
-                System.out.println("test");
                 // mediaplayer is stoppped when opening/closing miniplayer, have to make sure this code here doesnt mess with that
             }
 
@@ -112,7 +111,7 @@ public class MediaInterface {
                 currentTime = newTime;
 
                 Platform.runLater(() ->{
-                    if(controlBarController.durationSlider.getValue() != (double) newTime/1000) controlBarController.durationSlider.setValue((double)newTime/1000);
+                    if(Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.5)controlBarController.durationSlider.setValue((double)newTime/1000);
 
                     if(!menuController.captionsController.subtitles.isEmpty() &&
                             menuController.captionsController.captionsPosition >= 0 &&
@@ -172,8 +171,6 @@ public class MediaInterface {
                     if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.slider.setMax((double)mediaPlayer.media().info().duration()/1000);
 
                     mediaActive.set(true);
-                    controlBarController.enablePlayButton();
-                    if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enablePlayButton();
 
                     play();
                 });
@@ -226,9 +223,13 @@ public class MediaInterface {
             }
         }
 
-        if (Math.abs(getCurrentTime().toSeconds() - newValue) > 0.5) {
+        if(Math.abs(currentTime/1000 - newValue) > 0.5) {
             currentTime = newValue;
             seek(Duration.seconds(newValue));
+        }
+        else if(newValue == 0){
+            currentTime = newValue;
+            seek(Duration.ZERO);
         }
 
 
@@ -416,6 +417,8 @@ public class MediaInterface {
 
     public void play() {
 
+        if(!mediaActive.get()) return;
+
         playing.set(true);
 
 
@@ -440,9 +443,12 @@ public class MediaInterface {
 
     public void pause(){
 
-        playing.set(false);
+        if(!mediaActive.get()) return;
 
-        embeddedMediaPlayer.controls().pause();
+        if(playing.get()) {
+            playing.set(false);
+            embeddedMediaPlayer.controls().pause();
+        }
 
         Platform.runLater(() ->{
             if (menuController.historyBox.index != -1) {

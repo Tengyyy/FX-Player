@@ -265,7 +265,7 @@ public class ControlBarController implements Initializable {
         });
 
 
-        durationSlider.addEventFilter(MouseEvent.DRAG_DETECTED, e -> {
+        durationSlider.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
             durationSlider.setValueChanging(true);
 
         });
@@ -302,11 +302,12 @@ public class ControlBarController implements Initializable {
         });
 
         durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+
+
             if(mediaInterface.mediaActive.get()){
 
 
                 if(oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5){
-                    //previousVideoTooltip.updateText("Replay");
 
                     previousVideoButton.setOnAction((e) -> mediaInterface.replay());
 
@@ -318,7 +319,6 @@ public class ControlBarController implements Initializable {
                     }
                 }
                 else if(oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5){
-                    //previousVideoTooltip.updateText("Previous video (SHIFT + P)");
 
                     previousVideoButton.setOnAction((e) -> previousVideoButtonClick());
 
@@ -348,6 +348,7 @@ public class ControlBarController implements Initializable {
 
         durationSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
+
             if (newValue) { // pause video when user starts seeking
                 mediaInterface.pause();
             }
@@ -356,7 +357,6 @@ public class ControlBarController implements Initializable {
                     durationSliderHoverOff();
                 }
 
-                //mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
 
                 if (settingsController.settingsState != SettingsState.CLOSED) { // close settings pane after user finishes seeking media (if its open)
                     settingsController.closeSettings();
@@ -367,6 +367,7 @@ public class ControlBarController implements Initializable {
                 }
                 else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
                     mediaInterface.play();
+                    mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
                 }
             }
         });

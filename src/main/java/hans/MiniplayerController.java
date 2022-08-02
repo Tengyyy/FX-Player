@@ -204,6 +204,7 @@ public class MiniplayerController {
             sliderHoverOn();
         });
 
+
         slider.setOnMouseExited((e) -> {
             sliderHover = false;
             if (!e.isPrimaryButtonDown() && !e.isSecondaryButtonDown() && !e.isMiddleButtonDown()) {
@@ -242,6 +243,9 @@ public class MiniplayerController {
 
         slider.setMax(controlBarController.durationSlider.getMax());
         sliderPane.setMouseTransparent(!mediaInterface.mediaActive.get());
+        slider.setValue(controlBarController.durationSlider.getValue());
+
+        progressBar.setProgress(controlBarController.durationSlider.getValue() / controlBarController.durationSlider.getMax());
 
 
 

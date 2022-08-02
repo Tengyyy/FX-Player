@@ -433,6 +433,9 @@ public class MainController implements Initializable {
     }
 
     public void openMiniplayer(){
+
+        if(controlBarController.durationSlider.isValueChanging()) return;
+
         miniplayerActive = true;
 
         if(App.fullScreen) controlBarController.toggleFullScreen();
@@ -444,8 +447,22 @@ public class MainController implements Initializable {
 
         miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface, settingsController);
 
+
         mediaInterface.embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(miniplayer.miniplayerController.videoImageView));
-        mediaInterface.embeddedMediaPlayer.controls().stop();
+
+
+        if(mediaInterface.mediaActive.get()) {
+            boolean playValue = mediaInterface.playing.get();
+            mediaInterface.embeddedMediaPlayer.controls().stop();
+            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.activeItem.getMediaItem().getFile().getAbsolutePath());
+            mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
+            if (playValue) {
+                mediaInterface.embeddedMediaPlayer.controls().play();
+            }
+            else {
+                mediaInterface.embeddedMediaPlayer.controls().nextFrame();
+            }
+        }
 
         videoImageView.setImage(null);
 
@@ -460,6 +477,7 @@ public class MainController implements Initializable {
 
     public void closeMiniplayer(){
 
+        if(controlBarController.durationSlider.isValueChanging()) return;
 
         miniplayer.miniplayerController.videoImageViewInnerWrapper.widthProperty().removeListener(miniplayer.miniplayerController.widthListener);
 
@@ -483,10 +501,19 @@ public class MainController implements Initializable {
 
         miniplayerActiveText.setVisible(false);
 
-
         mediaInterface.embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(videoImageView));
-        mediaInterface.embeddedMediaPlayer.controls().stop();
-
+        if(mediaInterface.mediaActive.get()) {
+            boolean playValue = mediaInterface.playing.get();
+            mediaInterface.embeddedMediaPlayer.controls().stop();
+            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.activeItem.getMediaItem().getFile().getAbsolutePath());
+            mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
+            if (playValue) {
+                mediaInterface.embeddedMediaPlayer.controls().play();
+            }
+            else {
+                mediaInterface.embeddedMediaPlayer.controls().nextFrame();
+            }
+        }
 
 
         App.stage.setIconified(false);

@@ -396,13 +396,13 @@ public class ActiveItem extends GridPane implements MenuObject {
 
     public void updateIconToPlay(){
         playIcon.setShape(menuController.activeItem.playSVG);
-        playButtonTooltip.updateText("Play video");
+        if(playButtonTooltip != null) playButtonTooltip.updateText("Play video");
         columns.pause();
     }
 
     public void updateIconToPause(){
         playIcon.setShape(menuController.activeItem.pauseSVG);
-        playButtonTooltip.updateText("Pause video");
+        if(playButtonTooltip != null) playButtonTooltip.updateText("Pause video");
         columns.play();
     }
 

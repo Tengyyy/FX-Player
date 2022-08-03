@@ -275,12 +275,20 @@ public class MainController implements Initializable {
         videoImageViewInnerWrapper.setOnMouseClicked(e -> {
 
             if (e.getClickCount() == 1) {
+
+
+                if(e.getTarget() == captionsController.captionsBox || e.getTarget() == captionsController.captionsLabel1 || e.getTarget() == captionsController.captionsLabel2 || e.getTarget() == captionsController.captionsLabel1.lookup(".text") || e.getTarget() == captionsController.captionsLabel2.lookup(".text")) return;
+
                 mediaClick(e);
 
                 if(e.getButton() == MouseButton.SECONDARY) e.consume();
             }
 
             if (e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY) {
+
+                if(e.getTarget() == captionsController.captionsBox || e.getTarget() == captionsController.captionsLabel1 || e.getTarget() == captionsController.captionsLabel2 || e.getTarget() == captionsController.captionsLabel1.lookup(".text") || e.getTarget() == captionsController.captionsLabel2.lookup(".text")) return;
+
+
                 mediaClick(e);
                 controlBarController.toggleFullScreen();
             }
@@ -303,7 +311,10 @@ public class MainController implements Initializable {
             return;
         }
 
-        if(loopPopUp.isShowing()) loopPopUp.hide();
+        if(loopPopUp.isShowing()){
+            loopPopUp.hide();
+            return;
+        }
 
         if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
@@ -692,16 +703,17 @@ public class MainController implements Initializable {
 
     public void pressJ(KeyEvent e){
         controlBarController.mouseEventTracker.move();
-        if(forwardsIndicator.wrapper.isVisible()){
-            forwardsIndicator.setVisible(false);
-        }
-        backwardsIndicator.setText("10 seconds");
-        backwardsIndicator.reset();
-        backwardsIndicator.setVisible(true);
-        backwardsIndicator.animate();
 
         if (mediaInterface.mediaActive.get()) {
             mediaInterface.seekedToEnd = false;
+
+            if(forwardsIndicator.wrapper.isVisible()){
+                forwardsIndicator.setVisible(false);
+            }
+            backwardsIndicator.setText("10 seconds");
+            backwardsIndicator.reset();
+            backwardsIndicator.setVisible(true);
+            backwardsIndicator.animate();
 
             seekingWithKeys = true;
             if(miniplayerActive) {
@@ -736,19 +748,21 @@ public class MainController implements Initializable {
     public void pressL(KeyEvent e){
         controlBarController.mouseEventTracker.move();
 
-        if(backwardsIndicator.wrapper.isVisible()){
-            backwardsIndicator.setVisible(false);
-        }
-        forwardsIndicator.setText("10 seconds");
-        forwardsIndicator.reset();
-        forwardsIndicator.setVisible(true);
-        forwardsIndicator.animate();
 
         if (mediaInterface.mediaActive.get()) {
 
             if (mediaInterface.getCurrentTime().toSeconds() + 10 >= controlBarController.durationSlider.getMax()) {
                 mediaInterface.seekedToEnd = true;
             }
+
+            if(backwardsIndicator.wrapper.isVisible()){
+                backwardsIndicator.setVisible(false);
+            }
+            forwardsIndicator.setText("10 seconds");
+            forwardsIndicator.reset();
+            forwardsIndicator.setVisible(true);
+            forwardsIndicator.animate();
+
 
             seekingWithKeys = true;
             if(miniplayerActive) {

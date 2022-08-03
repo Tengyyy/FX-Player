@@ -246,7 +246,7 @@ public class MediaInterface {
             controlBarController.mouseEventTracker.move();
 
             // restart current video
-            seek(Duration.ZERO);
+            embeddedMediaPlayer.controls().start();
 
         }
         else if (settingsController.playbackOptionsController.shuffleOn || settingsController.playbackOptionsController.autoplayOn) {
@@ -312,16 +312,14 @@ public class MediaInterface {
 
     public void resetMediaPlayer(){
 
+        mainController.videoImageView.setImage(null);
+        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
+
+        controlBarController.durationSlider.setValue(0);
+
         embeddedMediaPlayer.controls().stop();
 
 
-        // instead of this add a black screen to the imageview
-        /*mainController.mediaView.setMediaPlayer(null);
-        if(mainController.miniplayerActive){
-            mainController.miniplayer.miniplayerController.mediaView.setMediaPlayer(null);
-        }*/
-
-        controlBarController.durationSlider.setValue(0);
 
         App.setFrameDuration((float)1 / 30);
 
@@ -330,7 +328,7 @@ public class MediaInterface {
 
         if(settingsController.playbackOptionsController.loopOn) settingsController.playbackOptionsController.loopTab.toggle.fire();
 
-
+        mediaActive.set(false);
 
     }
 

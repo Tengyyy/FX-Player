@@ -45,7 +45,7 @@
                                       <Cursor fx:constant="DEFAULT" />
                                   </cursor>
                               </ProgressBar>
-                              <Slider fx:id="durationSlider" blockIncrement="5.0" maxHeight="-Infinity" minHeight="16.0" prefHeight="16.0" prefWidth="600.0" StackPane.alignment="CENTER">
+                              <Slider fx:id="durationSlider" blockIncrement="5.0" focusTraversable="false" maxHeight="-Infinity" minHeight="16.0" prefHeight="16.0" prefWidth="600.0" StackPane.alignment="CENTER">
                                   <cursor>
                                       <Cursor fx:constant="DEFAULT" />
                                   </cursor>

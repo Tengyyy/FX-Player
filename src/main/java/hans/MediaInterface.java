@@ -25,6 +25,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
 
+import java.awt.*;
 import java.io.File;
 import java.util.*;
 
@@ -86,6 +87,7 @@ public class MediaInterface {
     public void init(){
         this.mediaPlayerFactory = new MediaPlayerFactory();
         this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
+
 
         embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(mainController.videoImageView));
         embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());

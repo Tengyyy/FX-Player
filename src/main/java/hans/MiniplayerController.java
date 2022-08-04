@@ -92,6 +92,9 @@ public class MiniplayerController {
 
     PauseTransition progressBarTimer = new PauseTransition(Duration.millis(1000));
 
+
+    PauseTransition seekTimer = new PauseTransition(Duration.millis(50));
+
     MiniplayerController(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface, Miniplayer miniplayer){
 
         this.mainController = mainController;
@@ -182,7 +185,7 @@ public class MiniplayerController {
         slider.setId("slider");
         StackPane.setMargin(slider, new Insets(0, 4, 0, 4));
 
-        slider.addEventFilter(MouseEvent.DRAG_DETECTED, e -> {
+        slider.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
             slider.setValueChanging(true);
 
         });
@@ -222,9 +225,14 @@ public class MiniplayerController {
 
                 showControls();
 
-                mediaInterface.pause();
+                seekTimer.playFromStart();
+                if(mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
+                mediaInterface.playing.set(false);
 
             } else {
+
+                if(seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();
+                if(controlBarController.seekTimer.getStatus() == Animation.Status.RUNNING) controlBarController.seekTimer.stop();
 
                 if (!sliderHover) sliderHoverOff();
                 if(!miniplayerHover) hideControls();
@@ -247,6 +255,9 @@ public class MiniplayerController {
 
         progressBar.setProgress(controlBarController.durationSlider.getValue() / controlBarController.durationSlider.getMax());
 
+        seekTimer.setOnFinished(e -> {
+            mediaInterface.pause();
+        });
 
 
         widthListener = (observableValue, oldValue, newValue) -> {

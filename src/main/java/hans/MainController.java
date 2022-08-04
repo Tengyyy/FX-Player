@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -96,6 +97,7 @@ public class MainController implements Initializable {
 
     LoopPopUp loopPopUp;
 
+    String snapshotDirectory;
 
 
     @Override
@@ -115,6 +117,8 @@ public class MainController implements Initializable {
         videoImageViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
 
         loopPopUp = new LoopPopUp(settingsController);
+
+        snapshotDirectory = System.getProperty("user.home").concat("/vlcj-snapshots/");
 
 
         // declaring media control images
@@ -403,44 +407,15 @@ public class MainController implements Initializable {
     public void takeScreenshot(){
         if(menuController.activeItem == null || miniplayerActive) return;
 
-        FileChooser fileChooser = new FileChooser();
 
-        //Set extension filter
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG file (*.png)", "*.png"));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JPG file (*.jpg)", "*.jpg"));
+        // snapshot file name formatting
+        String out = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date());
+        String videoName = menuController.activeItem.videoTitle.getText();
 
-        double width = menuController.activeItem.getMediaItem().getMedia().getWidth();
-        double height = menuController.activeItem.getMediaItem().getMedia().getHeight();
-        double aspectRatio = width / height;
-
-        double realWidth = Math.min(videoImageView.getFitWidth(), videoImageView.getFitHeight() * aspectRatio);
-        double realHeight = Math.min(videoImageView.getFitHeight(), videoImageView.getFitWidth() / aspectRatio);
-
-        WritableImage writableImage = new WritableImage((int) realWidth, (int)realHeight);
-
-        videoImageView.snapshot(null, writableImage);
-
-        // Flashing screen animation
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), whitePane);
-        fadeTransition.setFromValue(0);
-        fadeTransition.setToValue(1);
-        fadeTransition.setAutoReverse(true);
-        fadeTransition.setCycleCount(2);
-        fadeTransition.playFromStart();
+        mediaInterface.embeddedMediaPlayer.snapshots().save(new File(snapshotDirectory.concat(videoName).concat(" ").concat(out).concat(".png")));
 
 
-        //Prompt user to select a file
-        File file = fileChooser.showSaveDialog(App.stage);
 
-        if(file != null){
-            try {
-                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, new BufferedImage((int) writableImage.getWidth(), (int) writableImage.getHeight(), BufferedImage.TYPE_INT_RGB));
-
-                //Write the snapshot to the chosen file
-                ImageIO.write(renderedImage, Utilities.getFileExtension(file), file);
-
-            } catch (IOException ex) { ex.printStackTrace(); }
-        }
     }
 
     public void openMiniplayer(){

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -92,6 +93,8 @@ public class ControlBarController implements Initializable {
     MediaInterface mediaInterface;
 
     ScaleTransition fullScreenButtonScaleTransition;
+
+    PauseTransition seekTimer = new PauseTransition(Duration.millis(50));
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -350,9 +353,15 @@ public class ControlBarController implements Initializable {
 
 
             if (newValue) { // pause video when user starts seeking
-                mediaInterface.pause();
+                seekTimer.playFromStart();
+                if(mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
+                mediaInterface.playing.set(false);
             }
             else {
+
+                if(seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();
+                if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.seekTimer.getStatus() == Animation.Status.RUNNING) mainController.miniplayer.miniplayerController.seekTimer.stop();
+
                 if (!durationSliderHover) {
                     durationSliderHoverOff();
                 }
@@ -372,6 +381,10 @@ public class ControlBarController implements Initializable {
             }
         });
 
+
+        seekTimer.setOnFinished(e -> {
+            mediaInterface.pause();
+        });
 
     }
 

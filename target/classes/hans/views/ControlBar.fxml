@@ -18,7 +18,7 @@
 
 <StackPane fx:id="controlBarWrapper" maxHeight="-Infinity" minHeight="-Infinity" minWidth="601.0" pickOnBounds="false" prefHeight="70.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.ControlBarController">
    <children>
-      <StackPane fx:id="shadowBox" minWidth="601.0" mouseTransparent="true" pickOnBounds="false" prefHeight="70.0" style="-fx-background-color: black;" translateY="70.0">
+      <StackPane fx:id="bottomShadowBox" minWidth="601.0" mouseTransparent="true" pickOnBounds="false" prefHeight="70.0" style="-fx-background-color: black;" translateY="70.0">
          <effect>
             <DropShadow height="255.0" radius="68.5" spread="0.5" />
          </effect>

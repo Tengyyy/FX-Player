@@ -270,7 +270,6 @@ public class MediaInterface {
         wasPlaying = false;
         currentTime = 0;
 
-        // play mediaItem in embeddedmediaplayer
 
 
         if(mediaItem.getSubtitles() != null){
@@ -280,6 +279,13 @@ public class MediaInterface {
             mediaItem.setSubtitles(settingsController.captionsController.captionsFile);
             if(menuController.captionsController.captionsOn.get()) mediaItem.setSubtitlesOn(true);
             if(menuController.activeItem != null && !menuController.activeItem.subTextWrapper.getChildren().contains(menuController.activeItem.captionsPane)) menuController.activeItem.subTextWrapper.getChildren().add(0, menuController.activeItem.captionsPane);
+        }
+
+        if(mediaItem.getTitle() == null){
+            mainController.videoTitleLabel.setText(mediaItem.getFile().getName());
+        }
+        else {
+            mainController.videoTitleLabel.setText(mediaItem.getTitle());
         }
 
         controlBarController.durationSlider.setValue(0);
@@ -302,9 +308,6 @@ public class MediaInterface {
         }
 
 
-
-        App.setFrameDuration(mediaItem.getFrameDuration());
-
         embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());
         embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
 
@@ -322,11 +325,10 @@ public class MediaInterface {
         embeddedMediaPlayer.controls().stop();
 
 
-
-        App.setFrameDuration((float)1 / 30);
-
         if(controlBarController.showingTimeLeft) controlBarController.durationLabel.setText("−00:00/00:00");
         else controlBarController.durationLabel.setText("00:00/00:00");
+
+        mainController.videoTitleLabel.setText(null);
 
         if(settingsController.playbackOptionsController.loopOn) settingsController.playbackOptionsController.loopTab.toggle.fire();
 

@@ -28,7 +28,7 @@ public class ControlBarController implements Initializable {
     VBox controlBar;
 
     @FXML
-    StackPane controlBarWrapper;
+    StackPane controlBarWrapper, bottomShadowBox;
 
     @FXML
     Button fullScreenButton, playButton, volumeButton, settingsButton, nextVideoButton, captionsButton, previousVideoButton, miniplayerButton;
@@ -156,6 +156,8 @@ public class ControlBarController implements Initializable {
         controlBarWrapper.setTranslateY(70);
 
         durationPane.setMouseTransparent(true);
+
+        bottomShadowBox.setScaleX(1.1);
 
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
 
@@ -648,11 +650,11 @@ public class ControlBarController implements Initializable {
     }
 
     public void displayControls() {
-        AnimationsClass.displayControls(this, captionsController);
+        AnimationsClass.displayControls(this, captionsController, mainController);
     }
 
     public void hideControls() {
-        AnimationsClass.hideControls(this, captionsController);
+        AnimationsClass.hideControls(this, captionsController, mainController);
     }
 
 

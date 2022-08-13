@@ -390,9 +390,9 @@ public class CaptionsController {
 
     public Pos findClosestCaptionsPosition( double x, double y){
 
-        Point2D topLeft = new Point2D(70, 30);
-        Point2D topCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, 30);
-        Point2D topRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30, 30);
+        Point2D topLeft = new Point2D(70, 80);
+        Point2D topCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, 80);
+        Point2D topRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30, 80);
         Point2D centerRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
         Point2D bottomRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30,mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
         Point2D bottomCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 120);
@@ -492,7 +492,7 @@ public class CaptionsController {
         }
 
         if(position == Pos.TOP_LEFT || position == Pos.TOP_CENTER || position == Pos.TOP_RIGHT){
-            translateTransition.setToY(30);
+            translateTransition.setToY(80);
         }
         else if(position == Pos.BOTTOM_LEFT || position == Pos.BOTTOM_CENTER || position == Pos.BOTTOM_RIGHT){
             translateTransition.setToY(-120);
@@ -634,16 +634,16 @@ public class CaptionsController {
             break;
             case TOP_LEFT: {
                 captionsBox.setTranslateX(70);
-                captionsBox.setTranslateY(30);
+                captionsBox.setTranslateY(80);
             }
             break;
             case TOP_CENTER: {
                 captionsBox.setTranslateX(0);
-                captionsBox.setTranslateY(30);
+                captionsBox.setTranslateY(80);
             }
             case TOP_RIGHT: {
                 captionsBox.setTranslateX(-30);
-                captionsBox.setTranslateY(30);
+                captionsBox.setTranslateY(80);
             }
         }
     }

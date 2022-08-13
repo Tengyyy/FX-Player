@@ -1,18 +1,13 @@
 package hans;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -25,19 +20,17 @@ import javafx.scene.control.Button;
 
 
 import javafx.scene.control.Label;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
-
-import javax.imageio.ImageIO;
 
 import static hans.SVG.*;
 
@@ -85,7 +78,6 @@ public class MainController implements Initializable {
 
     SimpleDoubleProperty sizeMultiplier = new SimpleDoubleProperty();
 
-    StackPane whitePane = new StackPane();
     Label miniplayerActiveText = new Label();
 
     boolean seekingWithKeys = false; // if true, show miniplayer progressbar
@@ -98,6 +90,9 @@ public class MainController implements Initializable {
     LoopPopUp loopPopUp;
 
     String snapshotDirectory;
+
+    StackPane topShadowBox = new StackPane();
+    Label videoTitleLabel = new Label();
 
 
     @Override
@@ -171,11 +166,6 @@ public class MainController implements Initializable {
 
         menuIcon.setShape(menuSVG);
 
-        whitePane.setPrefSize(StackPane.USE_COMPUTED_SIZE, StackPane.USE_COMPUTED_SIZE);
-        whitePane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        whitePane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-        whitePane.setMouseTransparent(true);
-        whitePane.setOpacity(0);
 
 
 
@@ -186,8 +176,7 @@ public class MainController implements Initializable {
         miniplayerActiveText.setVisible(false);
         StackPane.setAlignment(miniplayerActiveText, Pos.CENTER);
 
-        videoImageViewWrapper.getChildren().add(whitePane);
-        videoImageViewInnerWrapper.getChildren().addAll(miniplayerActiveText);
+        videoImageViewInnerWrapper.getChildren().add(miniplayerActiveText);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBarWrapper, 1000, true);
@@ -299,6 +288,36 @@ public class MainController implements Initializable {
         });
 
 
+        topShadowBox.setPrefHeight(70);
+        topShadowBox.setMaxHeight(70);
+        topShadowBox.setMinWidth(601);
+        topShadowBox.setMaxWidth(Double.MAX_VALUE);
+        topShadowBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        StackPane.setAlignment(topShadowBox, Pos.TOP_CENTER);
+        topShadowBox.setTranslateY(-70);
+        topShadowBox.setScaleX(1.1);
+        topShadowBox.setOpacity(0);
+        topShadowBox.setMouseTransparent(true);
+
+        DropShadow dropShadow = new DropShadow(BlurType.THREE_PASS_BOX, Color.BLACK, 68.5, 0.5, 0, 0);
+        dropShadow.setWidth(21);
+        dropShadow.setHeight(255);
+
+        topShadowBox.setEffect(dropShadow);
+
+
+        videoTitleLabel.setMouseTransparent(true);
+        videoTitleLabel.setBackground(Background.EMPTY);
+        videoTitleLabel.setText(null);
+        videoTitleLabel.setWrapText(true);
+        videoTitleLabel.setLineSpacing(10);
+        videoTitleLabel.setTextFill(Color.WHITE);
+        StackPane.setAlignment(videoTitleLabel, Pos.TOP_LEFT);
+        StackPane.setMargin(videoTitleLabel, new Insets(30, 0, 0, 80));
+
+
+
+        videoImageViewInnerWrapper.getChildren().addAll(topShadowBox, videoTitleLabel);
 
     }
 
@@ -368,7 +387,7 @@ public class MainController implements Initializable {
         if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 
        if(mediaInterface.playing.get())controlBarController.mouseEventTracker.hide();
-       else AnimationsClass.hideControls(controlBarController, captionsController);
+       else AnimationsClass.hideControls(controlBarController, captionsController, this);
 
     }
 
@@ -803,7 +822,7 @@ public class MainController implements Initializable {
 
         // seek forward by 1 frame
         if(!mediaInterface.playing.get() && mediaInterface.mediaActive.get()){
-            if (mediaInterface.getCurrentTime().toSeconds() + App.frameDuration >= controlBarController.durationSlider.getMax()) {
+            if (mediaInterface.getCurrentTime().toSeconds() + 0.1 >= controlBarController.durationSlider.getMax()) {
                 mediaInterface.seekedToEnd = true;
             }
 

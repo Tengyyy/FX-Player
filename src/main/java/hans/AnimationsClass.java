@@ -1,22 +1,13 @@
 package hans;
 
 import javafx.animation.*;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class AnimationsClass {
@@ -81,7 +72,7 @@ public class AnimationsClass {
         volumeSliderTranslateTransition3.play();
     }
 
-    public static void displayControls(ControlBarController controlBarController, CaptionsController captionsController) {
+    public static void displayControls(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
 
         TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox);
         captionsTransition.setCycleCount(1);
@@ -89,6 +80,9 @@ public class AnimationsClass {
 
         if((captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT) && !captionsController.mainController.miniplayerActive){
             captionsTransition.setToY(-120);
+        }
+        else if((captionsController.captionsLocation == Pos.TOP_CENTER || captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.TOP_RIGHT) && !captionsController.mainController.miniplayerActive){
+            captionsTransition.setToY(mainController.videoTitleLabel.getHeight() + 50);
         }
         else {
             captionsTransition.setToY(captionsController.captionsBox.getTranslateY());
@@ -98,8 +92,16 @@ public class AnimationsClass {
         translateTransition.setToY(0);
         translateTransition.setCycleCount(1);
 
+        FadeTransition topShadowTransition = new FadeTransition(Duration.millis(100), mainController.topShadowBox);
+        topShadowTransition.setFromValue(0);
+        topShadowTransition.setToValue(1);
+        topShadowTransition.setCycleCount(1);
 
-        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition);
+        mainController.videoTitleLabel.setVisible(true);
+        TranslateTransition videoTitleTransition = new TranslateTransition(Duration.millis(100), mainController.videoTitleLabel);
+
+
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition, topShadowTransition, videoTitleTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
         parallelTransition.setOnFinished((e) -> {
             controlBarController.controlBarOpen = true;
@@ -111,7 +113,7 @@ public class AnimationsClass {
         controlBarController.mainController.menuButton.setVisible(true);
     }
 
-    public static void hideControls(ControlBarController controlBarController, CaptionsController captionsController) {
+    public static void hideControls(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
 
         TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox);
         captionsTransition.setCycleCount(1);
@@ -119,6 +121,9 @@ public class AnimationsClass {
 
         if((captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT) && !captionsController.mainController.miniplayerActive){
             captionsTransition.setToY(-50);
+        }
+        else if((captionsController.captionsLocation == Pos.TOP_CENTER || captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.TOP_RIGHT) && !captionsController.mainController.miniplayerActive){
+            captionsTransition.setToY(30);
         }
         else {
             captionsTransition.setToY(captionsController.captionsBox.getTranslateY());
@@ -129,11 +134,19 @@ public class AnimationsClass {
         translateTransition.setToY(70);
         translateTransition.setCycleCount(1);
 
-        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition);
+        FadeTransition topShadowTransition = new FadeTransition(Duration.millis(100), mainController.topShadowBox);
+        topShadowTransition.setFromValue(1);
+        topShadowTransition.setToValue(0);
+        topShadowTransition.setCycleCount(1);
+
+        TranslateTransition videoTitleTransition = new TranslateTransition(Duration.millis(100), mainController.videoTitleLabel);
+
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition, topShadowTransition, videoTitleTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
         parallelTransition.setOnFinished((e) -> {
             controlBarController.controlBarOpen = false;
             controlBarController.mouseEventTracker.mouseMoving.set(false);
+            mainController.videoTitleLabel.setVisible(false);
         });
         parallelTransition.play();
 

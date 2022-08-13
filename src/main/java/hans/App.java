@@ -39,8 +39,6 @@ public class App extends Application {
 
     MediaInterface mediaInterface;
 
-    public static float frameDuration = (float)1 / 30;
-
     public static EnumMap<SVG, String> svgMap = new EnumMap<>(SVG.class);
 
 
@@ -238,9 +236,6 @@ public class App extends Application {
         launch(args);
     }
 
-    public static void setFrameDuration(float duration){
-        frameDuration = duration;
-    }
 
 
 }

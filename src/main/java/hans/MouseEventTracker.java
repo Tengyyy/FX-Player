@@ -32,13 +32,10 @@ public class MouseEventTracker {
                     controlBarController.controlBarWrapper.setMouseTransparent(true);
                     AnimationsClass.hideControls(controlBarController, controlBarController.captionsController, mainController); // hides controlbar if no mouse or other relevant events have not occurred in the last 4 seconds and the video is not paused, settings page and captions page are not open and user is not seeking video or changing volume
                 }
-            } else if (isNowMoving) {
-
-                if (!controlBarController.controlBarOpen) {
-                    mainController.menuButtonPane.setVisible(true);
-                    controlBarController.controlBarWrapper.setMouseTransparent(false);
-                    AnimationsClass.displayControls(controlBarController, controlBarController.captionsController, mainController); // displays controlbar if the mouse starts moving or any relevant key is pressed
-                }
+            } else {
+                mainController.menuButtonPane.setVisible(true);
+                controlBarController.controlBarWrapper.setMouseTransparent(false);
+                AnimationsClass.displayControls(controlBarController, controlBarController.captionsController, mainController); // displays controlbar if the mouse starts moving or any relevant key is pressed
             }
         });
 

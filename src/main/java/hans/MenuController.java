@@ -128,6 +128,7 @@ public class MenuController implements Initializable {
     private double scrollVelocity = 0;
     private int scrollSpeed = 4;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -551,21 +552,54 @@ public class MenuController implements Initializable {
     }
 
     public void closeMenu(){
-        if(!menuInTransition) {
 
-            captionsController.cancelDrag();
+        if(menuInTransition) return;
 
-            if(dragResizer.dragging) {
-                dragResizer.dragging = false;
-                dragPane.setCursor(Cursor.DEFAULT);
+        captionsController.cancelDrag();
+
+        if(dragResizer.dragging) {
+            dragResizer.dragging = false;
+            dragPane.setCursor(Cursor.DEFAULT);
+        }
+        menuInTransition = true;
+        menu.setMinWidth(0);
+        menuOpen = false;
+        notificationPane.setOpacity(0);
+        menu.setMouseTransparent(true);
+        if (closeMenuTooltip.countdown.getStatus() == Animation.Status.RUNNING) closeMenuTooltip.countdown.stop();
+        AnimationsClass.closeMenu(this);
+
+        if((captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.CENTER_LEFT || captionsController.captionsLocation == Pos.BOTTOM_LEFT) && !mainController.miniplayerActive){
+
+
+            if(captionsController.captionsTransition != null && captionsController.captionsTransition.getStatus() == Animation.Status.RUNNING){
+                captionsController.captionsTransition.stop();
             }
-            menuInTransition = true;
-            menu.setMinWidth(0);
-            menuOpen = false;
-            notificationPane.setOpacity(0);
-            menu.setMouseTransparent(true);
-            if (closeMenuTooltip.countdown.getStatus() == Animation.Status.RUNNING) closeMenuTooltip.countdown.stop();
-            AnimationsClass.closeMenu(mainController, this);
+
+            if(mainController.captionsLeftTranslate != null && mainController.captionsLeftTranslate.getStatus() == Animation.Status.RUNNING) mainController.captionsLeftTranslate.stop();
+
+
+            mainController.captionsLeftTranslate = new TranslateTransition(Duration.millis(300), captionsController.captionsBox);
+
+            mainController.captionsLeftTranslate.setFromX(captionsController.captionsBox.getTranslateX());
+            mainController.captionsLeftTranslate.setToX(70);
+
+            mainController.captionsLeftTranslate.setFromY(captionsController.captionsBox.getTranslateY());
+            if(captionsController.captionsLocation == Pos.TOP_LEFT){
+                mainController.captionsLeftTranslate.setToY(70);
+            }
+            else if(captionsController.captionsLocation == Pos.CENTER_LEFT){
+                mainController.captionsLeftTranslate.setToY(0);
+            }
+            else mainController.captionsLeftTranslate.setToY(-80);
+
+            mainController. captionsLeftTranslate.setOnFinished(e -> {
+                captionsController.captionsAnimating = false;
+                captionsController.captionsBox.setStyle("-fx-background-color: transparent;");
+            });
+
+            mainController.captionsLeftTranslate.play();
+
         }
     }
 

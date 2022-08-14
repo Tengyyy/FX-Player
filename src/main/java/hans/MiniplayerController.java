@@ -6,26 +6,20 @@ import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MiniplayerController {
@@ -175,7 +169,12 @@ public class MiniplayerController {
         StackPane.setMargin(progressBar, new Insets(0, 11, 0, 12));
 
         progressBarTimer.setOnFinished(e -> {
-            if(!miniplayerHover && !slider.isValueChanging()) sliderPane.setVisible(false);
+            if(!miniplayerHover && !slider.isValueChanging()) {
+                sliderPane.setVisible(false);
+                if(mainController.captionsController.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+                    mainController.captionsController.captionsBox.setTranslateY(-10);
+                }
+            }
         });
 
 
@@ -678,6 +677,9 @@ public class MiniplayerController {
     }
 
     public void showControls(){
+
+        if(!mainController.miniplayerActive) return;
+
         controlsBackground.setVisible(true);
 
         closeButtonPane.setVisible(true);
@@ -686,11 +688,15 @@ public class MiniplayerController {
         nextVideoButtonPane.setVisible(true);
 
         sliderPane.setVisible(true);
+
+        if(mainController.captionsController.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+            mainController.captionsController.captionsBox.setTranslateY(-30);
+        }
     }
 
     public void hideControls() {
 
-        if (!mainController.seekingWithKeys && progressBarTimer.getStatus() != Animation.Status.RUNNING && !slider.isValueChanging()){
+        if (!mainController.seekingWithKeys && progressBarTimer.getStatus() != Animation.Status.RUNNING && !slider.isValueChanging() && mainController.miniplayerActive){
 
             controlsBackground.setVisible(false);
             closeButtonPane.setVisible(false);
@@ -698,6 +704,10 @@ public class MiniplayerController {
             playButtonPane.setVisible(false);
             nextVideoButtonPane.setVisible(false);
             sliderPane.setVisible(false);
+
+            if(mainController.captionsController.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+                mainController.captionsController.captionsBox.setTranslateY(-10);
+            }
         }
     }
 
@@ -858,6 +868,9 @@ public class MiniplayerController {
 
             mainController.seekingWithKeys = true;
             sliderPane.setVisible(true);
+            if(mainController.captionsController.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+                mainController.captionsController.captionsBox.setTranslateY(-30);
+            }
             progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
             e.consume();
@@ -884,6 +897,9 @@ public class MiniplayerController {
 
             mainController.seekingWithKeys = true;
             sliderPane.setVisible(true);
+            if(mainController.captionsController.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+                mainController.captionsController.captionsBox.setTranslateY(-30);
+            }
             progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
 

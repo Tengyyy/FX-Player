@@ -79,10 +79,10 @@ public class AnimationsClass {
         captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
 
         if((captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT) && !captionsController.mainController.miniplayerActive){
-            captionsTransition.setToY(-120);
+            captionsTransition.setToY(-80);
         }
         else if((captionsController.captionsLocation == Pos.TOP_CENTER || captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.TOP_RIGHT) && !captionsController.mainController.miniplayerActive){
-            captionsTransition.setToY(mainController.videoTitleLabel.getHeight() + 50);
+            captionsTransition.setToY(70);
         }
         else {
             captionsTransition.setToY(captionsController.captionsBox.getTranslateY());
@@ -120,7 +120,7 @@ public class AnimationsClass {
         captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
 
         if((captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT) && !captionsController.mainController.miniplayerActive){
-            captionsTransition.setToY(-50);
+            captionsTransition.setToY(-30);
         }
         else if((captionsController.captionsLocation == Pos.TOP_CENTER || captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.TOP_RIGHT) && !captionsController.mainController.miniplayerActive){
             captionsTransition.setToY(30);
@@ -254,13 +254,13 @@ public class AnimationsClass {
     }
 
 
-    public static void openMenu(MainController mainController, MenuController menuController){
+    public static void openMenu(MenuController menuController){
         Timeline timeline = new Timeline();
 
         timeline.setCycleCount(1);
         timeline.setAutoReverse(false);
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(),Double.min(menuController.prefWidth, menuController.menu.getMaxWidth()), Interpolator.EASE_OUT)));
-        timeline.play();
+
         timeline.setOnFinished((e) -> {
             menuController.menu.setMinWidth(350);
             menuController.prefWidth = menuController.menu.getWidth();
@@ -268,19 +268,25 @@ public class AnimationsClass {
             menuController.menuInTransition = false;
         });
 
+        timeline.play();
+
     }
 
-    public static void closeMenu(MainController mainController, MenuController menuController) {
+    public static void closeMenu(MenuController menuController) {
 
         Timeline timeline = new Timeline();
+
 
         timeline.setCycleCount(1);
         timeline.setAutoReverse(false);
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(), 0, Interpolator.EASE_OUT)));
-        timeline.play();
+
+
         timeline.setOnFinished((e) -> {
             menuController.menuInTransition = false;
         });
+
+        timeline.play();
     }
 
     public static FadeTransition fadeIn(Node child){

@@ -9,6 +9,10 @@
       -fx-text-fill: white;
     }
 
-    .menu-item:focused {
+    .menu-item {
+        -fx-background-color: transparent;
+    }
+
+    .menu-item:hover {
       -fx-background-color: #404040;
     }

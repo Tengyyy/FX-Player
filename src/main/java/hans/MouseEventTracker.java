@@ -3,6 +3,7 @@ package hans;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.Cursor;
 import javafx.scene.control.TabPane;
 import javafx.util.Duration;
 
@@ -30,11 +31,13 @@ public class MouseEventTracker {
                 if (mainController.mediaInterface.playing.get() && settingsController.settingsState == SettingsState.CLOSED && !controlBarController.volumeSlider.isValueChanging() && !controlBarController.durationSlider.isValueChanging() && controlBarController.controlBarOpen && !mainController.captionsController.captionsDragActive) {
                     controlBarController.controlBarWrapper.setMouseTransparent(true);
                     AnimationsClass.hideControls(controlBarController, controlBarController.captionsController, mainController); // hides controlbar if no mouse or other relevant events have not occurred in the last 4 seconds and the video is not paused, settings page and captions page are not open and user is not seeking video or changing volume
+                    mainController.videoTitleLabel.getScene().setCursor(Cursor.NONE);
                 }
             } else {
                 if(!controlBarController.controlBarOpen) {
                     controlBarController.controlBarWrapper.setMouseTransparent(false);
                     AnimationsClass.displayControls(controlBarController, controlBarController.captionsController, mainController); // displays controlbar if the mouse starts moving or any relevant key is pressed
+                    mainController.videoTitleLabel.getScene().setCursor(Cursor.DEFAULT);
                 }
             }
         });

@@ -567,7 +567,7 @@ public class MenuController implements Initializable {
         notificationPane.setOpacity(0);
         menu.setMouseTransparent(true);
         if (closeMenuTooltip.countdown.getStatus() == Animation.Status.RUNNING) closeMenuTooltip.countdown.stop();
-        AnimationsClass.closeMenu(this);
+        AnimationsClass.closeMenu(this, mainController);
 
         if((captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.CENTER_LEFT || captionsController.captionsLocation == Pos.BOTTOM_LEFT) && !mainController.miniplayerActive){
 

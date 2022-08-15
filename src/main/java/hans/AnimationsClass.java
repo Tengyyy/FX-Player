@@ -93,15 +93,21 @@ public class AnimationsClass {
         translateTransition.setCycleCount(1);
 
         FadeTransition topShadowTransition = new FadeTransition(Duration.millis(100), mainController.topShadowBox);
-        topShadowTransition.setFromValue(0);
+        topShadowTransition.setFromValue(mainController.topShadowBox.getOpacity());
         topShadowTransition.setToValue(1);
         topShadowTransition.setCycleCount(1);
 
-        mainController.videoTitleLabel.setVisible(true);
-        TranslateTransition videoTitleTransition = new TranslateTransition(Duration.millis(100), mainController.videoTitleLabel);
+        mainController.videoTitleBox.setVisible(true);
+        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBox);
+        videoTitleTransition.setFromValue(mainController.videoTitleBox.getOpacity());
+        videoTitleTransition.setToValue(1);
+
+        FadeTransition menuButtonTransition = new FadeTransition(Duration.millis(100), mainController.menuButtonPane);
+        menuButtonTransition.setFromValue(mainController.menuButtonPane.getOpacity());
+        menuButtonTransition.setToValue(1);
 
 
-        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition, topShadowTransition, videoTitleTransition);
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition, topShadowTransition, videoTitleTransition, menuButtonTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
         parallelTransition.setOnFinished((e) -> {
             controlBarController.controlBarOpen = true;
@@ -135,18 +141,24 @@ public class AnimationsClass {
         translateTransition.setCycleCount(1);
 
         FadeTransition topShadowTransition = new FadeTransition(Duration.millis(100), mainController.topShadowBox);
-        topShadowTransition.setFromValue(1);
+        topShadowTransition.setFromValue(mainController.topShadowBox.getOpacity());
         topShadowTransition.setToValue(0);
         topShadowTransition.setCycleCount(1);
 
-        TranslateTransition videoTitleTransition = new TranslateTransition(Duration.millis(100), mainController.videoTitleLabel);
+        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBox);
+        videoTitleTransition.setFromValue(mainController.videoTitleBox.getOpacity());
+        videoTitleTransition.setToValue(0);
 
-        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition, topShadowTransition, videoTitleTransition);
+        FadeTransition menuButtonTransition = new FadeTransition(Duration.millis(100), mainController.menuButtonPane);
+        menuButtonTransition.setFromValue(mainController.menuButtonPane.getOpacity());
+        menuButtonTransition.setToValue(0);
+
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition, topShadowTransition, videoTitleTransition, menuButtonTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
         parallelTransition.setOnFinished((e) -> {
             controlBarController.controlBarOpen = false;
             controlBarController.mouseEventTracker.mouseMoving.set(false);
-            mainController.videoTitleLabel.setVisible(false);
+            mainController.videoTitleBox.setVisible(false);
         });
         parallelTransition.play();
 
@@ -254,39 +266,52 @@ public class AnimationsClass {
     }
 
 
-    public static void openMenu(MenuController menuController){
+    public static void openMenu(MenuController menuController, MainController mainController){
         Timeline timeline = new Timeline();
+        TranslateTransition titleTranslate = new TranslateTransition(Duration.millis(300), mainController.videoTitleBox);
+        ParallelTransition parallelTransition = new ParallelTransition();
 
         timeline.setCycleCount(1);
         timeline.setAutoReverse(false);
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(),Double.min(menuController.prefWidth, menuController.menu.getMaxWidth()), Interpolator.EASE_OUT)));
 
-        timeline.setOnFinished((e) -> {
+        titleTranslate.setFromX(mainController.videoTitleBox.getTranslateX());
+        titleTranslate.setToX(30);
+
+
+
+        parallelTransition.setOnFinished((e) -> {
             menuController.menu.setMinWidth(350);
             menuController.prefWidth = menuController.menu.getWidth();
             menuController.menu.setMouseTransparent(false);
             menuController.menuInTransition = false;
         });
 
-        timeline.play();
+        parallelTransition.getChildren().addAll(timeline, titleTranslate);
+        parallelTransition.play();
+
 
     }
 
-    public static void closeMenu(MenuController menuController) {
+    public static void closeMenu(MenuController menuController, MainController mainController) {
 
         Timeline timeline = new Timeline();
-
+        TranslateTransition titleTranslate = new TranslateTransition(Duration.millis(300), mainController.videoTitleBox);
+        ParallelTransition parallelTransition = new ParallelTransition();
 
         timeline.setCycleCount(1);
         timeline.setAutoReverse(false);
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(), 0, Interpolator.EASE_OUT)));
 
+        titleTranslate.setFromX(mainController.videoTitleBox.getTranslateX());
+        titleTranslate.setToX(80);
 
-        timeline.setOnFinished((e) -> {
+        parallelTransition.setOnFinished((e) -> {
             menuController.menuInTransition = false;
         });
 
-        timeline.play();
+        parallelTransition.getChildren().addAll(timeline, titleTranslate);
+        parallelTransition.play();
     }
 
     public static FadeTransition fadeIn(Node child){
@@ -337,8 +362,7 @@ public class AnimationsClass {
     }
 
 
-    public static void AnimateBackgroundColor(Region icon, Color fromColor,Color toColor,int duration)
-    {
+    public static void AnimateBackgroundColor(Region icon, Color fromColor, Color toColor, int duration) {
 
         Rectangle rect = new Rectangle();
         rect.setFill(fromColor);
@@ -358,5 +382,15 @@ public class AnimationsClass {
         });
 
         tr.play();
+    }
+
+
+    public static void AnimateTextColor(Label label, Color toColor, int duration) {
+        Duration animationDuration = Duration.millis(duration);
+        Timeline timeline = new Timeline(new KeyFrame(animationDuration,
+                new KeyValue(label.textFillProperty(), toColor, Interpolator.LINEAR)));
+
+        timeline.play();
+
     }
 }

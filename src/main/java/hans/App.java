@@ -120,7 +120,7 @@ public class App extends Application {
 
 
             primaryStage.setMinHeight(325);
-            primaryStage.setMinWidth(613);
+            primaryStage.setMinWidth(618);
 
             App.stage = primaryStage;
 

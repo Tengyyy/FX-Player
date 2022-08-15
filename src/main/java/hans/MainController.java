@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -88,12 +89,16 @@ public class MainController implements Initializable {
 
     ChangeListener<? super Number> widthListener;
 
+    ChangeListener<? super Number> widthListenerForTitle;
+
+
     LoopPopUp loopPopUp;
 
     String snapshotDirectory;
 
-    StackPane topShadowBox = new StackPane();
+    StackPane topShadowBox = new StackPane(), videoTitleBox = new StackPane();
     Label videoTitleLabel = new Label();
+
 
     TranslateTransition captionsLeftTranslate;
 
@@ -157,7 +162,6 @@ public class MainController implements Initializable {
 
         menuButtonPane.translateXProperty().bind(menuController.menu.widthProperty().multiply(-1));
         menuButton.setBackground(Background.EMPTY);
-        menuButton.setVisible(false);
 
         menuButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
             controlBarController.controlButtonHoverOn(menuButtonPane);
@@ -254,6 +258,38 @@ public class MainController implements Initializable {
 
         videoImageViewInnerWrapper.widthProperty().addListener(widthListener);
 
+        widthListenerForTitle = (observableValue, oldValue, newValue) -> {
+
+            if(newValue.doubleValue() < 800){
+                videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 17");
+            }
+            else if((newValue.doubleValue() >= 800 && newValue.doubleValue() < 1200)){
+                // default
+
+                videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 20");
+
+            }
+            else if((newValue.doubleValue() >= 1200 && newValue.doubleValue() < 1800)){
+
+                videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 22");
+
+            }
+            else if((newValue.doubleValue() >= 1800 && newValue.doubleValue() < 2400)){
+
+                videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 25");
+
+            }
+            else if(newValue.doubleValue() >= 2400){
+
+                videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 28");
+
+            }
+        };
+
+        videoImageViewInnerWrapper.widthProperty().addListener(widthListenerForTitle);
+
+
+
         videoImageViewWrapper.setOnMouseDragOver(e -> {
             if(captionsController.captionsDragActive){
                 if(e.getY() - captionsController.dragPositionY <= captionsController.minimumY) captionsController.captionsBox.setTranslateY(((captionsController.startY - captionsController.minimumY) * -1) + captionsController.startTranslateY);
@@ -305,19 +341,39 @@ public class MainController implements Initializable {
 
         topShadowBox.setEffect(dropShadow);
 
+        videoTitleBox.setBackground(Background.EMPTY);
+        videoTitleBox.setTranslateX(70);
+        videoTitleBox.setMinHeight(60);
+        videoTitleBox.setMaxHeight(60);
+        videoTitleBox.setAlignment(Pos.CENTER_LEFT);
+        StackPane.setAlignment(videoTitleBox, Pos.TOP_LEFT);
 
-        videoTitleLabel.setMouseTransparent(true);
+        videoTitleBox.getChildren().add(videoTitleLabel);
+
+
+        videoTitleLabel.setMouseTransparent(false);
         videoTitleLabel.setBackground(Background.EMPTY);
         videoTitleLabel.setText(null);
-        videoTitleLabel.setWrapText(true);
-        videoTitleLabel.setLineSpacing(10);
-        videoTitleLabel.setTextFill(Color.WHITE);
-        StackPane.setAlignment(videoTitleLabel, Pos.TOP_LEFT);
-        StackPane.setMargin(videoTitleLabel, new Insets(30, 0, 0, 80));
+        videoTitleLabel.setTextFill(Color.rgb(200, 200, 200));
+        videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 20");
+        videoTitleLabel.setEffect(new DropShadow());
+        videoTitleLabel.setOnMouseClicked(e -> {
+            if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+
+            e.consume();
+        });
+
+        videoTitleLabel.setOnMouseEntered(e -> {
+            AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(255, 255, 255), 200);
+        });
+
+        videoTitleLabel.setOnMouseExited(e -> {
+            AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(200, 200,200), 200);
+        });
 
 
 
-        videoImageViewInnerWrapper.getChildren().addAll(topShadowBox, videoTitleLabel);
+        videoImageViewInnerWrapper.getChildren().addAll(topShadowBox, videoTitleBox);
 
     }
 
@@ -373,7 +429,7 @@ public class MainController implements Initializable {
         menuController.menuInTransition = true;
         menuController.menuOpen = true;
 
-        AnimationsClass.openMenu(menuController);
+        AnimationsClass.openMenu(menuController, this);
 
         if((captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.CENTER_LEFT || captionsController.captionsLocation == Pos.BOTTOM_LEFT) && !miniplayerActive){
 

@@ -1,17 +1,12 @@
 package hans;
 
 import com.jfoenix.controls.JFXButton;
-import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -19,11 +14,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 import java.io.File;
-import java.net.PasswordAuthentication;
 
 public class ActiveItem extends GridPane implements MenuObject {
 
@@ -320,25 +312,15 @@ public class ActiveItem extends GridPane implements MenuObject {
             else mediaInterface.play();
         });
 
-        optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-            AnimationsClass.fadeAnimation(200, optionsButton, 0, 1, false, 1, true);
-        });
+        optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, optionsButton, 0, 1, false, 1, true));
 
-        optionsButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-            AnimationsClass.fadeAnimation(200, optionsButton, 1, 0, false, 1, true);
-        });
+        optionsButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, optionsButton, 1, 0, false, 1, true));
 
-        removeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-            AnimationsClass.fadeAnimation(200, removeButton, 0, 1, false, 1, true);
-        });
+        removeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 0, 1, false, 1, true));
 
-        removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-            AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true);
-        });
+        removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
 
-        removeButton.setOnAction((e) -> {
-            remove();
-        });
+        removeButton.setOnAction((e) -> remove());
 
     }
 

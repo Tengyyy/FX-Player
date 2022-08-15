@@ -12,15 +12,10 @@ import javafx.util.Duration;
 
 public class AnimationsClass {
 
-    static ScaleTransition fullScreenButtonScaleTransition;
-
     static TranslateTransition volumeSliderTranslateTransition1;
     static TranslateTransition volumeSliderTranslateTransition2;
     static TranslateTransition volumeSliderTranslateTransition3;
 
-
-    static ParallelTransition addPaneDragEntered;
-    static ParallelTransition addPaneDragDropped;
 
     static TranslateTransition nextVideoNotificationOnTransition;
     static FadeTransition nextVideoNotificationOffTransition;
@@ -109,10 +104,7 @@ public class AnimationsClass {
 
         ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition, topShadowTransition, videoTitleTransition, menuButtonTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
-        parallelTransition.setOnFinished((e) -> {
-            controlBarController.controlBarOpen = true;
-
-        });
+        parallelTransition.setOnFinished((e) -> controlBarController.controlBarOpen = true);
 
         parallelTransition.play();
 
@@ -245,9 +237,7 @@ public class AnimationsClass {
         nextVideoNotificationOnTransition.setToY(0);
         nextVideoNotificationOnTransition.setCycleCount(1);
         nextVideoNotificationOnTransition.setInterpolator(Interpolator.EASE_OUT);
-        nextVideoNotificationOnTransition.setOnFinished((e) -> {
-            menuController.closeTimer.playFromStart();
-        });
+        nextVideoNotificationOnTransition.setOnFinished((e) -> menuController.closeTimer.playFromStart());
         nextVideoNotificationOnTransition.playFromStart();
 
     }
@@ -259,9 +249,7 @@ public class AnimationsClass {
         nextVideoNotificationOffTransition.setToValue(0);
         nextVideoNotificationOnTransition.setCycleCount(1);
         nextVideoNotificationOnTransition.setInterpolator(Interpolator.EASE_OUT);
-        nextVideoNotificationOffTransition.setOnFinished((e) -> {
-            menuController.notificationPane.setTranslateY(80);
-        });
+        nextVideoNotificationOffTransition.setOnFinished((e) -> menuController.notificationPane.setTranslateY(80));
         nextVideoNotificationOffTransition.playFromStart();
     }
 
@@ -306,9 +294,7 @@ public class AnimationsClass {
         titleTranslate.setFromX(mainController.videoTitleBox.getTranslateX());
         titleTranslate.setToX(80);
 
-        parallelTransition.setOnFinished((e) -> {
-            menuController.menuInTransition = false;
-        });
+        parallelTransition.setOnFinished((e) -> menuController.menuInTransition = false);
 
         parallelTransition.getChildren().addAll(timeline, titleTranslate);
         parallelTransition.play();
@@ -349,16 +335,14 @@ public class AnimationsClass {
 
     public static Timeline animateMinHeight(double newHeight, Region region){
         Duration animationDuration = Duration.millis(ANIMATION_SPEED);
-        Timeline minTimeline = new Timeline(new KeyFrame(animationDuration,
+        return new Timeline(new KeyFrame(animationDuration,
                 new KeyValue(region.minHeightProperty(),newHeight, Interpolator.EASE_BOTH)));
-        return minTimeline;
     }
 
     public static Timeline animateMaxHeight(double newHeight, Region region){
         Duration animationDuration = Duration.millis(ANIMATION_SPEED);
-        Timeline maxTimeline = new Timeline(new KeyFrame(animationDuration,
+        return new Timeline(new KeyFrame(animationDuration,
                 new KeyValue(region.maxHeightProperty(),newHeight, Interpolator.EASE_BOTH)));
-        return maxTimeline;
     }
 
 

@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -115,6 +116,9 @@ public class BackgroundOpacityPane {
             captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
             captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
+            captionsController.captionsLabel1.setEffect(new DropShadow());
+            captionsController.captionsLabel2.setEffect(new DropShadow());
+
             captionsController.showCaptions();
         });
 
@@ -133,7 +137,11 @@ public class BackgroundOpacityPane {
             captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
             captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
+            captionsController.captionsLabel1.setEffect(null);
+            captionsController.captionsLabel2.setEffect(null);
+
             captionsController.showCaptions();
+
         });
 
         _50Tab.setOnMouseClicked(e -> {
@@ -151,7 +159,11 @@ public class BackgroundOpacityPane {
             captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
             captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
+            captionsController.captionsLabel1.setEffect(null);
+            captionsController.captionsLabel2.setEffect(null);
+
             captionsController.showCaptions();
+
         });
 
         _75Tab.setOnMouseClicked(e -> {
@@ -168,6 +180,9 @@ public class BackgroundOpacityPane {
 
             captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
             captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+
+            captionsController.captionsLabel1.setEffect(null);
+            captionsController.captionsLabel2.setEffect(null);
 
             captionsController.showCaptions();
         });
@@ -186,6 +201,10 @@ public class BackgroundOpacityPane {
 
             captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
             captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+
+            captionsController.captionsLabel1.setEffect(null);
+            captionsController.captionsLabel2.setEffect(null);
+
 
             captionsController.showCaptions();
         });

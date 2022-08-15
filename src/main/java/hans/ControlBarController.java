@@ -270,10 +270,7 @@ public class ControlBarController implements Initializable {
         });
 
 
-        durationSlider.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
-            durationSlider.setValueChanging(true);
-
-        });
+        durationSlider.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> durationSlider.setValueChanging(true));
         durationSlider.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> durationSlider.setValueChanging(false));
 
         durationSlider.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
@@ -384,9 +381,7 @@ public class ControlBarController implements Initializable {
         });
 
 
-        seekTimer.setOnFinished(e -> {
-            mediaInterface.pause();
-        });
+        seekTimer.setOnFinished(e -> mediaInterface.pause());
 
     }
 
@@ -648,15 +643,6 @@ public class ControlBarController implements Initializable {
         ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, durationTrack, 1, 1, durationTrack.getScaleY(), 1, false, 1, false);
         AnimationsClass.parallelAnimation(true, sliderThumbHoverOff, sliderTrackHoverOff);
     }
-
-    public void displayControls() {
-        AnimationsClass.displayControls(this, captionsController, mainController);
-    }
-
-    public void hideControls() {
-        AnimationsClass.hideControls(this, captionsController, mainController);
-    }
-
 
     public void enterCaptionsButton() {
         captionsButtonHover = true;

@@ -3,20 +3,16 @@ package hans;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Duration;
+import javafx.stage.Stage;
 
-import java.math.BigDecimal;
 import java.util.EnumMap;
+import java.util.Objects;
 
 import static hans.SVG.*;
 
@@ -25,8 +21,6 @@ public class App extends Application {
 
     public static Stage stage;
 
-
-    public EventHandler<KeyEvent> eventHandler;
 
     public static boolean fullScreen;
 
@@ -109,8 +103,8 @@ public class App extends Application {
 
             Scene scene = new Scene(root, 705, 400);
 
-            scene.getStylesheets().add(getClass().getResource("styles/application.css").toExternalForm());
-            scene.getStylesheets().add(getClass().getResource("styles/loopPopUp.css").toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/application.css")).toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/loopPopUp.css")).toExternalForm());
 
 
             scene.addEventFilter(MouseEvent.ANY, event -> {

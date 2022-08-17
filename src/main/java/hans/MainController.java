@@ -102,6 +102,8 @@ public class MainController implements Initializable {
 
     TranslateTransition captionsLeftTranslate;
 
+    SliderHoverLabel sliderHoverLabel;
+
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -116,6 +118,8 @@ public class MainController implements Initializable {
         settingsController.init(mediaInterface, captionsController);
 
         mediaInterface.init();
+
+        sliderHoverLabel = new SliderHoverLabel(this, controlBarController);
 
         videoImageViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
 

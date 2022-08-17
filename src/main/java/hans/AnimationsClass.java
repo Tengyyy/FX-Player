@@ -74,7 +74,7 @@ public class AnimationsClass {
         captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
 
         if((captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT) && !captionsController.mainController.miniplayerActive){
-            captionsTransition.setToY(-80);
+            captionsTransition.setToY(-90);
         }
         else if((captionsController.captionsLocation == Pos.TOP_CENTER || captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.TOP_RIGHT) && !captionsController.mainController.miniplayerActive){
             captionsTransition.setToY(70);

@@ -251,7 +251,7 @@ public class MediaInterface {
             embeddedMediaPlayer.controls().start();
 
         }
-        else if (settingsController.playbackOptionsController.shuffleOn || settingsController.playbackOptionsController.autoplayOn) {
+        else {
             if((menuController.historyBox.index == -1 || menuController.historyBox.index >= menuController.history.size() -1) && menuController.queue.isEmpty()) defaultEnd();
             else requestNext();
 

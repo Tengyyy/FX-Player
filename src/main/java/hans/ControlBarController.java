@@ -289,8 +289,12 @@ public class ControlBarController implements Initializable {
 
             durationSlider.lookup(".track").setCursor(Cursor.HAND);
 
-            durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_PRESSED, e -> durationSlider.setValueChanging(true));
-            durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_RELEASED, e -> durationSlider.setValueChanging(false));
+            durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+                if(e.getButton() == MouseButton.PRIMARY) durationSlider.setValueChanging(true);
+            });
+            durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
+                if(e.getButton() == MouseButton.PRIMARY) durationSlider.setValueChanging(false);
+            });
 
             durationSlider.lookup(".track").setOnMouseMoved(e -> {
 
@@ -311,6 +315,7 @@ public class ControlBarController implements Initializable {
                 durationSliderHover = true;
                 durationSliderHoverOn();
 
+
                 double minTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX();
 
@@ -326,11 +331,11 @@ public class ControlBarController implements Initializable {
 
             durationSlider.lookup(".track").setOnMouseExited((e) -> {
                 durationSliderHover = false;
-                if (!e.isPrimaryButtonDown() && !e.isSecondaryButtonDown() && !e.isMiddleButtonDown()) {
-                    durationSliderHoverOff();
-                }
 
-                if(!durationSlider.isValueChanging()) mainController.sliderHoverLabel.label.setVisible(false);
+                if (!e.isPrimaryButtonDown()) {
+                    durationSliderHoverOff();
+                    mainController.sliderHoverLabel.label.setVisible(false);
+                }
             });
 
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
@@ -346,7 +351,6 @@ public class ControlBarController implements Initializable {
                     String newTime = Utilities.getTime(Duration.seconds(e.getX()/(durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                     mainController.sliderHoverLabel.label.setText(newTime);
 
-                    mainController.sliderHoverLabel.label.setVisible(true);
 
                     e.consume();
                 }

@@ -119,7 +119,7 @@ public class MainController implements Initializable {
 
         mediaInterface.init();
 
-        sliderHoverLabel = new SliderHoverLabel(this, controlBarController);
+        sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
 
         videoImageViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
 

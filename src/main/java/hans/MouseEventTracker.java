@@ -27,7 +27,6 @@ public class MouseEventTracker {
 
         mouseMoving.addListener((obs, wasMoving, isNowMoving) -> {
             if (!isNowMoving) {
-
                 if (mainController.mediaInterface.playing.get() && settingsController.settingsState == SettingsState.CLOSED && !controlBarController.volumeSlider.isValueChanging() && !controlBarController.durationSlider.isValueChanging() && controlBarController.controlBarOpen && !mainController.captionsController.captionsDragActive) {
                     controlBarController.controlBarWrapper.setMouseTransparent(true);
                     AnimationsClass.hideControls(controlBarController, controlBarController.captionsController, mainController); // hides controlbar if no mouse or other relevant events have not occurred in the last 4 seconds and the video is not paused, settings page and captions page are not open and user is not seeking video or changing volume
@@ -49,6 +48,9 @@ public class MouseEventTracker {
     }
 
     public void move() { // resets the countdown when called
+
+        if(mainController.getMenuController().menuOpen) return;
+
         mouseMoving.set(true);
         pause.playFromStart();
     }

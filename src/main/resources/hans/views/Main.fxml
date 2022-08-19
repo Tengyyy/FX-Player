@@ -3,38 +3,31 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 
 <StackPane fx:id="outerPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MainController">
    <children>
-      <BorderPane fx:id="mainPane">
-         <center>
-            <StackPane fx:id="videoImageViewWrapper" minWidth="0.0" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefWidth="601.0" BorderPane.alignment="CENTER_RIGHT">
+      <StackPane fx:id="videoImageViewWrapper" minWidth="0.0" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefWidth="601.0">
+         <children>
+            <StackPane fx:id="videoImageViewInnerWrapper" minWidth="601.0" StackPane.alignment="CENTER_RIGHT">
                <children>
-                  <StackPane fx:id="videoImageViewInnerWrapper" minWidth="601.0" StackPane.alignment="CENTER_RIGHT">
-                     <children>
-                        <ImageView fx:id="videoImageView" fitHeight="150.0" fitWidth="200.0" preserveRatio="true" />
-                     </children>
-                  </StackPane>
-                    <fx:include fx:id="controlBar" minWidth="601.0" source="ControlBar.fxml" StackPane.alignment="BOTTOM_RIGHT" />
-                  <StackPane fx:id="menuButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="60.0" StackPane.alignment="TOP_LEFT">
-                     <children>
-                          <Button fx:id="menuButton" mnemonicParsing="false" onAction="#openMenu" prefHeight="60.0" prefWidth="60.0" style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="CENTER">
-                              <cursor>
-                                  <Cursor fx:constant="HAND" />
-                              </cursor>
-                          </Button>
-                        <Region fx:id="menuIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="25.0" prefWidth="30.0" styleClass="controlIcon" StackPane.alignment="CENTER" />
-                     </children>
-                  </StackPane>
+                  <ImageView fx:id="videoImageView" fitHeight="150.0" fitWidth="200.0" preserveRatio="true" />
                </children>
             </StackPane>
-         </center>
-         <left>
-              <fx:include fx:id="menu" minWidth="0.0" prefWidth="0.0" source="Menu.fxml" BorderPane.alignment="CENTER_LEFT" StackPane.alignment="CENTER_LEFT" />
-         </left>
-      </BorderPane>
+              <fx:include fx:id="controlBar" minWidth="601.0" source="ControlBar.fxml" StackPane.alignment="BOTTOM_RIGHT" />
+            <StackPane fx:id="menuButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="60.0" StackPane.alignment="TOP_LEFT">
+               <children>
+                    <Button fx:id="menuButton" mnemonicParsing="false" onAction="#openMenu" prefHeight="60.0" prefWidth="60.0" style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="CENTER">
+                        <cursor>
+                            <Cursor fx:constant="HAND" />
+                        </cursor>
+                    </Button>
+                  <Region fx:id="menuIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="25.0" prefWidth="30.0" styleClass="controlIcon" StackPane.alignment="CENTER" />
+               </children>
+            </StackPane>
+         </children>
+      </StackPane>
+        <fx:include fx:id="menu" minWidth="0.0" prefWidth="0.0" source="Menu.fxml" StackPane.alignment="CENTER_LEFT" />
    </children>
 </StackPane>

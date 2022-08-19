@@ -36,9 +36,8 @@ public class DragResizer {
             return;
         }
 
-        if(event.getSceneX() + correction >= 350) {
-            parentNode.setPrefWidth(event.getSceneX() + correction);
-            menuController.prefWidth = Double.max(350, event.getSceneX() + correction);
+        if(event.getSceneX() + correction >= menuController.MIN_WIDTH) {
+            parentNode.setMaxWidth(event.getSceneX() + correction);
         }
 
     }
@@ -46,7 +45,7 @@ public class DragResizer {
     protected void mousePressed(MouseEvent event) {
 
         dragging = true;
-        correction = parentNode.getPrefWidth() - event.getSceneX();
+        correction = parentNode.getBoundsInLocal().getMaxX() - event.getSceneX();
 
 
     }

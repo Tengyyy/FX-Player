@@ -90,11 +90,13 @@ public class SettingsController {
 
     public void openSettings(){
 
-        if(animating.get()) return;
+        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuOpen) return;
 
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 0, 45, false, 1, true);
 
         settingsState = SettingsState.HOME_OPEN;
+
+        mainController.sliderHoverLabel.label.setVisible(false);
 
         if(controlBarController.captions.isShowing()) controlBarController.captions.hide();
         if(controlBarController.settings.isShowing()) controlBarController.settings.hide();
@@ -237,6 +239,9 @@ public class SettingsController {
         }
 
         settingsState = SettingsState.CLOSED;
+
+        if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()) mainController.sliderHoverLabel.label.setVisible(true);
+
     }
 
 

@@ -238,8 +238,7 @@ public class CaptionsController {
 
             minimumY = 70; // maximum negative translation that can be applied (70px margin from top edge)
 
-            if(menuController.menuOpen) minimumX = 20;
-            else minimumX = 70; // 70px from left edge due to the button in top left corner
+            minimumX = 70; // 70px from left edge due to the button in top left corner
 
             maximumY = mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90;
             maximumX = mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30;
@@ -405,23 +404,14 @@ public class CaptionsController {
 
     public Pos findClosestCaptionsPosition(double x, double y){
 
-        Point2D topLeft;
-        if(menuController.menuOpen) topLeft = new Point2D(20, 70);
-        else topLeft = new Point2D(70, 70);
-
+        Point2D topLeft = new Point2D(70, 70);
         Point2D topCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, 70);
         Point2D topRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30, 70);
         Point2D centerRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
         Point2D bottomRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30,mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90);
         Point2D bottomCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90);
-
-        Point2D bottomLeft;
-        if(menuController.menuOpen) bottomLeft = new Point2D(20, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90);
-        else bottomLeft = new Point2D(70, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90);
-
-        Point2D centerLeft;
-        if(menuController.menuOpen) centerLeft = new Point2D(20, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
-        else centerLeft = new Point2D(70, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
+        Point2D bottomLeft = new Point2D(70, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90);
+        Point2D centerLeft = new Point2D(70, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
 
         ArrayList<Point2D> captionsPositions = new ArrayList<>();
         captionsPositions.add(topLeft);
@@ -506,8 +496,7 @@ public class CaptionsController {
         translateTransition.setFromY(captionsBox.getTranslateY());
 
         if(position == Pos.CENTER_LEFT || position == Pos.TOP_LEFT || position == Pos.BOTTOM_LEFT){
-            if(menuController.menuOpen) translateTransition.setToX(20);
-            else translateTransition.setToX(70);
+            translateTransition.setToX(70);
         }
         else if(position == Pos.TOP_RIGHT || position == Pos.CENTER_RIGHT || position == Pos.BOTTOM_RIGHT){
             translateTransition.setToX(-30);
@@ -576,11 +565,8 @@ public class CaptionsController {
     public void moveToMiniplayer(){
         captionsBox.setMouseTransparent(true);
 
-        if(captionsTransition != null && captionsTransition.getStatus() == Animation.Status.RUNNING){
+        if(captionsTransition != null && captionsTransition.getStatus() == Animation.Status.RUNNING) {
             captionsTransition.stop();
-        }
-        if(mainController.captionsLeftTranslate != null && mainController.captionsLeftTranslate.getStatus() == Animation.Status.RUNNING){
-            mainController.captionsLeftTranslate.stop();
         }
 
         mainController.videoImageViewInnerWrapper.getChildren().remove(captionsBox);
@@ -651,8 +637,7 @@ public class CaptionsController {
             }
             break;
             case BOTTOM_LEFT: {
-                if(menuController.menuOpen) captionsBox.setTranslateX(20);
-                else captionsBox.setTranslateX(70);
+                captionsBox.setTranslateX(70);
 
                 if(controlBarController.controlBarOpen) captionsBox.setTranslateY(-90);
                 else captionsBox.setTranslateY(-30);
@@ -664,14 +649,12 @@ public class CaptionsController {
             }
             break;
             case CENTER_LEFT: {
-                if(menuController.menuOpen) captionsBox.setTranslateX(20);
-                else captionsBox.setTranslateX(70);
+                captionsBox.setTranslateX(70);
                 captionsBox.setTranslateY(0);
             }
             break;
             case TOP_LEFT: {
-                if(menuController.menuOpen) captionsBox.setTranslateX(20);
-                else captionsBox.setTranslateX(70);
+                captionsBox.setTranslateX(70);
                 captionsBox.setTranslateY(70);
             }
             break;

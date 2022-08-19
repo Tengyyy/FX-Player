@@ -48,8 +48,6 @@ public class MainController implements Initializable {
     @FXML
     StackPane outerPane, menuButtonPane, videoImageViewWrapper, videoImageViewInnerWrapper;
 
-    @FXML
-    BorderPane mainPane;
 
     @FXML
     Region menuIcon;
@@ -99,8 +97,6 @@ public class MainController implements Initializable {
     StackPane topShadowBox = new StackPane(), videoTitleBox = new StackPane();
     Label videoTitleLabel = new Label();
 
-
-    TranslateTransition captionsLeftTranslate;
 
     SliderHoverLabel sliderHoverLabel;
 
@@ -164,7 +160,6 @@ public class MainController implements Initializable {
 
 
 
-        menuButtonPane.translateXProperty().bind(menuController.menu.widthProperty().multiply(-1));
         menuButton.setBackground(Background.EMPTY);
 
         menuButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
@@ -193,9 +188,8 @@ public class MainController implements Initializable {
             openMenuTooltip = new ControlTooltip("Open menu (q)", menuButton, controlBarController.controlBarWrapper, 1000, true);
 
             videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
-                if(newValue.doubleValue() < menuController.menu.getPrefWidth()){
-                    menuController.menu.setPrefWidth(newValue.doubleValue());
-                    menuController.prefWidth = newValue.doubleValue();
+                if(newValue.doubleValue() < menuController.menu.getMaxWidth()){
+                    menuController.menu.setMaxWidth(newValue.doubleValue());
                 }
             });
 
@@ -399,7 +393,9 @@ public class MainController implements Initializable {
             return;
         }
 
-        if (settingsController.settingsState != SettingsState.CLOSED) {
+
+        if(menuController.menuOpen) menuController.closeMenu();
+        else if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         }
         else if(mediaInterface.mediaActive.get() && !miniplayerActive){
@@ -433,40 +429,14 @@ public class MainController implements Initializable {
         menuController.menuInTransition = true;
         menuController.menuOpen = true;
 
+        if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+
+        controlBarController.controlBarWrapper.setMouseTransparent(true);
+        AnimationsClass.hideControls(controlBarController, captionsController, this);
+
         AnimationsClass.openMenu(menuController, this);
 
-        if((captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.CENTER_LEFT || captionsController.captionsLocation == Pos.BOTTOM_LEFT) && !miniplayerActive){
 
-
-            if(captionsController.captionsTransition != null && captionsController.captionsTransition.getStatus() == Animation.Status.RUNNING){
-                captionsController.captionsTransition.stop();
-            }
-
-            if(captionsLeftTranslate != null && captionsLeftTranslate.getStatus() == Animation.Status.RUNNING) captionsLeftTranslate.stop();
-
-
-            captionsLeftTranslate = new TranslateTransition(Duration.millis(300), captionsController.captionsBox);
-
-            captionsLeftTranslate.setFromX(captionsController.captionsBox.getTranslateX());
-            captionsLeftTranslate.setToX(20);
-
-            captionsLeftTranslate.setFromY(captionsController.captionsBox.getTranslateY());
-            if(captionsController.captionsLocation == Pos.TOP_LEFT){
-                captionsLeftTranslate.setToY(70);
-            }
-            else if(captionsController.captionsLocation == Pos.CENTER_LEFT){
-                captionsLeftTranslate.setToY(0);
-            }
-            else captionsLeftTranslate.setToY(-80);
-
-            captionsLeftTranslate.setOnFinished(e -> {
-                captionsController.captionsAnimating = false;
-                captionsController.captionsBox.setStyle("-fx-background-color: transparent;");
-            });
-
-            captionsLeftTranslate.play();
-
-        }
     }
 
     public void handleDragEntered(DragEvent e){
@@ -479,8 +449,7 @@ public class MainController implements Initializable {
 
         if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 
-       if(mediaInterface.playing.get())controlBarController.mouseEventTracker.hide();
-       else AnimationsClass.hideControls(controlBarController, captionsController, this);
+       AnimationsClass.hideControls(controlBarController, captionsController, this);
 
     }
 
@@ -984,9 +953,11 @@ public class MainController implements Initializable {
     }
 
     public void pressQ(KeyEvent e){
-        controlBarController.mouseEventTracker.move();
 
-        if(menuController.menuOpen) menuController.closeMenu();
+        if(menuController.menuOpen) {
+            menuController.closeMenu();
+            controlBarController.mouseEventTracker.move();
+        }
         else openMenu();
     }
 

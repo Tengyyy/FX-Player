@@ -326,7 +326,7 @@ public class ControlBarController implements Initializable {
                 String newTime = Utilities.getTime(Duration.seconds(e.getX()/(durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverLabel.label.setText(newTime);
 
-                mainController.sliderHoverLabel.label.setVisible(true);
+                if(settingsController.settingsState == SettingsState.CLOSED) mainController.sliderHoverLabel.label.setVisible(true);
             });
 
             durationSlider.lookup(".track").setOnMouseExited((e) -> {
@@ -450,7 +450,7 @@ public class ControlBarController implements Initializable {
             }
             else {
 
-                if(!durationSliderHover) mainController.sliderHoverLabel.label.setVisible(false);
+                if(!durationSliderHover && settingsController.settingsState == SettingsState.CLOSED) mainController.sliderHoverLabel.label.setVisible(false);
 
                 if(seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();
                 if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.seekTimer.getStatus() == Animation.Status.RUNNING) mainController.miniplayer.miniplayerController.seekTimer.stop();
@@ -504,7 +504,6 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         } else {
-            // logic to play/pause/replay
 
             if(mediaInterface.atEnd) mediaInterface.replay();
             else if(mediaInterface.playing.get()){

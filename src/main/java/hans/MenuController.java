@@ -87,7 +87,8 @@ public class MenuController implements Initializable {
 
     boolean menuInTransition = false;
 
-    double prefWidth = 350;
+
+    final double MIN_WIDTH = 350;
 
     ControlTooltip addMediaTooltip, clearQueueTooltip, closeMenuTooltip, appSettingsTooltip, historyTooltip, shuffleTooltip;
 
@@ -291,6 +292,9 @@ public class MenuController implements Initializable {
         queueScroll.setContent(menuContent);
 
         menu.setMinWidth(0);
+        menu.setMaxWidth(MIN_WIDTH);
+
+        Platform.runLater(() -> menu.setTranslateX(-menu.getWidth()));
 
         closeTimer = new PauseTransition(Duration.millis(3000));
         closeTimer.setOnFinished((e) -> AnimationsClass.closeMenuNotification(this));
@@ -507,7 +511,6 @@ public class MenuController implements Initializable {
         dragResizer = new DragResizer(this);
 
         Platform.runLater(() -> {
-            menu.maxWidthProperty().bind(menu.sceneProperty().get().widthProperty());
             closeMenuTooltip = new ControlTooltip("Close menu (q)", closeButton, new VBox(), 1000, true);
             addMediaTooltip = new ControlTooltip("Add media", addVideoButton, new VBox(), 1000, true);
             clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, new VBox(), 1000, false);
@@ -561,46 +564,14 @@ public class MenuController implements Initializable {
             dragResizer.dragging = false;
             dragPane.setCursor(Cursor.DEFAULT);
         }
+
         menuInTransition = true;
-        menu.setMinWidth(0);
         menuOpen = false;
         notificationPane.setOpacity(0);
         menu.setMouseTransparent(true);
         if (closeMenuTooltip.countdown.getStatus() == Animation.Status.RUNNING) closeMenuTooltip.countdown.stop();
         AnimationsClass.closeMenu(this, mainController);
 
-        if((captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.CENTER_LEFT || captionsController.captionsLocation == Pos.BOTTOM_LEFT) && !mainController.miniplayerActive){
-
-
-            if(captionsController.captionsTransition != null && captionsController.captionsTransition.getStatus() == Animation.Status.RUNNING){
-                captionsController.captionsTransition.stop();
-            }
-
-            if(mainController.captionsLeftTranslate != null && mainController.captionsLeftTranslate.getStatus() == Animation.Status.RUNNING) mainController.captionsLeftTranslate.stop();
-
-
-            mainController.captionsLeftTranslate = new TranslateTransition(Duration.millis(300), captionsController.captionsBox);
-
-            mainController.captionsLeftTranslate.setFromX(captionsController.captionsBox.getTranslateX());
-            mainController.captionsLeftTranslate.setToX(70);
-
-            mainController.captionsLeftTranslate.setFromY(captionsController.captionsBox.getTranslateY());
-            if(captionsController.captionsLocation == Pos.TOP_LEFT){
-                mainController.captionsLeftTranslate.setToY(70);
-            }
-            else if(captionsController.captionsLocation == Pos.CENTER_LEFT){
-                mainController.captionsLeftTranslate.setToY(0);
-            }
-            else mainController.captionsLeftTranslate.setToY(-80);
-
-            mainController. captionsLeftTranslate.setOnFinished(e -> {
-                captionsController.captionsAnimating = false;
-                captionsController.captionsBox.setStyle("-fx-background-color: transparent;");
-            });
-
-            mainController.captionsLeftTranslate.play();
-
-        }
     }
 
 

@@ -255,49 +255,29 @@ public class AnimationsClass {
 
 
     public static void openMenu(MenuController menuController, MainController mainController){
-        Timeline timeline = new Timeline();
-        TranslateTransition titleTranslate = new TranslateTransition(Duration.millis(300), mainController.videoTitleBox);
-        ParallelTransition parallelTransition = new ParallelTransition();
 
-        timeline.setCycleCount(1);
-        timeline.setAutoReverse(false);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(),Double.min(menuController.prefWidth, menuController.menu.getMaxWidth()), Interpolator.EASE_OUT)));
+        TranslateTransition openMenu = new TranslateTransition(Duration.millis(300), menuController.menu);
+        openMenu.setFromX(menuController.menu.getTranslateX());
+        openMenu.setToX(0);
+        openMenu.setInterpolator(Interpolator.EASE_OUT);
 
-        titleTranslate.setFromX(mainController.videoTitleBox.getTranslateX());
-        titleTranslate.setToX(30);
-
-
-
-        parallelTransition.setOnFinished((e) -> {
-            menuController.menu.setMinWidth(350);
-            menuController.prefWidth = menuController.menu.getWidth();
+        openMenu.setOnFinished((e) -> {
             menuController.menu.setMouseTransparent(false);
             menuController.menuInTransition = false;
         });
 
-        parallelTransition.getChildren().addAll(timeline, titleTranslate);
-        parallelTransition.play();
-
+        openMenu.play();
 
     }
 
     public static void closeMenu(MenuController menuController, MainController mainController) {
 
-        Timeline timeline = new Timeline();
-        TranslateTransition titleTranslate = new TranslateTransition(Duration.millis(300), mainController.videoTitleBox);
-        ParallelTransition parallelTransition = new ParallelTransition();
+        TranslateTransition closeMenu = new TranslateTransition(Duration.millis(300), menuController.menu);
+        closeMenu.setFromX(menuController.menu.getTranslateX());
+        closeMenu.setToX(-menuController.menu.getWidth());
 
-        timeline.setCycleCount(1);
-        timeline.setAutoReverse(false);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(menuController.menu.prefWidthProperty(), 0, Interpolator.EASE_OUT)));
-
-        titleTranslate.setFromX(mainController.videoTitleBox.getTranslateX());
-        titleTranslate.setToX(80);
-
-        parallelTransition.setOnFinished((e) -> menuController.menuInTransition = false);
-
-        parallelTransition.getChildren().addAll(timeline, titleTranslate);
-        parallelTransition.play();
+        closeMenu.setOnFinished((e) -> menuController.menuInTransition = false);
+        closeMenu.play();
     }
 
     public static FadeTransition fadeIn(Node child){

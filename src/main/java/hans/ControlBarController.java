@@ -156,7 +156,6 @@ public class ControlBarController implements Initializable {
 
         durationLabel.setTranslateX(-60);
 
-        controlBarWrapper.setTranslateY(70);
 
         durationPane.setMouseTransparent(true);
 

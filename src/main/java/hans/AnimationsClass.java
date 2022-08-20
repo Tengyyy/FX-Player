@@ -82,10 +82,10 @@ public class AnimationsClass {
         else {
             captionsTransition.setToY(captionsController.captionsBox.getTranslateY());
         }
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), controlBarController.controlBarWrapper);
-        translateTransition.setFromY(controlBarController.controlBarWrapper.getTranslateY());
-        translateTransition.setToY(0);
-        translateTransition.setCycleCount(1);
+        FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarWrapper);
+        controlBarFade.setFromValue(0);
+        controlBarFade.setToValue(1);
+        controlBarFade.setCycleCount(1);
 
         FadeTransition topShadowTransition = new FadeTransition(Duration.millis(100), mainController.topShadowBox);
         topShadowTransition.setFromValue(mainController.topShadowBox.getOpacity());
@@ -102,7 +102,7 @@ public class AnimationsClass {
         menuButtonTransition.setToValue(1);
 
 
-        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition, topShadowTransition, videoTitleTransition, menuButtonTransition);
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, topShadowTransition, videoTitleTransition, menuButtonTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
         parallelTransition.setOnFinished((e) -> controlBarController.controlBarOpen = true);
 
@@ -112,6 +112,8 @@ public class AnimationsClass {
     }
 
     public static void hideControls(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
+
+        if(captionsController.captionsTransition != null && captionsController.captionsTransition.getStatus() == Animation.Status.RUNNING) captionsController.captionsTransition.stop();
 
         TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox);
         captionsTransition.setCycleCount(1);
@@ -124,13 +126,23 @@ public class AnimationsClass {
             captionsTransition.setToY(30);
         }
         else {
-            captionsTransition.setToY(captionsController.captionsBox.getTranslateY());
+            captionsTransition.setToY(0);
         }
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), controlBarController.controlBarWrapper);
-        translateTransition.setFromY(controlBarController.controlBarWrapper.getTranslateY());
-        translateTransition.setToY(70);
-        translateTransition.setCycleCount(1);
+        if(captionsController.captionsLocation == Pos.CENTER_LEFT || captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.BOTTOM_LEFT){
+            captionsTransition.setToX(70);
+        }
+        else if(captionsController.captionsLocation == Pos.TOP_RIGHT || captionsController.captionsLocation == Pos.CENTER_RIGHT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+            captionsTransition.setToX(-30);
+        }
+        else {
+            captionsTransition.setToX(0);
+        }
+
+        FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarWrapper);
+        controlBarFade.setFromValue(1);
+        controlBarFade.setToValue(0);
+        controlBarFade.setCycleCount(1);
 
         FadeTransition topShadowTransition = new FadeTransition(Duration.millis(100), mainController.topShadowBox);
         topShadowTransition.setFromValue(mainController.topShadowBox.getOpacity());
@@ -145,12 +157,14 @@ public class AnimationsClass {
         menuButtonTransition.setFromValue(mainController.menuButtonPane.getOpacity());
         menuButtonTransition.setToValue(0);
 
-        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, translateTransition, topShadowTransition, videoTitleTransition, menuButtonTransition);
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, topShadowTransition, videoTitleTransition, menuButtonTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
         parallelTransition.setOnFinished((e) -> {
             controlBarController.controlBarOpen = false;
             controlBarController.mouseEventTracker.mouseMoving.set(false);
             mainController.videoTitleBox.setVisible(false);
+            captionsController.captionsAnimating = false;
+            captionsController.captionsBox.setStyle("-fx-background-color: transparent;");
         });
         parallelTransition.play();
 

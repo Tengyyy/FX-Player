@@ -66,7 +66,7 @@ public class Mp4Item implements MediaItem{
     String recordLabelName; // (©lab)
 
     // technical details of the media object (TODO: separate audio and video)
-    double frameRate = 30; // 30 by default, will be over-written by the metadata reader
+    double frameRate = 30;
     float frameDuration = (float) (1 / frameRate);
     double width;
     double height;
@@ -200,7 +200,7 @@ public class Mp4Item implements MediaItem{
         //only return information under the artist tag if the media type is "music video"
         //because in case of a movie or tv show the information under the artist tag
         //might have been incorrectly categorized and actually contain cast, directors etc..
-        if(mediaType != null && mediaType == "Music video"){
+        if(mediaType != null && mediaType.equals("Music video")){
             return artist;
         }
         else return null;

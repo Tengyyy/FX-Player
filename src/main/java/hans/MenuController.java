@@ -558,8 +558,6 @@ public class MenuController implements Initializable {
 
         if(menuInTransition) return;
 
-        captionsController.cancelDrag();
-
         if(dragResizer.dragging) {
             dragResizer.dragging = false;
             dragPane.setCursor(Cursor.DEFAULT);
@@ -571,6 +569,8 @@ public class MenuController implements Initializable {
         menu.setMouseTransparent(true);
         if (closeMenuTooltip.countdown.getStatus() == Animation.Status.RUNNING) closeMenuTooltip.countdown.stop();
         AnimationsClass.closeMenu(this, mainController);
+
+        captionsController.captionsBox.setMouseTransparent(false);
 
     }
 

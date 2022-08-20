@@ -158,10 +158,12 @@ public class CaptionsController {
 
         captionsBox.setOnMousePressed(e -> {
 
-            if(menuController.menuInTransition){
+            if(menuController.menuInTransition || menuController.menuOpen){
                 e.consume();
                 return;
             }
+
+            if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 
             captionsBox.setCursor(Cursor.CLOSED_HAND);
             captionsBox.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
@@ -232,6 +234,8 @@ public class CaptionsController {
         captionsBox.setOnMouseClicked(Event::consume);
 
         captionsBox.setOnDragDetected(e -> {
+
+            if(!captionsDragActive) return;
 
             dragPositionY = e.getY();
             dragPositionX = e.getX();

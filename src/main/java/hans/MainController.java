@@ -422,9 +422,7 @@ public class MainController implements Initializable {
 
     public void openMenu() {
 
-        if(menuController.menuInTransition) return;
-
-        captionsController.cancelDrag();
+        if(menuController.menuInTransition || controlBarController.durationSlider.isValueChanging() || controlBarController.volumeSlider.isValueChanging() || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || captionsController.captionsDragActive) return;
 
         menuController.menuInTransition = true;
         menuController.menuOpen = true;
@@ -435,6 +433,8 @@ public class MainController implements Initializable {
         AnimationsClass.hideControls(controlBarController, captionsController, this);
 
         AnimationsClass.openMenu(menuController, this);
+
+        captionsController.captionsBox.setMouseTransparent(true);
 
 
     }

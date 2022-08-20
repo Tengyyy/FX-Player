@@ -1,5 +1,6 @@
 package hans;
 
+import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -56,6 +57,7 @@ public class SettingsController {
         settingsBackground.setId("settingsBackground");
         settingsBackground.setVisible(false);
         settingsBackground.setMouseTransparent(true);
+        settingsBackground.setOpacity(0);
         StackPane.setMargin(settingsBuffer, new Insets(0, 20, 80, 0));
         StackPane.setAlignment(settingsBackground, Pos.BOTTOM_RIGHT);
 
@@ -90,13 +92,13 @@ public class SettingsController {
 
     public void openSettings(){
 
-        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuOpen) return;
+        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuOpen || captionsController.captionsDragActive) return;
 
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 0, 45, false, 1, true);
 
         settingsState = SettingsState.HOME_OPEN;
 
-        mainController.sliderHoverLabel.label.setVisible(false);
+        mainController.sliderHoverLabel.label.setVisible(false );
 
         if(controlBarController.captions.isShowing()) controlBarController.captions.hide();
         if(controlBarController.settings.isShowing()) controlBarController.settings.hide();
@@ -115,13 +117,13 @@ public class SettingsController {
         settingsHomeController.settingsHome.setVisible(true);
         settingsHomeController.settingsHome.setMouseTransparent(false);
 
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(settingsHomeController.settingsHome.getHeight());
-        backgroundTranslate.setToY(0);
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(0);
+        backgroundTranslate.setToValue(1);
 
-        TranslateTransition homeTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsHomeController.settingsHome);
-        homeTranslate.setFromY(settingsHomeController.settingsHome.getHeight());
-        homeTranslate.setToY(0);
+        FadeTransition homeTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsHomeController.settingsHome);
+        homeTranslate.setFromValue(0);
+        homeTranslate.setToValue(1);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, homeTranslate);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -132,7 +134,7 @@ public class SettingsController {
 
     public void closeSettings(){
 
-        if(animating.get()) return;
+        if(animating.get() || playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging()) return;
 
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 45, 0, false, 1, true);
 
@@ -246,13 +248,13 @@ public class SettingsController {
 
 
     public void closeSettingsFromHome(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(settingsHomeController.settingsHome.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsHomeController.settingsHome);
-        homeTransition.setFromY(0);
-        homeTransition.setToY(settingsHomeController.settingsHome.getHeight());
+        FadeTransition homeTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsHomeController.settingsHome);
+        homeTransition.setFromValue(1);
+        homeTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, homeTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -262,6 +264,7 @@ public class SettingsController {
             settingsBackground.setVisible(false);
             settingsBackground.setMouseTransparent(true);
             settingsHomeController.settingsHome.setVisible(false);
+            settingsHomeController.settingsHome.setOpacity(1);
             settingsHomeController.settingsHome.setMouseTransparent(true);
         });
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -270,13 +273,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromPlaybackOptions(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition playbackOptionsTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), playbackOptionsController.playbackOptionsBox);
-        playbackOptionsTransition.setFromY(0);
-        playbackOptionsTransition.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
+        FadeTransition playbackOptionsTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackOptionsController.playbackOptionsBox);
+        playbackOptionsTransition.setFromValue(1);
+        playbackOptionsTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, playbackOptionsTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -286,8 +289,8 @@ public class SettingsController {
             settingsBackground.setVisible(false);
             settingsBackground.setMouseTransparent(true);
             playbackOptionsController.playbackOptionsBox.setVisible(false);
+             playbackOptionsController.playbackOptionsBox.setOpacity(1);
             playbackOptionsController.playbackOptionsBox.setMouseTransparent(true);
-            playbackOptionsController.playbackOptionsBox.setTranslateY(0);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
         });
 
@@ -297,13 +300,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromPlaybackSpeed(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(playbackSpeedController.playbackSpeedPane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition playbackSpeedTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), playbackSpeedController.playbackSpeedPane.scrollPane);
-        playbackSpeedTransition.setFromY(0);
-        playbackSpeedTransition.setToY(playbackSpeedController.playbackSpeedPane.scrollPane.getHeight());
+        FadeTransition playbackSpeedTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSpeedController.playbackSpeedPane.scrollPane);
+        playbackSpeedTransition.setFromValue(1);
+        playbackSpeedTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, playbackSpeedTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -314,7 +317,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(false);
             playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(true);
-            playbackSpeedController.playbackSpeedPane.scrollPane.setTranslateY(0);
+            playbackSpeedController.playbackSpeedPane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
         });
 
@@ -324,13 +327,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromCustomSpeed(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(playbackSpeedController.customSpeedPane.customSpeedBox.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition customTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), playbackSpeedController.customSpeedPane.customSpeedBox);
-        customTransition.setFromY(0);
-        customTransition.setToY(playbackSpeedController.customSpeedPane.customSpeedBox.getHeight());
+        FadeTransition customTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSpeedController.customSpeedPane.customSpeedBox);
+        customTransition.setFromValue(1);
+        customTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, customTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -341,7 +344,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             playbackSpeedController.customSpeedPane.customSpeedBox.setVisible(false);
             playbackSpeedController.customSpeedPane.customSpeedBox.setMouseTransparent(true);
-            playbackSpeedController.customSpeedPane.customSpeedBox.setTranslateY(0);
+            playbackSpeedController.customSpeedPane.customSpeedBox.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
         });
 
@@ -351,13 +354,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromCaptions(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(playbackOptionsController.playbackOptionsBox.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition captionsPaneTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsPane.captionsBox);
-        captionsPaneTransition.setFromY(0);
-        captionsPaneTransition.setToY(captionsController.captionsPane.captionsBox.getHeight());
+        FadeTransition captionsPaneTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsPane.captionsBox);
+        captionsPaneTransition.setFromValue(1);
+        captionsPaneTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, captionsPaneTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -368,7 +371,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsPane.captionsBox.setVisible(false);
             captionsController.captionsPane.captionsBox.setMouseTransparent(true);
-            captionsController.captionsPane.captionsBox.setTranslateY(0);
+            captionsController.captionsPane.captionsBox.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
         });
 
@@ -378,13 +381,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromCaptionsOptions(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(captionsController.captionsOptionsPane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition captionsOptionsTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.scrollPane);
-        captionsOptionsTransition.setFromY(0);
-        captionsOptionsTransition.setToY(captionsController.captionsOptionsPane.scrollPane.getHeight());
+        FadeTransition captionsOptionsTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.scrollPane);
+        captionsOptionsTransition.setFromValue(1);
+        captionsOptionsTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, captionsOptionsTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -395,7 +398,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsOptionsPane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.scrollPane.setTranslateY(0);
+            captionsController.captionsOptionsPane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });
@@ -406,13 +409,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromFontFamily(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition fontFamilyTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontFamilyPane.scrollPane);
-        fontFamilyTransition.setFromY(0);
-        fontFamilyTransition.setToY(captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.getHeight());
+        FadeTransition fontFamilyTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontFamilyPane.scrollPane);
+        fontFamilyTransition.setFromValue(1);
+        fontFamilyTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, fontFamilyTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -423,7 +426,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setTranslateY(0);
+            captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });
@@ -434,13 +437,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromFontColor(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(captionsController.captionsOptionsPane.fontColorPane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition fontColorTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontColorPane.scrollPane);
-        fontColorTransition.setFromY(0);
-        fontColorTransition.setToY(captionsController.captionsOptionsPane.fontColorPane.scrollPane.getHeight());
+        FadeTransition fontColorTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontColorPane.scrollPane);
+        fontColorTransition.setFromValue(1);
+        fontColorTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, fontColorTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -451,7 +454,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsOptionsPane.fontColorPane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.fontColorPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontColorPane.scrollPane.setTranslateY(0);
+            captionsController.captionsOptionsPane.fontColorPane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });
@@ -462,13 +465,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromFontSize(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(captionsController.captionsOptionsPane.fontSizePane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition fontSizeTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontSizePane.scrollPane);
-        fontSizeTransition.setFromY(0);
-        fontSizeTransition.setToY(captionsController.captionsOptionsPane.fontSizePane.scrollPane.getHeight());
+        FadeTransition fontSizeTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontSizePane.scrollPane);
+        fontSizeTransition.setFromValue(1);
+        fontSizeTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, fontSizeTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -479,7 +482,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsOptionsPane.fontSizePane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.fontSizePane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontSizePane.scrollPane.setTranslateY(0);
+            captionsController.captionsOptionsPane.fontSizePane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });
@@ -490,13 +493,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromTextAlignment(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition textAlignmentTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.textAlignmentPane.scrollPane);
-        textAlignmentTransition.setFromY(0);
-        textAlignmentTransition.setToY(captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.getHeight());
+        FadeTransition textAlignmentTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.textAlignmentPane.scrollPane);
+        textAlignmentTransition.setFromValue(1);
+        textAlignmentTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, textAlignmentTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -507,7 +510,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setTranslateY(0);
+            captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });
@@ -518,13 +521,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromBackgroundColor(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition backgroundColorTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.backgroundColorPane.scrollPane);
-        backgroundColorTransition.setFromY(0);
-        backgroundColorTransition.setToY(captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.getHeight());
+        FadeTransition backgroundColorTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.backgroundColorPane.scrollPane);
+        backgroundColorTransition.setFromValue(1);
+        backgroundColorTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, backgroundColorTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -535,7 +538,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setTranslateY(0);
+            captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });
@@ -546,13 +549,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromBackgroundOpacity(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition backgroundOpacityTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane);
-        backgroundOpacityTransition.setFromY(0);
-        backgroundOpacityTransition.setToY(captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.getHeight());
+        FadeTransition backgroundOpacityTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane);
+        backgroundOpacityTransition.setFromValue(1);
+        backgroundOpacityTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, backgroundOpacityTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -563,7 +566,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setTranslateY(0);
+            captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });
@@ -574,13 +577,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromLineSpacing(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition lineSpacingTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.lineSpacingPane.scrollPane);
-        lineSpacingTransition.setFromY(0);
-        lineSpacingTransition.setToY(captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.getHeight());
+        FadeTransition lineSpacingTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.lineSpacingPane.scrollPane);
+        lineSpacingTransition.setFromValue(1);
+        lineSpacingTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, lineSpacingTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -591,7 +594,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setTranslateY(0);
+            captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });
@@ -602,13 +605,13 @@ public class SettingsController {
     }
 
     public void closeSettingsFromOpacity(){
-        TranslateTransition backgroundTranslate = new TranslateTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromY(0);
-        backgroundTranslate.setToY(captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.getHeight());
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
 
-        TranslateTransition opacityTransition = new TranslateTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontOpacityPane.scrollPane);
-        opacityTransition.setFromY(0);
-        opacityTransition.setToY(captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.getHeight());
+        FadeTransition opacityTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontOpacityPane.scrollPane);
+        opacityTransition.setFromValue(1);
+        opacityTransition.setToValue(0);
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, opacityTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -619,7 +622,7 @@ public class SettingsController {
             settingsBackground.setMouseTransparent(true);
             captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setVisible(false);
             captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setTranslateY(0);
+            captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });

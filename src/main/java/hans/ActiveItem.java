@@ -275,7 +275,7 @@ public class ActiveItem extends GridPane implements MenuObject {
             playIcon.setVisible(true);
             columns.setVisible(false);
 
-            this.setStyle("-fx-background-color: #2C2C2C;");
+            this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
 
         });

@@ -19,7 +19,6 @@ public class ActiveBox extends StackPane {
         this.setMinHeight(70);
         this.setPrefHeight(70);
         this.setMaxHeight(70);
-        this.getStyleClass().add("menuBox");
     }
 
     public void clear(){

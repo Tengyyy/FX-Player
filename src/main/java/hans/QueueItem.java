@@ -312,7 +312,7 @@ public class QueueItem extends GridPane implements MenuObject{
             playText.setVisible(false);
             playIcon.setVisible(true);
 
-            this.setStyle("-fx-background-color: #2C2C2C;");
+            this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
 
         });
@@ -343,7 +343,7 @@ public class QueueItem extends GridPane implements MenuObject{
             queueBox.draggedNode = this;
 
             this.setViewOrder(0);
-            this.setStyle("-fx-background-color: #2C2C2C;");
+            this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
             if (optionsPopUp.isShowing()) optionsPopUp.hide();
 

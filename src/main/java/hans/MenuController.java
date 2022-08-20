@@ -219,10 +219,6 @@ public class MenuController implements Initializable {
        historyHeader.getStyleClass().add("menuBoxHeader");
        historyHeader.setId("historyHeader");
 
-        historyHeader.setBorder(new Border(new BorderStroke(Color.web("#909090"), Color.web("#909090"), Color.web("#909090"), Color.web("#909090"),
-                BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-                CornerRadii.EMPTY, new BorderWidths(1), new Insets(0, 1,0,1))));
-
 
         historyWrapper.getChildren().add(historyBox);
         historyBox.setAlignment(Pos.TOP_CENTER);
@@ -287,9 +283,15 @@ public class MenuController implements Initializable {
 
         queueBox.setAlignment(Pos.TOP_CENTER);
 
-        menuContent.setId("menuContent");
+
         menuContent.getChildren().addAll(historyHeader, historyWrapper, currentHeader, activeBox, queueHeader, queueBox);
         queueScroll.setContent(menuContent);
+
+        menu.setBackground(Background.EMPTY);
+
+        menuContent.setBackground(Background.EMPTY);
+
+        queueScroll.setBackground(Background.EMPTY);
 
         menu.setMinWidth(0);
         menu.setMaxWidth(MIN_WIDTH);
@@ -407,7 +409,7 @@ public class MenuController implements Initializable {
 
             if(queueBox.dragActive) {
                 queueBox.draggedNode.setViewOrder(0);
-                queueBox.draggedNode.setStyle("-fx-background-color: #2C2C2C;");
+                queueBox.draggedNode.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
                 queueBox.draggedNode.dragPosition = 0;
                 queueBox.draggedNode.minimumY = 0;
                 queueBox.draggedNode.maximumY = 0;
@@ -450,7 +452,7 @@ public class MenuController implements Initializable {
 
             if(queueBox.dragActive) {
                 queueBox.draggedNode.setViewOrder(0);
-                queueBox.draggedNode.setStyle("-fx-background-color: #2C2C2C;");
+                queueBox.draggedNode.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
                 queueBox.draggedNode.dragPosition = 0;
                 queueBox.draggedNode.minimumY = 0;
                 queueBox.draggedNode.maximumY = 0;

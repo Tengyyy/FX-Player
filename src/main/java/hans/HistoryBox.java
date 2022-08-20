@@ -27,7 +27,6 @@ public class HistoryBox extends VBox {
         this.historyWrapper = historyWrapper;
         this.menuController = menuController;
         this.setAlignment(Pos.TOP_CENTER);
-        this.getStyleClass().add("menuBox");
         this.setFillWidth(true);
 
     }

@@ -231,12 +231,6 @@ public class HistoryItem extends GridPane implements MenuObject{
         optionsButton.setText(null);
 
 
-        this.setBorder(new Border(new BorderStroke(Color.web("#909090"), Color.web("#909090"), Color.web("#909090"), Color.web("#909090"),
-                    BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-                    CornerRadii.EMPTY, new BorderWidths(1), new Insets(0, 1, 0, 1))));
-
-
-
         optionsButton.setOnAction((e) -> {
             if(optionsPopUp.isShowing()) optionsPopUp.hide();
             else optionsPopUp.showOptions();
@@ -271,7 +265,7 @@ public class HistoryItem extends GridPane implements MenuObject{
             // hide the bouncing columns thingy and stop animation
             if(!isActive.get()) playIcon.setVisible(true);
 
-            this.setStyle("-fx-background-color: #454545;");
+            this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
 
         });
@@ -282,7 +276,7 @@ public class HistoryItem extends GridPane implements MenuObject{
             // show bouncing columns and start animation
             if(!isActive.get()) playIcon.setVisible(false);
 
-            this.setStyle("-fx-background-color: #353535;");
+            this.setStyle("-fx-background-color: transparent;");
         });
 
 

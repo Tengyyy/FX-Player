@@ -20,11 +20,11 @@
 #queueScroll {
     -fx-background-insets: 0;
     -fx-padding: 0;
-    -fx-background-color: #191919;
+    -fx-background-color: transparent;
 }
 
-#queueScroll > .viewPort {
-    -fx-background-color: #191919;
+#queueScroll > .viewport {
+    -fx-background-color: transparent;
 }
 
 #queueScroll .scroll-bar:horizontal .track,
@@ -83,19 +83,16 @@
     -fx-background-color: red;
 }
 
-.menuBox, #menuContent {
-    -fx-background-color: #191919;
+#menuContent {
+    -fx-background-color: rgba(10,10,10,0.8);
 }
 
 
 .menuBoxHeader {
     -fx-padding: 10 10 10 10;
-    -fx-background-color: #191919;
+    -fx-background-color: transparent;
 }
 
-#historyHeader {
-    -fx-background-color: #353535;
-}
 
 .menuBoxTitle {
     -fx-text-fill: white;
@@ -104,7 +101,7 @@
 }
 
 #menuBar {
-    -fx-background-color: #232323;
+    -fx-background-color: transparent;
 }
 
 
@@ -127,21 +124,18 @@
 }
 
 #menuPane {
-    -fx-background-color: #303030;
-}
-
-.menuItemPane{
-    -fx-background-color: #191919;
-}
-
-
-.queueItem, .activeItem {
     -fx-background-color: transparent;
 }
 
-.historyItem {
-    -fx-background-color: #353535
+.menuItemPane{
+    -fx-background-color: transparent;
 }
+
+
+.queueItem, .activeItem, .historyItem {
+    -fx-background-color: transparent;
+}
+
 
 .playButton {
     -fx-padding: 0;

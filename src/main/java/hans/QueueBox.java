@@ -43,8 +43,6 @@ public class QueueBox extends VBox {
     QueueBox(MenuController menuController){
         this.menuController = menuController;
         this.setAlignment(Pos.TOP_CENTER);
-        this.getStyleClass().add("menuBox");
-        this.setId("queueBox");
         this.setFillWidth(true);
 
         VBox.setVgrow(this, Priority.ALWAYS);

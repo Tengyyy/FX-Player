@@ -33,6 +33,8 @@ public class HistoryBox extends VBox {
 
     public void add(HistoryItem historyItem){
 
+        if(menuController.history.isEmpty()) menuController.enableHistoryButton();
+
         if(menuController.history.size() >= CAPACITY) menuController.history.remove(0);
         menuController.history.add(historyItem);
 
@@ -146,7 +148,7 @@ public class HistoryBox extends VBox {
 
     public void open(){
 
-        if(closeHistory != null && closeHistory.getStatus() == Animation.Status.RUNNING) return;
+        if((closeHistory != null && closeHistory.getStatus() == Animation.Status.RUNNING) || menuController.history.isEmpty()) return;
 
         menuController.historyTooltip.updateText("Close history");
 

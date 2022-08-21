@@ -15,7 +15,7 @@ public enum SVG {
     MAXIMIZE,
     MINIMIZE,
     PLUS,
-    CLEAR_QUEUE,
+    QUEUE_ADD,
     CLOSE,
     PLAY_CIRCLE,
     PAUSE_CIRCLE,

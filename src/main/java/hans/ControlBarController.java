@@ -756,26 +756,26 @@ public class ControlBarController implements Initializable {
     public void controlButtonHoverOn(StackPane stackPane){
         Region icon = (Region) stackPane.getChildren().get(1);
 
-        if(!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected) AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
-        else AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
+        if(!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected) AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+        else AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(100, 100, 100), Color.rgb(130, 130, 130), 200);
     }
 
 
     public void controlButtonHoverOff(StackPane stackPane){
         Region icon = (Region) stackPane.getChildren().get(1);
 
-        if(!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected) AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
-        else AnimationsClass.AnimateBackgroundColor(icon, (Color) icon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+        if(!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected) AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
+        else AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(130, 130, 130), Color.rgb(100, 100, 100), 200);
     }
 
     public void previousVideoButtonHoverOn(){
         previousVideoButtonHover = true;
 
         if(previousVideoButtonEnabled){
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(100, 100, 100), Color.rgb(130, 130, 130), 200);
         }
     }
 
@@ -783,10 +783,10 @@ public class ControlBarController implements Initializable {
         previousVideoButtonHover = false;
 
         if(previousVideoButtonEnabled){
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, (Color) previousVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(130, 130, 130), Color.rgb(100, 100, 100), 200);
         }
     }
 
@@ -794,10 +794,10 @@ public class ControlBarController implements Initializable {
         playButtonHover = true;
 
         if(playButtonEnabled){
-            AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
+            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(100, 100, 100), Color.rgb(130, 130, 130), 200);
         }
     }
 
@@ -805,10 +805,10 @@ public class ControlBarController implements Initializable {
         playButtonHover = false;
 
         if(playButtonEnabled){
-            AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(playIcon, (Color) playIcon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(130, 130, 130), Color.rgb(100, 100, 100), 200);
         }
     }
 
@@ -816,10 +816,11 @@ public class ControlBarController implements Initializable {
         nextVideoButtonHover = true;
 
         if(nextVideoButtonEnabled){
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(100, 100, 100), Color.rgb(130, 130, 130), 200);
+
         }
     }
 
@@ -827,10 +828,10 @@ public class ControlBarController implements Initializable {
         nextVideoButtonHover = false;
 
         if(nextVideoButtonEnabled){
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(255, 255, 25), Color.rgb(200, 200, 200), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, (Color) nextVideoIcon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(130, 130, 130), Color.rgb(100, 100, 100), 200);
         }
     }
 

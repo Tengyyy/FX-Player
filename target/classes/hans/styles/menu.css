@@ -29,25 +29,25 @@
 
 #queueScroll .scroll-bar:horizontal .track,
 #queueScroll .scroll-bar:vertical .track{
-    -fx-background-color : #191919;
-    -fx-border-color: #191919;
-    -fx-background-radius : 0.0em;
-    -fx-border-radius :0.0em;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0.0em;
+    -fx-border-radius: 0.0em;
 }
 
 
 #queueScroll .scroll-bar:horizontal .increment-button ,
 .#queueScroll .scroll-bar:horizontal .decrement-button {
-    -fx-background-color :transparent;
-    -fx-background-radius : 0.0em;
-    -fx-padding :0.0 0.0 0.0 0.0;
+    -fx-background-color: transparent;
+    -fx-background-radius: 0.0em;
+    -fx-padding: 0.0 0.0 0.0 0.0;
 
 }
 
 #queueScroll .scroll-bar:vertical .increment-button ,
 #queueScroll .scroll-bar:vertical .decrement-button {
-    -fx-background-color : transparent;
-    -fx-background-radius : 0.0em;
+    -fx-background-color: transparent;
+    -fx-background-radius: 0.0em;
     -fx-padding :0.0 0.0 0.0 0.0;
 
 }
@@ -71,6 +71,10 @@
     -fx-background-radius : 2.0em;
 }
 
+#queueScroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
 #queueScroll:focused { /*removes the annoying outline when clicking on the scrollpane*/
     -fx-background-insets: 0;
 }
@@ -84,7 +88,7 @@
 }
 
 #menuContent {
-    -fx-background-color: rgba(10,10,10,0.8);
+    -fx-background-color: rgba(0,0,0,0.8);
 }
 
 
@@ -100,28 +104,21 @@
     -fx-font-size: 16;
 }
 
-#menuBar {
-    -fx-background-color: transparent;
-}
 
 
-.menuActionButton, #clearQueueButton{
+.menuActionButton{
     -fx-background-color: #ff5447;
 }
 
 #clearQueueButton {
-    -fx-text-fill: white;
-    -fx-background-radius: 50;
+    -fx-text-fill: rgb(150,150,150);
+    -fx-background-radius: 5;
+    -fx-border-radius: 2;
+    -fx-border-color: rgb(150,150,150);
+    -fx-border-width: 1;
     -fx-font-family: "Roboto Medium";
 }
 
-.menuButton{
-    -fx-background-color: #303030;
-}
-
-.menuButton:hover {
-    -fx-background-color: #404040;
-}
 
 #menuPane {
     -fx-background-color: transparent;
@@ -166,11 +163,12 @@
     -fx-background-color: #cfcfcf;
 }
 
-.optionsButton, .removeButton {
+.optionsButton, .removeButton, #shuffleToggle, #addButton {
     -fx-background-radius: 100;
     -fx-padding: 0;
     -fx-background-color: #656565;
 }
+
 
 .iconBackground {
     -fx-background-color: black;
@@ -180,23 +178,21 @@
 #historyButton {
     -fx-background-radius: 100;
     -fx-padding: 0;
-    -fx-background-color: #505050;
-    -fx-border-radius: 100;
-    -fx-border-width: 1;
-    -fx-border-color: #BFBFBF;
+    -fx-background-color: transparent;
 }
 
 #historyIcon {
-    -fx-background-color: #EFEFEF;
+    -fx-background-color: rgb(100,100,100);
+}
+
+#closeIcon {
+    -fx-background-color: rgb(200, 200, 200);
 }
 
 .menuIcon, #shuffleIcon {
     -fx-background-color: white;
 }
 
-.menuBarIcon {
-    -fx-background-color: red;
-}
 
 #playText {
     -fx-font-size: 24;
@@ -208,16 +204,8 @@
     -fx-background-color: white;
 }
 
-
-#shuffleToggle {
-    -mfx-unselected-color: rgb(40, 40, 40);
-    -mfx-unselected-border-color: white;
-	-mfx-selected-color: #ff5447;
-	-mfx-selected-border-color: transparent;
+#dragPane {
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: #909090;
+    -fx-border-style: none solid none none;
 }
-
-#shuffleToggle:hover  {
-    -mfx-unselected-color: rgb(60,60,60);
-    -mfx-selected-color: #ff3030;
-}
-

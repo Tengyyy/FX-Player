@@ -31,6 +31,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
@@ -48,14 +49,9 @@ import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
 
-    @FXML
-    JFXButton addVideoButton, appSettingsButton;
 
     @FXML
-    Button closeButton;
-
-    @FXML
-    StackPane menu, notificationPane, addVideoButtonPane, appSettingsButtonPane, closeButtonPane, dragPane;
+    StackPane menu, notificationPane, dragPane;
 
     @FXML
     Text notificationText;
@@ -63,11 +59,9 @@ public class MenuController implements Initializable {
     @FXML
     ScrollPane queueScroll;
 
-    @FXML
-    Region addVideoIcon, appSettingsIcon, closeIcon;
 
 
-    SVGPath addVideoIconSVG, appSettingsIconSVG, closeIconSVG;
+    SVGPath addVideoIconSVG, closeIconSVG;
 
 
     VBox menuContent = new VBox();
@@ -87,10 +81,12 @@ public class MenuController implements Initializable {
 
     boolean menuInTransition = false;
 
+    boolean historyButtonEnabled = false;
+    boolean historyButtonHover = false;
 
     final double MIN_WIDTH = 350;
 
-    ControlTooltip addMediaTooltip, clearQueueTooltip, closeMenuTooltip, appSettingsTooltip, historyTooltip, shuffleTooltip;
+    ControlTooltip addMediaTooltip, clearQueueTooltip, historyTooltip, shuffleTooltip;
 
     DragResizer dragResizer;
 
@@ -114,13 +110,28 @@ public class MenuController implements Initializable {
     JFXButton historyButton = new JFXButton();
     JFXButton clearQueueButton = new JFXButton();
 
-    MFXCircleToggleNode shuffleToggle = new MFXCircleToggleNode();
+
+    StackPane shuffleTogglePane = new StackPane();
+    JFXButton shuffleToggle = new JFXButton();
+    Region shuffleIcon = new Region();
+    Circle shuffleDot = new Circle();
+
+
+    StackPane addButtonPane = new StackPane();
+    JFXButton addButton = new JFXButton();
+    Region addIcon = new Region();
 
     Region historyIcon = new Region();
-    Region shuffleIcon = new Region();
 
     SVGPath historyIconPath = new SVGPath();
     SVGPath shufflePath = new SVGPath();
+
+
+    StackPane closeButtonBar = new StackPane();
+    StackPane closeButtonPane = new StackPane();
+
+    Button closeButton = new Button();
+    Region closeIcon = new Region();
 
     // the lower bound of the bottom drag detection area
     DoubleProperty lowerBottomBound = new SimpleDoubleProperty();
@@ -176,16 +187,21 @@ public class MenuController implements Initializable {
        historyButton.setMinSize(40, 40);
        historyButton.setPrefSize(40, 40);
        historyButton.setMaxSize(40, 40);
-       historyButton.setRipplerFill(Color.WHITE);
+       historyButton.setRipplerFill(null);
        historyButton.setId("historyButton");
        historyButton.setCursor(Cursor.HAND);
-       historyButton.setButtonType(JFXButton.ButtonType.RAISED);
-       historyButton.setText(null);
+       historyButton.setButtonType(JFXButton.ButtonType.FLAT);
 
+        historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+            historyButtonHover = true;
+            AnimationsClass.AnimateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
+        });
 
-        historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> historyButton.setStyle("-fx-background-color: #606060"));
+        historyButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+            historyButtonHover = false;
+            AnimationsClass.AnimateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+        });
 
-        historyButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> historyButton.setStyle("-fx-background-color: #505050"));
 
         historyButton.setOnAction((e) -> {
             if(historyBox.open) historyBox.close();
@@ -249,33 +265,77 @@ public class MenuController implements Initializable {
         shuffleIcon.setMaxSize(20, 20);
         shuffleIcon.setId("shuffleIcon");
         shuffleIcon.setShape(shufflePath);
+        shuffleIcon.setTranslateY(-2);
+        shuffleIcon.setMouseTransparent(true);
 
-        shuffleToggle.setSize(20);
-        shuffleToggle.setGap(0);
-        shuffleToggle.setGraphic(shuffleIcon);
-        shuffleToggle.setTranslateY(6);
+
         shuffleToggle.setCursor(Cursor.HAND);
         shuffleToggle.setId("shuffleToggle");
-        shuffleToggle.setPadding(Insets.EMPTY);
-        shuffleToggle.setGraphicTextGap(0);
-        shuffleToggle.setFont(new Font(0));
-        HBox.setMargin(shuffleToggle, new Insets(0, 20, 0, 0));
+        shuffleToggle.setPrefSize(42, 42);
+        shuffleToggle.setMaxSize(42, 42);
+        shuffleToggle.setRipplerFill(Color.rgb(255,255,255,0.6));
+        shuffleToggle.setOpacity(0);
 
-        shuffleToggle.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
-            settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(newValue);
-        });
+        shuffleToggle.setOnAction(e -> settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!settingsController.playbackOptionsController.shuffleTab.toggle.isSelected()));
+
+        shuffleToggle.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, shuffleToggle, 0, 0.5, false, 1, true));
+
+        shuffleToggle.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, shuffleToggle, 0.5, 0, false, 1, true));
+
+        shuffleDot.setFill(Color.RED);
+        shuffleDot.setRadius(4);
+        shuffleDot.setTranslateY(-1);
+        shuffleDot.setMouseTransparent(true);
+        shuffleDot.setOpacity(0.1);
+        StackPane.setAlignment(shuffleDot, Pos.BOTTOM_CENTER);
+
+
+        HBox.setMargin(shuffleTogglePane, new Insets(0, 10, 0, 0));
+        shuffleTogglePane.setPrefSize(42, 42);
+        shuffleTogglePane.setMaxSize(42, 42);
+        shuffleTogglePane.getChildren().addAll(shuffleToggle, shuffleIcon, shuffleDot);
+
+
+        addVideoIconSVG = new SVGPath();
+        addVideoIconSVG.setContent(App.svgMap.get(SVG.PLUS));
+
+        addIcon.setShape(addVideoIconSVG);
+        addIcon.setPrefSize(20, 20);
+        addIcon.setMaxSize(20,20);
+        addIcon.getStyleClass().add("menuIcon");
+        addIcon.setMouseTransparent(true);
+
+
+        addButton.setCursor(Cursor.HAND);
+        addButton.setId("addButton");
+        addButton.setPrefSize(42, 42);
+        addButton.setMaxSize(42, 42);
+        addButton.setRipplerFill(Color.rgb(255,255,255,0.6));
+        addButton.setOpacity(0);
+
+        addButton.setOnAction(e -> openVideoChooser());
+
+        addButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, addButton, 0, 0.5, false, 1, true));
+
+        addButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, addButton, 0.5, 0, false, 1, true));
+
+        HBox.setMargin(addButtonPane, new Insets(0, 10, 0, 0));
+        addButtonPane.setPrefSize(42, 42);
+        addButtonPane.setMaxSize(42, 42);
+        addButtonPane.getChildren().addAll(addButton, addIcon);
+
 
         clearQueueButton.setId("clearQueueButton");
         clearQueueButton.setRipplerFill(Color.WHITE);
         clearQueueButton.setCursor(Cursor.HAND);
-        clearQueueButton.setText("Clear queue");
+        clearQueueButton.setText("CLEAR");
         clearQueueButton.setDisable(true);
 
         clearQueueButton.setOnAction((e) -> clearQueue());
 
         queueHeader = new HBox();
         queueHeader.setAlignment(Pos.CENTER_LEFT);
-        queueHeader.getChildren().addAll(queueText, shuffleToggle, clearQueueButton);
+        queueHeader.getChildren().addAll(queueText, shuffleTogglePane, addButtonPane, clearQueueButton);
         queueHeader.setMinHeight(60);
         queueHeader.setPrefHeight(60);
         queueHeader.setMaxHeight(60);
@@ -284,7 +344,7 @@ public class MenuController implements Initializable {
         queueBox.setAlignment(Pos.TOP_CENTER);
 
 
-        menuContent.getChildren().addAll(historyHeader, historyWrapper, currentHeader, activeBox, queueHeader, queueBox);
+        menuContent.getChildren().addAll(closeButtonBar, historyHeader, historyWrapper, currentHeader, activeBox, queueHeader, queueBox);
         queueScroll.setContent(menuContent);
 
         menu.setBackground(Background.EMPTY);
@@ -494,27 +554,46 @@ public class MenuController implements Initializable {
 
         lowerBottomBound.bind(menu.heightProperty().subtract(60));
 
-        addVideoIconSVG = new SVGPath();
-        addVideoIconSVG.setContent(App.svgMap.get(SVG.PLUS));
-        addVideoIcon.setShape(addVideoIconSVG);
-
-        appSettingsIconSVG = new SVGPath();
-        appSettingsIconSVG.setContent(App.svgMap.get(SVG.SETTINGS));
-        appSettingsIcon.setShape(appSettingsIconSVG);
 
         closeIconSVG = new SVGPath();
         closeIconSVG.setContent(App.svgMap.get(SVG.CLOSE));
         closeIcon.setShape(closeIconSVG);
+        closeIcon.setPrefSize(20, 20);
+        closeIcon.setMaxSize(20, 20);
+        closeIcon.setId("closeIcon");
+        closeIcon.setMouseTransparent(true);
+
+        closeButton.setPrefSize(40, 40);
+        closeButton.setMaxSize(40, 40);
+        closeButton.setCursor(Cursor.HAND);
+        closeButton.setBackground(Background.EMPTY);
+
+        closeButton.setOnAction(e -> closeMenu());
+
+        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+            AnimationsClass.AnimateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+        });
+
+        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+            historyButtonHover = false;
+            AnimationsClass.AnimateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+        });
+
+        closeButtonPane.setPrefSize(50, 50);
+        closeButtonPane.setMaxSize(50, 50);
+        closeButtonPane.getChildren().addAll(closeButton, closeIcon);
+        StackPane.setAlignment(closeButtonPane, Pos.CENTER_RIGHT);
+
+        closeButtonBar.setPrefHeight(60);
+        closeButtonBar.setMinHeight(60);
+        closeButtonBar.getChildren().add(closeButtonPane);
 
 
         dragResizer = new DragResizer(this);
 
         Platform.runLater(() -> {
-            closeMenuTooltip = new ControlTooltip("Close menu (q)", closeButton, new VBox(), 1000, true);
-            addMediaTooltip = new ControlTooltip("Add media", addVideoButton, new VBox(), 1000, true);
+            addMediaTooltip = new ControlTooltip("Add media", addButton, new VBox(), 1000, false);
             clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, new VBox(), 1000, false);
-            appSettingsTooltip = new ControlTooltip("App settings", appSettingsButton, new VBox(), 1000, true);
-            historyTooltip = new ControlTooltip("Open history", historyButton, new VBox(), 1000, false);
             shuffleTooltip = new ControlTooltip("Shuffle is off", shuffleToggle, new VBox(), 1000, false);
         });
 }
@@ -566,7 +645,6 @@ public class MenuController implements Initializable {
         menuOpen = false;
         notificationPane.setOpacity(0);
         menu.setMouseTransparent(true);
-        if (closeMenuTooltip.countdown.getStatus() == Animation.Status.RUNNING) closeMenuTooltip.countdown.stop();
         AnimationsClass.closeMenu(this, mainController);
 
         captionsController.captionsBox.setMouseTransparent(false);
@@ -743,6 +821,26 @@ public class MenuController implements Initializable {
         this.settingsController = settingsController;
         this.mediaInterface = mediaInterface;
         this.captionsController = captionsController;
+    }
+
+    public void enableHistoryButton(){
+        historyButtonEnabled = true;
+        historyTooltip = new ControlTooltip("Open history", historyButton, new VBox(), 1000, false);
+
+        if(historyButtonHover) historyIcon.setStyle("-fx-background-color: rgb(255,255,255)");
+        else historyIcon.setStyle("-fx-background-color: rgb(200,200,200)");
+
+        historyButton.setRipplerFill(Color.WHITE);
+
+        historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+            historyButtonHover = true;
+            AnimationsClass.AnimateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+        });
+
+        historyButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+            historyButtonHover = false;
+            AnimationsClass.AnimateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+        });
     }
 }
 

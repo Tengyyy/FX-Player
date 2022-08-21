@@ -102,6 +102,8 @@ public class PlaybackOptionsController {
 
                 settingsController.menuController.shuffleTooltip.updateText("Shuffle is off");
 
+                settingsController.menuController.shuffleDot.setOpacity(0.1);
+
             } else { // ON
                 shuffleOn = true;
 
@@ -115,9 +117,10 @@ public class PlaybackOptionsController {
                 if(!settingsController.menuController.animationsInProgress.isEmpty()) return;
 
                 if(!settingsController.menuController.queue.isEmpty()) settingsController.menuController.queueBox.shuffle();
+
+                settingsController.menuController.shuffleDot.setOpacity(1);
             }
 
-            settingsController.menuController.shuffleToggle.setSelected(newValue);
         });
 
         loopTab.toggle.selectedProperty().addListener((observable, oldValue, newValue) -> {

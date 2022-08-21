@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 
 
@@ -151,6 +152,10 @@ public class MainController implements Initializable {
             if(!menuController.menuOpen){
                 videoImageViewWrapper.prefWidthProperty().bind(videoImageViewWrapper.getScene().widthProperty());
             }
+
+            videoImageViewWrapper.getScene().setOnMouseExited(e -> {
+                controlBarController.mouseEventTracker.hide();
+            });
         });
 
 
@@ -430,7 +435,10 @@ public class MainController implements Initializable {
         if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 
         controlBarController.controlBarWrapper.setMouseTransparent(true);
-        AnimationsClass.hideControls(controlBarController, captionsController, this);
+
+        if(controlBarController.controlBarOpen) AnimationsClass.hideControls(controlBarController, captionsController, this);
+
+        videoImageViewWrapper.getScene().setCursor(Cursor.DEFAULT);
 
         AnimationsClass.openMenu(menuController, this);
 

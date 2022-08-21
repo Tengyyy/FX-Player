@@ -94,10 +94,7 @@
             <Insets bottom="30.0" left="50.0" right="50.0" />
          </StackPane.margin>
       </StackPane>
-      <StackPane fx:id="dragPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="5.0" style="-fx-background-color: #313131;" StackPane.alignment="CENTER_RIGHT">
-         <children>
-            <Region fx:id="dragIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="13.0" prefWidth="3.0" style="-fx-background-color: white;" StackPane.alignment="CENTER" />
-         </children>
+      <StackPane id="dragPane" fx:id="dragPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="3.0" StackPane.alignment="CENTER_RIGHT">
          <cursor>
             <Cursor fx:constant="H_RESIZE" />
          </cursor>

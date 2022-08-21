@@ -29,25 +29,25 @@
 
 #queueScroll .scroll-bar:horizontal .track,
 #queueScroll .scroll-bar:vertical .track{
-    -fx-background-color : #191919;
-    -fx-border-color: #191919;
-    -fx-background-radius : 0.0em;
-    -fx-border-radius :0.0em;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0.0em;
+    -fx-border-radius: 0.0em;
 }
 
 
 #queueScroll .scroll-bar:horizontal .increment-button ,
 .#queueScroll .scroll-bar:horizontal .decrement-button {
-    -fx-background-color :transparent;
-    -fx-background-radius : 0.0em;
-    -fx-padding :0.0 0.0 0.0 0.0;
+    -fx-background-color: transparent;
+    -fx-background-radius: 0.0em;
+    -fx-padding: 0.0 0.0 0.0 0.0;
 
 }
 
 #queueScroll .scroll-bar:vertical .increment-button ,
 #queueScroll .scroll-bar:vertical .decrement-button {
-    -fx-background-color : transparent;
-    -fx-background-radius : 0.0em;
+    -fx-background-color: transparent;
+    -fx-background-radius: 0.0em;
     -fx-padding :0.0 0.0 0.0 0.0;
 
 }
@@ -69,6 +69,10 @@
     -fx-background-color: derive(black, 90%);
     -fx-background-insets : 2.0, 0.0, 0.0;
     -fx-background-radius : 2.0em;
+}
+
+#queueScroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
 }
 
 #queueScroll:focused { /*removes the annoying outline when clicking on the scrollpane*/
@@ -219,5 +223,11 @@
 #shuffleToggle:hover  {
     -mfx-unselected-color: rgb(60,60,60);
     -mfx-selected-color: #ff3030;
+}
+
+#dragPane {
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: #909090;
+    -fx-border-style: none solid none none;
 }
 

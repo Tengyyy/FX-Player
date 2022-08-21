@@ -64,10 +64,10 @@ public class MenuController implements Initializable {
     ScrollPane queueScroll;
 
     @FXML
-    Region addVideoIcon, appSettingsIcon, closeIcon, dragIcon;
+    Region addVideoIcon, appSettingsIcon, closeIcon;
 
 
-    SVGPath addVideoIconSVG, appSettingsIconSVG, closeIconSVG, dragSVG;
+    SVGPath addVideoIconSVG, appSettingsIconSVG, closeIconSVG;
 
 
     VBox menuContent = new VBox();
@@ -506,9 +506,6 @@ public class MenuController implements Initializable {
         closeIconSVG.setContent(App.svgMap.get(SVG.CLOSE));
         closeIcon.setShape(closeIconSVG);
 
-        dragSVG = new SVGPath();
-        dragSVG.setContent(App.svgMap.get(SVG.OPTIONS));
-        dragIcon.setShape(dragSVG);
 
         dragResizer = new DragResizer(this);
 

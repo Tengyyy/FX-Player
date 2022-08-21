@@ -69,6 +69,8 @@ public class AnimationsClass {
 
     public static void displayControls(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
 
+        controlBarController.controlBarOpen = true;
+
         TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox);
         captionsTransition.setCycleCount(1);
         captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
@@ -83,7 +85,7 @@ public class AnimationsClass {
             captionsTransition.setToY(captionsController.captionsBox.getTranslateY());
         }
         FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarWrapper);
-        controlBarFade.setFromValue(0);
+        controlBarFade.setFromValue(controlBarController.controlBarWrapper.getOpacity());
         controlBarFade.setToValue(1);
         controlBarFade.setCycleCount(1);
 
@@ -104,7 +106,7 @@ public class AnimationsClass {
 
         ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, topShadowTransition, videoTitleTransition, menuButtonTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
-        parallelTransition.setOnFinished((e) -> controlBarController.controlBarOpen = true);
+        //parallelTransition.setOnFinished((e) -> controlBarController.controlBarOpen = true);
 
         parallelTransition.play();
 
@@ -140,7 +142,7 @@ public class AnimationsClass {
         }
 
         FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarWrapper);
-        controlBarFade.setFromValue(1);
+        controlBarFade.setFromValue(controlBarController.controlBarWrapper.getOpacity());
         controlBarFade.setToValue(0);
         controlBarFade.setCycleCount(1);
 

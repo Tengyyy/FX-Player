@@ -3,6 +3,8 @@ package hans;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -205,6 +207,7 @@ public class App extends Application {
                     mainController.seekingWithKeys = false;
                 }
             });
+
 
 
             primaryStage.setScene(scene);

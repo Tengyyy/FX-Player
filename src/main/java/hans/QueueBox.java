@@ -48,9 +48,9 @@ public class QueueBox extends VBox {
         VBox.setVgrow(this, Priority.ALWAYS);
 
 
-        this.setOnDragEntered(e -> handleDragEntered(e));
-        this.setOnDragOver(e -> handleDragOver(e));
-        this.setOnDragDropped(e -> handleDragDropped(e));
+        this.setOnDragEntered(this::handleDragEntered);
+        this.setOnDragOver(this::handleDragOver);
+        this.setOnDragDropped(this::handleDragDropped);
         this.setOnDragExited(e -> handleDragExited());
 
         this.setOnMouseDragOver((e) -> {
@@ -807,6 +807,9 @@ public class QueueBox extends VBox {
             draggedNode.setViewOrder(1);
             draggedNode.setStyle("-fx-background-color: transparent;");
 
+            draggedNode.indexLabel.setVisible(true);
+            draggedNode.playIcon.setVisible(false);
+
             if(menuController.queue.indexOf(draggedNode) != draggedNode.newPosition){
                 menuController.queue.remove(draggedNode);
                 getChildren().remove(draggedNode);
@@ -825,7 +828,6 @@ public class QueueBox extends VBox {
 
     public void initialize(QueueItem queueItem){
         Platform.runLater(() -> {
-            queueItem.playButtonTooltip = new ControlTooltip("Play video", queueItem.playButton, new VBox(), 1000, false);
             queueItem.removeButtonTooltip = new ControlTooltip("Remove video", queueItem.removeButton, new VBox(), 1000, false);
             queueItem.optionsButtonTooltip = new ControlTooltip("Options", queueItem.optionsButton, new VBox(), 1000, false);
             queueItem.optionsPopUp = new MenuItemOptionsPopUp(queueItem);

@@ -408,11 +408,6 @@ public class MediaInterface {
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.end();
         if(menuController.activeItem != null)menuController.activeItem.updateIconToPlay();
 
-        if (menuController.historyBox.index != -1) {
-            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
-            historyItem.updateIconToPlay();
-        }
-
         playing.set(false);
 
 
@@ -428,10 +423,7 @@ public class MediaInterface {
         embeddedMediaPlayer.controls().play();
 
         Platform.runLater(() -> {
-            if (menuController.historyBox.index != -1) {
-                HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
-                historyItem.updateIconToPause();
-            }
+
 
             if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.play();
 
@@ -454,10 +446,6 @@ public class MediaInterface {
         }
 
         Platform.runLater(() ->{
-            if (menuController.historyBox.index != -1) {
-                HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
-                historyItem.updateIconToPlay();
-            }
 
             if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.pause();
 

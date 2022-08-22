@@ -134,11 +134,6 @@
 }
 
 
-.playButton {
-    -fx-padding: 0;
-    -fx-background-radius: 100;
-    -fx-background-color: transparent;
-}
 
 .videoTitle {
     -fx-font-size: 15;
@@ -185,9 +180,10 @@
     -fx-background-color: rgb(100,100,100);
 }
 
-#closeIcon {
+#closeIcon, #playIcon {
     -fx-background-color: rgb(200, 200, 200);
 }
+
 
 .menuIcon, #shuffleIcon {
     -fx-background-color: white;
@@ -195,9 +191,9 @@
 
 
 #playText {
-    -fx-font-size: 24;
+    -fx-font-size: 20;
     -fx-font-family: "Roboto";
-    -fx-fill: white;
+    -fx-text-fill: rgb(200,200,200);
 }
 
 .column {
@@ -208,4 +204,18 @@
     -fx-border-width: 0 1 0 0;
     -fx-border-color: #909090;
     -fx-border-style: none solid none none;
+}
+
+
+#historyImageBorder {
+    -fx-border-style: solid;
+    -fx-border-insets: 0;
+    -fx-border-color: red;
+    -fx-border-width: 4;
+}
+
+.playButton {
+    -fx-padding: 0;
+    -fx-background-radius: 100;
+    -fx-background-color: transparent;
 }

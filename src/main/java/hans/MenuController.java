@@ -84,7 +84,7 @@ public class MenuController implements Initializable {
     boolean historyButtonEnabled = false;
     boolean historyButtonHover = false;
 
-    final double MIN_WIDTH = 350;
+    final double MIN_WIDTH = 450;
 
     ControlTooltip addMediaTooltip, clearQueueTooltip, historyTooltip, shuffleTooltip;
 
@@ -229,11 +229,11 @@ public class MenuController implements Initializable {
         historyHeader = new HBox();
         historyHeader.getChildren().addAll(historyText, historySizeText, historyButtonWrapper);
         historyHeader.setAlignment(Pos.CENTER_LEFT);
-       historyHeader.setMinHeight(58);
-       historyHeader.setPrefHeight(58);
-       historyHeader.setMaxHeight(58);
-       historyHeader.getStyleClass().add("menuBoxHeader");
-       historyHeader.setId("historyHeader");
+        historyHeader.setMinHeight(58);
+        historyHeader.setPrefHeight(58);
+        historyHeader.setMaxHeight(58);
+        historyHeader.getStyleClass().add("menuBoxHeader");
+        historyHeader.setId("historyHeader");
 
 
         historyWrapper.getChildren().add(historyBox);
@@ -353,8 +353,7 @@ public class MenuController implements Initializable {
 
         queueScroll.setBackground(Background.EMPTY);
 
-        menu.setMinWidth(0);
-        menu.setMaxWidth(MIN_WIDTH);
+        menu.setMaxWidth(500);
 
         Platform.runLater(() -> menu.setTranslateX(-menu.getWidth()));
 
@@ -484,6 +483,8 @@ public class MenuController implements Initializable {
                     queueBox.draggedNode.setMouseTransparent(false);
                     queueBox.draggedNode.setViewOrder(1);
                     queueBox.draggedNode.setStyle("-fx-background-color: transparent;");
+                    queueBox.draggedNode.playIcon.setVisible(false);
+                    queueBox.draggedNode.indexLabel.setVisible(true);
 
                     if(queue.indexOf(queueBox.draggedNode) != queueBox.draggedNode.newPosition){
                         queue.remove(queueBox.draggedNode);
@@ -526,6 +527,9 @@ public class MenuController implements Initializable {
                     queueBox.draggedNode.setMouseTransparent(false);
                     queueBox.draggedNode.setViewOrder(1);
                     queueBox.draggedNode.setStyle("-fx-background-color: transparent;");
+
+                    queueBox.draggedNode.indexLabel.setVisible(true);
+                    queueBox.draggedNode.playIcon.setVisible(false);
 
                     if(queue.indexOf(queueBox.draggedNode) != queueBox.draggedNode.newPosition){
                         queue.remove(queueBox.draggedNode);

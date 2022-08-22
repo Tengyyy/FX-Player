@@ -31,15 +31,14 @@ public class HistoryItem extends GridPane implements MenuObject{
 
 
     // layout constraints for the video item
-    ColumnConstraints column1 = new ColumnConstraints(70,70,70);
-    ColumnConstraints column2 = new ColumnConstraints(0,100,Double.MAX_VALUE);
-    ColumnConstraints column3 = new ColumnConstraints(35,35,35);
+    ColumnConstraints column1 = new ColumnConstraints(45, 45, 45);
+    ColumnConstraints column2 = new ColumnConstraints(70,70,70);
+    ColumnConstraints column3 = new ColumnConstraints(0,100,Double.MAX_VALUE);
     ColumnConstraints column4 = new ColumnConstraints(35,35,35);
 
-    RowConstraints row1 = new RowConstraints(70, 70, 70);
+    RowConstraints row1 = new RowConstraints(90, 90, 90);
 
 
-    Button playButton = new Button();
     Label videoTitle = new Label();
 
     HBox subTextWrapper = new HBox();
@@ -57,26 +56,29 @@ public class HistoryItem extends GridPane implements MenuObject{
 
     Region optionsIcon, playIcon, captionsIcon;
 
+    StackPane playIconWrapper = new StackPane();
+
     ImageView coverImage = new ImageView();
 
 
-    StackPane playButtonWrapper = new StackPane();
+    StackPane imageWrapper = new StackPane();
     StackPane optionsButtonWrapper = new StackPane();
+    Region imageBorder = new Region();
 
-    ControlTooltip playButtonTooltip, optionsButtonTooltip;
+    ControlTooltip optionsButtonTooltip;
 
     boolean mouseHover = false;
     BooleanProperty isActive = new SimpleBooleanProperty(false);
 
 
-    SVGPath playSVG, pauseSVG, optionsSVG, captionsPath;
+    SVGPath playSVG, optionsSVG, captionsPath;
 
     // the options popup for this queue item
     MenuItemOptionsPopUp optionsPopUp;
 
     MediaInterface mediaInterface;
 
-    static double height = 72;
+    static double height = 90;
 
     HistoryBox historyBox;
 
@@ -95,15 +97,17 @@ public class HistoryItem extends GridPane implements MenuObject{
         });
 
 
-        column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) to take up all available space
+        column3.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4);
         this.getRowConstraints().addAll(row1);
 
-        GridPane.setValignment(playButtonWrapper, VPos.CENTER);
+        GridPane.setValignment(playIconWrapper, VPos.CENTER);
+        GridPane.setValignment(imageWrapper, VPos.CENTER);
         GridPane.setValignment(textWrapper, VPos.CENTER);
         GridPane.setValignment(optionsButtonWrapper, VPos.CENTER);
 
-        GridPane.setHalignment(playButtonWrapper, HPos.CENTER);
+        GridPane.setHalignment(playIconWrapper, HPos.CENTER);
+        GridPane.setHalignment(imageWrapper, HPos.CENTER);
         GridPane.setHalignment(textWrapper, HPos.LEFT);
         GridPane.setHalignment(optionsButtonWrapper, HPos.CENTER);
 
@@ -111,23 +115,19 @@ public class HistoryItem extends GridPane implements MenuObject{
 
         this.setOpacity(0);
 
-        coverImage.setFitHeight(50);
-        coverImage.setFitWidth(50);
+        this.setCursor(Cursor.HAND);
+
+        coverImage.setFitHeight(70);
+        coverImage.setFitWidth(70);
         coverImage.setSmooth(true);
         coverImage.setImage(mediaItem.getCover());
         coverImage.setPreserveRatio(true);
 
-        playButton.setPrefWidth(40);
-        playButton.setPrefHeight(40);
-        playButton.getStyleClass().add("playButton");
-        playButton.setCursor(Cursor.HAND);
 
 
         playSVG = new SVGPath();
-        playSVG.setContent(App.svgMap.get(SVG.PLAY_CIRCLE));
+        playSVG.setContent(App.svgMap.get(SVG.PLAY));
 
-        pauseSVG = new SVGPath();
-        pauseSVG.setContent(App.svgMap.get(SVG.PAUSE_CIRCLE));
 
 
         optionsSVG = new SVGPath();
@@ -135,38 +135,39 @@ public class HistoryItem extends GridPane implements MenuObject{
 
         playIcon = new Region();
         playIcon.setShape(playSVG);
-        playIcon.setMinSize(40, 40);
-        playIcon.setPrefSize(40, 40);
-        playIcon.setMaxSize(40, 40);
+        playIcon.setMinSize(13, 15);
+        playIcon.setPrefSize(13, 15);
+        playIcon.setMaxSize(13, 15);
         playIcon.setMouseTransparent(true);
-        playIcon.getStyleClass().add("menuIcon");
+        playIcon.setId("playIcon");
         playIcon.setVisible(false);
-        // TODO: create semi-transparent dark background for the playicon
+        playIcon.setTranslateX(3);
 
-        StackPane iconBackground = new StackPane();
+        playIconWrapper.getChildren().add(playIcon);
+
 
         if(mediaItem.getCover() != null) {
             double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
             double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
             double realHeight = Math.min(coverImage.getFitHeight(), coverImage.getFitWidth() / aspectRatio);
 
-            iconBackground.setMinSize(realWidth, realHeight);
-            iconBackground.setPrefSize(realWidth, realHeight);
-            iconBackground.setMaxSize(realWidth, realHeight);
+            //TODO: logic to create image avg color background (should be async)
         }
         else {
-            iconBackground.setMinSize(0, 0);
-            iconBackground.setPrefSize(0, 0);
-            iconBackground.setMaxSize(0, 0);
+            //TODO: logic to grab a frame from the video (async)
         }
 
-        iconBackground.getStyleClass().add("iconBackground");
-        iconBackground.setMouseTransparent(true);
 
-        iconBackground.visibleProperty().bind(playIcon.visibleProperty());
+        imageWrapper.setPrefSize(70, 70); // has to be changed
+        imageWrapper.setMaxSize(70, 70);
+        imageWrapper.getChildren().addAll(coverImage, imageBorder);
 
-
-        playButtonWrapper.getChildren().addAll(coverImage,iconBackground, playButton, playIcon);
+        imageBorder.setPrefSize(70, 70);
+        imageBorder.setMaxSize(70, 70);
+        imageBorder.setBackground(Background.EMPTY);
+        imageBorder.setId("historyImageBorder");
+        imageBorder.setMouseTransparent(true);
+        imageBorder.setVisible(false);
 
 
         videoTitle.getStyleClass().add("videoTitle");
@@ -218,9 +219,9 @@ public class HistoryItem extends GridPane implements MenuObject{
         if(mediaItem.getSubtitles() != null) subTextWrapper.getChildren().add(0, captionsPane);
 
         textWrapper.setAlignment(Pos.CENTER_LEFT);
-        //videoTitleWrapper.setClip(clip);
         textWrapper.setPrefHeight(70);
         textWrapper.getChildren().addAll(videoTitle,subTextWrapper);
+        GridPane.setMargin(textWrapper, new Insets(0, 0, 0, 10));
 
         optionsButton.setPrefWidth(30);
         optionsButton.setPrefHeight(30);
@@ -238,7 +239,11 @@ public class HistoryItem extends GridPane implements MenuObject{
 
         this.setOnMouseClicked(e -> {
             if(optionsPopUp.isShowing()) optionsPopUp.hide();
+
+            if(!menuController.animationsInProgress.isEmpty()) return;
+            if(!this.isActive.get()) play();
         });
+
         this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
 
         optionsIcon = new Region();
@@ -253,8 +258,9 @@ public class HistoryItem extends GridPane implements MenuObject{
 
         this.setPadding(new Insets(0, 10, 0, 0));
 
-        this.add(playButtonWrapper, 0, 0);
-        this.add(textWrapper, 1, 0);
+        this.add(playIconWrapper, 0, 0);
+        this.add(imageWrapper, 1, 0);
+        this.add(textWrapper, 2, 0);
         this.add(optionsButtonWrapper, 3, 0);
 
         this.getStyleClass().add("historyItem");
@@ -276,34 +282,10 @@ public class HistoryItem extends GridPane implements MenuObject{
             // show bouncing columns and start animation
             if(!isActive.get()) playIcon.setVisible(false);
 
-            this.setStyle("-fx-background-color: transparent;");
+            if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+            else this.setStyle("-fx-background-color: transparent;");
         });
 
-
-        playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-            // AnimationsClass.queuePlayHoverOn(playButtonWrapper);
-
-            AnimationsClass.parallelAnimation(true,AnimationsClass.scaleAnimation(100, playIcon, 1, 1.1, 1, 1.1, false, 1, false),AnimationsClass.scaleAnimation(100, playButton, 1, 1.1, 1, 1.1, false, 1, false));
-
-        });
-
-        playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-            //AnimationsClass.queuePlayHoverOff(playButtonWrapper);
-
-            AnimationsClass.parallelAnimation(true,AnimationsClass.scaleAnimation(100, playIcon, 1.1, 1, 1.1, 1, false, 1, false),AnimationsClass.scaleAnimation(100, playButton, 1.1, 1, 1.1, 1, false, 1, false));
-        });
-
-        playButton.setOnAction((e) -> {
-            if(this.isActive.getValue()){
-                if(mediaInterface.atEnd) mediaInterface.replay();
-                else if (mediaInterface.playing.get()) mediaInterface.pause();
-                else mediaInterface.play();
-            }
-            else {
-                if(!menuController.animationsInProgress.isEmpty()) return;
-                play();
-            }
-        });
 
         optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
             AnimationsClass.fadeAnimation(200, optionsButton, 0, 1, false, 1, true);
@@ -320,21 +302,39 @@ public class HistoryItem extends GridPane implements MenuObject{
         if(historyBox.index != -1){
             HistoryItem historyItem = menuController.history.get(historyBox.index);
             historyItem.isActive.set(false);
-            historyItem.videoTitle.setStyle("-fx-text-fill: white;");
-            historyItem.playIcon.setShape(playSVG);
+            historyItem.playIcon.setStyle("-fx-background-color: rgb(200,200,200);");
+            if(!historyItem.mouseHover) {
+                historyItem.playIcon.setVisible(false);
+                historyItem.setStyle("-fx-background-color: transparent;");
+                historyItem.imageBorder.setVisible(false);
+            }
+
+
+            historyItem.setCursor(Cursor.HAND);
 
         }
 
         this.isActive.set(true);
-        this.videoTitle.setStyle("-fx-text-fill: red");
+        this.playIcon.setStyle("-fx-background-color: red");
+        this.playIcon.setVisible(true);
+        this.setCursor(Cursor.DEFAULT);
+
+        if(this.coverImage.getImage() != null) this.imageBorder.setVisible(true);
+
+        if(!mouseHover) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
 
         historyBox.index = historyBox.getChildren().indexOf(this);
     }
 
     public void setInactive(){
         this.isActive.set(false);
-        this.videoTitle.setStyle("-fx-text-fill: white");
-        playIcon.setShape(playSVG);
+        this.playIcon.setStyle("-fx-background-color: rgb(200,200,200)");
+        if(!mouseHover) this.playIcon.setVisible(false);
+        this.setCursor(Cursor.HAND);
+
+        this.imageBorder.setVisible(false);
+
+        if(!mouseHover) this.setStyle("-fx-background-color: transparent;");
 
         historyBox.index = -1;
     }
@@ -364,15 +364,6 @@ public class HistoryItem extends GridPane implements MenuObject{
 
     }
 
-    public void updateIconToPlay(){
-        playIcon.setShape(menuController.activeItem.playSVG);
-        if(playButtonTooltip != null) playButtonTooltip.updateText("Play video");
-    }
-
-    public void updateIconToPause(){
-        playIcon.setShape(menuController.activeItem.pauseSVG);
-        if(playButtonTooltip != null) playButtonTooltip.updateText("Pause video");
-    }
 
 
     @Override

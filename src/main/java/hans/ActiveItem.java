@@ -20,12 +20,13 @@ import java.io.File;
 public class ActiveItem extends GridPane implements MenuObject {
 
     // layout constraints for the video item
-    ColumnConstraints column1 = new ColumnConstraints(70,70,70);
-    ColumnConstraints column2 = new ColumnConstraints(0,100,Double.MAX_VALUE);
-    ColumnConstraints column3 = new ColumnConstraints(35,35,35);
+    ColumnConstraints column1 = new ColumnConstraints(45, 45, 45);
+    ColumnConstraints column2 = new ColumnConstraints(70,70,70);
+    ColumnConstraints column3 = new ColumnConstraints(0,100,Double.MAX_VALUE);
     ColumnConstraints column4 = new ColumnConstraints(35,35,35);
+    ColumnConstraints column5 = new ColumnConstraints(35,35,35);
 
-    RowConstraints row1 = new RowConstraints(70, 70, 70);
+    RowConstraints row1 = new RowConstraints(90, 90, 90);
 
 
     Button playButton = new Button();
@@ -80,8 +81,8 @@ public class ActiveItem extends GridPane implements MenuObject {
         this.activeBox = activeBox;
 
 
-        column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) to take up all available space
-        this.getColumnConstraints().addAll(column1, column2, column3, column4);
+        column3.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) to take up all available space
+        this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
         this.getRowConstraints().addAll(row1);
 
         this.setOpacity(0);
@@ -99,8 +100,8 @@ public class ActiveItem extends GridPane implements MenuObject {
         this.getStyleClass().add("queueItem");
 
 
-        coverImage.setFitHeight(50);
-        coverImage.setFitWidth(50);
+        coverImage.setFitHeight(70);
+        coverImage.setFitWidth(70);
         coverImage.setSmooth(true);
         coverImage.setImage(mediaItem.getCover());
         coverImage.setPreserveRatio(true);
@@ -211,6 +212,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         textWrapper.setAlignment(Pos.CENTER_LEFT);
         textWrapper.setPrefHeight(70);
         textWrapper.getChildren().addAll(videoTitle,subTextWrapper);
+        GridPane.setMargin(textWrapper, new Insets(0, 0, 0, 10));
 
         removeButton.setPrefWidth(30);
         removeButton.setPrefHeight(30);
@@ -261,10 +263,10 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         this.setPadding(new Insets(0, 10, 0, 0));
 
-        this.add(playButtonWrapper, 0, 0);
-        this.add(textWrapper, 1, 0);
-        this.add(removeButtonWrapper, 2, 0);
-        this.add(optionsButtonWrapper, 3, 0);
+        this.add(playButtonWrapper, 1, 0);
+        this.add(textWrapper, 2, 0);
+        this.add(removeButtonWrapper, 3, 0);
+        this.add(optionsButtonWrapper, 4, 0);
 
         this.getStyleClass().add("activeItem");
 

@@ -2,6 +2,7 @@ package hans;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.api.JCodecException;
@@ -23,6 +24,8 @@ public class Mp4Item implements MediaItem{
 
     File subtitles;
     boolean subtitlesOn;
+
+    Color backgroundColor = null;
 
     // class to retrieve and edit movie information (apple tags)
     MetadataEditor mediaMeta;
@@ -147,6 +150,15 @@ public class Mp4Item implements MediaItem{
         this.subtitles = file;
     }
 
+    @Override
+    public Color getCoverBackgroundColor() {
+        return backgroundColor;
+    }
+
+    @Override
+    public void setCoverBackgroundColor(Color color) {
+        this.backgroundColor = color;
+    }
 
 
     @Override

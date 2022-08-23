@@ -2,6 +2,7 @@ package hans;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -22,6 +23,8 @@ public class Mp3Item implements MediaItem{
 
     File subtitles;
     boolean subtitlesOn = false;
+
+    Color backgroundColor = null;
 
     Mp3Item(File file){
         this.file = file;
@@ -91,5 +94,15 @@ public class Mp3Item implements MediaItem{
     @Override
     public void setSubtitles(File file){
         this.subtitles = file;
+    }
+
+    @Override
+    public Color getCoverBackgroundColor() {
+        return backgroundColor;
+    }
+
+    @Override
+    public void setCoverBackgroundColor(Color color) {
+        this.backgroundColor = color;
     }
 }

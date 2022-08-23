@@ -3,6 +3,7 @@ package hans;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -36,4 +37,8 @@ public interface MediaItem {
     Image getCover();
 
     void setSubtitles(File file);
+
+    Color getCoverBackgroundColor();
+
+    void setCoverBackgroundColor(Color color);
 }

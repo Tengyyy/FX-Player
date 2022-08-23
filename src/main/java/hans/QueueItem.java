@@ -17,6 +17,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelBuffer;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -31,12 +33,14 @@ import org.jcodec.codecs.common.biari.BitIO;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QueueItem extends GridPane implements MenuObject{
 
     // layout constraints for the video item
     ColumnConstraints column1 = new ColumnConstraints(45, 45, 45);
-    ColumnConstraints column2 = new ColumnConstraints(70,70,70);
+    ColumnConstraints column2 = new ColumnConstraints(129,129,129);
     ColumnConstraints column3 = new ColumnConstraints(0,100,Double.MAX_VALUE);
     ColumnConstraints column4 = new ColumnConstraints(35,35,35);
     ColumnConstraints column5 = new ColumnConstraints(35,35,35);
@@ -133,7 +137,7 @@ public class QueueItem extends GridPane implements MenuObject{
         this.setCursor(Cursor.HAND);
 
         coverImage.setFitHeight(70);
-        coverImage.setFitWidth(70);
+        coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
         coverImage.setImage(mediaItem.getCover());
         coverImage.setPreserveRatio(true);
@@ -164,18 +168,57 @@ public class QueueItem extends GridPane implements MenuObject{
 
 
         if(mediaItem.getCover() != null) {
-            double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
-            double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
-            double realHeight = Math.min(coverImage.getFitHeight(), coverImage.getFitWidth() / aspectRatio);
 
-            //TODO: logic to create image avg color background (should be async)
+            if(mediaItem.getCoverBackgroundColor() == null){
+
+
+                final PixelReader pr = mediaItem.getCover().getPixelReader();
+                final Map<Color, Long> colCount = new HashMap<>();
+
+                for(int x = 0; x < Math.min(mediaItem.getCover().getWidth(), 5); x++) {
+                    for(int y = 0; y < mediaItem.getCover().getHeight(); y++) {
+                        final Color col = pr.getColor(x, y);
+                        if(colCount.containsKey(col)) {
+                            colCount.put(col, colCount.get(col) + 1);
+                        } else {
+                            colCount.put(col, 1L);
+                        }
+                    }
+                }
+
+                if(mediaItem.getCover().getWidth() > 5){
+                    for(int x = (int) Math.max((mediaItem.getCover().getWidth() - 5), 5); x < mediaItem.getCover().getWidth(); x++){
+                        for(int y = 0; y < mediaItem.getCover().getHeight(); y++) {
+                            final Color col = pr.getColor(x, y);
+                            if(colCount.containsKey(col)) {
+                                colCount.put(col, colCount.get(col) + 1);
+                            } else {
+                                colCount.put(col, 1L);
+                            }
+                        }
+                    }
+                }
+
+                // Get the color with the highest number of occurrences .
+
+                final Color dominantCol = colCount.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
+                mediaItem.setCoverBackgroundColor(dominantCol);
+
+                imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantCol.getRed() * 256) + "," + Math.round(dominantCol.getGreen() * 256) + "," + Math.round(dominantCol.getBlue() * 256) + ", 0.7);");
+
+            }
+            else {
+                imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
+            }
         }
         else {
-            //TODO: logic to grab a frame from the video (async)
+            imageWrapper.setStyle("-fx-background-color: rgba(0,0,0, 0.7);");
+
+            //grab frame, set it as cover, calculate background color
         }
 
 
-
+        imageWrapper.setMaxSize(125,70);
         imageWrapper.getChildren().addAll(coverImage);
 
         videoTitle.getStyleClass().add("videoTitle");

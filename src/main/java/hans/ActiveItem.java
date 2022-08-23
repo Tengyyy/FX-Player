@@ -10,18 +10,21 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ActiveItem extends GridPane implements MenuObject {
 
     // layout constraints for the video item
     ColumnConstraints column1 = new ColumnConstraints(45, 45, 45);
-    ColumnConstraints column2 = new ColumnConstraints(70,70,70);
+    ColumnConstraints column2 = new ColumnConstraints(129,129,129);
     ColumnConstraints column3 = new ColumnConstraints(0,100,Double.MAX_VALUE);
     ColumnConstraints column4 = new ColumnConstraints(35,35,35);
     ColumnConstraints column5 = new ColumnConstraints(35,35,35);
@@ -62,7 +65,6 @@ public class ActiveItem extends GridPane implements MenuObject {
     boolean mouseHover = false;
 
 
-
     SVGPath playSVG, pauseSVG, removeSVG, optionsSVG, captionsPath;
 
     // the options popup for this queue item
@@ -87,11 +89,13 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         this.setOpacity(0);
 
+        GridPane.setValignment(columns, VPos.CENTER);
         GridPane.setValignment(playButtonWrapper, VPos.CENTER);
         GridPane.setValignment(textWrapper, VPos.CENTER);
         GridPane.setValignment(removeButtonWrapper, VPos.CENTER);
         GridPane.setValignment(optionsButtonWrapper, VPos.CENTER);
 
+        GridPane.setHalignment(columns, HPos.CENTER);
         GridPane.setHalignment(playButtonWrapper, HPos.CENTER);
         GridPane.setHalignment(textWrapper, HPos.LEFT);
         GridPane.setHalignment(optionsButtonWrapper, HPos.CENTER);
@@ -101,7 +105,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
 
         coverImage.setFitHeight(70);
-        coverImage.setFitWidth(70);
+        coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
         coverImage.setImage(mediaItem.getCover());
         coverImage.setPreserveRatio(true);
@@ -141,25 +145,64 @@ public class ActiveItem extends GridPane implements MenuObject {
         StackPane iconBackground = new StackPane();
 
         if(mediaItem.getCover() != null) {
-            double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
-            double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
-            double realHeight = Math.min(coverImage.getFitHeight(), coverImage.getFitWidth() / aspectRatio);
 
-            iconBackground.setMinSize(realWidth, realHeight);
-            iconBackground.setPrefSize(realWidth, realHeight);
-            iconBackground.setMaxSize(realWidth, realHeight);
+            iconBackground.setPrefSize(125, 70);
+            iconBackground.setMaxSize(125, 70);
+
+            if(mediaItem.getCoverBackgroundColor() == null){
+                final PixelReader pr = mediaItem.getCover().getPixelReader();
+                final Map<Color, Long> colCount = new HashMap<>();
+
+                for(int x = 0; x < Math.min(mediaItem.getCover().getWidth(), 4); x++) {
+                    for(int y = 0; y < mediaItem.getCover().getHeight(); y++) {
+                        final Color col = pr.getColor(x, y);
+                        if(colCount.containsKey(col)) {
+                            colCount.put(col, colCount.get(col) + 1);
+                        } else {
+                            colCount.put(col, 1L);
+                        }
+                    }
+                }
+
+                if(mediaItem.getCover().getWidth() > 5){
+                    for(int x = (int) Math.max((mediaItem.getCover().getWidth() - 5), 5); x < mediaItem.getCover().getWidth(); x++){
+                        for(int y = 0; y < mediaItem.getCover().getHeight(); y++) {
+                            final Color col = pr.getColor(x, y);
+                            if(colCount.containsKey(col)) {
+                                colCount.put(col, colCount.get(col) + 1);
+                            } else {
+                                colCount.put(col, 1L);
+                            }
+                        }
+                    }
+                }
+
+                // Get the color with the highest number of occurrences .
+
+                final Color dominantCol = colCount.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
+                mediaItem.setCoverBackgroundColor(dominantCol);
+
+                playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantCol.getRed() * 256) + "," + Math.round(dominantCol.getGreen() * 256) + "," + Math.round(dominantCol.getBlue() * 256) + ", 0.7);");
+
+            }
+            else {
+                playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
+            }
         }
         else {
-            iconBackground.setMinSize(0, 0);
-            iconBackground.setPrefSize(0, 0);
-            iconBackground.setMaxSize(0, 0);
+            playButtonWrapper.setStyle("-fx-background-color: rgba(0,0,0, 0.7);");
+
+            //grab frame
         }
 
         iconBackground.getStyleClass().add("iconBackground");
         iconBackground.setMouseTransparent(true);
+        iconBackground.setVisible(false);
 
 
-        playButtonWrapper.getChildren().addAll(coverImage, iconBackground, playButton, playIcon, columns);
+        playButtonWrapper.getChildren().addAll(coverImage, iconBackground, playButton, playIcon);
+        playButtonWrapper.setMaxSize(125,70);
+
 
 
         videoTitle.getStyleClass().add("videoTitle");
@@ -263,6 +306,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         this.setPadding(new Insets(0, 10, 0, 0));
 
+        this.add(columns, 0, 0);
         this.add(playButtonWrapper, 1, 0);
         this.add(textWrapper, 2, 0);
         this.add(removeButtonWrapper, 3, 0);
@@ -275,7 +319,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
             // hide the bouncing columns thingy and stop animation
             playIcon.setVisible(true);
-            columns.setVisible(false);
+            iconBackground.setVisible(true);
 
             this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
@@ -287,7 +331,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
             // show bouncing columns and start animation
             playIcon.setVisible(false);
-            columns.setVisible(true);
+            iconBackground.setVisible(false);
 
             this.setStyle("-fx-background-color: transparent;");
 

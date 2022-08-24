@@ -3,8 +3,14 @@ package hans;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class Utilities {
@@ -64,5 +70,71 @@ public class Utilities {
 
     public static String[] splitLines(String str) {
         return str.split("\\R", 2);
+    }
+
+
+    public static Color findDominantColor(double realWidth, double realHeight, Image image){
+
+        PixelReader pr = image.getPixelReader();
+        Map<Color, Long> colCount = new HashMap<>();
+
+        if(realWidth < 125){
+            // scan left and right edges to find the dominant color
+
+            for(int x = 0; x < Math.min(image.getWidth(), 5); x++) {
+                for(int y = 0; y < image.getHeight(); y++) {
+                    final Color col = pr.getColor(x, y);
+                    if(colCount.containsKey(col)) {
+                        colCount.put(col, colCount.get(col) + 1);
+                    } else {
+                        colCount.put(col, 1L);
+                    }
+                }
+            }
+
+            if(image.getWidth() > 5){
+                for(int x = (int) Math.max((image.getWidth() - 5), 5); x < image.getWidth(); x++){
+                    for(int y = 0; y < image.getHeight(); y++) {
+                        final Color col = pr.getColor(x, y);
+                        if(colCount.containsKey(col)) {
+                            colCount.put(col, colCount.get(col) + 1);
+                        } else {
+                            colCount.put(col, 1L);
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            //scan top and bottom edges
+
+            for(int y = 0; y < Math.min(image.getHeight(), 5); y++) {
+                for(int x = 0; x < image.getWidth(); x++) {
+                    final Color col = pr.getColor(x, y);
+                    if(colCount.containsKey(col)) {
+                        colCount.put(col, colCount.get(col) + 1);
+                    } else {
+                        colCount.put(col, 1L);
+                    }
+                }
+            }
+
+            if(image.getHeight() > 5){
+                for(int y = (int) Math.max((image.getHeight() - 5), 5); y < image.getHeight(); y++){
+                    for(int x = 0; x < image.getWidth(); x++) {
+                        final Color col = pr.getColor(x, y);
+                        if(colCount.containsKey(col)) {
+                            colCount.put(col, colCount.get(col) + 1);
+                        } else {
+                            colCount.put(col, 1L);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // Return the color with the highest number of occurrences .
+        return colCount.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
     }
 }

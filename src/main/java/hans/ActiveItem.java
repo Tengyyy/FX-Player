@@ -111,17 +111,17 @@ public class ActiveItem extends GridPane implements MenuObject {
         coverImage.setPreserveRatio(true);
 
 
-        playButton.setPrefWidth(40);
-        playButton.setPrefHeight(40);
+        playButton.setPrefWidth(125);
+        playButton.setPrefHeight(70);
         playButton.getStyleClass().add("playButton");
         playButton.setCursor(Cursor.HAND);
 
 
         playSVG = new SVGPath();
-        playSVG.setContent(App.svgMap.get(SVG.PLAY_CIRCLE));
+        playSVG.setContent(App.svgMap.get(SVG.PLAY));
 
         pauseSVG = new SVGPath();
-        pauseSVG.setContent(App.svgMap.get(SVG.PAUSE_CIRCLE));
+        pauseSVG.setContent(App.svgMap.get(SVG.PAUSE));
 
 
         removeSVG = new SVGPath();
@@ -132,57 +132,31 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         playIcon = new Region();
         playIcon.setShape(playSVG);
-        playIcon.setMinSize(40, 40);
-        playIcon.setPrefSize(40, 40);
-        playIcon.setMaxSize(40, 40);
+        playIcon.setPrefSize(30, 32);
+        playIcon.setMaxSize(30, 32);
         playIcon.setMouseTransparent(true);
-        playIcon.getStyleClass().add("menuIcon");
+        playIcon.setId("playIcon");
         playIcon.setVisible(false);
-        // TODO: create semi-transparent dark background for the playicon
 
 
 
         StackPane iconBackground = new StackPane();
+        iconBackground.setPrefSize(125, 70);
+        iconBackground.setMaxSize(125, 70);
 
         if(mediaItem.getCover() != null) {
 
-            iconBackground.setPrefSize(125, 70);
-            iconBackground.setMaxSize(125, 70);
-
             if(mediaItem.getCoverBackgroundColor() == null){
-                final PixelReader pr = mediaItem.getCover().getPixelReader();
-                final Map<Color, Long> colCount = new HashMap<>();
 
-                for(int x = 0; x < Math.min(mediaItem.getCover().getWidth(), 4); x++) {
-                    for(int y = 0; y < mediaItem.getCover().getHeight(); y++) {
-                        final Color col = pr.getColor(x, y);
-                        if(colCount.containsKey(col)) {
-                            colCount.put(col, colCount.get(col) + 1);
-                        } else {
-                            colCount.put(col, 1L);
-                        }
-                    }
-                }
+                double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
+                double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
+                double realHeight = Math.min(coverImage.getFitHeight(), coverImage.getFitWidth() / aspectRatio);
 
-                if(mediaItem.getCover().getWidth() > 5){
-                    for(int x = (int) Math.max((mediaItem.getCover().getWidth() - 5), 5); x < mediaItem.getCover().getWidth(); x++){
-                        for(int y = 0; y < mediaItem.getCover().getHeight(); y++) {
-                            final Color col = pr.getColor(x, y);
-                            if(colCount.containsKey(col)) {
-                                colCount.put(col, colCount.get(col) + 1);
-                            } else {
-                                colCount.put(col, 1L);
-                            }
-                        }
-                    }
-                }
+                Color dominantColor = Utilities.findDominantColor(realWidth, realHeight, mediaItem.getCover());
+                mediaItem.setCoverBackgroundColor(dominantColor);
 
-                // Get the color with the highest number of occurrences .
-
-                final Color dominantCol = colCount.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
-                mediaItem.setCoverBackgroundColor(dominantCol);
-
-                playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantCol.getRed() * 256) + "," + Math.round(dominantCol.getGreen() * 256) + "," + Math.round(dominantCol.getBlue() * 256) + ", 0.7);");
+                assert dominantColor != null;
+                playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantColor.getRed() * 256) + "," + Math.round(dominantColor.getGreen() * 256) + "," + Math.round(dominantColor.getBlue() * 256) + ", 0.7);");
 
             }
             else {
@@ -192,7 +166,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         else {
             playButtonWrapper.setStyle("-fx-background-color: rgba(0,0,0, 0.7);");
 
-            //grab frame
+            //grab frame, set it as cover, calculate background color
         }
 
         iconBackground.getStyleClass().add("iconBackground");
@@ -339,16 +313,14 @@ public class ActiveItem extends GridPane implements MenuObject {
 
 
         playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-            // AnimationsClass.queuePlayHoverOn(playButtonWrapper);
 
-            AnimationsClass.parallelAnimation(true,AnimationsClass.scaleAnimation(100, playIcon, 1, 1.1, 1, 1.1, false, 1, false),AnimationsClass.scaleAnimation(100, playButton, 1, 1.1, 1, 1.1, false, 1, false));
+            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
 
         });
 
         playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-            //AnimationsClass.queuePlayHoverOff(playButtonWrapper);
 
-            AnimationsClass.parallelAnimation(true,AnimationsClass.scaleAnimation(100, playIcon, 1.1, 1, 1.1, 1, false, 1, false),AnimationsClass.scaleAnimation(100, playButton, 1.1, 1, 1.1, 1, false, 1, false));
+            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
 
         });
 
@@ -423,12 +395,22 @@ public class ActiveItem extends GridPane implements MenuObject {
 
 
     public void updateIconToPlay(){
+
+        playIcon.setTranslateX(4);
+
+        playIcon.setPrefSize(30, 32);
+        playIcon.setMaxSize(30, 32);
         playIcon.setShape(menuController.activeItem.playSVG);
         if(playButtonTooltip != null) playButtonTooltip.updateText("Play video");
         columns.pause();
     }
 
     public void updateIconToPause(){
+
+        playIcon.setTranslateX(0);
+
+        playIcon.setPrefSize(30, 30);
+        playIcon.setMaxSize(30, 30);
         playIcon.setShape(menuController.activeItem.pauseSVG);
         if(playButtonTooltip != null) playButtonTooltip.updateText("Pause video");
         columns.play();

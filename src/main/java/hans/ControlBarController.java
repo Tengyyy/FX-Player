@@ -828,7 +828,7 @@ public class ControlBarController implements Initializable {
         nextVideoButtonHover = false;
 
         if(nextVideoButtonEnabled){
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(255, 255, 25), Color.rgb(200, 200, 200), 200);
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         }
         else {
             AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(130, 130, 130), Color.rgb(100, 100, 100), 200);

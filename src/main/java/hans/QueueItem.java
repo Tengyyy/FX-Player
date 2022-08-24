@@ -171,40 +171,15 @@ public class QueueItem extends GridPane implements MenuObject{
 
             if(mediaItem.getCoverBackgroundColor() == null){
 
+                double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
+                double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
+                double realHeight = Math.min(coverImage.getFitHeight(), coverImage.getFitWidth() / aspectRatio);
 
-                final PixelReader pr = mediaItem.getCover().getPixelReader();
-                final Map<Color, Long> colCount = new HashMap<>();
+                Color dominantColor = Utilities.findDominantColor(realWidth, realHeight, mediaItem.getCover());
+                mediaItem.setCoverBackgroundColor(dominantColor);
 
-                for(int x = 0; x < Math.min(mediaItem.getCover().getWidth(), 5); x++) {
-                    for(int y = 0; y < mediaItem.getCover().getHeight(); y++) {
-                        final Color col = pr.getColor(x, y);
-                        if(colCount.containsKey(col)) {
-                            colCount.put(col, colCount.get(col) + 1);
-                        } else {
-                            colCount.put(col, 1L);
-                        }
-                    }
-                }
-
-                if(mediaItem.getCover().getWidth() > 5){
-                    for(int x = (int) Math.max((mediaItem.getCover().getWidth() - 5), 5); x < mediaItem.getCover().getWidth(); x++){
-                        for(int y = 0; y < mediaItem.getCover().getHeight(); y++) {
-                            final Color col = pr.getColor(x, y);
-                            if(colCount.containsKey(col)) {
-                                colCount.put(col, colCount.get(col) + 1);
-                            } else {
-                                colCount.put(col, 1L);
-                            }
-                        }
-                    }
-                }
-
-                // Get the color with the highest number of occurrences .
-
-                final Color dominantCol = colCount.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
-                mediaItem.setCoverBackgroundColor(dominantCol);
-
-                imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantCol.getRed() * 256) + "," + Math.round(dominantCol.getGreen() * 256) + "," + Math.round(dominantCol.getBlue() * 256) + ", 0.7);");
+                assert dominantColor != null;
+                imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantColor.getRed() * 256) + "," + Math.round(dominantColor.getGreen() * 256) + "," + Math.round(dominantColor.getBlue() * 256) + ", 0.7);");
 
             }
             else {

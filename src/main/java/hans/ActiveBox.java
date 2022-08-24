@@ -16,9 +16,9 @@ public class ActiveBox extends StackPane {
     ActiveBox(MenuController menuController){
         this.menuController = menuController;
         this.setAlignment(Pos.BOTTOM_CENTER);
-        this.setMinHeight(70);
-        this.setPrefHeight(70);
-        this.setMaxHeight(70);
+        this.setMinHeight(90);
+        this.setPrefHeight(90);
+        this.setMaxHeight(90);
     }
 
     public void clear(){

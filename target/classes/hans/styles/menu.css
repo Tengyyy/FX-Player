@@ -211,7 +211,11 @@
     -fx-border-style: solid;
     -fx-border-insets: 0;
     -fx-border-color: red;
-    -fx-border-width: 4;
+    -fx-border-width: 2;
+}
+
+#historyImageWrapper {
+    -fx-background-insets: 2;
 }
 
 .playButton {

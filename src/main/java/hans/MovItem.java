@@ -7,14 +7,12 @@ import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.JavaFXFrameConverter;
-import org.jcodec.containers.mp4.boxes.MetaValue;
-import org.jcodec.movtool.MetadataEditor;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-public class Mp3Item implements MediaItem{
+public class MovItem implements MediaItem{
 
     double frameRate = 30;
     float frameDuration = (float) (1 / frameRate);
@@ -26,41 +24,60 @@ public class Mp3Item implements MediaItem{
     Duration duration;
 
 
-
-    //Metadata tags
-    String album;
-    String artist;
-    String title;
-
     Image cover;
+    String title;
+    String artist;
 
+    String mediaType;
 
-    Mp3Item(File file){
+    MovItem(File file){
         this.file = file;
-
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+            fFmpegFrameGrabber.setVideoStream(2);
 
             fFmpegFrameGrabber.start();
-            duration = Duration.seconds((int) (fFmpegFrameGrabber.getLengthInAudioFrames()/fFmpegFrameGrabber.getAudioFrameRate()));
-            frameRate = fFmpegFrameGrabber.getAudioFrameRate();
+            if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
+            else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
+
+            frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-
             Map<String, String> metadata = fFmpegFrameGrabber.getMetadata();
+
             if(metadata != null){
                 for(Map.Entry<String, String> entry : metadata.entrySet()){
                     switch (entry.getKey()){
-                        case "artist": artist = entry.getValue();
+                        case "media_type":
+                            switch(Integer.parseInt(entry.getValue())){
+                                case 6: mediaType = "Music video";
+                                    break;
+                                case 9: mediaType = "Movie";
+                                    break;
+                                case 10: mediaType = "TV Show";
+                                    break;
+                                case 21: mediaType = "Podcast";
+                                    break;
+                                default: mediaType = "Home video";
+                            }
                             break;
                         case "title": title = entry.getValue();
+                            break;
+                        case "artist": artist = entry.getValue();
                             break;
                         default:
                             break;
                     }
                 }
             }
+
+            Frame frame = fFmpegFrameGrabber.grabImage();
+            JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
+            if(frame != null) cover = javaFXFrameConverter.convert(frame);
+
+            if(cover == null) cover = Utilities.grabMiddleFrame(file);
+
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();
@@ -70,13 +87,14 @@ public class Mp3Item implements MediaItem{
         }
     }
 
+
     @Override
     public float getFrameDuration() {
         return frameDuration;
     }
 
     @Override
-    public Map<String, String> getMediaInformation() {
+    public Map getMediaInformation() {
         return null;
     }
 
@@ -87,7 +105,9 @@ public class Mp3Item implements MediaItem{
 
 
     @Override
-    public File getFile() {return this.file;}
+    public File getFile() {
+        return file;
+    }
 
     @Override
     public File getSubtitles() {
@@ -104,7 +124,6 @@ public class Mp3Item implements MediaItem{
         subtitlesOn = value;
     }
 
-
     @Override
     public Duration getDuration() {
         return duration;
@@ -112,7 +131,10 @@ public class Mp3Item implements MediaItem{
 
     @Override
     public String getArtist() {
-        return artist;
+        if(mediaType != null && mediaType.equals("Music video")){
+            return artist;
+        }
+        else return null;
     }
 
     @Override
@@ -122,12 +144,12 @@ public class Mp3Item implements MediaItem{
 
     @Override
     public Image getCover() {
-        return null;
+        return cover;
     }
 
     @Override
-    public void setSubtitles(File file){
-        this.subtitles = file;
+    public void setSubtitles(File file) {
+        subtitles = file;
     }
 
     @Override
@@ -137,6 +159,6 @@ public class Mp3Item implements MediaItem{
 
     @Override
     public void setCoverBackgroundColor(Color color) {
-        this.backgroundColor = color;
+        backgroundColor = color;
     }
 }

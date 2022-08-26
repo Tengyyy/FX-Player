@@ -35,7 +35,7 @@ public class SettingsHomeController {
 
         fileChooser = new FileChooser();
         fileChooser.setTitle("Select video");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", ".mkv", "*.flv", "*.mov"), new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav"));
 
         shuffleSVG.setContent(App.svgMap.get(SVG.SHUFFLE));
         repeatSVG.setContent(App.svgMap.get(SVG.REPEAT));
@@ -180,6 +180,15 @@ public class SettingsHomeController {
 
             if(Utilities.getFileExtension(selectedFile).equals("mp4")) temp = new Mp4Item(selectedFile);
             else if(Utilities.getFileExtension(selectedFile).equals("mp3")) temp = new Mp3Item(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("avi")) temp = new AviItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("mkv")) temp = new MkvItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("flac")) temp = new FlacItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("flv")) temp = new FlvItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("mov")) temp = new MovItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("mov")) temp = new MovItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("wav")) temp = new WavItem(selectedFile);
+
+
 
             ActiveItem activeItem = new ActiveItem(temp, settingsController.menuController, settingsController.mediaInterface, settingsController.menuController.activeBox);
             activeItem.play(true);

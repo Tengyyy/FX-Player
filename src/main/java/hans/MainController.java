@@ -478,7 +478,7 @@ public class MainController implements Initializable {
         File file = e.getDragboard().getFiles().get(0);
 
         /* return statement */
-        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3")) return;
+        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3") && !Utilities.getFileExtension(file).equals("avi") && !Utilities.getFileExtension(file).equals("mkv") && !Utilities.getFileExtension(file).equals("flac") && !Utilities.getFileExtension(file).equals("flv") && !Utilities.getFileExtension(file).equals("mov") && !Utilities.getFileExtension(file).equals("wav")) return;
 
         actionIndicator.animate();
 
@@ -487,6 +487,14 @@ public class MainController implements Initializable {
 
         if(Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
         else if(Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
+        else if(Utilities.getFileExtension(file).equals("avi")) temp = new AviItem(file);
+        else if(Utilities.getFileExtension(file).equals("mkv")) temp = new MkvItem(file);
+        else if(Utilities.getFileExtension(file).equals("flac")) temp = new FlacItem(file);
+        else if(Utilities.getFileExtension(file).equals("flv")) temp = new FlvItem(file);
+        else if(Utilities.getFileExtension(file).equals("mov")) temp = new MovItem(file);
+        else if(Utilities.getFileExtension(file).equals("wav")) temp = new WavItem(file);
+
+
 
         ActiveItem activeItem = new ActiveItem(temp, menuController, mediaInterface, menuController.activeBox);
         activeItem.play(true);

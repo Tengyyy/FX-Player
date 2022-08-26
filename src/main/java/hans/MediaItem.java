@@ -18,8 +18,6 @@ public interface MediaItem {
 
     Map getMediaDetails();
 
-    Media getMedia();
-
     File getFile();
 
     File getSubtitles();

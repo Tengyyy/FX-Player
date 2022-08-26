@@ -725,7 +725,7 @@ public class QueueBox extends VBox {
         dragBoardFiles = (ArrayList<File>) e.getDragboard().getFiles();
 
         for(File file : dragBoardFiles){
-            if(Utilities.getFileExtension(file).equals("mp4") || Utilities.getFileExtension(file).equals("mp3")){
+            if(Utilities.getFileExtension(file).equals("mp4") || Utilities.getFileExtension(file).equals("mp3") || Utilities.getFileExtension(file).equals("avi") || Utilities.getFileExtension(file).equals("flac") || Utilities.getFileExtension(file).equals("flv") || Utilities.getFileExtension(file).equals("mkv") || Utilities.getFileExtension(file).equals("mov") || Utilities.getFileExtension(file).equals("wav")){
 
                 dragBoardMedia.add(file);
             }
@@ -765,6 +765,15 @@ public class QueueBox extends VBox {
             MediaItem temp = null;
             if (Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
             else if (Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
+            else if (Utilities.getFileExtension(file).equals("avi")) temp = new AviItem(file);
+            else if (Utilities.getFileExtension(file).equals("mkv")) temp = new MkvItem(file);
+            else if (Utilities.getFileExtension(file).equals("mov")) temp = new MovItem(file);
+            else if (Utilities.getFileExtension(file).equals("flv")) temp = new FlvItem(file);
+            else if (Utilities.getFileExtension(file).equals("flac")) temp = new FlacItem(file);
+            else if (Utilities.getFileExtension(file).equals("wav")) temp = new WavItem(file);
+
+
+
             assert temp != null;
             newItems.add(new QueueItem(temp, menuController, menuController.mediaInterface, this));
         }

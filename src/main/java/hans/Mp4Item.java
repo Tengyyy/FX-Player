@@ -1,25 +1,32 @@
 package hans;
 
+import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacv.*;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.api.JCodecException;
 import org.jcodec.common.DemuxerTrack;
 import org.jcodec.common.io.NIOUtils;
+import org.jcodec.common.model.Picture;
 import org.jcodec.containers.mp4.boxes.MetaValue;
 import org.jcodec.movtool.MetadataEditor;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
+
+
 
 public class Mp4Item implements MediaItem{
 
     File file;
-    Media media;
 
 
     File subtitles;
@@ -74,75 +81,69 @@ public class Mp4Item implements MediaItem{
     double width;
     double height;
 
-    double seconds;
     Duration duration;
 
-    Mp4Item(File file){
+    Mp4Item(File file) {
         this.file = file;
 
-        media = new Media(file.toURI().toString());
 
         try {
-            mediaMeta = MetadataEditor.createFrom(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+            fFmpegFrameGrabber.setVideoStream(2);
 
-        /*Map<String, MetaValue> keyedMeta = mediaMeta.getKeyedMeta();
-        if (keyedMeta != null) {
-            System.out.println("Keyed metadata:");
-            for (Map.Entry<String, MetaValue> entry : keyedMeta.entrySet()) {
-                System.out.println(entry.getKey() + ": " + entry.getValue());
-            }
-        }*/
 
-        Map<Integer, MetaValue> itunesMeta = mediaMeta.getItunesMeta();
-        if (itunesMeta != null) {
-            for (Map.Entry<Integer, MetaValue> entry : itunesMeta.entrySet()) {
-                String keyString = Utilities.fourccToString(entry.getKey());
+            fFmpegFrameGrabber.start();
+            if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
+            else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
-                switch(keyString){
-                    case "©nam": title = String.valueOf(entry.getValue());
-                        break;
-                    case "©ART": artist = String.valueOf(entry.getValue());
-                        break;
-                    case "stik":
-                        // WARNING!!! Ugly nested switch, proceed at your own caution
-                        switch(Integer.parseInt(String.valueOf(entry.getValue()))){
-                            case 6: mediaType = "Music video";
-                            break;
-                            case 9: mediaType = "Movie";
-                            break;
-                            case 10: mediaType = "TV Show";
-                            break;
-                            case 21: mediaType = "Podcast";
-                            break;
-                            default: mediaType = "Home video";
-                        }
-                        break;
-                    case "covr": cover = new Image(new ByteArrayInputStream(entry.getValue().getData()));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        // gets fps
-        try {
-            FrameGrab grab = FrameGrab.createFrameGrab(NIOUtils.readableChannel(file));
-            DemuxerTrack vt = grab.getVideoTrack();
-
-            int frameCount = vt.getMeta().getTotalFrames();
-            seconds = vt.getMeta().getTotalDuration();
-            frameRate = frameCount / seconds;
+            frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            duration = Duration.seconds(seconds);
+            Map<String, String> metadata = fFmpegFrameGrabber.getMetadata();
 
-        } catch (IOException | JCodecException e) {
+            if(metadata != null){
+                for(Map.Entry<String, String> entry : metadata.entrySet()){
+                    switch (entry.getKey()){
+                        case "media_type":
+                            switch(Integer.parseInt(entry.getValue())){
+                                case 6: mediaType = "Music video";
+                                    break;
+                                case 9: mediaType = "Movie";
+                                    break;
+                                case 10: mediaType = "TV Show";
+                                    break;
+                                case 21: mediaType = "Podcast";
+                                    break;
+                                default: mediaType = "Home video";
+                            }
+                            break;
+                        case "title": title = entry.getValue();
+                            break;
+                        case "artist": artist = entry.getValue();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            Frame frame = fFmpegFrameGrabber.grabImage();
+            JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
+            if(frame != null) cover = javaFXFrameConverter.convert(frame);
+
+            if(cover ==  null){
+                cover = Utilities.grabMiddleFrame(file);
+            }
+
+            fFmpegFrameGrabber.stop();
+            fFmpegFrameGrabber.close();
+
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
+
     }
 
     @Override
@@ -176,10 +177,6 @@ public class Mp4Item implements MediaItem{
         return null;
     }
 
-    @Override
-    public Media getMedia() {
-        return this.media;
-    }
 
     @Override
     public File getFile() {
@@ -228,3 +225,6 @@ public class Mp4Item implements MediaItem{
         return this.cover;
     }
 }
+
+
+

@@ -1,20 +1,18 @@
 package hans;
 
 import javafx.scene.image.Image;
-import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.JavaFXFrameConverter;
-import org.jcodec.containers.mp4.boxes.MetaValue;
-import org.jcodec.movtool.MetadataEditor;
+
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-public class Mp3Item implements MediaItem{
+public class FlacItem implements MediaItem {
 
     double frameRate = 30;
     float frameDuration = (float) (1 / frameRate);
@@ -26,7 +24,6 @@ public class Mp3Item implements MediaItem{
     Duration duration;
 
 
-
     //Metadata tags
     String album;
     String artist;
@@ -35,26 +32,27 @@ public class Mp3Item implements MediaItem{
     Image cover;
 
 
-    Mp3Item(File file){
+    FlacItem(File file) {
         this.file = file;
 
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
 
+
             fFmpegFrameGrabber.start();
-            duration = Duration.seconds((int) (fFmpegFrameGrabber.getLengthInAudioFrames()/fFmpegFrameGrabber.getAudioFrameRate()));
+            duration = Duration.seconds((int) (fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate()));
             frameRate = fFmpegFrameGrabber.getAudioFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-
             Map<String, String> metadata = fFmpegFrameGrabber.getMetadata();
+
             if(metadata != null){
-                for(Map.Entry<String, String> entry : metadata.entrySet()){
-                    switch (entry.getKey()){
-                        case "artist": artist = entry.getValue();
+                for (Map.Entry<String, String> entry : metadata.entrySet()){
+                    switch(entry.getKey()){
+                        case "ARTIST": artist = entry.getValue();
                             break;
-                        case "title": title = entry.getValue();
+                        case "TITLE": title = entry.getValue();
                             break;
                         default:
                             break;
@@ -87,7 +85,9 @@ public class Mp3Item implements MediaItem{
 
 
     @Override
-    public File getFile() {return this.file;}
+    public File getFile() {
+        return this.file;
+    }
 
     @Override
     public File getSubtitles() {
@@ -122,11 +122,11 @@ public class Mp3Item implements MediaItem{
 
     @Override
     public Image getCover() {
-        return null;
+        return cover;
     }
 
     @Override
-    public void setSubtitles(File file){
+    public void setSubtitles(File file) {
         this.subtitles = file;
     }
 

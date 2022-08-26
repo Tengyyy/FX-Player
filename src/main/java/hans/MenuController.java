@@ -167,8 +167,8 @@ public class MenuController implements Initializable {
 
 
         fileChooser.setTitle("Open video");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4"));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audio", "*.mp3"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav"));
 
        historyText = new Label();
        historyText.setText("History");
@@ -616,6 +616,15 @@ public class MenuController implements Initializable {
 
             if(Utilities.getFileExtension(selectedFile).equals("mp4")) temp = new Mp4Item(selectedFile);
             else if(Utilities.getFileExtension(selectedFile).equals("mp3")) temp = new Mp3Item(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("avi")) temp = new AviItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("mkv")) temp = new MkvItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("flac")) temp = new FlacItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("flv")) temp = new FlvItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("mov")) temp = new MovItem(selectedFile);
+            else if(Utilities.getFileExtension(selectedFile).equals("wav")) temp = new WavItem(selectedFile);
+
+
+
 
             assert temp != null;
             QueueItem item = new QueueItem(temp, this, mediaInterface, queueBox);

@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane fx:id="settingsBackgroundPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="170.0" minWidth="0.0" prefHeight="170.0" prefWidth="235.0" stylesheets="@../styles/application.css" StackPane.alignment="BOTTOM_RIGHT" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.SettingsController">
+<Pane fx:id="settingsBackgroundPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="170.0" minWidth="0.0" prefHeight="170.0" prefWidth="235.0" stylesheets="@../styles/application.css" StackPane.alignment="BOTTOM_RIGHT" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Settings.SettingsController">
     <StackPane.margin>
         <Insets bottom="60.0" right="10.0" />
     </StackPane.margin>

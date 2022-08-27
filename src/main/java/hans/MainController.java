@@ -7,13 +7,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
+import hans.MediaItems.*;
+import hans.Menu.ActiveItem;
+import hans.Menu.MenuController;
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import javafx.animation.Animation;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -65,7 +68,7 @@ public class MainController implements Initializable {
     MediaInterface mediaInterface;
 
     DoubleProperty videoImageViewWidth;
-    DoubleProperty videoImageViewHeight;
+    public DoubleProperty videoImageViewHeight;
 
 
 
@@ -79,11 +82,11 @@ public class MainController implements Initializable {
 
     SimpleDoubleProperty sizeMultiplier = new SimpleDoubleProperty();
 
-    Label miniplayerActiveText = new Label();
+    public Label miniplayerActiveText = new Label();
 
     boolean seekingWithKeys = false; // if true, show miniplayer progressbar
 
-    boolean miniplayerActive = false;
+    public boolean miniplayerActive = false;
     Miniplayer miniplayer;
 
     ChangeListener<? super Number> widthListener;
@@ -91,7 +94,7 @@ public class MainController implements Initializable {
     ChangeListener<? super Number> widthListenerForTitle;
 
 
-    LoopPopUp loopPopUp;
+    public LoopPopUp loopPopUp;
 
     String snapshotDirectory;
 
@@ -99,7 +102,7 @@ public class MainController implements Initializable {
     Label videoTitleLabel = new Label();
 
 
-    SliderHoverLabel sliderHoverLabel;
+    public SliderHoverLabel sliderHoverLabel;
 
 
     @Override
@@ -149,13 +152,7 @@ public class MainController implements Initializable {
 
         //video expands to take up entire window if menu is not open
         Platform.runLater(() ->{
-            if(!menuController.menuOpen){
-                videoImageViewWrapper.prefWidthProperty().bind(videoImageViewWrapper.getScene().widthProperty());
-            }
-
-            videoImageViewWrapper.getScene().setOnMouseExited(e -> {
-                controlBarController.mouseEventTracker.hide();
-            });
+            videoImageViewWrapper.getScene().setOnMouseExited(e -> controlBarController.mouseEventTracker.hide());
         });
 
 
@@ -167,13 +164,9 @@ public class MainController implements Initializable {
 
         menuButton.setBackground(Background.EMPTY);
 
-        menuButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-            controlBarController.controlButtonHoverOn(menuButtonPane);
-        });
+        menuButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlBarController.controlButtonHoverOn(menuButtonPane));
 
-        menuButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-            controlBarController.controlButtonHoverOff(menuButtonPane);
-        });
+        menuButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlBarController.controlButtonHoverOff(menuButtonPane));
 
         menuIcon.setShape(menuSVG);
 
@@ -366,13 +359,9 @@ public class MainController implements Initializable {
             e.consume();
         });
 
-        videoTitleLabel.setOnMouseEntered(e -> {
-            AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(255, 255, 255), 200);
-        });
+        videoTitleLabel.setOnMouseEntered(e -> AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(255, 255, 255), 200));
 
-        videoTitleLabel.setOnMouseExited(e -> {
-            AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(200, 200,200), 200);
-        });
+        videoTitleLabel.setOnMouseExited(e -> AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(200, 200,200), 200));
 
 
 
@@ -461,7 +450,7 @@ public class MainController implements Initializable {
 
     }
 
-    public void handleDragExited(DragEvent e){
+    public void handleDragExited(){
 
         if(actionIndicator.parallelTransition.getStatus() != Animation.Status.RUNNING) actionIndicator.setVisible(false);
     }
@@ -474,27 +463,33 @@ public class MainController implements Initializable {
     }
 
     public void handleDragDropped(DragEvent e){
-        //mediaView.setEffect(null);
+
         File file = e.getDragboard().getFiles().get(0);
 
-        /* return statement */
-        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3") && !Utilities.getFileExtension(file).equals("avi") && !Utilities.getFileExtension(file).equals("mkv") && !Utilities.getFileExtension(file).equals("flac") && !Utilities.getFileExtension(file).equals("flv") && !Utilities.getFileExtension(file).equals("mov") && !Utilities.getFileExtension(file).equals("wav")) return;
+        MediaItem temp;
+
+        switch(Utilities.getFileExtension(file)){
+            case "mp4": temp = new Mp4Item(file);
+                break;
+            case "mp3": temp = new Mp3Item(file);
+                break;
+            case "avi": temp = new AviItem(file);
+                break;
+            case "mkv": temp = new MkvItem(file);
+                break;
+            case "flac": temp = new FlacItem(file);
+                break;
+            case "flv": temp = new FlvItem(file);
+                break;
+            case "mov": temp = new MovItem(file);
+                break;
+            case "wav": temp = new WavItem(file);
+                break;
+            default:
+                return;
+        }
 
         actionIndicator.animate();
-
-
-        MediaItem temp = null;
-
-        if(Utilities.getFileExtension(file).equals("mp4")) temp = new Mp4Item(file);
-        else if(Utilities.getFileExtension(file).equals("mp3")) temp = new Mp3Item(file);
-        else if(Utilities.getFileExtension(file).equals("avi")) temp = new AviItem(file);
-        else if(Utilities.getFileExtension(file).equals("mkv")) temp = new MkvItem(file);
-        else if(Utilities.getFileExtension(file).equals("flac")) temp = new FlacItem(file);
-        else if(Utilities.getFileExtension(file).equals("flv")) temp = new FlvItem(file);
-        else if(Utilities.getFileExtension(file).equals("mov")) temp = new MovItem(file);
-        else if(Utilities.getFileExtension(file).equals("wav")) temp = new WavItem(file);
-
-
 
         ActiveItem activeItem = new ActiveItem(temp, menuController, mediaInterface, menuController.activeBox);
         activeItem.play(true);
@@ -743,11 +738,11 @@ public class MainController implements Initializable {
         }
     }
 
-    public void pressTAB(KeyEvent e){
+    public void pressTAB(){
         controlBarController.mouseEventTracker.move();
     }
 
-    public void pressM(KeyEvent e){
+    public void pressM(){
         controlBarController.mouseEventTracker.move();
         if (!controlBarController.muted) {
             controlBarController.mute();
@@ -787,7 +782,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void pressJ(KeyEvent e){
+    public void pressJ(){
         controlBarController.mouseEventTracker.move();
 
         if (mediaInterface.mediaActive.get()) {
@@ -815,7 +810,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void pressK(KeyEvent e){
+    public void pressK(){
         controlBarController.mouseEventTracker.move();
         if (!controlBarController.durationSlider.isValueChanging() && mediaInterface.mediaActive.get() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())) {  // wont let user play/pause video while media slider is seeking
             if (mediaInterface.atEnd) {
@@ -935,7 +930,7 @@ public class MainController implements Initializable {
         e.consume();
     }
 
-    public void pressUP(KeyEvent e){
+    public void pressUP(){
         controlBarController.mouseEventTracker.move();
 
         controlBarController.volumeSlider.setValue(Math.min(controlBarController.volumeSlider.getValue() + 5, 100));
@@ -948,7 +943,7 @@ public class MainController implements Initializable {
         actionIndicator.animate();
     }
 
-    public void pressDOWN(KeyEvent e){
+    public void pressDOWN(){
         controlBarController.mouseEventTracker.move();
 
         controlBarController.volumeSlider.setValue(Math.max(controlBarController.volumeSlider.getValue() - 5, 0));
@@ -962,13 +957,13 @@ public class MainController implements Initializable {
         actionIndicator.animate();
     }
 
-    public void pressI(KeyEvent e){
+    public void pressI(){
 
         if(miniplayerActive) closeMiniplayer();
         else openMiniplayer();
     }
 
-    public void pressQ(KeyEvent e){
+    public void pressQ(){
 
         if(menuController.menuOpen) {
             menuController.closeMenu();
@@ -977,7 +972,7 @@ public class MainController implements Initializable {
         else openMenu();
     }
 
-    public void pressS(KeyEvent e){
+    public void pressS(){
         controlBarController.mouseEventTracker.move();
 
         if (settingsController.settingsState != SettingsState.CLOSED) {
@@ -1034,17 +1029,17 @@ public class MainController implements Initializable {
         }
     }
 
-    public void pressF(KeyEvent e){
+    public void pressF(){
         controlBarController.mouseEventTracker.move();
         controlBarController.toggleFullScreen();
     }
 
-    public void pressF12(KeyEvent e){
+    public void pressF12(){
         takeScreenshot();
         controlBarController.mouseEventTracker.move();
     }
 
-    public void pressC(KeyEvent e){
+    public void pressC(){
         controlBarController.mouseEventTracker.move();
 
         if(!captionsController.captionsSelected || captionsController.captionsDragActive) return;
@@ -1058,7 +1053,7 @@ public class MainController implements Initializable {
         captionsController.captionsPane.captionsToggle.fire();
     }
 
-    public void press1(KeyEvent e){
+    public void press1(){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 1 / 10);
@@ -1075,7 +1070,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void press2(KeyEvent e){
+    public void press2(){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 2 / 10);
@@ -1092,7 +1087,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void press3( KeyEvent e){
+    public void press3(){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 3 / 10);
@@ -1109,7 +1104,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void press4(KeyEvent e){
+    public void press4(){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 4 / 10);
@@ -1126,7 +1121,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void press5(KeyEvent e){
+    public void press5(){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 5 / 10);
@@ -1143,7 +1138,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void press6(KeyEvent e){
+    public void press6(){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 6 / 10);
@@ -1160,7 +1155,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void press7(KeyEvent e){
+    public void press7(){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 7 / 10);
@@ -1177,7 +1172,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void press8(KeyEvent e){
+    public void press8(){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 8 / 10);
@@ -1194,7 +1189,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void press9(KeyEvent e){
+    public void press9(){
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 9 / 10);
@@ -1211,7 +1206,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void press0(KeyEvent e){
+    public void press0(){
         controlBarController.mouseEventTracker.move();
         mediaInterface.seekedToEnd = false;
         if(mediaInterface.mediaActive.get()){
@@ -1232,7 +1227,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void pressESCAPE(KeyEvent e){
+    public void pressESCAPE(){
         captionsController.cancelDrag();
 
         controlBarController.mouseEventTracker.move();
@@ -1248,7 +1243,7 @@ public class MainController implements Initializable {
             controlBarController.fullScreen = new ControlTooltip("Full screen (f)", controlBarController.fullScreenButton, controlBarController.controlBarWrapper, 0, false);
     }
 
-    public void pressEND(KeyEvent e){
+    public void pressEND(){
         controlBarController.mouseEventTracker.move();
         mediaInterface.seekedToEnd = true;
         if(mediaInterface.mediaActive.get()){

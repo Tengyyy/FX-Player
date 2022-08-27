@@ -13,7 +13,7 @@ public class SliderHoverLabel {
     ControlBarController controlBarController;
 
 
-    Label label = new Label();
+    public Label label = new Label();
 
     SliderHoverLabel(StackPane parent, ControlBarController controlBarController, boolean miniplayer){
         this.controlBarController = controlBarController;

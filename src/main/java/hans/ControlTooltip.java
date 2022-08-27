@@ -38,7 +38,7 @@ public class ControlTooltip extends Tooltip {
 
 
 
-    ControlTooltip(String tooltipText, Region tooltipParent, Region controlBar, int delay, boolean isMenu) {
+    public ControlTooltip(String tooltipText, Region tooltipParent, Region controlBar, int delay, boolean isMenu) {
 
         this.tooltipText = tooltipText;
         this.tooltipParent = tooltipParent;

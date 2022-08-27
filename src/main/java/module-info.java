@@ -16,4 +16,10 @@ module hans {
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;
+    exports hans.MediaItems;
+    opens hans.MediaItems to javafx.fxml, javafx.graphics;
+    exports hans.Settings;
+    opens hans.Settings to javafx.fxml, javafx.graphics;
+    exports hans.Menu;
+    opens hans.Menu to javafx.fxml, javafx.graphics;
 }

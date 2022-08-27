@@ -1,10 +1,11 @@
 package hans;
 
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Cursor;
-import javafx.scene.control.TabPane;
 import javafx.util.Duration;
 
 public class MouseEventTracker {

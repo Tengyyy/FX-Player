@@ -1,5 +1,6 @@
 package hans;
 
+import hans.Menu.MenuController;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,6 +13,7 @@ import javafx.util.Duration;
 
 public class AnimationsClass {
 
+    public static final double ANIMATION_SPEED = 200;
     static TranslateTransition volumeSliderTranslateTransition1;
     static TranslateTransition volumeSliderTranslateTransition2;
     static TranslateTransition volumeSliderTranslateTransition3;
@@ -21,7 +23,6 @@ public class AnimationsClass {
     static FadeTransition nextVideoNotificationOffTransition;
 
 
-    static final double ANIMATION_SPEED = 200;
 
 
     public static void volumeSliderHoverOn(Slider volumeSlider, Label durationLabel, ProgressBar volumeTrack) {

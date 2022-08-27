@@ -3,13 +3,15 @@ package hans;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import hans.Menu.MenuController;
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,7 +24,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Screen;
 import javafx.util.Duration;
 
 public class ControlBarController implements Initializable {
@@ -31,10 +32,31 @@ public class ControlBarController implements Initializable {
     VBox controlBar;
 
     @FXML
-    StackPane controlBarWrapper, bottomShadowBox;
+    public
+    StackPane controlBarWrapper;
+    @FXML
+    StackPane bottomShadowBox;
 
     @FXML
-    Button fullScreenButton, playButton, volumeButton, settingsButton, nextVideoButton, captionsButton, previousVideoButton, miniplayerButton;
+    public
+    Button fullScreenButton;
+    @FXML
+    Button playButton;
+    @FXML
+    Button volumeButton;
+    @FXML
+    public
+    Button settingsButton;
+    @FXML
+    Button nextVideoButton;
+    @FXML
+    public
+    Button captionsButton;
+    @FXML
+    Button previousVideoButton;
+    @FXML
+    public
+    Button miniplayerButton;
 
     @FXML
     public Slider volumeSlider, durationSlider;
@@ -69,7 +91,7 @@ public class ControlBarController implements Initializable {
     boolean muted = false;
     boolean isExited = true;
     boolean showingTimeLeft = false;
-    boolean durationSliderHover = false;
+    public boolean durationSliderHover = false;
     boolean controlBarOpen = false;
 
 
@@ -79,19 +101,26 @@ public class ControlBarController implements Initializable {
     boolean nextVideoButtonHover = false;
 
     boolean volumeButtonHover = false;
-    boolean captionsButtonHover = false;
-    boolean settingsButtonHover = false;
-    boolean fullScreenButtonHover = false;
-    boolean miniplayerButtonHover = false;
+    public boolean captionsButtonHover = false;
+    public boolean settingsButtonHover = false;
+    public boolean fullScreenButtonHover = false;
+    public boolean miniplayerButtonHover = false;
 
     boolean previousVideoButtonEnabled = false;
     boolean playButtonEnabled = false;
-    boolean nextVideoButtonEnabled = false;
+    public boolean nextVideoButtonEnabled = false;
 
 
     MouseEventTracker mouseEventTracker;
 
-    ControlTooltip play, mute, settings, fullScreen, captions, nextVideoTooltip, previousVideoTooltip, miniplayer;
+    ControlTooltip play;
+    ControlTooltip mute;
+    public ControlTooltip settings;
+    public ControlTooltip fullScreen;
+    public ControlTooltip captions;
+    ControlTooltip nextVideoTooltip;
+    ControlTooltip previousVideoTooltip;
+    public ControlTooltip miniplayer;
 
     MediaInterface mediaInterface;
 
@@ -520,7 +549,7 @@ public class ControlBarController implements Initializable {
 
         playIcon.setShape(pauseSVG);
         playIcon.setPrefSize(20, 20);
-        play.updateText("Pause (k)");
+        if(play != null) play.updateText("Pause (k)");
     }
 
     public void pause() {
@@ -528,14 +557,14 @@ public class ControlBarController implements Initializable {
         playIcon.setShape(playSVG);
         playIcon.setPrefSize(20, 20);
 
-        play.updateText("Play (k)");
+        if(play != null) play.updateText("Play (k)");
     }
 
     public void end(){
         playIcon.setShape(replaySVG);
         playIcon.setPrefSize(24, 24);
 
-        play.updateText("Replay (k)");
+        if(play != null) play.updateText("Replay (k)");
     }
 
     public void enterArea() {

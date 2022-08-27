@@ -1,5 +1,6 @@
 package hans;
 
+import hans.Settings.SettingsController;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.geometry.Pos;
@@ -10,7 +11,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
@@ -21,7 +21,8 @@ public class LoopPopUp extends ContextMenu {
     FadeTransition showTransition, hideTransition;
 
     SVGPath loopSVG = new SVGPath(), checkSVG = new SVGPath();
-    Region loopIcon = new Region(), checkIcon = new Region();
+    Region loopIcon = new Region();
+    public Region checkIcon = new Region();
 
     HBox itemWrapper = new HBox();
     Label text = new Label();

@@ -1,8 +1,14 @@
 package hans;
 
 
+import hans.Menu.HistoryItem;
+import hans.Menu.MenuController;
 import hans.SRTParser.srt.SRTParser;
 import hans.SRTParser.srt.Subtitle;
+import hans.Settings.CaptionsOptionsPane;
+import hans.Settings.CaptionsPane;
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
@@ -17,10 +23,8 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -28,72 +32,72 @@ import java.util.ArrayList;
 
 public class CaptionsController {
 
-    SettingsController settingsController;
+    public SettingsController settingsController;
     MainController mainController;
     MediaInterface mediaInterface;
-    ControlBarController controlBarController;
-    MenuController menuController;
+    public ControlBarController controlBarController;
+    public MenuController menuController;
 
 
-    CaptionsPane captionsPane;
+    public CaptionsPane captionsPane;
 
-    CaptionsOptionsPane captionsOptionsPane;
+    public CaptionsOptionsPane captionsOptionsPane;
 
     File captionsFile;
 
     ArrayList<Subtitle> subtitles  = new ArrayList<>();
     int captionsPosition = 0;
 
-    boolean captionsSelected = false;
+    public boolean captionsSelected = false;
     BooleanProperty captionsOn = new SimpleBooleanProperty();
     boolean showedCurrentCaption = false;
 
 
-    VBox captionsBox = new VBox();
-    Label captionsLabel1 = new Label();
-    Label captionsLabel2 = new Label();
+    public VBox captionsBox = new VBox();
+    public Label captionsLabel1 = new Label();
+    public Label captionsLabel2 = new Label();
 
-    int defaultFontSize = 30;
-    String defaultFontFamily = "\"Roboto Medium\"";
+    public int defaultFontSize = 30;
+    public String defaultFontFamily = "\"Roboto Medium\"";
 
-    double defaultTextOpacity = 1.0;
-
-
-    Color defaultTextFill = Color.WHITE;
-
-    int defaultSpacing = 10;
-    int defaultBackgroundRed = 0;
-    int defaultBackgroundGreen = 0;
-    int defaultBackgroundBlue = 0;
-    double defaultBackgroundOpacity = 0.75;
-    Pos defaultTextAlignment = Pos.CENTER;
-
-    Color defaultBackground = Color.rgb(defaultBackgroundRed, defaultBackgroundGreen, defaultBackgroundBlue, defaultBackgroundOpacity);
-
-    DoubleProperty mediaWidthMultiplier = new SimpleDoubleProperty(0.4);
+    public double defaultTextOpacity = 1.0;
 
 
-    int currentFontSize = defaultFontSize;
-    String currentFontFamily = defaultFontFamily;
+    public Color defaultTextFill = Color.WHITE;
 
-    double currentTextOpacity = defaultTextOpacity;
+    public int defaultSpacing = 10;
+    public int defaultBackgroundRed = 0;
+    public int defaultBackgroundGreen = 0;
+    public int defaultBackgroundBlue = 0;
+    public double defaultBackgroundOpacity = 0.75;
+    public Pos defaultTextAlignment = Pos.CENTER;
 
-    Color currentTextFill = defaultTextFill;
-    int currentSpacing = defaultSpacing;
-    int currentBackgroundRed = defaultBackgroundRed;
-    int currentBackgroundGreen = defaultBackgroundGreen;
-    int currentBackgroundBlue = defaultBackgroundBlue;
-    double currentBackgroundOpacity = defaultBackgroundOpacity;
-    Pos currentTextAlignment = defaultTextAlignment;
+    public Color defaultBackground = Color.rgb(defaultBackgroundRed, defaultBackgroundGreen, defaultBackgroundBlue, defaultBackgroundOpacity);
 
-    Color currentBackground = defaultBackground;
+    public DoubleProperty mediaWidthMultiplier = new SimpleDoubleProperty(0.4);
+
+
+    public int currentFontSize = defaultFontSize;
+    public String currentFontFamily = defaultFontFamily;
+
+    public double currentTextOpacity = defaultTextOpacity;
+
+    public Color currentTextFill = defaultTextFill;
+    public int currentSpacing = defaultSpacing;
+    public int currentBackgroundRed = defaultBackgroundRed;
+    public int currentBackgroundGreen = defaultBackgroundGreen;
+    public int currentBackgroundBlue = defaultBackgroundBlue;
+    public double currentBackgroundOpacity = defaultBackgroundOpacity;
+    public Pos currentTextAlignment = defaultTextAlignment;
+
+    public Color currentBackground = defaultBackground;
 
 
     Pos captionsLocation = Pos.BOTTOM_CENTER;
 
     PauseTransition showCaptionsTimer;
 
-    boolean captionsDragActive = false;
+    public boolean captionsDragActive = false;
     boolean captionsAnimating = false;
     TranslateTransition captionsTransition;
 

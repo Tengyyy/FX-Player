@@ -1,5 +1,6 @@
 package hans;
 
+import hans.Menu.MenuController;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;

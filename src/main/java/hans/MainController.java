@@ -46,15 +46,10 @@ public class MainController implements Initializable {
     @FXML
     public ImageView videoImageView;
 
-    @FXML
-    Button menuButton;
 
     @FXML
-    StackPane outerPane, menuButtonPane, videoImageViewWrapper, videoImageViewInnerWrapper;
+    StackPane outerPane, videoImageViewWrapper, videoImageViewInnerWrapper;
 
-
-    @FXML
-    Region menuIcon;
 
     @FXML
     private ControlBarController controlBarController;
@@ -98,11 +93,17 @@ public class MainController implements Initializable {
 
     String snapshotDirectory;
 
-    StackPane topShadowBox = new StackPane(), videoTitleBox = new StackPane();
+    StackPane videoTitleBox = new StackPane();
     Label videoTitleLabel = new Label();
 
 
     public SliderHoverLabel sliderHoverLabel;
+
+
+    StackPane videoTitleBoxWrapper = new StackPane();
+    Button menuButton = new Button();
+    StackPane menuButtonPane = new StackPane();
+    Region menuIcon = new Region();
 
 
     @Override
@@ -161,19 +162,7 @@ public class MainController implements Initializable {
         videoImageViewInnerWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
 
 
-
-        menuButton.setBackground(Background.EMPTY);
-
-        menuButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlBarController.controlButtonHoverOn(menuButtonPane));
-
-        menuButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlBarController.controlButtonHoverOff(menuButtonPane));
-
-        menuIcon.setShape(menuSVG);
-
-
-
-
-        miniplayerActiveText.setText("Video active in miniplayer");
+        miniplayerActiveText.setText("Media active in miniplayer");
         miniplayerActiveText.setId("mediaViewText");
         miniplayerActiveText.setBackground(Background.EMPTY);
         miniplayerActiveText.setMouseTransparent(true);
@@ -193,6 +182,8 @@ public class MainController implements Initializable {
 
 
         });
+
+        videoImageViewWrapper.getChildren().add(1, controlBarController.controlBarBackground);
 
         widthListener = (observableValue, oldValue, newValue) -> {
 
@@ -320,36 +311,49 @@ public class MainController implements Initializable {
         });
 
 
-        topShadowBox.setPrefHeight(70);
-        topShadowBox.setMaxHeight(70);
-        topShadowBox.setMinWidth(601);
-        topShadowBox.setMaxWidth(Double.MAX_VALUE);
-        topShadowBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        StackPane.setAlignment(topShadowBox, Pos.TOP_CENTER);
-        topShadowBox.setTranslateY(-70);
-        topShadowBox.setScaleX(1.1);
-        topShadowBox.setOpacity(0);
-        topShadowBox.setMouseTransparent(true);
+        videoTitleBoxWrapper.setPrefHeight(120);
+        videoTitleBoxWrapper.setMaxHeight(120);
+        videoTitleBoxWrapper.setStyle("-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));");
+        videoTitleBoxWrapper.setAlignment(Pos.TOP_LEFT);
+        StackPane.setAlignment(videoTitleBoxWrapper, Pos.TOP_LEFT);
+        videoTitleBoxWrapper.maxWidthProperty().bind(videoImageViewWrapper.widthProperty());
+        videoTitleBoxWrapper.getChildren().add(videoTitleBox);
 
-        DropShadow dropShadow = new DropShadow(BlurType.THREE_PASS_BOX, Color.BLACK, 68.5, 0.5, 0, 0);
-        dropShadow.setWidth(21);
-        dropShadow.setHeight(255);
-
-        topShadowBox.setEffect(dropShadow);
-
-        videoTitleBox.setBackground(Background.EMPTY);
-        videoTitleBox.setTranslateX(70);
         videoTitleBox.setMinHeight(60);
         videoTitleBox.setMaxHeight(60);
         videoTitleBox.setAlignment(Pos.CENTER_LEFT);
         StackPane.setAlignment(videoTitleBox, Pos.TOP_LEFT);
 
-        videoTitleBox.getChildren().add(videoTitleLabel);
+        videoTitleBox.getChildren().addAll(menuButtonPane, videoTitleLabel);
+
+        menuButtonPane.setPrefSize(60, 60);
+        menuButtonPane.setMaxSize(60, 60);
+        menuButtonPane.setBackground(Background.EMPTY);
+        menuButtonPane.getChildren().addAll(menuButton, menuIcon);
+
+        menuButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlBarController.controlButtonHoverOn(menuButtonPane));
+
+        menuButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlBarController.controlButtonHoverOff(menuButtonPane));
+
+
+        menuButton.setPrefSize(60, 60);
+        menuButton.setMaxSize(60, 60);
+        menuButton.setBackground(Background.EMPTY);
+        menuButton.setCursor(Cursor.HAND);
+        menuButton.setOnAction(e -> openMenu());
+
+
+        menuIcon.setShape(menuSVG);
+        menuIcon.setPrefSize(30, 25);
+        menuIcon.setMaxSize(30, 25);
+        menuIcon.setMouseTransparent(true);
+        menuIcon.getStyleClass().add("controlIcon");
 
 
         videoTitleLabel.setMouseTransparent(false);
         videoTitleLabel.setBackground(Background.EMPTY);
         videoTitleLabel.setText(null);
+        videoTitleLabel.setTranslateX(70);
         videoTitleLabel.setTextFill(Color.rgb(200, 200, 200));
         videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 20");
         videoTitleLabel.setEffect(new DropShadow());
@@ -365,7 +369,7 @@ public class MainController implements Initializable {
 
 
 
-        videoImageViewInnerWrapper.getChildren().addAll(topShadowBox, videoTitleBox);
+        videoImageViewInnerWrapper.getChildren().add(videoTitleBoxWrapper);
 
     }
 

@@ -12,6 +12,7 @@ import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -34,8 +35,6 @@ public class ControlBarController implements Initializable {
     @FXML
     public
     StackPane controlBarWrapper;
-    @FXML
-    StackPane bottomShadowBox;
 
     @FXML
     public
@@ -128,6 +127,9 @@ public class ControlBarController implements Initializable {
 
     PauseTransition seekTimer = new PauseTransition(Duration.millis(50));
 
+
+    StackPane controlBarBackground = new StackPane();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -188,9 +190,14 @@ public class ControlBarController implements Initializable {
 
         durationPane.setMouseTransparent(true);
 
-        bottomShadowBox.setScaleX(1.1);
-
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
+
+
+        controlBarBackground.setStyle("-fx-background-color: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));");
+        controlBarBackground.setMouseTransparent(true);
+        controlBarBackground.setPrefHeight(200);
+        controlBarBackground.setMaxHeight(200);
+        StackPane.setAlignment(controlBarBackground, Pos.BOTTOM_CENTER);
 
         previousVideoIcon.setShape(previousVideoSVG);
         playIcon.setShape(playSVG);

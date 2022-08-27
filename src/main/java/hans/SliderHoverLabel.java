@@ -21,6 +21,8 @@ public class SliderHoverLabel {
         label.setTextFill(Color.WHITE);
 
         //TODO: create a stronger drop-shadow effect
+
+
         label.setEffect(new DropShadow());
 
         label.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 14");

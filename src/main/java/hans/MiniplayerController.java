@@ -82,6 +82,7 @@ public class MiniplayerController {
 
 
     ChangeListener<? super Number> widthListener;
+    ChangeListener<? super Number> heightListener;
 
     boolean previousVideoButtonHover = false, playButtonHover = false, nextVideoButtonHover = false;
 
@@ -157,10 +158,12 @@ public class MiniplayerController {
 
 
         mainController.sizeMultiplier.set(0.6);
+        mainController.heightMultiplier.set(0.6);
         if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
         mainController.forwardsIndicator.resize();
         mainController.backwardsIndicator.resize();
         mainController.valueIndicator.resize();
+        mainController.valueIndicator.reposition();
 
         sliderPane.setPrefHeight(16);
         sliderPane.setMaxHeight(Region.USE_PREF_SIZE);
@@ -398,7 +401,37 @@ public class MiniplayerController {
 
         };
 
+        heightListener = (observableValue, oldValue, newValue) -> {
+
+
+            if(newValue.doubleValue() < 300){
+
+                mainController.heightMultiplier.set(0.35);
+                mainController.valueIndicator.reposition();
+            }
+            else if((newValue.doubleValue() >= 300 && newValue.doubleValue() < 400)){
+
+                mainController.heightMultiplier.set(0.5);
+                mainController.valueIndicator.reposition();
+
+            }
+            else if((newValue.doubleValue() >= 400 && newValue.doubleValue() < 550)){
+
+                mainController.heightMultiplier.set(0.6);
+                mainController.valueIndicator.reposition();
+
+            }
+            else if(newValue.doubleValue() >= 550){
+
+                mainController.heightMultiplier.set(0.7);
+                mainController.valueIndicator.reposition();
+
+            }
+
+        };
+
         videoImageViewInnerWrapper.widthProperty().addListener(widthListener);
+        videoImageViewInnerWrapper.heightProperty().addListener(heightListener);
 
 
         controlsBackground.setMouseTransparent(true);
@@ -804,7 +837,7 @@ public class MiniplayerController {
             playIcon.setMaxSize(40, 40);
         }
 
-        playButtonTooltip.updateText("Pause (k)");
+        if(playButtonTooltip != null) playButtonTooltip.updateText("Pause (k)");
     }
 
 
@@ -820,7 +853,7 @@ public class MiniplayerController {
             playIcon.setMaxSize(40, 40);
         }
 
-        playButtonTooltip.updateText("Play (k)");
+        if(playButtonTooltip != null) playButtonTooltip.updateText("Play (k)");
     }
 
     public void end(){
@@ -835,7 +868,7 @@ public class MiniplayerController {
             playIcon.setMaxSize(48, 48);
         }
 
-        playButtonTooltip.updateText("Replay (k)");
+        if(playButtonTooltip != null) playButtonTooltip.updateText("Replay (k)");
     }
 
 

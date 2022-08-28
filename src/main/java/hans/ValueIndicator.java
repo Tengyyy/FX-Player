@@ -26,7 +26,7 @@ public class ValueIndicator {
         wrapper.setBackground(new Background(new BackgroundFill(Color.rgb(30,30,30,0.6), new CornerRadii(5), Insets.EMPTY)));
         wrapper.setMouseTransparent(true);
         wrapper.setVisible(false);
-        wrapper.setTranslateY(50 * mainController.sizeMultiplier.doubleValue());
+        wrapper.setTranslateY(100 * mainController.heightMultiplier.doubleValue());
         wrapper.setPadding(new Insets(15 * mainController.sizeMultiplier.doubleValue(), 25 * mainController.sizeMultiplier.doubleValue(), 15 * mainController.sizeMultiplier.doubleValue(), 25 * mainController.sizeMultiplier.doubleValue()));
         StackPane.setAlignment(wrapper, Pos.TOP_CENTER);
         wrapper.setPrefSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
@@ -89,8 +89,15 @@ public class ValueIndicator {
         }
 
         wrapper.setPadding(new Insets(15 * mainController.sizeMultiplier.doubleValue(), 25 * mainController.sizeMultiplier.doubleValue(), 15 * mainController.sizeMultiplier.doubleValue(), 25 * mainController.sizeMultiplier.doubleValue()));
-        wrapper.setTranslateY(50 * mainController.sizeMultiplier.doubleValue());
     }
+
+
+
+    public void reposition(){
+        wrapper.setTranslateY(100 * mainController.heightMultiplier.doubleValue());
+
+    }
+
 
     public void moveToMiniplayer(){
         mainController.videoImageViewInnerWrapper.getChildren().remove(wrapper);

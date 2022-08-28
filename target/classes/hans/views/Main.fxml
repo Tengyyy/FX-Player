@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 
 <StackPane fx:id="outerPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MainController">
@@ -16,16 +13,6 @@
                </children>
             </StackPane>
               <fx:include fx:id="controlBar" minWidth="601.0" source="ControlBar.fxml" StackPane.alignment="BOTTOM_RIGHT" />
-            <StackPane fx:id="menuButtonPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="60.0" StackPane.alignment="TOP_LEFT">
-               <children>
-                    <Button fx:id="menuButton" mnemonicParsing="false" onAction="#openMenu" prefHeight="60.0" prefWidth="60.0" style="-fx-padding: 0;" styleClass="focusableProperty" StackPane.alignment="CENTER">
-                        <cursor>
-                            <Cursor fx:constant="HAND" />
-                        </cursor>
-                    </Button>
-                  <Region fx:id="menuIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="25.0" prefWidth="30.0" styleClass="controlIcon" StackPane.alignment="CENTER" />
-               </children>
-            </StackPane>
          </children>
       </StackPane>
         <fx:include fx:id="menu" minWidth="0.0" prefWidth="0.0" source="Menu.fxml" StackPane.alignment="CENTER_LEFT" />

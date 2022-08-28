@@ -793,7 +793,7 @@ public class ControlBarController implements Initializable {
         Region icon = (Region) stackPane.getChildren().get(1);
 
         if(!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected) AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
-        else AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(100, 100, 100), Color.rgb(130, 130, 130), 200);
+        else AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
     }
 
 
@@ -801,7 +801,7 @@ public class ControlBarController implements Initializable {
         Region icon = (Region) stackPane.getChildren().get(1);
 
         if(!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected) AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
-        else AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(130, 130, 130), Color.rgb(100, 100, 100), 200);
+        else AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
     }
 
     public void previousVideoButtonHoverOn(){
@@ -811,7 +811,7 @@ public class ControlBarController implements Initializable {
             AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(100, 100, 100), Color.rgb(130, 130, 130), 200);
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
         }
     }
 
@@ -822,7 +822,7 @@ public class ControlBarController implements Initializable {
             AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(130, 130, 130), Color.rgb(100, 100, 100), 200);
+            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
     }
 
@@ -833,7 +833,7 @@ public class ControlBarController implements Initializable {
             AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(100, 100, 100), Color.rgb(130, 130, 130), 200);
+            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
         }
     }
 
@@ -844,7 +844,7 @@ public class ControlBarController implements Initializable {
             AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(130, 130, 130), Color.rgb(100, 100, 100), 200);
+            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
     }
 
@@ -855,7 +855,7 @@ public class ControlBarController implements Initializable {
             AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(100, 100, 100), Color.rgb(130, 130, 130), 200);
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
 
         }
     }
@@ -867,7 +867,7 @@ public class ControlBarController implements Initializable {
             AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         }
         else {
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(130, 130, 130), Color.rgb(100, 100, 100), 200);
+            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
     }
 
@@ -895,10 +895,10 @@ public class ControlBarController implements Initializable {
         previousVideoButtonEnabled = false;
 
         if(previousVideoButtonHover){
-            previousVideoIcon.setStyle("-fx-background-color: rgb(130, 130, 130);");
+            previousVideoIcon.setStyle("-fx-background-color: rgb(150, 150, 150);");
         }
         else {
-            previousVideoIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
+            previousVideoIcon.setStyle("-fx-background-color: rgb(120, 120, 120);");
         }
 
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
@@ -932,10 +932,10 @@ public class ControlBarController implements Initializable {
         playButtonEnabled = false;
 
         if(playButtonHover){
-            playIcon.setStyle("-fx-background-color: rgb(130, 130, 130);");
+            playIcon.setStyle("-fx-background-color: rgb(150, 150, 150);");
         }
         else {
-            playIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
+            playIcon.setStyle("-fx-background-color: rgb(120, 120, 120);");
         }
 
 
@@ -966,10 +966,10 @@ public class ControlBarController implements Initializable {
         nextVideoButtonEnabled = false;
 
         if(nextVideoButtonHover){
-            nextVideoIcon.setStyle("-fx-background-color: rgb(130, 130, 130);");
+            nextVideoIcon.setStyle("-fx-background-color: rgb(150, 150, 150);");
         }
         else {
-            nextVideoIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
+            nextVideoIcon.setStyle("-fx-background-color: rgb(120, 120, 120);");
         }
 
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disableNextVideoButton();

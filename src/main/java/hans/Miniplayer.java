@@ -11,6 +11,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.util.Objects;
+
 public class Miniplayer {
 
     MainController mainController;
@@ -47,7 +49,7 @@ public class Miniplayer {
 
         scene = new BorderlessScene(stage, StageStyle.TRANSPARENT, miniplayerController.videoImageViewWrapper);
         scene.setFill(Color.TRANSPARENT);
-        scene.getStylesheets().add(getClass().getResource("styles/miniplayer.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/miniplayer.css")).toExternalForm());
 
 
         miniplayerController.initActions();

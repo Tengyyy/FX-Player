@@ -91,18 +91,23 @@ public class AnimationsClass {
         controlBarFade.setCycleCount(1);
 
         FadeTransition controlBarBackgroundFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarBackground);
-        controlBarFade.setFromValue(controlBarController.controlBarBackground.getOpacity());
-        controlBarFade.setToValue(1);
-        controlBarFade.setCycleCount(1);
+        controlBarBackgroundFade.setFromValue(controlBarController.controlBarBackground.getOpacity());
+        controlBarBackgroundFade.setToValue(1);
+        controlBarBackgroundFade.setCycleCount(1);
 
 
-        mainController.videoTitleBoxWrapper.setVisible(true);
-        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBoxWrapper);
-        videoTitleTransition.setFromValue(mainController.videoTitleBoxWrapper.getOpacity());
+        mainController.videoTitleBox.setVisible(true);
+        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBox);
+        videoTitleTransition.setFromValue(mainController.videoTitleBox.getOpacity());
+        videoTitleTransition.setToValue(1);
+
+        mainController.videoTitleBackground.setVisible(true);
+        FadeTransition videoTitleBackgroundTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBackground);
+        videoTitleTransition.setFromValue(mainController.videoTitleBackground.getOpacity());
         videoTitleTransition.setToValue(1);
 
 
-        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, videoTitleTransition, controlBarBackgroundFade);
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, controlBarBackgroundFade, videoTitleTransition, videoTitleBackgroundTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
 
         parallelTransition.play();
@@ -144,22 +149,27 @@ public class AnimationsClass {
         controlBarFade.setCycleCount(1);
 
         FadeTransition controlBarBackgroundFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarBackground);
-        controlBarFade.setFromValue(controlBarController.controlBarBackground.getOpacity());
-        controlBarFade.setToValue(0);
-        controlBarFade.setCycleCount(1);
+        controlBarBackgroundFade.setFromValue(controlBarController.controlBarBackground.getOpacity());
+        controlBarBackgroundFade.setToValue(0);
+        controlBarBackgroundFade.setCycleCount(1);
 
 
-        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBoxWrapper);
-        videoTitleTransition.setFromValue(mainController.videoTitleBoxWrapper.getOpacity());
+        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBox);
+        videoTitleTransition.setFromValue(mainController.videoTitleBox.getOpacity());
+        videoTitleTransition.setToValue(0);
+
+        FadeTransition videoTitleBackgroundTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBackground);
+        videoTitleTransition.setFromValue(mainController.videoTitleBackground.getOpacity());
         videoTitleTransition.setToValue(0);
 
 
-        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, videoTitleTransition, controlBarBackgroundFade);
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, controlBarBackgroundFade, videoTitleTransition, videoTitleBackgroundTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
         parallelTransition.setOnFinished((e) -> {
             controlBarController.controlBarOpen = false;
             controlBarController.mouseEventTracker.mouseMoving.set(false);
-            mainController.videoTitleBoxWrapper.setVisible(false);
+            mainController.videoTitleBox.setVisible(false);
+            mainController.videoTitleBackground.setVisible(false);
             captionsController.captionsAnimating = false;
             captionsController.captionsBox.setStyle("-fx-background-color: transparent;");
         });

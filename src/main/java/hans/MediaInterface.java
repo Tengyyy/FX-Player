@@ -67,8 +67,14 @@ public class MediaInterface {
                 }
             }
             else {
-                if(controlBarController.playButtonEnabled) controlBarController.disablePlayButton();
-                if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disablePlayButton();
+                if(controlBarController.playButtonEnabled) {
+                    controlBarController.pause();
+                    controlBarController.disablePlayButton();
+                }
+                if(mainController.miniplayerActive){
+                    mainController.miniplayer.miniplayerController.pause();
+                    mainController.miniplayer.miniplayerController.disablePlayButton();
+                }
                 mainController.miniplayerActiveText.setVisible(false);
             }
         });
@@ -134,7 +140,7 @@ public class MediaInterface {
                             }
 
                             menuController.captionsController.showedCurrentCaption = true;
-                        } else if ((newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && menuController.captionsController.captionsPosition >= menuController.captionsController.subtitles.size() - 1) || (newTime) >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn) {
+                        } else if ((newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && menuController.captionsController.captionsPosition >= menuController.captionsController.subtitles.size() - 1) || (newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn) || (newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition <= 0)) {
                             Platform.runLater(() -> {
                                 menuController.captionsController.captionsLabel1.setOpacity(0);
                                 menuController.captionsController.captionsLabel2.setOpacity(0);

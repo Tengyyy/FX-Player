@@ -76,6 +76,7 @@ public class MainController implements Initializable {
     ValueIndicator valueIndicator;
 
     SimpleDoubleProperty sizeMultiplier = new SimpleDoubleProperty();
+    SimpleDoubleProperty heightMultiplier = new SimpleDoubleProperty();
 
     public Label miniplayerActiveText = new Label();
 
@@ -85,6 +86,7 @@ public class MainController implements Initializable {
     Miniplayer miniplayer;
 
     ChangeListener<? super Number> widthListener;
+    ChangeListener<? super Number> heightListener;
 
     ChangeListener<? super Number> widthListenerForTitle;
 
@@ -100,7 +102,7 @@ public class MainController implements Initializable {
     public SliderHoverLabel sliderHoverLabel;
 
 
-    StackPane videoTitleBoxWrapper = new StackPane();
+    StackPane videoTitleBackground = new StackPane();
     Button menuButton = new Button();
     StackPane menuButtonPane = new StackPane();
     Region menuIcon = new Region();
@@ -183,7 +185,7 @@ public class MainController implements Initializable {
 
         });
 
-        videoImageViewWrapper.getChildren().add(1, controlBarController.controlBarBackground);
+        videoImageViewInnerWrapper.getChildren().add(1, controlBarController.controlBarBackground);
 
         widthListener = (observableValue, oldValue, newValue) -> {
 
@@ -243,11 +245,46 @@ public class MainController implements Initializable {
             }
         };
 
+        heightListener = (observableValue, oldValue, newValue) -> {
+
+            if(newValue.doubleValue() < 400){
+
+                heightMultiplier.set(0.55);
+                valueIndicator.reposition();
+
+            }
+            else if((newValue.doubleValue() >= 400 && newValue.doubleValue() < 600)){
+
+                heightMultiplier.set(0.65);
+                valueIndicator.reposition();
+
+            }
+            else if((newValue.doubleValue() >= 600 && newValue.doubleValue() < 900)){
+
+                heightMultiplier.set(0.8);
+                valueIndicator.reposition();
+
+            }
+            else if((newValue.doubleValue() >= 900 && newValue.doubleValue() < 1200)){
+
+                heightMultiplier.set(1);
+                valueIndicator.reposition();
+
+            }
+            else if(newValue.doubleValue() >= 1200){
+
+
+                heightMultiplier.set(1.2);
+                valueIndicator.reposition();
+            }
+        };
+
         videoImageViewInnerWrapper.widthProperty().addListener(widthListener);
+        videoImageViewInnerWrapper.heightProperty().addListener(heightListener);
 
         widthListenerForTitle = (observableValue, oldValue, newValue) -> {
 
-            if(newValue.doubleValue() < 800){
+             if(newValue.doubleValue() < 800){
                 videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 17");
             }
             else if((newValue.doubleValue() >= 800 && newValue.doubleValue() < 1200)){
@@ -311,13 +348,13 @@ public class MainController implements Initializable {
         });
 
 
-        videoTitleBoxWrapper.setPrefHeight(120);
-        videoTitleBoxWrapper.setMaxHeight(120);
-        videoTitleBoxWrapper.setStyle("-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));");
-        videoTitleBoxWrapper.setAlignment(Pos.TOP_LEFT);
-        StackPane.setAlignment(videoTitleBoxWrapper, Pos.TOP_LEFT);
-        videoTitleBoxWrapper.maxWidthProperty().bind(videoImageViewWrapper.widthProperty());
-        videoTitleBoxWrapper.getChildren().add(videoTitleBox);
+        videoTitleBackground.setPrefHeight(120);
+        videoTitleBackground.setMaxHeight(120);
+        videoTitleBackground.setStyle("-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));");
+        videoTitleBackground.setAlignment(Pos.TOP_LEFT);
+        StackPane.setAlignment(videoTitleBackground, Pos.TOP_LEFT);
+        videoTitleBackground.maxWidthProperty().bind(videoImageViewWrapper.widthProperty());
+        videoTitleBackground.setMouseTransparent(true);
 
         videoTitleBox.setMinHeight(60);
         videoTitleBox.setMaxHeight(60);
@@ -354,6 +391,7 @@ public class MainController implements Initializable {
         videoTitleLabel.setBackground(Background.EMPTY);
         videoTitleLabel.setText(null);
         videoTitleLabel.setTranslateX(70);
+        videoTitleLabel.maxWidthProperty().bind(videoImageViewInnerWrapper.widthProperty().subtract(70));
         videoTitleLabel.setTextFill(Color.rgb(200, 200, 200));
         videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 20");
         videoTitleLabel.setEffect(new DropShadow());
@@ -369,7 +407,8 @@ public class MainController implements Initializable {
 
 
 
-        videoImageViewInnerWrapper.getChildren().add(videoTitleBoxWrapper);
+        videoImageViewInnerWrapper.getChildren().add(1, videoTitleBackground);
+        videoImageViewInnerWrapper.getChildren().add(videoTitleBox);
 
     }
 
@@ -525,6 +564,7 @@ public class MainController implements Initializable {
 
 
         videoImageViewInnerWrapper.widthProperty().removeListener(widthListener);
+        videoImageViewInnerWrapper.heightProperty().removeListener(heightListener);
 
 
         miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface, settingsController);
@@ -564,6 +604,8 @@ public class MainController implements Initializable {
         if(controlBarController.durationSlider.isValueChanging()) return;
 
         miniplayer.miniplayerController.videoImageViewInnerWrapper.widthProperty().removeListener(miniplayer.miniplayerController.widthListener);
+        miniplayer.miniplayerController.videoImageViewInnerWrapper.heightProperty().removeListener(miniplayer.miniplayerController.heightListener);
+
 
         if(miniplayerActive && miniplayer != null && miniplayer.stage != null){
             miniplayer.stage.close();
@@ -583,7 +625,10 @@ public class MainController implements Initializable {
 
 
         resizeIndicators();
+        repositionValueIndicator();
+
         videoImageViewInnerWrapper.widthProperty().addListener(widthListener);
+        videoImageViewInnerWrapper.heightProperty().addListener(heightListener);
 
         miniplayerActiveText.setVisible(false);
 
@@ -658,6 +703,41 @@ public class MainController implements Initializable {
             valueIndicator.resize();
         }
     }
+
+    public void repositionValueIndicator(){
+        if(videoImageViewInnerWrapper.getHeight() < 400){
+
+            heightMultiplier.set(0.55);
+            valueIndicator.reposition();
+
+        }
+        else if((videoImageViewInnerWrapper.getHeight() >= 400 && videoImageViewInnerWrapper.getHeight() < 600)){
+
+            heightMultiplier.set(0.65);
+            valueIndicator.reposition();
+
+        }
+        else if((videoImageViewInnerWrapper.getHeight() >= 600 && videoImageViewInnerWrapper.getHeight() < 900)){
+
+            heightMultiplier.set(0.8);
+            valueIndicator.reposition();
+
+        }
+        else if((videoImageViewInnerWrapper.getHeight() >= 900 && videoImageViewInnerWrapper.getHeight() < 1200)){
+
+            heightMultiplier.set(1);
+            valueIndicator.reposition();
+
+        }
+        else if(videoImageViewInnerWrapper.getHeight() >= 1200){
+
+
+            heightMultiplier.set(1.2);
+            valueIndicator.reposition();
+        }
+    }
+
+
 
 
     public void pressRIGHT(KeyEvent e){

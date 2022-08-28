@@ -38,7 +38,7 @@ public class SettingsHomeController {
 
         fileChooser = new FileChooser();
         fileChooser.setTitle("Select video");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov"), new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All supported formats", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov", "*.mp3", "*.flac", "*.wav"), new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov"), new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav"));
 
         shuffleSVG.setContent(App.svgMap.get(SVG.SHUFFLE));
         repeatSVG.setContent(App.svgMap.get(SVG.REPEAT));

@@ -455,6 +455,9 @@ public class ControlBarController implements Initializable {
             }
             durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
 
+            captionsController.updateCaptions(newValue.doubleValue() * 1000 + 1000);
+
+
             if(mainController.miniplayerActive){
                 mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
                 if(mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue()){
@@ -977,6 +980,9 @@ public class ControlBarController implements Initializable {
         nextVideoButton.setOnMouseEntered(null);
         if(nextVideoButtonHover && nextVideoTooltip != null) nextVideoTooltip.hide();
     }
+
+
+
 
 
 }

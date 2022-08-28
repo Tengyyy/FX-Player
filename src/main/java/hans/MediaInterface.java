@@ -109,56 +109,6 @@ public class MediaInterface {
                 Platform.runLater(() -> {
                     if(Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.5)controlBarController.durationSlider.setValue((double)newTime/1000);
                 });
-
-                    if(!menuController.captionsController.subtitles.isEmpty() &&
-                            menuController.captionsController.captionsPosition >= 0 &&
-                            menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size() &&
-                            menuController.captionsController.captionsOn.get() &&
-                            !menuController.captionsController.captionsDragActive) {
-
-
-                        if (newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && !menuController.captionsController.showedCurrentCaption) {
-                            String text = menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).text;
-
-                            // if the subtitle contains a new line character then split the subtitle into two and add the part after the new line onto another label
-
-                            String[] subtitleLines = Utilities.splitLines(text);
-
-                            if (subtitleLines.length == 2) {
-                                Platform.runLater(() -> {
-                                    menuController.captionsController.captionsLabel1.setOpacity(1);
-                                    menuController.captionsController.captionsLabel2.setOpacity(1);
-                                    menuController.captionsController.captionsLabel1.setText(subtitleLines[0]);
-                                    menuController.captionsController.captionsLabel2.setText(subtitleLines[1]);
-                                });
-                            } else {
-                                Platform.runLater(() -> {
-                                    menuController.captionsController.captionsLabel1.setOpacity(0);
-                                    menuController.captionsController.captionsLabel2.setOpacity(1);
-                                    menuController.captionsController.captionsLabel2.setText(subtitleLines[0]);
-                                });
-                            }
-
-                            menuController.captionsController.showedCurrentCaption = true;
-                        } else if ((newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && menuController.captionsController.captionsPosition >= menuController.captionsController.subtitles.size() - 1) || (newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn) || (newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition <= 0)) {
-                            Platform.runLater(() -> {
-                                menuController.captionsController.captionsLabel1.setOpacity(0);
-                                menuController.captionsController.captionsLabel2.setOpacity(0);
-                            });
-                        } else if (newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition > 0) {
-                            do {
-                                menuController.captionsController.captionsPosition--;
-                                menuController.captionsController.showedCurrentCaption = false;
-                            }
-                            while (newTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition > 0);
-                        } else if (menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size() - 1 && newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn) {
-                            do {
-                                menuController.captionsController.captionsPosition++;
-                                menuController.captionsController.showedCurrentCaption = false;
-                            }
-                            while (menuController.captionsController.captionsPosition < menuController.captionsController.subtitles.size() - 1 && newTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn);
-                        }
-                    }
             }
 
             @Override

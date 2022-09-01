@@ -119,9 +119,9 @@ public class ActiveBox extends StackPane {
     public void initialize(ActiveItem activeItem){
         Platform.runLater(() -> {
             activeItem.optionsPopUp = new MenuItemOptionsPopUp(activeItem);
-            activeItem.playButtonTooltip = new ControlTooltip("Play video", activeItem.playButton, new VBox(), 1000, false);
-            activeItem.removeButtonTooltip = new ControlTooltip("Remove video", activeItem.removeButton, new VBox(), 1000, false);
-            activeItem.optionsButtonTooltip = new ControlTooltip("Options", activeItem.optionsButton, new VBox(), 1000, false);
+            activeItem.playButtonTooltip = new ControlTooltip("Play video", activeItem.playButton, 1000);
+            activeItem.removeButtonTooltip = new ControlTooltip("Remove video", activeItem.removeButton, 1000);
+            activeItem.optionsButtonTooltip = new ControlTooltip("Options", activeItem.optionsButton, 1000);
 
             menuController.mediaInterface.createMedia(activeItem);
         });

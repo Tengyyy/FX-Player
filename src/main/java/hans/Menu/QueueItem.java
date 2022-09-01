@@ -34,11 +34,11 @@ public class QueueItem extends GridPane implements MenuObject {
     RowConstraints row1 = new RowConstraints(90, 90, 90);
 
 
-    Label videoTitle = new Label();
+    public Label videoTitle = new Label();
 
     HBox subTextWrapper = new HBox();
     Label artist = new Label();
-    Label duration = new Label();
+    public Label duration = new Label();
 
     VBox textWrapper = new VBox();
 

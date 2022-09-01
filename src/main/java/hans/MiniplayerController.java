@@ -882,8 +882,8 @@ public class MiniplayerController {
         }
 
         Platform.runLater(() -> {
-            if(controlBarController.durationSlider.getValue() > 5) previousVideoButtonTooltip = new ControlTooltip("Replay", previousVideoButton, new VBox(), 0, false);
-            else previousVideoButtonTooltip = new ControlTooltip("Previous video (SHIFT + P", previousVideoButton, new VBox(), 0, false);
+            if(controlBarController.durationSlider.getValue() > 5) previousVideoButtonTooltip = new ControlTooltip("Replay", previousVideoButton, 0);
+            else previousVideoButtonTooltip = new ControlTooltip("Previous video (SHIFT + P", previousVideoButton, 0);
 
             if(previousVideoButtonHover) previousVideoButtonTooltip.showTooltip();
         });
@@ -914,9 +914,9 @@ public class MiniplayerController {
         }
 
         Platform.runLater(() -> {
-            if(mediaInterface.atEnd) playButtonTooltip = new ControlTooltip("Replay (k)", playButton, new VBox(), 0 , false);
-            else if(mediaInterface.playing.get()) playButtonTooltip = new ControlTooltip("Pause (k)", playButton, new VBox(), 0, false);
-            else playButtonTooltip = new ControlTooltip("Play (k)", playButton, new VBox(), 0, false);
+            if(mediaInterface.atEnd) playButtonTooltip = new ControlTooltip("Replay (k)", playButton, 0);
+            else if(mediaInterface.playing.get()) playButtonTooltip = new ControlTooltip("Pause (k)", playButton, 0);
+            else playButtonTooltip = new ControlTooltip("Play (k)", playButton, 0);
 
             if(playButtonHover) playButtonTooltip.showTooltip();
         });
@@ -945,7 +945,7 @@ public class MiniplayerController {
         }
 
         Platform.runLater(() -> {
-            nextVideoButtonTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, new VBox(), 0, false);
+            nextVideoButtonTooltip = new ControlTooltip("Next video (SHIFT + N)", nextVideoButton, 0);
 
             if(nextVideoButtonHover) nextVideoButtonTooltip.showTooltip();
         });

@@ -9,16 +9,27 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+
+import java.util.Objects;
 
 public class ControlTooltip extends Tooltip {
 
     String lastTextValue = "";
     String tooltipText;
+
+
+    String tooltipTitle;
+    String tooltipSubText;
+    Image tooltipImage;
+    Color imageBackground;
+
     Region tooltipParent;
 
     double tooltipMiddle;
@@ -27,24 +38,20 @@ public class ControlTooltip extends Tooltip {
     double nodeMiddleX;
     double nodeMiddleY;
 
-    boolean isMenu;
-
-    Region controlBar;
-
     int delay;
 
     BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
     PauseTransition countdown;
 
+    boolean isControlBarTooltip = false;
 
 
-    public ControlTooltip(String tooltipText, Region tooltipParent, Region controlBar, int delay, boolean isMenu) {
+
+    public ControlTooltip(String tooltipText, Region tooltipParent, int delay) {
 
         this.tooltipText = tooltipText;
         this.tooltipParent = tooltipParent;
-        this.controlBar = controlBar;
         this.delay = delay;
-        this.isMenu = isMenu;
         this.getStyleClass().add("tooltip");
 
         this.setText(tooltipText);
@@ -69,9 +76,67 @@ public class ControlTooltip extends Tooltip {
         });
     }
 
+    public ControlTooltip(String tooltipText, Region tooltipParent, int delay, boolean isControlBarTooltip){
+        this.tooltipText = tooltipText;
+        this.tooltipParent = tooltipParent;
+        this.delay = delay;
+        this.isControlBarTooltip = isControlBarTooltip;
+        this.getStyleClass().add("tooltip");
+
+        this.setText(tooltipText);
+
+        mouseHover.addListener((obs, wasHover, isHover) -> {
+            if(isHover){
+                showTooltip();
+            }
+        });
+
+        countdown = new PauseTransition(Duration.millis(delay));
+        countdown.setOnFinished((e) -> mouseHover.set(true));
+
+        tooltipParent.setOnMouseEntered((e) -> countdown.playFromStart());
+
+        tooltipParent.setOnMouseExited((e) -> {
+            this.hide();
+            mouseHover.set(false);
+            countdown.stop();
+        });
+    }
+
+    public ControlTooltip(String tooltipText, String tooltipTitle, String tooltipSubText, Image tooltipImage, Color imageBackground, Region tooltipParent, int delay, boolean isControlBarTooltip){
+        this.tooltipText = tooltipText;
+        this.tooltipTitle = tooltipTitle;
+        this.tooltipSubText = tooltipSubText;
+        this.tooltipImage = tooltipImage;
+        this.imageBackground = imageBackground;
+        this.tooltipParent = tooltipParent;
+        this.delay = delay;
+        this.isControlBarTooltip = isControlBarTooltip;
+
+        this.getStyleClass().add("tooltip");
+
+        mouseHover.addListener((obs, wasHover, isHover) -> {
+            if(isHover){
+                showTooltip();
+            }
+        });
+
+        countdown = new PauseTransition(Duration.millis(delay));
+        countdown.setOnFinished((e) -> mouseHover.set(true));
+
+        tooltipParent.setOnMouseEntered((e) -> countdown.playFromStart());
+
+        tooltipParent.setOnMouseExited((e) -> {
+            this.hide();
+            mouseHover.set(false);
+            countdown.stop();
+        });
+
+    }
+
     public void showTooltip() {
 
-        if(this.getText() != lastTextValue){
+        if(!Objects.equals(this.getText(), lastTextValue)){
             this.show(tooltipParent, 0, 0);
             tooltipMiddle = (this.getWidth() - 18) / 2;
             tooltipHeight = this.getHeight();
@@ -84,17 +149,16 @@ public class ControlTooltip extends Tooltip {
         nodeMiddleX = tooltipParent.getWidth() / 2;
         nodeMiddleY = tooltipParent.getHeight() / 2;
 
-        double translation = this.delay == 0 ? controlBar.getTranslateY() : 0;
-
-        if(!isMenu) this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight - translation);
-        else this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() + tooltipHeight + translation);
-
+        if(isControlBarTooltip) this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight - 10);
+        else this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight);
     }
 
 
     public void updateText(String newText){
 
-        if(this.getText() == newText) return;
+        this.setGraphic(null);
+
+        if(Objects.equals(this.getText(), newText)) return;
 
         this.setText(newText);
 
@@ -102,6 +166,11 @@ public class ControlTooltip extends Tooltip {
             this.hide();
             this.showTooltip();
         }
+    }
+
+    // update previous and next video tooltips
+    public void updateGraphic(String newTitle, String newSubText, Image newImage, Color newImageBackground){
+        this.setText(null);
     }
 
 }

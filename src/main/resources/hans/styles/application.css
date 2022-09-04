@@ -237,6 +237,18 @@
     -fx-font-family: "Roboto Bold";
 }
 
+#tooltipMainText {
+    -fx-text-fill: rgb(150,150,150);
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 14;
+}
+
+#tooltipTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 14;
+}
+
 .settingsPaneSubText {
     -fx-font-family: "Roboto";
     -fx-font-size: 13;
@@ -280,6 +292,13 @@
 #settingsBackground {
     -fx-background-color: rgba(30,30,30,0.8);
     -fx-background-radius: 2;
+}
+
+
+#tooltipSubText {
+    -fx-padding: 2 2 2 2;
+    -fx-background-color: rgba(30,30,30,0.8);
+    -fx-font-size: 13;
 }
 
 

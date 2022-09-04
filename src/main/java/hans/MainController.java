@@ -1049,7 +1049,7 @@ public class MainController implements Initializable {
 
     public void pressQ(){
 
-        if(menuController.menuOpen) {
+        if(menuController.menuOpen){
             menuController.closeMenu();
             controlBarController.mouseEventTracker.move();
         }

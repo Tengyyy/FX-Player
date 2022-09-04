@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.util.Objects;
@@ -48,7 +49,7 @@ public class ControlTooltip extends Tooltip {
     Label durationLabel = new Label();
     ImageView imageView = new ImageView();
 
-    HBox textContainer = new HBox();
+    VBox textContainer = new VBox();
     Label mainTextLabel = new Label();
     Label titleLabel = new Label();
 
@@ -147,22 +148,51 @@ public class ControlTooltip extends Tooltip {
 
         graphicBackground.setPadding(new Insets(2));
         graphicBackground.setBackground(Background.EMPTY);
-        graphicBackground.setPrefSize(250, 74);
-        graphicBackground.setMaxSize(250, 74);
+        graphicBackground.setPrefSize(350, 94);
+        graphicBackground.setMaxSize(350, 94);
         graphicBackground.getChildren().addAll(imageViewBackground, textContainer);
 
         StackPane.setAlignment(imageViewBackground, Pos.CENTER_LEFT);
-        imageViewBackground.setPrefSize(125, 70);
-        imageViewBackground.setMaxSize(125, 70);
+        imageViewBackground.setPrefSize(160, 90);
+        imageViewBackground.setMaxSize(160, 90);
 
-        imageViewBackground.setStyle("-fx-background-color: rgba(" + imageBackground.getRed() * 256 + "," + imageBackground.getGreen() * 256 + "," + imageBackground.getBlue() * 256 + ", 0.7);");
+        if(imageBackground != null) imageViewBackground.setStyle("-fx-background-color: rgba(" + imageBackground.getRed() * 256 + "," + imageBackground.getGreen() * 256 + "," + imageBackground.getBlue() * 256 + ", 0.7);");
+        else imageViewBackground.setStyle("-fx-background-color: rgba(0,0,0,0.7);");
+
         imageViewBackground.getChildren().addAll(imageView, durationLabel);
 
 
-        imageView.setFitWidth(125);
-        imageView.setFitHeight(70);
-        imageView.setImage(tooltipImage);
+        imageView.setFitWidth(160);
+        imageView.setFitHeight(90);
+        if(tooltipImage != null) imageView.setImage(tooltipImage);
         imageView.setPreserveRatio(true);
+
+        StackPane.setAlignment(durationLabel, Pos.BOTTOM_RIGHT);
+        if(tooltipSubText.toCharArray()[1] == '•'){
+            durationLabel.setText(tooltipSubText.substring(3));
+        }
+        else durationLabel.setText(tooltipSubText);
+
+        durationLabel.setId("tooltipSubText");
+        StackPane.setMargin(durationLabel, new Insets(0, 5, 3, 0));
+
+
+        textContainer.setAlignment(Pos.TOP_CENTER);
+        textContainer.setPrefSize(186, 90);
+        textContainer.setMaxSize(186, 90);
+        textContainer.getChildren().addAll(mainTextLabel, titleLabel);
+        textContainer.setSpacing(3);
+        textContainer.setPadding(new Insets(0, 5, 0, 5));
+        StackPane.setAlignment(textContainer, Pos.TOP_RIGHT);
+
+        mainTextLabel.setText(tooltipText);
+        mainTextLabel.setId("tooltipMainText");
+        mainTextLabel.setPadding(new Insets(2, 0,0,0));
+
+        titleLabel.setWrapText(true);
+        titleLabel.setId("tooltipTitle");
+        titleLabel.setText(tooltipTitle);
+        titleLabel.setTextAlignment(TextAlignment.CENTER);
 
 
         this.setGraphic(graphicBackground);

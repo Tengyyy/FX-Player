@@ -668,6 +668,7 @@ public class MenuController implements Initializable {
         notificationPane.setOpacity(0);
         menu.setMouseTransparent(true);
         AnimationsClass.closeMenu(this, mainController);
+        controlBarController.mouseEventTracker.move();
 
         captionsController.captionsBox.setMouseTransparent(false);
 

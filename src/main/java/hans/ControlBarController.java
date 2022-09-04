@@ -95,7 +95,7 @@ public class ControlBarController implements Initializable {
     boolean isExited = true;
     boolean showingTimeLeft = false;
     public boolean durationSliderHover = false;
-    boolean controlBarOpen = false;
+    boolean controlBarOpen = true;
 
 
     // variables to keep track of whether mouse is hovering any control button
@@ -114,7 +114,7 @@ public class ControlBarController implements Initializable {
     public boolean nextVideoButtonEnabled = false;
 
 
-    MouseEventTracker mouseEventTracker;
+    public MouseEventTracker mouseEventTracker;
 
     ControlTooltip play;
     ControlTooltip mute;
@@ -935,7 +935,7 @@ public class ControlBarController implements Initializable {
 
 
         previousVideoButton.setOnMouseEntered(null);
-        if (previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.hide();
+        if (previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
     }
 
     public void enablePlayButton() {
@@ -968,7 +968,7 @@ public class ControlBarController implements Initializable {
 
 
         playButton.setOnMouseEntered(null);
-        if (playButtonHover && play != null) play.hide();
+        if (play != null && play.isShowing()) play.hide();
     }
 
     public void enableNextVideoButton() {

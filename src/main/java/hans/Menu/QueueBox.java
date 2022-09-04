@@ -219,6 +219,7 @@ public class QueueBox extends VBox {
         parallelTransition.playFromStart();
 
         if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
+        else menuController.controlBarController.updateNextAndPrevTooltips();
     }
 
     public void addRand(QueueItem child){
@@ -244,6 +245,7 @@ public class QueueBox extends VBox {
         fadeTransition.playFromStart();
 
         if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
+        else menuController.controlBarController.updateNextAndPrevTooltips();
 
     }
 
@@ -299,6 +301,7 @@ public class QueueBox extends VBox {
             if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
                 if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.disableNextVideoButton();
             }
+            else if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
         }
     }
 
@@ -377,6 +380,8 @@ public class QueueBox extends VBox {
         if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
             if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.disableNextVideoButton();
         }
+        else if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
+
 
     }
 
@@ -478,6 +483,7 @@ public class QueueBox extends VBox {
 
 
         if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
+        else menuController.controlBarController.updateNextAndPrevTooltips();
     }
 
     public void addAll(int index, Collection<? extends QueueItem> collection) {
@@ -531,6 +537,7 @@ public class QueueBox extends VBox {
         parallelTransition.playFromStart();
 
         if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
+        else menuController.controlBarController.updateNextAndPrevTooltips();
     }
 
     public void clear(){
@@ -654,6 +661,8 @@ public class QueueBox extends VBox {
 
         menuController.animationsInProgress.add(fadeTransition);
         fadeTransition.playFromStart();
+
+        if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
     }
 
 
@@ -697,6 +706,8 @@ public class QueueBox extends VBox {
 
         menuController.animationsInProgress.add(parallelFadeOut);
         parallelFadeOut.playFromStart();
+
+        if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
 
     }
 
@@ -821,19 +832,23 @@ public class QueueBox extends VBox {
                 menuController.queue.add(draggedNode.newPosition, draggedNode);
                 getChildren().add(draggedNode.newPosition, draggedNode);
 
+                if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
+
             }
 
             draggedNode = null;
         }
 
         dragActive = false;
+
+
     }
 
 
     public void initialize(QueueItem queueItem){
         Platform.runLater(() -> {
-            queueItem.removeButtonTooltip = new ControlTooltip("Remove video", queueItem.removeButton, 1000);
-            queueItem.optionsButtonTooltip = new ControlTooltip("Options", queueItem.optionsButton, 1000);
+            queueItem.removeButtonTooltip = new ControlTooltip(menuController.mainController,"Remove video", queueItem.removeButton, 1000);
+            queueItem.optionsButtonTooltip = new ControlTooltip(menuController.mainController, "Options", queueItem.optionsButton, 1000);
             queueItem.optionsPopUp = new MenuItemOptionsPopUp(queueItem);
 
             QueueItem.height = queueItem.getBoundsInParent().getHeight();

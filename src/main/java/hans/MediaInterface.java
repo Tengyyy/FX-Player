@@ -321,6 +321,7 @@ public class MediaInterface {
             queueItem.play(true);
 
         }
+
     }
 
     public void playPrevious(){
@@ -337,6 +338,7 @@ public class MediaInterface {
             HistoryItem historyItem = menuController.history.get(menuController.historyBox.index -1);
             historyItem.play();
         }
+
     }
 
     public void defaultEnd(){

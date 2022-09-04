@@ -390,6 +390,8 @@ public class ActiveItem extends GridPane implements MenuObject {
         activeBox.set(this, true);
 
 
+        menuController.controlBarController.updateNextAndPrevTooltips();
+
     }
 
 

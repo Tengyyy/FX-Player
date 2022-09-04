@@ -5,23 +5,20 @@ import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Bounds;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.Objects;
 
 public class ControlTooltip extends Tooltip {
 
-    String lastTextValue = "";
     String tooltipText;
 
 
@@ -45,15 +42,30 @@ public class ControlTooltip extends Tooltip {
 
     boolean isControlBarTooltip = false;
 
+    StackPane graphicBackground = new StackPane();
+
+    StackPane imageViewBackground = new StackPane();
+    Label durationLabel = new Label();
+    ImageView imageView = new ImageView();
+
+    HBox textContainer = new HBox();
+    Label mainTextLabel = new Label();
+    Label titleLabel = new Label();
+
+    MainController mainController;
 
 
-    public ControlTooltip(String tooltipText, Region tooltipParent, int delay) {
+
+
+    public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay) {
 
         this.tooltipText = tooltipText;
         this.tooltipParent = tooltipParent;
         this.delay = delay;
-        this.getStyleClass().add("tooltip");
+        this.mainController = mainController;
 
+        this.getStyleClass().add("tooltip");
+        this.setStyle("-fx-padding: 10;");
         this.setText(tooltipText);
 
         mouseHover.addListener((obs, wasHover, isHover) -> {
@@ -74,14 +86,18 @@ public class ControlTooltip extends Tooltip {
             mouseHover.set(false);
             countdown.stop();
         });
+
     }
 
-    public ControlTooltip(String tooltipText, Region tooltipParent, int delay, boolean isControlBarTooltip){
+    public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay, boolean isControlBarTooltip){
         this.tooltipText = tooltipText;
         this.tooltipParent = tooltipParent;
         this.delay = delay;
         this.isControlBarTooltip = isControlBarTooltip;
+        this.mainController = mainController;
+
         this.getStyleClass().add("tooltip");
+        this.setStyle("-fx-padding: 10;");
 
         this.setText(tooltipText);
 
@@ -101,9 +117,10 @@ public class ControlTooltip extends Tooltip {
             mouseHover.set(false);
             countdown.stop();
         });
+
     }
 
-    public ControlTooltip(String tooltipText, String tooltipTitle, String tooltipSubText, Image tooltipImage, Color imageBackground, Region tooltipParent, int delay, boolean isControlBarTooltip){
+    public ControlTooltip(MainController mainController, String tooltipText, String tooltipTitle, String tooltipSubText, Image tooltipImage, Color imageBackground, Region tooltipParent, int delay, boolean isControlBarTooltip){
         this.tooltipText = tooltipText;
         this.tooltipTitle = tooltipTitle;
         this.tooltipSubText = tooltipSubText;
@@ -112,8 +129,12 @@ public class ControlTooltip extends Tooltip {
         this.tooltipParent = tooltipParent;
         this.delay = delay;
         this.isControlBarTooltip = isControlBarTooltip;
+        this.mainController = mainController;
+
+        this.setStyle("-fx-padding: 0;");
 
         this.getStyleClass().add("tooltip");
+
 
         mouseHover.addListener((obs, wasHover, isHover) -> {
             if(isHover){
@@ -124,6 +145,30 @@ public class ControlTooltip extends Tooltip {
         countdown = new PauseTransition(Duration.millis(delay));
         countdown.setOnFinished((e) -> mouseHover.set(true));
 
+        graphicBackground.setPadding(new Insets(2));
+        graphicBackground.setBackground(Background.EMPTY);
+        graphicBackground.setPrefSize(250, 74);
+        graphicBackground.setMaxSize(250, 74);
+        graphicBackground.getChildren().addAll(imageViewBackground, textContainer);
+
+        StackPane.setAlignment(imageViewBackground, Pos.CENTER_LEFT);
+        imageViewBackground.setPrefSize(125, 70);
+        imageViewBackground.setMaxSize(125, 70);
+
+        imageViewBackground.setStyle("-fx-background-color: rgba(" + imageBackground.getRed() * 256 + "," + imageBackground.getGreen() * 256 + "," + imageBackground.getBlue() * 256 + ", 0.7);");
+        imageViewBackground.getChildren().addAll(imageView, durationLabel);
+
+
+        imageView.setFitWidth(125);
+        imageView.setFitHeight(70);
+        imageView.setImage(tooltipImage);
+        imageView.setPreserveRatio(true);
+
+
+        this.setGraphic(graphicBackground);
+
+
+
         tooltipParent.setOnMouseEntered((e) -> countdown.playFromStart());
 
         tooltipParent.setOnMouseExited((e) -> {
@@ -131,32 +176,31 @@ public class ControlTooltip extends Tooltip {
             mouseHover.set(false);
             countdown.stop();
         });
-
     }
 
     public void showTooltip() {
 
-        if(!Objects.equals(this.getText(), lastTextValue)){
-            this.show(tooltipParent, 0, 0);
-            tooltipMiddle = (this.getWidth() - 18) / 2;
-            tooltipHeight = this.getHeight();
-            this.hide();
+        this.show(tooltipParent, 0, 0);
+        tooltipMiddle = (this.getWidth() - 18) / 2;
+        tooltipHeight = this.getHeight();
+        this.hide();
 
-            lastTextValue = this.getText();
-        }
 
         Bounds bounds = tooltipParent.localToScreen(tooltipParent.getLayoutBounds());
         nodeMiddleX = tooltipParent.getWidth() / 2;
         nodeMiddleY = tooltipParent.getHeight() / 2;
 
-        if(isControlBarTooltip) this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight - 10);
+        double minX = mainController.videoImageViewWrapper.localToScreen(mainController.videoImageViewWrapper.getLayoutBounds()).getMinX() + 20;
+        double maxX = mainController.videoImageViewWrapper.localToScreen(mainController.videoImageViewWrapper.getLayoutBounds()).getMaxX() - 20 - (this.getWidth() - 18);
+
+        if(isControlBarTooltip){
+            this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMinX() + nodeMiddleX - tooltipMiddle)), bounds.getMinY() - tooltipHeight - 10);
+        }
         else this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight);
     }
 
 
     public void updateText(String newText){
-
-        this.setGraphic(null);
 
         if(Objects.equals(this.getText(), newText)) return;
 
@@ -166,11 +210,6 @@ public class ControlTooltip extends Tooltip {
             this.hide();
             this.showTooltip();
         }
-    }
-
-    // update previous and next video tooltips
-    public void updateGraphic(String newTitle, String newSubText, Image newImage, Color newImageBackground){
-        this.setText(null);
     }
 
 }

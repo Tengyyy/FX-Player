@@ -496,6 +496,7 @@ public class MenuController implements Initializable {
                         for(QueueItem queueItem : queue){
                             queueItem.setTranslateY(0);
                         }
+                        if(controlBarController.nextVideoButtonEnabled) controlBarController.updateNextAndPrevTooltips();
                     }
 
                     queueBox.dragAnimationsInProgress.remove(translateTransition);
@@ -541,6 +542,9 @@ public class MenuController implements Initializable {
                         for(QueueItem queueItem : queue){
                             queueItem.setTranslateY(0);
                         }
+
+                        if(controlBarController.nextVideoButtonEnabled) controlBarController.updateNextAndPrevTooltips();
+
                     }
 
                     queueBox.dragAnimationsInProgress.remove(translateTransition);
@@ -591,9 +595,9 @@ public class MenuController implements Initializable {
         dragResizer = new DragResizer(this);
 
         Platform.runLater(() -> {
-            addMediaTooltip = new ControlTooltip("Add media", addButton, 1000);
-            clearQueueTooltip = new ControlTooltip("Clear queue", clearQueueButton, 1000);
-            shuffleTooltip = new ControlTooltip("Shuffle is off", shuffleToggle, 1000);
+            addMediaTooltip = new ControlTooltip(mainController,"Add media", addButton, 1000);
+            clearQueueTooltip = new ControlTooltip(mainController,"Clear queue", clearQueueButton, 1000);
+            shuffleTooltip = new ControlTooltip(mainController,"Shuffle is off", shuffleToggle, 1000);
         });
 }
 
@@ -827,7 +831,7 @@ public class MenuController implements Initializable {
 
     public void enableHistoryButton(){
         historyButtonEnabled = true;
-        historyTooltip = new ControlTooltip("Open history", historyButton, 1000);
+        historyTooltip = new ControlTooltip(mainController,"Open history", historyButton, 1000);
 
         if(historyButtonHover) historyIcon.setStyle("-fx-background-color: rgb(255,255,255)");
         else historyIcon.setStyle("-fx-background-color: rgb(200,200,200)");

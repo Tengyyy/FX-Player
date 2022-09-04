@@ -417,6 +417,8 @@ public class QueueItem extends GridPane implements MenuObject {
         else {
             queueBox.removeAndMove(queueBox.getChildren().indexOf(this));
         }
+
+        menuController.controlBarController.updateNextAndPrevTooltips();
     }
 
     @Override

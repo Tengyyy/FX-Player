@@ -141,7 +141,7 @@ public class HistoryBox extends VBox {
 
     public void initialize(HistoryItem historyItem){
         Platform.runLater(() -> {
-            historyItem.optionsButtonTooltip = new ControlTooltip("Options", historyItem.optionsButton, 1000);
+            historyItem.optionsButtonTooltip = new ControlTooltip(menuController.mainController, "Options", historyItem.optionsButton, 1000);
             historyItem.optionsPopUp = new MenuItemOptionsPopUp(historyItem);
         });
     }

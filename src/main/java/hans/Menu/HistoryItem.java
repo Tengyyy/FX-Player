@@ -373,6 +373,8 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         this.setActive();
 
+        menuController.controlBarController.updateNextAndPrevTooltips();
+
     }
 
 

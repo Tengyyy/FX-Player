@@ -1,11 +1,7 @@
 package hans;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import hans.Menu.HistoryItem;
 import hans.Menu.MenuController;
-import hans.Menu.MenuObject;
 import hans.Menu.QueueItem;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
@@ -23,12 +19,18 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class ControlBarController implements Initializable {
 
@@ -77,7 +79,6 @@ public class ControlBarController implements Initializable {
 
     @FXML
     public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, captionsIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
-
 
 
     SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
@@ -137,11 +138,11 @@ public class ControlBarController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         Platform.runLater(() -> {
-            mute = new ControlTooltip("Mute (m)", volumeButton,0, true);
-            settings = new ControlTooltip("Settings (s)", settingsButton,0, true);
-            fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton,0, true);
-            captions = new ControlTooltip("Subtitles/CC not selected", captionsButton, 0, true);
-            miniplayer = new ControlTooltip("Miniplayer (i)", miniplayerButton, 0, true);
+            mute = new ControlTooltip(mainController,"Mute (m)", volumeButton, 0, true);
+            settings = new ControlTooltip(mainController,"Settings (s)", settingsButton, 0, true);
+            fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, true);
+            captions = new ControlTooltip(mainController,"Subtitles/CC not selected", captionsButton, 0, true);
+            miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", miniplayerButton, 0, true);
         });
 
         previousVideoSVG = new SVGPath();
@@ -275,9 +276,9 @@ public class ControlBarController implements Initializable {
         volumeSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
             if (!newValue) {
-                if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+                if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 
-                if(isExited) volumeSliderExit();
+                if (isExited) volumeSliderExit();
             }
         });
 
@@ -293,15 +294,13 @@ public class ControlBarController implements Initializable {
                 volumeIcon.setTranslateX(0);
                 muted = true;
                 mute.updateText("Unmute (m)");
-            }
-            else if (newValue.doubleValue() < 50) {
+            } else if (newValue.doubleValue() < 50) {
                 volumeIcon.setShape(lowVolumeSVG);
                 volumeIcon.setPrefSize(15, 18);
                 volumeIcon.setTranslateX(-3);
                 muted = false;
                 mute.updateText("Mute (m)");
-            }
-            else {
+            } else {
                 volumeIcon.setShape(highVolumeSVG);
                 volumeIcon.setPrefSize(20, 20);
                 volumeIcon.setTranslateX(0);
@@ -328,10 +327,10 @@ public class ControlBarController implements Initializable {
             durationSlider.lookup(".track").setCursor(Cursor.HAND);
 
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
-                if(e.getButton() == MouseButton.PRIMARY) durationSlider.setValueChanging(true);
+                if (e.getButton() == MouseButton.PRIMARY) durationSlider.setValueChanging(true);
             });
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
-                if(e.getButton() == MouseButton.PRIMARY) durationSlider.setValueChanging(false);
+                if (e.getButton() == MouseButton.PRIMARY) durationSlider.setValueChanging(false);
             });
 
             durationSlider.lookup(".track").setOnMouseMoved(e -> {
@@ -340,12 +339,12 @@ public class ControlBarController implements Initializable {
                 double minTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX();
 
-                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
+                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
 
 
                 mainController.sliderHoverLabel.label.setTranslateX(newTranslation);
 
-                String newTime = Utilities.getTime(Duration.seconds((e.getX())/(durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                String newTime = Utilities.getTime(Duration.seconds((e.getX()) / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverLabel.label.setText(newTime);
             });
 
@@ -357,14 +356,15 @@ public class ControlBarController implements Initializable {
                 double minTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX();
 
-                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
+                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
 
 
                 mainController.sliderHoverLabel.label.setTranslateX(newTranslation);
-                String newTime = Utilities.getTime(Duration.seconds(e.getX()/(durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverLabel.label.setText(newTime);
 
-                if(settingsController.settingsState == SettingsState.CLOSED) mainController.sliderHoverLabel.label.setVisible(true);
+                if (settingsController.settingsState == SettingsState.CLOSED)
+                    mainController.sliderHoverLabel.label.setVisible(true);
             });
 
             durationSlider.lookup(".track").setOnMouseExited((e) -> {
@@ -377,16 +377,16 @@ public class ControlBarController implements Initializable {
             });
 
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
-                if(!e.isPrimaryButtonDown()){
+                if (!e.isPrimaryButtonDown()) {
 
                     double minTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                     double maxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX();
 
-                    double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
+                    double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
 
 
                     mainController.sliderHoverLabel.label.setTranslateX(newTranslation);
-                    String newTime = Utilities.getTime(Duration.seconds(e.getX()/(durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                    String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                     mainController.sliderHoverLabel.label.setText(newTime);
 
 
@@ -399,53 +399,61 @@ public class ControlBarController implements Initializable {
 
 
         durationSlider.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
-            if(e.getButton() != MouseButton.PRIMARY) e.consume();
+            if (e.getButton() != MouseButton.PRIMARY) e.consume();
         });
 
         durationSlider.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
-            if(e.getButton() != MouseButton.PRIMARY) e.consume();
+            if (e.getButton() != MouseButton.PRIMARY) e.consume();
         });
-
 
 
         durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 
 
-            if(mediaInterface.mediaActive.get()){
+            if (mediaInterface.mediaActive.get()) {
 
-
-                if(oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5){
+                if (oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5) {
 
                     previousVideoButton.setOnAction((e) -> mediaInterface.replay());
 
 
-                    if(!previousVideoButtonEnabled) enablePreviousVideoButton();
+                    if (!previousVideoButtonEnabled) enablePreviousVideoButton();
                     else {
-                        previousVideoTooltip.updateText("Replay");
-                        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
+                        if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
+
+                        previousVideoTooltip = new ControlTooltip(mainController, "Replay", previousVideoButton, 0, true);
+                        if(previousVideoButtonHover) previousVideoTooltip.showTooltip();
+
+
+                        if (mainController.miniplayerActive)
+                            mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
                     }
-                }
-                else if(oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5){
+                } else if (oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5) {
 
                     previousVideoButton.setOnAction((e) -> previousVideoButtonClick());
 
 
-                    if(menuController.history.isEmpty() || menuController.historyBox.index == 0){
-                        if(previousVideoButtonEnabled) disablePreviousVideoButton();
-                    }
-                    else {
-                        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Previous video (SHIFT + N)");
+                    if ((menuController.history.isEmpty() || menuController.historyBox.index == 0) && previousVideoButtonEnabled) {
+                        disablePreviousVideoButton();
+                    } else {
+                        if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Previous video (SHIFT + P)");
 
-                        HistoryItem historyItem;
-                        if(menuController.historyBox.index == -1 && !menuController.history.isEmpty()){
+                        HistoryItem historyItem = null;
+                        if (menuController.historyBox.index == -1 && !menuController.history.isEmpty()) {
                             historyItem = menuController.history.get(menuController.history.size() - 1);
 
                         }
-                        else {
+                        else if(menuController.historyBox.index > 0){
                             historyItem = menuController.history.get(menuController.historyBox.index - 1);
 
                         }
-                        previousVideoTooltip.updateGraphic(historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor());
+
+                        if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
+                        if(historyItem != null) previousVideoTooltip = new ControlTooltip(mainController, "PREVIOUS (SHIFT + P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
+                        if(previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.showTooltip();
+
+
+
                     }
 
                 }
@@ -453,12 +461,12 @@ public class ControlBarController implements Initializable {
 
                 mediaInterface.updateMedia(newValue.doubleValue());
 
-                if(durationSlider.isValueChanging() && !mainController.seekingWithKeys){
+                if (durationSlider.isValueChanging() && !mainController.seekingWithKeys) {
                     double minTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                     double maxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX();
 
 
-                    double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX() + durationSlider.lookup(".track").getBoundsInLocal().getMaxX() * (newValue.doubleValue() / durationSlider.getMax()) - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
+                    double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX() + durationSlider.lookup(".track").getBoundsInLocal().getMaxX() * (newValue.doubleValue() / durationSlider.getMax()) - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
 
 
                     mainController.sliderHoverLabel.label.setTranslateX(newTranslation);
@@ -471,9 +479,9 @@ public class ControlBarController implements Initializable {
             captionsController.updateCaptions(newValue.doubleValue() * 1000 + 1000);
 
 
-            if(mainController.miniplayerActive){
+            if (mainController.miniplayerActive) {
                 mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
-                if(mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue()){
+                if (mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue()) {
                     mainController.miniplayer.miniplayerController.slider.setValue(newValue.doubleValue());
                 }
             }
@@ -484,27 +492,28 @@ public class ControlBarController implements Initializable {
 
             if (newValue) { // pause video when user starts seeking
                 seekTimer.playFromStart();
-                if(mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
+                if (mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
                 mediaInterface.playing.set(false);
 
                 double minTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX();
 
 
-                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX() + durationSlider.lookup(".track").getBoundsInLocal().getMaxX() * (durationSlider.getValue() / durationSlider.getMax()) - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
+                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX() + durationSlider.lookup(".track").getBoundsInLocal().getMaxX() * (durationSlider.getValue() / durationSlider.getMax()) - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
 
 
                 mainController.sliderHoverLabel.label.setTranslateX(newTranslation);
 
                 mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
 
-            }
-            else {
+            } else {
 
-                if(!durationSliderHover && settingsController.settingsState == SettingsState.CLOSED) mainController.sliderHoverLabel.label.setVisible(false);
+                if (!durationSliderHover && settingsController.settingsState == SettingsState.CLOSED)
+                    mainController.sliderHoverLabel.label.setVisible(false);
 
-                if(seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();
-                if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.seekTimer.getStatus() == Animation.Status.RUNNING) mainController.miniplayer.miniplayerController.seekTimer.stop();
+                if (seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();
+                if (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.seekTimer.getStatus() == Animation.Status.RUNNING)
+                    mainController.miniplayer.miniplayerController.seekTimer.stop();
 
                 if (!durationSliderHover) {
                     durationSliderHoverOff();
@@ -517,8 +526,7 @@ public class ControlBarController implements Initializable {
 
                 if (mediaInterface.atEnd) {
                     mediaInterface.endMedia();
-                }
-                else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
+                } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
                     mediaInterface.play();
                     mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
                 }
@@ -544,7 +552,7 @@ public class ControlBarController implements Initializable {
         if (showingTimeLeft && mediaInterface.mediaActive.get()) {
             Utilities.setCurrentTimeLabel(durationLabel, durationSlider, Duration.millis(mediaInterface.embeddedMediaPlayer.media().info().duration()));
             showingTimeLeft = false;
-        } else if(!showingTimeLeft && mediaInterface.mediaActive.get()){
+        } else if (!showingTimeLeft && mediaInterface.mediaActive.get()) {
             Utilities.setTimeLeftLabel(durationLabel, durationSlider, Duration.millis(mediaInterface.embeddedMediaPlayer.media().info().duration()));
             showingTimeLeft = true;
         }
@@ -556,22 +564,21 @@ public class ControlBarController implements Initializable {
             settingsController.closeSettings();
         } else {
 
-            if(mediaInterface.atEnd) mediaInterface.replay();
-            else if(mediaInterface.playing.get()){
+            if (mediaInterface.atEnd) mediaInterface.replay();
+            else if (mediaInterface.playing.get()) {
                 mediaInterface.wasPlaying = false;
                 mediaInterface.pause();
-            }
-            else mediaInterface.play();
+            } else mediaInterface.play();
 
         }
     }
-
 
 
     public void play() {
 
         playIcon.setShape(pauseSVG);
         playIcon.setPrefSize(20, 20);
+
         if(play != null) play.updateText("Pause (k)");
     }
 
@@ -580,14 +587,14 @@ public class ControlBarController implements Initializable {
         playIcon.setShape(playSVG);
         playIcon.setPrefSize(20, 20);
 
-        if(play != null) play.updateText("Play (k)");
+        if (play != null) play.updateText("Play (k)");
     }
 
-    public void end(){
+    public void end() {
         playIcon.setShape(replaySVG);
         playIcon.setPrefSize(24, 24);
 
-        if(play != null) play.updateText("Replay (k)");
+        if (play != null) play.updateText("Replay (k)");
     }
 
     public void enterArea() {
@@ -624,10 +631,10 @@ public class ControlBarController implements Initializable {
             if (settingsController.settingsState == SettingsState.CLOSED) {
                 if (fullScreen.isShowing()) {
                     fullScreen.hide();
-                    fullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, 0, true);
+                    fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", fullScreenButton, 0, true);
                     fullScreen.showTooltip();
                 } else {
-                    fullScreen = new ControlTooltip("Exit full screen (f)", fullScreenButton, 0, true);
+                    fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", fullScreenButton, 0, true);
                 }
             }
         } else {
@@ -637,10 +644,10 @@ public class ControlBarController implements Initializable {
             if (settingsController.settingsState == SettingsState.CLOSED) {
                 if (fullScreen.isShowing()) {
                     fullScreen.hide();
-                    fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, 0, true);
+                    fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, true);
                     fullScreen.showTooltip();
                 } else {
-                    fullScreen = new ControlTooltip("Full screen (f)", fullScreenButton, 0, true);
+                    fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, true);
                 }
             }
         }
@@ -648,22 +655,23 @@ public class ControlBarController implements Initializable {
 
     public void fullScreenButtonHoverOn() {
         fullScreenButtonHover = true;
-        fullScreenButtonScaleTransition = AnimationsClass.scaleAnimation(200, fullScreenIcon,1, 1.3, 1, 1.3, true, 2, true);
+        fullScreenButtonScaleTransition = AnimationsClass.scaleAnimation(200, fullScreenIcon, 1, 1.3, 1, 1.3, true, 2, true);
 
     }
 
     public void fullScreenButtonHoverOff() {
         fullScreenButtonHover = false;
-        if(fullScreenButtonScaleTransition != null && fullScreenButtonScaleTransition.getStatus() == Animation.Status.RUNNING) fullScreenButtonScaleTransition.stop();
+        if (fullScreenButtonScaleTransition != null && fullScreenButtonScaleTransition.getStatus() == Animation.Status.RUNNING)
+            fullScreenButtonScaleTransition.stop();
         fullScreenIcon.setScaleX(1);
         fullScreenIcon.setScaleY(1);
     }
 
-    public void miniplayerButtonHoverOn(){
+    public void miniplayerButtonHoverOn() {
         miniplayerButtonHover = true;
     }
 
-    public void miniplayerButtonHoverOff(){
+    public void miniplayerButtonHoverOff() {
         miniplayerButtonHover = false;
     }
 
@@ -691,11 +699,11 @@ public class ControlBarController implements Initializable {
     }
 
 
-    public void previousVideoButtonClick(){
+    public void previousVideoButtonClick() {
         if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         } else {
-            if(!menuController.animationsInProgress.isEmpty()) return;
+            if (!menuController.animationsInProgress.isEmpty()) return;
             mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition etc
         }
     }
@@ -704,7 +712,7 @@ public class ControlBarController implements Initializable {
         if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         } else {
-            if(!menuController.animationsInProgress.isEmpty()) return;
+            if (!menuController.animationsInProgress.isEmpty()) return;
             mediaInterface.playNext();
         }
     }
@@ -712,7 +720,7 @@ public class ControlBarController implements Initializable {
 
     public void openCaptions() {
 
-        if(!captionsController.captionsSelected) return;
+        if (!captionsController.captionsSelected) return;
 
         captionsController.captionsOn.set(true);
 
@@ -740,14 +748,14 @@ public class ControlBarController implements Initializable {
             toggleFullScreen();
     }
 
-    public void miniplayerButtonClick(){
+    public void miniplayerButtonClick() {
 
-        if(settingsController.settingsState != SettingsState.CLOSED){
+        if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
             return;
         }
 
-        if(mainController.miniplayerActive) mainController.closeMiniplayer();
+        if (mainController.miniplayerActive) mainController.closeMiniplayer();
         else mainController.openMiniplayer();
     }
 
@@ -760,12 +768,12 @@ public class ControlBarController implements Initializable {
 
     public void captionsButtonClick() {
 
-        if(settingsController.settingsState != SettingsState.CLOSED) {
+        if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
             return;
         }
 
-        if(!captionsController.captionsSelected) return;
+        if (!captionsController.captionsSelected) return;
 
         if (!captionsController.captionsOn.get())
             openCaptions();
@@ -805,217 +813,233 @@ public class ControlBarController implements Initializable {
     }
 
 
-    public void controlButtonHoverOn(StackPane stackPane){
+    public void controlButtonHoverOn(StackPane stackPane) {
         Region icon = (Region) stackPane.getChildren().get(1);
 
-        if(!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected) AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+        if (!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected)
+            AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         else AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
     }
 
 
-    public void controlButtonHoverOff(StackPane stackPane){
+    public void controlButtonHoverOff(StackPane stackPane) {
         Region icon = (Region) stackPane.getChildren().get(1);
 
-        if(!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected) AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
+        if (!stackPane.equals(captionsButtonPane) || captionsController.captionsSelected)
+            AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         else AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
     }
 
-    public void previousVideoButtonHoverOn(){
+    public void previousVideoButtonHoverOn() {
         previousVideoButtonHover = true;
 
-        if(previousVideoButtonEnabled){
+        if (previousVideoButtonEnabled) {
             AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
-        }
-        else {
+        } else {
             AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
         }
     }
 
-    public void previousVideoButtonHoverOff(){
+    public void previousVideoButtonHoverOff() {
         previousVideoButtonHover = false;
 
-        if(previousVideoButtonEnabled){
+        if (previousVideoButtonEnabled) {
             AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
-        }
-        else {
+        } else {
             AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
     }
 
-    public void playButtonHoverOn(){
+    public void playButtonHoverOn() {
         playButtonHover = true;
 
-        if(playButtonEnabled){
+        if (playButtonEnabled) {
             AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
-        }
-        else {
+        } else {
             AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
         }
     }
 
-    public void playButtonHoverOff(){
+    public void playButtonHoverOff() {
         playButtonHover = false;
 
-        if(playButtonEnabled){
+        if (playButtonEnabled) {
             AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
-        }
-        else {
+        } else {
             AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
     }
 
-    public void nextVideoButtonHoverOn(){
+    public void nextVideoButtonHoverOn() {
         nextVideoButtonHover = true;
 
-        if(nextVideoButtonEnabled){
+        if (nextVideoButtonEnabled) {
             AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
-        }
-        else {
+        } else {
             AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
 
         }
     }
 
-    public void nextVideoButtonHoverOff(){
+    public void nextVideoButtonHoverOff() {
         nextVideoButtonHover = false;
 
-        if(nextVideoButtonEnabled){
+        if (nextVideoButtonEnabled) {
             AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
-        }
-        else {
+        } else {
             AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
     }
 
-    public void enablePreviousVideoButton(){
+    public void enablePreviousVideoButton() {
         previousVideoButtonEnabled = true;
 
-        if(previousVideoButtonHover){
+        if (previousVideoButtonHover) {
             previousVideoIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
-        }
-        else {
+        } else {
             previousVideoIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
 
-        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enablePreviousVideoButton();
+        if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enablePreviousVideoButton();
 
         Platform.runLater(() -> {
-            if(durationSlider.getValue() > 5) previousVideoTooltip = new ControlTooltip("Replay", previousVideoButton, 0, true);
+            if (durationSlider.getValue() > 5)
+                previousVideoTooltip = new ControlTooltip(mainController,"Replay", previousVideoButton, 0, true);
             else {
-                HistoryItem historyItem;
-                if(menuController.historyBox.index == -1 && !menuController.history.isEmpty()){
+                HistoryItem historyItem = null;
+                if (menuController.historyBox.index == -1 && !menuController.history.isEmpty()) {
                     historyItem = menuController.history.get(menuController.history.size() - 1);
 
-                }
-                else {
+                } else if(!menuController.history.isEmpty()){
                     historyItem = menuController.history.get(menuController.historyBox.index - 1);
 
                 }
-                previousVideoTooltip = new ControlTooltip("PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
+                if(historyItem != null) previousVideoTooltip = new ControlTooltip(mainController,"PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
             }
 
-            if(previousVideoButtonHover) previousVideoTooltip.showTooltip();
+            if (previousVideoButtonHover) previousVideoTooltip.showTooltip();
         });
     }
 
-    public void disablePreviousVideoButton(){
+    public void disablePreviousVideoButton() {
         previousVideoButtonEnabled = false;
 
-        if(previousVideoButtonHover){
+        if (previousVideoButtonHover) {
             previousVideoIcon.setStyle("-fx-background-color: rgb(150, 150, 150);");
-        }
-        else {
+        } else {
             previousVideoIcon.setStyle("-fx-background-color: rgb(120, 120, 120);");
         }
 
-        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
+        if (mainController.miniplayerActive)
+            mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
 
 
         previousVideoButton.setOnMouseEntered(null);
-        if(previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.hide();
+        if (previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.hide();
     }
 
-    public void enablePlayButton(){
+    public void enablePlayButton() {
         playButtonEnabled = true;
 
-        if(playButtonHover){
+        if (playButtonHover) {
             playIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
-        }
-        else {
+        } else {
             playIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
 
 
         Platform.runLater(() -> {
-            if(mediaInterface.atEnd) play = new ControlTooltip("Replay (k)", playButton, 0, true);
-            else if(mediaInterface.playing.get()) play = new ControlTooltip("Pause (k)", playButton, 0, true);
-            else play = new ControlTooltip("Play (k)", playButton, 0, true);
+            if (mediaInterface.atEnd) play = new ControlTooltip(mainController,"Replay (k)", playButton, 0, true);
+            else if (mediaInterface.playing.get()) play = new ControlTooltip(mainController,"Pause (k)", playButton, 0, true);
+            else play = new ControlTooltip(mainController,"Play (k)", playButton, 0, true);
 
-            if(playButtonHover) play.showTooltip();
+            if (playButtonHover) play.showTooltip();
         });
     }
 
-    public void disablePlayButton(){
+    public void disablePlayButton() {
         playButtonEnabled = false;
 
-        if(playButtonHover){
+        if (playButtonHover) {
             playIcon.setStyle("-fx-background-color: rgb(150, 150, 150);");
-        }
-        else {
+        } else {
             playIcon.setStyle("-fx-background-color: rgb(120, 120, 120);");
         }
 
 
         playButton.setOnMouseEntered(null);
-        if(playButtonHover && play != null) play.hide();
+        if (playButtonHover && play != null) play.hide();
     }
 
-    public void enableNextVideoButton(){
+    public void enableNextVideoButton() {
         nextVideoButtonEnabled = true;
 
-        if(nextVideoButtonHover){
+        if (nextVideoButtonHover) {
             nextVideoIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
-        }
-        else {
+        } else {
             nextVideoIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
 
-        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enableNextVideoButton();
+        if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enableNextVideoButton();
 
         Platform.runLater(() -> {
 
-            if((menuController.historyBox.index == -1 || menuController.historyBox.index == menuController.history.size() - 1) && !menuController.queue.isEmpty()){
+            if ((menuController.historyBox.index == -1 || menuController.historyBox.index == menuController.history.size() - 1) && !menuController.queue.isEmpty()) {
                 QueueItem queueItem = menuController.queue.get(0);
-                nextVideoTooltip = new ControlTooltip("NEXT (SHIFT+P)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getCover(), queueItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
-            }
-            else if(menuController.historyBox.index < menuController.history.size() - 1){
+                nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getCover(), queueItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+            } else if (menuController.historyBox.index < menuController.history.size() - 1 && !menuController.history.isEmpty()) {
                 HistoryItem historyItem = menuController.history.get(menuController.historyBox.index + 1);
-                nextVideoTooltip = new ControlTooltip("NEXT (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+                nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
             }
 
 
-            if(nextVideoButtonHover) nextVideoTooltip.showTooltip();
+            if (nextVideoButtonHover) nextVideoTooltip.showTooltip();
         });
     }
 
-    public void disableNextVideoButton(){
+    public void disableNextVideoButton() {
         nextVideoButtonEnabled = false;
 
-        if(nextVideoButtonHover){
+        if (nextVideoButtonHover) {
             nextVideoIcon.setStyle("-fx-background-color: rgb(150, 150, 150);");
-        }
-        else {
+        } else {
             nextVideoIcon.setStyle("-fx-background-color: rgb(120, 120, 120);");
         }
 
-        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disableNextVideoButton();
+        if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disableNextVideoButton();
 
         nextVideoButton.setOnMouseEntered(null);
-        if(nextVideoButtonHover && nextVideoTooltip != null) nextVideoTooltip.hide();
+        if (nextVideoButtonHover && nextVideoTooltip != null) nextVideoTooltip.hide();
     }
 
+    public void updateNextAndPrevTooltips(){
+        if((menuController.historyBox.index == menuController.history.size() -1 || menuController.historyBox.index == -1) && !menuController.queue.isEmpty()){
+            QueueItem queueItem = menuController.queue.get(0);
+            if(nextVideoTooltip != null && nextVideoTooltip.isShowing()) nextVideoTooltip.hide();
+            nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getCover(), queueItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+        }
+        else if(menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1 && !menuController.history.isEmpty()){
+            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index + 1);
+            if(nextVideoTooltip != null && nextVideoTooltip.isShowing()) nextVideoTooltip.hide();
+            nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+        }
+        if(nextVideoTooltip != null && nextVideoButtonHover) nextVideoTooltip.showTooltip();
 
+        if(!menuController.history.isEmpty()){
+            HistoryItem historyItem = null;
 
+            if(menuController.historyBox.index == -1){
+                historyItem = menuController.history.get(menuController.history.size() -1);
+            }
+            else if(menuController.historyBox.index > 0){
+                historyItem = menuController.history.get(menuController.historyBox.index -1);
+            }
 
+            if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
+            if(historyItem != null) previousVideoTooltip = new ControlTooltip(mainController,"PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
+            if(previousVideoTooltip != null && previousVideoButtonHover) previousVideoTooltip.showTooltip();
+        }
+
+    }
 
 }

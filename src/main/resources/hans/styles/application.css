@@ -301,4 +301,13 @@
     -fx-font-size: 13;
 }
 
+#sliderHoverPreviewPane {
+    -fx-background-radius: 2;
+    -fx-border-color: white;
+    -fx-border-style: solid;
+    -fx-border-width: 2;
+    -fx-border-radius: 2;
+    -fx-background-color: black;
+}
+
 

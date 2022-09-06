@@ -100,6 +100,7 @@ public class MainController implements Initializable {
 
 
     public SliderHoverLabel sliderHoverLabel;
+    public SliderHoverPreview sliderHoverPreview;
 
 
     StackPane videoTitleBackground = new StackPane();
@@ -123,6 +124,7 @@ public class MainController implements Initializable {
         mediaInterface.init();
 
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
+        sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
 
         videoImageViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
 

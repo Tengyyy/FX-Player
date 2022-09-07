@@ -31,9 +31,11 @@ public class SliderHoverPreview {
         imageView.setMouseTransparent(true);
         imageView.setFitHeight(90);
         imageView.setFitWidth(160);
+        imageView.setPreserveRatio(true);
 
         pane.setTranslateY(-100);
 
+        pane.setVisible(false);
 
 
 

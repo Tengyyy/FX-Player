@@ -40,6 +40,8 @@ public class FlacItem implements MediaItem {
 
 
             fFmpegFrameGrabber.start();
+
+
             duration = Duration.seconds((int) (fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate()));
             frameRate = fFmpegFrameGrabber.getAudioFrameRate();
             frameDuration = (float) (1 / frameRate);
@@ -137,5 +139,10 @@ public class FlacItem implements MediaItem {
     @Override
     public void setCoverBackgroundColor(Color color) {
         this.backgroundColor = color;
+    }
+
+    @Override
+    public boolean hasVideo() {
+        return false;
     }
 }

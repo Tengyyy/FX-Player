@@ -31,14 +31,19 @@ public class MovItem implements MediaItem {
 
     String mediaType;
 
+
+    boolean hasVideo;
+
     public MovItem(File file){
         this.file = file;
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
-            fFmpegFrameGrabber.setVideoStream(2);
 
             fFmpegFrameGrabber.start();
+
+            hasVideo = fFmpegFrameGrabber.hasVideo();
+
             if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
@@ -72,6 +77,13 @@ public class MovItem implements MediaItem {
                     }
                 }
             }
+
+            fFmpegFrameGrabber.stop();
+
+
+            fFmpegFrameGrabber.setVideoStream(2);
+
+            fFmpegFrameGrabber.start();
 
             Frame frame = fFmpegFrameGrabber.grabImage();
             JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
@@ -161,5 +173,10 @@ public class MovItem implements MediaItem {
     @Override
     public void setCoverBackgroundColor(Color color) {
         backgroundColor = color;
+    }
+
+    @Override
+    public boolean hasVideo() {
+        return hasVideo;
     }
 }

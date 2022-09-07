@@ -135,4 +135,9 @@ public class Mp3Item implements MediaItem {
     public void setCoverBackgroundColor(Color color) {
         this.backgroundColor = color;
     }
+
+    @Override
+    public boolean hasVideo() {
+        return false;
+    }
 }

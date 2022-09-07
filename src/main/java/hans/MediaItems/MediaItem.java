@@ -39,4 +39,6 @@ public interface MediaItem {
     Color getCoverBackgroundColor();
 
     void setCoverBackgroundColor(Color color);
+
+    boolean hasVideo();
 }

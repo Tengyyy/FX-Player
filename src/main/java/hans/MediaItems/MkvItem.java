@@ -29,15 +29,17 @@ public class MkvItem implements MediaItem {
     String title;
     String artist;
 
+    boolean hasVideo;
+
     public MkvItem(File file){
         this.file = file;
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
 
-            fFmpegFrameGrabber.setVideoStream(2);
-
             fFmpegFrameGrabber.start();
+            hasVideo = fFmpegFrameGrabber.hasVideo();
+
             if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
@@ -58,6 +60,13 @@ public class MkvItem implements MediaItem {
                     }
                 }
             }
+
+            fFmpegFrameGrabber.stop();
+
+
+            fFmpegFrameGrabber.setVideoStream(2);
+
+            fFmpegFrameGrabber.start();
 
             Frame frame = fFmpegFrameGrabber.grabImage();
             JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
@@ -145,5 +154,10 @@ public class MkvItem implements MediaItem {
     @Override
     public void setCoverBackgroundColor(Color color) {
         backgroundColor = color;
+    }
+
+    @Override
+    public boolean hasVideo() {
+        return hasVideo;
     }
 }

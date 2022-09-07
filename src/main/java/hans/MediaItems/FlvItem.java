@@ -27,6 +27,8 @@ public class FlvItem implements MediaItem {
     String title;
     String artist;
 
+    boolean hasVideo;
+
     public FlvItem(File file){
         this.file = file;
 
@@ -35,15 +37,15 @@ public class FlvItem implements MediaItem {
 
 
             fFmpegFrameGrabber.start();
+
+            hasVideo = fFmpegFrameGrabber.hasVideo();
+
+
             if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
-
-            Map<String, String> metadata = fFmpegFrameGrabber.getMetadata();
-            System.out.println(metadata);
-            System.out.println(fFmpegFrameGrabber.hasVideo());
 
             if(cover == null) cover = Utilities.grabMiddleFrame(file);
 
@@ -126,5 +128,10 @@ public class FlvItem implements MediaItem {
     @Override
     public void setCoverBackgroundColor(Color color) {
         backgroundColor = color;
+    }
+
+    @Override
+    public boolean hasVideo() {
+        return hasVideo;
     }
 }

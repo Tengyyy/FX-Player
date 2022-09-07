@@ -31,7 +31,6 @@ public class MediaInterface {
     public MediaPlayerFactory mediaPlayerFactory;
 
     public EmbeddedMediaPlayer embeddedMediaPlayer;
-    public MediaItem activeMediaItem;
 
     // Variables to keep track of mediaplayer status:
     public BooleanProperty mediaActive = new SimpleBooleanProperty(false); // is the mediaplayer active (is any video currently loaded in)
@@ -234,7 +233,6 @@ public class MediaInterface {
         controlBarController.durationSlider.setValue(0);
 
 
-
         if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty() && controlBarController.nextVideoButtonEnabled){
             controlBarController.disableNextVideoButton();
         }
@@ -276,6 +274,8 @@ public class MediaInterface {
         if(settingsController.playbackOptionsController.loopOn) settingsController.playbackOptionsController.loopTab.toggle.fire();
 
         mediaActive.set(false);
+
+        mainController.sliderHoverPreview.pane.setVisible(false);
 
 
     }

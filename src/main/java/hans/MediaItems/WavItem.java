@@ -126,4 +126,9 @@ public class WavItem implements MediaItem {
         this.backgroundColor = color;
     }
 
+    @Override
+    public boolean hasVideo() {
+        return false;
+    }
+
 }

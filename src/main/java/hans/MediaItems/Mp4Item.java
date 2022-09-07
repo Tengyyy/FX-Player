@@ -73,16 +73,20 @@ public class Mp4Item implements MediaItem {
 
     Duration duration;
 
+
+    boolean hasVideo;
+
     public Mp4Item(File file) {
         this.file = file;
 
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
-            fFmpegFrameGrabber.setVideoStream(2);
-
 
             fFmpegFrameGrabber.start();
+
+            hasVideo = fFmpegFrameGrabber.hasVideo();
+
             if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
@@ -117,6 +121,12 @@ public class Mp4Item implements MediaItem {
                 }
             }
 
+            fFmpegFrameGrabber.stop();
+
+            fFmpegFrameGrabber.setVideoStream(2);
+            fFmpegFrameGrabber.start();
+
+
             Frame frame = fFmpegFrameGrabber.grabImage();
             JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
             if(frame != null) cover = javaFXFrameConverter.convert(frame);
@@ -149,6 +159,11 @@ public class Mp4Item implements MediaItem {
     @Override
     public void setCoverBackgroundColor(Color color) {
         this.backgroundColor = color;
+    }
+
+    @Override
+    public boolean hasVideo() {
+        return hasVideo;
     }
 
 

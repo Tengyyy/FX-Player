@@ -27,6 +27,9 @@ public class AviItem implements MediaItem {
     String title;
     String artist;
 
+
+    boolean hasVideo;
+
     public AviItem(File file){
         this.file = file;
 
@@ -35,6 +38,9 @@ public class AviItem implements MediaItem {
 
 
             fFmpegFrameGrabber.start();
+
+            hasVideo = fFmpegFrameGrabber.hasVideo();
+
             if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
@@ -125,5 +131,10 @@ public class AviItem implements MediaItem {
     @Override
     public void setCoverBackgroundColor(Color color) {
         backgroundColor = color;
+    }
+
+    @Override
+    public boolean hasVideo() {
+        return hasVideo;
     }
 }

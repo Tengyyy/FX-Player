@@ -28,6 +28,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -134,6 +135,12 @@ public class ControlBarController implements Initializable {
 
 
     StackPane controlBarBackground = new StackPane();
+
+
+    PauseTransition pauseTransition;
+
+    double lastKnownSliderHoverPosition = -1000;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -355,9 +362,23 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-
                 String newTime = Utilities.getTime(Duration.seconds((e.getX()) / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverLabel.label.setText(newTime);
+
+                lastKnownSliderHoverPosition = e.getX();
+
+
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+
+                    if (pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
+
+                    pauseTransition = new PauseTransition(Duration.millis(50));
+                    pauseTransition.setOnFinished(j -> mainController.sliderHoverPreview.setImage(mediaInterface.getImageAt(lastKnownSliderHoverPosition / durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+                    pauseTransition.playFromStart();
+
+                }
+
+
             });
 
             durationSlider.lookup(".track").setOnMouseEntered((e) -> {
@@ -402,6 +423,7 @@ public class ControlBarController implements Initializable {
                     durationSliderHoverOff();
                     mainController.sliderHoverLabel.label.setVisible(false);
                     mainController.sliderHoverPreview.pane.setVisible(false);
+                    mainController.sliderHoverPreview.setImage(null);
                 }
             });
 
@@ -575,6 +597,7 @@ public class ControlBarController implements Initializable {
                 if (!durationSliderHover && settingsController.settingsState == SettingsState.CLOSED) {
                     mainController.sliderHoverLabel.label.setVisible(false);
                     mainController.sliderHoverPreview.pane.setVisible(false);
+                    mainController.sliderHoverPreview.setImage(null);
                 }
 
                 if (seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();

@@ -12,7 +12,12 @@ import javafx.application.Platform;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.image.Image;
 import javafx.util.Duration;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.JavaFXFrameConverter;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
@@ -44,6 +49,8 @@ public class MediaInterface {
     public PauseTransition transitionTimer;
 
     double currentTime;
+
+    FFmpegFrameGrabber fFmpegFrameGrabber;
 
 
     MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController) {
@@ -212,6 +219,14 @@ public class MediaInterface {
         wasPlaying = false;
         currentTime = 0;
 
+        fFmpegFrameGrabber = new FFmpegFrameGrabber(menuController.activeItem.getMediaItem().getFile());
+        fFmpegFrameGrabber.setVideoOption("preset", "ultrafast");
+
+        try {
+            fFmpegFrameGrabber.start();
+        } catch (FFmpegFrameGrabber.Exception e) {
+            e.printStackTrace();
+        }
 
 
         if(mediaItem.getSubtitles() != null){
@@ -275,7 +290,13 @@ public class MediaInterface {
 
         mediaActive.set(false);
 
-        mainController.sliderHoverPreview.pane.setVisible(false);
+        mainController.sliderHoverPreview.setImage(null);
+
+        try {
+            fFmpegFrameGrabber.close();
+        } catch (FrameGrabber.Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -424,5 +445,24 @@ public class MediaInterface {
 
     public Duration getCurrentTime(){
         return Duration.millis(currentTime);
+    }
+
+
+
+    public Image getImageAt(double time) {
+
+            try {
+
+                fFmpegFrameGrabber.setFrameNumber((int) (fFmpegFrameGrabber.getLengthInFrames() * time));
+                Frame frame = fFmpegFrameGrabber.grabImage();
+
+                JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
+                return javaFXFrameConverter.convert(frame);
+
+            } catch (FFmpegFrameGrabber.Exception e) {
+                e.printStackTrace();
+            }
+
+        return null;
     }
 }

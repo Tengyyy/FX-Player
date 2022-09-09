@@ -414,6 +414,21 @@ public class ControlBarController implements Initializable {
                     if (menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
 
                 }
+
+                lastKnownSliderHoverPosition = e.getX();
+
+
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+
+                    if (pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
+
+                    pauseTransition = new PauseTransition(Duration.millis(50));
+                    pauseTransition.setOnFinished(j -> mainController.sliderHoverPreview.setImage(mediaInterface.getImageAt(lastKnownSliderHoverPosition / durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+                    pauseTransition.playFromStart();
+
+                }
+
+
             });
 
             durationSlider.lookup(".track").setOnMouseExited((e) -> {
@@ -453,6 +468,20 @@ public class ControlBarController implements Initializable {
 
                     String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                     mainController.sliderHoverLabel.label.setText(newTime);
+
+
+                    lastKnownSliderHoverPosition = e.getX();
+
+
+                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+
+                        if (pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
+
+                        pauseTransition = new PauseTransition(Duration.millis(50));
+                        pauseTransition.setOnFinished(j -> mainController.sliderHoverPreview.setImage(mediaInterface.getImageAt(lastKnownSliderHoverPosition / durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+                        pauseTransition.playFromStart();
+
+                    }
 
 
                     e.consume();
@@ -548,6 +577,21 @@ public class ControlBarController implements Initializable {
 
 
                     mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
+
+
+                    lastKnownSliderHoverPosition = newValue.doubleValue()/durationSlider.getMax() * durationSlider.lookup(".track").getLayoutBounds().getMaxX();
+
+
+                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+
+                        if (pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
+
+                        pauseTransition = new PauseTransition(Duration.millis(50));
+                        pauseTransition.setOnFinished(j -> mainController.sliderHoverPreview.setImage(mediaInterface.getImageAt(lastKnownSliderHoverPosition / durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+                        pauseTransition.playFromStart();
+
+                    }
+
                 }
             }
             durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
@@ -591,6 +635,22 @@ public class ControlBarController implements Initializable {
 
 
                 mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
+
+
+                lastKnownSliderHoverPosition = durationSlider.getValue()/durationSlider.getMax() * durationSlider.lookup(".track").getLayoutBounds().getMaxX();
+
+
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+
+                    if (pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
+
+                    pauseTransition = new PauseTransition(Duration.millis(50));
+                    pauseTransition.setOnFinished(j -> mainController.sliderHoverPreview.setImage(mediaInterface.getImageAt(lastKnownSliderHoverPosition / durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+                    pauseTransition.playFromStart();
+
+                }
+
+
 
             } else {
 

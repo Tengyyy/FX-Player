@@ -25,6 +25,9 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 public class MediaInterface {
 
@@ -51,6 +54,8 @@ public class MediaInterface {
     double currentTime;
 
     FFmpegFrameGrabber fFmpegFrameGrabber;
+
+    FrameGrabberTask frameGrabberTask;
 
 
     MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController) {
@@ -220,7 +225,7 @@ public class MediaInterface {
         currentTime = 0;
 
         fFmpegFrameGrabber = new FFmpegFrameGrabber(menuController.activeItem.getMediaItem().getFile());
-        fFmpegFrameGrabber.setVideoOption("preset", "ultrafast");
+
 
         try {
             fFmpegFrameGrabber.start();
@@ -449,20 +454,21 @@ public class MediaInterface {
 
 
 
-    public Image getImageAt(double time) {
+    public void updatePreviewFrame() {
 
-            try {
+        if(frameGrabberTask != null && frameGrabberTask.isRunning()) return;
 
-                fFmpegFrameGrabber.setFrameNumber((int) (fFmpegFrameGrabber.getLengthInFrames() * time));
-                Frame frame = fFmpegFrameGrabber.grabImage();
+        frameGrabberTask = new FrameGrabberTask(fFmpegFrameGrabber, controlBarController);
 
-                JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
-                return javaFXFrameConverter.convert(frame);
+        frameGrabberTask.setOnSucceeded((succeededEvent) -> {
+            mainController.sliderHoverPreview.imageView.setImage(frameGrabberTask.getValue());
+        });
 
-            } catch (FFmpegFrameGrabber.Exception e) {
-                e.printStackTrace();
-            }
 
-        return null;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        executorService.execute(frameGrabberTask);
+        executorService.shutdown();
+
     }
 }

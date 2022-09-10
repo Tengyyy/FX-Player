@@ -99,7 +99,8 @@ public class SettingsController {
 
         settingsState = SettingsState.HOME_OPEN;
 
-        mainController.sliderHoverLabel.label.setVisible(false );
+        mainController.sliderHoverLabel.label.setVisible(false);
+        mainController.sliderHoverPreview.pane.setVisible(false);
 
         if(controlBarController.captions.isShowing()) controlBarController.captions.hide();
         if(controlBarController.settings.isShowing()) controlBarController.settings.hide();
@@ -243,7 +244,10 @@ public class SettingsController {
 
         settingsState = SettingsState.CLOSED;
 
-        if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()) mainController.sliderHoverLabel.label.setVisible(true);
+        if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()){
+            mainController.sliderHoverLabel.label.setVisible(true);
+            if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+        }
 
     }
 

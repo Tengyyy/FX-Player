@@ -12,7 +12,7 @@ public class SliderHoverPreview {
 
     ControlBarController controlBarController;
 
-    StackPane pane = new StackPane();
+    public StackPane pane = new StackPane();
     ImageView imageView = new ImageView();
 
 

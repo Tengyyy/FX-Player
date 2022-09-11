@@ -19,6 +19,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
@@ -337,9 +338,12 @@ public class ControlBarController implements Initializable {
 
             durationSlider.lookup(".track").setCursor(Cursor.HAND);
 
-            durationSlider.lookup(".track").addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
                 if (e.getButton() == MouseButton.PRIMARY){
                     durationSlider.setValueChanging(true);
+                }
+                else {
+                    e.consume();
                 }
             });
             durationSlider.lookup(".track").addEventHandler(MouseEvent.MOUSE_RELEASED, e -> {
@@ -382,8 +386,6 @@ public class ControlBarController implements Initializable {
 
 
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
-
-                    mainController.sliderHoverPreview.pane.setVisible(true);
 
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
@@ -448,7 +450,9 @@ public class ControlBarController implements Initializable {
             durationSlider.lookup(".track").setOnMouseExited((e) -> {
                 durationSliderHover = false;
 
+
                 if (!e.isPrimaryButtonDown()) {
+
                     durationSliderHoverOff();
                     mainController.sliderHoverLabel.label.setVisible(false);
                     mainController.sliderHoverPreview.pane.setVisible(false);
@@ -457,8 +461,12 @@ public class ControlBarController implements Initializable {
             });
 
 
+
+
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
                 if (!e.isPrimaryButtonDown()) {
+
+                    e.consume();
 
                     double offset = 0;
                     if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
@@ -479,12 +487,6 @@ public class ControlBarController implements Initializable {
                     mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-                    if (settingsController.settingsState == SettingsState.CLOSED) {
-                        mainController.sliderHoverLabel.label.setVisible(true);
-                        if (menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
-                    }
-
-
                     String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                     mainController.sliderHoverLabel.label.setText(newTime);
 
@@ -502,9 +504,6 @@ public class ControlBarController implements Initializable {
 
                         pauseTransition.playFromStart();
                     }
-
-                    e.consume();
-
                 }
 
             });
@@ -678,7 +677,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setVisible(false);
                 mainController.sliderHoverLabel.label.setVisible(false);
 
-                if (!durationSliderHover && settingsController.settingsState == SettingsState.CLOSED) {
+                if (!durationSliderHover) {
                     mainController.sliderHoverLabel.label.setVisible(false);
                     mainController.sliderHoverPreview.pane.setVisible(false);
                     mainController.sliderHoverPreview.setImage(null);

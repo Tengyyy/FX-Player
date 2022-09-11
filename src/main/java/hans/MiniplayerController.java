@@ -205,6 +205,7 @@ public class MiniplayerController {
 
             slider.lookup(".track").addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
                 if(e.getButton() == MouseButton.PRIMARY) slider.setValueChanging(true);
+                else e.consume();
             });
             slider.lookup(".track").addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
                 if(e.getButton() == MouseButton.PRIMARY) slider.setValueChanging(false);
@@ -316,8 +317,12 @@ public class MiniplayerController {
                 if(seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();
                 if(controlBarController.seekTimer.getStatus() == Animation.Status.RUNNING) controlBarController.seekTimer.stop();
 
-                if (!sliderHover) sliderHoverOff();
+                if (!sliderHover){
+                    sliderHoverOff();
+                    sliderHoverLabel.label.setVisible(false);
+                }
                 if(!miniplayerHover) hideControls();
+
 
                 if(mediaInterface.mediaActive.get()) mediaInterface.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
 

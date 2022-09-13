@@ -568,6 +568,13 @@ public class ControlBarController implements Initializable {
                 mediaInterface.updateMedia(newValue.doubleValue());
                 durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
 
+                if (mainController.miniplayerActive) {
+                    mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
+                    if (mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue()) {
+                        mainController.miniplayer.miniplayerController.slider.setValue(newValue.doubleValue());
+                    }
+                }
+
 
                 if (durationSlider.isValueChanging() && !mainController.seekingWithKeys) {
 
@@ -611,14 +618,6 @@ public class ControlBarController implements Initializable {
             }
 
             captionsController.updateCaptions(newValue.doubleValue() * 1000 + 1000);
-
-
-            if (mainController.miniplayerActive) {
-                mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
-                if (mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue()) {
-                    mainController.miniplayer.miniplayerController.slider.setValue(newValue.doubleValue());
-                }
-            }
         });
 
         durationSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
@@ -674,22 +673,21 @@ public class ControlBarController implements Initializable {
 
             } else {
 
-                mainController.sliderHoverPreview.pane.setVisible(false);
-                mainController.sliderHoverLabel.label.setVisible(false);
-
-                if (!durationSliderHover) {
-                    mainController.sliderHoverLabel.label.setVisible(false);
+                if(!mainController.miniplayerActive) {
                     mainController.sliderHoverPreview.pane.setVisible(false);
-                    mainController.sliderHoverPreview.setImage(null);
+                    mainController.sliderHoverLabel.label.setVisible(false);
                 }
+
+                if(!durationSliderHover){
+                    mainController.sliderHoverPreview.setImage(null);
+                    durationSliderHoverOff();
+                }
+
 
                 if (seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();
                 if (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.seekTimer.getStatus() == Animation.Status.RUNNING)
                     mainController.miniplayer.miniplayerController.seekTimer.stop();
 
-                if (!durationSliderHover) {
-                    durationSliderHoverOff();
-                }
 
 
                 if (settingsController.settingsState != SettingsState.CLOSED) { // close settings pane after user finishes seeking media (if its open)

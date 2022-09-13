@@ -224,6 +224,8 @@ public class MiniplayerController {
 
                 String newTime = Utilities.getTime(Duration.seconds((e.getX())/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
                 sliderHoverLabel.label.setText(newTime);
+
+                sliderHoverLabel.label.setVisible(true);
             });
 
             slider.lookup(".track").setOnMouseEntered((e) -> {
@@ -317,12 +319,11 @@ public class MiniplayerController {
                 if(seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();
                 if(controlBarController.seekTimer.getStatus() == Animation.Status.RUNNING) controlBarController.seekTimer.stop();
 
-                if (!sliderHover){
-                    sliderHoverOff();
-                    sliderHoverLabel.label.setVisible(false);
-                }
+                if (!sliderHover) sliderHoverOff();
+
                 if(!miniplayerHover) hideControls();
 
+                sliderHoverLabel.label.setVisible(false);
 
                 if(mediaInterface.mediaActive.get()) mediaInterface.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
 

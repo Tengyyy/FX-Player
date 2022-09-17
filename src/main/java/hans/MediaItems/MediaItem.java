@@ -41,4 +41,7 @@ public interface MediaItem {
     void setCoverBackgroundColor(Color color);
 
     boolean hasVideo();
+
+
+    // 1024 is int value for attached pic disposition
 }

@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.scene.control.Label;
@@ -143,7 +144,7 @@ public class Utilities {
     }
 
 
-    public static Image grabMiddleFrame(File file){
+    public static Image grabRandomFrame(File file){
 
 
         FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
@@ -153,11 +154,13 @@ public class Utilities {
 
         try {
 
+            Random random = new Random();
             fFmpegFrameGrabber.start();
 
             int totalFrames = fFmpegFrameGrabber.getLengthInFrames();
+            int randomFrame = random.nextInt(totalFrames);
 
-            fFmpegFrameGrabber.setFrameNumber(totalFrames / 2);
+            fFmpegFrameGrabber.setFrameNumber(randomFrame);
             Frame frame = fFmpegFrameGrabber.grabImage();
 
             JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();

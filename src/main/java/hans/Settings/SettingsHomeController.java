@@ -182,21 +182,21 @@ public class SettingsHomeController {
             MediaItem temp = null;
 
             switch(Utilities.getFileExtension(selectedFile)){
-                case "mp4": temp = new Mp4Item(selectedFile);
+                case "mp4": temp = new Mp4Item(selectedFile, settingsController.mainController);
                     break;
-                case "mp3": temp = new Mp3Item(selectedFile);
+                case "mp3": temp = new Mp3Item(selectedFile, settingsController.mainController);
                     break;
-                case "avi": temp = new AviItem(selectedFile);
+                case "avi": temp = new AviItem(selectedFile, settingsController.mainController);
                     break;
-                case "mkv": temp = new MkvItem(selectedFile);
+                case "mkv": temp = new MkvItem(selectedFile, settingsController.mainController);
                     break;
-                case "flac": temp = new FlacItem(selectedFile);
+                case "flac": temp = new FlacItem(selectedFile, settingsController.mainController);
                     break;
-                case "flv": temp = new FlvItem(selectedFile);
+                case "flv": temp = new FlvItem(selectedFile, settingsController.mainController);
                     break;
-                case "mov": temp = new MovItem(selectedFile);
+                case "mov": temp = new MovItem(selectedFile, settingsController.mainController);
                     break;
-                case "wav": temp = new WavItem(selectedFile);
+                case "wav": temp = new WavItem(selectedFile, settingsController.mainController);
                     break;
                 default:
                     break;

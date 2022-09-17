@@ -1,11 +1,14 @@
 package hans.Menu;
 
 import hans.App;
+import hans.SVG;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.Region;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
@@ -17,7 +20,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
     MenuObject menuObject;
 
     MenuItem playNext = new MenuItem("Play next");
-    MenuItem metadata = new MenuItem("Show metadata");
+    MenuItem metadata = new MenuItem("View metadata");
     MenuItem addSubtitles = new MenuItem("Add subtitles");
 
     double buttonWidth;
@@ -26,6 +29,9 @@ public class MenuItemOptionsPopUp extends ContextMenu {
     Node menuObjectNode;
 
     FadeTransition showTransition, hideTransition;
+
+    SVGPath playNextPath = new SVGPath(), metadataPath = new SVGPath(), addSubtitlesPath = new SVGPath();
+    Region playNextIcon = new Region(), metadataIcon = new Region(), addSubtitlesIcon = new Region();
 
 
     MenuItemOptionsPopUp(MenuObject menuObject){
@@ -37,14 +43,39 @@ public class MenuItemOptionsPopUp extends ContextMenu {
 
         menuObjectNode.getScene().getStylesheets().add(Objects.requireNonNull(menuObject.getMenuController().mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 
+
+        playNextPath.setContent(App.svgMap.get(SVG.PLAY_CIRCLE));
+        playNextIcon.setShape(playNextPath);
+        playNextIcon.getStyleClass().add("icon");
+        playNextIcon.setPrefSize(20, 20);
+        playNextIcon.setMaxSize(20, 20);
+
+        playNext.setGraphic(playNextIcon);
+        playNext.getStyleClass().add("popUpItem");
         playNext.setOnAction((e) -> {
             if(!menuObject.getMenuController().animationsInProgress.isEmpty()) return;
             menuObject.playNext();
         });
 
+        metadataPath.setContent(App.svgMap.get(SVG.INFORMATION_OUTLINE));
+        metadataIcon.setShape(metadataPath);
+        metadataIcon.getStyleClass().add("icon");
+        metadataIcon.setPrefSize(20, 20);
+        metadataIcon.setMaxSize(20, 20);
+
+        metadata.setGraphic(metadataIcon);
+        metadata.getStyleClass().add("popUpItem");
         metadata.setOnAction((e) -> menuObject.showMetadata());
 
 
+        addSubtitlesPath.setContent(App.svgMap.get(SVG.CAPTIONS_OUTLINE));
+        addSubtitlesIcon.setShape(addSubtitlesPath);
+        addSubtitlesIcon.getStyleClass().add("icon");
+        addSubtitlesIcon.setPrefSize(20, 20);
+        addSubtitlesIcon.setMaxSize(20, 20);
+
+        addSubtitles.setGraphic(addSubtitlesIcon);
+        addSubtitles.getStyleClass().add("popUpItem");
         addSubtitles.setOnAction((e) -> openSubtitleChooser());
 
 

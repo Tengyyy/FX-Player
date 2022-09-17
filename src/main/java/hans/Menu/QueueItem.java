@@ -164,7 +164,6 @@ public class QueueItem extends GridPane implements MenuObject {
                 Color dominantColor = Utilities.findDominantColor(realWidth, realHeight, mediaItem.getCover());
                 mediaItem.setCoverBackgroundColor(dominantColor);
 
-                assert dominantColor != null;
                 imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantColor.getRed() * 256) + "," + Math.round(dominantColor.getGreen() * 256) + "," + Math.round(dominantColor.getBlue() * 256) + ", 0.7);");
 
             }
@@ -218,14 +217,14 @@ public class QueueItem extends GridPane implements MenuObject {
         String formattedDuration = Utilities.getTime(mediaItem.getDuration());
 
         if(artist.getText() != null){
-            formattedDuration = " • " + formattedDuration;
+            formattedDuration = formattedDuration + " • ";
         }
 
         if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
         duration.getStyleClass().add("subText");
 
         subTextWrapper.setAlignment(Pos.CENTER_LEFT);
-        subTextWrapper.getChildren().addAll(artist, duration);
+        subTextWrapper.getChildren().addAll(duration, artist);
 
         if(mediaItem.getSubtitles() != null) subTextWrapper.getChildren().add(0, captionsPane);
 

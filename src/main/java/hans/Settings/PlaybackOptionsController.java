@@ -24,7 +24,7 @@ public class PlaybackOptionsController {
 
     public PlaybackOptionsTab loopTab;
     public PlaybackOptionsTab shuffleTab;
-    PlaybackOptionsTab autoplayTab;
+    public PlaybackOptionsTab autoplayTab;
 
     VBox playbackOptionsBox = new VBox();
 
@@ -98,6 +98,9 @@ public class PlaybackOptionsController {
         shuffleTab.toggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) { // OFF
                 shuffleOn = false;
+
+                settingsController.mainController.playbackOptionsPopUp.shuffleCheckIcon.setVisible(false);
+
                 if(!autoplayTab.toggle.isSelected() && !loopTab.toggle.isSelected()) {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.tuneSVG);
                 }
@@ -109,6 +112,8 @@ public class PlaybackOptionsController {
 
             } else { // ON
                 shuffleOn = true;
+
+                settingsController.mainController.playbackOptionsPopUp.shuffleCheckIcon.setVisible(true);
 
 
                 if(!loopTab.toggle.isSelected()) {
@@ -130,7 +135,7 @@ public class PlaybackOptionsController {
             if (!newValue) { // OFF
                 loopOn = false;
 
-                settingsController.mainController.loopPopUp.checkIcon.setVisible(false);
+                settingsController.mainController.playbackOptionsPopUp.loopCheckIcon.setVisible(false);
 
                 if(shuffleTab.toggle.isSelected()) settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.shuffleSVG);
                 else if(autoplayTab.toggle.isSelected()) settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatSVG);
@@ -139,7 +144,7 @@ public class PlaybackOptionsController {
             } else { // ON
                 loopOn = true;
 
-                settingsController.mainController.loopPopUp.checkIcon.setVisible(true);
+                settingsController.mainController.playbackOptionsPopUp.loopCheckIcon.setVisible(true);
 
                 settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatOnceSVG);
             }
@@ -150,12 +155,18 @@ public class PlaybackOptionsController {
 
                 autoplayOn = false;
 
+                settingsController.mainController.playbackOptionsPopUp.autoplayCheckIcon.setVisible(false);
+
+
                 if(!shuffleTab.toggle.isSelected() && !loopTab.toggle.isSelected()) {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.tuneSVG);
                 }
             } else { // ON
 
                 autoplayOn = true;
+
+                if(settingsController.mainController.playbackOptionsPopUp != null) settingsController.mainController.playbackOptionsPopUp.autoplayCheckIcon.setVisible(true);
+
 
                 if(!shuffleTab.toggle.isSelected() && !loopTab.toggle.isSelected()) {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatSVG);

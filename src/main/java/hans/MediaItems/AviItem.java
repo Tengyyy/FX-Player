@@ -1,5 +1,6 @@
 package hans.MediaItems;
 
+import hans.MainController;
 import hans.MediaItems.MediaItem;
 import hans.Utilities;
 import javafx.scene.image.Image;
@@ -27,11 +28,13 @@ public class AviItem implements MediaItem {
     String title;
     String artist;
 
-
     boolean hasVideo;
 
-    public AviItem(File file){
+    MainController mainController;
+
+    public AviItem(File file, MainController mainController){
         this.file = file;
+        this.mainController = mainController;
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
@@ -50,7 +53,7 @@ public class AviItem implements MediaItem {
             Map<String, String> metadata = fFmpegFrameGrabber.getMetadata();
             System.out.println(metadata);
 
-            if(cover == null) cover = Utilities.grabMiddleFrame(file);
+            if(cover == null) cover = Utilities.grabRandomFrame(file);
 
 
             fFmpegFrameGrabber.stop();

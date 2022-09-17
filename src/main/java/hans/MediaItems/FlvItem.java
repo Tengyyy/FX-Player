@@ -1,5 +1,6 @@
 package hans.MediaItems;
 
+import hans.MainController;
 import hans.MediaItems.MediaItem;
 import hans.Utilities;
 import javafx.scene.image.Image;
@@ -28,9 +29,11 @@ public class FlvItem implements MediaItem {
     String artist;
 
     boolean hasVideo;
+    MainController mainController;
 
-    public FlvItem(File file){
+    public FlvItem(File file, MainController mainController){
         this.file = file;
+        this.mainController = mainController;
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
@@ -47,7 +50,7 @@ public class FlvItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            if(cover == null) cover = Utilities.grabMiddleFrame(file);
+            if(cover == null) cover = Utilities.grabRandomFrame(file);
 
 
             fFmpegFrameGrabber.stop();

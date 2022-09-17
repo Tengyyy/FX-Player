@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -84,6 +85,7 @@ public class App extends Application {
             svgMap.put(FORWARD, "M13,6V18L21.5,12M4,18L12.5,12L4,6V18Z");
             svgMap.put(REWIND, "M11.5,12L20,18V6M11,18V6L2.5,12L11,18Z");
             svgMap.put(MINIPLAYER, "M19,11H11V17H19V11M23,19V5C23,3.88 22.1,3 21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19M21,19H3V4.97H21V19Z");
+            svgMap.put(INFORMATION_OUTLINE, "M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z");
 
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("views/Main.fxml"));
@@ -107,7 +109,7 @@ public class App extends Application {
             Scene scene = new Scene(root, 705, 400);
 
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/application.css")).toExternalForm());
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/loopPopUp.css")).toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/playbackOptionsPopUp.css")).toExternalForm());
 
 
             scene.addEventFilter(MouseEvent.ANY, event -> {
@@ -213,6 +215,7 @@ public class App extends Application {
 
             primaryStage.setScene(scene);
             primaryStage.setTitle("MP4 Player");
+            primaryStage.getIcons().add(new Image(getClass().getResource("images/appIcon.png").toExternalForm()));
             primaryStage.show();
 
             primaryStage.setOnCloseRequest(event -> {

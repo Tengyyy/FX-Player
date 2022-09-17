@@ -1,5 +1,6 @@
 package hans.MediaItems;
 
+import hans.MainController;
 import hans.MediaItems.MediaItem;
 import hans.Utilities;
 import javafx.scene.image.Image;
@@ -76,9 +77,11 @@ public class Mp4Item implements MediaItem {
 
     boolean hasVideo;
 
-    public Mp4Item(File file) {
-        this.file = file;
+    MainController mainController;
 
+    public Mp4Item(File file, MainController mainController) {
+        this.file = file;
+        this.mainController = mainController;
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
@@ -132,7 +135,7 @@ public class Mp4Item implements MediaItem {
             if(frame != null) cover = javaFXFrameConverter.convert(frame);
 
             if(cover ==  null){
-                cover = Utilities.grabMiddleFrame(file);
+                cover = Utilities.grabRandomFrame(file);
             }
 
             fFmpegFrameGrabber.stop();

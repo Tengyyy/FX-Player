@@ -1,5 +1,6 @@
 package hans.MediaItems;
 
+import hans.MainController;
 import hans.MediaItems.MediaItem;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -10,6 +11,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 public class WavItem implements MediaItem {
 
@@ -30,10 +32,11 @@ public class WavItem implements MediaItem {
 
     Image cover;
 
+    MainController mainController;
 
-    public WavItem(File file) {
+    public WavItem(File file, MainController mainController) {
         this.file = file;
-
+        this.mainController = mainController;
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
@@ -51,6 +54,11 @@ public class WavItem implements MediaItem {
 
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        if(cover == null){
+            cover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/default.png")).toExternalForm()));
+            backgroundColor = Color.rgb(254, 200, 149);
         }
     }
 

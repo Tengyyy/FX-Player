@@ -215,14 +215,14 @@ public class ActiveItem extends GridPane implements MenuObject {
         String formattedDuration = Utilities.getTime(mediaItem.getDuration());
 
         if(artist.getText() != null){
-            formattedDuration = " • " + formattedDuration;
+            formattedDuration = formattedDuration + " • ";
         }
 
         if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
         duration.getStyleClass().add("subText");
 
         subTextWrapper.setAlignment(Pos.CENTER_LEFT);
-        subTextWrapper.getChildren().addAll(artist, duration);
+        subTextWrapper.getChildren().addAll(duration, artist);
 
 
         textWrapper.setAlignment(Pos.CENTER_LEFT);

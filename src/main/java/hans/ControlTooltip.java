@@ -168,8 +168,11 @@ public class ControlTooltip extends Tooltip {
         imageView.setPreserveRatio(true);
 
         StackPane.setAlignment(durationLabel, Pos.BOTTOM_RIGHT);
-        if(tooltipSubText.toCharArray()[1] == '•'){
-            durationLabel.setText(tooltipSubText.substring(3));
+
+        char[] durationArray = tooltipSubText.toCharArray();
+
+        if(durationArray[durationArray.length - 2] == '•'){
+            durationLabel.setText(tooltipSubText.substring(0, durationArray.length - 3));
         }
         else durationLabel.setText(tooltipSubText);
 

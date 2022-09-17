@@ -91,7 +91,7 @@ public class MainController implements Initializable {
     ChangeListener<? super Number> widthListenerForTitle;
 
 
-    public LoopPopUp loopPopUp;
+    public PlaybackOptionsPopUp playbackOptionsPopUp;
 
     String snapshotDirectory;
 
@@ -128,7 +128,7 @@ public class MainController implements Initializable {
 
         videoImageViewWrapper.getChildren().add(2, settingsController.settingsBuffer);
 
-        loopPopUp = new LoopPopUp(settingsController);
+        playbackOptionsPopUp = new PlaybackOptionsPopUp(settingsController);
 
         snapshotDirectory = System.getProperty("user.home").concat("/vlcj-snapshots/");
 
@@ -155,9 +155,11 @@ public class MainController implements Initializable {
         videoImageView.setPreserveRatio(true);
 
 
-        //video expands to take up entire window if menu is not open
+        //hide controlbar when mouse exits window
         Platform.runLater(() ->{
-            videoImageViewWrapper.getScene().setOnMouseExited(e -> controlBarController.mouseEventTracker.hide());
+            videoImageViewWrapper.getScene().setOnMouseExited(e -> {
+                if(!playbackOptionsPopUp.isShowing()) controlBarController.mouseEventTracker.hide();
+            });
         });
 
 
@@ -421,14 +423,14 @@ public class MainController implements Initializable {
 
         if(e.getButton() == MouseButton.SECONDARY){
             // open/close loop toggle pop-up
-            loopPopUp.show(videoImageViewInnerWrapper, e.getScreenX(), e.getScreenY());
+            playbackOptionsPopUp.show(videoImageViewInnerWrapper, e.getScreenX(), e.getScreenY());
 
 
             return;
         }
 
-        if(loopPopUp.isShowing()){
-            loopPopUp.hide();
+        if(playbackOptionsPopUp.isShowing()){
+            playbackOptionsPopUp.hide();
             return;
         }
 
@@ -514,21 +516,21 @@ public class MainController implements Initializable {
         MediaItem temp;
 
         switch(Utilities.getFileExtension(file)){
-            case "mp4": temp = new Mp4Item(file);
+            case "mp4": temp = new Mp4Item(file, controlBarController.mainController);
                 break;
-            case "mp3": temp = new Mp3Item(file);
+            case "mp3": temp = new Mp3Item(file, controlBarController.mainController);
                 break;
-            case "avi": temp = new AviItem(file);
+            case "avi": temp = new AviItem(file, controlBarController.mainController);
                 break;
-            case "mkv": temp = new MkvItem(file);
+            case "mkv": temp = new MkvItem(file, controlBarController.mainController);
                 break;
-            case "flac": temp = new FlacItem(file);
+            case "flac": temp = new FlacItem(file, controlBarController.mainController);
                 break;
-            case "flv": temp = new FlvItem(file);
+            case "flv": temp = new FlvItem(file, controlBarController.mainController);
                 break;
-            case "mov": temp = new MovItem(file);
+            case "mov": temp = new MovItem(file, controlBarController.mainController);
                 break;
-            case "wav": temp = new WavItem(file);
+            case "wav": temp = new WavItem(file, controlBarController.mainController);
                 break;
             default:
                 return;

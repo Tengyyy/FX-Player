@@ -39,5 +39,7 @@ public enum SVG {
     TUNE,
     FORWARD,
     REWIND,
-    MINIPLAYER
+    MINIPLAYER,
+    INFORMATION_OUTLINE,
+    INFORMATION
 }

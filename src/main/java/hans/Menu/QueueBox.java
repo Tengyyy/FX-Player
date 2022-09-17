@@ -763,21 +763,21 @@ public class QueueBox extends VBox {
         for (File file : dragBoardMedia) {
             MediaItem temp = null;
             switch(Utilities.getFileExtension(file)){
-                case "mp4": temp = new Mp4Item(file);
+                case "mp4": temp = new Mp4Item(file, menuController.mainController);
                     break;
-                case "mp3": temp = new Mp3Item(file);
+                case "mp3": temp = new Mp3Item(file, menuController.mainController);
                     break;
-                case "avi": temp = new AviItem(file);
+                case "avi": temp = new AviItem(file, menuController.mainController);
                     break;
-                case "mkv": temp = new MkvItem(file);
+                case "mkv": temp = new MkvItem(file, menuController.mainController);
                     break;
-                case "flac": temp = new FlacItem(file);
+                case "flac": temp = new FlacItem(file, menuController.mainController);
                     break;
-                case "flv": temp = new FlvItem(file);
+                case "flv": temp = new FlvItem(file, menuController.mainController);
                     break;
-                case "mov": temp = new MovItem(file);
+                case "mov": temp = new MovItem(file, menuController.mainController);
                     break;
-                case "wav": temp = new WavItem(file);
+                case "wav": temp = new WavItem(file, menuController.mainController);
                     break;
                 default:
                     break;

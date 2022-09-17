@@ -67,7 +67,7 @@ public class MainController implements Initializable {
 
 
 
-    ControlTooltip openMenuTooltip;
+    ControlTooltip openMenuTooltip, viewMetadataTooltip;
 
     SVGPath menuSVG;
 
@@ -107,6 +107,11 @@ public class MainController implements Initializable {
     Button menuButton = new Button();
     StackPane menuButtonPane = new StackPane();
     Region menuIcon = new Region();
+
+    SVGPath metadataPath = new SVGPath();
+    StackPane metadataButtonPane = new StackPane();
+    Button metadataButton = new Button();
+    Region metadataIcon = new Region();
 
 
     @Override
@@ -178,7 +183,8 @@ public class MainController implements Initializable {
         videoImageViewInnerWrapper.getChildren().add(miniplayerActiveText);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
-            openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 1000, false, true);
+            openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 0, false, true);
+            viewMetadataTooltip = new ControlTooltip(this,"View metadata", metadataButton, 0, false, true);
 
             videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 if(newValue.doubleValue() < menuController.menu.getMaxWidth()){
@@ -365,10 +371,10 @@ public class MainController implements Initializable {
         videoTitleBox.setAlignment(Pos.CENTER_LEFT);
         StackPane.setAlignment(videoTitleBox, Pos.TOP_LEFT);
 
-        videoTitleBox.getChildren().addAll(menuButtonPane, videoTitleLabel);
+        videoTitleBox.getChildren().addAll(menuButtonPane, videoTitleLabel, metadataButtonPane);
 
-        menuButtonPane.setPrefSize(60, 60);
-        menuButtonPane.setMaxSize(60, 60);
+        menuButtonPane.setPrefSize(50, 50);
+        menuButtonPane.setMaxSize(50, 50);
         menuButtonPane.setBackground(Background.EMPTY);
         menuButtonPane.getChildren().addAll(menuButton, menuIcon);
 
@@ -377,8 +383,8 @@ public class MainController implements Initializable {
         menuButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlBarController.controlButtonHoverOff(menuButtonPane));
 
 
-        menuButton.setPrefSize(60, 60);
-        menuButton.setMaxSize(60, 60);
+        menuButton.setPrefSize(50, 50);
+        menuButton.setMaxSize(50, 50);
         menuButton.setBackground(Background.EMPTY);
         menuButton.setCursor(Cursor.HAND);
         menuButton.setOnAction(e -> openMenu());
@@ -395,7 +401,7 @@ public class MainController implements Initializable {
         videoTitleLabel.setBackground(Background.EMPTY);
         videoTitleLabel.setText(null);
         videoTitleLabel.setTranslateX(70);
-        videoTitleLabel.maxWidthProperty().bind(videoImageViewInnerWrapper.widthProperty().subtract(70));
+        videoTitleLabel.maxWidthProperty().bind(videoImageViewInnerWrapper.widthProperty().subtract(70).subtract(80));
         videoTitleLabel.setTextFill(Color.rgb(200, 200, 200));
         videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 20");
         videoTitleLabel.setEffect(new DropShadow());
@@ -408,6 +414,37 @@ public class MainController implements Initializable {
         videoTitleLabel.setOnMouseEntered(e -> AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(255, 255, 255), 200));
 
         videoTitleLabel.setOnMouseExited(e -> AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(200, 200,200), 200));
+
+        metadataButtonPane.setPrefSize(50, 50);
+        metadataButtonPane.setMaxSize(50, 50);
+        metadataButtonPane.setBackground(Background.EMPTY);
+        metadataButtonPane.getChildren().addAll(metadataButton, metadataIcon);
+        StackPane.setAlignment(metadataButtonPane, Pos.CENTER_RIGHT);
+        StackPane.setMargin(metadataButtonPane, new Insets(0, 20, 0, 0));
+
+        metadataButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlBarController.controlButtonHoverOn(metadataButtonPane));
+
+        metadataButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlBarController.controlButtonHoverOff(metadataButtonPane));
+
+        metadataButtonPane.setVisible(false);
+        metadataButtonPane.setMouseTransparent(true);
+        metadataButtonPane.visibleProperty().bind(mediaInterface.mediaActive);
+        metadataButtonPane.mouseTransparentProperty().bind(mediaInterface.mediaActive.not());
+
+
+        metadataButton.setPrefSize(50, 50);
+        metadataButton.setMaxSize(50, 50);
+        metadataButton.setBackground(Background.EMPTY);
+        metadataButton.setCursor(Cursor.HAND);
+        metadataButton.setOnAction(e -> System.out.println("test"));
+
+
+        metadataPath.setContent(App.svgMap.get(INFORMATION));
+        metadataIcon.setShape(metadataPath);
+        metadataIcon.setPrefSize(25, 25);
+        metadataIcon.setMaxSize(25, 25);
+        metadataIcon.setMouseTransparent(true);
+        metadataIcon.getStyleClass().add("controlIcon");
 
 
 

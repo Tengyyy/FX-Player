@@ -433,7 +433,6 @@ public class QueueItem extends GridPane implements MenuObject {
         this.getMediaItem().setSubtitlesOn(true);
 
         if(!subTextWrapper.getChildren().contains(captionsPane))subTextWrapper.getChildren().add(0, captionsPane);
-        //make subtitles selected icon active
     }
 
     @Override

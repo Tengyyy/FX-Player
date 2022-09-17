@@ -194,7 +194,6 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         artist.setText(mediaItem.getArtist());
         artist.getStyleClass().add("subText");
-        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
 
         captionsPane = new StackPane();
         captionsPane.setMinSize(21, 14);
@@ -202,6 +201,8 @@ public class HistoryItem extends GridPane implements MenuObject {
         captionsPane.setMaxSize(21, 14);
         captionsPane.setPadding(new Insets(1, 6, 1, 0));
         captionsPane.setMouseTransparent(true);
+
+        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
 
         captionsIcon = new Region();
         captionsIcon.setId("captionsSelectedIcon");

@@ -42,6 +42,7 @@ public class ControlTooltip extends Tooltip {
     PauseTransition countdown;
 
     boolean isControlBarTooltip = false;
+    boolean isMenuButtonTooltip = false;
 
     StackPane graphicBackground = new StackPane();
 
@@ -59,66 +60,18 @@ public class ControlTooltip extends Tooltip {
 
 
     public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay) {
-
-        this.tooltipText = tooltipText;
-        this.tooltipParent = tooltipParent;
-        this.delay = delay;
-        this.mainController = mainController;
-
-        this.getStyleClass().add("tooltip");
-        this.setStyle("-fx-padding: 10;");
-        this.setText(tooltipText);
-
-        mouseHover.addListener((obs, wasHover, isHover) -> {
-            if(isHover){
-                showTooltip();
-            }
-        });
-
-        countdown = new PauseTransition(Duration.millis(delay));
-        countdown.setOnFinished((e) -> mouseHover.set(true));
-
-        tooltipParent.setOnMouseEntered((e) -> {
-            countdown.playFromStart();
-        });
-
-        tooltipParent.setOnMouseExited((e) -> {
-            this.hide();
-            mouseHover.set(false);
-            countdown.stop();
-        });
-
+        createTooltip(mainController, tooltipText, tooltipParent, delay);
     }
 
     public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay, boolean isControlBarTooltip){
-        this.tooltipText = tooltipText;
-        this.tooltipParent = tooltipParent;
-        this.delay = delay;
         this.isControlBarTooltip = isControlBarTooltip;
-        this.mainController = mainController;
+        createTooltip(mainController, tooltipText, tooltipParent, delay);
+    }
 
-        this.getStyleClass().add("tooltip");
-        this.setStyle("-fx-padding: 10;");
-
-        this.setText(tooltipText);
-
-        mouseHover.addListener((obs, wasHover, isHover) -> {
-            if(isHover){
-                showTooltip();
-            }
-        });
-
-        countdown = new PauseTransition(Duration.millis(delay));
-        countdown.setOnFinished((e) -> mouseHover.set(true));
-
-        tooltipParent.setOnMouseEntered((e) -> countdown.playFromStart());
-
-        tooltipParent.setOnMouseExited((e) -> {
-            this.hide();
-            mouseHover.set(false);
-            countdown.stop();
-        });
-
+    public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay, boolean isControlBarTooltip, boolean isMenuButtonTooltip){
+        this.isControlBarTooltip = isControlBarTooltip;
+        this.isMenuButtonTooltip = isMenuButtonTooltip;
+        createTooltip(mainController, tooltipText, tooltipParent, delay);
     }
 
     public ControlTooltip(MainController mainController, String tooltipText, String tooltipTitle, String tooltipSubText, Image tooltipImage, Color imageBackground, Region tooltipParent, int delay, boolean isControlBarTooltip){
@@ -229,6 +182,9 @@ public class ControlTooltip extends Tooltip {
         if(isControlBarTooltip){
             this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMinX() + nodeMiddleX - tooltipMiddle)), bounds.getMinY() - tooltipHeight - 10);
         }
+        else if(isMenuButtonTooltip){
+            this.show(tooltipParent, bounds.getMaxX() + 10, bounds.getMinY() + nodeMiddleY - tooltipHeight/2 + 9);
+        }
         else this.show(tooltipParent, bounds.getMinX() + nodeMiddleX - tooltipMiddle, bounds.getMinY() - tooltipHeight);
     }
 
@@ -243,6 +199,37 @@ public class ControlTooltip extends Tooltip {
             this.hide();
             this.showTooltip();
         }
+    }
+
+
+    private void createTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay){
+        this.tooltipText = tooltipText;
+        this.tooltipParent = tooltipParent;
+        this.delay = delay;
+        this.mainController = mainController;
+
+        this.getStyleClass().add("tooltip");
+        this.setStyle("-fx-padding: 10;");
+        this.setText(tooltipText);
+
+        mouseHover.addListener((obs, wasHover, isHover) -> {
+            if(isHover){
+                showTooltip();
+            }
+        });
+
+        countdown = new PauseTransition(Duration.millis(delay));
+        countdown.setOnFinished((e) -> mouseHover.set(true));
+
+        tooltipParent.setOnMouseEntered((e) -> {
+            countdown.playFromStart();
+        });
+
+        tooltipParent.setOnMouseExited((e) -> {
+            this.hide();
+            mouseHover.set(false);
+            countdown.stop();
+        });
     }
 
 }

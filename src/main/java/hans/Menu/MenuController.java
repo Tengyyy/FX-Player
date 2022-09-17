@@ -137,6 +137,8 @@ public class MenuController implements Initializable {
     Button closeButton = new Button();
     Region closeIcon = new Region();
 
+    public MenuItemOptionsPopUp activeMenuItemOptionsPopUp;
+
     // the lower bound of the bottom drag detection area
     DoubleProperty lowerBottomBound = new SimpleDoubleProperty();
 

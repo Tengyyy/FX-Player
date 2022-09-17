@@ -178,7 +178,7 @@ public class MainController implements Initializable {
         videoImageViewInnerWrapper.getChildren().add(miniplayerActiveText);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
-            openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 1000);
+            openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 1000, false, true);
 
             videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 if(newValue.doubleValue() < menuController.menu.getMaxWidth()){
@@ -1053,6 +1053,9 @@ public class MainController implements Initializable {
 
     public void pressQ(){
 
+        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
+        if(menuController.activeMenuItemOptionsPopUp != null && menuController.activeMenuItemOptionsPopUp.isShowing()) menuController.activeMenuItemOptionsPopUp.hide();
+
         if(menuController.menuOpen){
             menuController.closeMenu();
             controlBarController.mouseEventTracker.move();
@@ -1120,6 +1123,9 @@ public class MainController implements Initializable {
     public void pressF(){
         controlBarController.mouseEventTracker.move();
         controlBarController.toggleFullScreen();
+
+        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
+        if(menuController.activeMenuItemOptionsPopUp != null && menuController.activeMenuItemOptionsPopUp.isShowing()) menuController.activeMenuItemOptionsPopUp.hide();
     }
 
     public void pressF12(){
@@ -1323,6 +1329,9 @@ public class MainController implements Initializable {
             settingsController.closeSettings();
         }
         App.fullScreen = false;
+
+        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
+        if(menuController.activeMenuItemOptionsPopUp != null && menuController.activeMenuItemOptionsPopUp.isShowing()) menuController.activeMenuItemOptionsPopUp.hide();
 
         controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
         App.stage.setFullScreen(false);

@@ -111,6 +111,8 @@ public class MenuItemOptionsPopUp extends ContextMenu {
         showTransition.setToValue(1);
         showTransition.playFromStart();
 
+        menuObject.getMenuController().activeMenuItemOptionsPopUp = this;
+
     }
 
     @Override

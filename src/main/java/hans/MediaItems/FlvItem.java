@@ -31,6 +31,8 @@ public class FlvItem implements MediaItem {
     boolean hasVideo;
     MainController mainController;
 
+    Map<String, String> mediaInformation;
+
     public FlvItem(File file, MainController mainController){
         this.file = file;
         this.mainController = mainController;
@@ -44,14 +46,15 @@ public class FlvItem implements MediaItem {
             hasVideo = fFmpegFrameGrabber.hasVideo();
 
 
-            if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
+            if(hasVideo) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            if(cover == null) cover = Utilities.grabRandomFrame(file);
+            mediaInformation = fFmpegFrameGrabber.getMetadata();
 
+            if(cover == null) cover = Utilities.grabRandomFrame(file);
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();
@@ -69,7 +72,7 @@ public class FlvItem implements MediaItem {
 
     @Override
     public Map getMediaInformation() {
-        return null;
+        return mediaInformation;
     }
 
     @Override
@@ -101,16 +104,6 @@ public class FlvItem implements MediaItem {
     @Override
     public Duration getDuration() {
         return duration;
-    }
-
-    @Override
-    public String getArtist() {
-        return artist;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
     }
 
     @Override

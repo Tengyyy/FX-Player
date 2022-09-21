@@ -407,7 +407,6 @@ public class MainController implements Initializable {
         videoTitleLabel.setEffect(new DropShadow());
         videoTitleLabel.setOnMouseClicked(e -> {
             if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-
             e.consume();
         });
 
@@ -436,7 +435,6 @@ public class MainController implements Initializable {
         metadataButton.setMaxSize(50, 50);
         metadataButton.setBackground(Background.EMPTY);
         metadataButton.setCursor(Cursor.HAND);
-        metadataButton.setOnAction(e -> System.out.println("test"));
 
 
         metadataPath.setContent(App.svgMap.get(INFORMATION));

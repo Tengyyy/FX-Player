@@ -27,15 +27,12 @@ public class MovItem implements MediaItem {
 
 
     Image cover;
-    String title;
-    String artist;
-
-    String mediaType;
-
 
     boolean hasVideo;
 
     MainController mainController;
+
+    Map<String, String> mediaInformation;
 
     public MovItem(File file, MainController mainController){
         this.file = file;
@@ -54,33 +51,9 @@ public class MovItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            Map<String, String> metadata = fFmpegFrameGrabber.getMetadata();
+            mediaInformation = fFmpegFrameGrabber.getMetadata();
 
-            if(metadata != null){
-                for(Map.Entry<String, String> entry : metadata.entrySet()){
-                    switch (entry.getKey()){
-                        case "media_type":
-                            switch(Integer.parseInt(entry.getValue())){
-                                case 6: mediaType = "Music video";
-                                    break;
-                                case 9: mediaType = "Movie";
-                                    break;
-                                case 10: mediaType = "TV Show";
-                                    break;
-                                case 21: mediaType = "Podcast";
-                                    break;
-                                default: mediaType = "Home video";
-                            }
-                            break;
-                        case "title": title = entry.getValue();
-                            break;
-                        case "artist": artist = entry.getValue();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
+
 
             fFmpegFrameGrabber.stop();
 
@@ -112,7 +85,7 @@ public class MovItem implements MediaItem {
 
     @Override
     public Map getMediaInformation() {
-        return null;
+        return mediaInformation;
     }
 
     @Override
@@ -144,19 +117,6 @@ public class MovItem implements MediaItem {
     @Override
     public Duration getDuration() {
         return duration;
-    }
-
-    @Override
-    public String getArtist() {
-        if(mediaType != null && mediaType.equals("Music video")){
-            return artist;
-        }
-        else return null;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
     }
 
     @Override

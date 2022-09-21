@@ -20,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
 import java.io.File;
+import java.util.Map;
 
 public class HistoryItem extends GridPane implements MenuObject {
 
@@ -183,16 +184,35 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         videoTitle.getStyleClass().add("videoTitle");
 
-        if(mediaItem.getTitle() == null){
-            videoTitle.setText(mediaItem.getFile().getName());
+        Map<String, String> mediaInformation = mediaItem.getMediaInformation();
+
+        if(mediaInformation != null){
+            if(mediaInformation.containsKey("title")){
+                videoTitle.setText(mediaInformation.get("title"));
+            }
+            else if(mediaInformation.containsKey("TITLE")){
+                videoTitle.setText(mediaInformation.get("TITLE"));
+            }
+            else {
+                videoTitle.setText(mediaItem.getFile().getName());
+            }
+
+            if(mediaInformation.containsKey("media_type") && mediaInformation.containsKey("artist")){
+                if(mediaInformation.get("media_type").equals("6")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
+            else {
+                String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
+                if((fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) && mediaInformation.containsKey("artist")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
         }
-        else {
-            videoTitle.setText(mediaItem.getTitle());
-        }
+
         videoTitle.setWrapText(true);
         videoTitle.setMaxHeight(40);
 
-        artist.setText(mediaItem.getArtist());
         artist.getStyleClass().add("subText");
 
         captionsPane = new StackPane();
@@ -218,7 +238,7 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         String formattedDuration = Utilities.getTime(mediaItem.getDuration());
 
-        if(artist.getText() != null){
+        if(!artist.getText().isEmpty()){
             formattedDuration = formattedDuration + " • ";
         }
 
@@ -402,7 +422,10 @@ public class HistoryItem extends GridPane implements MenuObject {
 
     @Override
     public void showMetadata() {
-        System.out.println("Showing metadata");
+
+        if(menuController.menuInTransition) return;
+
+        menuController.metadataPage.enterMetadataPage(this);
     }
 
     @Override
@@ -423,5 +446,10 @@ public class HistoryItem extends GridPane implements MenuObject {
     @Override
     public MenuController getMenuController() {
         return menuController;
+    }
+
+    @Override
+    public String getTitle() {
+        return videoTitle.getText();
     }
 }

@@ -243,12 +243,10 @@ public class MediaInterface {
             if(menuController.activeItem != null && !menuController.activeItem.subTextWrapper.getChildren().contains(menuController.activeItem.captionsPane)) menuController.activeItem.subTextWrapper.getChildren().add(0, menuController.activeItem.captionsPane);
         }
 
-        if(mediaItem.getTitle() == null){
-            mainController.videoTitleLabel.setText(mediaItem.getFile().getName());
-        }
-        else {
-            mainController.videoTitleLabel.setText(mediaItem.getTitle());
-        }
+
+
+        mainController.videoTitleLabel.setText(menuObject.getTitle());
+
 
         controlBarController.durationSlider.setValue(0);
 
@@ -267,6 +265,8 @@ public class MediaInterface {
         else if(!menuController.history.isEmpty() && (menuController.historyBox.index == -1 || menuController.historyBox.index > 0) && !controlBarController.previousVideoButtonEnabled){
             controlBarController.enablePreviousVideoButton();
         }
+
+        mainController.metadataButton.setOnAction(e -> menuObject.showMetadata());
 
 
         embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());

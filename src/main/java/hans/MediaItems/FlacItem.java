@@ -24,15 +24,11 @@ public class FlacItem implements MediaItem {
     Color backgroundColor = null;
     Duration duration;
 
-
-    //Metadata tags
-    String album;
-    String artist;
-    String title;
-
     Image cover;
 
     MainController mainController;
+
+    Map<String, String> mediaInformation;
 
     public FlacItem(File file, MainController mainController) {
         this.file = file;
@@ -49,20 +45,8 @@ public class FlacItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getAudioFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            Map<String, String> metadata = fFmpegFrameGrabber.getMetadata();
+            mediaInformation = fFmpegFrameGrabber.getMetadata();
 
-            if(metadata != null){
-                for (Map.Entry<String, String> entry : metadata.entrySet()){
-                    switch(entry.getKey()){
-                        case "ARTIST": artist = entry.getValue();
-                            break;
-                        case "TITLE": title = entry.getValue();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();
@@ -84,7 +68,7 @@ public class FlacItem implements MediaItem {
 
     @Override
     public Map<String, String> getMediaInformation() {
-        return null;
+        return mediaInformation;
     }
 
     @Override
@@ -113,20 +97,9 @@ public class FlacItem implements MediaItem {
         subtitlesOn = value;
     }
 
-
     @Override
     public Duration getDuration() {
         return duration;
-    }
-
-    @Override
-    public String getArtist() {
-        return artist;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
     }
 
     @Override

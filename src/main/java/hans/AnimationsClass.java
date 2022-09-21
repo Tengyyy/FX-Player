@@ -175,7 +175,6 @@ public class AnimationsClass {
         });
         parallelTransition.play();
 
-        controlBarController.mainController.menuButton.setVisible(false);
     }
 
 
@@ -297,7 +296,15 @@ public class AnimationsClass {
         closeMenu.setFromX(menuController.menu.getTranslateX());
         closeMenu.setToX(-menuController.menu.getWidth());
 
-        closeMenu.setOnFinished((e) -> menuController.menuInTransition = false);
+        closeMenu.setOnFinished((e) -> {
+            menuController.menuInTransition = false;
+            menuController.metadataScroll.setVisible(false);
+            menuController.queueScroll.setVisible(true);
+
+            menuController.metadataPage.textBox.getChildren().clear();
+            menuController.metadataPage.imageView.setImage(null);
+            menuController.metadataPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
+        });
         closeMenu.play();
     }
 

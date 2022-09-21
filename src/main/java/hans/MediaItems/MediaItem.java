@@ -14,7 +14,7 @@ public interface MediaItem {
 
     float getFrameDuration();
 
-    Map getMediaInformation();
+    Map<String, String> getMediaInformation();
 
     Map getMediaDetails();
 
@@ -27,10 +27,6 @@ public interface MediaItem {
     void setSubtitlesOn(boolean value);
 
     Duration getDuration();
-
-    String getArtist();
-
-    String getTitle();
 
     Image getCover();
 

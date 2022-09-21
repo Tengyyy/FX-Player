@@ -32,6 +32,8 @@ public class AviItem implements MediaItem {
 
     MainController mainController;
 
+    Map<String, String> mediaInformation;
+
     public AviItem(File file, MainController mainController){
         this.file = file;
         this.mainController = mainController;
@@ -50,8 +52,7 @@ public class AviItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            Map<String, String> metadata = fFmpegFrameGrabber.getMetadata();
-            System.out.println(metadata);
+            mediaInformation = fFmpegFrameGrabber.getMetadata();
 
             if(cover == null) cover = Utilities.grabRandomFrame(file);
 
@@ -72,7 +73,7 @@ public class AviItem implements MediaItem {
 
     @Override
     public Map getMediaInformation() {
-        return null;
+        return mediaInformation;
     }
 
     @Override
@@ -104,16 +105,6 @@ public class AviItem implements MediaItem {
     @Override
     public Duration getDuration() {
         return duration;
-    }
-
-    @Override
-    public String getArtist() {
-        return artist;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
     }
 
     @Override

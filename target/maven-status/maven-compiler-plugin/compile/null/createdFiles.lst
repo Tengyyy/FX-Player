@@ -5,6 +5,7 @@ hans\App.class
 hans\ActionIndicator.class
 hans\ControlTooltip.class
 hans\AnimationsClass.class
+hans\Menu\MetadataPage.class
 hans\SeekIndicator.class
 hans\MediaInterface$1.class
 hans\AnimationsClass$1.class

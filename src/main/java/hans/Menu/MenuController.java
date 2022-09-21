@@ -58,7 +58,11 @@ public class MenuController implements Initializable {
     Text notificationText;
 
     @FXML
+    public
     ScrollPane queueScroll;
+
+    @FXML
+    public ScrollPane metadataScroll;
 
 
 
@@ -72,6 +76,8 @@ public class MenuController implements Initializable {
     SettingsController settingsController;
     public CaptionsController captionsController;
     MediaInterface mediaInterface;
+
+    public MetadataPage metadataPage;
 
     FileChooser fileChooser = new FileChooser();
 
@@ -161,6 +167,8 @@ public class MenuController implements Initializable {
         queueBox = new QueueBox(this);
         historyBox = new HistoryBox(this, historyWrapper);
         activeBox = new ActiveBox(this);
+
+        metadataPage = new MetadataPage(this);
 
         queue.addListener((ListChangeListener<QueueItem>) change -> {
 
@@ -601,6 +609,10 @@ public class MenuController implements Initializable {
             clearQueueTooltip = new ControlTooltip(mainController,"Clear queue", clearQueueButton, 1000);
             shuffleTooltip = new ControlTooltip(mainController,"Shuffle is off", shuffleToggle, 1000);
         });
+
+
+        metadataScroll.setVisible(false);
+        metadataScroll.setBackground(Background.EMPTY);
 }
 
 

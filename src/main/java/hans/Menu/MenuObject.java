@@ -19,4 +19,6 @@ public interface MenuObject {
     void addSubtitles(File file);
 
     MenuController getMenuController();
+
+    String getTitle();
 }

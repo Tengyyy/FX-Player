@@ -27,12 +27,12 @@ public class MkvItem implements MediaItem {
 
 
     Image cover;
-    String title;
-    String artist;
 
     boolean hasVideo;
 
     MainController mainController;
+
+    Map<String, String> mediaInformation;
 
     public MkvItem(File file, MainController mainController){
         this.file = file;
@@ -50,20 +50,8 @@ public class MkvItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            Map<String, String> metadata = fFmpegFrameGrabber.getMetadata();
+            mediaInformation = fFmpegFrameGrabber.getMetadata();
 
-            if(metadata != null){
-                for(Map.Entry<String, String> entry : metadata.entrySet()){
-                    switch(entry.getKey()){
-                        case "TITLE": title = entry.getValue();
-                            break;
-                        case "ARTIST": artist = entry.getValue();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
 
             fFmpegFrameGrabber.stop();
 
@@ -96,7 +84,7 @@ public class MkvItem implements MediaItem {
 
     @Override
     public Map getMediaInformation() {
-        return null;
+        return mediaInformation;
     }
 
     @Override
@@ -128,16 +116,6 @@ public class MkvItem implements MediaItem {
     @Override
     public Duration getDuration() {
         return duration;
-    }
-
-    @Override
-    public String getArtist() {
-        return artist;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
     }
 
     @Override

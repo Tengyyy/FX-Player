@@ -17,18 +17,18 @@
 }
 
 
-#queueScroll {
+.menuScroll {
     -fx-background-insets: 0;
     -fx-padding: 0;
     -fx-background-color: transparent;
 }
 
-#queueScroll > .viewport {
+.menuScroll > .viewport {
     -fx-background-color: transparent;
 }
 
-#queueScroll .scroll-bar:horizontal .track,
-#queueScroll .scroll-bar:vertical .track{
+.menuScroll .scroll-bar:horizontal .track,
+.menuScroll .scroll-bar:vertical .track{
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-background-radius: 0.0em;
@@ -36,50 +36,50 @@
 }
 
 
-#queueScroll .scroll-bar:horizontal .increment-button ,
-.#queueScroll .scroll-bar:horizontal .decrement-button {
+.menuScroll .scroll-bar:horizontal .increment-button ,
+.menuScroll .scroll-bar:horizontal .decrement-button {
     -fx-background-color: transparent;
     -fx-background-radius: 0.0em;
     -fx-padding: 0.0 0.0 0.0 0.0;
 
 }
 
-#queueScroll .scroll-bar:vertical .increment-button ,
-#queueScroll .scroll-bar:vertical .decrement-button {
+.menuScroll .scroll-bar:vertical .increment-button ,
+.menuScroll .scroll-bar:vertical .decrement-button {
     -fx-background-color: transparent;
     -fx-background-radius: 0.0em;
     -fx-padding :0.0 0.0 0.0 0.0;
 
 }
 
- #queueScroll .scroll-bar .increment-arrow,
- #queueScroll .scroll-bar .decrement-arrow{
-    -fx-shape : " ";
-    -fx-padding :0.0em 0.0;
+.menuScroll .scroll-bar .increment-arrow,
+.menuScroll .scroll-bar .decrement-arrow{
+   -fx-shape : " ";
+   -fx-padding :0.0em 0.0;
 }
 
- #queueScroll .scroll-bar:vertical .increment-arrow,
- #queueScroll .scroll-bar:vertical .decrement-arrow{
-    -fx-shape : " ";
-    -fx-padding :0.0 0.0em;
+.menuScroll .scroll-bar:vertical .increment-arrow,
+.menuScroll .scroll-bar:vertical .decrement-arrow{
+   -fx-shape : " ";
+   -fx-padding :0.0 0.0em;
 }
 
-#queueScroll .scroll-bar:horizontal .thumb,
-#queueScroll .scroll-bar:vertical .thumb {
+.menuScroll .scroll-bar:horizontal .thumb,
+.menuScroll .scroll-bar:vertical .thumb {
     -fx-background-color: derive(black, 90%);
     -fx-background-insets : 2.0, 0.0, 0.0;
     -fx-background-radius : 2.0em;
 }
 
-#queueScroll .scroll-bar:vertical {
+.menuScroll .scroll-bar:vertical {
     -fx-background-color: transparent;
 }
 
-#queueScroll:focused { /*removes the annoying outline when clicking on the scrollpane*/
+.menuScroll:focused { /*removes the annoying outline when clicking on the scrollpane*/
     -fx-background-insets: 0;
 }
 
-#queueScroll .corner {
+.menuScroll .corner {
     -fx-background-insets: 0;
 }
 
@@ -180,7 +180,7 @@
     -fx-background-color: rgb(100,100,100);
 }
 
-#closeIcon, #playIcon {
+#closeIcon, #playIcon, #backIcon {
     -fx-background-color: rgb(200, 200, 200);
 }
 
@@ -222,4 +222,24 @@
     -fx-padding: 0;
     -fx-background-radius: 100;
     -fx-background-color: transparent;
+}
+
+
+#imageViewContainer {
+    -fx-border-width: 2;
+    -fx-border-color: rgb(100,100,100)
+}
+
+
+.metadataKey {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 18;
+    -fx-text-fill: white;
+    -fx-padding: 5 0 0 0;
+}
+
+.metadataValue {
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 15;
+    -fx-fill: rgb(200,200,200);
 }

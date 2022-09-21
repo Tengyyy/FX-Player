@@ -10,6 +10,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,15 +25,11 @@ public class WavItem implements MediaItem {
     Color backgroundColor = null;
     Duration duration;
 
-
-    //Metadata tags
-    String album;
-    String artist;
-    String title;
-
     Image cover;
 
     MainController mainController;
+
+    Map<String, String> mediaInformation;
 
     public WavItem(File file, MainController mainController) {
         this.file = file;
@@ -47,7 +44,7 @@ public class WavItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getAudioFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            System.out.println(fFmpegFrameGrabber.getMetadata());
+            mediaInformation = fFmpegFrameGrabber.getMetadata();
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();
@@ -69,7 +66,7 @@ public class WavItem implements MediaItem {
 
     @Override
     public Map<String, String> getMediaInformation() {
-        return null;
+        return mediaInformation;
     }
 
     @Override
@@ -98,20 +95,9 @@ public class WavItem implements MediaItem {
         subtitlesOn = value;
     }
 
-
     @Override
     public Duration getDuration() {
         return duration;
-    }
-
-    @Override
-    public String getArtist() {
-        return artist;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
     }
 
     @Override

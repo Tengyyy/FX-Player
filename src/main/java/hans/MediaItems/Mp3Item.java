@@ -29,7 +29,7 @@ public class Mp3Item implements MediaItem {
 
     MainController mainController;
 
-    Map<String, String> mediaInformation;
+    Map<String, String> mediaInformation = new HashMap<>();
 
 
     public Mp3Item(File file, MainController mainController){
@@ -46,7 +46,9 @@ public class Mp3Item implements MediaItem {
             frameDuration = (float) (1 / frameRate);
 
 
-            mediaInformation = fFmpegFrameGrabber.getMetadata();
+            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
+                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
+            }
 
 
             fFmpegFrameGrabber.stop();

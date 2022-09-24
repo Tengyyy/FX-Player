@@ -10,7 +10,10 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AviItem implements MediaItem {
 
@@ -32,7 +35,7 @@ public class AviItem implements MediaItem {
 
     MainController mainController;
 
-    Map<String, String> mediaInformation;
+    Map<String, String> mediaInformation = new HashMap<>();
 
     public AviItem(File file, MainController mainController){
         this.file = file;
@@ -52,7 +55,10 @@ public class AviItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            mediaInformation = fFmpegFrameGrabber.getMetadata();
+            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
+                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
+            }
+
 
             if(cover == null) cover = Utilities.grabRandomFrame(file);
 

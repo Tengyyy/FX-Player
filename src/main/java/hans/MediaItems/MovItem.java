@@ -12,6 +12,7 @@ import org.bytedeco.javacv.JavaFXFrameConverter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MovItem implements MediaItem {
@@ -32,7 +33,7 @@ public class MovItem implements MediaItem {
 
     MainController mainController;
 
-    Map<String, String> mediaInformation;
+    Map<String, String> mediaInformation = new HashMap<>();
 
     public MovItem(File file, MainController mainController){
         this.file = file;
@@ -51,7 +52,9 @@ public class MovItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            mediaInformation = fFmpegFrameGrabber.getMetadata();
+            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
+                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
+            }
 
 
 

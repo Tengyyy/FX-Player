@@ -243,3 +243,15 @@
     -fx-font-size: 15;
     -fx-fill: rgb(200,200,200);
 }
+
+.metadataTitle {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 27;
+    -fx-fill: white;
+}
+
+.metadataEpisode {
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 15;
+    -fx-fill: white;
+}

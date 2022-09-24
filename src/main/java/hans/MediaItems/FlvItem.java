@@ -10,6 +10,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FlvItem implements MediaItem {
@@ -31,7 +32,7 @@ public class FlvItem implements MediaItem {
     boolean hasVideo;
     MainController mainController;
 
-    Map<String, String> mediaInformation;
+    Map<String, String> mediaInformation = new HashMap<>();
 
     public FlvItem(File file, MainController mainController){
         this.file = file;
@@ -52,7 +53,9 @@ public class FlvItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            mediaInformation = fFmpegFrameGrabber.getMetadata();
+            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
+                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
+            }
 
             if(cover == null) cover = Utilities.grabRandomFrame(file);
 

@@ -10,6 +10,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class FlacItem implements MediaItem {
 
     MainController mainController;
 
-    Map<String, String> mediaInformation;
+    Map<String, String> mediaInformation = new HashMap<>();
 
     public FlacItem(File file, MainController mainController) {
         this.file = file;
@@ -45,7 +46,9 @@ public class FlacItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getAudioFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            mediaInformation = fFmpegFrameGrabber.getMetadata();
+            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
+                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
+            }
 
 
             fFmpegFrameGrabber.stop();

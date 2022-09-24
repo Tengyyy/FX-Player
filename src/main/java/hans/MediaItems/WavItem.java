@@ -29,7 +29,7 @@ public class WavItem implements MediaItem {
 
     MainController mainController;
 
-    Map<String, String> mediaInformation;
+    Map<String, String> mediaInformation = new HashMap<>();
 
     public WavItem(File file, MainController mainController) {
         this.file = file;
@@ -44,7 +44,9 @@ public class WavItem implements MediaItem {
             frameRate = fFmpegFrameGrabber.getAudioFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            mediaInformation = fFmpegFrameGrabber.getMetadata();
+            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
+                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
+            }
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();

@@ -41,7 +41,7 @@ public class Mp4Item implements MediaItem {
     MainController mainController;
 
 
-    Map<String, String> mediaInformation;
+    Map<String, String> mediaInformation = new HashMap<>();
 
     Image cover;
 
@@ -63,7 +63,9 @@ public class Mp4Item implements MediaItem {
             frameRate = fFmpegFrameGrabber.getFrameRate();
             frameDuration = (float) (1 / frameRate);
 
-            mediaInformation = fFmpegFrameGrabber.getMetadata();
+            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
+                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
+            }
 
 
             fFmpegFrameGrabber.stop();

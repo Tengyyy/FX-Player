@@ -42,5 +42,6 @@ public enum SVG {
     MINIPLAYER,
     INFORMATION_OUTLINE,
     INFORMATION,
-    ARROW_LEFT
+    ARROW_LEFT,
+    COPY
 }

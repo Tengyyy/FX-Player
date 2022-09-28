@@ -1,34 +1,32 @@
 package hans.Menu;
 
+import com.jfoenix.controls.JFXButton;
 import hans.AnimationsClass;
 import hans.App;
 import hans.MediaItems.MediaItem;
 import hans.SVG;
 import hans.Utilities;
+import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MetadataPage {
 
@@ -54,9 +52,14 @@ public class MetadataPage {
     public ImageView imageView = new javafx.scene.image.ImageView();
 
     public VBox textBox = new VBox();
-    
+
+    public SVGPath copySVG = new SVGPath(), checkSVG = new SVGPath();
+
     MetadataPage(MenuController menuController){
         this.menuController = menuController;
+
+        copySVG.setContent(App.svgMap.get(SVG.COPY));
+        checkSVG.setContent(App.svgMap.get(SVG.CHECK));
 
         backIconSVG.setContent(App.svgMap.get(SVG.ARROW_LEFT));
         backIcon.setShape(backIconSVG);
@@ -375,6 +378,42 @@ public class MetadataPage {
         Label keyLabel = new Label(key);
         keyLabel.getStyleClass().add("metadataKey");
 
+        StackPane copyButtonPane = new StackPane();
+        copyButtonPane.setPrefSize(30, 30);
+        copyButtonPane.setMaxSize(30, 30);
+        HBox.setMargin(copyButtonPane, new Insets(0, 0, 0, 20));
+
+        JFXButton copyButton = new JFXButton();
+        copyButton.setPrefWidth(30);
+        copyButton.setPrefHeight(30);
+        copyButton.setRipplerFill(Color.WHITE);
+        copyButton.getStyleClass().add("copyButton");
+        copyButton.setCursor(Cursor.HAND);
+        copyButton.setOpacity(0);
+        copyButton.setText(null);
+
+        copyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, copyButton, 0, 1, false, 1, true));
+        copyButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, copyButton, 1, 0, false, 1, true));
+
+        Region copyIcon = new Region();
+        copyIcon.setShape(copySVG);
+        copyIcon.setMinSize(15, 15);
+        copyIcon.setPrefSize(15, 15);
+        copyIcon.setMaxSize(15, 15);
+        copyIcon.setMouseTransparent(true);
+        copyIcon.getStyleClass().add("copyIcon");
+
+
+        copyButtonPane.getChildren().addAll(copyButton, copyIcon);
+
+
+        HBox keyHbox = new HBox();
+        keyHbox.setAlignment(Pos.CENTER_LEFT);
+        keyHbox.getChildren().addAll(keyLabel, copyButtonPane);
+
+        keyLabel.prefWidthProperty().bind(keyHbox.widthProperty().subtract(50));
+
+
         Label label = new Label(value);
         label.getStyleClass().add("metadataValue");
         label.setMaxWidth(Double.MAX_VALUE);
@@ -384,11 +423,16 @@ public class MetadataPage {
         label.setMaxHeight(80);
         label.setAlignment(Pos.TOP_LEFT);
 
+        AtomicReference<PauseTransition> pauseTransition = new AtomicReference<>();
+        copyButton.setOnAction(e -> {
+            pauseTransition.set(copyText(label, copyIcon, pauseTransition.get()));
+        });
+
         Button button = new Button("Show more");
         button.setUnderline(true);
         button.setCursor(Cursor.HAND);
         button.setBackground(Background.EMPTY);
-        button.setTranslateY(-5);
+        button.setTranslateY(-15);
         button.getStyleClass().add("expandButton");
         button.setVisible(false);
         button.setMouseTransparent(true);
@@ -409,7 +453,7 @@ public class MetadataPage {
         HBox hBox = new HBox(button);
         hBox.setAlignment(Pos.CENTER_RIGHT);
 
-        textBox.getChildren().addAll(keyLabel, label, hBox);
+        textBox.getChildren().addAll(keyHbox, label, hBox);
 
         label.widthProperty().addListener((observable, oldValue, newValue) -> {
             updateLabel(label, button);
@@ -454,6 +498,28 @@ public class MetadataPage {
                 button.setMouseTransparent(false);
             }
         }
+    }
+
+
+    private PauseTransition copyText(Label label, Region region, PauseTransition pauseTransition){
+        region.setShape(checkSVG);
+
+        final ClipboardContent content = new ClipboardContent();
+        content.putString(label.getText());
+        Clipboard.getSystemClipboard().setContent(content);
+
+        if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) {
+            pauseTransition.stop();
+        }
+
+        pauseTransition = new PauseTransition(Duration.millis(3000));
+        pauseTransition.setOnFinished(e -> {
+            region.setShape(copySVG);
+        });
+
+        pauseTransition.playFromStart();
+
+        return pauseTransition;
     }
 
 }

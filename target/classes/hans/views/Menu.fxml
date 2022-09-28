@@ -12,7 +12,7 @@
 
 <StackPane id="menuContent" fx:id="menu" minWidth="350.0" prefWidth="350.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Menu.MenuController">
    <children>
-      <ScrollPane fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
+      <ScrollPane fx:id="queueScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
          <StackPane.margin>
             <Insets right="5.0" />
          </StackPane.margin></ScrollPane>
@@ -41,7 +41,7 @@
             <Insets bottom="30.0" left="50.0" right="50.0" />
          </StackPane.margin>
       </StackPane>
-      <ScrollPane fx:id="metadataScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
+      <ScrollPane fx:id="metadataScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
         </content>

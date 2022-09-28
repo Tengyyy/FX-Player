@@ -5,23 +5,28 @@ import hans.App;
 import hans.MediaItems.MediaItem;
 import hans.SVG;
 import hans.Utilities;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
+import javafx.util.Duration;
 
 import java.util.Map;
 
@@ -49,9 +54,7 @@ public class MetadataPage {
     public ImageView imageView = new javafx.scene.image.ImageView();
 
     public VBox textBox = new VBox();
-
-
-
+    
     MetadataPage(MenuController menuController){
         this.menuController = menuController;
 
@@ -179,345 +182,110 @@ public class MetadataPage {
         if(mediaItem.getMediaInformation() != null){
             Map<String, String> metadata = mediaItem.getMediaInformation();
 
-            if(metadata.containsKey("title")){
-                String value = metadata.get("title");
-                if(!value.trim().isEmpty()){
-                    TextFlow textFlow = new TextFlow();
-                    textFlow.setMaxWidth(Double.MAX_VALUE);
-                    textFlow.setPrefWidth(Double.MAX_VALUE);
-                    textFlow.setTextAlignment(TextAlignment.LEFT);
-                    textFlow.setPadding(new Insets(0, 0, 15, 0));
-
-                    Text text = new Text(metadata.get("title"));
-                    text.getStyleClass().add("metadataTitle");
-
-                    textFlow.getChildren().add(text);
-                    textBox.getChildren().add(textFlow);
-                }
+            if(metadata.containsKey("title") && !metadata.get("title").trim().isEmpty()){
+                createTitle(metadata.get("title"));
             }
 
             if(metadata.containsKey("media_type")){
 
-
                 String value = metadata.get("media_type");
                 if(!value.isEmpty()){
-
                     if(value.equals("10")){
                         if(metadata.containsKey("show") && !metadata.get("show").trim().isEmpty()){
-                            Label key = new Label("TV Show");
-                            key.getStyleClass().add("metadataKey");
-                            textBox.getChildren().add(key);
-
-                            TextFlow textFlow = new TextFlow();
-                            textFlow.setMaxWidth(Double.MAX_VALUE);
-                            textFlow.setPrefWidth(Double.MAX_VALUE);
-                            textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                            Text text = new Text(metadata.get("show").concat(" "));
-                            text.getStyleClass().add("metadataValue");
-                            textFlow.getChildren().add(text);
-
+                            Label label = createItem("Series title", metadata.get("show"));
                             if(metadata.containsKey("season_number") && !metadata.get("season_number").trim().isEmpty() && metadata.containsKey("episode_sort") && !metadata.get("episode_sort").trim().isEmpty()){
-                                Text seasonText = new Text("(S" + metadata.get("season_number") + "E" + metadata.get("episode_sort") + ")");
-                                seasonText.getStyleClass().add("metadataEpisode");
-                                textFlow.getChildren().add(seasonText);
+                                label.setText(label.getText().concat("(S" + metadata.get("season_number") + "E" + metadata.get("episode_sort") + ")"));
                             }
-
-                            textBox.getChildren().add(textFlow);
                         }
 
                         if(metadata.containsKey("network") && !metadata.get("network").trim().isEmpty()){
-                            Label key = new Label("Network");
-                            key.getStyleClass().add("metadataKey");
-                            textBox.getChildren().add(key);
-
-                            TextFlow textFlow = new TextFlow();
-                            textFlow.setMaxWidth(Double.MAX_VALUE);
-                            textFlow.setPrefWidth(Double.MAX_VALUE);
-                            textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                            Text text = new Text(metadata.get("network"));
-                            text.getStyleClass().add("metadataValue");
-                            textFlow.getChildren().add(text);
-
-                            textBox.getChildren().add(textFlow);
+                            createItem("Network", metadata.get("network"));
                         }
                     }
 
-                    Label key = new Label("Media type");
-                    key.getStyleClass().add("metadataKey");
-                    textBox.getChildren().add(key);
-
-                    TextFlow textFlow = new TextFlow();
-                    textFlow.setMaxWidth(Double.MAX_VALUE);
-                    textFlow.setPrefWidth(Double.MAX_VALUE);
-                    textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                    String formattedValue;
-
                     switch(metadata.get("media_type")){
-                        case "6": formattedValue = "Music video";
+                        case "6": createItem("Media type", "Music video");
                             break;
-                        case "9": formattedValue = "Movie";
+                        case "9": createItem("Media type", "Movie");
                             break;
-                        case "10": formattedValue = "TV Show";
+                        case "10": createItem("Media type", "TV Show");
                             break;
-                        case "21": formattedValue = "Podcast";
+                        case "21": createItem("Media type", "Podcast");
                             break;
-                        default: formattedValue = "Home video";
+                        default: createItem("Media type", "Home video");
                             break;
                     }
 
-                    Text text = new Text(formattedValue);
-                    text.getStyleClass().add("metadataValue");
-
-                    textFlow.getChildren().add(text);
-                    textBox.getChildren().add(textFlow);
                 }
                 else {
-                    Label key = new Label("Media type");
-                    key.getStyleClass().add("metadataKey");
-                    textBox.getChildren().add(key);
-
-                    TextFlow textFlow = new TextFlow();
-                    textFlow.setMaxWidth(Double.MAX_VALUE);
-                    textFlow.setPrefWidth(Double.MAX_VALUE);
-                    textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                    Text text = new Text("Home video");
-                    text.getStyleClass().add("metadataValue");
-
-                    textFlow.getChildren().add(text);
-                    textBox.getChildren().add(textFlow);
+                    createItem("Media type", "Home video");
                 }
             }
             else {
-                Label key = new Label("Media type");
-                key.getStyleClass().add("metadataKey");
-                textBox.getChildren().add(key);
-
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                Text text = new Text("Home video");
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
+                createItem("Media type", "Home video");
             }
 
             if(metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty()){
                 if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10"))){
-                    Label key = new Label("Cast");
-                    key.getStyleClass().add("metadataKey");
-                    textBox.getChildren().add(key);
+                    createItem("Cast", metadata.get("artist"));
                 }
                 else {
-                    Label key = new Label("Artist");
-                    key.getStyleClass().add("metadataKey");
-                    textBox.getChildren().add(key);
+                    createItem("Artist", metadata.get("artist"));
                 }
-
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                Text text = new Text(metadata.get("artist"));
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
             }
 
             if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6") && metadata.containsKey("track") && !metadata.get("track").trim().isEmpty()){
-                Label key = new Label("Track number");
-                key.getStyleClass().add("metadataKey");
-                textBox.getChildren().add(key);
-
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                Text text = new Text(metadata.get("track"));
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
+                createItem("Track number", metadata.get("track"));
             }
 
             if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6") && metadata.containsKey("album") && !metadata.get("album").trim().isEmpty()){
-                Label key = new Label("Album");
-                key.getStyleClass().add("metadataKey");
-                textBox.getChildren().add(key);
-
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                Text text = new Text(metadata.get("album"));
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
+                createItem("Album", metadata.get("album"));
             }
 
             if(metadata.containsKey("album_artist") && !metadata.get("album_artist").trim().isEmpty()){
                 if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10"))){
-                    Label key = new Label("Director");
-                    key.getStyleClass().add("metadataKey");
-                    textBox.getChildren().add(key);
+                    createItem("Director", metadata.get("album_artist"));
                 }
                 else if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
-                    Label key = new Label("Album Artist");
-                    key.getStyleClass().add("metadataKey");
-                    textBox.getChildren().add(key);
-                }
-
-                if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10") || metadata.get("media_type").equals("6"))) {
-                    TextFlow textFlow = new TextFlow();
-                    textFlow.setMaxWidth(Double.MAX_VALUE);
-                    textFlow.setPrefWidth(Double.MAX_VALUE);
-                    textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                    Text text = new Text(metadata.get("album_artist"));
-                    text.getStyleClass().add("metadataValue");
-
-                    textFlow.getChildren().add(text);
-                    textBox.getChildren().add(textFlow);
+                    createItem("Album artist", metadata.get("album_artist"));
                 }
             }
 
             if(metadata.containsKey("composer") && !metadata.get("composer").trim().isEmpty()){
                 if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10"))){
-                    Label key = new Label("Writers");
-                    key.getStyleClass().add("metadataKey");
-                    textBox.getChildren().add(key);
+                    createItem("Writers", metadata.get("composer"));
                 }
                 else if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
-                    Label key = new Label("Composer");
-                    key.getStyleClass().add("metadataKey");
-                    textBox.getChildren().add(key);
-                }
-
-                if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10") || metadata.get("media_type").equals("6"))) {
-                    TextFlow textFlow = new TextFlow();
-                    textFlow.setMaxWidth(Double.MAX_VALUE);
-                    textFlow.setPrefWidth(Double.MAX_VALUE);
-                    textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                    Text text = new Text(metadata.get("composer"));
-                    text.getStyleClass().add("metadataValue");
-
-                    textFlow.getChildren().add(text);
-                    textBox.getChildren().add(textFlow);
+                    createItem("Composer", metadata.get("composer"));
                 }
             }
 
             if(metadata.containsKey("genre") && !metadata.get("genre").trim().isEmpty()){
-                Label key = new Label("Genre");
-                key.getStyleClass().add("metadataKey");
-                textBox.getChildren().add(key);
+                createItem("Genre", metadata.get("genre"));
 
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                Text text = new Text(metadata.get("genre"));
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
             }
 
             if(metadata.containsKey("description") && !metadata.get("description").trim().isEmpty()){
-                Label key = new Label("Description");
-                key.getStyleClass().add("metadataKey");
-                textBox.getChildren().add(key);
+                createItem("Description", metadata.get("description"));
 
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                Text text = new Text(metadata.get("description"));
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
             }
 
             if(metadata.containsKey("synopsis") && !metadata.get("synopsis").trim().isEmpty()){
-                Label key = new Label("Synopsis");
-                key.getStyleClass().add("metadataKey");
-                textBox.getChildren().add(key);
+                createItem("Synopsis", metadata.get("synopsis"));
 
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                Text text = new Text(metadata.get("synopsis"));
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
             }
 
             if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6") && metadata.containsKey("lyrics") && !metadata.get("lyrics").trim().isEmpty()){
-                Label key = new Label("Lyrics");
-                key.getStyleClass().add("metadataKey");
-                textBox.getChildren().add(key);
+                createItem("Lyrics", metadata.get("lyrics"));
 
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                Text text = new Text(metadata.get("lyrics"));
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
             }
 
             if(metadata.containsKey("date") && !metadata.get("date").trim().isEmpty()){
-                Label key = new Label("Release date");
-                key.getStyleClass().add("metadataKey");
-                textBox.getChildren().add(key);
-
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.LEFT);
-
-                Text text = new Text(metadata.get("date"));
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
+                createItem("Release date", metadata.get("date"));
             }
 
             if(metadata.containsKey("comment") && !metadata.get("comment").trim().isEmpty()){
-                Label key = new Label("Comment");
-                key.getStyleClass().add("metadataKey");
-                textBox.getChildren().add(key);
-
-                TextFlow textFlow = new TextFlow();
-                textFlow.setMaxWidth(Double.MAX_VALUE);
-                textFlow.setPrefWidth(Double.MAX_VALUE);
-                textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                Text text = new Text(metadata.get("comment"));
-                text.getStyleClass().add("metadataValue");
-
-                textFlow.getChildren().add(text);
-                textBox.getChildren().add(textFlow);
+                createItem("Comment", metadata.get("comment"));
             }
         }
     }
@@ -526,58 +294,45 @@ public class MetadataPage {
         if(mediaItem.getMediaInformation() != null){
             Map<String, String> metadata = mediaItem.getMediaInformation();
 
-            if(metadata.containsKey("title")){
-                String value = metadata.get("title");
-                if(!value.trim().isEmpty()){
-                    TextFlow textFlow = new TextFlow();
-                    textFlow.setMaxWidth(Double.MAX_VALUE);
-                    textFlow.setPrefWidth(Double.MAX_VALUE);
-                    textFlow.setTextAlignment(TextAlignment.LEFT);
-                    textFlow.setPadding(new Insets(0, 0, 15, 0));
-
-                    Text text = new Text(metadata.get("title"));
-                    text.getStyleClass().add("metadataTitle");
-
-                    textFlow.getChildren().add(text);
-                    textBox.getChildren().add(textFlow);
-                }
+            if(metadata.containsKey("title") && !metadata.get("title").trim().isEmpty()){
+                createTitle(metadata.get("title"));
             }
 
             if(metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty()){
-                createItem(metadata, "artist", "Artist");
+                createItem("Artist", metadata.get("artist"));
             }
             if(metadata.containsKey("album") && !metadata.get("album").trim().isEmpty()){
-                createItem(metadata, "album", "Album");
+                createItem("Album", metadata.get("album"));
             }
             if(metadata.containsKey("track") && !metadata.get("track").trim().isEmpty()){
-                Text text = createItem(metadata, "track", "Track");
+                Label label = createItem("Track", metadata.get("track"));
                 if(metadata.containsKey("disc") && !metadata.get("disc").trim().isEmpty()){
-                    text.setText(text.getText().concat(" (Disc "+ metadata.get("disc") + ")"));
+                    label.setText(label.getText().concat(" (Disc "+ metadata.get("disc") + ")"));
                 }
             }
             if(metadata.containsKey("album_artist") && !metadata.get("album_artist").trim().isEmpty()){
-                createItem(metadata, "album_artist", "Album artist");
+                createItem("Album artist", metadata.get("album_artist"));
             }
             if(metadata.containsKey("composer") && !metadata.get("composer").trim().isEmpty()){
-                createItem(metadata, "composer", "Composer");
+                createItem("Composer", metadata.get("composer"));
             }
             if(metadata.containsKey("performer") && !metadata.get("performer").trim().isEmpty()){
-                createItem(metadata, "performer", "Performer");
+                createItem("Performer", metadata.get("performer"));
             }
             if(metadata.containsKey("publisher") && !metadata.get("publisher").trim().isEmpty()){
-                createItem(metadata, "publisher", "Publisher");
+                createItem("Publisher", metadata.get("publisher"));
             }
             if(metadata.containsKey("genre") && !metadata.get("genre").trim().isEmpty()){
-                createItem(metadata, "genre", "Genre");
+                createItem("Genre", metadata.get("genre"));
             }
             if(metadata.containsKey("language") && !metadata.get("language").trim().isEmpty()){
-                createItem(metadata, "language", "Language");
+                createItem("Language", metadata.get("language"));
             }
             if(metadata.containsKey("date") && !metadata.get("date").trim().isEmpty()){
-                createItem(metadata, "date", "Release Date");
+                createItem("Release date", metadata.get("date"));
             }
             if(metadata.containsKey("lyrics") && !metadata.get("lyrics").trim().isEmpty()){
-                createItem(metadata, "lyrics", "Lyrics");
+                createItem("Lyrics", metadata.get("lyrics"));
             }
 
 
@@ -594,71 +349,111 @@ public class MetadataPage {
         if(mediaItem.getMediaInformation() != null){
             Map<String, String> metadata = mediaItem.getMediaInformation();
 
-            if(metadata.containsKey("title")){
-                String value = metadata.get("title");
-                if(!value.trim().isEmpty()){
-                    TextFlow textFlow = new TextFlow();
-                    textFlow.setMaxWidth(Double.MAX_VALUE);
-                    textFlow.setPrefWidth(Double.MAX_VALUE);
-                    textFlow.setTextAlignment(TextAlignment.LEFT);
-                    textFlow.setPadding(new Insets(0, 0, 15, 0));
-
-                    Text text = new Text(metadata.get("title"));
-                    text.getStyleClass().add("metadataTitle");
-
-                    textFlow.getChildren().add(text);
-                    textBox.getChildren().add(textFlow);
-                }
+            if(metadata.containsKey("title") && !metadata.get("title").trim().isEmpty()){
+                createTitle(metadata.get("title"));
             }
 
             if(metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty()){
-                createItem(metadata, "artist", "Artist");
+                createItem("Artist", metadata.get("artist"));
             }
             if(metadata.containsKey("description") && !metadata.get("description").trim().isEmpty()){
-                createItem(metadata, "description", "Description");
+                createItem("Description", metadata.get("description"));
             }
 
             for(Map.Entry<String, String> entry : metadata.entrySet()){
                 if(!entry.getKey().equals("title") && !entry.getKey().equals("artist") && !entry.getKey().equals("description") && !entry.getValue().trim().isEmpty()){
-                    Label keyLabel = new Label((entry.getKey().substring(0, 1).toUpperCase() + entry.getKey().substring(1)).replaceAll("[_]", " "));
-                    keyLabel.getStyleClass().add("metadataKey");
-                    textBox.getChildren().add(keyLabel);
-
-                    TextFlow textFlow = new TextFlow();
-                    textFlow.setMaxWidth(Double.MAX_VALUE);
-                    textFlow.setPrefWidth(Double.MAX_VALUE);
-                    textFlow.setTextAlignment(TextAlignment.JUSTIFY);
-
-                    Text text = new Text(entry.getValue());
-                    text.getStyleClass().add("metadataValue");
-
-                    textFlow.getChildren().add(text);
-                    textBox.getChildren().add(textFlow);
+                    String filtered = entry.getKey().replaceAll("[_]", " ");
+                    createItem(filtered.substring(0, 1).toUpperCase() + filtered.substring(1), entry.getValue());
                 }
             }
         }
     }
 
 
-    private Text createItem(Map<String, String> metadata, String key, String keyDisplayText){
-        Label keyLabel = new Label(keyDisplayText);
+    private Label createItem(String key, String value){
+
+        Label keyLabel = new Label(key);
         keyLabel.getStyleClass().add("metadataKey");
-        textBox.getChildren().add(keyLabel);
 
-        TextFlow textFlow = new TextFlow();
-        textFlow.setMaxWidth(Double.MAX_VALUE);
-        textFlow.setPrefWidth(Double.MAX_VALUE);
-        textFlow.setTextAlignment(TextAlignment.JUSTIFY);
+        Label label = new Label(value);
+        label.getStyleClass().add("metadataValue");
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setWrapText(true);
+        label.setLineSpacing(5);
+        label.setTextAlignment(TextAlignment.JUSTIFY);
+        label.setMaxHeight(80);
+        label.setAlignment(Pos.TOP_LEFT);
 
-        Text text = new Text(metadata.get(key));
-        text.getStyleClass().add("metadataValue");
+        Button button = new Button("Show more");
+        button.setUnderline(true);
+        button.setCursor(Cursor.HAND);
+        button.setBackground(Background.EMPTY);
+        button.setTranslateY(-5);
+        button.getStyleClass().add("expandButton");
+        button.setVisible(false);
+        button.setMouseTransparent(true);
 
-        textFlow.getChildren().add(text);
-        textBox.getChildren().add(textFlow);
 
-        return text;
+        button.setOnAction(e -> {
+            if(label.getMaxHeight() == 80){
+                label.setMaxHeight(Double.MAX_VALUE);
+                button.setText("Show less");
+            }
+            else {
+                label.setMaxHeight(80);
+                button.setText("Show more");
+            }
+
+        });
+
+        HBox hBox = new HBox(button);
+        hBox.setAlignment(Pos.CENTER_RIGHT);
+
+        textBox.getChildren().addAll(keyLabel, label, hBox);
+
+        label.widthProperty().addListener((observable, oldValue, newValue) -> {
+            updateLabel(label, button);
+        });
+
+        return label;
     }
 
+    private void createTitle(String title){
+        Label label = new Label(title);
+        label.getStyleClass().add("metadataTitle");
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setWrapText(true);
+        label.setLineSpacing(5);
+        label.setPadding(new Insets(0, 0, 15, 0));
 
+
+        textBox.getChildren().add(label);
+    }
+
+    private void updateLabel(Label label, Button button){
+
+        if(label.getHeight() == 0){
+
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(10));
+            pauseTransition.setOnFinished(e -> updateLabel(label, button));
+            pauseTransition.playFromStart();
+        }
+        else {
+            String originalString = label.getText();
+            Text textNode = (Text) label.lookup(".text"); // "text" is the style class of Text
+            String actualString = textNode.getText();
+
+            boolean clipped = !actualString.isEmpty() && !originalString.equals(actualString);
+
+            if(!clipped && label.getHeight() <= 80){
+                button.setVisible(false);
+                button.setMouseTransparent(true);
+            }
+            else {
+                button.setVisible(true);
+                button.setMouseTransparent(false);
+            }
+        }
+    }
 
 }

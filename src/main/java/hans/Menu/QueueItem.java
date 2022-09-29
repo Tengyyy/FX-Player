@@ -472,7 +472,8 @@ public class QueueItem extends GridPane implements MenuObject {
         if(videoIndex > 1) queueBox.move(videoIndex -1, 0);
 
         menuController.notificationText.setText("Video will play next");
-        AnimationsClass.openMenuNotification(menuController);
+        if(menuController.menuNotificationOpen) menuController.closeTimer.playFromStart();
+        else AnimationsClass.openMenuNotification(menuController);
     }
 
     @Override

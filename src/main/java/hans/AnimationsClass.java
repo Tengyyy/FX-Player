@@ -19,8 +19,8 @@ public class AnimationsClass {
     static TranslateTransition volumeSliderTranslateTransition3;
 
 
-    static TranslateTransition nextVideoNotificationOnTransition;
-    static FadeTransition nextVideoNotificationOffTransition;
+    static ParallelTransition nextVideoNotificationOnTransition;
+    static ParallelTransition nextVideoNotificationOffTransition;
 
 
 
@@ -252,11 +252,19 @@ public class AnimationsClass {
 
         menuController.notificationPane.setOpacity(1);
 
-        nextVideoNotificationOnTransition = new TranslateTransition(Duration.millis(300), menuController.notificationPane);
-        nextVideoNotificationOnTransition.setFromY(80);
-        nextVideoNotificationOnTransition.setToY(0);
-        nextVideoNotificationOnTransition.setCycleCount(1);
-        nextVideoNotificationOnTransition.setInterpolator(Interpolator.EASE_OUT);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(300), menuController.notificationPane);
+        translateTransition.setFromY(menuController.notificationPane.getTranslateY());
+        translateTransition.setToY(0);
+        translateTransition.setCycleCount(1);
+        translateTransition.setInterpolator(Interpolator.EASE_OUT);
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), menuController.notificationPane);
+        fadeTransition.setFromValue(menuController.notificationPane.getOpacity());
+        fadeTransition.setToValue(1);
+        fadeTransition.setCycleCount(1);
+        fadeTransition.setInterpolator(Interpolator.EASE_OUT);
+
+        nextVideoNotificationOnTransition = new ParallelTransition(translateTransition, fadeTransition);
         nextVideoNotificationOnTransition.setOnFinished((e) -> menuController.closeTimer.playFromStart());
         nextVideoNotificationOnTransition.playFromStart();
 
@@ -264,13 +272,21 @@ public class AnimationsClass {
 
     public static void closeMenuNotification(MenuController menuController){
         menuController.menuNotificationOpen = false;
-        nextVideoNotificationOffTransition = new FadeTransition(Duration.millis(400), menuController.notificationPane);
-        nextVideoNotificationOffTransition.setFromValue(1);
-        nextVideoNotificationOffTransition.setToValue(0);
-        nextVideoNotificationOnTransition.setCycleCount(1);
-        nextVideoNotificationOnTransition.setInterpolator(Interpolator.EASE_OUT);
-        nextVideoNotificationOffTransition.setOnFinished((e) -> menuController.notificationPane.setTranslateY(80));
-        nextVideoNotificationOffTransition.playFromStart();
+
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(300), menuController.notificationPane);
+        translateTransition.setFromY(menuController.notificationPane.getTranslateY());
+        translateTransition.setToY(60);
+        translateTransition.setCycleCount(1);
+        translateTransition.setInterpolator(Interpolator.EASE_OUT);
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), menuController.notificationPane);
+        fadeTransition.setFromValue(menuController.notificationPane.getOpacity());
+        fadeTransition.setToValue(0);
+        fadeTransition.setCycleCount(1);
+        fadeTransition.setInterpolator(Interpolator.EASE_OUT);
+
+        nextVideoNotificationOnTransition = new ParallelTransition(translateTransition, fadeTransition);
+        nextVideoNotificationOnTransition.playFromStart();
     }
 
 

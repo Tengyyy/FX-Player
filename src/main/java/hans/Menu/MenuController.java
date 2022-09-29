@@ -49,13 +49,15 @@ public class MenuController implements Initializable {
     @FXML
     public
     StackPane menu;
+
     @FXML
-    public StackPane notificationPane;
+    public HBox notificationPane;
+
     @FXML
     StackPane dragPane;
 
     @FXML
-    Text notificationText;
+    Label notificationText;
 
     @FXML
     public

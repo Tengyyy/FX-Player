@@ -575,6 +575,8 @@ public class ControlBarController implements Initializable {
                     }
                 }
 
+                captionsController.updateCaptions(newValue.doubleValue() * 1000 + 1000);
+
 
                 if (durationSlider.isValueChanging() && !mainController.seekingWithKeys) {
 
@@ -617,7 +619,6 @@ public class ControlBarController implements Initializable {
                 }
             }
 
-            captionsController.updateCaptions(newValue.doubleValue() * 1000 + 1000);
         });
 
         durationSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {

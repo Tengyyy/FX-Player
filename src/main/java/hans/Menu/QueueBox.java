@@ -754,10 +754,10 @@ public class QueueBox extends VBox {
 
         if(dragBoardMedia.size() == 1) menuController.notificationText.setText("Added 1 video to the queue");
         else menuController.notificationText.setText("Added " + dragBoardMedia.size() + " videos to the queue");
-        AnimationsClass.openMenuNotification(menuController);
+        if(menuController.menuNotificationOpen) menuController.closeTimer.playFromStart();
+        else AnimationsClass.openMenuNotification(menuController);
 
 
-        // add mp4 and mp3 files to mediainterface queue, create queue objects in the menu, show popup indicating how many videos were added to the queue and a blinking indicator inside the queue tab button to show how many new videos have been to the queue in total
         ArrayList<QueueItem> newItems = new ArrayList<>();
 
         for (File file : dragBoardMedia) {

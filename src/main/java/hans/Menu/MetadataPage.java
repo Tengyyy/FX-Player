@@ -1,13 +1,11 @@
 package hans.Menu;
 
 import com.jfoenix.controls.JFXButton;
-import hans.AnimationsClass;
-import hans.App;
+import hans.*;
 import hans.MediaItems.MediaItem;
-import hans.SVG;
-import hans.Utilities;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -397,7 +395,6 @@ public class MetadataPage {
 
         Region copyIcon = new Region();
         copyIcon.setShape(copySVG);
-        copyIcon.setMinSize(15, 15);
         copyIcon.setPrefSize(15, 15);
         copyIcon.setMaxSize(15, 15);
         copyIcon.setMouseTransparent(true);
@@ -436,6 +433,10 @@ public class MetadataPage {
         button.getStyleClass().add("expandButton");
         button.setVisible(false);
         button.setMouseTransparent(true);
+
+        Platform.runLater(() -> {
+            new ControlTooltip(menuController.mainController,"Copy to clipboard", copyButton, 1000);
+        });
 
 
         button.setOnAction(e -> {
@@ -503,6 +504,12 @@ public class MetadataPage {
 
     private PauseTransition copyText(Label label, Region region, PauseTransition pauseTransition){
         region.setShape(checkSVG);
+        region.setPrefSize(15, 12);
+        region.setMaxSize(15,12);
+
+        menuController.notificationText.setText("Value copied to clipboard");
+        if(menuController.menuNotificationOpen) menuController.closeTimer.playFromStart();
+        else AnimationsClass.openMenuNotification(menuController);
 
         final ClipboardContent content = new ClipboardContent();
         content.putString(label.getText());
@@ -515,6 +522,8 @@ public class MetadataPage {
         pauseTransition = new PauseTransition(Duration.millis(3000));
         pauseTransition.setOnFinished(e -> {
             region.setShape(copySVG);
+            region.setPrefSize(15, 15);
+            region.setMaxSize(15,15);
         });
 
         pauseTransition.playFromStart();

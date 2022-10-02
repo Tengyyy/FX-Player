@@ -20,7 +20,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
     MenuObject menuObject;
 
     MenuItem playNext = new MenuItem("Play next");
-    MenuItem metadata = new MenuItem("View metadata");
+    MenuItem metadata = new MenuItem("Media information");
     MenuItem addSubtitles = new MenuItem("Add subtitles");
 
     double buttonWidth;

@@ -557,13 +557,9 @@ public class ControlBarController implements Initializable {
                         if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
                         if(historyItem != null) previousVideoTooltip = new ControlTooltip(mainController, "PREVIOUS (SHIFT + P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
                         if(previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.showTooltip();
-
-
-
                     }
 
                 }
-
 
                 mediaInterface.updateMedia(newValue.doubleValue());
                 durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());

@@ -36,6 +36,14 @@ public class MetadataPage {
     StackPane closeButtonBar = new StackPane();
     StackPane closeButtonPane = new StackPane();
 
+    StackPane footerPane = new StackPane();
+
+    JFXButton editButton = new JFXButton();
+    Region editIcon = new Region();
+
+    JFXButton detailsButton = new JFXButton();
+    Region detailsIcon = new Region();
+
     Button closeButton = new Button();
     Region closeIcon = new Region();
 
@@ -51,13 +59,15 @@ public class MetadataPage {
 
     public VBox textBox = new VBox();
 
-    public SVGPath copySVG = new SVGPath(), checkSVG = new SVGPath();
+    public SVGPath copySVG = new SVGPath(), checkSVG = new SVGPath(), editSVG = new SVGPath(), detailsSVG = new SVGPath();
 
     MetadataPage(MenuController menuController){
         this.menuController = menuController;
 
         copySVG.setContent(App.svgMap.get(SVG.COPY));
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
+        editSVG.setContent(App.svgMap.get(SVG.EDIT));
+        detailsSVG.setContent(App.svgMap.get(SVG.DETAILS));
 
         backIconSVG.setContent(App.svgMap.get(SVG.ARROW_LEFT));
         backIcon.setShape(backIconSVG);
@@ -125,7 +135,7 @@ public class MetadataPage {
         imageView.fitHeightProperty().bind(Bindings.min(225, imageView.fitWidthProperty().multiply(9).divide(16)));
 
         content.setAlignment(Pos.TOP_CENTER);
-        content.getChildren().addAll(closeButtonBar, imageViewWrapper, textBox);
+        content.getChildren().addAll(closeButtonBar, imageViewWrapper, textBox, footerPane);
         content.setBackground(Background.EMPTY);
         content.setPadding(new Insets(0, 0, 20, 0));
         menuController.metadataScroll.setContent(content);
@@ -133,6 +143,40 @@ public class MetadataPage {
         textBox.setAlignment(Pos.TOP_LEFT);
         textBox.setPadding(new Insets(0, 15, 0, 15));
         textBox.setSpacing(10);
+
+        footerPane.getChildren().addAll(detailsButton, editButton);
+
+        editButton.setRipplerFill(Color.WHITE);
+        editButton.setText("Edit metadata");
+        editButton.setId("editButton");
+        editButton.setGraphicTextGap(7);
+        editButton.setPadding(new Insets(8, 10, 8, 8));
+        editButton.setCursor(Cursor.HAND);
+
+        editIcon.setShape(editSVG);
+        editIcon.getStyleClass().add("menuIcon");
+        editIcon.setPrefSize(18, 18);
+        editIcon.setMaxSize(18, 18);
+
+        editButton.setGraphic(editIcon);
+        StackPane.setMargin(editButton, new Insets(20, 20, 10, 0));
+        StackPane.setAlignment(editButton, Pos.CENTER_RIGHT);
+
+        detailsButton.setRipplerFill(Color.WHITE);
+        detailsButton.setCursor(Cursor.HAND);
+        detailsButton.setText("Technical details");
+        StackPane.setAlignment(detailsButton, Pos.CENTER_LEFT);
+        detailsButton.setId("detailsButton");
+        StackPane.setMargin(detailsButton, new Insets(20, 0, 10, 20));
+        detailsButton.setPadding(new Insets(8, 10, 8, 8));
+
+        detailsIcon.setShape(detailsSVG);
+        detailsIcon.getStyleClass().add("menuIcon");
+        detailsIcon.setPrefSize(18, 18);
+        detailsIcon.setMaxSize(18, 18);
+
+        detailsButton.setGraphic(detailsIcon);
+        detailsButton.setGraphicTextGap(7);
 
     }
 

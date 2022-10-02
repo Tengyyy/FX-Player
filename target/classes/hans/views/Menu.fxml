@@ -2,13 +2,12 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <StackPane id="menuContent" fx:id="menu" minWidth="350.0" prefWidth="350.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Menu.MenuController">
    <children>
@@ -16,31 +15,6 @@
          <StackPane.margin>
             <Insets right="5.0" />
          </StackPane.margin></ScrollPane>
-      <StackPane fx:id="notificationPane" maxHeight="-Infinity" maxWidth="-Infinity" pickOnBounds="false" prefHeight="50.0" prefWidth="500.0" style="-fx-background-color: #303030; -fx-background-radius: 7; -fx-border-color: #404040; -fx-border-width: 1; -fx-border-radius: 7;" StackPane.alignment="BOTTOM_CENTER">
-         <children>
-            <Text fx:id="notificationText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Video will play next" StackPane.alignment="CENTER_LEFT">
-               <font>
-                  <Font name="Roboto Medium" size="18.0" />
-               </font>
-               <StackPane.margin>
-                  <Insets />
-               </StackPane.margin>
-            </Text>
-         </children>
-         <effect>
-            <DropShadow blurType="GAUSSIAN" height="93.55" radius="58.182500000000005" spread="0.37" width="141.18">
-               <color>
-                  <Color red="0.03947368264198303" green="0.03801169618964195" blue="0.03801169618964195" />
-               </color>
-            </DropShadow>
-         </effect>
-         <padding>
-            <Insets left="30.0" right="30.0" />
-         </padding>
-         <StackPane.margin>
-            <Insets bottom="30.0" left="50.0" right="50.0" />
-         </StackPane.margin>
-      </StackPane>
       <ScrollPane fx:id="metadataScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
@@ -49,6 +23,21 @@
             <Insets right="5.0" />
          </StackPane.margin>
       </ScrollPane>
+      <HBox fx:id="notificationPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" style="-fx-background-color: #303030; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;" StackPane.alignment="BOTTOM_LEFT">
+         <children>
+            <Label fx:id="notificationText" text="Video willl play next" textFill="WHITE">
+               <font>
+                  <Font name="Roboto Medium" size="17.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="15.0" right="15.0" />
+         </padding>
+         <StackPane.margin>
+            <Insets bottom="10.0" left="10.0" />
+         </StackPane.margin>
+      </HBox>
       <StackPane id="dragPane" fx:id="dragPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="3.0" StackPane.alignment="CENTER_RIGHT">
          <cursor>
             <Cursor fx:constant="H_RESIZE" />

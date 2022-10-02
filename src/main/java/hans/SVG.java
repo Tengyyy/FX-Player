@@ -43,5 +43,7 @@ public enum SVG {
     INFORMATION_OUTLINE,
     INFORMATION,
     ARROW_LEFT,
-    COPY
+    COPY,
+    EDIT,
+    DETAILS
 }

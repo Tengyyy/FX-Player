@@ -10,10 +10,8 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.text.DateFormat;
+import java.util.*;
 
 public class AviItem implements MediaItem {
 
@@ -36,6 +34,8 @@ public class AviItem implements MediaItem {
     MainController mainController;
 
     Map<String, String> mediaInformation = new HashMap<>();
+    Map<String, String> mediaDetails = new HashMap<>();
+
 
     public AviItem(File file, MainController mainController){
         this.file = file;
@@ -62,6 +62,28 @@ public class AviItem implements MediaItem {
 
             if(cover == null) cover = Utilities.grabRandomFrame(file);
 
+            System.out.println("Video codec name: " + fFmpegFrameGrabber.getVideoCodecName());
+            System.out.println("Video bitrate: " + fFmpegFrameGrabber.getVideoBitrate());
+            System.out.println("Video codec: " + fFmpegFrameGrabber.getVideoCodec());
+            System.out.println("Streams: " + fFmpegFrameGrabber.getVideoStream());
+            System.out.println("Video framerate: " + fFmpegFrameGrabber.getFrameRate());
+            System.out.println("Sample rate: " + fFmpegFrameGrabber.getSampleRate());
+            System.out.println("Format: " + fFmpegFrameGrabber.getFormat());
+            System.out.println("Aspect ratio: " + fFmpegFrameGrabber.getAspectRatio());
+            System.out.println("Image height: " + fFmpegFrameGrabber.getImageHeight());
+            System.out.println("Image width: " + fFmpegFrameGrabber.getImageWidth());
+            System.out.println("Length in frames: " + fFmpegFrameGrabber.getLengthInFrames());
+            System.out.println("Audio framerate: " + fFmpegFrameGrabber.getAudioFrameRate());
+            System.out.println("Audio bitrate: " + fFmpegFrameGrabber.getAudioBitrate());
+            System.out.println("Audio codec name: " + fFmpegFrameGrabber.getAudioCodecName());
+            System.out.println("Audio codec: " + fFmpegFrameGrabber.getAudioCodecName());
+            System.out.println("Audio channels: " + fFmpegFrameGrabber.getAudioChannels());
+
+            mediaDetails.put("size", Utilities.formatFileSize(file.length()));
+            mediaDetails.put("name", file.getName());
+            mediaDetails.put("path", file.getAbsolutePath());
+            mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
+
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();
@@ -78,13 +100,13 @@ public class AviItem implements MediaItem {
     }
 
     @Override
-    public Map getMediaInformation() {
+    public Map<String, String> getMediaInformation() {
         return mediaInformation;
     }
 
     @Override
-    public Map getMediaDetails() {
-        return null;
+    public Map<String, String> getMediaDetails() {
+        return mediaDetails;
     }
 
 

@@ -12,6 +12,8 @@ import org.bytedeco.javacv.JavaFXFrameConverter;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +36,8 @@ public class MkvItem implements MediaItem {
     MainController mainController;
 
     Map<String, String> mediaInformation = new HashMap<>();
+    Map<String, String> mediaDetails = new HashMap<>();
+
 
     public MkvItem(File file, MainController mainController){
         this.file = file;
@@ -54,6 +58,28 @@ public class MkvItem implements MediaItem {
             for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
                 mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
             }
+
+            System.out.println("Video codec name: " + fFmpegFrameGrabber.getVideoCodecName());
+            System.out.println("Video bitrate: " + fFmpegFrameGrabber.getVideoBitrate());
+            System.out.println("Video codec: " + fFmpegFrameGrabber.getVideoCodec());
+            System.out.println("Streams: " + fFmpegFrameGrabber.getVideoStream());
+            System.out.println("Video framerate: " + fFmpegFrameGrabber.getFrameRate());
+            System.out.println("Sample rate: " + fFmpegFrameGrabber.getSampleRate());
+            System.out.println("Format: " + fFmpegFrameGrabber.getFormat());
+            System.out.println("Aspect ratio: " + fFmpegFrameGrabber.getAspectRatio());
+            System.out.println("Image height: " + fFmpegFrameGrabber.getImageHeight());
+            System.out.println("Image width: " + fFmpegFrameGrabber.getImageWidth());
+            System.out.println("Length in frames: " + fFmpegFrameGrabber.getLengthInFrames());
+            System.out.println("Audio framerate: " + fFmpegFrameGrabber.getAudioFrameRate());
+            System.out.println("Audio bitrate: " + fFmpegFrameGrabber.getAudioBitrate());
+            System.out.println("Audio codec name: " + fFmpegFrameGrabber.getAudioCodecName());
+            System.out.println("Audio codec: " + fFmpegFrameGrabber.getAudioCodecName());
+            System.out.println("Audio channels: " + fFmpegFrameGrabber.getAudioChannels());
+
+            mediaDetails.put("size", Utilities.formatFileSize(file.length()));
+            mediaDetails.put("name", file.getName());
+            mediaDetails.put("path", file.getAbsolutePath());
+            mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
 
 
             fFmpegFrameGrabber.stop();
@@ -86,13 +112,13 @@ public class MkvItem implements MediaItem {
     }
 
     @Override
-    public Map getMediaInformation() {
+    public Map<String, String> getMediaInformation() {
         return mediaInformation;
     }
 
     @Override
-    public Map getMediaDetails() {
-        return null;
+    public Map<String, String> getMediaDetails() {
+        return mediaDetails;
     }
 
 

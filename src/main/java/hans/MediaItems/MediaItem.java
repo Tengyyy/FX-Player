@@ -16,7 +16,7 @@ public interface MediaItem {
 
     Map<String, String> getMediaInformation();
 
-    Map getMediaDetails();
+    Map<String, String> getMediaDetails();
 
     File getFile();
 

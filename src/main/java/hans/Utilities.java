@@ -177,4 +177,30 @@ public class Utilities {
         return image;
     }
 
+
+    public static String formatFileSize(long size){
+        double countingSize = size;
+        String unit = "";
+
+        if(countingSize >= 1000){
+           countingSize /= 1000;
+           unit = " KB";
+        }
+        if(countingSize >= 1000){
+            countingSize /= 1000;
+            unit = " MB";
+        }
+        if(countingSize >= 1000) {
+            countingSize /= 1000;
+            unit = " GB";
+        }
+
+        return round(countingSize, 1) + unit;
+    }
+
+    public static double round (double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
+    }
+
 }

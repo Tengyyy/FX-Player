@@ -2,6 +2,7 @@ package hans.MediaItems;
 
 import hans.MainController;
 import hans.MediaItems.MediaItem;
+import hans.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -10,6 +11,8 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,6 +33,8 @@ public class FlacItem implements MediaItem {
     MainController mainController;
 
     Map<String, String> mediaInformation = new HashMap<>();
+    Map<String, String> mediaDetails = new HashMap<>();
+
 
     public FlacItem(File file, MainController mainController) {
         this.file = file;
@@ -49,6 +54,28 @@ public class FlacItem implements MediaItem {
             for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
                 mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
             }
+
+            System.out.println("Video codec name: " + fFmpegFrameGrabber.getVideoCodecName());
+            System.out.println("Video bitrate: " + fFmpegFrameGrabber.getVideoBitrate());
+            System.out.println("Video codec: " + fFmpegFrameGrabber.getVideoCodec());
+            System.out.println("Streams: " + fFmpegFrameGrabber.getVideoStream());
+            System.out.println("Video framerate: " + fFmpegFrameGrabber.getFrameRate());
+            System.out.println("Sample rate: " + fFmpegFrameGrabber.getSampleRate());
+            System.out.println("Format: " + fFmpegFrameGrabber.getFormat());
+            System.out.println("Aspect ratio: " + fFmpegFrameGrabber.getAspectRatio());
+            System.out.println("Image height: " + fFmpegFrameGrabber.getImageHeight());
+            System.out.println("Image width: " + fFmpegFrameGrabber.getImageWidth());
+            System.out.println("Length in frames: " + fFmpegFrameGrabber.getLengthInFrames());
+            System.out.println("Audio framerate: " + fFmpegFrameGrabber.getAudioFrameRate());
+            System.out.println("Audio bitrate: " + fFmpegFrameGrabber.getAudioBitrate());
+            System.out.println("Audio codec name: " + fFmpegFrameGrabber.getAudioCodecName());
+            System.out.println("Audio codec: " + fFmpegFrameGrabber.getAudioCodecName());
+            System.out.println("Audio channels: " + fFmpegFrameGrabber.getAudioChannels());
+
+            mediaDetails.put("size", Utilities.formatFileSize(file.length()));
+            mediaDetails.put("name", file.getName());
+            mediaDetails.put("path", file.getAbsolutePath());
+            mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
 
 
             fFmpegFrameGrabber.stop();
@@ -75,8 +102,8 @@ public class FlacItem implements MediaItem {
     }
 
     @Override
-    public Map getMediaDetails() {
-        return null;
+    public Map<String, String> getMediaDetails() {
+        return mediaDetails;
     }
 
 

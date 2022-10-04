@@ -8,14 +8,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+
+import java.util.Map;
 
 public class TechnicalDetailsPage {
 
@@ -122,15 +124,6 @@ public class TechnicalDetailsPage {
         textBox.setSpacing(10);
     }
 
-    public void exitTechnicalDetailsPage(){
-            menuController.metadataScroll.setVisible(true);
-            menuController.technicalDetailsScroll.setVisible(false);
-
-            textBox.getChildren().clear();
-            imageView.setImage(null);
-            imageViewContainer.setStyle("-fx-background-color: transparent;");
-    }
-
     public void enterTechnicalDetailsPage(MenuObject menuObject){
         imageView.setImage(menuObject.getMediaItem().getCover());
 
@@ -138,8 +131,69 @@ public class TechnicalDetailsPage {
 
         if(color != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
 
+        Map<String, String> map = menuObject.getMediaItem().getMediaDetails();
+        if(map != null && !map.isEmpty()){
+            createFileSection(map);
+        }
+
         menuController.metadataScroll.setVisible(false);
         menuController.technicalDetailsScroll.setVisible(true);
+    }
+
+
+    public void exitTechnicalDetailsPage(){
+        menuController.metadataScroll.setVisible(true);
+        menuController.technicalDetailsScroll.setVisible(false);
+
+        textBox.getChildren().clear();
+        imageView.setImage(null);
+        imageViewContainer.setStyle("-fx-background-color: transparent;");
+    }
+
+    private void createTitle(String title){
+        Label label = new Label(title);
+        label.getStyleClass().add("metadataTitle");
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setWrapText(true);
+        label.setLineSpacing(5);
+        label.setPadding(new Insets(0, 0, 5, 0));
+
+        textBox.getChildren().add(label);
+    }
+
+    private  void createItem(String key, double keyWidth, String value){
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.TOP_LEFT);
+
+        Label keyText = new Label(key);
+        keyText.getStyleClass().add("keyText");
+        keyText.setMinWidth(keyWidth);
+        keyText.setMaxWidth(keyWidth);
+
+        TextFlow textFlow = new TextFlow();
+        Text valueText = new Text(value);
+        valueText.getStyleClass().add("valueText");
+        textFlow.getChildren().add(valueText);
+        hBox.getChildren().addAll(keyText, textFlow);
+        textBox.getChildren().add(hBox);
+
+    }
+
+    private void createFileSection(Map<String, String> map){
+        createTitle("File");
+        if(map.containsKey("name")) createItem("File name: ", 120, map.get("name"));
+        if(map.containsKey("path")) createItem("File path: ", 120, map.get("path"));
+        if(map.containsKey("size")) createItem("File size: ", 120, map.get("size"));
+        if(map.containsKey("modified")) createItem("Last modified: ", 120, map.get("modified"));
+
+    }
+
+    private void createVideoSection(Map<String, String> map){
+        createTitle("Video");
+    }
+
+    private void createAudioSection(Map<String, String> map){
+        createTitle("Audio");
     }
 
 }

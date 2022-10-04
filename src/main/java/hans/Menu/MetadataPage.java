@@ -55,11 +55,13 @@ public class MetadataPage {
 
     StackPane imageViewWrapper = new StackPane();
     public StackPane imageViewContainer = new StackPane();
-    public ImageView imageView = new javafx.scene.image.ImageView();
+    public ImageView imageView = new ImageView();
 
     public VBox textBox = new VBox();
 
     public SVGPath copySVG = new SVGPath(), checkSVG = new SVGPath(), editSVG = new SVGPath(), detailsSVG = new SVGPath();
+
+    MenuObject menuObject = null;
 
     MetadataPage(MenuController menuController){
         this.menuController = menuController;
@@ -170,6 +172,10 @@ public class MetadataPage {
         StackPane.setMargin(detailsButton, new Insets(20, 0, 10, 20));
         detailsButton.setPadding(new Insets(8, 10, 8, 8));
 
+        detailsButton.setOnAction(e -> {
+            if(this.menuObject != null) menuController.technicalDetailsPage.enterTechnicalDetailsPage(this.menuObject);
+        });
+
         detailsIcon.setShape(detailsSVG);
         detailsIcon.getStyleClass().add("menuIcon");
         detailsIcon.setPrefSize(18, 18);
@@ -182,6 +188,8 @@ public class MetadataPage {
 
 
     public void enterMetadataPage(MenuObject menuObject){
+
+        this.menuObject = menuObject;
 
         String extension = Utilities.getFileExtension(menuObject.getMediaItem().getFile());
 
@@ -214,12 +222,15 @@ public class MetadataPage {
     }
 
     public void exitMetadataPage(){
+
+        this.menuObject = null;
+
         menuController.metadataScroll.setVisible(false);
         menuController.queueScroll.setVisible(true);
 
         textBox.getChildren().clear();
-        menuController.metadataPage.imageView.setImage(null);
-        menuController.metadataPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
+        imageView.setImage(null);
+        imageViewContainer.setStyle("-fx-background-color: transparent;");
     }
 
 

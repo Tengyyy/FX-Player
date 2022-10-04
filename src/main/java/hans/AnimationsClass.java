@@ -315,11 +315,15 @@ public class AnimationsClass {
         closeMenu.setOnFinished((e) -> {
             menuController.menuInTransition = false;
             menuController.metadataScroll.setVisible(false);
+            menuController.technicalDetailsScroll.setVisible(false);
             menuController.queueScroll.setVisible(true);
 
             menuController.metadataPage.textBox.getChildren().clear();
             menuController.metadataPage.imageView.setImage(null);
             menuController.metadataPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
+            menuController.technicalDetailsPage.textBox.getChildren().clear();
+            menuController.technicalDetailsPage.imageView.setImage(null);
+            menuController.technicalDetailsPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
         });
         closeMenu.play();
     }

@@ -267,3 +267,26 @@
 .expandButton:hover {
     -fx-text-fill: rgb(200,200,200);
 }
+
+
+#editButton {
+    -fx-background-color: rgb(237, 64, 64);
+    -fx-background-radius: 3;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto Regular";
+}
+
+#detailsButton {
+    -fx-background-radius: 3;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto Medium";
+    -fx-border-width: 1;
+    -fx-border-color: white;
+    -fx-border-radius: 3;
+}
+
+#detailsButton:hover {
+    -fx-background-color: rgba(50, 50, 50, 0.7);
+}

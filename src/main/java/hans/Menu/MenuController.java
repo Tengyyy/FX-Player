@@ -66,6 +66,9 @@ public class MenuController implements Initializable {
     @FXML
     public ScrollPane metadataScroll;
 
+    @FXML
+    public ScrollPane technicalDetailsScroll;
+
 
 
     SVGPath addVideoIconSVG, closeIconSVG;
@@ -80,6 +83,7 @@ public class MenuController implements Initializable {
     MediaInterface mediaInterface;
 
     public MetadataPage metadataPage;
+    public TechnicalDetailsPage technicalDetailsPage;
 
     FileChooser fileChooser = new FileChooser();
 
@@ -171,6 +175,7 @@ public class MenuController implements Initializable {
         activeBox = new ActiveBox(this);
 
         metadataPage = new MetadataPage(this);
+        technicalDetailsPage = new TechnicalDetailsPage(this);
 
         queue.addListener((ListChangeListener<QueueItem>) change -> {
 
@@ -615,6 +620,9 @@ public class MenuController implements Initializable {
 
         metadataScroll.setVisible(false);
         metadataScroll.setBackground(Background.EMPTY);
+
+        technicalDetailsScroll.setVisible(false);
+        technicalDetailsScroll.setBackground(Background.EMPTY);
 }
 
 

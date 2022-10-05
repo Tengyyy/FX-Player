@@ -11,6 +11,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
 public class AviItem implements MediaItem {
@@ -62,27 +63,22 @@ public class AviItem implements MediaItem {
 
             if(cover == null) cover = Utilities.grabRandomFrame(file);
 
-            System.out.println("Video codec name: " + fFmpegFrameGrabber.getVideoCodecName());
-            System.out.println("Video bitrate: " + fFmpegFrameGrabber.getVideoBitrate());
-            System.out.println("Video codec: " + fFmpegFrameGrabber.getVideoCodec());
-            System.out.println("Streams: " + fFmpegFrameGrabber.getVideoStream());
-            System.out.println("Video framerate: " + fFmpegFrameGrabber.getFrameRate());
-            System.out.println("Sample rate: " + fFmpegFrameGrabber.getSampleRate());
-            System.out.println("Format: " + fFmpegFrameGrabber.getFormat());
-            System.out.println("Aspect ratio: " + fFmpegFrameGrabber.getAspectRatio());
-            System.out.println("Image height: " + fFmpegFrameGrabber.getImageHeight());
-            System.out.println("Image width: " + fFmpegFrameGrabber.getImageWidth());
-            System.out.println("Length in frames: " + fFmpegFrameGrabber.getLengthInFrames());
-            System.out.println("Audio framerate: " + fFmpegFrameGrabber.getAudioFrameRate());
-            System.out.println("Audio bitrate: " + fFmpegFrameGrabber.getAudioBitrate());
-            System.out.println("Audio codec name: " + fFmpegFrameGrabber.getAudioCodecName());
-            System.out.println("Audio codec: " + fFmpegFrameGrabber.getAudioCodecName());
-            System.out.println("Audio channels: " + fFmpegFrameGrabber.getAudioChannels());
-
             mediaDetails.put("size", Utilities.formatFileSize(file.length()));
             mediaDetails.put("name", file.getName());
             mediaDetails.put("path", file.getAbsolutePath());
             mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
+            mediaDetails.put("hasVideo", String.valueOf(fFmpegFrameGrabber.hasVideo()));
+            mediaDetails.put("hasAudio", String.valueOf(fFmpegFrameGrabber.hasAudio()));
+            if(fFmpegFrameGrabber.hasAudio()) mediaDetails.put("audioChannels", String.valueOf(fFmpegFrameGrabber.getAudioChannels()));
+            if(fFmpegFrameGrabber.getAudioCodecName() != null) mediaDetails.put("audioCodec", fFmpegFrameGrabber.getAudioCodecName());
+            if(fFmpegFrameGrabber.hasAudio() && fFmpegFrameGrabber.getAudioBitrate() != 0) mediaDetails.put("audioBitrate", Utilities.formatBitrate(fFmpegFrameGrabber.getAudioBitrate()));
+            mediaDetails.put("duration", Utilities.getTime(duration));
+            mediaDetails.put("format", fFmpegFrameGrabber.getFormat());
+            if(fFmpegFrameGrabber.hasAudio()) mediaDetails.put("sampleRate", NumberFormat.getInstance().format(fFmpegFrameGrabber.getSampleRate()) + " Hz");
+            if(fFmpegFrameGrabber.getVideoCodecName() != null) mediaDetails.put("videoCodec", fFmpegFrameGrabber.getVideoCodecName());
+            if(fFmpegFrameGrabber.hasVideo() && fFmpegFrameGrabber.getVideoBitrate() != 0) mediaDetails.put("videoBitrate", Utilities.formatBitrate(fFmpegFrameGrabber.getVideoBitrate()));
+            mediaDetails.put("frameRate", Math.round(fFmpegFrameGrabber.getFrameRate()) + " fps");
+            if(fFmpegFrameGrabber.hasVideo()) mediaDetails.put("resolution", fFmpegFrameGrabber.getImageWidth() + "×" + fFmpegFrameGrabber.getImageHeight());
 
 
             fFmpegFrameGrabber.stop();

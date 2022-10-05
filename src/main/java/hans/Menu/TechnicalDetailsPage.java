@@ -18,6 +18,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class TechnicalDetailsPage {
 
@@ -134,6 +135,8 @@ public class TechnicalDetailsPage {
         Map<String, String> map = menuObject.getMediaItem().getMediaDetails();
         if(map != null && !map.isEmpty()){
             createFileSection(map);
+            if(map.containsKey("hasVideo") && Objects.equals(map.get("hasVideo"), "true")) createVideoSection(map);
+            if(map.containsKey("hasAudio") && Objects.equals(map.get("hasAudio"), "true")) createAudioSection(map);
         }
 
         menuController.metadataScroll.setVisible(false);
@@ -181,19 +184,37 @@ public class TechnicalDetailsPage {
 
     private void createFileSection(Map<String, String> map){
         createTitle("File");
-        if(map.containsKey("name")) createItem("File name: ", 120, map.get("name"));
-        if(map.containsKey("path")) createItem("File path: ", 120, map.get("path"));
-        if(map.containsKey("size")) createItem("File size: ", 120, map.get("size"));
-        if(map.containsKey("modified")) createItem("Last modified: ", 120, map.get("modified"));
+        if(map.containsKey("name")) createItem("File name:", 120, map.get("name"));
+        if(map.containsKey("path")) createItem("File path:", 120, map.get("path"));
+        if(map.containsKey("size")) createItem("File size:", 120, map.get("size"));
+        if(map.containsKey("modified")) createItem("Last modified:", 120, map.get("modified"));
 
     }
 
     private void createVideoSection(Map<String, String> map){
         createTitle("Video");
+
+        if(map.containsKey("duration")) createItem("Duration:", 120, map.get("duration"));
+        if(map.containsKey("format")) createItem("Format:", 120, map.get("format"));
+
+        if(map.containsKey("videoCodec")) createItem("Video codec:", 120, map.get("videoCodec"));
+        if(map.containsKey("frameRate")) createItem("Frame rate:", 120, map.get("frameRate"));
+        if(map.containsKey("resolution")) createItem("Resolution:", 120, map.get("resolution"));
+        if(map.containsKey("videoBitrate")) createItem("Video Bitrate:", 120, map.get("videoBitrate"));
     }
 
     private void createAudioSection(Map<String, String> map){
         createTitle("Audio");
+        if(!map.containsKey("hasVideo") || Objects.equals(map.get("hasVideo"), "false")){
+            if(map.containsKey("duration")) createItem("Duration:", 120, map.get("duration"));
+            if(map.containsKey("format")) createItem("Format:", 120, map.get("format"));
+        }
+
+        if(map.containsKey("audioCodec")) createItem("Audio codec:", 120, map.get("audioCodec"));
+        if(map.containsKey("audioBitrate")) createItem("Audio bitrate:", 120, map.get("audioBitrate"));
+        if(map.containsKey("sampleRate")) createItem("Sampling rate:", 120, map.get("sampleRate"));
+        if(map.containsKey("audioChannels")) createItem("Audio channels:", 120, map.get("audioChannels"));
+
     }
 
 }

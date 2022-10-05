@@ -198,6 +198,22 @@ public class Utilities {
         return round(countingSize, 1) + unit;
     }
 
+    public static String formatBitrate(long bits){
+        double countingBits = bits;
+        String unit = " bit/s";
+
+        if(countingBits >= 1000){
+            countingBits /= 1000;
+            unit = " kbit/s";
+        }
+        if(countingBits >= 1000){
+            countingBits /= 1000;
+            unit = " Mbit/s";
+        }
+
+        return round(countingBits, 1) + unit;
+    }
+
     public static double round (double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;

@@ -9,5 +9,8 @@
         <module name="javafx-media-player-new" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="javacv" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>

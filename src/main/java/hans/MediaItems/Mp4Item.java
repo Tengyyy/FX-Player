@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,7 +79,12 @@ public class Mp4Item implements MediaItem {
             mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
             mediaDetails.put("hasVideo", String.valueOf(fFmpegFrameGrabber.hasVideo()));
             mediaDetails.put("hasAudio", String.valueOf(fFmpegFrameGrabber.hasAudio()));
-            if(fFmpegFrameGrabber.hasAudio()) mediaDetails.put("audioChannels", String.valueOf(fFmpegFrameGrabber.getAudioChannels()));
+            if(fFmpegFrameGrabber.hasAudio()){
+                if(fFmpegFrameGrabber.getAudioChannels() == 2) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (stereo)");
+                else if(fFmpegFrameGrabber.getAudioChannels() == 6) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (5.1 surround sound)");
+                else if(fFmpegFrameGrabber.getAudioChannels() == 8) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (7.1 surround sound)");
+                else mediaDetails.put("audioChannels", String.valueOf(fFmpegFrameGrabber.getAudioChannels()));
+            }
             if(fFmpegFrameGrabber.getAudioCodecName() != null) mediaDetails.put("audioCodec", fFmpegFrameGrabber.getAudioCodecName());
             if(fFmpegFrameGrabber.hasAudio() && fFmpegFrameGrabber.getAudioBitrate() != 0) mediaDetails.put("audioBitrate", Utilities.formatBitrate(fFmpegFrameGrabber.getAudioBitrate()));
             mediaDetails.put("duration", Utilities.getTime(duration));
@@ -89,8 +95,6 @@ public class Mp4Item implements MediaItem {
             mediaDetails.put("frameRate", Math.round(fFmpegFrameGrabber.getFrameRate()) + " fps");
             if(fFmpegFrameGrabber.hasVideo()) mediaDetails.put("resolution", fFmpegFrameGrabber.getImageWidth() + "×" + fFmpegFrameGrabber.getImageHeight());
 
-            System.out.println(fFmpegFrameGrabber.getVideoCodec());
-            System.out.println(fFmpegFrameGrabber.getAudioCodec());
 
             fFmpegFrameGrabber.stop();
 

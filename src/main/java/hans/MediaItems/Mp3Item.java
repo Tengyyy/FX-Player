@@ -13,10 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Mp3Item implements MediaItem {
 
@@ -62,15 +59,19 @@ public class Mp3Item implements MediaItem {
             mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
             mediaDetails.put("hasVideo", "false");
             mediaDetails.put("hasAudio", String.valueOf(fFmpegFrameGrabber.hasAudio()));
-            if(fFmpegFrameGrabber.hasAudio()) mediaDetails.put("audioChannels", String.valueOf(fFmpegFrameGrabber.getAudioChannels()));
+            if(fFmpegFrameGrabber.hasAudio()){
+                if(fFmpegFrameGrabber.getAudioChannels() == 2) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (stereo)");
+                else if(fFmpegFrameGrabber.getAudioChannels() == 6) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (5.1 surround sound)");
+                else if(fFmpegFrameGrabber.getAudioChannels() == 8) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (7.1 surround sound)");
+                else mediaDetails.put("audioChannels", String.valueOf(fFmpegFrameGrabber.getAudioChannels()));
+            }
             if(fFmpegFrameGrabber.getAudioCodecName() != null) mediaDetails.put("audioCodec", fFmpegFrameGrabber.getAudioCodecName());
             if(fFmpegFrameGrabber.hasAudio() && fFmpegFrameGrabber.getAudioBitrate() != 0) mediaDetails.put("audioBitrate", Utilities.formatBitrate(fFmpegFrameGrabber.getAudioBitrate()));
             mediaDetails.put("duration", Utilities.getTime(duration));
             mediaDetails.put("format", fFmpegFrameGrabber.getFormat());
             if(fFmpegFrameGrabber.hasAudio()) mediaDetails.put("sampleRate", NumberFormat.getInstance().format(fFmpegFrameGrabber.getSampleRate()) + " Hz");
 
-            System.out.println(fFmpegFrameGrabber.getVideoCodec());
-            System.out.println(fFmpegFrameGrabber.getAudioCodec());
+
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();

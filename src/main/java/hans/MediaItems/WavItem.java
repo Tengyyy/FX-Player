@@ -67,6 +67,8 @@ public class WavItem implements MediaItem {
             mediaDetails.put("format", fFmpegFrameGrabber.getFormat());
             if(fFmpegFrameGrabber.hasAudio()) mediaDetails.put("sampleRate", NumberFormat.getInstance().format(fFmpegFrameGrabber.getSampleRate()) + " Hz");
 
+            System.out.println(fFmpegFrameGrabber.getVideoCodec());
+            System.out.println(fFmpegFrameGrabber.getAudioCodec());
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();

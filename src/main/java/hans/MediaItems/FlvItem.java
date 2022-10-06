@@ -82,6 +82,9 @@ public class FlvItem implements MediaItem {
             mediaDetails.put("frameRate", Math.round(fFmpegFrameGrabber.getFrameRate()) + " fps");
             if(fFmpegFrameGrabber.hasVideo()) mediaDetails.put("resolution", fFmpegFrameGrabber.getImageWidth() + "×" + fFmpegFrameGrabber.getImageHeight());
 
+            System.out.println(fFmpegFrameGrabber.getVideoCodec());
+            System.out.println(fFmpegFrameGrabber.getAudioCodec());
+
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();
 

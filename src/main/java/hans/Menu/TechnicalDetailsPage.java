@@ -1,5 +1,6 @@
 package hans.Menu;
 
+import com.jfoenix.controls.JFXButton;
 import hans.AnimationsClass;
 import hans.App;
 import hans.SVG;
@@ -17,6 +18,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 
@@ -48,6 +53,7 @@ public class TechnicalDetailsPage {
     TechnicalDetailsPage(MenuController menuController){
 
         this.menuController = menuController;
+
 
         backIconSVG.setContent(App.svgMap.get(SVG.ARROW_LEFT));
         backIcon.setShape(backIconSVG);
@@ -164,14 +170,14 @@ public class TechnicalDetailsPage {
         textBox.getChildren().add(label);
     }
 
-    private  void createItem(String key, double keyWidth, String value){
+    private  Text createItem(String key, String value){
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.TOP_LEFT);
 
         Label keyText = new Label(key);
         keyText.getStyleClass().add("keyText");
-        keyText.setMinWidth(keyWidth);
-        keyText.setMaxWidth(keyWidth);
+        keyText.setMinWidth(125);
+        keyText.setMaxWidth(125);
 
         TextFlow textFlow = new TextFlow();
         Text valueText = new Text(value);
@@ -180,40 +186,63 @@ public class TechnicalDetailsPage {
         hBox.getChildren().addAll(keyText, textFlow);
         textBox.getChildren().add(hBox);
 
+        return valueText;
+
     }
 
     private void createFileSection(Map<String, String> map){
         createTitle("File");
-        if(map.containsKey("name")) createItem("File name:", 120, map.get("name"));
-        if(map.containsKey("path")) createItem("File path:", 120, map.get("path"));
-        if(map.containsKey("size")) createItem("File size:", 120, map.get("size"));
-        if(map.containsKey("modified")) createItem("Last modified:", 120, map.get("modified"));
+        if(map.containsKey("name")) createItem("File name:", map.get("name"));
+        if(map.containsKey("path")){
+            Text text = createItem("File path:", map.get("path"));
+            text.setCursor(Cursor.HAND);
+            text.setOnMouseEntered(e -> text.setUnderline(true));
+            text.setOnMouseExited(e -> text.setUnderline(false));
+
+            text.setOnMouseClicked(e -> {
+
+                String os = System.getProperty("os.name");
+
+                try {
+                    if(os.toLowerCase().contains("windows")) Runtime.getRuntime().exec("explorer.exe /select," + map.get("path"));
+                    else if(Desktop.isDesktopSupported()){
+                        Desktop desktop = Desktop.getDesktop();
+                            File file = new File(map.get("path"));
+                            desktop.open(file.getParentFile());
+                        }
+                } catch (IOException ex){
+                    ex.printStackTrace();
+                }
+            });
+        }
+        if(map.containsKey("size")) createItem("File size:", map.get("size"));
+        if(map.containsKey("modified")) createItem("Last modified:", map.get("modified"));
 
     }
 
     private void createVideoSection(Map<String, String> map){
         createTitle("Video");
 
-        if(map.containsKey("duration")) createItem("Duration:", 120, map.get("duration"));
-        if(map.containsKey("format")) createItem("Format:", 120, map.get("format"));
+        if(map.containsKey("duration")) createItem("Duration:", map.get("duration"));
+        if(map.containsKey("format")) createItem("Format:", map.get("format"));
 
-        if(map.containsKey("videoCodec")) createItem("Video codec:", 120, map.get("videoCodec"));
-        if(map.containsKey("frameRate")) createItem("Frame rate:", 120, map.get("frameRate"));
-        if(map.containsKey("resolution")) createItem("Resolution:", 120, map.get("resolution"));
-        if(map.containsKey("videoBitrate")) createItem("Video Bitrate:", 120, map.get("videoBitrate"));
+        if(map.containsKey("videoCodec")) createItem("Video codec:", map.get("videoCodec"));
+        if(map.containsKey("frameRate")) createItem("Frame rate:", map.get("frameRate"));
+        if(map.containsKey("resolution")) createItem("Resolution:", map.get("resolution"));
+        if(map.containsKey("videoBitrate")) createItem("Video Bitrate:", map.get("videoBitrate"));
     }
 
     private void createAudioSection(Map<String, String> map){
         createTitle("Audio");
         if(!map.containsKey("hasVideo") || Objects.equals(map.get("hasVideo"), "false")){
-            if(map.containsKey("duration")) createItem("Duration:", 120, map.get("duration"));
-            if(map.containsKey("format")) createItem("Format:", 120, map.get("format"));
+            if(map.containsKey("duration")) createItem("Duration:", map.get("duration"));
+            if(map.containsKey("format")) createItem("Format:", map.get("format"));
         }
 
-        if(map.containsKey("audioCodec")) createItem("Audio codec:", 120, map.get("audioCodec"));
-        if(map.containsKey("audioBitrate")) createItem("Audio bitrate:", 120, map.get("audioBitrate"));
-        if(map.containsKey("sampleRate")) createItem("Sampling rate:", 120, map.get("sampleRate"));
-        if(map.containsKey("audioChannels")) createItem("Audio channels:", 120, map.get("audioChannels"));
+        if(map.containsKey("audioCodec")) createItem("Audio codec:", map.get("audioCodec"));
+        if(map.containsKey("audioBitrate")) createItem("Audio bitrate:", map.get("audioBitrate"));
+        if(map.containsKey("sampleRate")) createItem("Sampling rate:", map.get("sampleRate"));
+        if(map.containsKey("audioChannels")) createItem("Audio channels:", map.get("audioChannels"));
 
     }
 

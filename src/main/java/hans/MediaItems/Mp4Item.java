@@ -57,6 +57,7 @@ public class Mp4Item implements MediaItem {
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
 
+
             fFmpegFrameGrabber.start();
 
             hasVideo = fFmpegFrameGrabber.hasVideo();
@@ -87,6 +88,9 @@ public class Mp4Item implements MediaItem {
             if(fFmpegFrameGrabber.hasVideo() && fFmpegFrameGrabber.getVideoBitrate() != 0) mediaDetails.put("videoBitrate", Utilities.formatBitrate(fFmpegFrameGrabber.getVideoBitrate()));
             mediaDetails.put("frameRate", Math.round(fFmpegFrameGrabber.getFrameRate()) + " fps");
             if(fFmpegFrameGrabber.hasVideo()) mediaDetails.put("resolution", fFmpegFrameGrabber.getImageWidth() + "×" + fFmpegFrameGrabber.getImageHeight());
+
+            System.out.println(fFmpegFrameGrabber.getVideoCodec());
+            System.out.println(fFmpegFrameGrabber.getAudioCodec());
 
             fFmpegFrameGrabber.stop();
 

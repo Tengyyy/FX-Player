@@ -302,3 +302,14 @@
 #detailsButton:hover {
     -fx-background-color: rgba(50, 50, 50, 0.7);
 }
+
+#folderIcon {
+    -fx-background-color: rgb(160,160,160);
+}
+
+#fileButton {
+    -fx-background-radius: 100;
+    -fx-border-radius: 100;
+    -fx-border-width: 1;
+    -fx-border-color: rgb(160,160,160);
+}

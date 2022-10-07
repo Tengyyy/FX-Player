@@ -150,9 +150,8 @@ public class ActiveItem extends GridPane implements MenuObject {
 
                 double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
                 double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
-                double realHeight = Math.min(coverImage.getFitHeight(), coverImage.getFitWidth() / aspectRatio);
 
-                Color dominantColor = Utilities.findDominantColor(realWidth, realHeight, mediaItem.getCover());
+                Color dominantColor = Utilities.findDominantColor(mediaItem.getCover(), realWidth < coverImage.getFitWidth());
                 mediaItem.setCoverBackgroundColor(dominantColor);
 
                 assert dominantColor != null;

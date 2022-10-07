@@ -157,13 +157,13 @@ public class QueueItem extends GridPane implements MenuObject {
 
         if(mediaItem.getCover() != null) {
 
+
             if(mediaItem.getCoverBackgroundColor() == null){
 
                 double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
                 double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
-                double realHeight = Math.min(coverImage.getFitHeight(), coverImage.getFitWidth() / aspectRatio);
 
-                Color dominantColor = Utilities.findDominantColor(realWidth, realHeight, mediaItem.getCover());
+                Color dominantColor = Utilities.findDominantColor(mediaItem.getCover(), realWidth < coverImage.getFitWidth());
                 mediaItem.setCoverBackgroundColor(dominantColor);
 
                 imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantColor.getRed() * 256) + "," + Math.round(dominantColor.getGreen() * 256) + "," + Math.round(dominantColor.getBlue() * 256) + ", 0.7);");

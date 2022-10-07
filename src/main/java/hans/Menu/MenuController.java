@@ -60,14 +60,8 @@ public class MenuController implements Initializable {
     Label notificationText;
 
     @FXML
-    public
-    ScrollPane queueScroll;
+    public ScrollPane queueScroll, metadataScroll, metadataEditScroll, technicalDetailsScroll;
 
-    @FXML
-    public ScrollPane metadataScroll;
-
-    @FXML
-    public ScrollPane technicalDetailsScroll;
 
 
 
@@ -83,12 +77,13 @@ public class MenuController implements Initializable {
     MediaInterface mediaInterface;
 
     public MetadataPage metadataPage;
+    public MetadataEditPage metadataEditPage;
     public TechnicalDetailsPage technicalDetailsPage;
 
     FileChooser fileChooser = new FileChooser();
 
 
-    public boolean menuOpen;
+    public MenuState menuState = MenuState.CLOSED;
     public boolean menuNotificationOpen = false;
     public PauseTransition closeTimer;
 
@@ -175,6 +170,7 @@ public class MenuController implements Initializable {
         activeBox = new ActiveBox(this);
 
         metadataPage = new MetadataPage(this);
+        metadataEditPage = new MetadataEditPage(this);
         technicalDetailsPage = new TechnicalDetailsPage(this);
 
         queue.addListener((ListChangeListener<QueueItem>) change -> {
@@ -621,6 +617,9 @@ public class MenuController implements Initializable {
         metadataScroll.setVisible(false);
         metadataScroll.setBackground(Background.EMPTY);
 
+        metadataEditScroll.setVisible(false);
+        metadataEditScroll.setBackground(Background.EMPTY);
+
         technicalDetailsScroll.setVisible(false);
         technicalDetailsScroll.setBackground(Background.EMPTY);
 }
@@ -688,7 +687,7 @@ public class MenuController implements Initializable {
         }
 
         menuInTransition = true;
-        menuOpen = false;
+        menuState = MenuState.CLOSED;
         notificationPane.setOpacity(0);
         menu.setMouseTransparent(true);
         AnimationsClass.closeMenu(this, mainController);

@@ -315,12 +315,17 @@ public class AnimationsClass {
         closeMenu.setOnFinished((e) -> {
             menuController.menuInTransition = false;
             menuController.metadataScroll.setVisible(false);
+            menuController.metadataEditScroll.setVisible(false);
             menuController.technicalDetailsScroll.setVisible(false);
             menuController.queueScroll.setVisible(true);
 
             menuController.metadataPage.textBox.getChildren().clear();
             menuController.metadataPage.imageView.setImage(null);
             menuController.metadataPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
+            menuController.metadataEditPage.textBox.getChildren().clear();
+            menuController.metadataEditPage.imageView.setImage(null);
+            menuController.metadataEditPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
+            menuController.metadataEditPage.changesMade = false;
             menuController.technicalDetailsPage.textBox.getChildren().clear();
             menuController.technicalDetailsPage.imageView.setImage(null);
             menuController.technicalDetailsPage.imageViewContainer.setStyle("-fx-background-color: transparent;");

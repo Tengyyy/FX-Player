@@ -63,6 +63,7 @@ public class MetadataPage {
 
     MenuObject menuObject = null;
 
+
     MetadataPage(MenuController menuController){
         this.menuController = menuController;
 
@@ -155,6 +156,10 @@ public class MetadataPage {
         editButton.setPadding(new Insets(8, 10, 8, 8));
         editButton.setCursor(Cursor.HAND);
 
+        editButton.setOnAction(e -> {
+            if(this.menuObject != null) menuController.metadataEditPage.enterMetadataEditPage(this.menuObject);
+        });
+
         editIcon.setShape(editSVG);
         editIcon.getStyleClass().add("menuIcon");
         editIcon.setPrefSize(18, 18);
@@ -218,7 +223,8 @@ public class MetadataPage {
         menuController.metadataScroll.setVisible(true);
         menuController.queueScroll.setVisible(false);
 
-        if(!menuController.menuOpen) menuController.mainController.openMenu();
+        if(menuController.menuState == MenuState.CLOSED) menuController.mainController.openMenu();
+        menuController.menuState = MenuState.METADATA_OPEN;
     }
 
     public void exitMetadataPage(){
@@ -231,6 +237,8 @@ public class MetadataPage {
         textBox.getChildren().clear();
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");
+
+        menuController.menuState = MenuState.QUEUE_OPEN;
     }
 
 

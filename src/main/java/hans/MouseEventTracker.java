@@ -1,5 +1,6 @@
 package hans;
 
+import hans.Menu.MenuState;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
 import javafx.animation.PauseTransition;
@@ -52,7 +53,7 @@ public class MouseEventTracker {
 
     public void move() { // resets the countdown when called
 
-        if(mainController.getMenuController().menuOpen) return;
+        if(mainController.getMenuController().menuState != MenuState.CLOSED) return;
 
         mouseMoving.set(true);
         pause.playFromStart();

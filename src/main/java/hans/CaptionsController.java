@@ -3,6 +3,7 @@ package hans;
 
 import hans.Menu.HistoryItem;
 import hans.Menu.MenuController;
+import hans.Menu.MenuState;
 import hans.SRTParser.srt.SRTParser;
 import hans.SRTParser.srt.Subtitle;
 import hans.Settings.CaptionsOptionsPane;
@@ -163,7 +164,7 @@ public class CaptionsController {
 
         captionsBox.setOnMousePressed(e -> {
 
-            if(menuController.menuInTransition || menuController.menuOpen){
+            if(menuController.menuInTransition || menuController.menuState != MenuState.CLOSED){
                 e.consume();
                 return;
             }

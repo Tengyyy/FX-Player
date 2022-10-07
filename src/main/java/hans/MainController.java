@@ -10,6 +10,7 @@ import java.util.*;
 import hans.MediaItems.*;
 import hans.Menu.ActiveItem;
 import hans.Menu.MenuController;
+import hans.Menu.MenuState;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
 import javafx.animation.Animation;
@@ -470,7 +471,9 @@ public class MainController implements Initializable {
         }
 
 
-        if(menuController.menuOpen) menuController.closeMenu();
+        if(menuController.menuState == MenuState.METADATA_OPEN || menuController.menuState == MenuState.QUEUE_OPEN || menuController.menuState == MenuState.TECHNICAL_DETAILS_OPEN || (menuController.menuState == MenuState.METADATA_EDIT_OPEN && !menuController.metadataEditPage.changesMade)){
+            menuController.closeMenu();
+        }
         else if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         }
@@ -501,7 +504,7 @@ public class MainController implements Initializable {
         if(menuController.menuInTransition || controlBarController.durationSlider.isValueChanging() || controlBarController.volumeSlider.isValueChanging() || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || captionsController.captionsDragActive) return;
 
         menuController.menuInTransition = true;
-        menuController.menuOpen = true;
+        menuController.menuState = MenuState.QUEUE_OPEN;
 
         if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 
@@ -1091,7 +1094,7 @@ public class MainController implements Initializable {
         if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
         if(menuController.activeMenuItemOptionsPopUp != null && menuController.activeMenuItemOptionsPopUp.isShowing()) menuController.activeMenuItemOptionsPopUp.hide();
 
-        if(menuController.menuOpen){
+        if(menuController.menuState != MenuState.CLOSED){
             menuController.closeMenu();
             controlBarController.mouseEventTracker.move();
         }

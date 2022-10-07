@@ -147,6 +147,8 @@ public class TechnicalDetailsPage {
 
         menuController.metadataScroll.setVisible(false);
         menuController.technicalDetailsScroll.setVisible(true);
+
+        menuController.menuState = MenuState.TECHNICAL_DETAILS_OPEN;
     }
 
 
@@ -157,6 +159,8 @@ public class TechnicalDetailsPage {
         textBox.getChildren().clear();
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");
+
+        menuController.menuState = MenuState.METADATA_OPEN;
     }
 
     private void createTitle(String title){

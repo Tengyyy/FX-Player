@@ -7,6 +7,8 @@ hans\AnimationsClass$1.class
 hans\Utilities.class
 hans\MediaInterface.class
 hans\SVG.class
+hans\Menu\MetadataEditPage.class
+hans\Menu\MenuState.class
 hans\ControlBarController.class
 hans\App.class
 hans\ControlTooltip.class

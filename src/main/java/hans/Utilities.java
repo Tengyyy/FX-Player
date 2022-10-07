@@ -78,12 +78,12 @@ public class Utilities {
     }
 
 
-    public static Color findDominantColor(double realWidth, double realHeight, Image image){
+    public static Color findDominantColor(Image image, boolean scanLeftRight){
 
         PixelReader pr = image.getPixelReader();
         Map<Color, Long> colCount = new HashMap<>();
 
-        if(realWidth < 125){
+        if(scanLeftRight){
             // scan left and right edges to find the dominant color
 
             for(int x = 0; x < Math.min(image.getWidth(), 5); x++) {

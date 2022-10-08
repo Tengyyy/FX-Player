@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -127,7 +128,6 @@ public class QueueItem extends GridPane implements MenuObject {
         coverImage.setFitHeight(70);
         coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
-        coverImage.setImage(mediaItem.getCover());
         coverImage.setPreserveRatio(true);
 
 
@@ -154,28 +154,13 @@ public class QueueItem extends GridPane implements MenuObject {
         optionsSVG.setContent(App.svgMap.get(SVG.OPTIONS));
 
 
-
         if(mediaItem.getCover() != null) {
-
-
-            if(mediaItem.getCoverBackgroundColor() == null){
-
-                double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
-                double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
-
-                Color dominantColor = Utilities.findDominantColor(mediaItem.getCover(), realWidth < coverImage.getFitWidth());
-                mediaItem.setCoverBackgroundColor(dominantColor);
-
-                imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantColor.getRed() * 256) + "," + Math.round(dominantColor.getGreen() * 256) + "," + Math.round(dominantColor.getBlue() * 256) + ", 0.7);");
-
-            }
-            else {
-                imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
-            }
+            coverImage.setImage(mediaItem.getCover());
+            imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
         }
         else {
-            imageWrapper.setStyle("-fx-background-color: rgba(0,0,0, 0.7);");
-
+            imageWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
+            coverImage.setImage(mediaItem.getPlaceholderCover());
         }
 
 
@@ -292,7 +277,7 @@ public class QueueItem extends GridPane implements MenuObject {
             if(optionsPopUp.isShowing()) optionsPopUp.hide();
 
             if(!menuController.animationsInProgress.isEmpty()) return;
-            play(true);
+            if(e.getButton() == MouseButton.PRIMARY) play(true);
         });
 
         this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));

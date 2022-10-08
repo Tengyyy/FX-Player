@@ -78,12 +78,14 @@ public class Utilities {
     }
 
 
-    public static Color findDominantColor(Image image, boolean scanLeftRight){
+    public static Color findDominantColor(Image image){
+
+        double aspectRatio = image.getWidth() / image.getHeight();
 
         PixelReader pr = image.getPixelReader();
         Map<Color, Long> colCount = new HashMap<>();
 
-        if(scanLeftRight){
+        if(aspectRatio < (double) 16/9){
             // scan left and right edges to find the dominant color
 
             for(int x = 0; x < Math.min(image.getWidth(), 5); x++) {

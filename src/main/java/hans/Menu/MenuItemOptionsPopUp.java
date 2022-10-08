@@ -24,7 +24,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
     MenuItem addSubtitles = new MenuItem("Add subtitles");
 
     double buttonWidth;
-    final double popUpWidth = 127; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
+    final double popUpWidth = 191; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
 
     Node menuObjectNode;
 
@@ -112,7 +112,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
         showTransition.playFromStart();
 
         menuObject.getMenuController().activeMenuItemOptionsPopUp = this;
-
+        
     }
 
     @Override

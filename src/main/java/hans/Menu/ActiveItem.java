@@ -145,27 +145,12 @@ public class ActiveItem extends GridPane implements MenuObject {
         iconBackground.setMaxSize(125, 70);
 
         if(mediaItem.getCover() != null) {
-
-            if(mediaItem.getCoverBackgroundColor() == null){
-
-                double aspectRatio = mediaItem.getCover().getWidth() / mediaItem.getCover().getHeight();
-                double realWidth = Math.min(coverImage.getFitWidth(), coverImage.getFitHeight() * aspectRatio);
-
-                Color dominantColor = Utilities.findDominantColor(mediaItem.getCover(), realWidth < coverImage.getFitWidth());
-                mediaItem.setCoverBackgroundColor(dominantColor);
-
-                assert dominantColor != null;
-                playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(dominantColor.getRed() * 256) + "," + Math.round(dominantColor.getGreen() * 256) + "," + Math.round(dominantColor.getBlue() * 256) + ", 0.7);");
-
-            }
-            else {
-                playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
-            }
+            coverImage.setImage(mediaItem.getCover());
+            playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
         }
         else {
-            playButtonWrapper.setStyle("-fx-background-color: rgba(0,0,0, 0.7);");
-
-            //grab frame, set it as cover, calculate background color
+            playButtonWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
+            coverImage.setImage(mediaItem.getPlaceholderCover());
         }
 
         iconBackground.getStyleClass().add("iconBackground");

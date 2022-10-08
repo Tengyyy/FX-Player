@@ -17,8 +17,6 @@ import java.util.*;
 
 public class Mp3Item implements MediaItem {
 
-    double frameRate = 30;
-    float frameDuration = (float) (1 / frameRate);
 
     File file;
     File subtitles;
@@ -27,8 +25,11 @@ public class Mp3Item implements MediaItem {
     Duration duration;
 
     Image cover;
+    Image placeholderCover;
 
     MainController mainController;
+
+    boolean hasCover;
 
     Map<String, String> mediaInformation = new HashMap<>();
     Map<String, String> mediaDetails = new HashMap<>();
@@ -44,8 +45,6 @@ public class Mp3Item implements MediaItem {
 
             fFmpegFrameGrabber.start();
             duration = Duration.seconds((int) (fFmpegFrameGrabber.getLengthInAudioFrames()/fFmpegFrameGrabber.getAudioFrameRate()));
-            frameRate = fFmpegFrameGrabber.getAudioFrameRate();
-            frameDuration = (float) (1 / frameRate);
 
 
             for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
@@ -81,16 +80,16 @@ public class Mp3Item implements MediaItem {
         }
 
 
-        if(cover == null){
-            cover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/default.png")).toExternalForm()));
-            backgroundColor = Color.rgb(254, 200, 149);
-        }
+        hasCover = cover != null;
+        if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+
+        placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));
 
     }
 
     @Override
     public float getFrameDuration() {
-        return frameDuration;
+        return 0;
     }
 
     @Override
@@ -151,5 +150,25 @@ public class Mp3Item implements MediaItem {
     @Override
     public boolean hasVideo() {
         return false;
+    }
+
+    @Override
+    public boolean hasCover() {
+        return hasCover;
+    }
+
+    @Override
+    public void setHasCover(boolean value) {
+        hasCover = value;
+    }
+
+    @Override
+    public Image getPlaceholderCover() {
+        return placeholderCover;
+    }
+
+    @Override
+    public void setPlaceHolderCover(Image image) {
+        placeholderCover = image;
     }
 }

@@ -13,6 +13,8 @@ module hans {
     requires uk.co.caprica.vlcj.javafx;
     requires vlcj.natives;
     requires org.bytedeco.javacv;
+    requires com.sun.jna.platform;
+    requires com.sun.jna;
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;

@@ -38,6 +38,13 @@ public interface MediaItem {
 
     boolean hasVideo();
 
+    boolean hasCover();
+
+    void setHasCover(boolean value);
+
+    Image getPlaceholderCover();
+    void setPlaceHolderCover(Image image);
+
 
     // 1024 is int value for attached pic disposition
 }

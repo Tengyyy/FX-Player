@@ -4,6 +4,7 @@ C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\FontColor
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\FrameGrabberTask.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\SliderHoverLabel.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataPage.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Shell32Util.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\TechnicalDetailsPage.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\Columns.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\BackgroundColorPane.java
@@ -20,10 +21,12 @@ C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\SRTParser\srt\SRTP
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MenuController.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\SettingsHomeTab.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\MediaItems\MediaItem.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MenuState.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\MiniplayerController.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\MediaInterface.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\SettingsHomeController.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\DragResizer.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\EditImagePopUp.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\PlaybackOptionsPopUp.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\TextAlignmentPane.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\PlaybackSpeedPane.java
@@ -41,6 +44,7 @@ C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\SRTParser\srt\Subt
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\AnimationsClass.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\QueueItem.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\MediaItems\Mp3Item.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEditPage.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\BackgroundOpacityPane.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MenuItemOptionsPopUp.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\ValueIndicator.java
@@ -66,3 +70,4 @@ C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\ControlTooltip.jav
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\SVG.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Utilities.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\FontFamilyPane.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Shell32.java

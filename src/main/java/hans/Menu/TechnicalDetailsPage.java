@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import hans.AnimationsClass;
 import hans.App;
 import hans.SVG;
+import hans.Shell32Util;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -132,11 +133,19 @@ public class TechnicalDetailsPage {
     }
 
     public void enterTechnicalDetailsPage(MenuObject menuObject){
-        imageView.setImage(menuObject.getMediaItem().getCover());
 
-        Color color = menuObject.getMediaItem().getCoverBackgroundColor();
+        Color color;
 
-        if(color != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
+        if(menuObject.getMediaItem().getCover() != null){
+            imageView.setImage(menuObject.getMediaItem().getCover());
+            color = menuObject.getMediaItem().getCoverBackgroundColor();
+        }
+        else {
+            imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+            color = Color.rgb(64,64,64);
+        }
+
+        imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
 
         Map<String, String> map = menuObject.getMediaItem().getMediaDetails();
         if(map != null && !map.isEmpty()){
@@ -207,16 +216,24 @@ public class TechnicalDetailsPage {
 
                 String os = System.getProperty("os.name");
 
-                try {
-                    if(os.toLowerCase().contains("windows")) Runtime.getRuntime().exec("explorer.exe /select," + map.get("path"));
-                    else if(Desktop.isDesktopSupported()){
-                        Desktop desktop = Desktop.getDesktop();
-                            File file = new File(map.get("path"));
-                            desktop.open(file.getParentFile());
-                        }
-                } catch (IOException ex){
-                    ex.printStackTrace();
+                if(os.toLowerCase().contains("windows")){
+                    Shell32Util.SHOpenFolderAndSelectItems(new File(map.get("path")));
                 }
+                else if(Desktop.isDesktopSupported()){
+                    Desktop desktop = Desktop.getDesktop();
+                        File file = new File(map.get("path"));
+
+                        if(desktop.isSupported(Desktop.Action.BROWSE_FILE_DIR)){
+                            desktop.browseFileDirectory(new File(map.get("path")));
+                        }
+                        else if(desktop.isSupported(Desktop.Action.OPEN)){
+                            try {
+                                desktop.open(file.getParentFile());
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }
             });
         }
         if(map.containsKey("size")) createItem("File size:", map.get("size"));

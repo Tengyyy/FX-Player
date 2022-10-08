@@ -555,7 +555,10 @@ public class ControlBarController implements Initializable {
                         }
 
                         if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
-                        if(historyItem != null) previousVideoTooltip = new ControlTooltip(mainController, "PREVIOUS (SHIFT + P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
+                        if(historyItem != null){
+                            if(historyItem.getMediaItem().getCover() != null) previousVideoTooltip = new ControlTooltip(mainController, "PREVIOUS (SHIFT + P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
+                            else previousVideoTooltip = new ControlTooltip(mainController, "PREVIOUS (SHIFT + P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), previousVideoButton, 0, true);
+                        }
                         if(previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.showTooltip();
                     }
 
@@ -1081,7 +1084,10 @@ public class ControlBarController implements Initializable {
                     historyItem = menuController.history.get(menuController.historyBox.index - 1);
 
                 }
-                if(historyItem != null) previousVideoTooltip = new ControlTooltip(mainController,"PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
+                if(historyItem != null){
+                    if(historyItem.getMediaItem().getCover() != null) previousVideoTooltip = new ControlTooltip(mainController,"PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
+                    else previousVideoTooltip = new ControlTooltip(mainController, "PREVIOUS (SHIFT + P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), previousVideoButton, 0, true);
+                }
             }
 
             if (previousVideoButtonHover) previousVideoTooltip.showTooltip();
@@ -1153,10 +1159,13 @@ public class ControlBarController implements Initializable {
 
             if ((menuController.historyBox.index == -1 || menuController.historyBox.index == menuController.history.size() - 1) && !menuController.queue.isEmpty()) {
                 QueueItem queueItem = menuController.queue.get(0);
-                nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getCover(), queueItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+                if(queueItem.getMediaItem().getCover() != null) nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getCover(), queueItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+                else nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), nextVideoButton, 0, true);
             } else if (menuController.historyBox.index < menuController.history.size() - 1 && !menuController.history.isEmpty()) {
                 HistoryItem historyItem = menuController.history.get(menuController.historyBox.index + 1);
-                nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+                if(historyItem.getMediaItem().getCover() != null) nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+                else nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), nextVideoButton, 0, true);
+
             }
 
 
@@ -1183,12 +1192,15 @@ public class ControlBarController implements Initializable {
         if((menuController.historyBox.index == menuController.history.size() -1 || menuController.historyBox.index == -1) && !menuController.queue.isEmpty()){
             QueueItem queueItem = menuController.queue.get(0);
             if(nextVideoTooltip != null && nextVideoTooltip.isShowing()) nextVideoTooltip.hide();
-            nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getCover(), queueItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+            if(queueItem.getMediaItem().getCover() != null) nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getCover(), queueItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+            else nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), nextVideoButton, 0, true);
         }
         else if(menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1 && !menuController.history.isEmpty()){
             HistoryItem historyItem = menuController.history.get(menuController.historyBox.index + 1);
             if(nextVideoTooltip != null && nextVideoTooltip.isShowing()) nextVideoTooltip.hide();
-            nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+            if(historyItem.getMediaItem().getCover() != null) nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
+            else nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), nextVideoButton, 0, true);
+
         }
         if(nextVideoTooltip != null && nextVideoButtonHover) nextVideoTooltip.showTooltip();
 
@@ -1203,7 +1215,11 @@ public class ControlBarController implements Initializable {
             }
 
             if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
-            if(historyItem != null) previousVideoTooltip = new ControlTooltip(mainController,"PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
+            if(historyItem != null){
+                if(historyItem.getMediaItem().getCover() != null) previousVideoTooltip = new ControlTooltip(mainController,"PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
+                else previousVideoTooltip = new ControlTooltip(mainController,"PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), previousVideoButton, 0, true);
+
+            }
             if(previousVideoTooltip != null && previousVideoButtonHover) previousVideoTooltip.showTooltip();
         }
 

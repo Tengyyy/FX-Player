@@ -25,6 +25,8 @@ public class MetadataEditPage {
 
     MenuController menuController;
 
+    FileChooser fileChooser;
+
     SVGPath closeIconSVG = new SVGPath();
     SVGPath backIconSVG = new SVGPath();
     SVGPath editIconSVG = new SVGPath();
@@ -59,16 +61,23 @@ public class MetadataEditPage {
     public VBox textBox = new VBox();
 
     MenuObject menuObject = null;
+    EditImagePopUp editImagePopUp;
 
 
     public boolean changesMade = false;
 
 
+    boolean hasCover;
     Color newColor = null;
     Image newImage = null;
 
+
     MetadataEditPage(MenuController menuController){
         this.menuController = menuController;
+
+        fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose image");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Supported images", "*.jpg", ".jpeg", ".png"));
 
         editIconSVG.setContent(App.svgMap.get(SVG.EDIT));
 
@@ -177,12 +186,21 @@ public class MetadataEditPage {
         editImageButton.setOpacity(0);
         editImageButton.setCursor(Cursor.HAND);
 
-        editImageButton.setOnAction(e -> {
-            editImage();
-        });
 
         Platform.runLater(() -> {
             editImageTooltip = new ControlTooltip(menuController.mainController, "Edit image", editImageButton, 1000);
+
+            editImagePopUp = new EditImagePopUp(this);
+
+            editImageButton.setOnAction(e -> {
+
+                if(hasCover){
+                    editImagePopUp.showOptions(menuObject);
+                }
+                else {
+                    editImage();
+                }
+            });
         });
 
         content.setAlignment(Pos.TOP_CENTER);
@@ -202,11 +220,24 @@ public class MetadataEditPage {
         this.menuObject = menuObject;
 
 
-        imageView.setImage(menuObject.getMediaItem().getCover());
+        Color color;
 
-        Color color = menuObject.getMediaItem().getCoverBackgroundColor();
+        if(menuObject.getMediaItem().hasCover()){
+            hasCover = true;
+            imageView.setImage(menuObject.getMediaItem().getCover());
+            color = menuObject.getMediaItem().getCoverBackgroundColor();
+        }
+        else {
+            hasCover = false;
+            imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+            color = Color.rgb(64,64,64);
+        }
 
-        if(color != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
+        imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
+
+
+        //TODO: add the textboxes/textareas to edit metadata key-value fields
+
 
         menuController.metadataEditScroll.setVisible(true);
         menuController.metadataScroll.setVisible(false);
@@ -230,23 +261,23 @@ public class MetadataEditPage {
     }
 
     public void editImage(){
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose image");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Supported images", "*.jpg", ".jpeg", ".png"));
-
         File selectedFile = fileChooser.showOpenDialog(imageView.getScene().getWindow());
         if(selectedFile != null){
             changesMade = true;
+            hasCover = true;
             newImage = new Image(String.valueOf(selectedFile));
             imageView.setImage(newImage);
 
-            double aspectRatio = newImage.getWidth() / newImage.getHeight();
-            double realWidth = Math.min(imageView.getFitWidth(), imageView.getFitHeight() * aspectRatio);
-
-            newColor = Utilities.findDominantColor(newImage, realWidth < imageView.getFitWidth());
-
+            newColor = Utilities.findDominantColor(newImage);
             if(newColor != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + newColor.getRed() * 256 +  "," + newColor.getGreen() * 256 + "," + newColor.getBlue() * 256 + ",0.7);");
         }
+    }
 
+    public void removeImage(MenuObject menuObject){
+        changesMade = true;
+        newImage = null;
+        hasCover = false;
+        imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+        imageViewContainer.setStyle("-fx-background-color: rgba(64,64,64,0.7);");
     }
 }

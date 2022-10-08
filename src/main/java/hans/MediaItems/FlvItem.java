@@ -12,15 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class FlvItem implements MediaItem {
 
-    double frameRate = 30;
-    float frameDuration = (float) (1 / frameRate);
 
     File file;
     File subtitles;
@@ -30,10 +25,10 @@ public class FlvItem implements MediaItem {
 
 
     Image cover;
-    String title;
-    String artist;
+    Image placeholderCover;
 
     boolean hasVideo;
+    boolean hasCover;
     MainController mainController;
 
     Map<String, String> mediaInformation = new HashMap<>();
@@ -56,14 +51,15 @@ public class FlvItem implements MediaItem {
             if(hasVideo) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
-            frameRate = fFmpegFrameGrabber.getFrameRate();
-            frameDuration = (float) (1 / frameRate);
-
             for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
                 mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
             }
 
-            if(cover == null) cover = Utilities.grabRandomFrame(file);
+            hasCover = cover != null;
+            if(!hasCover && hasVideo) cover = Utilities.grabRandomFrame(file);
+            if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+
+            placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
 
 
             mediaDetails.put("size", Utilities.formatFileSize(file.length()));
@@ -104,7 +100,7 @@ public class FlvItem implements MediaItem {
 
     @Override
     public float getFrameDuration() {
-        return frameDuration;
+        return 0;
     }
 
     @Override
@@ -166,5 +162,25 @@ public class FlvItem implements MediaItem {
     @Override
     public boolean hasVideo() {
         return hasVideo;
+    }
+
+    @Override
+    public boolean hasCover() {
+        return hasCover;
+    }
+
+    @Override
+    public void setHasCover(boolean value) {
+        hasCover = value;
+    }
+
+    @Override
+    public Image getPlaceholderCover() {
+        return placeholderCover;
+    }
+
+    @Override
+    public void setPlaceHolderCover(Image image) {
+        placeholderCover = image;
     }
 }

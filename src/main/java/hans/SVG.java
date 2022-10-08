@@ -46,4 +46,5 @@ public enum SVG {
     COPY,
     EDIT,
     DETAILS,
+    IMAGE
 }

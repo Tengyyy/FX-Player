@@ -214,11 +214,18 @@ public class MetadataPage {
                 break;
         }
 
-        imageView.setImage(menuObject.getMediaItem().getCover());
+        Color color;
 
-        Color color = menuObject.getMediaItem().getCoverBackgroundColor();
+        if(menuObject.getMediaItem().getCover() != null){
+            imageView.setImage(menuObject.getMediaItem().getCover());
+            color = menuObject.getMediaItem().getCoverBackgroundColor();
+        }
+        else {
+            imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+            color = Color.rgb(64,64,64);
+        }
 
-        if(color != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
+        imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
 
         menuController.metadataScroll.setVisible(true);
         menuController.queueScroll.setVisible(false);

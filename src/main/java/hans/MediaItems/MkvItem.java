@@ -17,11 +17,10 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MkvItem implements MediaItem {
 
-    double frameRate = 30;
-    float frameDuration = (float) (1 / frameRate);
 
     File file;
     File subtitles;
@@ -31,8 +30,10 @@ public class MkvItem implements MediaItem {
 
 
     Image cover;
+    Image placeholderCover;
 
     boolean hasVideo;
+    boolean hasCover;
 
     MainController mainController;
 
@@ -53,8 +54,6 @@ public class MkvItem implements MediaItem {
             if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
-            frameRate = fFmpegFrameGrabber.getFrameRate();
-            frameDuration = (float) (1 / frameRate);
 
             for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
                 mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
@@ -96,7 +95,11 @@ public class MkvItem implements MediaItem {
             if(frame != null) cover = javaFXFrameConverter.convert(frame);
 
 
-            if(cover == null) cover = Utilities.grabRandomFrame(file);
+            hasCover = cover != null;
+            if(!hasCover && hasVideo) cover = Utilities.grabRandomFrame(file);
+            if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+
+            placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
 
 
             fFmpegFrameGrabber.stop();
@@ -110,7 +113,7 @@ public class MkvItem implements MediaItem {
 
     @Override
     public float getFrameDuration() {
-        return frameDuration;
+        return 0;
     }
 
     @Override
@@ -172,5 +175,25 @@ public class MkvItem implements MediaItem {
     @Override
     public boolean hasVideo() {
         return hasVideo;
+    }
+
+    @Override
+    public boolean hasCover() {
+        return hasCover;
+    }
+
+    @Override
+    public void setHasCover(boolean value) {
+        hasCover = value;
+    }
+
+    @Override
+    public Image getPlaceholderCover() {
+        return placeholderCover;
+    }
+
+    @Override
+    public void setPlaceHolderCover(Image image) {
+        placeholderCover = image;
     }
 }

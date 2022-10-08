@@ -110,7 +110,6 @@ public class ControlTooltip extends Tooltip {
         imageViewBackground.setMaxSize(160, 90);
 
         if(imageBackground != null) imageViewBackground.setStyle("-fx-background-color: rgba(" + imageBackground.getRed() * 256 + "," + imageBackground.getGreen() * 256 + "," + imageBackground.getBlue() * 256 + ", 0.7);");
-        else imageViewBackground.setStyle("-fx-background-color: rgba(0,0,0,0.7);");
 
         imageViewBackground.getChildren().addAll(imageView, durationLabel);
 

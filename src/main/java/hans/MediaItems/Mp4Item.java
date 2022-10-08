@@ -12,35 +12,23 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.*;
 
 
 public class Mp4Item implements MediaItem {
 
     File file;
 
-
     File subtitles;
     boolean subtitlesOn;
 
     Color backgroundColor = null;
 
-    // class to retrieve and edit movie information (apple tags)
-    MetadataEditor mediaMeta;
-
-    // technical details of the media object (TODO: separate audio and video)
-    double frameRate = 30;
-    float frameDuration = (float) (1 / frameRate);
-    double width;
-    double height;
 
     Duration duration;
 
     boolean hasVideo;
+    boolean hasCover;
 
     MainController mainController;
 
@@ -49,6 +37,7 @@ public class Mp4Item implements MediaItem {
     Map<String, String> mediaDetails = new HashMap<>();
 
     Image cover;
+    Image placeholderCover;
 
 
     public Mp4Item(File file, MainController mainController) {
@@ -66,8 +55,6 @@ public class Mp4Item implements MediaItem {
             if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
-            frameRate = fFmpegFrameGrabber.getFrameRate();
-            frameDuration = (float) (1 / frameRate);
 
             for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
                 mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
@@ -106,9 +93,13 @@ public class Mp4Item implements MediaItem {
             JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
             if(frame != null) cover = javaFXFrameConverter.convert(frame);
 
-            if(cover ==  null){
-                cover = Utilities.grabRandomFrame(file);
-            }
+            hasCover = cover != null;
+            if(!hasCover && hasVideo) cover = Utilities.grabRandomFrame(file);
+            if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+
+            if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));
+            else if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("21")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcastGraphic.png")).toExternalForm()));
+            else placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();
@@ -141,10 +132,30 @@ public class Mp4Item implements MediaItem {
         return hasVideo;
     }
 
+    @Override
+    public boolean hasCover() {
+        return hasCover;
+    }
+
+    @Override
+    public void setHasCover(boolean value) {
+        hasCover = value;
+    }
+
+    @Override
+    public Image getPlaceholderCover() {
+        return placeholderCover;
+    }
+
+    @Override
+    public void setPlaceHolderCover(Image image) {
+        placeholderCover = image;
+    }
+
 
     @Override
     public float getFrameDuration() {
-        return this.frameDuration;
+        return 0;
     }
 
     @Override

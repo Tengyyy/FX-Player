@@ -43,7 +43,7 @@ public class MediaInterface {
     // Variables to keep track of mediaplayer status:
     public BooleanProperty mediaActive = new SimpleBooleanProperty(false); // is the mediaplayer active (is any video currently loaded in)
     public BooleanProperty playing = new SimpleBooleanProperty(false); // is mediaplayer currently playing
-    boolean wasPlaying = false; // was mediaplayer playing before a seeking action occurred
+    public boolean wasPlaying = false; // was mediaplayer playing before a seeking action occurred
     public boolean atEnd = false; // is mediaplayer at the end of the video
     public boolean seekedToEnd = false; // true = video was seeked to the end; false = video naturally reached the end or the video is still playing
     ////////////////////////////////////////////////
@@ -243,30 +243,25 @@ public class MediaInterface {
             if(menuController.activeItem != null && !menuController.activeItem.subTextWrapper.getChildren().contains(menuController.activeItem.captionsPane)) menuController.activeItem.subTextWrapper.getChildren().add(0, menuController.activeItem.captionsPane);
         }
 
-
-
         mainController.videoTitleLabel.setText(menuObject.getTitle());
-
 
         controlBarController.durationSlider.setValue(0);
 
-
-        if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty() && controlBarController.nextVideoButtonEnabled){
-            controlBarController.disableNextVideoButton();
-        }
-        else if(menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1 && !controlBarController.nextVideoButtonEnabled){
-            controlBarController.enableNextVideoButton();
-        }
-
-
-        if((menuController.history.isEmpty() || menuController.historyBox.index == 0) && controlBarController.durationSlider.getValue() <= 5 && controlBarController.previousVideoButtonEnabled){
-            controlBarController.disablePreviousVideoButton();
-        }
-        else if(!menuController.history.isEmpty() && (menuController.historyBox.index == -1 || menuController.historyBox.index > 0) && !controlBarController.previousVideoButtonEnabled){
-            controlBarController.enablePreviousVideoButton();
-        }
-
         mainController.metadataButton.setOnAction(e -> menuObject.showMetadata());
+
+
+        if(!menuObject.getMediaItem().hasVideo()){
+            if(mainController.miniplayerActive){
+                if(menuObject.getMediaItem().hasCover()) mainController.miniplayer.miniplayerController.videoImageView.setImage(menuObject.getMediaItem().getCover());
+                else mainController.miniplayer.miniplayerController.videoImageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+            }
+            else {
+                if(menuObject.getMediaItem().hasCover()) mainController.videoImageView.setImage(menuObject.getMediaItem().getCover());
+                else mainController.videoImageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+            }
+        }
+
+        controlBarController.updateButtonState();
 
 
         embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());
@@ -275,8 +270,7 @@ public class MediaInterface {
     }
 
 
-
-    public void resetMediaPlayer(){
+    public void resetMediaPlayer(boolean disableButtons){
 
         mainController.videoImageView.setImage(null);
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
@@ -297,13 +291,16 @@ public class MediaInterface {
 
         mainController.sliderHoverPreview.setImage(null);
 
+        if(disableButtons){
+            controlBarController.disablePreviousVideoButton();
+            controlBarController.disableNextVideoButton();
+        }
+
         try {
             fFmpegFrameGrabber.close();
         } catch (FrameGrabber.Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 

@@ -4,6 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -30,13 +32,15 @@ public class MetadataEditPage {
     SVGPath closeIconSVG = new SVGPath();
     SVGPath backIconSVG = new SVGPath();
     SVGPath editIconSVG = new SVGPath();
+    SVGPath saveIconSVG = new SVGPath();
 
     StackPane closeButtonBar = new StackPane();
     StackPane closeButtonPane = new StackPane();
 
     StackPane footerPane = new StackPane();
 
-    JFXButton applyButton = new JFXButton();
+    JFXButton saveButton = new JFXButton();
+    Region saveIcon = new Region();
 
     JFXButton cancelButton = new JFXButton();
 
@@ -64,7 +68,7 @@ public class MetadataEditPage {
     EditImagePopUp editImagePopUp;
 
 
-    public boolean changesMade = false;
+    public BooleanProperty changesMade = new SimpleBooleanProperty(false);
 
 
     boolean hasCover;
@@ -80,6 +84,7 @@ public class MetadataEditPage {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Supported images", "*.jpg", ".jpeg", ".png"));
 
         editIconSVG.setContent(App.svgMap.get(SVG.EDIT));
+        saveIconSVG.setContent(App.svgMap.get(SVG.SAVE));
 
         backIconSVG.setContent(App.svgMap.get(SVG.ARROW_LEFT));
         backIcon.setShape(backIconSVG);
@@ -213,7 +218,44 @@ public class MetadataEditPage {
         textBox.setPadding(new Insets(0, 15, 0, 15));
         textBox.setSpacing(10);
 
-        footerPane.getChildren().addAll(cancelButton, applyButton);
+        footerPane.getChildren().addAll(cancelButton, saveButton);
+
+        saveButton.setRipplerFill(Color.WHITE);
+        saveButton.setText("Save changes");
+        saveButton.getStyleClass().add("mainButton");
+        saveButton.setGraphicTextGap(7);
+        saveButton.setPadding(new Insets(8, 10, 8, 8));
+        saveButton.setCursor(Cursor.HAND);
+        saveButton.setDisable(true);
+
+        changesMade.addListener((observableValue, oldValue, newValue) -> {
+            saveButton.setDisable(!newValue);
+        });
+
+        saveButton.setOnAction(e -> saveChanges());
+
+        saveIcon.setShape(saveIconSVG);
+        saveIcon.getStyleClass().add("menuIcon");
+        saveIcon.setPrefSize(18, 18);
+        saveIcon.setMaxSize(18, 18);
+
+        saveButton.setGraphic(saveIcon);
+        StackPane.setMargin(saveButton, new Insets(20, 20, 10, 0));
+        StackPane.setAlignment(saveButton, Pos.CENTER_RIGHT);
+
+        cancelButton.setRipplerFill(Color.WHITE);
+        cancelButton.setCursor(Cursor.HAND);
+        cancelButton.setText("Cancel");
+        StackPane.setAlignment(cancelButton, Pos.CENTER_LEFT);
+        cancelButton.getStyleClass().add("secondaryButton");
+
+        StackPane.setMargin(cancelButton, new Insets(20, 0, 10, 20));
+        cancelButton.setPadding(new Insets(8, 10, 8, 10));
+
+        cancelButton.setOnAction(e -> {
+            exitMetadataEditPage();
+        });
+
     }
 
     public void enterMetadataEditPage(MenuObject menuObject){
@@ -252,7 +294,7 @@ public class MetadataEditPage {
         menuController.metadataEditScroll.setVisible(false);
         menuController.metadataScroll.setVisible(true);
 
-        changesMade = false;
+        changesMade.set(false);
         textBox.getChildren().clear();
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");
@@ -263,7 +305,7 @@ public class MetadataEditPage {
     public void editImage(){
         File selectedFile = fileChooser.showOpenDialog(imageView.getScene().getWindow());
         if(selectedFile != null){
-            changesMade = true;
+            changesMade.set(true);
             hasCover = true;
             newImage = new Image(String.valueOf(selectedFile));
             imageView.setImage(newImage);
@@ -274,10 +316,15 @@ public class MetadataEditPage {
     }
 
     public void removeImage(MenuObject menuObject){
-        changesMade = true;
+        changesMade.set(true);
         newImage = null;
         hasCover = false;
         imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
         imageViewContainer.setStyle("-fx-background-color: rgba(64,64,64,0.7);");
     }
+
+    public void saveChanges(){
+        changesMade.set(false);
+    }
+
 }

@@ -52,6 +52,7 @@ public class QueueBox extends VBox {
         this.setOnDragDropped(this::handleDragDropped);
         this.setOnDragExited(e -> handleDragExited());
 
+
         this.setOnMouseDragOver((e) -> {
             if(dragActive){
                 // update draggedNode translateY
@@ -218,8 +219,7 @@ public class QueueBox extends VBox {
         menuController.animationsInProgress.add(parallelTransition);
         parallelTransition.playFromStart();
 
-        if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
-        else menuController.controlBarController.updateNextAndPrevTooltips();
+        menuController.controlBarController.enableNextVideoButton();
     }
 
     public void addRand(QueueItem child){
@@ -244,18 +244,17 @@ public class QueueBox extends VBox {
         FadeTransition fadeTransition = AnimationsClass.fadeIn(child);
         fadeTransition.playFromStart();
 
-        if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
-        else menuController.controlBarController.updateNextAndPrevTooltips();
+        menuController.controlBarController.enableNextVideoButton();
 
     }
 
-    public void remove(QueueItem child){
+    public void remove(QueueItem child, boolean updateTooltip){
         if(menuController.queue.contains(child)){
-            this.remove(menuController.queue.indexOf(child));
+            this.remove(menuController.queue.indexOf(child), updateTooltip);
         }
     }
 
-    public void remove(int index){
+    public void remove(int index, boolean updateTooltip){
 
         cancelDragAndDrop();
 
@@ -298,15 +297,17 @@ public class QueueBox extends VBox {
 
             // decrease max height by 50, apply translate of -50 to all nodes below the one that will be removed and on end actually remove the node and reset translate
 
-            if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
-                if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.disableNextVideoButton();
+            if(updateTooltip) {
+                if ((menuController.historyBox.index == -1 || menuController.historyBox.index == menuController.history.size() - 1) && menuController.queue.isEmpty()) {
+                    if (menuController.controlBarController.nextVideoButtonEnabled)
+                        menuController.controlBarController.disableNextVideoButton();
+                } else menuController.controlBarController.enableNextVideoButton();
             }
-            else if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
         }
     }
 
     //TODO: implement Collections.rotate instead of removing and adding
-    public void removeAndMove(int index){
+    public void removeAndMove(int index, boolean updateTooltip){
 
         cancelDragAndDrop();
 
@@ -315,7 +316,7 @@ public class QueueBox extends VBox {
         // removes item at index from the queuebox, moves all previous items to the bottom
         if(index < 0 || index >= getChildren().size()) return;
         if(index ==0){
-            remove(index);
+            remove(index, updateTooltip);
             return;
         }
 
@@ -377,11 +378,12 @@ public class QueueBox extends VBox {
         menuController.animationsInProgress.add(parallelFadeOut);
         parallelFadeOut.playFromStart();
 
-        if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
-            if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.disableNextVideoButton();
+        if(updateTooltip) {
+            if ((menuController.historyBox.index == -1 || menuController.historyBox.index == menuController.history.size() - 1) && menuController.queue.isEmpty()) {
+                if (menuController.controlBarController.nextVideoButtonEnabled)
+                    menuController.controlBarController.disableNextVideoButton();
+            } else menuController.controlBarController.enableNextVideoButton();
         }
-        else if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
-
 
     }
 
@@ -482,8 +484,7 @@ public class QueueBox extends VBox {
         parallelTransition.playFromStart();
 
 
-        if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
-        else menuController.controlBarController.updateNextAndPrevTooltips();
+        menuController.controlBarController.enableNextVideoButton();
     }
 
     public void addAll(int index, Collection<? extends QueueItem> collection) {
@@ -536,8 +537,7 @@ public class QueueBox extends VBox {
         menuController.animationsInProgress.add(parallelTransition);
         parallelTransition.playFromStart();
 
-        if(!menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.enableNextVideoButton();
-        else menuController.controlBarController.updateNextAndPrevTooltips();
+        menuController.controlBarController.enableNextVideoButton();
     }
 
     public void clear(){
@@ -662,7 +662,7 @@ public class QueueBox extends VBox {
         menuController.animationsInProgress.add(fadeTransition);
         fadeTransition.playFromStart();
 
-        if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
+        menuController.controlBarController.enableNextVideoButton();
     }
 
 
@@ -707,7 +707,7 @@ public class QueueBox extends VBox {
         menuController.animationsInProgress.add(parallelFadeOut);
         parallelFadeOut.playFromStart();
 
-        if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
+        menuController.controlBarController.enableNextVideoButton();
 
     }
 
@@ -832,7 +832,7 @@ public class QueueBox extends VBox {
                 menuController.queue.add(draggedNode.newPosition, draggedNode);
                 getChildren().add(draggedNode.newPosition, draggedNode);
 
-                if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.updateNextAndPrevTooltips();
+                menuController.controlBarController.enableNextVideoButton();
 
             }
 

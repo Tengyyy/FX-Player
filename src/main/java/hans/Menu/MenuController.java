@@ -509,7 +509,7 @@ public class MenuController implements Initializable {
                         for(QueueItem queueItem : queue){
                             queueItem.setTranslateY(0);
                         }
-                        if(controlBarController.nextVideoButtonEnabled) controlBarController.updateNextAndPrevTooltips();
+                        controlBarController.enableNextVideoButton();
                     }
 
                     queueBox.dragAnimationsInProgress.remove(translateTransition);
@@ -556,7 +556,7 @@ public class MenuController implements Initializable {
                             queueItem.setTranslateY(0);
                         }
 
-                        if(controlBarController.nextVideoButtonEnabled) controlBarController.updateNextAndPrevTooltips();
+                        controlBarController.enableNextVideoButton();
 
                     }
 

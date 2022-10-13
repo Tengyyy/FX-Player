@@ -325,7 +325,7 @@ public class AnimationsClass {
             menuController.metadataEditPage.textBox.getChildren().clear();
             menuController.metadataEditPage.imageView.setImage(null);
             menuController.metadataEditPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
-            menuController.metadataEditPage.changesMade = false;
+            menuController.metadataEditPage.changesMade.set(false);
             menuController.technicalDetailsPage.textBox.getChildren().clear();
             menuController.technicalDetailsPage.imageView.setImage(null);
             menuController.technicalDetailsPage.imageViewContainer.setStyle("-fx-background-color: transparent;");

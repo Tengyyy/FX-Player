@@ -328,7 +328,10 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         playButton.setOnAction((e) -> {
             if(mediaInterface.atEnd) mediaInterface.replay();
-            else if (mediaInterface.playing.get()) mediaInterface.pause();
+            else if (mediaInterface.playing.get()){
+                mediaInterface.wasPlaying = false;
+                mediaInterface.pause();
+            }
             else mediaInterface.play();
         });
 
@@ -361,7 +364,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
             if(menuController.historyBox.index != -1) menuController.history.get(menuController.historyBox.index).setInactive();
 
-            mediaInterface.resetMediaPlayer();
+            mediaInterface.resetMediaPlayer(false);
             activeBox.clear();
         }
     }
@@ -388,11 +391,14 @@ public class ActiveItem extends GridPane implements MenuObject {
             historyItem.setInactive();
         }
 
-        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer();
+        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer(true);
+        else {
+            menuController.controlBarController.disablePreviousVideoButton();
+            menuController.controlBarController.disableNextVideoButton();
+        }
         activeBox.set(this, true);
 
 
-        menuController.controlBarController.updateNextAndPrevTooltips();
     }
 
 
@@ -464,4 +470,10 @@ public class ActiveItem extends GridPane implements MenuObject {
     public String getTitle() {
         return videoTitle.getText();
     }
+
+    @Override
+    public boolean getHover() {
+        return mouseHover;
+    }
+
 }

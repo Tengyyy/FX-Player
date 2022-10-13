@@ -281,7 +281,7 @@
 }
 
 
-#editButton {
+.mainButton {
     -fx-background-color: rgb(237, 64, 64);
     -fx-background-radius: 3;
     -fx-text-fill: white;
@@ -289,7 +289,7 @@
     -fx-font-family: "Roboto Regular";
 }
 
-#detailsButton {
+.secondaryButton {
     -fx-background-radius: 3;
     -fx-text-fill: white;
     -fx-font-size: 15;
@@ -299,7 +299,7 @@
     -fx-border-radius: 3;
 }
 
-#detailsButton:hover {
+.secondaryButton:hover {
     -fx-background-color: rgba(50, 50, 50, 0.7);
 }
 

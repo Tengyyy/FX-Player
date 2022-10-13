@@ -2,17 +2,21 @@ package hans.Menu;
 
 import hans.App;
 import hans.SVG;
+import hans.Shell32Util;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 public class MenuItemOptionsPopUp extends ContextMenu {
@@ -21,17 +25,30 @@ public class MenuItemOptionsPopUp extends ContextMenu {
 
     MenuItem playNext = new MenuItem("Play next");
     MenuItem metadata = new MenuItem("Media information");
-    MenuItem addSubtitles = new MenuItem("Add subtitles");
+    MenuItem addSubtitles = new MenuItem("Add external subtitles");
+    MenuItem openFileLocation = new MenuItem("Open file in location");
 
     double buttonWidth;
-    final double popUpWidth = 191; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
+    final double popUpWidth = 214; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
 
     Node menuObjectNode;
 
     FadeTransition showTransition, hideTransition;
 
-    SVGPath playNextPath = new SVGPath(), metadataPath = new SVGPath(), addSubtitlesPath = new SVGPath();
-    Region playNextIcon = new Region(), metadataIcon = new Region(), addSubtitlesIcon = new Region();
+    SVGPath playNextPath = new SVGPath(), metadataPath = new SVGPath(), addSubtitlesPath = new SVGPath(), folderPath = new SVGPath();
+    Region playNextIcon = new Region(), metadataIcon = new Region(), addSubtitlesIcon = new Region(), folderIcon = new Region();
+
+
+    //TODO: finish this
+    MenuItemOptionsPopUp(HistoryItem historyItem){
+
+    }
+    MenuItemOptionsPopUp(ActiveItem activeItem){
+
+    }
+    MenuItemOptionsPopUp(QueueItem queueItem){
+
+    }
 
 
     MenuItemOptionsPopUp(MenuObject menuObject){
@@ -79,11 +96,18 @@ public class MenuItemOptionsPopUp extends ContextMenu {
         addSubtitles.setOnAction((e) -> openSubtitleChooser());
 
 
+        folderPath.setContent(App.svgMap.get(SVG.FOLDER));
+        folderIcon.setShape(folderPath);
+        folderIcon.getStyleClass().add("icon");
+        folderIcon.setPrefSize(20, 20);
+        folderIcon.setMaxSize(20, 20);
+
+        openFileLocation.setGraphic(folderIcon);
+        openFileLocation.getStyleClass().add("popUpItem");
+        openFileLocation.setOnAction((e) -> openFileLocation(menuObject.getMediaItem().getMediaDetails().get("path")));
 
 
-        this.getItems().add(playNext);
-        this.getItems().add(metadata);
-        this.getItems().add(addSubtitles);
+        this.getItems().addAll(playNext, metadata, addSubtitles, openFileLocation);
 
         buttonWidth = menuObject.getOptionsButton().getWidth();
 
@@ -112,12 +136,18 @@ public class MenuItemOptionsPopUp extends ContextMenu {
         showTransition.playFromStart();
 
         menuObject.getMenuController().activeMenuItemOptionsPopUp = this;
-        
+
     }
 
     @Override
     public void hide() {
 
+        if(!menuObject.getHover()){
+            GridPane gridPane = (GridPane) menuObject;
+
+            if (isActive.get()) gridPane.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+            else gridPane.setStyle("-fx-background-color: transparent;");
+        }
 
         if(showTransition != null && showTransition.getStatus() == Animation.Status.RUNNING) showTransition.stop();
 
@@ -139,6 +169,30 @@ public class MenuItemOptionsPopUp extends ContextMenu {
 
         if(selectedFile != null){
             menuObject.addSubtitles(selectedFile);
+        }
+    }
+
+
+    public void openFileLocation(String path){
+        String os = System.getProperty("os.name");
+
+        if(os.toLowerCase().contains("windows")){
+            Shell32Util.SHOpenFolderAndSelectItems(new File(path));
+        }
+        else if(Desktop.isDesktopSupported()){
+            Desktop desktop = Desktop.getDesktop();
+            File file = new File(path);
+
+            if(desktop.isSupported(Desktop.Action.BROWSE_FILE_DIR)){
+                desktop.browseFileDirectory(new File(path));
+            }
+            else if(desktop.isSupported(Desktop.Action.OPEN)){
+                try {
+                    desktop.open(file.getParentFile());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
     }
 

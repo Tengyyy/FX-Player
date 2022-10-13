@@ -285,7 +285,7 @@ public class HistoryItem extends GridPane implements MenuObject {
         this.setOnMouseEntered((e) -> {
             mouseHover = true;
 
-            // hide the bouncing columns thingy and stop animation
+
             if(!isActive.get()) playIcon.setVisible(true);
 
             this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
@@ -296,11 +296,13 @@ public class HistoryItem extends GridPane implements MenuObject {
         this.setOnMouseExited((e) -> {
             mouseHover = false;
 
-            // show bouncing columns and start animation
-            if(!isActive.get()) playIcon.setVisible(false);
+            if(!optionsPopUp.isShowing()) {
+                // show bouncing columns and start animation
+                if (!isActive.get()) playIcon.setVisible(false);
 
-            if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-            else this.setStyle("-fx-background-color: transparent;");
+                if (isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+                else this.setStyle("-fx-background-color: transparent;");
+            }
         });
 
 
@@ -373,13 +375,19 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         ActiveItem newActive = new ActiveItem(this.getMediaItem(), menuController, mediaInterface, menuController.activeBox);
 
-        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer();
+        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer(true);
+        else {
+            menuController.controlBarController.disablePreviousVideoButton();
+            menuController.controlBarController.disableNextVideoButton();
+        }
 
         menuController.activeBox.set(newActive, true);
 
         this.setActive();
 
-        menuController.controlBarController.updateNextAndPrevTooltips();
+        if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
+            if(menuController.controlBarController.nextVideoButtonEnabled) menuController.controlBarController.disableNextVideoButton();
+        }
 
     }
 
@@ -437,4 +445,10 @@ public class HistoryItem extends GridPane implements MenuObject {
     public String getTitle() {
         return videoTitle.getText();
     }
+
+    @Override
+    public boolean getHover() {
+        return mouseHover;
+    }
+
 }

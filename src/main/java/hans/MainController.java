@@ -471,7 +471,7 @@ public class MainController implements Initializable {
         }
 
 
-        if(menuController.menuState == MenuState.METADATA_OPEN || menuController.menuState == MenuState.QUEUE_OPEN || menuController.menuState == MenuState.TECHNICAL_DETAILS_OPEN || (menuController.menuState == MenuState.METADATA_EDIT_OPEN && !menuController.metadataEditPage.changesMade)){
+        if(menuController.menuState == MenuState.METADATA_OPEN || menuController.menuState == MenuState.QUEUE_OPEN || menuController.menuState == MenuState.TECHNICAL_DETAILS_OPEN || (menuController.menuState == MenuState.METADATA_EDIT_OPEN && !menuController.metadataEditPage.changesMade.get())){
             menuController.closeMenu();
         }
         else if (settingsController.settingsState != SettingsState.CLOSED) {
@@ -523,7 +523,7 @@ public class MainController implements Initializable {
 
     public void handleDragEntered(DragEvent e){
         File file = e.getDragboard().getFiles().get(0);
-        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3")) return;
+        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3") && !Utilities.getFileExtension(file).equals("wav") && !Utilities.getFileExtension(file).equals("mov") && !Utilities.getFileExtension(file).equals("mkv")&& !Utilities.getFileExtension(file).equals("flv") && !Utilities.getFileExtension(file).equals("flac")&& !Utilities.getFileExtension(file).equals("avi")) return;
 
 
         actionIndicator.setIcon(PLUS);
@@ -542,7 +542,7 @@ public class MainController implements Initializable {
 
     public void handleDragOver(DragEvent e){
         File file = e.getDragboard().getFiles().get(0);
-        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3")) return;
+        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3") && !Utilities.getFileExtension(file).equals("wav") && !Utilities.getFileExtension(file).equals("mov") && !Utilities.getFileExtension(file).equals("mkv")&& !Utilities.getFileExtension(file).equals("flv") && !Utilities.getFileExtension(file).equals("flac")&& !Utilities.getFileExtension(file).equals("avi")) return;
 
         e.acceptTransferModes(TransferMode.COPY);
     }

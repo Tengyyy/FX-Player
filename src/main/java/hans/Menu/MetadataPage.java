@@ -151,7 +151,7 @@ public class MetadataPage {
 
         editButton.setRipplerFill(Color.WHITE);
         editButton.setText("Edit metadata");
-        editButton.setId("editButton");
+        editButton.getStyleClass().add("mainButton");
         editButton.setGraphicTextGap(7);
         editButton.setPadding(new Insets(8, 10, 8, 8));
         editButton.setCursor(Cursor.HAND);
@@ -173,7 +173,7 @@ public class MetadataPage {
         detailsButton.setCursor(Cursor.HAND);
         detailsButton.setText("Technical details");
         StackPane.setAlignment(detailsButton, Pos.CENTER_LEFT);
-        detailsButton.setId("detailsButton");
+        detailsButton.getStyleClass().add("secondaryButton");
         StackPane.setMargin(detailsButton, new Insets(20, 0, 10, 20));
         detailsButton.setPadding(new Insets(8, 10, 8, 8));
 

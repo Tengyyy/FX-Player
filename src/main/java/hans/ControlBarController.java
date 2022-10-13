@@ -1185,44 +1185,26 @@ public class ControlBarController implements Initializable {
         if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disableNextVideoButton();
 
         nextVideoButton.setOnMouseEntered(null);
-        if (nextVideoButtonHover && nextVideoTooltip != null) nextVideoTooltip.hide();
+        if (nextVideoTooltip != null){
+            nextVideoTooltip.hide();
+        }
     }
 
-    public void updateNextAndPrevTooltips(){
-        if((menuController.historyBox.index == menuController.history.size() -1 || menuController.historyBox.index == -1) && !menuController.queue.isEmpty()){
-            QueueItem queueItem = menuController.queue.get(0);
-            if(nextVideoTooltip != null && nextVideoTooltip.isShowing()) nextVideoTooltip.hide();
-            if(queueItem.getMediaItem().getCover() != null) nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getCover(), queueItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
-            else nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", queueItem.videoTitle.getText(), queueItem.duration.getText(), queueItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), nextVideoButton, 0, true);
+    public void updateButtonState(){
+        if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
+            disableNextVideoButton();
         }
-        else if(menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1 && !menuController.history.isEmpty()){
-            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index + 1);
-            if(nextVideoTooltip != null && nextVideoTooltip.isShowing()) nextVideoTooltip.hide();
-            if(historyItem.getMediaItem().getCover() != null) nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), nextVideoButton, 0, true);
-            else nextVideoTooltip = new ControlTooltip(mainController,"NEXT (SHIFT+N)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), nextVideoButton, 0, true);
-
-        }
-        if(nextVideoTooltip != null && nextVideoButtonHover) nextVideoTooltip.showTooltip();
-
-        if(!menuController.history.isEmpty()){
-            HistoryItem historyItem = null;
-
-            if(menuController.historyBox.index == -1){
-                historyItem = menuController.history.get(menuController.history.size() -1);
-            }
-            else if(menuController.historyBox.index > 0){
-                historyItem = menuController.history.get(menuController.historyBox.index -1);
-            }
-
-            if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
-            if(historyItem != null){
-                if(historyItem.getMediaItem().getCover() != null) previousVideoTooltip = new ControlTooltip(mainController,"PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getCover(), historyItem.getMediaItem().getCoverBackgroundColor(), previousVideoButton, 0, true);
-                else previousVideoTooltip = new ControlTooltip(mainController,"PREVIOUS (SHIFT+P)", historyItem.videoTitle.getText(), historyItem.duration.getText(), historyItem.getMediaItem().getPlaceholderCover(), Color.rgb(64,64,64), previousVideoButton, 0, true);
-
-            }
-            if(previousVideoTooltip != null && previousVideoButtonHover) previousVideoTooltip.showTooltip();
+        else {
+            enableNextVideoButton();
         }
 
+
+        if((menuController.history.isEmpty() || menuController.historyBox.index == 0) && durationSlider.getValue() <= 5){
+            disablePreviousVideoButton();
+        }
+        else {
+            enablePreviousVideoButton();
+        }
     }
 
 }

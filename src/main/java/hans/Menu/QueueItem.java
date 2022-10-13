@@ -380,7 +380,7 @@ public class QueueItem extends GridPane implements MenuObject {
 
             if(!menuController.animationsInProgress.isEmpty()) return;
 
-            queueBox.remove(this);
+            queueBox.remove(this, true);
 
         });
 
@@ -412,18 +412,21 @@ public class QueueItem extends GridPane implements MenuObject {
 
         ActiveItem activeItem = new ActiveItem(getMediaItem(), menuController, mediaInterface, menuController.activeBox);
 
-        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer();
+        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer(true);
+        else {
+            menuController.controlBarController.disablePreviousVideoButton();
+            menuController.controlBarController.disableNextVideoButton();
+        }
 
         menuController.activeBox.set(activeItem, true);
 
         if(menuController.settingsController.playbackOptionsController.shuffleOn || menuController.queue.indexOf(this) == menuController.queue.size() -1){
-            queueBox.remove(this);
+            queueBox.remove(this, false);
         }
         else {
-            queueBox.removeAndMove(queueBox.getChildren().indexOf(this));
+            queueBox.removeAndMove(queueBox.getChildren().indexOf(this), false);
         }
 
-        menuController.controlBarController.updateNextAndPrevTooltips();
     }
 
     @Override
@@ -451,6 +454,12 @@ public class QueueItem extends GridPane implements MenuObject {
     public String getTitle() {
         return videoTitle.getText();
     }
+
+    @Override
+    public boolean getHover() {
+        return mouseHover;
+    }
+
 
     @Override
     public void playNext(){

@@ -274,10 +274,11 @@ public class QueueItem extends GridPane implements MenuObject {
         });
 
         this.setOnMouseClicked(e -> {
-            if(optionsPopUp.isShowing()) optionsPopUp.hide();
 
             if(!menuController.animationsInProgress.isEmpty()) return;
-            if(e.getButton() == MouseButton.PRIMARY) play(true);
+
+            if(optionsPopUp.isShowing()) optionsPopUp.hide();
+            else if(e.getButton() == MouseButton.PRIMARY) play(true);
         });
 
         this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
@@ -360,7 +361,7 @@ public class QueueItem extends GridPane implements MenuObject {
             mouseHover = false;
 
 
-            if(!queueBox.dragActive){
+            if(!queueBox.dragActive && !optionsPopUp.showing){
                 this.setStyle("-fx-background-color: transparent;");
 
                 indexLabel.setVisible(true);
@@ -380,7 +381,8 @@ public class QueueItem extends GridPane implements MenuObject {
 
             if(!menuController.animationsInProgress.isEmpty()) return;
 
-            queueBox.remove(this, true);
+            if(optionsPopUp.showing) optionsPopUp.hide();
+            else queueBox.remove(this, true);
 
         });
 

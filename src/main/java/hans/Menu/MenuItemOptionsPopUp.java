@@ -38,22 +38,18 @@ public class MenuItemOptionsPopUp extends ContextMenu {
     SVGPath playNextPath = new SVGPath(), metadataPath = new SVGPath(), addSubtitlesPath = new SVGPath(), folderPath = new SVGPath();
     Region playNextIcon = new Region(), metadataIcon = new Region(), addSubtitlesIcon = new Region(), folderIcon = new Region();
 
-
-    //TODO: finish this
-    MenuItemOptionsPopUp(HistoryItem historyItem){
-
-    }
-    MenuItemOptionsPopUp(ActiveItem activeItem){
-
-    }
-    MenuItemOptionsPopUp(QueueItem queueItem){
-
-    }
-
+    boolean isHistoryItem = false;
+    boolean isActiveItem = false;
+    boolean showing = false;
 
     MenuItemOptionsPopUp(MenuObject menuObject){
 
         this.menuObject = menuObject;
+
+
+        if (menuObject instanceof HistoryItem) isHistoryItem = true;
+        else if(menuObject instanceof ActiveItem) isActiveItem = true;
+
 
         menuObjectNode = (Node) menuObject;
 
@@ -130,6 +126,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
         this.getStyleableNode().setOpacity(0);
 
         super.show(node, v, v1);
+        showing = true;
         showTransition = new FadeTransition(Duration.millis(150), this.getStyleableNode());
         showTransition.setFromValue(0);
         showTransition.setToValue(1);
@@ -142,11 +139,22 @@ public class MenuItemOptionsPopUp extends ContextMenu {
     @Override
     public void hide() {
 
-        if(!menuObject.getHover()){
-            GridPane gridPane = (GridPane) menuObject;
+        showing = false;
 
-            if (isActive.get()) gridPane.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-            else gridPane.setStyle("-fx-background-color: transparent;");
+        if(!menuObject.getHover()){
+            if(isHistoryItem){
+                HistoryItem historyItem = (HistoryItem) menuObject;
+                if (historyItem.isActive.get()) menuObjectNode.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+                else menuObjectNode.setStyle("-fx-background-color: transparent;");
+            }
+            else if(isActiveItem){
+                ActiveItem activeItem = (ActiveItem) menuObject;
+                activeItem.playIcon.setVisible(false);
+                activeItem.iconBackground.setVisible(false);
+
+                activeItem.setStyle("-fx-background-color: transparent;");
+            }
+            else menuObjectNode.setStyle("-fx-background-color: transparent;");
         }
 
         if(showTransition != null && showTransition.getStatus() == Animation.Status.RUNNING) showTransition.stop();

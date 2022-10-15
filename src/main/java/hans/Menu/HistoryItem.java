@@ -255,10 +255,10 @@ public class HistoryItem extends GridPane implements MenuObject {
         });
 
         this.setOnMouseClicked(e -> {
-            if(optionsPopUp.isShowing()) optionsPopUp.hide();
-
             if(!menuController.animationsInProgress.isEmpty()) return;
-            if(!this.isActive.get() && e.getButton() == MouseButton.PRIMARY) play();
+
+            if(optionsPopUp.isShowing()) optionsPopUp.hide();
+            else if(!this.isActive.get() && e.getButton() == MouseButton.PRIMARY) play();
         });
 
         this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
@@ -296,7 +296,7 @@ public class HistoryItem extends GridPane implements MenuObject {
         this.setOnMouseExited((e) -> {
             mouseHover = false;
 
-            if(!optionsPopUp.isShowing()) {
+            if(!optionsPopUp.showing) {
                 // show bouncing columns and start animation
                 if (!isActive.get()) playIcon.setVisible(false);
 

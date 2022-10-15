@@ -57,6 +57,7 @@ public class ActiveItem extends GridPane implements MenuObject {
     StackPane playButtonWrapper = new StackPane();
     StackPane removeButtonWrapper = new StackPane();
     StackPane optionsButtonWrapper = new StackPane();
+    StackPane iconBackground;
 
     public StackPane captionsPane;
 
@@ -140,7 +141,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
 
 
-        StackPane iconBackground = new StackPane();
+        iconBackground = new StackPane();
         iconBackground.setPrefSize(125, 70);
         iconBackground.setMaxSize(125, 70);
 
@@ -307,10 +308,12 @@ public class ActiveItem extends GridPane implements MenuObject {
             mouseHover = false;
 
             // show bouncing columns and start animation
-            playIcon.setVisible(false);
-            iconBackground.setVisible(false);
+            if(!optionsPopUp.showing) {
+                playIcon.setVisible(false);
+                iconBackground.setVisible(false);
 
-            this.setStyle("-fx-background-color: transparent;");
+                this.setStyle("-fx-background-color: transparent;");
+            }
 
         });
 
@@ -327,7 +330,9 @@ public class ActiveItem extends GridPane implements MenuObject {
         });
 
         playButton.setOnAction((e) -> {
-            if(mediaInterface.atEnd) mediaInterface.replay();
+
+            if(optionsPopUp.showing) optionsPopUp.hide();
+            else if(mediaInterface.atEnd) mediaInterface.replay();
             else if (mediaInterface.playing.get()){
                 mediaInterface.wasPlaying = false;
                 mediaInterface.pause();
@@ -343,7 +348,10 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
 
-        removeButton.setOnAction((e) -> remove());
+        removeButton.setOnAction((e) -> {
+            if(optionsPopUp.showing) optionsPopUp.hide();
+            else remove();
+        });
 
     }
 

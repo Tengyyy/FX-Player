@@ -2,6 +2,9 @@ package hans.Menu;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
+import hans.MediaItems.MediaItem;
+import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -10,18 +13,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.util.Map;
 
 public class MetadataEditPage {
 
@@ -157,7 +159,6 @@ public class MetadataEditPage {
         imageViewContainer.setOnMouseExited(e -> {
             AnimationsClass.fadeAnimation(200, imageFilter, imageFilter.getOpacity(), 0, false, 1, true);
             AnimationsClass.fadeAnimation(200, editImageIcon, editImageIcon.getOpacity(), 0, false, 1, true);
-
         });
 
         imageView.setMouseTransparent(true);
@@ -190,7 +191,6 @@ public class MetadataEditPage {
         editImageButton.setId("editImageButton");
         editImageButton.setOpacity(0);
         editImageButton.setCursor(Cursor.HAND);
-
 
         Platform.runLater(() -> {
             editImageTooltip = new ControlTooltip(menuController.mainController, "Edit image", editImageButton, 1000);
@@ -278,7 +278,23 @@ public class MetadataEditPage {
         imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
 
 
-        //TODO: add the textboxes/textareas to edit metadata key-value fields
+        String extension = Utilities.getFileExtension(menuObject.getMediaItem().getFile());
+
+        switch (extension) {
+            case "mp4":
+            case "mov":
+                createMp4(menuObject.getMediaItem());
+                break;
+            case "mp3":
+                //createMp3(menuObject.getMediaItem());
+                break;
+            case "avi":
+                //createAvi(menuObject.getMediaItem());
+                break;
+            default:
+                //createOther(menuObject.getMediaItem());
+                break;
+        }
 
 
         menuController.metadataEditScroll.setVisible(true);
@@ -325,6 +341,186 @@ public class MetadataEditPage {
 
     public void saveChanges(){
         changesMade.set(false);
+        //TODO: actually make this functional
+
+    }
+
+    private void createMp4(MediaItem mediaItem){
+        if(mediaItem.getMediaInformation() != null){
+            Map<String, String> metadata = mediaItem.getMediaInformation();
+
+            createTextArea("Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "");
+            MFXComboBox<String> comboBox = createComboBox("Music video", "Movie", "TV Show", "Podcast", "Home video");
+
+            if(metadata.containsKey("media_type")){
+                if(metadata.get("media_type").equals("10")){
+                    // TV Show fields
+                    createTextArea("Series title", metadata.containsKey("show") && !metadata.get("show").trim().isEmpty() ? metadata.get("show") : "");
+                    createTextField("Season number", metadata.containsKey("season_number") && !metadata.get("season_number").trim().isEmpty() ? metadata.get("season_number") : "");
+                    createTextField("Episode number", metadata.containsKey("episode_sort") && !metadata.get("episode_sort").trim().isEmpty() ? metadata.get("episode_sort") : "");
+                    createTextArea("Network", metadata.containsKey("network") && !metadata.get("network").trim().isEmpty() ? metadata.get("network") : "");
+
+                }
+
+                switch(metadata.get("media_type")){
+                    case "6": comboBox.setValue("Music video");
+                        break;
+                    case "9": comboBox.setValue("Movie");
+                        break;
+                    case "10": comboBox.setValue("TV Show");
+                        break;
+                    case "21": comboBox.setValue("Podcast");
+                        break;
+                    default: comboBox.setValue("Home video");
+                        break;
+                }
+            }
+            else {
+                comboBox.setValue("Home video");
+            }
+
+
+
+            if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10"))){
+                createTextArea("Cast", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "");
+            }
+            else {
+                createTextArea("Artist", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "");
+            }
+
+            if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+                createTrackField(metadata.containsKey("track") && !metadata.get("track").trim().isEmpty() ? metadata.get("track") : "");
+            }
+
+            if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+                createTextArea("Album", metadata.containsKey("album") && !metadata.get("album").trim().isEmpty() ? metadata.get("album") : "");
+            }
+
+            if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10"))){
+                createTextArea("Director", metadata.containsKey("album_artist") && !metadata.get("album_artist").trim().isEmpty() ? metadata.get("album_artist") : "");
+            }
+            else if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+                createTextArea("Album artist", metadata.containsKey("album_artist") && !metadata.get("album_artist").trim().isEmpty() ? metadata.get("album_artist") : "");
+            }
+
+            if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10"))){
+                createTextArea("Writers", metadata.containsKey("composer") && !metadata.get("composer").trim().isEmpty() ? metadata.get("composer") : "");
+            }
+            else if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+                createTextArea("Composer", metadata.containsKey("composer") && !metadata.get("composer").trim().isEmpty() ? metadata.get("composer") : "");
+            }
+
+            createTextArea("Genre", metadata.containsKey("genre") && !metadata.get("genre").trim().isEmpty() ? metadata.get("genre") : "");
+
+            createTextArea("Description", metadata.containsKey("description") && !metadata.get("description").trim().isEmpty() ? metadata.get("description") : "");
+
+            createTextArea("Synopsis", metadata.containsKey("synopsis") && !metadata.get("synopsis").trim().isEmpty() ? metadata.get("synopsis") : "");
+
+
+            if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+                createTextArea("Lyrics", metadata.containsKey("lyrics") && !metadata.get("lyrics").trim().isEmpty() ? metadata.get("lyrics") : "");
+            }
+
+            createTextArea("Release date", metadata.containsKey("date") && !metadata.get("date").trim().isEmpty() ? metadata.get("date") : "");
+
+
+            createTextArea("Comment", metadata.containsKey("comment") && !metadata.get("comment").trim().isEmpty() ? metadata.get("comment") : "");
+        }
+    }
+
+    private MFXTextField createTextField(String key, String value){
+
+        Label keyLabel = new Label(key);
+        keyLabel.getStyleClass().add("metadataKey");
+
+        MFXTextField textField = new MFXTextField(value);
+        textField.textProperty().addListener((observableValue, s, t1) -> {
+            changesMade.set(true);
+        });
+
+        VBox vBox = new VBox(keyLabel, textField);
+
+        textBox.getChildren().add(vBox);
+
+        return textField;
+
+    }
+
+    private void createTrackField(String value){
+        Label label = new Label("Track number");
+        label.getStyleClass().add("metadataKey");
+
+        String firstValue = "";
+        String secondValue = "";
+
+        if(value.contains("/") && value.indexOf('/') > 0 && value.indexOf('/') < value.length() - 1){
+            firstValue = value.substring(0, value.indexOf('/'));
+            secondValue = value.substring(value.indexOf('/'));
+        }
+        else {
+            firstValue = value;
+        }
+
+        MFXTextField textField1 = new MFXTextField(firstValue);
+        textField1.textProperty().addListener((observableValue, s, t1) -> {
+            changesMade.set(true);
+        });
+
+        Label slash = new Label("/");
+        slash.getStyleClass().add("metadataKey");
+
+        MFXTextField textField2 = new MFXTextField(secondValue);
+        textField2.textProperty().addListener((observableValue, s, t1) -> {
+            changesMade.set(true);
+        });
+
+        HBox hBox = new HBox(textField1, slash, textField2);
+        hBox.setSpacing(5);
+
+
+        VBox vBox = new VBox(label, hBox);
+
+        textBox.getChildren().add(vBox);
+    }
+
+    private MFXComboBox<String> createComboBox(String... values){
+
+        Label label = new Label("Media type");
+        label.getStyleClass().add("metadataKey");
+
+        MFXComboBox<String> comboBox = new MFXComboBox<>();
+        for(String value : values){
+            comboBox.getItems().add(value);
+        }
+        comboBox.valueProperty().addListener((observableValue, s, t1) -> {
+            changesMade.set(true);
+        });
+
+        HBox hBox = new HBox(label, comboBox);
+        textBox.getChildren().add(hBox);
+
+        return comboBox;
+    }
+
+    private ExpandableTextArea createTextArea(String key, String value){
+        Label keyLabel = new Label(key);
+        keyLabel.getStyleClass().add("metadataKey");
+
+        ExpandableTextArea expandableTextArea = new ExpandableTextArea(value, menuController.mainController);
+        expandableTextArea.setExpandable(false);
+        expandableTextArea.setInitialNoOfLines(2);
+        expandableTextArea.textProperty().addListener((observableValue, s, t1) -> {
+            changesMade.set(true);
+        });
+
+        VBox vBox = new VBox(keyLabel, expandableTextArea);
+        textBox.getChildren().add(vBox);
+
+        return expandableTextArea;
+    }
+
+    private void updateMediaType(String oldValue, String newValue){
+
     }
 
 }

@@ -473,13 +473,11 @@ public class MetadataPage {
 
         copyButtonPane.getChildren().addAll(copyButton, copyIcon);
 
-
         HBox keyHbox = new HBox();
         keyHbox.setAlignment(Pos.CENTER_LEFT);
         keyHbox.getChildren().addAll(keyLabel, copyButtonPane);
 
         keyLabel.prefWidthProperty().bind(keyHbox.widthProperty().subtract(50));
-
 
         Label label = new Label(value);
         label.getStyleClass().add("metadataValue");

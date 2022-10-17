@@ -221,4 +221,8 @@ public class Utilities {
         return (double) Math.round(value * scale) / scale;
     }
 
+    public static boolean checkMap(Map<String, String> map, String key){
+        return map.containsKey(key) && !map.get(key).trim().isEmpty();
+    }
+
 }

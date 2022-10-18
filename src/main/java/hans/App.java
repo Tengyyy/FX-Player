@@ -1,6 +1,7 @@
 package hans;
 
 
+import hans.Menu.ExpandableTextArea;
 import hans.Menu.MenuController;
 import hans.Settings.SettingsController;
 import javafx.application.Application;
@@ -8,6 +9,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
@@ -136,75 +138,76 @@ public class App extends Application {
             //press F11 to set full screen
             primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 
-                switch (event.getCode()) {
-                    case TAB: mainController.pressTAB();
-                    break;
-                    case RIGHT: mainController.pressRIGHT(event);
-                    break;
-                    case LEFT: mainController.pressLEFT(event);
-                    break;
-                    case UP: mainController.pressUP();
-                    break;
-                    case DOWN: mainController.pressDOWN();
-                    break;
-                    case ESCAPE: mainController.pressESCAPE();
-                    break;
-                    case L: mainController.pressL(event);
-                    break;
-                    case J: mainController.pressJ();
-                    break;
-                    case DIGIT1: mainController.press1();
-                    break;
-                    case DIGIT2: mainController.press2();
-                    break;
-                    case DIGIT3: mainController.press3();
-                    break;
-                    case DIGIT4: mainController.press4();
-                    break;
-                    case DIGIT5: mainController.press5();
-                    break;
-                    case DIGIT6: mainController.press6();
-                    break;
-                    case DIGIT7: mainController.press7();
-                    break;
-                    case DIGIT8: mainController.press8();
-                    break;
-                    case DIGIT9: mainController.press9();
-                    break;
-                    case DIGIT0:
-                    case HOME: mainController.press0();
-                    break;
-                    case END: mainController.pressEND();
-                    break;
-                    case K: mainController.pressK();
-                    break;
-                    case M: mainController.pressM();
-                    break;
-                    case F11:
-                    case F: mainController.pressF();
-                    break;
-                    case F12: mainController.pressF12();
-                    break;
-                    case SPACE: mainController.pressSPACE(event);
-                    break;
-                    case C: mainController.pressC();
-                    break;
-                    case S: mainController.pressS();
-                    break;
-                    case Q: mainController.pressQ();
-                    break;
-                    case P: mainController.pressP(event);
-                    break;
-                    case I: mainController.pressI();
-                    break;
-                    case N: mainController.pressN(event);
-                    break;
-                    case COMMA: mainController.pressCOMMA(event);
-                    break;
-                    case PERIOD: mainController.pressPERIOD(event);
-                    break;
-                    default:
-                        break;
+                if(event.getCode() ==KeyCode.ESCAPE) mainController.pressESCAPE();
+                else if(event.getCode() == KeyCode.F11) mainController.pressF();
+                else if(!(event.getTarget() instanceof ExpandableTextArea || event.getTarget() instanceof TextField)){
+                    switch (event.getCode()) {
+                        case TAB: mainController.pressTAB();
+                            break;
+                        case RIGHT: mainController.pressRIGHT(event);
+                            break;
+                        case LEFT: mainController.pressLEFT(event);
+                            break;
+                        case UP: mainController.pressUP();
+                            break;
+                        case DOWN: mainController.pressDOWN();
+                            break;
+                        case L: mainController.pressL(event);
+                            break;
+                        case J: mainController.pressJ();
+                            break;
+                        case DIGIT1: mainController.press1();
+                            break;
+                        case DIGIT2: mainController.press2();
+                            break;
+                        case DIGIT3: mainController.press3();
+                            break;
+                        case DIGIT4: mainController.press4();
+                            break;
+                        case DIGIT5: mainController.press5();
+                            break;
+                        case DIGIT6: mainController.press6();
+                            break;
+                        case DIGIT7: mainController.press7();
+                            break;
+                        case DIGIT8: mainController.press8();
+                            break;
+                        case DIGIT9: mainController.press9();
+                            break;
+                        case DIGIT0:
+                        case HOME: mainController.press0();
+                            break;
+                        case END: mainController.pressEND();
+                            break;
+                        case K: mainController.pressK();
+                            break;
+                        case M: mainController.pressM();
+                            break;
+                        case F: mainController.pressF();
+                            break;
+                        case F12: mainController.pressF12();
+                            break;
+                        case SPACE: mainController.pressSPACE(event);
+                            break;
+                        case C: mainController.pressC();
+                            break;
+                        case S: mainController.pressS();
+                            break;
+                        case Q: mainController.pressQ();
+                            break;
+                        case P: mainController.pressP(event);
+                            break;
+                        case I: mainController.pressI();
+                            break;
+                        case N: mainController.pressN(event);
+                            break;
+                        case COMMA: mainController.pressCOMMA(event);
+                            break;
+                        case PERIOD: mainController.pressPERIOD(event);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             });
 

@@ -17,15 +17,14 @@ import javafx.scene.text.Text;
 
 public class ExpandableTextArea extends TextArea {
 
-    private final double DEFAULT_HEIGHT = 20.0;
-
     public ExpandableTextArea() {
         this.getStyleClass().add("expandable-text-area");
-        setMinHeight(DEFAULT_HEIGHT);
-        setPrefHeight(DEFAULT_HEIGHT);
-        setMaxHeight(DEFAULT_HEIGHT);
 
-        disableEnter();
+        setPrefHeight(36);
+        setMinHeight(36);
+        setMaxHeight(36);
+
+        disableKeys();
     }
 
     @Override
@@ -45,62 +44,26 @@ public class ExpandableTextArea extends TextArea {
         viewport.setPadding(new Insets(0, 0, 0, 0));
 
         Region content = (Region) viewport.lookup(".content");
-        content.setPadding(new Insets(-1, 1, 0, 1));
+        content.setPadding(new Insets(7, 10, 7, 10));
 
         Text text = (Text) content.lookup(".text");
 
-
-
         text.layoutBoundsProperty().addListener((observableBoundsAfter, boundsBefore, boundsAfter) -> {
             if(boundsBefore.getHeight() != boundsAfter.getHeight()){
-                setMinHeight(boundsAfter.getHeight());
-                setPrefHeight(boundsAfter.getHeight());
-                setMaxHeight(boundsAfter.getHeight());
+                double textHeight = boundsAfter.getHeight();
+                setMinHeight(textHeight + 16);
+                setPrefHeight(textHeight + 16);
+                setMaxHeight(textHeight + 16);
 
                 Platform.runLater(this::requestLayout);
             }
         });
-        /*text.textProperty().addListener((property) -> {
-
-            double textHeight = text.getLayoutBounds().getHeight();
-
-                oldTextHeight = textHeight;
-                if (textHeight < DEFAULT_HEIGHT) {
-                    textHeight = DEFAULT_HEIGHT;
-                }
-
-                textHeight = textHeight + 1;
-
-                setMinHeight(textHeight);
-                setPrefHeight(textHeight);
-                setMaxHeight(textHeight);
-        });
-
-        this.widthProperty().addListener((observableValue, number, t1) -> {
-            double textHeight = text.getLayoutBounds().getHeight();
-
-            if(oldTextHeight != textHeight){
-                oldTextHeight = textHeight;
-                if (textHeight < DEFAULT_HEIGHT) {
-                    textHeight = DEFAULT_HEIGHT;
-                }
-
-                textHeight = textHeight + 1;
-
-                setMinHeight(textHeight);
-                setPrefHeight(textHeight);
-                setMaxHeight(textHeight);
-
-                requestFocus();
-            }
-        });*/
-
 
     }
 
-    private void disableEnter() {
+    private void disableKeys() {
         setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
+            if (event.getCode() != KeyCode.ESCAPE) {
                 event.consume();
             }
         });

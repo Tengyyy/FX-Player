@@ -504,15 +504,14 @@ public class MetadataEditPage {
 
     private void createTextArea(String key, String value){
         Label keyLabel = new Label(key);
+        VBox.setMargin(keyLabel, new Insets(0, 0, 3, 0));
         keyLabel.getStyleClass().add("metadataKey");
 
         ExpandableTextArea textArea = new ExpandableTextArea();
-        Platform.runLater(() -> {
-            textArea.setText(value);
-            /*textArea.textProperty().addListener((observableValue, s, t1) -> {
-                changesMade.set(true);
-            });*/
-        });
+        textArea.setText(value);
+        /*textArea.textProperty().addListener((observableValue, s, t1) -> {
+            changesMade.set(true);
+        });*/
 
 
 

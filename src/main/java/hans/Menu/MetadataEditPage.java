@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -351,6 +352,7 @@ public class MetadataEditPage {
 
             createTextArea("Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "");
             MFXComboBox<String> comboBox = createComboBox("Music video", "Movie", "TV Show", "Podcast", "Home video");
+            comboBox.getSelectionModel().selectLast();
 
             if(metadata.containsKey("media_type")){
                 if(metadata.get("media_type").equals("10")){
@@ -428,12 +430,12 @@ public class MetadataEditPage {
         }
     }
 
-    private MFXTextField createTextField(String key, String value){
+    private void createTextField(String key, String value){
 
         Label keyLabel = new Label(key);
         keyLabel.getStyleClass().add("metadataKey");
 
-        MFXTextField textField = new MFXTextField(value);
+        TextField textField = new TextField(value);
         textField.textProperty().addListener((observableValue, s, t1) -> {
             changesMade.set(true);
         });
@@ -441,8 +443,6 @@ public class MetadataEditPage {
         VBox vBox = new VBox(keyLabel, textField);
 
         textBox.getChildren().add(vBox);
-
-        return textField;
 
     }
 
@@ -502,21 +502,23 @@ public class MetadataEditPage {
         return comboBox;
     }
 
-    private ExpandableTextArea createTextArea(String key, String value){
+    private void createTextArea(String key, String value){
         Label keyLabel = new Label(key);
         keyLabel.getStyleClass().add("metadataKey");
 
-        ExpandableTextArea expandableTextArea = new ExpandableTextArea(value, menuController.mainController);
-        expandableTextArea.setExpandable(false);
-        expandableTextArea.setInitialNoOfLines(2);
-        expandableTextArea.textProperty().addListener((observableValue, s, t1) -> {
-            changesMade.set(true);
+        ExpandableTextArea textArea = new ExpandableTextArea();
+        Platform.runLater(() -> {
+            textArea.setText(value);
+            /*textArea.textProperty().addListener((observableValue, s, t1) -> {
+                changesMade.set(true);
+            });*/
         });
 
-        VBox vBox = new VBox(keyLabel, expandableTextArea);
+
+
+        VBox vBox = new VBox(keyLabel, textArea);
         textBox.getChildren().add(vBox);
 
-        return expandableTextArea;
     }
 
     private void updateMediaType(String oldValue, String newValue){

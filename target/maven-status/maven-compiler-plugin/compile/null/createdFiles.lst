@@ -10,6 +10,7 @@ hans\SVG.class
 hans\Menu\MetadataEditPage.class
 hans\Menu\MenuState.class
 hans\ControlBarController.class
+hans\Menu\ExpandableTextArea.class
 hans\ControlTooltip.class
 hans\Menu\MetadataPage.class
 hans\SeekIndicator.class

@@ -60,6 +60,6 @@
    </children>
    <stylesheets>
       <URL value="@../styles/menu.css" />
-      <URL value="@../styles/expandable-text-area.css" />
+      <URL value="@../styles/text-fields.css" />
    </stylesheets>
 </StackPane>

@@ -13,6 +13,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -217,7 +218,7 @@ public class MetadataEditPage {
 
         textBox.setAlignment(Pos.TOP_LEFT);
         textBox.setPadding(new Insets(0, 15, 0, 15));
-        textBox.setSpacing(10);
+        textBox.setSpacing(15);
 
         footerPane.getChildren().addAll(cancelButton, saveButton);
 
@@ -351,7 +352,7 @@ public class MetadataEditPage {
             Map<String, String> metadata = mediaItem.getMediaInformation();
 
             createTextArea("Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "");
-            MFXComboBox<String> comboBox = createComboBox("Music video", "Movie", "TV Show", "Podcast", "Home video");
+            ComboBox<String> comboBox = createComboBox("Music video", "Movie", "TV Show", "Podcast", "Home video");
             comboBox.getSelectionModel().selectLast();
 
             if(metadata.containsKey("media_type")){
@@ -434,11 +435,15 @@ public class MetadataEditPage {
 
         Label keyLabel = new Label(key);
         keyLabel.getStyleClass().add("metadataKey");
+        VBox.setMargin(keyLabel, new Insets(0, 0, 3, 0));
 
         TextField textField = new TextField(value);
         textField.textProperty().addListener((observableValue, s, t1) -> {
             changesMade.set(true);
         });
+        textField.setPrefHeight(36);
+        textField.setMinHeight(36);
+        textField.setMaxHeight(36);
 
         VBox vBox = new VBox(keyLabel, textField);
 
@@ -465,6 +470,9 @@ public class MetadataEditPage {
         textField1.textProperty().addListener((observableValue, s, t1) -> {
             changesMade.set(true);
         });
+        textField1.setPrefHeight(36);
+        textField1.setMinHeight(36);
+        textField1.setMaxHeight(36);
 
         Label slash = new Label("/");
         slash.getStyleClass().add("metadataKey");
@@ -473,6 +481,9 @@ public class MetadataEditPage {
         textField2.textProperty().addListener((observableValue, s, t1) -> {
             changesMade.set(true);
         });
+        textField2.setPrefHeight(36);
+        textField2.setMinHeight(36);
+        textField2.setMaxHeight(36);
 
         HBox hBox = new HBox(textField1, slash, textField2);
         hBox.setSpacing(5);
@@ -483,12 +494,13 @@ public class MetadataEditPage {
         textBox.getChildren().add(vBox);
     }
 
-    private MFXComboBox<String> createComboBox(String... values){
+    private ComboBox<String> createComboBox(String... values){
 
         Label label = new Label("Media type");
         label.getStyleClass().add("metadataKey");
+        VBox.setMargin(label, new Insets(0, 0, 3, 0));
 
-        MFXComboBox<String> comboBox = new MFXComboBox<>();
+        ComboBox<String> comboBox = new ComboBox<>();
         for(String value : values){
             comboBox.getItems().add(value);
         }
@@ -496,8 +508,8 @@ public class MetadataEditPage {
             changesMade.set(true);
         });
 
-        HBox hBox = new HBox(label, comboBox);
-        textBox.getChildren().add(hBox);
+        VBox vBox = new VBox(label, comboBox);
+        textBox.getChildren().add(vBox);
 
         return comboBox;
     }

@@ -27,7 +27,6 @@ import javafx.scene.control.Button;
 
 
 import javafx.scene.control.Label;
-import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -864,8 +863,9 @@ public class MainController implements Initializable {
         }
     }
 
-    public void pressTAB(){
+    public void pressTAB(KeyEvent event){
         controlBarController.mouseEventTracker.move();
+        event.consume(); // TODO: replace builtin focus traversal with custom engine
     }
 
     public void pressM(){
@@ -1056,31 +1056,45 @@ public class MainController implements Initializable {
         e.consume();
     }
 
-    public void pressUP(){
+    public void pressUP(KeyEvent event){
         controlBarController.mouseEventTracker.move();
 
-        controlBarController.volumeSlider.setValue(Math.min(controlBarController.volumeSlider.getValue() + 5, 100));
-        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+        if(event.isShiftDown()){
+            // change focus between menu items
+        }
+        else {
+            controlBarController.volumeSlider.setValue(Math.min(controlBarController.volumeSlider.getValue() + 5, 100));
+            valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
 
-        valueIndicator.play();
+            valueIndicator.play();
 
-        actionIndicator.setIcon(VOLUME_HIGH);
-        actionIndicator.setVisible(true);
-        actionIndicator.animate();
+            actionIndicator.setIcon(VOLUME_HIGH);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+        }
+
+        event.consume();
     }
 
-    public void pressDOWN(){
+    public void pressDOWN(KeyEvent event){
         controlBarController.mouseEventTracker.move();
 
-        controlBarController.volumeSlider.setValue(Math.max(controlBarController.volumeSlider.getValue() - 5, 0));
-        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+        if(event.isShiftDown()){
+            // change focus between menu items
+        }
+        else {
+            controlBarController.volumeSlider.setValue(Math.max(controlBarController.volumeSlider.getValue() - 5, 0));
+            valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
 
-        valueIndicator.play();
+            valueIndicator.play();
 
-        if(controlBarController.volumeSlider.getValue() == 0) actionIndicator.setIcon(VOLUME_MUTED);
-        else actionIndicator.setIcon(VOLUME_LOW);
-        actionIndicator.setVisible(true);
-        actionIndicator.animate();
+            if(controlBarController.volumeSlider.getValue() == 0) actionIndicator.setIcon(VOLUME_MUTED);
+            else actionIndicator.setIcon(VOLUME_LOW);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+        }
+
+        event.consume();
     }
 
     public void pressI(){

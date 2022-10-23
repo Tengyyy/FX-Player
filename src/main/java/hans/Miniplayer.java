@@ -69,9 +69,9 @@ public class Miniplayer {
                 break;
                 case LEFT: miniplayerController.pressLEFT(event);
                 break;
-                case UP: mainController.pressUP();
+                case UP: mainController.pressUP(event);
                 break;
-                case DOWN: mainController.pressDOWN();
+                case DOWN: mainController.pressDOWN(event);
                 break;
                 case J: mainController.pressJ();
                 break;

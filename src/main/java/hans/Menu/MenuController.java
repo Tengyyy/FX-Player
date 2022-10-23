@@ -23,9 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -363,6 +361,12 @@ public class MenuController implements Initializable {
 
         menuContent.getChildren().addAll(closeButtonBar, historyHeader, historyWrapper, currentHeader, activeBox, queueHeader, queueBox);
         queueScroll.setContent(menuContent);
+        queueScroll.addEventFilter(KeyEvent.ANY, e -> {
+            if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.DOWN){
+                e.consume();
+            }
+        });
+
 
         menu.setBackground(Background.EMPTY);
 
@@ -617,11 +621,16 @@ public class MenuController implements Initializable {
         metadataScroll.setVisible(false);
         metadataScroll.setBackground(Background.EMPTY);
 
+
+
         metadataEditScroll.setVisible(false);
         metadataEditScroll.setBackground(Background.EMPTY);
 
+
         technicalDetailsScroll.setVisible(false);
         technicalDetailsScroll.setBackground(Background.EMPTY);
+
+
 }
 
 

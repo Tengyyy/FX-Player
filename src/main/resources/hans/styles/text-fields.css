@@ -1,0 +1,162 @@
+
+@font-face {
+    src: url('../fonts/Roboto-Regular.ttf');
+}
+
+.expandable-text-area .content {
+    -fx-background-color : rgba(30,30,30,0.4);
+    -fx-background-radius: 5;
+
+}
+
+.expandable-text-area:focused {
+    -fx-border-color : rgb(200,200,200);
+    -fx-border-width : 2;
+    -fx-border-insets: -1
+}
+
+.expandable-text-area {
+    -fx-background-color : 0;
+    -fx-background-insets: 0;
+    -fx-text-fill        : rgb(200,200,200);
+    -fx-font-family      : "Roboto";
+    -fx-font-size        : 16;
+    -fx-border-style     : solid;
+    -fx-border-color     : rgb(100,100,100);
+    -fx-border-radius    : 5;
+    -fx-border-width     : 1;
+}
+
+.expandable-text-area .scroll-pane {
+    -fx-background-color : transparent;
+}
+
+.expandable-text-area .viewport {
+    -fx-background-color : transparent;
+}
+
+.text-field {
+    -fx-background-color : rgba(30,30,30,0.4);
+    -fx-background-radius: 5;
+    -fx-border-style     : solid;
+    -fx-border-color     : rgb(100,100,100);
+    -fx-border-radius    : 5;
+    -fx-text-fill        : rgb(200,200,200);
+    -fx-font-family      : "Roboto";
+    -fx-font-size        : 16;
+}
+
+.text-field:focused {
+    -fx-border-color: rgb(200,200,200);
+    -fx-border-width: 2;
+    -fx-border-insets: -1;
+}
+
+.text-field .menu-item .label{
+    -fx-text-fill: white;
+}
+
+.text-field .menu-item:disabled .label{
+    -fx-text-fill: rgb(150,150,150);
+}
+
+.text-field .context-menu{
+    -fx-background-color: rgba(30,30,30,0.95);
+}
+
+.text-field .menu-item{
+    -fx-background-color: transparent;
+}
+
+.text-field .menu-item:hover{
+    -fx-background-color: rgb(50,50,50);
+}
+
+.text-field .menu-item:disabled{
+    -fx-background-color: transparent;
+}
+
+.expandable-text-area .menu-item .label{
+    -fx-text-fill: white;
+}
+
+.expandable-text-area .menu-item:disabled .label{
+    -fx-text-fill: rgb(150,150,150);
+}
+
+.expandable-text-area .context-menu{
+    -fx-background-color: rgba(30,30,30,0.95);
+}
+
+.expandable-text-area .menu-item{
+    -fx-background-color: transparent;
+}
+
+.expandable-text-area .menu-item:hover{
+    -fx-background-color: rgb(50,50,50);
+}
+
+.expandable-text-area .menu-item:disabled{
+    -fx-background-color: transparent;
+}
+
+
+.combo-box {
+     -fx-background-color : rgba(30,30,30,0.4);
+     -fx-background-radius: 5;
+     -fx-border-style     : solid;
+     -fx-border-color     : rgb(100,100,100);
+     -fx-border-radius    : 5;
+     -fx-text-fill        : rgb(200,200,200);
+     -fx-font-family      : "Roboto";
+     -fx-font-size        : 16;
+}
+
+.combo-box:focused {
+    -fx-border-color: rgb(200,200,200);
+    -fx-border-width: 2;
+    -fx-border-insets: -1;
+}
+
+.combo-box:focused .arrow {
+    -fx-background-color: white;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill        : rgb(200,200,200);
+    -fx-font-family      : "Roboto";
+    -fx-font-size        : 16;
+}
+
+.combo-box .arrow{
+    -fx-background-color  : rgb(100,100,100);
+}
+.combo-box .arrow-button{
+    -fx-background-color  : transparent;
+    -fx-border-style      :none;
+}
+
+.combo-box .list-view {
+    -fx-background-color: transparent;
+}
+
+
+.combo-box .combo-box-popup .list-view, .combo-box .combo-box-popup .list-cell {
+    -fx-background-color  : rgba(30,30,30,0.9);
+    -fx-text-fill         : rgb(200,200,200) ;
+    -fx-font-family       : "Roboto";
+    -fx-font-size         : 16;
+}
+
+.combo-box .combo-box-popup .list-cell:selected {
+    -fx-text-fill         : white ;
+    -fx-background-color  : rgba(50,50,50,1);
+}
+
+.combo-box .combo-box-popup .list-cell:hover {
+    -fx-text-fill: white ;
+    -fx-background-color: rgba(60,60,60,1);
+}
+
+
+

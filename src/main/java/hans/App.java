@@ -140,17 +140,17 @@ public class App extends Application {
 
                 if(event.getCode() ==KeyCode.ESCAPE) mainController.pressESCAPE();
                 else if(event.getCode() == KeyCode.F11) mainController.pressF();
+                else if(event.getCode() == KeyCode.TAB) mainController.pressTAB(event);
                 else if(!(event.getTarget() instanceof ExpandableTextArea || event.getTarget() instanceof TextField)){
                     switch (event.getCode()) {
-                        case TAB: mainController.pressTAB();
-                            break;
+
                         case RIGHT: mainController.pressRIGHT(event);
                             break;
                         case LEFT: mainController.pressLEFT(event);
                             break;
-                        case UP: mainController.pressUP();
+                        case UP: mainController.pressUP(event);
                             break;
-                        case DOWN: mainController.pressDOWN();
+                        case DOWN: mainController.pressDOWN(event);
                             break;
                         case L: mainController.pressL(event);
                             break;

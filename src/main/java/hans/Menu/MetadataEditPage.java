@@ -285,10 +285,33 @@ public class MetadataEditPage {
         switch (extension) {
             case "mp4":
             case "mov":
-                createMp4(menuObject.getMediaItem());
+                if(menuObject.getMediaItem().getMediaInformation().containsKey("media_type")){
+                    String type = menuObject.getMediaItem().getMediaInformation().get("media_type");
+
+                    switch (type) {
+                        case "6":
+                            createMp4(menuObject.getMediaItem().getMediaInformation(), "Music video");
+                            break;
+                        case "9":
+                            createMp4(menuObject.getMediaItem().getMediaInformation(), "Movie");
+                            break;
+                        case "10":
+                            createMp4(menuObject.getMediaItem().getMediaInformation(), "TV Show");
+                            break;
+                        case "21":
+                            createMp4(menuObject.getMediaItem().getMediaInformation(), "Podcast");
+                            break;
+                        default:
+                            createMp4(menuObject.getMediaItem().getMediaInformation(), "Home video");
+                            break;
+                    }
+                }
+                else {
+                    createMp4(menuObject.getMediaItem().getMediaInformation(), "Home video");
+                }
                 break;
             case "mp3":
-                //createMp3(menuObject.getMediaItem());
+                createMp3(menuObject.getMediaItem());
                 break;
             case "avi":
                 //createAvi(menuObject.getMediaItem());
@@ -347,69 +370,49 @@ public class MetadataEditPage {
 
     }
 
-    private void createMp4(MediaItem mediaItem){
-        if(mediaItem.getMediaInformation() != null){
-            Map<String, String> metadata = mediaItem.getMediaInformation();
+    private void createMp4(Map<String, String> metadata, String mediaType){
+
+        if(metadata != null){
 
             createTextArea("Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "");
-            ComboBox<String> comboBox = createComboBox("Music video", "Movie", "TV Show", "Podcast", "Home video");
-            comboBox.getSelectionModel().selectLast();
+            ComboBox<String> comboBox = createComboBox(mediaType, "Music video", "Movie", "TV Show", "Podcast", "Home video");
 
-            if(metadata.containsKey("media_type")){
-                if(metadata.get("media_type").equals("10")){
-                    // TV Show fields
-                    createTextArea("Series title", metadata.containsKey("show") && !metadata.get("show").trim().isEmpty() ? metadata.get("show") : "");
-                    createTextField("Season number", metadata.containsKey("season_number") && !metadata.get("season_number").trim().isEmpty() ? metadata.get("season_number") : "");
-                    createTextField("Episode number", metadata.containsKey("episode_sort") && !metadata.get("episode_sort").trim().isEmpty() ? metadata.get("episode_sort") : "");
-                    createTextArea("Network", metadata.containsKey("network") && !metadata.get("network").trim().isEmpty() ? metadata.get("network") : "");
-
-                }
-
-                switch(metadata.get("media_type")){
-                    case "6": comboBox.setValue("Music video");
-                        break;
-                    case "9": comboBox.setValue("Movie");
-                        break;
-                    case "10": comboBox.setValue("TV Show");
-                        break;
-                    case "21": comboBox.setValue("Podcast");
-                        break;
-                    default: comboBox.setValue("Home video");
-                        break;
-                }
-            }
-            else {
-                comboBox.setValue("Home video");
+            if(mediaType.equals("TV Show")){
+                // TV Show fields
+                createTextArea("Series title", metadata.containsKey("show") && !metadata.get("show").trim().isEmpty() ? metadata.get("show") : "");
+                createTextField("Season number", metadata.containsKey("season_number") && !metadata.get("season_number").trim().isEmpty() ? metadata.get("season_number") : "");
+                createTextField("Episode number", metadata.containsKey("episode_sort") && !metadata.get("episode_sort").trim().isEmpty() ? metadata.get("episode_sort") : "");
+                createTextArea("Network", metadata.containsKey("network") && !metadata.get("network").trim().isEmpty() ? metadata.get("network") : "");
             }
 
 
 
-            if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10"))){
+            if(mediaType.equals("TV Show") || mediaType.equals("Movie")){
                 createTextArea("Cast", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "");
             }
             else {
                 createTextArea("Artist", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "");
             }
 
-            if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+            if(mediaType.equals("Music video")){
                 createTrackField(metadata.containsKey("track") && !metadata.get("track").trim().isEmpty() ? metadata.get("track") : "");
             }
 
-            if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+            if(mediaType.equals("Music video")){
                 createTextArea("Album", metadata.containsKey("album") && !metadata.get("album").trim().isEmpty() ? metadata.get("album") : "");
             }
 
-            if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10"))){
+            if(mediaType.equals("TV Show") || mediaType.equals("Movie")){
                 createTextArea("Director", metadata.containsKey("album_artist") && !metadata.get("album_artist").trim().isEmpty() ? metadata.get("album_artist") : "");
             }
-            else if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+            else if(mediaType.equals("Music video")){
                 createTextArea("Album artist", metadata.containsKey("album_artist") && !metadata.get("album_artist").trim().isEmpty() ? metadata.get("album_artist") : "");
             }
 
-            if(metadata.containsKey("media_type") && (metadata.get("media_type").equals("9") || metadata.get("media_type").equals("10"))){
+            if(mediaType.equals("TV Show") || mediaType.equals("Movie")){
                 createTextArea("Writers", metadata.containsKey("composer") && !metadata.get("composer").trim().isEmpty() ? metadata.get("composer") : "");
             }
-            else if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+            else if(mediaType.equals("Music video")){
                 createTextArea("Composer", metadata.containsKey("composer") && !metadata.get("composer").trim().isEmpty() ? metadata.get("composer") : "");
             }
 
@@ -420,7 +423,7 @@ public class MetadataEditPage {
             createTextArea("Synopsis", metadata.containsKey("synopsis") && !metadata.get("synopsis").trim().isEmpty() ? metadata.get("synopsis") : "");
 
 
-            if(metadata.containsKey("media_type") && metadata.get("media_type").equals("6")){
+            if(mediaType.equals("Music video")){
                 createTextArea("Lyrics", metadata.containsKey("lyrics") && !metadata.get("lyrics").trim().isEmpty() ? metadata.get("lyrics") : "");
             }
 
@@ -429,6 +432,10 @@ public class MetadataEditPage {
 
             createTextArea("Comment", metadata.containsKey("comment") && !metadata.get("comment").trim().isEmpty() ? metadata.get("comment") : "");
         }
+    }
+
+    private void createMp3(MediaItem mediaItem){
+
     }
 
     private void createTextField(String key, String value){
@@ -466,7 +473,7 @@ public class MetadataEditPage {
             firstValue = value;
         }
 
-        MFXTextField textField1 = new MFXTextField(firstValue);
+        TextField textField1 = new TextField(firstValue);
         textField1.textProperty().addListener((observableValue, s, t1) -> {
             changesMade.set(true);
         });
@@ -477,7 +484,7 @@ public class MetadataEditPage {
         Label slash = new Label("/");
         slash.getStyleClass().add("metadataKey");
 
-        MFXTextField textField2 = new MFXTextField(secondValue);
+        TextField textField2 = new TextField(secondValue);
         textField2.textProperty().addListener((observableValue, s, t1) -> {
             changesMade.set(true);
         });
@@ -494,19 +501,26 @@ public class MetadataEditPage {
         textBox.getChildren().add(vBox);
     }
 
-    private ComboBox<String> createComboBox(String... values){
+    private ComboBox<String> createComboBox(String initialValue, String... values){
 
         Label label = new Label("Media type");
         label.getStyleClass().add("metadataKey");
         VBox.setMargin(label, new Insets(0, 0, 3, 0));
 
         ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.setMinHeight(36);
+        comboBox.setPrefHeight(36);
+        comboBox.setMaxHeight(36);
         for(String value : values){
             comboBox.getItems().add(value);
         }
-        comboBox.valueProperty().addListener((observableValue, s, t1) -> {
+        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            System.out.println(oldValue);
+            System.out.println(newValue);
             changesMade.set(true);
         });
+
+        comboBox.setValue(initialValue);
 
         VBox vBox = new VBox(label, comboBox);
         textBox.getChildren().add(vBox);
@@ -525,14 +539,8 @@ public class MetadataEditPage {
             changesMade.set(true);
         });*/
 
-
-
         VBox vBox = new VBox(keyLabel, textArea);
         textBox.getChildren().add(vBox);
-
-    }
-
-    private void updateMediaType(String oldValue, String newValue){
 
     }
 

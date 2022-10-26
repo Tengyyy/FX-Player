@@ -4,6 +4,7 @@ package hans.Menu;
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.*;
+import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.Settings.SettingsController;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -29,7 +30,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
@@ -68,7 +68,7 @@ public class MenuController implements Initializable {
 
     VBox menuContent = new VBox();
 
-    MainController mainController;
+    public MainController mainController;
     ControlBarController controlBarController;
     SettingsController settingsController;
     public CaptionsController captionsController;

@@ -1,10 +1,9 @@
-package hans.Menu;
+package hans.Menu.MetadataEdit;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
-import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import hans.Menu.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -79,8 +78,10 @@ public class MetadataEditPage {
     Color newColor = null;
     Image newImage = null;
 
+    MP4EditPage mp4EditPage;
 
-    MetadataEditPage(MenuController menuController){
+
+    public MetadataEditPage(MenuController menuController){
         this.menuController = menuController;
 
         fileChooser = new FileChooser();
@@ -218,7 +219,6 @@ public class MetadataEditPage {
 
         textBox.setAlignment(Pos.TOP_LEFT);
         textBox.setPadding(new Insets(0, 15, 0, 15));
-        textBox.setSpacing(15);
 
         footerPane.getChildren().addAll(cancelButton, saveButton);
 
@@ -230,9 +230,7 @@ public class MetadataEditPage {
         saveButton.setCursor(Cursor.HAND);
         saveButton.setDisable(true);
 
-        changesMade.addListener((observableValue, oldValue, newValue) -> {
-            saveButton.setDisable(!newValue);
-        });
+        changesMade.addListener((observableValue, oldValue, newValue) -> saveButton.setDisable(!newValue));
 
         saveButton.setOnAction(e -> saveChanges());
 
@@ -254,9 +252,7 @@ public class MetadataEditPage {
         StackPane.setMargin(cancelButton, new Insets(20, 0, 10, 20));
         cancelButton.setPadding(new Insets(8, 10, 8, 10));
 
-        cancelButton.setOnAction(e -> {
-            exitMetadataEditPage();
-        });
+        cancelButton.setOnAction(e -> exitMetadataEditPage());
 
     }
 
@@ -285,30 +281,7 @@ public class MetadataEditPage {
         switch (extension) {
             case "mp4":
             case "mov":
-                if(menuObject.getMediaItem().getMediaInformation().containsKey("media_type")){
-                    String type = menuObject.getMediaItem().getMediaInformation().get("media_type");
-
-                    switch (type) {
-                        case "6":
-                            createMp4(menuObject.getMediaItem().getMediaInformation(), "Music video");
-                            break;
-                        case "9":
-                            createMp4(menuObject.getMediaItem().getMediaInformation(), "Movie");
-                            break;
-                        case "10":
-                            createMp4(menuObject.getMediaItem().getMediaInformation(), "TV Show");
-                            break;
-                        case "21":
-                            createMp4(menuObject.getMediaItem().getMediaInformation(), "Podcast");
-                            break;
-                        default:
-                            createMp4(menuObject.getMediaItem().getMediaInformation(), "Home video");
-                            break;
-                    }
-                }
-                else {
-                    createMp4(menuObject.getMediaItem().getMediaInformation(), "Home video");
-                }
+                mp4EditPage = new MP4EditPage(this, menuObject.getMediaItem());
                 break;
             case "mp3":
                 createMp3(menuObject.getMediaItem());
@@ -370,178 +343,7 @@ public class MetadataEditPage {
 
     }
 
-    private void createMp4(Map<String, String> metadata, String mediaType){
-
-        if(metadata != null){
-
-            createTextArea("Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "");
-            ComboBox<String> comboBox = createComboBox(mediaType, "Music video", "Movie", "TV Show", "Podcast", "Home video");
-
-            if(mediaType.equals("TV Show")){
-                // TV Show fields
-                createTextArea("Series title", metadata.containsKey("show") && !metadata.get("show").trim().isEmpty() ? metadata.get("show") : "");
-                createTextField("Season number", metadata.containsKey("season_number") && !metadata.get("season_number").trim().isEmpty() ? metadata.get("season_number") : "");
-                createTextField("Episode number", metadata.containsKey("episode_sort") && !metadata.get("episode_sort").trim().isEmpty() ? metadata.get("episode_sort") : "");
-                createTextArea("Network", metadata.containsKey("network") && !metadata.get("network").trim().isEmpty() ? metadata.get("network") : "");
-            }
-
-
-
-            if(mediaType.equals("TV Show") || mediaType.equals("Movie")){
-                createTextArea("Cast", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "");
-            }
-            else {
-                createTextArea("Artist", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "");
-            }
-
-            if(mediaType.equals("Music video")){
-                createTrackField(metadata.containsKey("track") && !metadata.get("track").trim().isEmpty() ? metadata.get("track") : "");
-            }
-
-            if(mediaType.equals("Music video")){
-                createTextArea("Album", metadata.containsKey("album") && !metadata.get("album").trim().isEmpty() ? metadata.get("album") : "");
-            }
-
-            if(mediaType.equals("TV Show") || mediaType.equals("Movie")){
-                createTextArea("Director", metadata.containsKey("album_artist") && !metadata.get("album_artist").trim().isEmpty() ? metadata.get("album_artist") : "");
-            }
-            else if(mediaType.equals("Music video")){
-                createTextArea("Album artist", metadata.containsKey("album_artist") && !metadata.get("album_artist").trim().isEmpty() ? metadata.get("album_artist") : "");
-            }
-
-            if(mediaType.equals("TV Show") || mediaType.equals("Movie")){
-                createTextArea("Writers", metadata.containsKey("composer") && !metadata.get("composer").trim().isEmpty() ? metadata.get("composer") : "");
-            }
-            else if(mediaType.equals("Music video")){
-                createTextArea("Composer", metadata.containsKey("composer") && !metadata.get("composer").trim().isEmpty() ? metadata.get("composer") : "");
-            }
-
-            createTextArea("Genre", metadata.containsKey("genre") && !metadata.get("genre").trim().isEmpty() ? metadata.get("genre") : "");
-
-            createTextArea("Description", metadata.containsKey("description") && !metadata.get("description").trim().isEmpty() ? metadata.get("description") : "");
-
-            createTextArea("Synopsis", metadata.containsKey("synopsis") && !metadata.get("synopsis").trim().isEmpty() ? metadata.get("synopsis") : "");
-
-
-            if(mediaType.equals("Music video")){
-                createTextArea("Lyrics", metadata.containsKey("lyrics") && !metadata.get("lyrics").trim().isEmpty() ? metadata.get("lyrics") : "");
-            }
-
-            createTextArea("Release date", metadata.containsKey("date") && !metadata.get("date").trim().isEmpty() ? metadata.get("date") : "");
-
-
-            createTextArea("Comment", metadata.containsKey("comment") && !metadata.get("comment").trim().isEmpty() ? metadata.get("comment") : "");
-        }
-    }
-
     private void createMp3(MediaItem mediaItem){
 
     }
-
-    private void createTextField(String key, String value){
-
-        Label keyLabel = new Label(key);
-        keyLabel.getStyleClass().add("metadataKey");
-        VBox.setMargin(keyLabel, new Insets(0, 0, 3, 0));
-
-        TextField textField = new TextField(value);
-        textField.textProperty().addListener((observableValue, s, t1) -> {
-            changesMade.set(true);
-        });
-        textField.setPrefHeight(36);
-        textField.setMinHeight(36);
-        textField.setMaxHeight(36);
-
-        VBox vBox = new VBox(keyLabel, textField);
-
-        textBox.getChildren().add(vBox);
-
-    }
-
-    private void createTrackField(String value){
-        Label label = new Label("Track number");
-        label.getStyleClass().add("metadataKey");
-
-        String firstValue = "";
-        String secondValue = "";
-
-        if(value.contains("/") && value.indexOf('/') > 0 && value.indexOf('/') < value.length() - 1){
-            firstValue = value.substring(0, value.indexOf('/'));
-            secondValue = value.substring(value.indexOf('/'));
-        }
-        else {
-            firstValue = value;
-        }
-
-        TextField textField1 = new TextField(firstValue);
-        textField1.textProperty().addListener((observableValue, s, t1) -> {
-            changesMade.set(true);
-        });
-        textField1.setPrefHeight(36);
-        textField1.setMinHeight(36);
-        textField1.setMaxHeight(36);
-
-        Label slash = new Label("/");
-        slash.getStyleClass().add("metadataKey");
-
-        TextField textField2 = new TextField(secondValue);
-        textField2.textProperty().addListener((observableValue, s, t1) -> {
-            changesMade.set(true);
-        });
-        textField2.setPrefHeight(36);
-        textField2.setMinHeight(36);
-        textField2.setMaxHeight(36);
-
-        HBox hBox = new HBox(textField1, slash, textField2);
-        hBox.setSpacing(5);
-
-
-        VBox vBox = new VBox(label, hBox);
-
-        textBox.getChildren().add(vBox);
-    }
-
-    private ComboBox<String> createComboBox(String initialValue, String... values){
-
-        Label label = new Label("Media type");
-        label.getStyleClass().add("metadataKey");
-        VBox.setMargin(label, new Insets(0, 0, 3, 0));
-
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.setMinHeight(36);
-        comboBox.setPrefHeight(36);
-        comboBox.setMaxHeight(36);
-        for(String value : values){
-            comboBox.getItems().add(value);
-        }
-        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            System.out.println(oldValue);
-            System.out.println(newValue);
-            changesMade.set(true);
-        });
-
-        comboBox.setValue(initialValue);
-
-        VBox vBox = new VBox(label, comboBox);
-        textBox.getChildren().add(vBox);
-
-        return comboBox;
-    }
-
-    private void createTextArea(String key, String value){
-        Label keyLabel = new Label(key);
-        VBox.setMargin(keyLabel, new Insets(0, 0, 3, 0));
-        keyLabel.getStyleClass().add("metadataKey");
-
-        ExpandableTextArea textArea = new ExpandableTextArea();
-        textArea.setText(value);
-        /*textArea.textProperty().addListener((observableValue, s, t1) -> {
-            changesMade.set(true);
-        });*/
-
-        VBox vBox = new VBox(keyLabel, textArea);
-        textBox.getChildren().add(vBox);
-
-    }
-
 }

@@ -1,19 +1,18 @@
-package hans.Menu;
+package hans.Menu.MetadataEdit;
 
 import hans.App;
+import hans.Menu.MenuObject;
+import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.SVG;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
-import java.io.File;
 import java.util.Objects;
 
 public class EditImagePopUp extends ContextMenu {

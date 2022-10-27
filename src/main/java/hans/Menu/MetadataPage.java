@@ -141,7 +141,7 @@ public class MetadataPage {
         content.getChildren().addAll(closeButtonBar, imageViewWrapper, textBox, footerPane);
         content.setBackground(Background.EMPTY);
         content.setPadding(new Insets(0, 0, 20, 0));
-        menuController.metadataScroll.setContent(content);
+        //menuController.metadataScroll.setContent(content);
 
         textBox.setAlignment(Pos.TOP_LEFT);
         textBox.setPadding(new Insets(0, 15, 0, 15));
@@ -227,7 +227,7 @@ public class MetadataPage {
 
         imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
 
-        menuController.metadataScroll.setVisible(true);
+        //menuController.metadataScroll.setVisible(true);
         menuController.queueScroll.setVisible(false);
 
         if(menuController.menuState == MenuState.CLOSED) menuController.mainController.openMenu();
@@ -238,7 +238,7 @@ public class MetadataPage {
 
         this.menuObject = null;
 
-        menuController.metadataScroll.setVisible(false);
+        //menuController.metadataScroll.setVisible(false);
         menuController.queueScroll.setVisible(true);
 
         textBox.getChildren().clear();

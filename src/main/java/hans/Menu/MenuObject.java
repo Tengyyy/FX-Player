@@ -17,6 +17,8 @@ public interface MenuObject {
 
     void showMetadata();
 
+    void showTechnicalDetails();
+
     void addSubtitles(File file);
 
     MenuController getMenuController();

@@ -459,8 +459,15 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         if(menuController.menuInTransition) return;
 
-        menuController.metadataPage.enterMetadataPage(this);
+        menuController.metadataEditPage.enterMetadataEditPage(this);
 
+    }
+
+    @Override
+    public void showTechnicalDetails() {
+        if(menuController.menuInTransition) return;
+
+        menuController.technicalDetailsPage.enterTechnicalDetailsPage(this);
     }
 
     @Override

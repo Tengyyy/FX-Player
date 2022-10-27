@@ -58,7 +58,7 @@ public class MenuController implements Initializable {
     Label notificationText;
 
     @FXML
-    public ScrollPane queueScroll, metadataScroll, metadataEditScroll, technicalDetailsScroll;
+    public ScrollPane queueScroll, metadataEditScroll, technicalDetailsScroll;
 
 
 
@@ -74,7 +74,6 @@ public class MenuController implements Initializable {
     public CaptionsController captionsController;
     MediaInterface mediaInterface;
 
-    public MetadataPage metadataPage;
     public MetadataEditPage metadataEditPage;
     public TechnicalDetailsPage technicalDetailsPage;
 
@@ -167,7 +166,6 @@ public class MenuController implements Initializable {
         historyBox = new HistoryBox(this, historyWrapper);
         activeBox = new ActiveBox(this);
 
-        metadataPage = new MetadataPage(this);
         metadataEditPage = new MetadataEditPage(this);
         technicalDetailsPage = new TechnicalDetailsPage(this);
 
@@ -617,9 +615,6 @@ public class MenuController implements Initializable {
             shuffleTooltip = new ControlTooltip(mainController,"Shuffle is off", shuffleToggle, 1000);
         });
 
-
-        metadataScroll.setVisible(false);
-        metadataScroll.setBackground(Background.EMPTY);
 
 
 

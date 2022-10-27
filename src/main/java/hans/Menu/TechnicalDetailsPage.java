@@ -154,7 +154,7 @@ public class TechnicalDetailsPage {
             if(map.containsKey("hasAudio") && Objects.equals(map.get("hasAudio"), "true")) createAudioSection(map);
         }
 
-        menuController.metadataScroll.setVisible(false);
+        menuController.queueScroll.setVisible(false);
         menuController.technicalDetailsScroll.setVisible(true);
 
         menuController.menuState = MenuState.TECHNICAL_DETAILS_OPEN;
@@ -162,7 +162,7 @@ public class TechnicalDetailsPage {
 
 
     public void exitTechnicalDetailsPage(){
-        menuController.metadataScroll.setVisible(true);
+        menuController.queueScroll.setVisible(true);
         menuController.technicalDetailsScroll.setVisible(false);
 
         textBox.getChildren().clear();

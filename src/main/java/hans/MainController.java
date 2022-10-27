@@ -435,7 +435,14 @@ public class MainController implements Initializable {
         metadataButton.setMaxSize(50, 50);
         metadataButton.setBackground(Background.EMPTY);
         metadataButton.setCursor(Cursor.HAND);
-
+        metadataButton.setOnAction(e -> {
+            //TODO: find out why this still doesnt work
+            if(menuController.menuInTransition) return;
+            if(menuController.activeItem != null){
+                openMenu();
+                menuController.metadataEditPage.enterMetadataEditPage(menuController.activeItem);
+            }
+        });
 
         metadataPath.setContent(App.svgMap.get(INFORMATION));
         metadataIcon.setShape(metadataPath);

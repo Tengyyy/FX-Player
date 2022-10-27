@@ -6,7 +6,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.bytedeco.javacv.*;
-import org.jcodec.movtool.MetadataEditor;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class Mp4Item implements MediaItem {
     MainController mainController;
 
 
-    Map<String, String> mediaInformation = new HashMap<>();
+    Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     Map<String, String> mediaDetails = new HashMap<>();
 
     Image cover;
@@ -56,9 +55,7 @@ public class Mp4Item implements MediaItem {
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
 
-            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
-                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
-            }
+            mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
 
             mediaDetails.put("size", Utilities.formatFileSize(file.length()));
             mediaDetails.put("name", file.getName());

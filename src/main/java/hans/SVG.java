@@ -49,4 +49,5 @@ public enum SVG {
     IMAGE,
     FOLDER,
     SAVE,
+    COGS
 }

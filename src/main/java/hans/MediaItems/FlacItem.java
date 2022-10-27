@@ -28,7 +28,7 @@ public class FlacItem implements MediaItem {
 
     MainController mainController;
 
-    Map<String, String> mediaInformation = new HashMap<>();
+    Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     Map<String, String> mediaDetails = new HashMap<>();
 
     boolean hasCover;
@@ -47,9 +47,7 @@ public class FlacItem implements MediaItem {
 
             duration = Duration.seconds((int) (fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate()));
 
-            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
-                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
-            }
+            mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
 
             mediaDetails.put("size", Utilities.formatFileSize(file.length()));
             mediaDetails.put("name", file.getName());

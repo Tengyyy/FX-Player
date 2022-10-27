@@ -1,8 +1,6 @@
 package hans.MediaItems;
 
-import hans.App;
 import hans.MainController;
-import hans.MediaItems.MediaItem;
 import hans.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -31,7 +29,7 @@ public class Mp3Item implements MediaItem {
 
     boolean hasCover;
 
-    Map<String, String> mediaInformation = new HashMap<>();
+    Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     Map<String, String> mediaDetails = new HashMap<>();
 
 
@@ -47,9 +45,7 @@ public class Mp3Item implements MediaItem {
             duration = Duration.seconds((int) (fFmpegFrameGrabber.getLengthInAudioFrames()/fFmpegFrameGrabber.getAudioFrameRate()));
 
 
-            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
-                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
-            }
+            mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
 
 
             mediaDetails.put("size", Utilities.formatFileSize(file.length()));

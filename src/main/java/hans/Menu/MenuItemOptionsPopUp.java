@@ -24,7 +24,8 @@ public class MenuItemOptionsPopUp extends ContextMenu {
     MenuObject menuObject;
 
     MenuItem playNext = new MenuItem("Play next");
-    MenuItem metadata = new MenuItem("Media information");
+    MenuItem metadata = new MenuItem("Media metadata");
+    MenuItem technicalDetails = new MenuItem("Technical details");
     MenuItem addSubtitles = new MenuItem("Add external subtitles");
     MenuItem openFileLocation = new MenuItem("Open file in location");
 
@@ -35,8 +36,8 @@ public class MenuItemOptionsPopUp extends ContextMenu {
 
     FadeTransition showTransition, hideTransition;
 
-    SVGPath playNextPath = new SVGPath(), metadataPath = new SVGPath(), addSubtitlesPath = new SVGPath(), folderPath = new SVGPath();
-    Region playNextIcon = new Region(), metadataIcon = new Region(), addSubtitlesIcon = new Region(), folderIcon = new Region();
+    SVGPath playNextPath = new SVGPath(), metadataPath = new SVGPath(), technicalDetailsPath = new SVGPath(), addSubtitlesPath = new SVGPath(), folderPath = new SVGPath();
+    Region playNextIcon = new Region(), metadataIcon = new Region(), technicalDetailsIcon = new Region(), addSubtitlesIcon = new Region(), folderIcon = new Region();
 
     boolean isHistoryItem = false;
     boolean isActiveItem = false;
@@ -80,6 +81,16 @@ public class MenuItemOptionsPopUp extends ContextMenu {
         metadata.getStyleClass().add("popUpItem");
         metadata.setOnAction((e) -> menuObject.showMetadata());
 
+        technicalDetailsPath.setContent(App.svgMap.get(SVG.COGS));
+        technicalDetailsIcon.setShape(technicalDetailsPath);
+        technicalDetailsIcon.getStyleClass().add("icon");
+        technicalDetailsIcon.setPrefSize(20, 20);
+        technicalDetailsIcon.setMaxSize(20, 20);
+
+        technicalDetails.setGraphic(technicalDetailsIcon);
+        technicalDetails.getStyleClass().add("popUpItem");
+        technicalDetails.setOnAction((e) -> menuObject.showTechnicalDetails());
+
 
         addSubtitlesPath.setContent(App.svgMap.get(SVG.CAPTIONS_OUTLINE));
         addSubtitlesIcon.setShape(addSubtitlesPath);
@@ -103,7 +114,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
         openFileLocation.setOnAction((e) -> openFileLocation(menuObject.getMediaItem().getMediaDetails().get("path")));
 
 
-        this.getItems().addAll(playNext, metadata, addSubtitles, openFileLocation);
+        this.getItems().addAll(playNext, metadata, technicalDetails, addSubtitles, openFileLocation);
 
         buttonWidth = menuObject.getOptionsButton().getWidth();
 

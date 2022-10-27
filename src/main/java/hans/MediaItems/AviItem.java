@@ -31,7 +31,7 @@ public class AviItem implements MediaItem {
 
     MainController mainController;
 
-    Map<String, String> mediaInformation = new HashMap<>();
+    Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     Map<String, String> mediaDetails = new HashMap<>();
 
 
@@ -51,9 +51,7 @@ public class AviItem implements MediaItem {
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
 
-            for(Map.Entry<String, String> entry : fFmpegFrameGrabber.getMetadata().entrySet()){
-                mediaInformation.put(entry.getKey().toLowerCase(), entry.getValue());
-            }
+            mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
 
             hasCover = cover != null;
             if(!hasCover && hasVideo) cover = Utilities.grabRandomFrame(file);

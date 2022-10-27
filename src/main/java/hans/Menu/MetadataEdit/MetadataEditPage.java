@@ -79,6 +79,7 @@ public class MetadataEditPage {
     Image newImage = null;
 
     MP4EditPage mp4EditPage;
+    MP3EditPage mp3EditPage;
 
 
     public MetadataEditPage(MenuController menuController){
@@ -284,7 +285,7 @@ public class MetadataEditPage {
                 mp4EditPage = new MP4EditPage(this, menuObject.getMediaItem());
                 break;
             case "mp3":
-                createMp3(menuObject.getMediaItem());
+                mp3EditPage = new MP3EditPage(this, menuObject.getMediaItem());
                 break;
             case "avi":
                 //createAvi(menuObject.getMediaItem());
@@ -340,10 +341,6 @@ public class MetadataEditPage {
     public void saveChanges(){
         changesMade.set(false);
         //TODO: actually make this functional
-
-    }
-
-    private void createMp3(MediaItem mediaItem){
 
     }
 }

@@ -54,7 +54,7 @@ public class FlvItem implements MediaItem {
             mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
 
             hasCover = cover != null;
-            if(!hasCover && hasVideo) cover = Utilities.grabRandomFrame(file);
+            if(!hasCover && hasVideo) cover = Utilities.grabMiddleFrame(file);
             if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
 
             placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));

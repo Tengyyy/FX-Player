@@ -1,14 +1,11 @@
 package hans;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
-import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
@@ -16,7 +13,6 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.bytedeco.javacv.*;
-import org.jcodec.movtool.MetadataEditor;
 
 public class Utilities {
 
@@ -146,7 +142,7 @@ public class Utilities {
     }
 
 
-    public static Image grabRandomFrame(File file){
+    public static Image grabMiddleFrame(File file){
 
 
         FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
@@ -156,13 +152,11 @@ public class Utilities {
 
         try {
 
-            Random random = new Random();
             fFmpegFrameGrabber.start();
 
             int totalFrames = fFmpegFrameGrabber.getLengthInFrames();
-            int randomFrame = random.nextInt(totalFrames);
 
-            fFmpegFrameGrabber.setFrameNumber(randomFrame);
+            fFmpegFrameGrabber.setFrameNumber(Math.floorDiv(totalFrames, 2));
             Frame frame = fFmpegFrameGrabber.grabImage();
 
             JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();

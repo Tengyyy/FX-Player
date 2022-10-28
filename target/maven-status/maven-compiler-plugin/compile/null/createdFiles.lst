@@ -17,8 +17,9 @@ hans\ControlBarController.class
 hans\Menu\MetadataEdit\TextAreaItem.class
 hans\Menu\ExpandableTextArea.class
 hans\ControlTooltip.class
-hans\Menu\MetadataPage.class
+hans\Menu\MetadataEdit\CustomTextAreaItem.class
 hans\SeekIndicator.class
+hans\Menu\MetadataEdit\OtherEditPage.class
 hans\Menu\MetadataEdit\MetadataEditPage.class
 hans\Menu\MetadataEdit\MetadataEditItem.class
 hans\Shell32Util.class

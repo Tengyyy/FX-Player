@@ -184,7 +184,7 @@ public class MainController implements Initializable {
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 0, false, true);
-            viewMetadataTooltip = new ControlTooltip(this,"Media information", metadataButton, 0, false, true);
+            viewMetadataTooltip = new ControlTooltip(this,"Media metadata", metadataButton, 0, false, true);
 
             videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 if(newValue.doubleValue() < menuController.menu.getMaxWidth()){

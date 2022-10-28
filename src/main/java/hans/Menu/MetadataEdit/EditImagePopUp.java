@@ -94,7 +94,6 @@ public class EditImagePopUp extends ContextMenu {
         showTransition.setToValue(1);
         showTransition.playFromStart();
 
-        System.out.println(this.getWidth());
     }
 
     @Override

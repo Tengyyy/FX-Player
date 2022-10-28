@@ -80,6 +80,7 @@ public class MetadataEditPage {
 
     MP4EditPage mp4EditPage;
     MP3EditPage mp3EditPage;
+    OtherEditPage otherEditPage;
 
 
     public MetadataEditPage(MenuController menuController){
@@ -263,16 +264,16 @@ public class MetadataEditPage {
 
         Color color;
 
-        if(menuObject.getMediaItem().hasCover()){
-            hasCover = true;
+        if(menuObject.getMediaItem().getCover() != null){
             imageView.setImage(menuObject.getMediaItem().getCover());
             color = menuObject.getMediaItem().getCoverBackgroundColor();
         }
         else {
-            hasCover = false;
             imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
             color = Color.rgb(64,64,64);
         }
+
+        hasCover = menuObject.getMediaItem().hasCover();
 
         imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
 
@@ -288,10 +289,10 @@ public class MetadataEditPage {
                 mp3EditPage = new MP3EditPage(this, menuObject.getMediaItem());
                 break;
             case "avi":
-                //createAvi(menuObject.getMediaItem());
+                //TODO: avi files dont allow free-form key-values so have to create custom edit page
                 break;
             default:
-                //createOther(menuObject.getMediaItem());
+                otherEditPage = new OtherEditPage(this, menuObject.getMediaItem());
                 break;
         }
 

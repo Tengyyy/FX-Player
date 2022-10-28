@@ -91,7 +91,7 @@ public class Mp4Item implements MediaItem {
             if(frame != null) cover = javaFXFrameConverter.convert(frame);
 
             hasCover = cover != null;
-            if(!hasCover && hasVideo) cover = Utilities.grabRandomFrame(file);
+            if(!hasCover && hasVideo) cover = Utilities.grabMiddleFrame(file);
             if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
 
             if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));

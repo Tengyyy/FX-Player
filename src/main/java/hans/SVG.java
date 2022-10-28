@@ -49,5 +49,6 @@ public enum SVG {
     IMAGE,
     FOLDER,
     SAVE,
-    COGS
+    COGS,
+    CLOSE_CIRCLE
 }

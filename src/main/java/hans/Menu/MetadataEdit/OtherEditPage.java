@@ -44,6 +44,10 @@ public class OtherEditPage {
         metadataEditPage.textBox.getChildren().add(content);
     }
 
+    public void updateItems(){
+
+    }
+
 
     public void saveMetadata(){
 

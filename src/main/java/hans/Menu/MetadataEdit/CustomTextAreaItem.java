@@ -19,6 +19,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
 public class CustomTextAreaItem extends VBox{
 
     TextField keyField = new TextField();
@@ -42,12 +45,17 @@ public class CustomTextAreaItem extends VBox{
     StackPane removeButtonPane = new StackPane();
     JFXButton removeButton = new JFXButton();
 
-    ControlTooltip editButtonTooltip, removeButtonTooltip;
+    ControlTooltip editButtonTooltip, removeButtonTooltip, warningLabelTooltip;
+
+    VBox parent;
+
+    String duplicateString = "";
 
 
     CustomTextAreaItem(OtherEditPage otherEditPage, String key, String value, VBox parent){
 
         this.otherEditPage = otherEditPage;
+        this.parent = parent;
 
         editSVG.setContent(App.svgMap.get(SVG.EDIT));
         removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
@@ -59,6 +67,7 @@ public class CustomTextAreaItem extends VBox{
         label.getStyleClass().add("metadataKey");
 
         warningLabel.getStyleClass().add("warningLabel");
+        warningLabel.setPadding(new Insets(5, 5, 5, 5));
 
         VBox.setMargin(labelBox, new Insets(0, 0, 3, 0));
 
@@ -71,16 +80,44 @@ public class CustomTextAreaItem extends VBox{
         keyField.getStyleClass().add("key-text-field");
         keyField.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ENTER){
+
+                if(!duplicateString.isEmpty() && !keyField.getText().equalsIgnoreCase(duplicateString)){
+                    ArrayList<CustomTextAreaItem> list = findDuplicates(duplicateString);
+                    if(list.size() == 1) list.get(0).removeWarningLabel();
+
+                    duplicateString = "";
+                }
+
+                ArrayList<CustomTextAreaItem> list = findDuplicates(keyField.getText());
+
                 if(keyField.getText().isEmpty()){
-                    //TODO: show popup
+                    addEmptyKeyWarningLabel();
+                }
+                else if(!list.isEmpty()){
+                    for(CustomTextAreaItem item : list) item.duplicateString = keyField.getText();
+                    duplicateString = keyField.getText();
+                    addDuplicateKeyWarningLabels(list);
                 }
                 else addLabel();
             }
         });
         keyField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(!newValue){
+                if(!duplicateString.isEmpty() && !keyField.getText().equalsIgnoreCase(duplicateString)){
+                    ArrayList<CustomTextAreaItem> list = findDuplicates(duplicateString);
+                    if(list.size() == 1) list.get(0).removeWarningLabel();
+
+                    duplicateString = "";
+                }
+
+                ArrayList<CustomTextAreaItem> list = findDuplicates(keyField.getText());
+
                 if(keyField.getText().isEmpty()){
-                    //TODO: show popup
+                    addEmptyKeyWarningLabel();
+                }
+                else if(!list.isEmpty()){
+                    duplicateString = keyField.getText();
+                    addDuplicateKeyWarningLabels(list);
                 }
                 else addLabel();
             }
@@ -131,8 +168,7 @@ public class CustomTextAreaItem extends VBox{
         removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
 
         removeButton.setOnAction((e) -> {
-            parent.getChildren().remove(this);
-            otherEditPage.items.remove(this);
+            removeItem();
         });
 
         removeButtonPane.setMaxWidth(30);
@@ -156,6 +192,8 @@ public class CustomTextAreaItem extends VBox{
         Platform.runLater(() -> {
             editButtonTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Edit key", editButton, 1000);
             removeButtonTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Remove key", removeButton, 1000);
+            warningLabelTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Key can not be empty", warningLabel, 0, false, true);
+            warningLabelTooltip.getStyleClass().add("warningLabelTooltip");
         });
 
 
@@ -163,17 +201,61 @@ public class CustomTextAreaItem extends VBox{
 
     public void addLabel(){
         label.setText(keyField.getText());
-        labelBox.getChildren().remove(keyField);
+        labelBox.getChildren().removeAll(keyField, warningLabel);
         if(!labelBox.getChildren().contains(label)) labelBox.getChildren().add(label);
         if(!labelBox.getChildren().contains(editButtonPane)) labelBox.getChildren().add(editButtonPane);
     }
 
     public void addTextField(){
         labelBox.getChildren().removeAll(label, editButtonPane);
-        if(!labelBox.getChildren().contains(keyField)) labelBox.getChildren().add(0, keyField);
+        if(!labelBox.getChildren().contains(keyField)){
+            if(labelBox.getChildren().contains(warningLabel)) labelBox.getChildren().add(1, keyField);
+            else labelBox.getChildren().add(0, keyField);
+        }
         Platform.runLater(() -> {
             keyField.requestFocus();
             keyField.positionCaret(keyField.getText().length());
         });
+    }
+
+    public void addEmptyKeyWarningLabel(){
+        if(!labelBox.getChildren().contains(warningLabel)) labelBox.getChildren().add(0, warningLabel);
+        warningLabelTooltip.setText("Key can not be empty");
+    }
+
+    public void addDuplicateKeyWarningLabels(ArrayList<CustomTextAreaItem> list){
+        if(!labelBox.getChildren().contains(warningLabel)) labelBox.getChildren().add(0, warningLabel);
+        warningLabelTooltip.setText("Duplicate key");
+
+        for(CustomTextAreaItem item : list){
+            if(!item.labelBox.getChildren().contains(item.warningLabel))  item.labelBox.getChildren().add(0, item.warningLabel);
+            item.warningLabelTooltip.setText("Duplicate key");
+        }
+    }
+
+    public void removeWarningLabel(){
+        labelBox.getChildren().remove(warningLabel);
+    }
+
+    public ArrayList<CustomTextAreaItem> findDuplicates(String key){
+        ArrayList<CustomTextAreaItem> duplicateItems = new ArrayList<>();
+        for(CustomTextAreaItem item : otherEditPage.items){
+
+            if(item.equals(this)) continue;
+            if(item.labelBox.getChildren().contains(item.label) && item.label.getText().equalsIgnoreCase(key)){
+                duplicateItems.add(item);
+            }
+            else if(item.labelBox.getChildren().contains(item.keyField) && item.keyField.getText().equalsIgnoreCase(key)){
+                duplicateItems.add(item);
+            }
+        }
+
+
+        return duplicateItems;
+    }
+
+    public void removeItem(){
+        parent.getChildren().remove(this);
+        otherEditPage.items.remove(this);
     }
 }

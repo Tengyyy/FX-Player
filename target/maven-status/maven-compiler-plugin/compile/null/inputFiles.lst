@@ -3,7 +3,6 @@ C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\FontSizeP
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\FontColorPane.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\FrameGrabberTask.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\SliderHoverLabel.java
-C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataPage.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Shell32Util.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\TechnicalDetailsPage.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\Columns.java
@@ -46,6 +45,7 @@ C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\MouseEventTracker.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MenuObject.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\MediaItems\AviItem.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\CustomTextAreaItem.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\SRTParser\srt\Subtitle.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\AnimationsClass.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\QueueItem.java
@@ -54,6 +54,7 @@ C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\Backgroun
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MenuItemOptionsPopUp.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\ValueIndicator.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\MediaItems\MovItem.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\OtherEditPage.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\MainController.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\ActiveBox.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\MediaItems\FlacItem.java

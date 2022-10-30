@@ -255,6 +255,13 @@ public class CustomTextAreaItem extends VBox{
     }
 
     public void removeItem(){
+
+        ArrayList<CustomTextAreaItem> list = null;
+        if(labelBox.getChildren().contains(label) && !label.getText().isEmpty()) list = findDuplicates(label.getText());
+        else if(labelBox.getChildren().contains(keyField) && !keyField.getText().isEmpty()) list = findDuplicates(keyField.getText());
+
+        if(list != null && list.size() == 1) list.get(0).removeWarningLabel();
+
         parent.getChildren().remove(this);
         otherEditPage.items.remove(this);
     }

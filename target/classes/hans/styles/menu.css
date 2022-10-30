@@ -312,4 +312,11 @@
     -fx-background-color: rgb(50,50,50);
 }
 
+.warningLabel {
+    -fx-text-fill: rgb(255,0,0);
+    -fx-font-family: "Roboto Bold";
+    -fx-font-size: 14;
+}
+
+
 

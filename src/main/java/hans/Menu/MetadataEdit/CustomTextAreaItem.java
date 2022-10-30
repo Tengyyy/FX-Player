@@ -1,26 +1,25 @@
 package hans.Menu.MetadataEdit;
 
 import com.jfoenix.controls.JFXButton;
-import hans.*;
+import hans.AnimationsClass;
+import hans.App;
+import hans.ControlTooltip;
 import hans.Menu.ExpandableTextArea;
+import hans.SVG;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class CustomTextAreaItem extends VBox{
 
@@ -31,7 +30,6 @@ public class CustomTextAreaItem extends VBox{
 
     StackPane labelContainer = new StackPane();
     HBox labelBox = new HBox();
-    Label label;
 
     Label warningLabel = new Label("*");
 
@@ -60,17 +58,24 @@ public class CustomTextAreaItem extends VBox{
         editSVG.setContent(App.svgMap.get(SVG.EDIT));
         removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
 
-        label = new Label(key);
-        label.setOnMouseClicked(e -> {
-            if(e.getClickCount() == 2) addTextField();
-        });
-        label.getStyleClass().add("metadataKey");
-
         warningLabel.getStyleClass().add("warningLabel");
         warningLabel.setPadding(new Insets(5, 5, 5, 5));
 
         VBox.setMargin(labelBox, new Insets(0, 0, 3, 0));
 
+        keyField.maxWidthProperty().bind(labelBox.widthProperty().subtract(35));
+        keyField.textProperty().addListener((ov, prevText, currText) -> {
+            // Do this in a Platform.runLater because of Textfield has no padding at first time and so on
+            Platform.runLater(() -> {
+                Text text = new Text(currText);
+                text.setFont(keyField.getFont()); // Set the same font, so the size is the same
+                double width = text.getLayoutBounds().getWidth() // This big is the Text in the TextField
+                        + keyField.getPadding().getLeft() + keyField.getPadding().getRight() // Add the padding of the TextField
+                        + 2d; // Add some spacing
+                keyField.setPrefWidth(width); // Set the width
+                keyField.positionCaret(keyField.getCaretPosition()); // If you remove this line, it flashes a little bit
+            });
+        });
         keyField.setText(key);
         keyField.setPrefHeight(20);
         keyField.setMinHeight(20);
@@ -98,11 +103,18 @@ public class CustomTextAreaItem extends VBox{
                     duplicateString = keyField.getText();
                     addDuplicateKeyWarningLabels(list);
                 }
-                else addLabel();
+                else {
+                   removeWarningLabel();
+                   parent.requestFocus();
+                   addEditButton();
+                }
             }
         });
         keyField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(!newValue){
+            if(newValue){
+                removeEditButton();
+            }
+            else {
                 if(!duplicateString.isEmpty() && !keyField.getText().equalsIgnoreCase(duplicateString)){
                     ArrayList<CustomTextAreaItem> list = findDuplicates(duplicateString);
                     if(list.size() == 1) list.get(0).removeWarningLabel();
@@ -119,10 +131,17 @@ public class CustomTextAreaItem extends VBox{
                     duplicateString = keyField.getText();
                     addDuplicateKeyWarningLabels(list);
                 }
-                else addLabel();
+                else {
+                    removeWarningLabel();
+                    addEditButton();
+                }
             }
         });
-        HBox.setHgrow(keyField, Priority.ALWAYS);
+        //HBox.setHgrow(keyField, Priority.ALWAYS);
+
+
+
+
 
         editButton.setPrefWidth(30);
         editButton.setPrefHeight(30);
@@ -139,11 +158,16 @@ public class CustomTextAreaItem extends VBox{
         editIcon.setMouseTransparent(true);
         editIcon.getStyleClass().add("menuIcon");
 
+        editButton.setOnAction(e -> {
+            removeEditButton();
+            keyField.requestFocus();
+            keyField.positionCaret(keyField.getText().length());
+        });
+
         editButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, editButton, 0, 1, false, 1, true));
 
         editButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, editButton, 1, 0, false, 1, true));
 
-        editButton.setOnAction((e) -> addTextField());
 
         HBox.setMargin(editButtonPane, new Insets(0, 0, 0, 5));
         editButtonPane.getChildren().addAll(editButton, editIcon);
@@ -174,7 +198,7 @@ public class CustomTextAreaItem extends VBox{
         removeButtonPane.setMaxWidth(30);
         removeButtonPane.getChildren().addAll(removeButton, removeIcon);
         StackPane.setAlignment(removeButtonPane, Pos.CENTER_RIGHT);
-        labelBox.getChildren().addAll(label, editButtonPane);
+        labelBox.getChildren().addAll(keyField, editButtonPane);
         StackPane.setAlignment(labelBox, Pos.CENTER_LEFT);
         labelContainer.getChildren().addAll(labelBox, removeButtonPane);
         labelContainer.setPrefWidth(Double.MAX_VALUE);
@@ -194,29 +218,12 @@ public class CustomTextAreaItem extends VBox{
             removeButtonTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Remove key", removeButton, 1000);
             warningLabelTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Key can not be empty", warningLabel, 0, false, true);
             warningLabelTooltip.getStyleClass().add("warningLabelTooltip");
+
         });
 
 
     }
 
-    public void addLabel(){
-        label.setText(keyField.getText());
-        labelBox.getChildren().removeAll(keyField, warningLabel);
-        if(!labelBox.getChildren().contains(label)) labelBox.getChildren().add(label);
-        if(!labelBox.getChildren().contains(editButtonPane)) labelBox.getChildren().add(editButtonPane);
-    }
-
-    public void addTextField(){
-        labelBox.getChildren().removeAll(label, editButtonPane);
-        if(!labelBox.getChildren().contains(keyField)){
-            if(labelBox.getChildren().contains(warningLabel)) labelBox.getChildren().add(1, keyField);
-            else labelBox.getChildren().add(0, keyField);
-        }
-        Platform.runLater(() -> {
-            keyField.requestFocus();
-            keyField.positionCaret(keyField.getText().length());
-        });
-    }
 
     public void addEmptyKeyWarningLabel(){
         if(!labelBox.getChildren().contains(warningLabel)) labelBox.getChildren().add(0, warningLabel);
@@ -242,10 +249,7 @@ public class CustomTextAreaItem extends VBox{
         for(CustomTextAreaItem item : otherEditPage.items){
 
             if(item.equals(this)) continue;
-            if(item.labelBox.getChildren().contains(item.label) && item.label.getText().equalsIgnoreCase(key)){
-                duplicateItems.add(item);
-            }
-            else if(item.labelBox.getChildren().contains(item.keyField) && item.keyField.getText().equalsIgnoreCase(key)){
+            if(item.keyField.getText().equalsIgnoreCase(key)){
                 duplicateItems.add(item);
             }
         }
@@ -257,12 +261,19 @@ public class CustomTextAreaItem extends VBox{
     public void removeItem(){
 
         ArrayList<CustomTextAreaItem> list = null;
-        if(labelBox.getChildren().contains(label) && !label.getText().isEmpty()) list = findDuplicates(label.getText());
-        else if(labelBox.getChildren().contains(keyField) && !keyField.getText().isEmpty()) list = findDuplicates(keyField.getText());
+        if(!keyField.getText().isEmpty()) list = findDuplicates(keyField.getText());
 
         if(list != null && list.size() == 1) list.get(0).removeWarningLabel();
 
         parent.getChildren().remove(this);
         otherEditPage.items.remove(this);
+    }
+
+    public void addEditButton(){
+        if(!labelBox.getChildren().contains(editButtonPane)) labelBox.getChildren().add(1, editButtonPane);
+    }
+
+    public void removeEditButton(){
+        labelBox.getChildren().remove(editButtonPane);
     }
 }

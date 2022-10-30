@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -45,15 +46,12 @@ public class CustomTextAreaItem extends VBox{
 
     ControlTooltip editButtonTooltip, removeButtonTooltip, warningLabelTooltip;
 
-    VBox parent;
-
     String duplicateString = "";
 
 
-    CustomTextAreaItem(OtherEditPage otherEditPage, String key, String value, VBox parent){
+    CustomTextAreaItem(OtherEditPage otherEditPage, String key, String value){
 
         this.otherEditPage = otherEditPage;
-        this.parent = parent;
 
         editSVG.setContent(App.svgMap.get(SVG.EDIT));
         removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
@@ -63,26 +61,29 @@ public class CustomTextAreaItem extends VBox{
 
         VBox.setMargin(labelBox, new Insets(0, 0, 3, 0));
 
-        keyField.maxWidthProperty().bind(labelBox.widthProperty().subtract(35));
-        keyField.textProperty().addListener((ov, prevText, currText) -> {
-            // Do this in a Platform.runLater because of Textfield has no padding at first time and so on
-            Platform.runLater(() -> {
-                Text text = new Text(currText);
-                text.setFont(keyField.getFont()); // Set the same font, so the size is the same
-                double width = text.getLayoutBounds().getWidth() // This big is the Text in the TextField
-                        + keyField.getPadding().getLeft() + keyField.getPadding().getRight() // Add the padding of the TextField
-                        + 2d; // Add some spacing
-                keyField.setPrefWidth(width); // Set the width
-                keyField.positionCaret(keyField.getCaretPosition()); // If you remove this line, it flashes a little bit
-            });
-        });
-        keyField.setText(key);
+        keyField.setPrefWidth(3);
         keyField.setPrefHeight(20);
         keyField.setMinHeight(20);
         keyField.setMaxHeight(20);
         keyField.setTranslateX(-1);
         keyField.setTranslateY(2);
         keyField.getStyleClass().add("key-text-field");
+        keyField.maxWidthProperty().bind(labelBox.widthProperty().subtract(35));
+
+        keyField.textProperty().addListener((ov, prevText, currText) -> {
+            // Do this in a Platform.runLater because of Textfield has no padding at first time and so on
+            Platform.runLater(() -> {
+                Text text = new Text(currText);
+                text.setFont(new Font("Roboto Medium", 18)); // Set the same font, so the size is the same
+                double width = text.getLayoutBounds().getWidth()
+                        + keyField.getPadding().getLeft() + keyField.getPadding().getRight() // Add the padding of the TextField
+                        + 2d; // Add some spacing
+                keyField.setPrefWidth(width); // Set the width
+                keyField.positionCaret(keyField.getCaretPosition()); // If you remove this line, it flashes a little bit
+            });
+        });
+
+
         keyField.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ENTER){
 
@@ -105,9 +106,10 @@ public class CustomTextAreaItem extends VBox{
                 }
                 else {
                    removeWarningLabel();
-                   parent.requestFocus();
-                   addEditButton();
                 }
+
+                otherEditPage.content.requestFocus();
+                addEditButton();
             }
         });
         keyField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -133,14 +135,11 @@ public class CustomTextAreaItem extends VBox{
                 }
                 else {
                     removeWarningLabel();
-                    addEditButton();
                 }
+
+                addEditButton();
             }
         });
-        //HBox.setHgrow(keyField, Priority.ALWAYS);
-
-
-
 
 
         editButton.setPrefWidth(30);
@@ -191,9 +190,7 @@ public class CustomTextAreaItem extends VBox{
 
         removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
 
-        removeButton.setOnAction((e) -> {
-            removeItem();
-        });
+        removeButton.setOnAction((e) -> removeItem());
 
         removeButtonPane.setMaxWidth(30);
         removeButtonPane.getChildren().addAll(removeButton, removeIcon);
@@ -211,14 +208,14 @@ public class CustomTextAreaItem extends VBox{
         textArea.setText(value);
 
         this.getChildren().addAll(labelContainer, textArea);
-        parent.getChildren().add(this);
+        otherEditPage.content.getChildren().add(otherEditPage.content.getChildren().indexOf(otherEditPage.addButton), this);
 
         Platform.runLater(() -> {
             editButtonTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Edit key", editButton, 1000);
             removeButtonTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Remove key", removeButton, 1000);
             warningLabelTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Key can not be empty", warningLabel, 0, false, true);
             warningLabelTooltip.getStyleClass().add("warningLabelTooltip");
-
+            keyField.setText(key);
         });
 
 
@@ -265,12 +262,12 @@ public class CustomTextAreaItem extends VBox{
 
         if(list != null && list.size() == 1) list.get(0).removeWarningLabel();
 
-        parent.getChildren().remove(this);
+        otherEditPage.content.getChildren().remove(this);
         otherEditPage.items.remove(this);
     }
 
     public void addEditButton(){
-        if(!labelBox.getChildren().contains(editButtonPane)) labelBox.getChildren().add(1, editButtonPane);
+        if(!labelBox.getChildren().contains(editButtonPane)) labelBox.getChildren().add(labelBox.getChildren().indexOf(keyField) + 1, editButtonPane);
     }
 
     public void removeEditButton(){

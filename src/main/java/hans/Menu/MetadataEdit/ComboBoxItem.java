@@ -1,5 +1,7 @@
 package hans.Menu.MetadataEdit;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -10,8 +12,12 @@ public class ComboBoxItem extends VBox{
     Label label;
     ComboBox<String> comboBox;
 
+    MetadataEditPage metadataEditPage;
 
-    ComboBoxItem(VBox parent, boolean add, String initialValue, String... values) {
+    ComboBoxItem(MetadataEditPage metadataEditPage, VBox parent, boolean add, String initialValue, String... values) {
+
+        this.metadataEditPage = metadataEditPage;
+
         label = new Label("Media type");
         label.getStyleClass().add("metadataKey");
         VBox.setMargin(label, new Insets(0, 0, 3, 0));
@@ -25,6 +31,9 @@ public class ComboBoxItem extends VBox{
         }
 
         comboBox.setValue(initialValue);
+        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            metadataEditPage.changesMade.set(true);
+        });
 
         this.getChildren().addAll(label, comboBox);
         if(add) parent.getChildren().add(this);

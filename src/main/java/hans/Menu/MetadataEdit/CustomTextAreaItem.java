@@ -7,6 +7,8 @@ import hans.ControlTooltip;
 import hans.Menu.ExpandableTextArea;
 import hans.SVG;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -72,6 +74,7 @@ public class CustomTextAreaItem extends VBox{
 
         keyField.textProperty().addListener((ov, prevText, currText) -> {
             // Do this in a Platform.runLater because of Textfield has no padding at first time and so on
+            otherEditPage.metadataEditPage.changesMade.set(true);
             Platform.runLater(() -> {
                 Text text = new Text(currText);
                 text.setFont(new Font("Roboto Medium", 18)); // Set the same font, so the size is the same
@@ -206,6 +209,9 @@ public class CustomTextAreaItem extends VBox{
 
         textArea = new ExpandableTextArea();
         textArea.setText(value);
+        textArea.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            otherEditPage.metadataEditPage.changesMade.set(true);
+        });
 
         this.getChildren().addAll(labelContainer, textArea);
         otherEditPage.content.getChildren().add(otherEditPage.content.getChildren().indexOf(otherEditPage.addButton), this);
@@ -215,7 +221,9 @@ public class CustomTextAreaItem extends VBox{
             removeButtonTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Remove key", removeButton, 1000);
             warningLabelTooltip = new ControlTooltip(otherEditPage.metadataEditPage.menuController.mainController, "Key can not be empty", warningLabel, 0, false, true);
             warningLabelTooltip.getStyleClass().add("warningLabelTooltip");
+            boolean changesMade = otherEditPage.metadataEditPage.changesMade.get();
             keyField.setText(key);
+            if(!changesMade) otherEditPage.metadataEditPage.changesMade.set(false);
         });
 
 
@@ -264,6 +272,9 @@ public class CustomTextAreaItem extends VBox{
 
         otherEditPage.content.getChildren().remove(this);
         otherEditPage.items.remove(this);
+
+        otherEditPage.metadataEditPage.changesMade.set(true);
+
     }
 
     public void addEditButton(){

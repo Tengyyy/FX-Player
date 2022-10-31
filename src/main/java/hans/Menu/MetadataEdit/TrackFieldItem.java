@@ -1,9 +1,6 @@
 package hans.Menu.MetadataEdit;
 
-import hans.Menu.ExpandableTextArea;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -14,8 +11,12 @@ public class TrackFieldItem extends VBox{
     TextField textField1;
     TextField textField2;
 
+    MetadataEditPage metadataEditPage;
 
-    TrackFieldItem(String value, VBox parent, boolean add){
+    TrackFieldItem(MetadataEditPage metadataEditPage, String value, VBox parent, boolean add){
+
+        this.metadataEditPage = metadataEditPage;
+
         label = new Label("Track number");
         label.getStyleClass().add("metadataKey");
 
@@ -31,6 +32,9 @@ public class TrackFieldItem extends VBox{
         }
 
         textField1 = new TextField(firstValue);
+        textField1.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            metadataEditPage.changesMade.set(true);
+        });
 
         textField1.setPrefHeight(36);
         textField1.setMinHeight(36);
@@ -40,6 +44,9 @@ public class TrackFieldItem extends VBox{
         slash.getStyleClass().add("metadataKey");
 
         textField2 = new TextField(secondValue);
+        textField2.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            metadataEditPage.changesMade.set(true);
+        });
 
         textField2.setPrefHeight(36);
         textField2.setMinHeight(36);

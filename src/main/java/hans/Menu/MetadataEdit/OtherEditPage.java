@@ -4,10 +4,10 @@ import com.jfoenix.controls.JFXButton;
 import hans.App;
 import hans.MediaItems.MediaItem;
 import hans.SVG;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
@@ -61,12 +61,13 @@ public class OtherEditPage {
             items.add(item);
             item.keyField.requestFocus();
             metadataEditPage.menuController.metadataEditScroll.setVvalue(1.0);
+            metadataEditPage.changesMade.set(true);
         });
 
         content.getChildren().add(addButton);
 
         if(metadata != null) {
-            titleItem = new TextAreaItem("Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
+            titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
             content.getChildren().add(0, titleItem);
 
 

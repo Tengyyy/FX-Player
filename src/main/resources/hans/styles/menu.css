@@ -318,5 +318,20 @@
     -fx-font-size: 14;
 }
 
+#confirmationWindowContainer {
+    -fx-background-color: rgba(0,0,0,0.8);
+}
+
+#confirmationWindow {
+    -fx-background-color: rgb(30,30,30);
+    -fx-background-radius: 5;
+}
+
+#confirmationWindowTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Bold";
+    -fx-font-size: 20;
+}
+
 
 

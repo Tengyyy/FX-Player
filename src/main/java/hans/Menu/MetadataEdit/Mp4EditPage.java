@@ -6,7 +6,7 @@ import javafx.scene.layout.VBox;
 import java.util.Arrays;
 import java.util.Map;
 
-public class MP4EditPage {
+public class Mp4EditPage {
 
     MetadataEditPage metadataEditPage;
     MediaItem mediaItem;
@@ -35,7 +35,7 @@ public class MP4EditPage {
     Map<String, String> metadata;
 
 
-    MP4EditPage(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    Mp4EditPage(MetadataEditPage metadataEditPage, MediaItem mediaItem){
         this.metadataEditPage = metadataEditPage;
         this.mediaItem = mediaItem;
 

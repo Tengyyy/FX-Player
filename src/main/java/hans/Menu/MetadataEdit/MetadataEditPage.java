@@ -2,7 +2,6 @@ package hans.Menu.MetadataEdit;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
-import hans.MediaItems.MediaItem;
 import hans.Menu.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -12,9 +11,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -24,7 +20,6 @@ import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 
 import java.io.File;
-import java.util.Map;
 
 public class MetadataEditPage {
 
@@ -42,7 +37,7 @@ public class MetadataEditPage {
 
     StackPane footerPane = new StackPane();
 
-    JFXButton saveButton = new JFXButton();
+    JFXButton applyButton = new JFXButton();
     Region saveIcon = new Region();
 
     JFXButton cancelButton = new JFXButton();
@@ -78,8 +73,8 @@ public class MetadataEditPage {
     Color newColor = null;
     Image newImage = null;
 
-    MP4EditPage mp4EditPage;
-    MP3EditPage mp3EditPage;
+    Mp4EditPage mp4EditPage;
+    Mp3EditPage mp3EditPage;
     OtherEditPage otherEditPage;
 
 
@@ -222,28 +217,28 @@ public class MetadataEditPage {
         textBox.setAlignment(Pos.TOP_LEFT);
         textBox.setPadding(new Insets(0, 15, 0, 15));
 
-        footerPane.getChildren().addAll(cancelButton, saveButton);
+        footerPane.getChildren().addAll(cancelButton, applyButton);
 
-        saveButton.setRipplerFill(Color.WHITE);
-        saveButton.setText("Save changes");
-        saveButton.getStyleClass().add("mainButton");
-        saveButton.setGraphicTextGap(7);
-        saveButton.setPadding(new Insets(8, 10, 8, 8));
-        saveButton.setCursor(Cursor.HAND);
-        saveButton.setDisable(true);
+        applyButton.setRipplerFill(Color.WHITE);
+        applyButton.setText("Apply changes");
+        applyButton.getStyleClass().add("mainButton");
+        applyButton.setGraphicTextGap(7);
+        applyButton.setPadding(new Insets(8, 10, 8, 8));
+        applyButton.setCursor(Cursor.HAND);
+        applyButton.setDisable(true);
 
-        changesMade.addListener((observableValue, oldValue, newValue) -> saveButton.setDisable(!newValue));
+        changesMade.addListener((observableValue, oldValue, newValue) -> applyButton.setDisable(!newValue));
 
-        saveButton.setOnAction(e -> saveChanges());
+        applyButton.setOnAction(e -> applyChanges());
 
         saveIcon.setShape(saveIconSVG);
         saveIcon.getStyleClass().add("menuIcon");
         saveIcon.setPrefSize(18, 18);
         saveIcon.setMaxSize(18, 18);
 
-        saveButton.setGraphic(saveIcon);
-        StackPane.setMargin(saveButton, new Insets(20, 20, 10, 0));
-        StackPane.setAlignment(saveButton, Pos.CENTER_RIGHT);
+        applyButton.setGraphic(saveIcon);
+        StackPane.setMargin(applyButton, new Insets(20, 20, 10, 0));
+        StackPane.setAlignment(applyButton, Pos.CENTER_RIGHT);
 
         cancelButton.setRipplerFill(Color.WHITE);
         cancelButton.setCursor(Cursor.HAND);
@@ -283,10 +278,10 @@ public class MetadataEditPage {
         switch (extension) {
             case "mp4":
             case "mov":
-                mp4EditPage = new MP4EditPage(this, menuObject.getMediaItem());
+                mp4EditPage = new Mp4EditPage(this, menuObject.getMediaItem());
                 break;
             case "mp3":
-                mp3EditPage = new MP3EditPage(this, menuObject.getMediaItem());
+                mp3EditPage = new Mp3EditPage(this, menuObject.getMediaItem());
                 break;
             case "avi":
                 //TODO: avi files dont allow free-form key-values so have to create custom edit page
@@ -339,7 +334,7 @@ public class MetadataEditPage {
         imageViewContainer.setStyle("-fx-background-color: rgba(64,64,64,0.7);");
     }
 
-    public void saveChanges(){
+    public void applyChanges(){
         changesMade.set(false);
         //TODO: actually make this functional
 

@@ -5,7 +5,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.Map;
 
-public class MP3EditPage {
+public class Mp3EditPage {
 
     MetadataEditPage metadataEditPage;
     MediaItem mediaItem;
@@ -30,7 +30,7 @@ public class MP3EditPage {
     Map<String, String> metadata;
 
 
-    MP3EditPage(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    Mp3EditPage(MetadataEditPage metadataEditPage, MediaItem mediaItem){
         this.metadataEditPage = metadataEditPage;
         this.mediaItem = mediaItem;
 

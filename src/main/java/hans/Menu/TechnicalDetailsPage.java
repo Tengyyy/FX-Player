@@ -169,7 +169,7 @@ public class TechnicalDetailsPage {
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");
 
-        menuController.menuState = MenuState.METADATA_OPEN;
+        menuController.menuState = MenuState.QUEUE_OPEN;
     }
 
     private void createTitle(String title){

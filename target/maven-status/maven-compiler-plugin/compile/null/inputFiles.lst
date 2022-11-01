@@ -17,6 +17,7 @@ C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\FontOpaci
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Miniplayer.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\HistoryBox.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\PlaybackSpeedTab.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\AviEditPage.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\SRTParser\srt\SRTParser.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MenuController.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\EditImagePopUp.java
@@ -76,7 +77,8 @@ C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\PlaybackO
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\ControlTooltip.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\SVG.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Utilities.java
-C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\MP4EditPage.java
-C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\MP3EditPage.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\Mp4EditPage.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\Mp3EditPage.java
+C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Menu\MetadataEdit\MetadataExitConfirmation.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Settings\FontFamilyPane.java
 C:\Users\hansu\git\javafx-media-player-new\src\main\java\hans\Shell32.java

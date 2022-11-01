@@ -247,7 +247,9 @@ public class MediaInterface {
 
         controlBarController.durationSlider.setValue(0);
 
-        mainController.metadataButton.setOnAction(e -> menuObject.showMetadata());
+        mainController.metadataButton.setOnAction(e -> {
+            menuObject.showMetadata();
+        });
 
 
         if(!menuObject.getMediaItem().hasVideo()){

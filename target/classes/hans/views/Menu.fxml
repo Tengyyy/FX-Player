@@ -5,7 +5,6 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
@@ -17,17 +16,11 @@
             <Insets right="5.0" />
          </StackPane.margin></ScrollPane>
       <ScrollPane fx:id="metadataEditScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-        </content>
          <StackPane.margin>
             <Insets right="5.0" />
          </StackPane.margin>
       </ScrollPane>
       <ScrollPane fx:id="technicalDetailsScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-        </content>
          <StackPane.margin>
             <Insets right="5.0" />
          </StackPane.margin>
@@ -47,6 +40,7 @@
             <Insets bottom="10.0" left="10.0" />
          </StackPane.margin>
       </HBox>
+      <StackPane fx:id="metadataExitConfirmationWindowContainer" prefHeight="150.0" prefWidth="200.0" />
       <StackPane id="dragPane" fx:id="dragPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="3.0" StackPane.alignment="CENTER_RIGHT">
          <cursor>
             <Cursor fx:constant="H_RESIZE" />

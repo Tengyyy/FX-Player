@@ -46,7 +46,7 @@ public class MenuController implements Initializable {
 
     @FXML
     public
-    StackPane menu, confirmationWindowContainer;
+    StackPane menu, metadataExitConfirmationWindowContainer;
 
     @FXML
     public HBox notificationPane;
@@ -140,14 +140,6 @@ public class MenuController implements Initializable {
 
     Button closeButton = new Button();
     Region closeIcon = new Region();
-
-
-    VBox confirmationWindow = new VBox();
-    SVGPath confirmationWindowSVG = new SVGPath();
-    Region confirmationWindowIcon = new Region();
-    Label confirmationWindowTitle = new Label(), confirmationWindowText = new Label();
-    StackPane confirmationWindowButtonContainer = new StackPane();
-    JFXButton confirmationWindowMainButton = new JFXButton(), confirmationWindowSecondaryButton = new JFXButton();
 
     public MenuItemOptionsPopUp activeMenuItemOptionsPopUp;
 
@@ -632,28 +624,6 @@ public class MenuController implements Initializable {
 
         technicalDetailsScroll.setVisible(false);
         technicalDetailsScroll.setBackground(Background.EMPTY);
-
-        confirmationWindowContainer.setId("confirmationWindowContainer");
-        confirmationWindowContainer.getChildren().add(confirmationWindow);
-
-        confirmationWindow.setAlignment(Pos.TOP_CENTER);
-        confirmationWindow.setPrefSize(350, 250);
-        confirmationWindow.setMaxSize(350, 250);
-        confirmationWindow.setId("confirmationWindow");
-
-        confirmationWindowSVG.setContent(App.svgMap.get(SVG.REMOVE));
-        confirmationWindowIcon.setShape(confirmationWindowSVG);
-        confirmationWindowIcon.getStyleClass().add("menuIcon");
-        confirmationWindowIcon.setMinSize(35, 35);
-        confirmationWindowIcon.setPrefSize(35, 35);
-        confirmationWindowIcon.setMaxSize(35, 35);
-        VBox.setMargin(confirmationWindowIcon, new Insets(20, 0, 20, 0));
-
-        confirmationWindowTitle.setText("Discard Changes");
-        confirmationWindowTitle.setId("confirmationWindowTitle");
-
-
-        confirmationWindow.getChildren().addAll(confirmationWindowIcon, confirmationWindowTitle);
 
     }
 

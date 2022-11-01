@@ -435,14 +435,6 @@ public class MainController implements Initializable {
         metadataButton.setMaxSize(50, 50);
         metadataButton.setBackground(Background.EMPTY);
         metadataButton.setCursor(Cursor.HAND);
-        metadataButton.setOnAction(e -> {
-            //TODO: find out why this still doesnt work
-            if(menuController.menuInTransition) return;
-            if(menuController.activeItem != null){
-                openMenu();
-                menuController.metadataEditPage.enterMetadataEditPage(menuController.activeItem);
-            }
-        });
 
         metadataPath.setContent(App.svgMap.get(INFORMATION));
         metadataIcon.setShape(metadataPath);
@@ -477,7 +469,7 @@ public class MainController implements Initializable {
         }
 
 
-        if(menuController.menuState == MenuState.METADATA_OPEN || menuController.menuState == MenuState.QUEUE_OPEN || menuController.menuState == MenuState.TECHNICAL_DETAILS_OPEN || (menuController.menuState == MenuState.METADATA_EDIT_OPEN && !menuController.metadataEditPage.changesMade.get())){
+        if(menuController.menuState == MenuState.QUEUE_OPEN || menuController.menuState == MenuState.TECHNICAL_DETAILS_OPEN || (menuController.menuState == MenuState.METADATA_EDIT_OPEN && !menuController.metadataEditPage.changesMade.get())){
             menuController.closeMenu();
         }
         else if (settingsController.settingsState != SettingsState.CLOSED) {
@@ -1116,7 +1108,12 @@ public class MainController implements Initializable {
         if(menuController.activeMenuItemOptionsPopUp != null && menuController.activeMenuItemOptionsPopUp.isShowing()) menuController.activeMenuItemOptionsPopUp.hide();
 
         if(menuController.menuState != MenuState.CLOSED){
-            menuController.closeMenu();
+            if(menuController.menuState == MenuState.METADATA_EDIT_OPEN && menuController.metadataEditPage.changesMade.get()){
+                menuController.metadataEditPage.requestExitMetadataEditPage(true);
+            }
+            else {
+                menuController.closeMenu();
+            }
             controlBarController.mouseEventTracker.move();
         }
         else openMenu();

@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -65,7 +66,6 @@ public class MetadataEditPage {
     MenuObject menuObject = null;
     EditImagePopUp editImagePopUp;
 
-
     public BooleanProperty changesMade = new SimpleBooleanProperty(false);
 
 
@@ -76,6 +76,8 @@ public class MetadataEditPage {
     Mp4EditPage mp4EditPage;
     Mp3EditPage mp3EditPage;
     OtherEditPage otherEditPage;
+
+    MetadataExitConfirmation metadataExitConfirmation;
 
 
     public MetadataEditPage(MenuController menuController){
@@ -101,7 +103,7 @@ public class MetadataEditPage {
         backButton.setCursor(Cursor.HAND);
         backButton.setBackground(Background.EMPTY);
 
-        backButton.setOnAction(e -> exitMetadataEditPage());
+        backButton.setOnAction(e -> requestExitMetadataEditPage(false));
 
         backButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.AnimateBackgroundColor(backIcon, (Color) backIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
@@ -126,7 +128,9 @@ public class MetadataEditPage {
         closeButton.setCursor(Cursor.HAND);
         closeButton.setBackground(Background.EMPTY);
 
-        closeButton.setOnAction(e -> menuController.closeMenu());
+        closeButton.setOnAction(e -> {
+            requestExitMetadataEditPage(true);
+        });
 
         closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.AnimateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
@@ -249,7 +253,9 @@ public class MetadataEditPage {
         StackPane.setMargin(cancelButton, new Insets(20, 0, 10, 20));
         cancelButton.setPadding(new Insets(8, 10, 8, 10));
 
-        cancelButton.setOnAction(e -> exitMetadataEditPage());
+        cancelButton.setOnAction(e -> requestExitMetadataEditPage(false));
+
+        metadataExitConfirmation = new MetadataExitConfirmation(menuController, this);
 
     }
 
@@ -295,9 +301,20 @@ public class MetadataEditPage {
         menuController.metadataEditScroll.setVisible(true);
         menuController.queueScroll.setVisible(false);
 
+        if(menuController.menuState == MenuState.CLOSED) menuController.mainController.openMenu();
+
         menuController.menuState = MenuState.METADATA_EDIT_OPEN;
     }
 
+    public void requestExitMetadataEditPage(boolean closeMenu){
+        if(changesMade.get()){
+            metadataExitConfirmation.show(closeMenu);
+        }
+        else {
+            if(closeMenu) menuController.closeMenu();
+            else exitMetadataEditPage();
+        }
+    }
 
     public void exitMetadataEditPage(){
         this.menuObject = null;
@@ -310,7 +327,7 @@ public class MetadataEditPage {
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");
 
-        menuController.menuState = MenuState.METADATA_OPEN;
+        menuController.menuState = MenuState.QUEUE_OPEN;
     }
 
     public void editImage(){

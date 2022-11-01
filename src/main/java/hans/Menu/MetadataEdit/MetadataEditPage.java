@@ -76,6 +76,7 @@ public class MetadataEditPage {
     Mp4EditPage mp4EditPage;
     Mp3EditPage mp3EditPage;
     OtherEditPage otherEditPage;
+    AviEditPage aviEditPage;
 
     MetadataExitConfirmation metadataExitConfirmation;
 
@@ -290,7 +291,7 @@ public class MetadataEditPage {
                 mp3EditPage = new Mp3EditPage(this, menuObject.getMediaItem());
                 break;
             case "avi":
-                //TODO: avi files dont allow free-form key-values so have to create custom edit page
+                aviEditPage = new AviEditPage(this, menuObject.getMediaItem());
                 break;
             default:
                 otherEditPage = new OtherEditPage(this, menuObject.getMediaItem());

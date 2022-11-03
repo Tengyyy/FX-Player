@@ -7,6 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.JavaFXFrameConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,13 +55,6 @@ public class FlvItem implements MediaItem {
 
             mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
 
-            hasCover = cover != null;
-            if(!hasCover && hasVideo) cover = Utilities.grabMiddleFrame(file);
-            if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
-
-            placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
-
-
             mediaDetails.put("size", Utilities.formatFileSize(file.length()));
             mediaDetails.put("name", file.getName());
             mediaDetails.put("path", file.getAbsolutePath());
@@ -88,6 +83,22 @@ public class FlvItem implements MediaItem {
             }
 
             fFmpegFrameGrabber.stop();
+
+            fFmpegFrameGrabber.setVideoDisposition(512);
+
+            fFmpegFrameGrabber.start();
+
+            Frame frame = fFmpegFrameGrabber.grabImage();
+            JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
+            if(frame != null) cover = javaFXFrameConverter.convert(frame);
+
+
+            hasCover = cover != null;
+            if(!hasCover && hasVideo) cover = Utilities.grabMiddleFrame(file);
+            if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+
+            placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
+
             fFmpegFrameGrabber.close();
 
         } catch (IOException e) {

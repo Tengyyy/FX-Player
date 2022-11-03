@@ -5,7 +5,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class TrackFieldItem extends VBox{
+public class TwoTextFieldItem extends VBox{
 
     Label label;
     TextField textField1;
@@ -13,7 +13,7 @@ public class TrackFieldItem extends VBox{
 
     MetadataEditPage metadataEditPage;
 
-    TrackFieldItem(MetadataEditPage metadataEditPage, String value, VBox parent, boolean add){
+    TwoTextFieldItem(MetadataEditPage metadataEditPage, String key, String value, VBox parent, boolean add){
 
         this.metadataEditPage = metadataEditPage;
 

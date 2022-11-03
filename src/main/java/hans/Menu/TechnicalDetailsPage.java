@@ -260,10 +260,11 @@ public class TechnicalDetailsPage {
             if(map.containsKey("format")) createItem("Format:", map.get("format"));
         }
 
-        if(map.containsKey("audioCodec")) createItem("Audio codec:", map.get("audioCodec"));
-        if(map.containsKey("audioBitrate")) createItem("Audio bitrate:", map.get("audioBitrate"));
+        if(map.containsKey("audioCodec")) createItem("Codec:", map.get("audioCodec"));
+        if(map.containsKey("audioBitrate")) createItem("Bitrate:", map.get("audioBitrate"));
+        if(map.containsKey("audioBitDepth")) createItem("Bit depth", map.get("audioBitDepth"));
         if(map.containsKey("sampleRate")) createItem("Sampling rate:", map.get("sampleRate"));
-        if(map.containsKey("audioChannels")) createItem("Audio channels:", map.get("audioChannels"));
+        if(map.containsKey("audioChannels")) createItem("Channels:", map.get("audioChannels"));
 
     }
 

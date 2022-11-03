@@ -14,7 +14,7 @@ public interface MediaItem {
 
     float getFrameDuration();
 
-    Map<String, String> getMediaInformation();
+    Map getMediaInformation();
 
     Map<String, String> getMediaDetails();
 

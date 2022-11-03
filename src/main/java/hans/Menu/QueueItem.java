@@ -4,8 +4,6 @@ package hans.Menu;
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
-import hans.MediaItems.Mp3Item;
-import hans.Menu.*;
 import javafx.animation.Animation;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;

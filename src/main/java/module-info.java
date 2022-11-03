@@ -11,10 +11,8 @@ module hans {
     requires FX.BorderlessScene;
     requires uk.co.caprica.vlcj;
     requires uk.co.caprica.vlcj.javafx;
-    requires vlcj.natives;
     requires org.bytedeco.javacv;
-    requires com.sun.jna.platform;
-    requires com.sun.jna;
+    requires jaudiotagger;
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;

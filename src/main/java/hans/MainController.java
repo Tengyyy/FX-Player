@@ -554,13 +554,13 @@ public class MainController implements Initializable {
         switch(Utilities.getFileExtension(file)){
             case "mp4": temp = new Mp4Item(file, controlBarController.mainController);
                 break;
-            case "mp3": temp = new Mp3Item(file, controlBarController.mainController);
+            case "mp3":
+            case "flac":
+                temp = new AudioItem(file, controlBarController.mainController);
                 break;
             case "avi": temp = new AviItem(file, controlBarController.mainController);
                 break;
             case "mkv": temp = new MkvItem(file, controlBarController.mainController);
-                break;
-            case "flac": temp = new FlacItem(file, controlBarController.mainController);
                 break;
             case "flv": temp = new FlvItem(file, controlBarController.mainController);
                 break;

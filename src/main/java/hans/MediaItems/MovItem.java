@@ -81,7 +81,7 @@ public class MovItem implements MediaItem {
             fFmpegFrameGrabber.stop();
 
 
-            fFmpegFrameGrabber.setVideoStream(2);
+            fFmpegFrameGrabber.setVideoDisposition(512);
 
             fFmpegFrameGrabber.start();
 

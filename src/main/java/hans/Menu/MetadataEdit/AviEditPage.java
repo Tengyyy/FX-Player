@@ -13,7 +13,7 @@ public class AviEditPage {
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;
     TextAreaItem albumItem = null;
-    TrackFieldItem trackItem = null;
+    TwoTextFieldItem trackItem = null;
     TextAreaItem genreItem = null;
     TextAreaItem languageItem = null;
     TextAreaItem releaseDateItem = null;
@@ -37,7 +37,7 @@ public class AviEditPage {
             titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, true);
             artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "", content, true);
             albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("album") && !metadata.get("album").trim().isEmpty() ? metadata.get("album") : "", content, true);
-            trackItem = new TrackFieldItem(metadataEditPage, metadata.containsKey("track") && !metadata.get("track").trim().isEmpty() ? metadata.get("track") : "", content, true);
+            trackItem = new TwoTextFieldItem(metadataEditPage, "Track number", metadata.containsKey("track") && !metadata.get("track").trim().isEmpty() ? metadata.get("track") : "", content, true);
             genreItem = new TextAreaItem(metadataEditPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").trim().isEmpty() ? metadata.get("genre") : "", content, true);
             languageItem = new TextAreaItem(metadataEditPage, "Language", metadata.containsKey("language") && !metadata.get("language").trim().isEmpty() ? metadata.get("language") : "", content, true);
             releaseDateItem = new TextAreaItem(metadataEditPage, "Release date", metadata.containsKey("date") && !metadata.get("date").trim().isEmpty() ? metadata.get("date") : "", content, true);

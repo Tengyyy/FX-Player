@@ -18,7 +18,7 @@ public class Mp4EditPage {
     TextFieldItem episodeNumberItem = null;
     TextAreaItem networkItem = null;
     TextAreaItem artistItem = null;
-    TrackFieldItem trackItem = null;
+    TwoTextFieldItem trackItem = null;
     TextAreaItem albumItem = null;
     TextAreaItem albumArtistItem = null;
     TextAreaItem composerItem = null;
@@ -91,7 +91,7 @@ public class Mp4EditPage {
                 artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "", content, true);
             }
 
-            trackItem = new TrackFieldItem(metadataEditPage, metadata.containsKey("track") && !metadata.get("track").trim().isEmpty() ? metadata.get("track") : "", content, false);
+            trackItem = new TwoTextFieldItem(metadataEditPage, "Track number", metadata.containsKey("track") && !metadata.get("track").trim().isEmpty() ? metadata.get("track") : "", content, false);
             albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("album") && !metadata.get("album").trim().isEmpty() ? metadata.get("album") : "", content, false);
 
             if (mediaType.equals("Music video")) {

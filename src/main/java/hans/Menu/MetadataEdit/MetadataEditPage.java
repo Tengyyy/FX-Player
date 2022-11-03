@@ -2,6 +2,7 @@ package hans.Menu.MetadataEdit;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
+import hans.MediaItems.AudioItem;
 import hans.Menu.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -74,7 +75,7 @@ public class MetadataEditPage {
     Image newImage = null;
 
     Mp4EditPage mp4EditPage;
-    Mp3EditPage mp3EditPage;
+    AudioEditPage audioEditPage;
     OtherEditPage otherEditPage;
     AviEditPage aviEditPage;
 
@@ -288,12 +289,14 @@ public class MetadataEditPage {
                 mp4EditPage = new Mp4EditPage(this, menuObject.getMediaItem());
                 break;
             case "mp3":
-                mp3EditPage = new Mp3EditPage(this, menuObject.getMediaItem());
+            case "flac":
+                audioEditPage = new AudioEditPage(this, (AudioItem) menuObject.getMediaItem());
                 break;
             case "avi":
                 aviEditPage = new AviEditPage(this, menuObject.getMediaItem());
                 break;
             default:
+                //TODO: find out if ffmpeg supports metadata for wav files
                 otherEditPage = new OtherEditPage(this, menuObject.getMediaItem());
                 break;
         }

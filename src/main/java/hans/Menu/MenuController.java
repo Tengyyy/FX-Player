@@ -642,13 +642,13 @@ public class MenuController implements Initializable {
             switch(Utilities.getFileExtension(selectedFile)){
                 case "mp4": temp = new Mp4Item(selectedFile, mainController);
                     break;
-                case "mp3": temp = new Mp3Item(selectedFile, mainController);
+                case "mp3":
+                case "flac":
+                    temp = new AudioItem(selectedFile, mainController);
                     break;
                 case "avi": temp = new AviItem(selectedFile, mainController);
                     break;
                 case "mkv": temp = new MkvItem(selectedFile, mainController);
-                    break;
-                case "flac": temp = new FlacItem(selectedFile, mainController);
                     break;
                 case "flv": temp = new FlvItem(selectedFile, mainController);
                     break;

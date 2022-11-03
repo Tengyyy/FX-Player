@@ -80,10 +80,11 @@ public class MkvItem implements MediaItem {
 
             fFmpegFrameGrabber.stop();
 
-
-            fFmpegFrameGrabber.setVideoStream(2);
+            fFmpegFrameGrabber.setVideoDisposition(512);
 
             fFmpegFrameGrabber.start();
+
+            System.out.println(fFmpegFrameGrabber.getVideoStream());
 
             Frame frame = fFmpegFrameGrabber.grabImage();
             JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();

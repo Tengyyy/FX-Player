@@ -765,13 +765,13 @@ public class QueueBox extends VBox {
             switch(Utilities.getFileExtension(file)){
                 case "mp4": temp = new Mp4Item(file, menuController.mainController);
                     break;
-                case "mp3": temp = new Mp3Item(file, menuController.mainController);
+                case "mp3":
+                case "flac":
+                    temp = new AudioItem(file, menuController.mainController);
                     break;
                 case "avi": temp = new AviItem(file, menuController.mainController);
                     break;
                 case "mkv": temp = new MkvItem(file, menuController.mainController);
-                    break;
-                case "flac": temp = new FlacItem(file, menuController.mainController);
                     break;
                 case "flv": temp = new FlvItem(file, menuController.mainController);
                     break;

@@ -82,7 +82,7 @@ public class Mp4Item implements MediaItem {
 
             fFmpegFrameGrabber.stop();
 
-            fFmpegFrameGrabber.setVideoStream(2);
+            fFmpegFrameGrabber.setVideoDisposition(512);
             fFmpegFrameGrabber.start();
 
 

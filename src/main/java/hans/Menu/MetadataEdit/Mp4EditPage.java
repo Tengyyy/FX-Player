@@ -1,6 +1,7 @@
 package hans.Menu.MetadataEdit;
 
 import hans.MediaItems.MediaItem;
+import hans.Utilities;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
@@ -91,7 +92,9 @@ public class Mp4EditPage {
                 artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "", content, true);
             }
 
-            trackItem = new TwoTextFieldItem(metadataEditPage, "Track number", metadata.containsKey("track") && !metadata.get("track").trim().isEmpty() ? metadata.get("track") : "", content, false);
+            String[] trackString = Utilities.splitString(metadata.getOrDefault("track", ""));
+            trackItem = new TwoTextFieldItem(metadataEditPage, "Track number", trackString[0], trackString[1], content, false);
+
             albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("album") && !metadata.get("album").trim().isEmpty() ? metadata.get("album") : "", content, false);
 
             if (mediaType.equals("Music video")) {

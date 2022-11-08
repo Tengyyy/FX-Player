@@ -210,6 +210,26 @@ public class Utilities {
         return round(countingBits, 1) + unit;
     }
 
+    public static String[] splitString(String value){
+        String[] values = new String[2];
+        if(value.isBlank()){
+            values[0] = "";
+            values[1] = "";
+        }
+        else {
+            if(value.contains("/")){
+                values[0] = value.substring(0, value.indexOf('/'));
+                values[1] = value.substring(value.indexOf('/') + 1);
+            }
+            else {
+                values[0] = value;
+                values[1] = "";
+            }
+        }
+
+        return values;
+    }
+
     public static double round (double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;

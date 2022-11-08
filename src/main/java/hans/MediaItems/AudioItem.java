@@ -38,7 +38,7 @@ public class AudioItem implements MediaItem {
 
     boolean hasCover;
 
-    Map<FieldKey, String> mediaInformation = new HashMap<>();
+    Map<String, String> mediaInformation = new HashMap<>();
     Map<String, String> mediaDetails = new HashMap<>();
 
 
@@ -59,21 +59,21 @@ public class AudioItem implements MediaItem {
                 cover = new Image(new ByteArrayInputStream(coverBinaryData));
             }
 
-            mediaInformation.put(FieldKey.TITLE, tag.getFirst(FieldKey.TITLE));
-            mediaInformation.put(FieldKey.ARTIST, tag.getFirst(FieldKey.ARTIST));
-            mediaInformation.put(FieldKey.ALBUM, tag.getFirst(FieldKey.ALBUM));
-            mediaInformation.put(FieldKey.ALBUM_ARTIST, tag.getFirst(FieldKey.ALBUM_ARTIST));
-            mediaInformation.put(FieldKey.TRACK, tag.getFirst(FieldKey.TRACK));
-            mediaInformation.put(FieldKey.TRACK_TOTAL, tag.getFirst(FieldKey.TRACK_TOTAL));
-            mediaInformation.put(FieldKey.YEAR, tag.getFirst(FieldKey.YEAR));
-            mediaInformation.put(FieldKey.GENRE, tag.getFirst(FieldKey.GENRE));
-            mediaInformation.put(FieldKey.COMMENT, tag.getFirst(FieldKey.COMMENT));
-            mediaInformation.put(FieldKey.COMPOSER, tag.getFirst(FieldKey.COMPOSER));
-            mediaInformation.put(FieldKey.DISC_NO, tag.getFirst(FieldKey.DISC_NO));
-            mediaInformation.put(FieldKey.DISC_TOTAL, tag.getFirst(FieldKey.DISC_TOTAL));
-            mediaInformation.put(FieldKey.LYRICS, tag.getFirst(FieldKey.LYRICS));
-            mediaInformation.put(FieldKey.LANGUAGE, tag.getFirst(FieldKey.LANGUAGE));
-            mediaInformation.put(FieldKey.RECORD_LABEL, tag.getFirst(FieldKey.RECORD_LABEL));
+            mediaInformation.put("title", tag.getFirst(FieldKey.TITLE));
+            mediaInformation.put("artist", tag.getFirst(FieldKey.ARTIST));
+            mediaInformation.put("album", tag.getFirst(FieldKey.ALBUM));
+            mediaInformation.put("album_artist", tag.getFirst(FieldKey.ALBUM_ARTIST));
+            mediaInformation.put("track", tag.getFirst(FieldKey.TRACK));
+            mediaInformation.put("track_total", tag.getFirst(FieldKey.TRACK_TOTAL));
+            mediaInformation.put("year", tag.getFirst(FieldKey.YEAR));
+            mediaInformation.put("genre", tag.getFirst(FieldKey.GENRE));
+            mediaInformation.put("comment", tag.getFirst(FieldKey.COMMENT));
+            mediaInformation.put("composer", tag.getFirst(FieldKey.COMPOSER));
+            mediaInformation.put("disc_no", tag.getFirst(FieldKey.DISC_NO));
+            mediaInformation.put("disc_total", tag.getFirst(FieldKey.DISC_TOTAL));
+            mediaInformation.put("lyrics", tag.getFirst(FieldKey.LYRICS));
+            mediaInformation.put("language", tag.getFirst(FieldKey.LANGUAGE));
+            mediaInformation.put("record_label", tag.getFirst(FieldKey.RECORD_LABEL));
 
 
             mediaDetails.put("size", Utilities.formatFileSize(file.length()));
@@ -108,7 +108,7 @@ public class AudioItem implements MediaItem {
     }
 
     @Override
-    public Map<FieldKey, String> getMediaInformation() {
+    public Map<String, String> getMediaInformation() {
         return mediaInformation;
     }
 

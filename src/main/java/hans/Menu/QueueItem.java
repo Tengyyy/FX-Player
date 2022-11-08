@@ -170,11 +170,8 @@ public class QueueItem extends GridPane implements MenuObject {
         Map<String, String> mediaInformation = mediaItem.getMediaInformation();
 
         if(mediaInformation != null){
-            if(mediaInformation.containsKey("title")){
+            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
                 videoTitle.setText(mediaInformation.get("title"));
-            }
-            else if(mediaInformation.containsKey("TITLE")){
-                videoTitle.setText(mediaInformation.get("TITLE"));
             }
             else {
                 videoTitle.setText(mediaItem.getFile().getName());

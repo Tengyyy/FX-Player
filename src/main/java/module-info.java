@@ -13,6 +13,7 @@ module hans {
     requires uk.co.caprica.vlcj.javafx;
     requires org.bytedeco.javacv;
     requires jaudiotagger;
+    requires org.bytedeco.ffmpeg;
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;

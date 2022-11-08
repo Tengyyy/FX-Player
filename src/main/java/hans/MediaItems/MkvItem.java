@@ -16,6 +16,9 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.*;
 
+import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_ATTACHED_PIC;
+import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_DEFAULT;
+
 public class MkvItem implements MediaItem {
 
 
@@ -45,8 +48,29 @@ public class MkvItem implements MediaItem {
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
 
+            fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_ATTACHED_PIC);
+
             fFmpegFrameGrabber.start();
+
+            if(fFmpegFrameGrabber.getVideoStream() != 0){
+                Frame frame = fFmpegFrameGrabber.grabImage();
+                JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
+                if(frame != null) cover = javaFXFrameConverter.convert(frame);
+            }
+
+
+            fFmpegFrameGrabber.stop();
+
+            fFmpegFrameGrabber.setVideoStream(0);
+            fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+
+            fFmpegFrameGrabber.start();
+
             hasVideo = fFmpegFrameGrabber.hasVideo();
+
+            hasCover = cover != null;
+            if(!hasCover && hasVideo) cover = Utilities.grabMiddleFrame(file);
+            if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
 
             if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
@@ -77,29 +101,10 @@ public class MkvItem implements MediaItem {
             mediaDetails.put("frameRate", Math.round(fFmpegFrameGrabber.getFrameRate()) + " fps");
             if(fFmpegFrameGrabber.hasVideo()) mediaDetails.put("resolution", fFmpegFrameGrabber.getImageWidth() + "×" + fFmpegFrameGrabber.getImageHeight());
 
-
-            fFmpegFrameGrabber.stop();
-
-            fFmpegFrameGrabber.setVideoDisposition(512);
-
-            fFmpegFrameGrabber.start();
-
-            System.out.println(fFmpegFrameGrabber.getVideoStream());
-
-            Frame frame = fFmpegFrameGrabber.grabImage();
-            JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
-            if(frame != null) cover = javaFXFrameConverter.convert(frame);
-
-
-            hasCover = cover != null;
-            if(!hasCover && hasVideo) cover = Utilities.grabMiddleFrame(file);
-            if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
-
-            placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
-
-
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();
+
+            placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
 
         } catch (IOException e) {
             throw new RuntimeException(e);

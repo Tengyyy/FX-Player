@@ -69,16 +69,16 @@ public class Mp4EditPage {
         }
 
         if(metadata != null) {
-            titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, true);
+            titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
             comboboxItem = new ComboBoxItem(metadataEditPage, content, true, mediaType, "Music video", "Movie", "TV Show", "Podcast", "Home video");
             comboboxItem.comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
                 if (oldValue != null && !oldValue.equals(newValue)) updateMediaType(newValue);
             });
 
-            seriesTitleItem = new TextAreaItem(metadataEditPage, "Series title", metadata.containsKey("show") && !metadata.get("show").trim().isEmpty() ? metadata.get("show") : "", content, false);
-            seasonNumberItem = new TextFieldItem(metadataEditPage, "Season number", metadata.containsKey("season_number") && !metadata.get("season_number").trim().isEmpty() ? metadata.get("season_number") : "", content, false);
-            episodeNumberItem = new TextFieldItem(metadataEditPage, "Episode number", metadata.containsKey("episode_sort") && !metadata.get("episode_sort").trim().isEmpty() ? metadata.get("episode_sort") : "", content, false);
-            networkItem = new TextAreaItem(metadataEditPage, "Network", metadata.containsKey("network") && !metadata.get("network").trim().isEmpty() ? metadata.get("network") : "", content, false);
+            seriesTitleItem = new TextAreaItem(metadataEditPage, "Series title", metadata.containsKey("show") && !metadata.get("show").isBlank() ? metadata.get("show") : "", content, false);
+            seasonNumberItem = new TextFieldItem(metadataEditPage, "Season number", metadata.containsKey("season_number") && !metadata.get("season_number").isBlank() ? metadata.get("season_number") : "", content, false);
+            episodeNumberItem = new TextFieldItem(metadataEditPage, "Episode number", metadata.containsKey("episode_sort") && !metadata.get("episode_sort").isBlank() ? metadata.get("episode_sort") : "", content, false);
+            networkItem = new TextAreaItem(metadataEditPage, "Network", metadata.containsKey("network") && !metadata.get("network").isBlank() ? metadata.get("network") : "", content, false);
 
             if (mediaType.equals("TV Show")) {
                 // TV Show fields
@@ -87,21 +87,21 @@ public class Mp4EditPage {
 
 
             if (mediaType.equals("TV Show") || mediaType.equals("Movie")) {
-                artistItem = new TextAreaItem(metadataEditPage, "Cast", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "", content, true);
+                artistItem = new TextAreaItem(metadataEditPage, "Cast", metadata.containsKey("artist") && !metadata.get("artist").isBlank() ? metadata.get("artist") : "", content, true);
             } else {
-                artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").trim().isEmpty() ? metadata.get("artist") : "", content, true);
+                artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").isBlank() ? metadata.get("artist") : "", content, true);
             }
 
             String[] trackString = Utilities.splitString(metadata.getOrDefault("track", ""));
             trackItem = new TwoTextFieldItem(metadataEditPage, "Track number", trackString[0], trackString[1], content, false);
 
-            albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("album") && !metadata.get("album").trim().isEmpty() ? metadata.get("album") : "", content, false);
+            albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("album") && !metadata.get("album").isBlank() ? metadata.get("album") : "", content, false);
 
             if (mediaType.equals("Music video")) {
                 content.getChildren().addAll(trackItem, albumItem);
             }
 
-            albumArtistItem = new TextAreaItem(metadataEditPage, "Director", metadata.containsKey("album_artist") && !metadata.get("album_artist").trim().isEmpty() ? metadata.get("album_artist") : "", content, false);
+            albumArtistItem = new TextAreaItem(metadataEditPage, "Director", metadata.containsKey("album_artist") && !metadata.get("album_artist").isBlank() ? metadata.get("album_artist") : "", content, false);
 
             if (mediaType.equals("TV Show") || mediaType.equals("Movie")) {
                 content.getChildren().add(albumArtistItem);
@@ -112,7 +112,7 @@ public class Mp4EditPage {
 
 
 
-            composerItem = new TextAreaItem(metadataEditPage, "Writers", metadata.containsKey("composer") && !metadata.get("composer").trim().isEmpty() ? metadata.get("composer") : "", content, false);
+            composerItem = new TextAreaItem(metadataEditPage, "Writers", metadata.containsKey("composer") && !metadata.get("composer").isBlank() ? metadata.get("composer") : "", content, false);
 
 
             if (mediaType.equals("TV Show") || mediaType.equals("Movie")) {
@@ -122,19 +122,19 @@ public class Mp4EditPage {
                 content.getChildren().add(composerItem);
             }
 
-            genreItem = new TextAreaItem(metadataEditPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").trim().isEmpty() ? metadata.get("genre") : "", content, true);
+            genreItem = new TextAreaItem(metadataEditPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").isBlank() ? metadata.get("genre") : "", content, true);
 
-            descriptionItem = new TextAreaItem(metadataEditPage, "Description", metadata.containsKey("description") && !metadata.get("description").trim().isEmpty() ? metadata.get("description") : "", content, true);
+            descriptionItem = new TextAreaItem(metadataEditPage, "Description", metadata.containsKey("description") && !metadata.get("description").isBlank() ? metadata.get("description") : "", content, true);
 
-            synopsisItem = new TextAreaItem(metadataEditPage, "Synopsis", metadata.containsKey("synopsis") && !metadata.get("synopsis").trim().isEmpty() ? metadata.get("synopsis") : "", content, true);
+            synopsisItem = new TextAreaItem(metadataEditPage, "Synopsis", metadata.containsKey("synopsis") && !metadata.get("synopsis").isBlank() ? metadata.get("synopsis") : "", content, true);
 
-            lyricsItem = new TextAreaItem(metadataEditPage, "Lyrics", metadata.containsKey("lyrics") && !metadata.get("lyrics").trim().isEmpty() ? metadata.get("lyrics") : "", content, false);
+            lyricsItem = new TextAreaItem(metadataEditPage, "Lyrics", metadata.containsKey("lyrics") && !metadata.get("lyrics").isBlank() ? metadata.get("lyrics") : "", content, false);
             if (mediaType.equals("Music video")) {
                 content.getChildren().add(lyricsItem);
             }
 
-            releaseDateItem = new TextAreaItem(metadataEditPage, "Release date", metadata.containsKey("date") && !metadata.get("date").trim().isEmpty() ? metadata.get("date") : "", content, true);
-            commentItem = new TextAreaItem(metadataEditPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").trim().isEmpty() ? metadata.get("comment") : "", content, true);
+            releaseDateItem = new TextAreaItem(metadataEditPage, "Release date", metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
+            commentItem = new TextAreaItem(metadataEditPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").isBlank() ? metadata.get("comment") : "", content, true);
         }
 
         metadataEditPage.textBox.getChildren().add(content);

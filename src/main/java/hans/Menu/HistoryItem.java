@@ -89,9 +89,9 @@ public class HistoryItem extends GridPane implements MenuObject {
         this.mediaInterface = mediaInterface;
         this.historyBox = historyBox;
 
-        isActive.addListener((observableValue, aBoolean, t1) -> {
-            if(t1) playIcon.setVisible(true);
-            else playIcon.setVisible(false);
+        isActive.addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) playIcon.setVisible(true);
+            else if(!mouseHover && !optionsPopUp.showing) playIcon.setVisible(false);
         });
 
 
@@ -172,11 +172,8 @@ public class HistoryItem extends GridPane implements MenuObject {
         Map<String, String> mediaInformation = mediaItem.getMediaInformation();
 
         if(mediaInformation != null){
-            if(mediaInformation.containsKey("title")){
+            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
                 videoTitle.setText(mediaInformation.get("title"));
-            }
-            else if(mediaInformation.containsKey("TITLE")){
-                videoTitle.setText(mediaInformation.get("TITLE"));
             }
             else {
                 videoTitle.setText(mediaItem.getFile().getName());
@@ -248,7 +245,6 @@ public class HistoryItem extends GridPane implements MenuObject {
         optionsButton.setOpacity(0);
         optionsButton.setText(null);
 
-
         optionsButton.setOnAction((e) -> {
             if(optionsPopUp.isShowing()) optionsPopUp.hide();
             else optionsPopUp.showOptions();
@@ -285,8 +281,7 @@ public class HistoryItem extends GridPane implements MenuObject {
         this.setOnMouseEntered((e) -> {
             mouseHover = true;
 
-
-            if(!isActive.get()) playIcon.setVisible(true);
+            playIcon.setVisible(true);
 
             this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
@@ -297,7 +292,7 @@ public class HistoryItem extends GridPane implements MenuObject {
             mouseHover = false;
 
             if(!optionsPopUp.showing) {
-                // show bouncing columns and start animation
+
                 if (!isActive.get()) playIcon.setVisible(false);
 
                 if (isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
@@ -322,11 +317,13 @@ public class HistoryItem extends GridPane implements MenuObject {
             HistoryItem historyItem = menuController.history.get(historyBox.index);
             historyItem.isActive.set(false);
             historyItem.playIcon.setStyle("-fx-background-color: rgb(200,200,200);");
-            if(!historyItem.mouseHover) {
+            if(!historyItem.mouseHover && !historyItem.optionsPopUp.showing) {
                 historyItem.playIcon.setVisible(false);
                 historyItem.setStyle("-fx-background-color: transparent;");
-                historyItem.imageBorder.setVisible(false);
             }
+
+            historyItem.playIcon.setStyle("-fx-background-color: rgb(200,200,200)");
+            historyItem.imageBorder.setVisible(false);
 
 
             historyItem.setCursor(Cursor.HAND);

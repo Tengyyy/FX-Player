@@ -157,6 +157,8 @@ public class MenuItemOptionsPopUp extends ContextMenu {
                 HistoryItem historyItem = (HistoryItem) menuObject;
                 if (historyItem.isActive.get()) menuObjectNode.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
                 else menuObjectNode.setStyle("-fx-background-color: transparent;");
+
+                historyItem.playIcon.setVisible(false);
             }
             else if(isActiveItem){
                 ActiveItem activeItem = (ActiveItem) menuObject;
@@ -165,7 +167,11 @@ public class MenuItemOptionsPopUp extends ContextMenu {
 
                 activeItem.setStyle("-fx-background-color: transparent;");
             }
-            else menuObjectNode.setStyle("-fx-background-color: transparent;");
+            else {
+                QueueItem queueItem = (QueueItem) menuObjectNode;
+                queueItem.setStyle("-fx-background-color: transparent;");
+                queueItem.playIcon.setVisible(false);
+            }
         }
 
         if(showTransition != null && showTransition.getStatus() == Animation.Status.RUNNING) showTransition.stop();

@@ -229,7 +229,6 @@ public class QueueItem extends GridPane implements MenuObject {
 
         if(mediaItem.getSubtitles() != null) subTextWrapper.getChildren().add(0, captionsPane);
 
-
         textWrapper.setAlignment(Pos.CENTER_LEFT);
         textWrapper.setPrefHeight(90);
         textWrapper.getChildren().addAll(videoTitle,subTextWrapper);
@@ -354,7 +353,6 @@ public class QueueItem extends GridPane implements MenuObject {
 
         this.setOnMouseExited((e) -> {
             mouseHover = false;
-
 
             if(!queueBox.dragActive && !optionsPopUp.showing){
                 this.setStyle("-fx-background-color: transparent;");

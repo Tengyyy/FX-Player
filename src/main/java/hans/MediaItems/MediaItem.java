@@ -16,6 +16,8 @@ public interface MediaItem {
 
     Map<String, String> getMediaInformation();
 
+    void setMediaInformation(Map<String, String> map, boolean updateFile);
+
     Map<String, String> getMediaDetails();
 
     File getFile();
@@ -29,6 +31,8 @@ public interface MediaItem {
     Duration getDuration();
 
     Image getCover();
+
+    void setCover(File imagePath, Image image, boolean updateFile);
 
     void setSubtitles(File file);
 

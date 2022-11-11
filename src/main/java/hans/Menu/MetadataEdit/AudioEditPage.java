@@ -4,7 +4,10 @@ import hans.MediaItems.AudioItem;
 import javafx.scene.layout.VBox;
 import org.jaudiotagger.tag.FieldKey;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AudioEditPage {
 
@@ -60,7 +63,30 @@ public class AudioEditPage {
 
 
     public void saveMetadata(){
+        Map<String, String> mediaInformation = new HashMap<>();
 
+        mediaInformation.put("title", titleItem.textArea.getText());
+        mediaInformation.put("artist", artistItem.textArea.getText());
+        mediaInformation.put("album", albumItem.textArea.getText());
+        mediaInformation.put("year", releaseDateItem.textArea.getText());
+        mediaInformation.put("track", trackItem.textField1.getText());
+        mediaInformation.put("track_total", trackItem.textField2.getText());
+        mediaInformation.put("disc_no", discItem.textField1.getText());
+        mediaInformation.put("disc_total", discItem.textField2.getText());
+        mediaInformation.put("album_artist", albumArtistItem.textArea.getText());
+        mediaInformation.put("composer", composerItem.textArea.getText());
+        mediaInformation.put("record_label", publisherItem.textArea.getText());
+        mediaInformation.put("genre", genreItem.textArea.getText());
+        mediaInformation.put("language", languageItem.textArea.getText());
+        mediaInformation.put("lyrics", lyricsItem.textArea.getText());
+        mediaInformation.put("comment", commentItem.textArea.getText());
+
+        audioItem.setMediaInformation(mediaInformation, true);
+
+        // loop through all menu items and if the file is the same update their mediainformation with updatemetadata false boolean value.
+        // also update menuitems cover image/artist/title of all matching items.
+        // update tooltips if needed
+        // update current video background if needed
     }
 }
 

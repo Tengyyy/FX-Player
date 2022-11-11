@@ -123,6 +123,11 @@ public class MovItem implements MediaItem {
     }
 
     @Override
+    public void setMediaInformation(Map<String, String> map, boolean updateFile) {
+
+    }
+
+    @Override
     public Map<String, String> getMediaDetails() {
         return mediaDetails;
     }
@@ -156,6 +161,11 @@ public class MovItem implements MediaItem {
     @Override
     public Image getCover() {
         return cover;
+    }
+
+    @Override
+    public void setCover(File imagePath, Image image, boolean updateFile) {
+        cover =  image;
     }
 
     @Override

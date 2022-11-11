@@ -8,12 +8,14 @@ import javafx.util.Duration;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.images.Artwork;
+import org.jaudiotagger.tag.images.ArtworkFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -113,6 +115,44 @@ public class AudioItem implements MediaItem {
     }
 
     @Override
+    public void setMediaInformation(Map<String, String> map, boolean updateFile) {
+        mediaInformation = map;
+        // TODO: update the actual keys of the audio file with jaudiotagger
+
+        if(updateFile){
+            try {
+                AudioFile f = AudioFileIO.read(file);
+                Tag tag = f.getTag();
+
+                tag.setField(FieldKey.TITLE, mediaInformation.get("title"));
+                tag.setField(FieldKey.ARTIST, mediaInformation.get("artist"));
+                tag.setField(FieldKey.ALBUM, mediaInformation.get("album"));
+                tag.setField(FieldKey.ALBUM_ARTIST, mediaInformation.get("album_artist"));
+                tag.setField(FieldKey.TRACK, mediaInformation.get("track"));
+                tag.setField(FieldKey.TRACK_TOTAL, mediaInformation.get("track_total"));
+                tag.setField(FieldKey.YEAR, mediaInformation.get("year"));
+                tag.setField(FieldKey.GENRE, mediaInformation.get("genre"));
+                tag.setField(FieldKey.COMMENT, mediaInformation.get("comment"));
+                tag.setField(FieldKey.COMPOSER, mediaInformation.get("composer"));
+                tag.setField(FieldKey.DISC_NO, mediaInformation.get("disc_no"));
+                tag.setField(FieldKey.DISC_TOTAL, mediaInformation.get("disc_total"));
+                tag.setField(FieldKey.LYRICS, mediaInformation.get("lyrics"));
+                tag.setField(FieldKey.LANGUAGE, mediaInformation.get("language"));
+                tag.setField(FieldKey.RECORD_LABEL, mediaInformation.get("record_label"));
+
+                f.commit();
+
+                System.out.println("SUCCESS");
+
+
+            } catch (CannotReadException | TagException | InvalidAudioFrameException | ReadOnlyFileException | IOException | CannotWriteException e) {
+                System.out.println("FAIL");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public Map<String, String> getMediaDetails() {
         return mediaDetails;
     }
@@ -145,6 +185,21 @@ public class AudioItem implements MediaItem {
     @Override
     public Image getCover() {
         return cover;
+    }
+
+    @Override
+    public void setCover(File imagePath, Image image, boolean updateFile) {
+        cover = image;
+
+        if(updateFile){
+            try {
+                AudioFile f = AudioFileIO.read(file);
+                Tag tag = f.getTag();
+                tag.setField(ArtworkFactory.createArtworkFromFile(imagePath));
+            } catch (CannotReadException | IOException | TagException | ReadOnlyFileException | InvalidAudioFrameException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

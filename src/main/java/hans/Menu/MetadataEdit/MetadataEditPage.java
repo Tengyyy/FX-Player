@@ -235,8 +235,6 @@ public class MetadataEditPage {
 
         changesMade.addListener((observableValue, oldValue, newValue) -> applyButton.setDisable(!newValue));
 
-        applyButton.setOnAction(e -> applyChanges());
-
         saveIcon.setShape(saveIconSVG);
         saveIcon.getStyleClass().add("menuIcon");
         saveIcon.setPrefSize(18, 18);
@@ -291,6 +289,10 @@ public class MetadataEditPage {
             case "mp3":
             case "flac":
                 audioEditPage = new AudioEditPage(this, (AudioItem) menuObject.getMediaItem());
+                applyButton.setOnAction(e -> {
+                    audioEditPage.saveMetadata();
+                    changesMade.set(false);
+                });
                 break;
             case "avi":
                 aviEditPage = new AviEditPage(this, menuObject.getMediaItem());
@@ -355,9 +357,4 @@ public class MetadataEditPage {
         imageViewContainer.setStyle("-fx-background-color: rgba(64,64,64,0.7);");
     }
 
-    public void applyChanges(){
-        changesMade.set(false);
-        //TODO: actually make this functional
-
-    }
 }

@@ -16,7 +16,7 @@ public interface MediaItem {
 
     Map<String, String> getMediaInformation();
 
-    void setMediaInformation(Map<String, String> map, boolean updateFile);
+    boolean setMediaInformation(Map<String, String> map, boolean updateFile);
 
     Map<String, String> getMediaDetails();
 

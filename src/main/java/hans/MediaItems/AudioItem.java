@@ -104,6 +104,20 @@ public class AudioItem implements MediaItem {
 
     }
 
+    public AudioItem(AudioItem audioItem, MainController mainController){
+        this.mainController = mainController;
+
+        this.file = audioItem.getFile();
+        duration = audioItem.getDuration();
+        cover = audioItem.getCover();
+        placeholderCover = audioItem.getPlaceholderCover();
+        subtitles = audioItem.getSubtitles();
+        backgroundColor = audioItem.getCoverBackgroundColor();
+        hasCover = audioItem.hasCover();
+        mediaInformation = audioItem.getMediaInformation();
+        mediaDetails = audioItem.getMediaDetails();
+    }
+
     @Override
     public float getFrameDuration() {
         return 0;
@@ -115,7 +129,7 @@ public class AudioItem implements MediaItem {
     }
 
     @Override
-    public void setMediaInformation(Map<String, String> map, boolean updateFile) {
+    public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
         mediaInformation = map;
         // TODO: update the actual keys of the audio file with jaudiotagger
 
@@ -142,13 +156,17 @@ public class AudioItem implements MediaItem {
 
                 f.commit();
 
-                System.out.println("SUCCESS");
+                return true;
 
 
             } catch (CannotReadException | TagException | InvalidAudioFrameException | ReadOnlyFileException | IOException | CannotWriteException e) {
-                System.out.println("FAIL");
                 e.printStackTrace();
+
+                return false;
             }
+        }
+        else {
+            return true;
         }
     }
 

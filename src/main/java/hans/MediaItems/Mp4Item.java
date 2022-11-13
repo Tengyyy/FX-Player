@@ -110,9 +110,21 @@ public class Mp4Item implements MediaItem {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public Mp4Item(Mp4Item mp4Item, MainController mainController){
+        this.mainController = mainController;
 
-
+        this.file = mp4Item.getFile();
+        duration = mp4Item.getDuration();
+        cover = mp4Item.getCover();
+        placeholderCover = mp4Item.getPlaceholderCover();
+        subtitles = mp4Item.getSubtitles();
+        backgroundColor = mp4Item.getCoverBackgroundColor();
+        hasCover = mp4Item.hasCover();
+        mediaInformation = mp4Item.getMediaInformation();
+        mediaDetails = mp4Item.getMediaDetails();
+        hasVideo = mp4Item.hasVideo();
     }
 
     @Override
@@ -167,8 +179,8 @@ public class Mp4Item implements MediaItem {
     }
 
     @Override
-    public void setMediaInformation(Map<String, String> map, boolean updateFile) {
-
+    public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
+        return false;
     }
 
     @Override

@@ -762,26 +762,31 @@ public class QueueBox extends VBox {
 
         for (File file : dragBoardMedia) {
             MediaItem temp = null;
-            switch(Utilities.getFileExtension(file)){
-                case "mp4": temp = new Mp4Item(file, menuController.mainController);
+            for(QueueItem queueItem : menuController.queue){
+                if(queueItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                    temp = Utilities.copyMediaItem(queueItem.getMediaItem(), menuController.mainController);
                     break;
-                case "mp3":
-                case "flac":
-                    temp = new AudioItem(file, menuController.mainController);
-                    break;
-                case "avi": temp = new AviItem(file, menuController.mainController);
-                    break;
-                case "mkv": temp = new MkvItem(file, menuController.mainController);
-                    break;
-                case "flv": temp = new FlvItem(file, menuController.mainController);
-                    break;
-                case "mov": temp = new MovItem(file, menuController.mainController);
-                    break;
-                case "wav": temp = new WavItem(file, menuController.mainController);
-                    break;
-                default:
-                    break;
+                }
             }
+            if(temp == null){
+                for (HistoryItem historyItem : menuController.history){
+                    if(historyItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                        temp = Utilities.copyMediaItem(historyItem.getMediaItem(), menuController.mainController);
+                        break;
+                    }
+                }
+            }
+            if(temp == null){
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                    temp = Utilities.copyMediaItem(menuController.activeItem.getMediaItem(), menuController.mainController);
+                }
+            }
+            if(temp == null){
+                temp = Utilities.createMediaItem(file, menuController.mainController);
+            }
+
+            //TODO: continue refactoring adding media
+
 
             if(temp != null) newItems.add(new QueueItem(temp, menuController, menuController.mediaInterface, this));
         }

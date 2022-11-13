@@ -6,6 +6,7 @@ import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 
+import hans.MediaItems.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
@@ -60,6 +61,34 @@ public class Utilities {
             return " ";
         }
 
+    }
+
+    public static MediaItem createMediaItem(File file, MainController mainController){
+        switch(Utilities.getFileExtension(file)){
+            case "mp4": return new Mp4Item(file, mainController);
+            case "mp3":
+            case "flac": return new AudioItem(file, mainController);
+            case "avi": return new AviItem(file, mainController);
+            case "mkv": return new MkvItem(file, mainController);
+            case "flv": return new FlvItem(file, mainController);
+            case "mov": return new MovItem(file, mainController);
+            case "wav": return new WavItem(file, mainController);
+            default: return null;
+        }
+    }
+
+    public static MediaItem copyMediaItem(MediaItem mediaItem, MainController mainController){
+        switch(Utilities.getFileExtension(mediaItem.getFile())){
+            case "mp4": return new Mp4Item((Mp4Item) mediaItem, mainController);
+            case "mp3":
+            case "flac": return new AudioItem((AudioItem) mediaItem, mainController);
+            case "avi": return new AviItem((AviItem) mediaItem, mainController);
+            case "mkv": return new MkvItem((MkvItem) mediaItem, mainController);
+            case "flv": return new FlvItem((FlvItem) mediaItem, mainController);
+            case "mov": return new MovItem((MovItem) mediaItem, mainController);
+            case "wav": return new WavItem((WavItem) mediaItem, mainController);
+            default: return null;
+        }
     }
 
     // Turns four-character-code into a string

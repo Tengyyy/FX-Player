@@ -111,6 +111,20 @@ public class MovItem implements MediaItem {
         }
     }
 
+    public MovItem(MovItem movItem, MainController mainController){
+        this.mainController = mainController;
+
+        this.file = movItem.getFile();
+        duration = movItem.getDuration();
+        cover = movItem.getCover();
+        placeholderCover = movItem.getPlaceholderCover();
+        subtitles = movItem.getSubtitles();
+        backgroundColor = movItem.getCoverBackgroundColor();
+        hasCover = movItem.hasCover();
+        mediaInformation = movItem.getMediaInformation();
+        mediaDetails = movItem.getMediaDetails();
+        hasVideo = movItem.hasVideo();
+    }
 
     @Override
     public float getFrameDuration() {
@@ -123,8 +137,8 @@ public class MovItem implements MediaItem {
     }
 
     @Override
-    public void setMediaInformation(Map<String, String> map, boolean updateFile) {
-
+    public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
+        return false;
     }
 
     @Override

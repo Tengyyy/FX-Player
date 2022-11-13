@@ -80,6 +80,20 @@ public class WavItem implements MediaItem {
         placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));
     }
 
+    public WavItem(WavItem wavItem, MainController mainController){
+        this.mainController = mainController;
+
+        this.file = wavItem.getFile();
+        duration = wavItem.getDuration();
+        cover = wavItem.getCover();
+        placeholderCover = wavItem.getPlaceholderCover();
+        subtitles = wavItem.getSubtitles();
+        backgroundColor = wavItem.getCoverBackgroundColor();
+        hasCover = wavItem.hasCover();
+        mediaInformation = wavItem.getMediaInformation();
+        mediaDetails = wavItem.getMediaDetails();
+    }
+
     @Override
     public float getFrameDuration() {
         return 0;
@@ -91,8 +105,8 @@ public class WavItem implements MediaItem {
     }
 
     @Override
-    public void setMediaInformation(Map<String, String> map, boolean updateFile) {
-
+    public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
+        return false;
     }
 
     @Override

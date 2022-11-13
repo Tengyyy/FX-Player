@@ -111,6 +111,20 @@ public class MkvItem implements MediaItem {
         }
     }
 
+    public MkvItem(MkvItem mkvItem, MainController mainController){
+        this.mainController = mainController;
+
+        this.file = mkvItem.getFile();
+        duration = mkvItem.getDuration();
+        cover = mkvItem.getCover();
+        placeholderCover = mkvItem.getPlaceholderCover();
+        subtitles = mkvItem.getSubtitles();
+        backgroundColor = mkvItem.getCoverBackgroundColor();
+        hasCover = mkvItem.hasCover();
+        mediaInformation = mkvItem.getMediaInformation();
+        mediaDetails = mkvItem.getMediaDetails();
+        hasVideo = mkvItem.hasVideo();
+    }
 
     @Override
     public float getFrameDuration() {
@@ -123,8 +137,8 @@ public class MkvItem implements MediaItem {
     }
 
     @Override
-    public void setMediaInformation(Map<String, String> map, boolean updateFile) {
-
+    public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
+        return false;
     }
 
     @Override

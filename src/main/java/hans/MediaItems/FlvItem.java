@@ -114,6 +114,20 @@ public class FlvItem implements MediaItem {
         }
     }
 
+    public FlvItem(FlvItem flvItem, MainController mainController){
+        this.mainController = mainController;
+
+        this.file = flvItem.getFile();
+        duration = flvItem.getDuration();
+        cover = flvItem.getCover();
+        placeholderCover = flvItem.getPlaceholderCover();
+        subtitles = flvItem.getSubtitles();
+        backgroundColor = flvItem.getCoverBackgroundColor();
+        hasCover = flvItem.hasCover();
+        mediaInformation = flvItem.getMediaInformation();
+        mediaDetails = flvItem.getMediaDetails();
+        hasVideo = flvItem.hasVideo();
+    }
 
     @Override
     public float getFrameDuration() {
@@ -126,8 +140,8 @@ public class FlvItem implements MediaItem {
     }
 
     @Override
-    public void setMediaInformation(Map<String, String> map, boolean updateFile) {
-
+    public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
+        return false;
     }
 
     @Override

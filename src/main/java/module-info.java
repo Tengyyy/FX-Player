@@ -14,6 +14,7 @@ module hans {
     requires org.bytedeco.javacv;
     requires jaudiotagger;
     requires org.bytedeco.ffmpeg;
+    requires com.sun.jna.platform;
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;

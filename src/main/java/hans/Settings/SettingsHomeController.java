@@ -179,35 +179,8 @@ public class SettingsHomeController {
 
         if (selectedFile != null) {
 
-            MediaItem temp = null;
-
-            switch(Utilities.getFileExtension(selectedFile)){
-                case "mp4": temp = new Mp4Item(selectedFile, settingsController.mainController);
-                    break;
-                case "mp3":
-                case "flac":
-                    temp = new AudioItem(selectedFile, settingsController.mainController);
-                    break;
-                case "avi": temp = new AviItem(selectedFile, settingsController.mainController);
-                    break;
-                case "mkv": temp = new MkvItem(selectedFile, settingsController.mainController);
-                    break;
-                case "flv": temp = new FlvItem(selectedFile, settingsController.mainController);
-                    break;
-                case "mov": temp = new MovItem(selectedFile, settingsController.mainController);
-                    break;
-                case "wav": temp = new WavItem(selectedFile, settingsController.mainController);
-                    break;
-                default:
-                    break;
-            }
-
-            ActiveItem activeItem;
-
-            if(temp != null) {
-                activeItem = new ActiveItem(temp, settingsController.menuController, settingsController.mediaInterface, settingsController.menuController.activeBox);
-                activeItem.play(true);
-            }
+            ActiveItem activeItem = new ActiveItem(Utilities.searchDuplicateOrCreate(selectedFile, settingsController.menuController), settingsController.menuController, settingsController.mediaInterface, settingsController.menuController.activeBox);
+            activeItem.play(true);
         }
     }
 }

@@ -549,32 +549,9 @@ public class MainController implements Initializable {
 
         File file = e.getDragboard().getFiles().get(0);
 
-        MediaItem temp;
-
-        switch(Utilities.getFileExtension(file)){
-            case "mp4": temp = new Mp4Item(file, controlBarController.mainController);
-                break;
-            case "mp3":
-            case "flac":
-                temp = new AudioItem(file, controlBarController.mainController);
-                break;
-            case "avi": temp = new AviItem(file, controlBarController.mainController);
-                break;
-            case "mkv": temp = new MkvItem(file, controlBarController.mainController);
-                break;
-            case "flv": temp = new FlvItem(file, controlBarController.mainController);
-                break;
-            case "mov": temp = new MovItem(file, controlBarController.mainController);
-                break;
-            case "wav": temp = new WavItem(file, controlBarController.mainController);
-                break;
-            default:
-                return;
-        }
-
         actionIndicator.animate();
 
-        ActiveItem activeItem = new ActiveItem(temp, menuController, mediaInterface, menuController.activeBox);
+        ActiveItem activeItem = new ActiveItem(Utilities.searchDuplicateOrCreate(file, menuController), menuController, mediaInterface, menuController.activeBox);
         activeItem.play(true);
 
     }

@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import hans.MediaItems.*;
+import hans.Menu.HistoryItem;
+import hans.Menu.MenuController;
+import hans.Menu.QueueItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
@@ -61,6 +64,34 @@ public class Utilities {
             return " ";
         }
 
+    }
+
+    public static MediaItem searchDuplicateOrCreate(File file, MenuController menuController){
+        MediaItem temp = null;
+        for(QueueItem queueItem : menuController.queue){
+            if(queueItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                temp = Utilities.copyMediaItem(queueItem.getMediaItem(), menuController.mainController);
+                break;
+            }
+        }
+        if(temp == null){
+            for (HistoryItem historyItem : menuController.history){
+                if(historyItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                    temp = Utilities.copyMediaItem(historyItem.getMediaItem(), menuController.mainController);
+                    break;
+                }
+            }
+        }
+        if(temp == null){
+            if(menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                temp = Utilities.copyMediaItem(menuController.activeItem.getMediaItem(), menuController.mainController);
+            }
+        }
+        if(temp == null){
+            temp = Utilities.createMediaItem(file, menuController.mainController);
+        }
+
+        return temp;
     }
 
     public static MediaItem createMediaItem(File file, MainController mainController){

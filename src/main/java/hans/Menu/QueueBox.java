@@ -761,34 +761,7 @@ public class QueueBox extends VBox {
         ArrayList<QueueItem> newItems = new ArrayList<>();
 
         for (File file : dragBoardMedia) {
-            MediaItem temp = null;
-            for(QueueItem queueItem : menuController.queue){
-                if(queueItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                    temp = Utilities.copyMediaItem(queueItem.getMediaItem(), menuController.mainController);
-                    break;
-                }
-            }
-            if(temp == null){
-                for (HistoryItem historyItem : menuController.history){
-                    if(historyItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                        temp = Utilities.copyMediaItem(historyItem.getMediaItem(), menuController.mainController);
-                        break;
-                    }
-                }
-            }
-            if(temp == null){
-                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                    temp = Utilities.copyMediaItem(menuController.activeItem.getMediaItem(), menuController.mainController);
-                }
-            }
-            if(temp == null){
-                temp = Utilities.createMediaItem(file, menuController.mainController);
-            }
-
-            //TODO: continue refactoring adding media
-
-
-            if(temp != null) newItems.add(new QueueItem(temp, menuController, menuController.mediaInterface, this));
+            newItems.add(new QueueItem(Utilities.searchDuplicateOrCreate(file, menuController), menuController, menuController.mediaInterface, this));
         }
 
         addAll(getChildren().indexOf(queueLine), newItems);

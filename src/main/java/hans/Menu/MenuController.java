@@ -637,39 +637,13 @@ public class MenuController implements Initializable {
             notificationText.setText("Added 1 video to the queue");
             AnimationsClass.openMenuNotification(this);
 
-            MediaItem temp = null;
+            QueueItem item = new QueueItem(Utilities.searchDuplicateOrCreate(selectedFile, this), this, mediaInterface, queueBox);
 
-            switch(Utilities.getFileExtension(selectedFile)){
-                case "mp4": temp = new Mp4Item(selectedFile, mainController);
-                    break;
-                case "mp3":
-                case "flac":
-                    temp = new AudioItem(selectedFile, mainController);
-                    break;
-                case "avi": temp = new AviItem(selectedFile, mainController);
-                    break;
-                case "mkv": temp = new MkvItem(selectedFile, mainController);
-                    break;
-                case "flv": temp = new FlvItem(selectedFile, mainController);
-                    break;
-                case "mov": temp = new MovItem(selectedFile, mainController);
-                    break;
-                case "wav": temp = new WavItem(selectedFile, mainController);
-                    break;
-                default:
-                    break;
+            if (settingsController.playbackOptionsController.shuffleOn) {
+                // add new media item to random position in queue
+                queueBox.addRand(item);
             }
-
-            QueueItem item;
-            if(temp != null) {
-                item = new QueueItem(temp, this, mediaInterface, queueBox);
-
-                if (settingsController.playbackOptionsController.shuffleOn) {
-                    // add new media item to random position in queue
-                    queueBox.addRand(item);
-                }
-                else queueBox.add(item);
-            }
+            else queueBox.add(item);
         }
     }
 

@@ -32,7 +32,7 @@ public interface MediaItem {
 
     Image getCover();
 
-    void setCover(File imagePath, Image image, boolean updateFile);
+    boolean setCover(File imagePath, Image image, boolean updateFile);
 
     void setSubtitles(File file);
 

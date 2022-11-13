@@ -7,7 +7,7 @@ import javafx.scene.layout.VBox;
 import java.util.Arrays;
 import java.util.Map;
 
-public class Mp4EditPage {
+public class Mp4EditItem implements MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
     MediaItem mediaItem;
@@ -36,7 +36,7 @@ public class Mp4EditPage {
     Map<String, String> metadata;
 
 
-    Mp4EditPage(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    Mp4EditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
         this.metadataEditPage = metadataEditPage;
         this.mediaItem = mediaItem;
 
@@ -176,8 +176,12 @@ public class Mp4EditPage {
         }
     }
 
-    public void saveMetadata(){
+    @Override
+    public Map<String, String> saveMetadata(){
+        return null;
 
+
+        //TODO: update placeholder cover when changing mediatype!
     }
 }
 

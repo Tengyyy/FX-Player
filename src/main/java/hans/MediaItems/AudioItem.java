@@ -130,31 +130,31 @@ public class AudioItem implements MediaItem {
 
     @Override
     public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
-        mediaInformation = map;
-        // TODO: update the actual keys of the audio file with jaudiotagger
 
         if(updateFile){
             try {
                 AudioFile f = AudioFileIO.read(file);
                 Tag tag = f.getTag();
 
-                tag.setField(FieldKey.TITLE, mediaInformation.get("title"));
-                tag.setField(FieldKey.ARTIST, mediaInformation.get("artist"));
-                tag.setField(FieldKey.ALBUM, mediaInformation.get("album"));
-                tag.setField(FieldKey.ALBUM_ARTIST, mediaInformation.get("album_artist"));
-                tag.setField(FieldKey.TRACK, mediaInformation.get("track"));
-                tag.setField(FieldKey.TRACK_TOTAL, mediaInformation.get("track_total"));
-                tag.setField(FieldKey.YEAR, mediaInformation.get("year"));
-                tag.setField(FieldKey.GENRE, mediaInformation.get("genre"));
-                tag.setField(FieldKey.COMMENT, mediaInformation.get("comment"));
-                tag.setField(FieldKey.COMPOSER, mediaInformation.get("composer"));
-                tag.setField(FieldKey.DISC_NO, mediaInformation.get("disc_no"));
-                tag.setField(FieldKey.DISC_TOTAL, mediaInformation.get("disc_total"));
-                tag.setField(FieldKey.LYRICS, mediaInformation.get("lyrics"));
-                tag.setField(FieldKey.LANGUAGE, mediaInformation.get("language"));
-                tag.setField(FieldKey.RECORD_LABEL, mediaInformation.get("record_label"));
+                tag.setField(FieldKey.TITLE, map.get("title"));
+                tag.setField(FieldKey.ARTIST, map.get("artist"));
+                tag.setField(FieldKey.ALBUM, map.get("album"));
+                tag.setField(FieldKey.ALBUM_ARTIST, map.get("album_artist"));
+                tag.setField(FieldKey.TRACK, map.get("track"));
+                tag.setField(FieldKey.TRACK_TOTAL, map.get("track_total"));
+                tag.setField(FieldKey.YEAR, map.get("year"));
+                tag.setField(FieldKey.GENRE, map.get("genre"));
+                tag.setField(FieldKey.COMMENT, map.get("comment"));
+                tag.setField(FieldKey.COMPOSER, map.get("composer"));
+                tag.setField(FieldKey.DISC_NO, map.get("disc_no"));
+                tag.setField(FieldKey.DISC_TOTAL, map.get("disc_total"));
+                tag.setField(FieldKey.LYRICS, map.get("lyrics"));
+                tag.setField(FieldKey.LANGUAGE, map.get("language"));
+                tag.setField(FieldKey.RECORD_LABEL, map.get("record_label"));
 
                 f.commit();
+
+                mediaInformation = map;
 
                 return true;
 
@@ -166,6 +166,8 @@ public class AudioItem implements MediaItem {
             }
         }
         else {
+            mediaInformation = map;
+
             return true;
         }
     }
@@ -206,17 +208,23 @@ public class AudioItem implements MediaItem {
     }
 
     @Override
-    public void setCover(File imagePath, Image image, boolean updateFile) {
+    public boolean setCover(File imagePath, Image image, boolean updateFile) {
         cover = image;
 
         if(updateFile){
             try {
                 AudioFile f = AudioFileIO.read(file);
                 Tag tag = f.getTag();
-                tag.setField(ArtworkFactory.createArtworkFromFile(imagePath));
+                tag.setField(ArtworkFactory.createArtworkFromFile(imagePath)); // might not work for removing cover images
+                return true;
+
             } catch (CannotReadException | IOException | TagException | ReadOnlyFileException | InvalidAudioFrameException e) {
                 e.printStackTrace();
+                return false;
             }
+        }
+        else {
+            return true;
         }
     }
 

@@ -22,6 +22,8 @@ import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class MetadataEditPage {
 
@@ -69,15 +71,13 @@ public class MetadataEditPage {
 
     public BooleanProperty changesMade = new SimpleBooleanProperty(false);
 
-
     boolean hasCover;
-    Color newColor = null;
-    Image newImage = null;
+    public boolean imageRemoved = false;
+    public Color newColor = null;
+    public Image newImage = null;
+    public File newFile = null;
 
-    Mp4EditPage mp4EditPage;
-    AudioEditPage audioEditPage;
-    OtherEditPage otherEditPage;
-    AviEditPage aviEditPage;
+    public MetadataEditItem metadataEditItem = null;
 
     MetadataExitConfirmation metadataExitConfirmation;
 
@@ -232,6 +232,9 @@ public class MetadataEditPage {
         applyButton.setPadding(new Insets(8, 10, 8, 8));
         applyButton.setCursor(Cursor.HAND);
         applyButton.setDisable(true);
+        applyButton.setOnAction(e -> {
+            saveMetadata();
+        });
 
         changesMade.addListener((observableValue, oldValue, newValue) -> applyButton.setDisable(!newValue));
 
@@ -284,22 +287,18 @@ public class MetadataEditPage {
         switch (extension) {
             case "mp4":
             case "mov":
-                mp4EditPage = new Mp4EditPage(this, menuObject.getMediaItem());
+                metadataEditItem = new Mp4EditItem(this, menuObject.getMediaItem());
                 break;
             case "mp3":
             case "flac":
-                audioEditPage = new AudioEditPage(this, (AudioItem) menuObject.getMediaItem());
-                applyButton.setOnAction(e -> {
-                    audioEditPage.saveMetadata();
-                    changesMade.set(false);
-                });
+                metadataEditItem = new AudioEditItem(this, (AudioItem) menuObject.getMediaItem());
                 break;
             case "avi":
-                aviEditPage = new AviEditPage(this, menuObject.getMediaItem());
+                metadataEditItem = new AviEditItem(this, menuObject.getMediaItem());
                 break;
             default:
                 //TODO: find out if ffmpeg supports metadata for wav files
-                otherEditPage = new OtherEditPage(this, menuObject.getMediaItem());
+                metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
                 break;
         }
 
@@ -325,6 +324,12 @@ public class MetadataEditPage {
     public void exitMetadataEditPage(){
         this.menuObject = null;
 
+        imageRemoved = false;
+        metadataEditItem = null;
+        newImage = null;
+        newColor = null;
+        newFile = null;
+
         menuController.metadataEditScroll.setVisible(false);
         menuController.queueScroll.setVisible(true);
 
@@ -339,22 +344,73 @@ public class MetadataEditPage {
     public void editImage(){
         File selectedFile = fileChooser.showOpenDialog(imageView.getScene().getWindow());
         if(selectedFile != null){
-            changesMade.set(true);
+            imageRemoved = false;
             hasCover = true;
             newImage = new Image(String.valueOf(selectedFile));
+            newFile = selectedFile;
             imageView.setImage(newImage);
 
             newColor = Utilities.findDominantColor(newImage);
             if(newColor != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + newColor.getRed() * 256 +  "," + newColor.getGreen() * 256 + "," + newColor.getBlue() * 256 + ",0.7);");
+
+            changesMade.set(true);
         }
     }
 
     public void removeImage(MenuObject menuObject){
-        changesMade.set(true);
+        imageRemoved = true;
         newImage = null;
+        newColor = null;
+        newFile = null;
         hasCover = false;
         imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
         imageViewContainer.setStyle("-fx-background-color: rgba(64,64,64,0.7);");
+
+        changesMade.set(true);
+    }
+
+    public void saveMetadata(){
+        Map<String,String> mediaInformation = metadataEditItem.saveMetadata();
+
+        boolean metadataEditSuccess = menuObject.getMediaItem().setMediaInformation(mediaInformation, true);
+
+        boolean imageEditSuccess = true;
+        if(imageRemoved){
+            imageEditSuccess = menuObject.getMediaItem().setCover(null, null, true);
+            if(imageEditSuccess) menuObject.getMediaItem().setCoverBackgroundColor(null);
+            if(imageEditSuccess) menuObject.getMediaItem().setHasCover(false);
+        }
+        else if(newImage != null){
+            imageEditSuccess = menuObject.getMediaItem().setCover(newFile, newImage, true);
+            if(imageEditSuccess) menuObject.getMediaItem().setCoverBackgroundColor(newColor);
+            if(imageEditSuccess) menuObject.getMediaItem().setHasCover(true);
+        }
+
+        if(metadataEditSuccess && imageEditSuccess){
+            menuObject.update();
+            ArrayList<MenuObject> duplicates = Utilities.findDuplicates(menuObject, menuController);
+
+            for(MenuObject duplicate : duplicates){
+                duplicate.getMediaItem().setMediaInformation(mediaInformation, false);
+                if(imageRemoved){
+                    duplicate.getMediaItem().setCover(null, null, false);
+                    duplicate.getMediaItem().setCoverBackgroundColor(null);
+                    duplicate.getMediaItem().setHasCover(false);
+                }
+                else if(newImage != null){
+                    duplicate.getMediaItem().setCover(newFile, newImage, false);
+                    duplicate.getMediaItem().setCoverBackgroundColor(newColor);
+                    duplicate.getMediaItem().setHasCover(true);
+                }
+                duplicate.update();
+            }
+
+            // update tooltips if needed
+            // update current video background if needed
+
+            changesMade.set(false);
+        }
+
     }
 
 }

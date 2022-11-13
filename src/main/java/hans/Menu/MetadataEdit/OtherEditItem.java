@@ -14,7 +14,7 @@ import javafx.scene.shape.SVGPath;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class OtherEditPage {
+public class OtherEditItem implements MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
     MediaItem mediaItem;
@@ -33,7 +33,7 @@ public class OtherEditPage {
     Map<String, String> metadata;
 
 
-    OtherEditPage(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    OtherEditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
         this.metadataEditPage = metadataEditPage;
         this.mediaItem = mediaItem;
 
@@ -83,9 +83,9 @@ public class OtherEditPage {
     }
 
 
-
-    public void saveMetadata(){
-
+    @Override
+    public Map<String, String> saveMetadata(){
+        return null;
     }
 }
 

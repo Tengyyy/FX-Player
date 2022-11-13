@@ -11,6 +11,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -108,7 +109,6 @@ public class ActiveItem extends GridPane implements MenuObject {
         coverImage.setFitHeight(70);
         coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
-        coverImage.setImage(mediaItem.getCover());
         coverImage.setPreserveRatio(true);
 
 
@@ -176,10 +176,8 @@ public class ActiveItem extends GridPane implements MenuObject {
                 videoTitle.setText(mediaItem.getFile().getName());
             }
 
-            if(mediaInformation.containsKey("media_type") && mediaInformation.containsKey("artist")){
-                if(mediaInformation.get("media_type").equals("6")){
-                    artist.setText(mediaInformation.get("artist"));
-                }
+            if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6") && mediaInformation.containsKey("artist")){
+                artist.setText(mediaInformation.get("artist"));
             }
             else {
                 String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
@@ -486,6 +484,46 @@ public class ActiveItem extends GridPane implements MenuObject {
     @Override
     public boolean getHover() {
         return mouseHover;
+    }
+
+    @Override
+    public void update(){
+
+        if(mediaItem.getCover() != null) {
+            coverImage.setImage(mediaItem.getCover());
+            playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
+        }
+        else {
+            playButtonWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
+            coverImage.setImage(mediaItem.getPlaceholderCover());
+        }
+
+        Map<String, String> mediaInformation = mediaItem.getMediaInformation();
+        if(mediaInformation != null){
+            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
+                videoTitle.setText(mediaInformation.get("title"));
+            }
+            else {
+                videoTitle.setText(mediaItem.getFile().getName());
+            }
+
+            if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6") && mediaInformation.containsKey("artist")){
+                artist.setText(mediaInformation.get("artist"));
+            }
+            else {
+                String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
+                if((fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) && mediaInformation.containsKey("artist")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
+        }
+
+        if(!artist.getText().isBlank() && !duration.getText().contains(" • ")){
+            duration.setText(duration.getText() + " • ");
+        }
+        else if(artist.getText().isBlank() && duration.getText().contains(" • ")){
+            duration.setText(duration.getText().substring(0, duration.getText().length() - 3));
+        }
     }
 
 }

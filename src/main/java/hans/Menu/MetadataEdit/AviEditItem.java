@@ -6,7 +6,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.Map;
 
-public class AviEditPage {
+public class AviEditItem implements  MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
     MediaItem mediaItem;
@@ -26,7 +26,7 @@ public class AviEditPage {
     Map<String, String> metadata;
 
 
-    AviEditPage(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    AviEditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
         this.metadataEditPage = metadataEditPage;
         this.mediaItem = mediaItem;
 
@@ -52,9 +52,9 @@ public class AviEditPage {
         metadataEditPage.textBox.getChildren().add(content);
     }
 
-
-    public void saveMetadata(){
-
+    @Override
+    public Map<String, String> saveMetadata(){
+        return null;
     }
 }
 

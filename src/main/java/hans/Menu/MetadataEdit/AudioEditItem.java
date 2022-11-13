@@ -1,15 +1,14 @@
 package hans.Menu.MetadataEdit;
 
 import hans.MediaItems.AudioItem;
+import hans.Menu.MenuObject;
+import hans.Utilities;
 import javafx.scene.layout.VBox;
 import org.jaudiotagger.tag.FieldKey;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class AudioEditPage {
+public class AudioEditItem implements MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
     AudioItem audioItem;
@@ -34,7 +33,7 @@ public class AudioEditPage {
     Map<String, String> metadata;
 
 
-    AudioEditPage(MetadataEditPage metadataEditPage, AudioItem audioItem){
+    AudioEditItem(MetadataEditPage metadataEditPage, AudioItem audioItem){
         this.metadataEditPage = metadataEditPage;
         this.audioItem = audioItem;
 
@@ -61,8 +60,8 @@ public class AudioEditPage {
         metadataEditPage.textBox.getChildren().add(content);
     }
 
-
-    public void saveMetadata(){
+    @Override
+    public Map<String, String> saveMetadata(){
         Map<String, String> mediaInformation = new HashMap<>();
 
         mediaInformation.put("title", titleItem.textArea.getText());
@@ -81,12 +80,7 @@ public class AudioEditPage {
         mediaInformation.put("lyrics", lyricsItem.textArea.getText());
         mediaInformation.put("comment", commentItem.textArea.getText());
 
-        audioItem.setMediaInformation(mediaInformation, true);
-
-        // loop through all menu items and if the file is the same update their mediainformation with updatemetadata false boolean value.
-        // also update menuitems cover image/artist/title of all matching items.
-        // update tooltips if needed
-        // update current video background if needed
+        return mediaInformation;
     }
 }
 

@@ -3,12 +3,14 @@ package hans;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import hans.MediaItems.*;
 import hans.Menu.HistoryItem;
 import hans.Menu.MenuController;
+import hans.Menu.MenuObject;
 import hans.Menu.QueueItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -297,6 +299,30 @@ public class Utilities {
 
     public static boolean checkMap(Map<String, String> map, String key){
         return map.containsKey(key) && !map.get(key).trim().isEmpty();
+    }
+
+    public static ArrayList<MenuObject> findDuplicates(MenuObject menuObject, MenuController menuController){
+        ArrayList<MenuObject> duplicates = new ArrayList<>();
+
+        String path = menuObject.getMediaItem().getFile().getAbsolutePath();
+
+        for(QueueItem queueItem : menuController.queue){
+            if(queueItem != menuObject && queueItem.getMediaItem().getFile().getAbsolutePath().equals(path)){
+                duplicates.add(queueItem);
+            }
+        }
+
+        for (HistoryItem historyItem : menuController.history){
+            if(historyItem != menuObject && historyItem.getMediaItem().getFile().getAbsolutePath().equals(path)){
+                duplicates.add(historyItem);
+            }
+        }
+
+        if(menuController.activeItem != menuObject && menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(path)){
+            duplicates.add(menuController.activeItem);
+        }
+
+        return duplicates;
     }
 
 }

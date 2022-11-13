@@ -12,6 +12,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
@@ -480,6 +481,46 @@ public class QueueItem extends GridPane implements MenuObject {
     @Override
     public MediaItem getMediaItem() {
         return this.mediaItem;
+    }
+
+    @Override
+    public void update(){
+
+        if(mediaItem.getCover() != null) {
+            coverImage.setImage(mediaItem.getCover());
+            imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
+        }
+        else {
+            imageWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
+            coverImage.setImage(mediaItem.getPlaceholderCover());
+        }
+
+        Map<String, String> mediaInformation = mediaItem.getMediaInformation();
+        if(mediaInformation != null){
+            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
+                videoTitle.setText(mediaInformation.get("title"));
+            }
+            else {
+                videoTitle.setText(mediaItem.getFile().getName());
+            }
+
+            if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6") && mediaInformation.containsKey("artist")){
+                artist.setText(mediaInformation.get("artist"));
+            }
+            else {
+                String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
+                if((fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) && mediaInformation.containsKey("artist")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
+        }
+
+        if(!artist.getText().isBlank() && !duration.getText().contains(" • ")){
+            duration.setText(duration.getText() + " • ");
+        }
+        else if(artist.getText().isBlank() && duration.getText().contains(" • ")){
+            duration.setText(duration.getText().substring(0, duration.getText().length() - 3));
+        }
     }
 
 }

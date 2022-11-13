@@ -221,8 +221,9 @@ public class Mp4Item implements MediaItem {
     }
 
     @Override
-    public void setCover(File imagePath, Image image, boolean updateFile) {
+    public boolean setCover(File imagePath, Image image, boolean updateFile) {
         cover = image;
+        return false;
     }
 }
 

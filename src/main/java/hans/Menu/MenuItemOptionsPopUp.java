@@ -171,6 +171,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
                 QueueItem queueItem = (QueueItem) menuObjectNode;
                 queueItem.setStyle("-fx-background-color: transparent;");
                 queueItem.playIcon.setVisible(false);
+                queueItem.indexLabel.setVisible(true);
             }
         }
 

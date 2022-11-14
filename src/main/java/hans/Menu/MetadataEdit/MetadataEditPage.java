@@ -405,7 +405,7 @@ public class MetadataEditPage {
                 duplicate.update();
             }
 
-            // update tooltips if needed
+            menuController.mainController.getControlBarController().updateTooltips();
             // update current video background if needed
 
             changesMade.set(false);

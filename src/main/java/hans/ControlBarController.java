@@ -1190,7 +1190,7 @@ public class ControlBarController implements Initializable {
         }
     }
 
-    public void updateButtonState(){
+    public void updateTooltips(){
         if((menuController.historyBox.index == -1  || menuController.historyBox.index == menuController.history.size() -1) && menuController.queue.isEmpty()){
             disableNextVideoButton();
         }

@@ -263,7 +263,7 @@ public class MediaInterface {
             }
         }
 
-        controlBarController.updateButtonState();
+        controlBarController.updateTooltips();
 
 
         embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());

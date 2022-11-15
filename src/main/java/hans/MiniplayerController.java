@@ -33,7 +33,7 @@ public class MiniplayerController {
     Miniplayer miniplayer;
 
 
-    ImageView videoImageView = new ImageView();
+    public ImageView videoImageView = new ImageView();
 
     StackPane videoImageViewWrapper = new StackPane();
     StackPane videoImageViewInnerWrapper = new StackPane();

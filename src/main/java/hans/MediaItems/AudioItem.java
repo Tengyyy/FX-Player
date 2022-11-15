@@ -215,10 +215,16 @@ public class AudioItem implements MediaItem {
             try {
                 AudioFile f = AudioFileIO.read(file);
                 Tag tag = f.getTag();
-                tag.setField(ArtworkFactory.createArtworkFromFile(imagePath)); // might not work for removing cover images
+                if(imagePath == null) tag.deleteArtworkField();
+                else {
+                    tag.setField(ArtworkFactory.createArtworkFromFile(imagePath));
+                }
+
+                f.commit();
+
                 return true;
 
-            } catch (CannotReadException | IOException | TagException | ReadOnlyFileException | InvalidAudioFrameException e) {
+            } catch (CannotReadException | IOException | TagException | ReadOnlyFileException | InvalidAudioFrameException | CannotWriteException e) {
                 e.printStackTrace();
                 return false;
             }

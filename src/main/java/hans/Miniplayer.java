@@ -24,7 +24,7 @@ public class Miniplayer {
     Stage stage;
     BorderlessScene scene;
 
-    MiniplayerController miniplayerController;
+    public MiniplayerController miniplayerController;
 
     final int MIN_WIDTH = 300;
     final int MIN_HEIGHT = 200;

@@ -377,13 +377,17 @@ public class MetadataEditPage {
         boolean imageEditSuccess = true;
         if(imageRemoved){
             imageEditSuccess = menuObject.getMediaItem().setCover(null, null, true);
-            if(imageEditSuccess) menuObject.getMediaItem().setCoverBackgroundColor(null);
-            if(imageEditSuccess) menuObject.getMediaItem().setHasCover(false);
+            if(imageEditSuccess){
+                menuObject.getMediaItem().setCoverBackgroundColor(null);
+                menuObject.getMediaItem().setHasCover(false);
+            }
         }
         else if(newImage != null){
             imageEditSuccess = menuObject.getMediaItem().setCover(newFile, newImage, true);
-            if(imageEditSuccess) menuObject.getMediaItem().setCoverBackgroundColor(newColor);
-            if(imageEditSuccess) menuObject.getMediaItem().setHasCover(true);
+            if(imageEditSuccess){
+                menuObject.getMediaItem().setCoverBackgroundColor(newColor);
+                menuObject.getMediaItem().setHasCover(true);
+            }
         }
 
         if(metadataEditSuccess && imageEditSuccess){
@@ -406,7 +410,20 @@ public class MetadataEditPage {
             }
 
             menuController.mainController.getControlBarController().updateTooltips();
-            // update current video background if needed
+            if(menuController.activeItem != null && menuController.activeItem == menuObject){
+                menuController.mainController.videoTitleLabel.setText(menuObject.getTitle());
+            }
+
+            if(!menuObject.getMediaItem().hasVideo()){
+                if(menuController.mainController.miniplayerActive){
+                    if(menuObject.getMediaItem().hasCover()) menuController.mainController.miniplayer.miniplayerController.videoImageView.setImage(menuObject.getMediaItem().getCover());
+                    else menuController.mainController.miniplayer.miniplayerController.videoImageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+                }
+                else {
+                    if(menuObject.getMediaItem().hasCover()) menuController.mainController.videoImageView.setImage(menuObject.getMediaItem().getCover());
+                    else menuController.mainController.videoImageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+                }
+            }
 
             changesMade.set(false);
         }

@@ -83,7 +83,7 @@ public class MainController implements Initializable {
     boolean seekingWithKeys = false; // if true, show miniplayer progressbar
 
     public boolean miniplayerActive = false;
-    Miniplayer miniplayer;
+    public Miniplayer miniplayer;
 
     ChangeListener<? super Number> widthListener;
     ChangeListener<? super Number> heightListener;
@@ -96,7 +96,7 @@ public class MainController implements Initializable {
     String snapshotDirectory;
 
     StackPane videoTitleBox = new StackPane();
-    Label videoTitleLabel = new Label();
+    public Label videoTitleLabel = new Label();
 
 
     public SliderHoverLabel sliderHoverLabel;

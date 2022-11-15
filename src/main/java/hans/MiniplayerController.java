@@ -38,7 +38,8 @@ public class MiniplayerController {
     StackPane videoImageViewWrapper = new StackPane();
     StackPane videoImageViewInnerWrapper = new StackPane();
 
-
+    public StackPane coverImageContainer = new StackPane();
+    public ImageView coverImageView = new ImageView();
 
     StackPane previousVideoButtonPane = new StackPane();
     StackPane playButtonPane = new StackPane();
@@ -129,9 +130,14 @@ public class MiniplayerController {
             miniplayerHover = false;
         });
 
+        coverImageContainer.setVisible(false);
+        coverImageContainer.setMouseTransparent(true);
+        coverImageContainer.getChildren().add(coverImageView);
+        coverImageView.setPreserveRatio(true);
+
         videoImageViewInnerWrapper.setBackground(Background.EMPTY);
         videoImageViewInnerWrapper.setMouseTransparent(true);
-        videoImageViewInnerWrapper.getChildren().add(videoImageView);
+        videoImageViewInnerWrapper.getChildren().addAll(videoImageView, coverImageContainer);
         StackPane.setAlignment(videoImageViewInnerWrapper, Pos.CENTER);
 
         Rectangle mediaClip = new Rectangle();

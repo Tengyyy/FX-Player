@@ -412,17 +412,8 @@ public class MetadataEditPage {
             menuController.mainController.getControlBarController().updateTooltips();
             if(menuController.activeItem != null && menuController.activeItem == menuObject){
                 menuController.mainController.videoTitleLabel.setText(menuObject.getTitle());
-            }
 
-            if(!menuObject.getMediaItem().hasVideo()){
-                if(menuController.mainController.miniplayerActive){
-                    if(menuObject.getMediaItem().hasCover()) menuController.mainController.miniplayer.miniplayerController.videoImageView.setImage(menuObject.getMediaItem().getCover());
-                    else menuController.mainController.miniplayer.miniplayerController.videoImageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
-                }
-                else {
-                    if(menuObject.getMediaItem().hasCover()) menuController.mainController.videoImageView.setImage(menuObject.getMediaItem().getCover());
-                    else menuController.mainController.videoImageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
-                }
+                if(!menuObject.getMediaItem().hasVideo()) menuController.mainController.setCoverImageView(menuObject);
             }
 
             changesMade.set(false);

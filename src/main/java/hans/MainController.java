@@ -7,14 +7,15 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-import hans.MediaItems.*;
 import hans.Menu.ActiveItem;
 import hans.Menu.MenuController;
+import hans.Menu.MenuObject;
 import hans.Menu.MenuState;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
 import javafx.animation.Animation;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -28,6 +29,7 @@ import javafx.scene.control.Button;
 
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -44,11 +46,11 @@ import static hans.SVG.*;
 public class MainController implements Initializable {
 
     @FXML
-    public ImageView videoImageView;
+    public ImageView videoImageView, coverImageView;
 
 
     @FXML
-    StackPane outerPane, videoImageViewWrapper, videoImageViewInnerWrapper;
+    StackPane outerPane, videoImageViewWrapper, videoImageViewInnerWrapper, coverImageContainer;
 
 
     @FXML
@@ -161,11 +163,9 @@ public class MainController implements Initializable {
 
 
         //hide controlbar when mouse exits window
-        Platform.runLater(() ->{
-            videoImageViewWrapper.getScene().setOnMouseExited(e -> {
-                if(!playbackOptionsPopUp.isShowing()) controlBarController.mouseEventTracker.hide();
-            });
-        });
+        Platform.runLater(() -> videoImageViewWrapper.getScene().setOnMouseExited(e -> {
+            if(!playbackOptionsPopUp.isShowing()) controlBarController.mouseEventTracker.hide();
+        }));
 
 
 
@@ -180,7 +180,7 @@ public class MainController implements Initializable {
         miniplayerActiveText.setVisible(false);
         StackPane.setAlignment(miniplayerActiveText, Pos.CENTER);
 
-        videoImageViewInnerWrapper.getChildren().add(miniplayerActiveText);
+        videoImageViewInnerWrapper.getChildren().addAll(miniplayerActiveText, controlBarController.controlBarBackground, videoTitleBackground, videoTitleBox);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 0, false, true);
@@ -194,8 +194,6 @@ public class MainController implements Initializable {
 
 
         });
-
-        videoImageViewInnerWrapper.getChildren().add(1, controlBarController.controlBarBackground);
 
         widthListener = (observableValue, oldValue, newValue) -> {
 
@@ -443,10 +441,9 @@ public class MainController implements Initializable {
         metadataIcon.setMouseTransparent(true);
         metadataIcon.getStyleClass().add("controlIcon");
 
-
-
-        videoImageViewInnerWrapper.getChildren().add(1, videoTitleBackground);
-        videoImageViewInnerWrapper.getChildren().add(videoTitleBox);
+        coverImageContainer.setStyle("-fx-background-color:red;");
+        coverImageContainer.setVisible(false);
+        coverImageContainer.setMouseTransparent(true);
 
     }
 
@@ -601,6 +598,8 @@ public class MainController implements Initializable {
             else {
                 mediaInterface.embeddedMediaPlayer.controls().nextFrame();
             }
+
+            if(menuController.activeItem != null && !menuController.activeItem.getMediaItem().hasVideo()) setCoverImageView(menuController.activeItem);
         }
 
         videoImageView.setImage(null);
@@ -609,7 +608,7 @@ public class MainController implements Initializable {
         miniplayer.miniplayerController.moveIndicators();
         captionsController.moveToMiniplayer();
 
-        if(menuController.activeItem != null){
+        if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
             miniplayerActiveText.setVisible(true);
         }
 
@@ -755,6 +754,42 @@ public class MainController implements Initializable {
     }
 
 
+    public void setCoverImageView(MenuObject menuObject){
+
+
+        Image image;
+        if(menuObject.getMediaItem().hasCover()){
+            image = menuObject.getMediaItem().getCover();
+        }
+        else image = menuObject.getMediaItem().getPlaceholderCover();
+
+        double width = image.getWidth();
+        double height = image.getHeight();
+
+
+        coverImageView.fitWidthProperty().bind(Bindings.min(width *2, videoImageViewWrapper.widthProperty().multiply(0.7)));
+        coverImageView.fitHeightProperty().bind(Bindings.min(height * 2, videoImageViewWrapper.heightProperty().multiply(0.7)));
+
+
+        coverImageView.setImage(image);
+        Color color = menuObject.getMediaItem().getCoverBackgroundColor();
+        if(menuObject.getMediaItem().hasCover()) coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
+        else coverImageContainer.setStyle("-fx-background-color: rgb(64,64,64);");
+
+        coverImageContainer.setVisible(true);
+
+        if(miniplayerActive){
+            miniplayer.miniplayerController.coverImageView.fitWidthProperty().bind(Bindings.min(width *2, miniplayer.miniplayerController.videoImageViewWrapper.widthProperty().multiply(0.7)));
+            miniplayer.miniplayerController.coverImageView.fitHeightProperty().bind(Bindings.min(height * 2, miniplayer.miniplayerController.videoImageViewWrapper.heightProperty().multiply(0.7)));
+
+            miniplayer.miniplayerController.coverImageView.setImage(image);
+            if(menuObject.getMediaItem().hasCover()) miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
+            else miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: rgb(64,64,64);");
+
+            miniplayer.miniplayerController.coverImageContainer.setVisible(true);
+        }
+
+    }
 
 
     public void pressRIGHT(KeyEvent e){

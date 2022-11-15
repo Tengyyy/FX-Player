@@ -74,7 +74,6 @@ public class MediaInterface {
                 if(!controlBarController.playButtonEnabled) controlBarController.enablePlayButton();
                 if(mainController.miniplayerActive){
                     mainController.miniplayer.miniplayerController.enablePlayButton();
-                    mainController.miniplayerActiveText.setVisible(true);
                 }
             }
             else {
@@ -86,7 +85,6 @@ public class MediaInterface {
                     mainController.miniplayer.miniplayerController.pause();
                     mainController.miniplayer.miniplayerController.disablePlayButton();
                 }
-                mainController.miniplayerActiveText.setVisible(false);
             }
         });
     }
@@ -247,20 +245,20 @@ public class MediaInterface {
 
         controlBarController.durationSlider.setValue(0);
 
-        mainController.metadataButton.setOnAction(e -> {
-            menuObject.showMetadata();
-        });
+        mainController.metadataButton.setOnAction(e -> menuObject.showMetadata());
 
 
         if(!menuObject.getMediaItem().hasVideo()){
+            mainController.miniplayerActiveText.setVisible(false);
+            mainController.setCoverImageView(menuObject);
+        }
+        else {
+            System.out.println("test");
             if(mainController.miniplayerActive){
-                if(menuObject.getMediaItem().hasCover()) mainController.miniplayer.miniplayerController.videoImageView.setImage(menuObject.getMediaItem().getCover());
-                else mainController.miniplayer.miniplayerController.videoImageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+                mainController.miniplayerActiveText.setVisible(true);
+                mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
             }
-            else {
-                if(menuObject.getMediaItem().hasCover()) mainController.videoImageView.setImage(menuObject.getMediaItem().getCover());
-                else mainController.videoImageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
-            }
+            mainController.coverImageContainer.setVisible(false);
         }
 
         controlBarController.updateTooltips();
@@ -275,7 +273,13 @@ public class MediaInterface {
     public void resetMediaPlayer(boolean disableButtons){
 
         mainController.videoImageView.setImage(null);
-        if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
+        if(mainController.miniplayerActive){
+            mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
+            mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
+        }
+
+        mainController.coverImageContainer.setVisible(false);
+        mainController.miniplayerActiveText.setVisible(false);
 
         controlBarController.durationSlider.setValue(0);
 

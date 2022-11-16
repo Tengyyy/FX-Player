@@ -41,8 +41,7 @@ public class ControlTooltip extends Tooltip {
     BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
     PauseTransition countdown;
 
-    boolean isControlBarTooltip = false;
-    boolean isMenuButtonTooltip = false;
+    TooltipType tooltipType = null;
 
     StackPane graphicBackground = new StackPane();
 
@@ -63,18 +62,12 @@ public class ControlTooltip extends Tooltip {
         createTooltip(mainController, tooltipText, tooltipParent, delay);
     }
 
-    public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay, boolean isControlBarTooltip){
-        this.isControlBarTooltip = isControlBarTooltip;
+    public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay, TooltipType tooltipType){
+        this.tooltipType = tooltipType;
         createTooltip(mainController, tooltipText, tooltipParent, delay);
     }
 
-    public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay, boolean isControlBarTooltip, boolean isMenuButtonTooltip){
-        this.isControlBarTooltip = isControlBarTooltip;
-        this.isMenuButtonTooltip = isMenuButtonTooltip;
-        createTooltip(mainController, tooltipText, tooltipParent, delay);
-    }
-
-    public ControlTooltip(MainController mainController, String tooltipText, String tooltipTitle, String tooltipSubText, Image tooltipImage, Color imageBackground, Region tooltipParent, int delay, boolean isControlBarTooltip){
+    public ControlTooltip(MainController mainController, String tooltipText, String tooltipTitle, String tooltipSubText, Image tooltipImage, Color imageBackground, Region tooltipParent, int delay, TooltipType tooltipType){
         this.tooltipText = tooltipText;
         this.tooltipTitle = tooltipTitle;
         this.tooltipSubText = tooltipSubText;
@@ -82,7 +75,7 @@ public class ControlTooltip extends Tooltip {
         this.imageBackground = imageBackground;
         this.tooltipParent = tooltipParent;
         this.delay = delay;
-        this.isControlBarTooltip = isControlBarTooltip;
+        this.tooltipType = tooltipType;
         this.mainController = mainController;
 
         this.setStyle("-fx-padding: 0;");
@@ -175,13 +168,20 @@ public class ControlTooltip extends Tooltip {
         nodeMiddleX = tooltipParent.getWidth() / 2;
         nodeMiddleY = tooltipParent.getHeight() / 2;
 
-        double minX = mainController.videoImageViewWrapper.localToScreen(mainController.videoImageViewWrapper.getLayoutBounds()).getMinX() + 20;
-        double maxX = mainController.videoImageViewWrapper.localToScreen(mainController.videoImageViewWrapper.getLayoutBounds()).getMaxX() - 20 - (this.getWidth() - 18);
+        double minX, maxX;
+        if(tooltipType == TooltipType.MINIPLAYER_TOOLTIP){
+            minX = mainController.miniplayer.miniplayerController.videoImageViewWrapper.localToScreen(mainController.miniplayer.miniplayerController.videoImageViewWrapper.getLayoutBounds()).getMinX() + 20;
+            maxX = mainController.miniplayer.miniplayerController.videoImageViewWrapper.localToScreen(mainController.miniplayer.miniplayerController.videoImageViewWrapper.getLayoutBounds()).getMaxX() - 20 - (this.getWidth() - 18);
+        }
+        else {
+            minX = mainController.videoImageViewWrapper.localToScreen(mainController.videoImageViewWrapper.getLayoutBounds()).getMinX() + 20;
+            maxX = mainController.videoImageViewWrapper.localToScreen(mainController.videoImageViewWrapper.getLayoutBounds()).getMaxX() - 20 - (this.getWidth() - 18);
+        }
 
-        if(isControlBarTooltip){
+        if(tooltipType == TooltipType.CONTROLBAR_TOOLTIP){
             this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMinX() + nodeMiddleX - tooltipMiddle)), bounds.getMinY() - tooltipHeight - 10);
         }
-        else if(isMenuButtonTooltip){
+        else if(tooltipType == TooltipType.MENU_TOOLTIP){
             this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMinX() + nodeMiddleX - tooltipMiddle)), bounds.getMaxY() + 10);
         }
         else this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMinX() + nodeMiddleX - tooltipMiddle)), bounds.getMinY() - tooltipHeight);
@@ -232,3 +232,4 @@ public class ControlTooltip extends Tooltip {
     }
 
 }
+

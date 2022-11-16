@@ -183,8 +183,8 @@ public class MainController implements Initializable {
         videoImageViewInnerWrapper.getChildren().addAll(miniplayerActiveText, controlBarController.controlBarBackground, videoTitleBackground, videoTitleBox);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
-            openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 0, false, true);
-            viewMetadataTooltip = new ControlTooltip(this,"Media metadata", metadataButton, 0, false, true);
+            openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 0, TooltipType.MENU_TOOLTIP);
+            viewMetadataTooltip = new ControlTooltip(this,"Media metadata", metadataButton, 0, TooltipType.MENU_TOOLTIP);
 
             videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 if(newValue.doubleValue() < menuController.menu.getMaxWidth()){
@@ -1405,7 +1405,7 @@ public class MainController implements Initializable {
         App.stage.setFullScreen(false);
 
         if (settingsController.settingsState == SettingsState.CLOSED)
-            controlBarController.fullScreen = new ControlTooltip(this,"Full screen (f)", controlBarController.fullScreenButton, 0, true);
+            controlBarController.fullScreen = new ControlTooltip(this,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
     }
 
     public void pressEND(){

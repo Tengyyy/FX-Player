@@ -894,8 +894,8 @@ public class MiniplayerController {
         }
 
         Platform.runLater(() -> {
-            if(controlBarController.durationSlider.getValue() > 5) previousVideoButtonTooltip = new ControlTooltip(mainController,"Replay", previousVideoButton, 0);
-            else previousVideoButtonTooltip = new ControlTooltip(mainController,"Previous video (SHIFT + P", previousVideoButton, 0);
+            if(controlBarController.durationSlider.getValue() > 5) previousVideoButtonTooltip = new ControlTooltip(mainController,"Replay", previousVideoButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
+            else previousVideoButtonTooltip = new ControlTooltip(mainController,"Previous video (SHIFT + P", previousVideoButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
 
             if(previousVideoButtonHover) previousVideoButtonTooltip.showTooltip();
         });
@@ -926,9 +926,9 @@ public class MiniplayerController {
         }
 
         Platform.runLater(() -> {
-            if(mediaInterface.atEnd) playButtonTooltip = new ControlTooltip(mainController,"Replay (k)", playButton, 0);
-            else if(mediaInterface.playing.get()) playButtonTooltip = new ControlTooltip(mainController,"Pause (k)", playButton, 0);
-            else playButtonTooltip = new ControlTooltip(mainController,"Play (k)", playButton, 0);
+            if(mediaInterface.atEnd) playButtonTooltip = new ControlTooltip(mainController,"Replay (k)", playButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
+            else if(mediaInterface.playing.get()) playButtonTooltip = new ControlTooltip(mainController,"Pause (k)", playButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
+            else playButtonTooltip = new ControlTooltip(mainController,"Play (k)", playButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
 
             if(playButtonHover) playButtonTooltip.showTooltip();
         });
@@ -957,7 +957,7 @@ public class MiniplayerController {
         }
 
         Platform.runLater(() -> {
-            nextVideoButtonTooltip = new ControlTooltip(mainController,"Next video (SHIFT + N)", nextVideoButton, 0);
+            nextVideoButtonTooltip = new ControlTooltip(mainController,"Next video (SHIFT + N)", nextVideoButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
 
             if(nextVideoButtonHover) nextVideoButtonTooltip.showTooltip();
         });

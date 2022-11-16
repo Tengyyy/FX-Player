@@ -1,11 +1,8 @@
 package hans.Menu.MetadataEdit;
 
 import com.jfoenix.controls.JFXButton;
-import hans.AnimationsClass;
-import hans.App;
-import hans.ControlTooltip;
+import hans.*;
 import hans.Menu.ExpandableTextArea;
-import hans.SVG;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -219,7 +216,7 @@ public class CustomTextAreaItem extends VBox{
         Platform.runLater(() -> {
             editButtonTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Edit key", editButton, 1000);
             removeButtonTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Remove key", removeButton, 1000);
-            warningLabelTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Key can not be empty", warningLabel, 0, false, true);
+            warningLabelTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Key can not be empty", warningLabel, 0, TooltipType.MENU_TOOLTIP);
             warningLabelTooltip.getStyleClass().add("warningLabelTooltip");
             boolean changesMade = otherEditItem.metadataEditPage.changesMade.get();
             keyField.setText(key);

@@ -662,9 +662,7 @@ public class ControlBarController implements Initializable {
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
-                    pauseTransition.setOnFinished(e -> {
-                        mediaInterface.updatePreviewFrame();
-                    });
+                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame());
 
                     pauseTransition.playFromStart();
                 }
@@ -673,10 +671,8 @@ public class ControlBarController implements Initializable {
 
             } else {
 
-                if(!mainController.miniplayerActive) {
-                    mainController.sliderHoverPreview.pane.setVisible(false);
-                    mainController.sliderHoverLabel.label.setVisible(false);
-                }
+                mainController.sliderHoverPreview.pane.setVisible(false);
+                mainController.sliderHoverLabel.label.setVisible(false);
 
                 if(!durationSliderHover){
                     mainController.sliderHoverPreview.setImage(null);

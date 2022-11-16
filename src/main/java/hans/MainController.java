@@ -472,7 +472,7 @@ public class MainController implements Initializable {
         else if (settingsController.settingsState != SettingsState.CLOSED) {
             settingsController.closeSettings();
         }
-        else if(mediaInterface.mediaActive.get() && !miniplayerActive){
+        else if(mediaInterface.mediaActive.get()){
             if (mediaInterface.atEnd) {
                 mediaInterface.replay();
                 actionIndicator.setIcon(REPLAY);

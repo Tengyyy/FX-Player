@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
+import com.sun.jna.platform.win32.WinDef;
+import de.intelligence.windowstoolbar.*;
 import hans.Menu.ActiveItem;
 import hans.Menu.MenuController;
 import hans.Menu.MenuObject;
@@ -37,6 +39,7 @@ import javafx.scene.layout.*;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
@@ -789,6 +792,37 @@ public class MainController implements Initializable {
             miniplayer.miniplayerController.coverImageContainer.setVisible(true);
         }
 
+    }
+
+    public void addTaskBarButtons(Stage stage){
+        var handle = WindowHandleFinder.getFromActiveWindow();
+        System.out.println(Objects.requireNonNull(getClass().getResource("images/skip-previous.ico")).getPath());
+
+        IWindowsTaskbar taskbar = TaskbarBuilder.builder()
+                .autoInit()
+                .setHWnd(handle)
+                .addButtons(TaskbarButtonListBuilder.builder()
+                        .buttonBuilder()
+                        .withFlag(TaskbarButtonFlag.ENABLED)
+                        .setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-previous.ico")).getPath()))
+                        .setOnClicked((TaskbarButtonClickEvent e) -> System.out.println("test"))
+                        .build()
+                        .buttonBuilder()
+                        .withFlag(TaskbarButtonFlag.DISABLED)
+                        .setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/play.ico")).getPath()))
+                        .build()
+                        .buttonBuilder()
+                        .withFlag(TaskbarButtonFlag.ENABLED)
+                        .setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-next.ico")).getPath()))
+                        .setOnClicked((TaskbarButtonClickEvent e) -> System.out.println("test"))
+                        .build()
+                        .build())
+                .build();
+
+    }
+
+    public void printTest(){
+        System.out.println("test");
     }
 
 

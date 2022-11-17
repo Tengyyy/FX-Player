@@ -223,12 +223,16 @@ public class App extends Application {
                 }
             });
 
-
-
             primaryStage.setScene(scene);
             primaryStage.setTitle("MP4 Player");
             primaryStage.getIcons().add(new Image(getClass().getResource("images/appIcon.png").toExternalForm()));
             primaryStage.show();
+
+            if(System.getProperty("os.name").toLowerCase().contains("windows")){
+                // program is being run on a windows operating system so we can take advantage of windows features
+
+                mainController.addTaskBarButtons(primaryStage);
+            }
 
             primaryStage.setOnCloseRequest(event -> {
 

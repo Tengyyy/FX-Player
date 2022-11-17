@@ -4,7 +4,6 @@ module hans {
     requires javafx.graphics;
     requires javafx.media;
     requires javafx.base;
-    requires jcodec;
     requires MaterialFX;
     requires com.jfoenix;
     requires org.apache.logging.log4j;
@@ -14,6 +13,7 @@ module hans {
     requires org.bytedeco.javacv;
     requires jaudiotagger;
     requires org.bytedeco.ffmpeg;
+    requires win.taskbar;
     requires com.sun.jna.platform;
 
     opens hans to javafx.graphics, javafx.fxml;

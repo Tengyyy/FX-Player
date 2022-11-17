@@ -14,6 +14,11 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>teragam-repo</id>
+            <name>IcarusCoding Repository</name>
+            <url>https://archiva.teragam.de/repository/IcarusCoding/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -40,11 +45,6 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>19</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jcodec</groupId>
-            <artifactId>jcodec</artifactId>
-            <version>0.2.5</version>
         </dependency>
         <dependency>
             <groupId>io.github.palexdev</groupId>
@@ -86,6 +86,11 @@
             <artifactId>jaudiotagger</artifactId>
             <version>3.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>de.intelligence</groupId>
+            <artifactId>win-taskbar</artifactId>
+            <version>1.1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -125,6 +130,8 @@
                         <option>javafx.base/com.sun.javafx.binding=com.jfoenix</option>
                         <option>--add-exports</option>
                         <option>javafx.graphics/com.sun.javafx.stage=com.jfoenix</option>
+                        <option>--add-exports</option>
+                        <option>javafx.graphics/com.sun.javafx.stage=win.taskbar</option>
                         <option>--add-exports</option>
                         <option>javafx.base/com.sun.javafx.event=com.jfoenix</option>
                     </options>

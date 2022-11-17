@@ -4,6 +4,7 @@ package hans;
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene;
 import hans.Menu.MenuController;
 import hans.Settings.SettingsController;
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -124,6 +125,10 @@ public class Miniplayer {
             if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.J || event.getCode() == KeyCode.L || event.getCode() == KeyCode.DIGIT1 || event.getCode() == KeyCode.DIGIT2 || event.getCode() == KeyCode.DIGIT3 || event.getCode() == KeyCode.DIGIT4 || event.getCode() == KeyCode.DIGIT5 || event.getCode() == KeyCode.DIGIT6 || event.getCode() == KeyCode.DIGIT7 || event.getCode() == KeyCode.DIGIT8 || event.getCode() == KeyCode.DIGIT9 || event.getCode() == KeyCode.DIGIT0 || event.getCode() == KeyCode.HOME || event.getCode() == KeyCode.END){
                 mainController.seekingWithKeys = false;
             }
+        });
+
+        stage.setOnCloseRequest(event -> {
+            mainController.closeMiniplayer();
         });
 
         stage.show();

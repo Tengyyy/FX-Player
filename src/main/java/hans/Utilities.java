@@ -1,12 +1,15 @@
 package hans;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinDef;
 import hans.MediaItems.*;
 import hans.Menu.HistoryItem;
 import hans.Menu.MenuController;
@@ -17,6 +20,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import org.bytedeco.javacv.*;
 
@@ -122,13 +127,6 @@ public class Utilities {
             case "wav": return new WavItem((WavItem) mediaItem, mainController);
             default: return null;
         }
-    }
-
-    // Turns four-character-code into a string
-    public static String fourccToString(int key) {
-        byte[] bytes = new byte[4];
-        ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).putInt(key);
-        return org.jcodec.platform.Platform.stringFromCharset(bytes, "iso8859-1");
     }
 
     public static String[] splitLines(String str) {
@@ -323,6 +321,21 @@ public class Utilities {
         }
 
         return duplicates;
+    }
+
+    public static WinDef.HWND getNativeHandleForStage(Stage stage) {
+        try {
+            final Method getPeer = Window.class.getDeclaredMethod("getPeer", null);
+            getPeer.setAccessible(true);
+            final Object tkStage = getPeer.invoke(stage);
+            final Method getRawHandle = tkStage.getClass().getMethod("getRawHandle");
+            getRawHandle.setAccessible(true);
+            final Pointer pointer = new Pointer((Long) getRawHandle.invoke(tkStage));
+            return new WinDef.HWND(pointer);
+        } catch (Exception ex) {
+            System.err.println("Unable to determine native handle for window");
+            return null;
+        }
     }
 
 }

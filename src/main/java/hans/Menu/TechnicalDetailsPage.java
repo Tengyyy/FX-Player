@@ -213,10 +213,7 @@ public class TechnicalDetailsPage {
             text.setOnMouseExited(e -> text.setUnderline(false));
 
             text.setOnMouseClicked(e -> {
-
-                String os = System.getProperty("os.name");
-
-                if(os.toLowerCase().contains("windows")){
+                if(App.isWindows){
                     Shell32Util.SHOpenFolderAndSelectItems(new File(map.get("path")));
                 }
                 else if(Desktop.isDesktopSupported()){

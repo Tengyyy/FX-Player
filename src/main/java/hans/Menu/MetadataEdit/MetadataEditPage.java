@@ -372,8 +372,6 @@ public class MetadataEditPage {
     public void saveMetadata(){
         Map<String,String> mediaInformation = metadataEditItem.saveMetadata();
 
-        boolean metadataEditSuccess = menuObject.getMediaItem().setMediaInformation(mediaInformation, true);
-
         boolean imageEditSuccess = true;
         if(imageRemoved){
             imageEditSuccess = menuObject.getMediaItem().setCover(null, null, true);
@@ -389,6 +387,8 @@ public class MetadataEditPage {
                 menuObject.getMediaItem().setHasCover(true);
             }
         }
+
+        boolean metadataEditSuccess = menuObject.getMediaItem().setMediaInformation(mediaInformation, true);
 
         if(metadataEditSuccess && imageEditSuccess){
             menuObject.update();

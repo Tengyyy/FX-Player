@@ -179,7 +179,7 @@ public class MediaInterface {
             atEnd = true;
             playing.set(false);
 
-            if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
+            if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive && !mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
                 endMedia();
             }
         }

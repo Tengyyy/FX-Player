@@ -5,6 +5,7 @@ import hans.Utilities;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Mp4EditItem implements MetadataEditItem{
@@ -178,8 +179,73 @@ public class Mp4EditItem implements MetadataEditItem{
 
     @Override
     public Map<String, String> saveMetadata(){
-        return null;
+        Map<String, String> mediaInformation = new HashMap<>();
 
+        if(!titleItem.textArea.getText().isBlank()) mediaInformation.put("title", titleItem.textArea.getText());
+        if(!artistItem.textArea.getText().isBlank()) mediaInformation.put("artist", artistItem.textArea.getText());
+
+        String mediaTypeString = "0";
+        switch (mediaType) {
+            case "Music video":
+                mediaTypeString = "6";
+                break;
+            case "Movie":
+                mediaTypeString = "9";
+                break;
+            case "TV Show":
+                mediaTypeString = "10";
+                break;
+            case "Podcast":
+                mediaTypeString = "21";
+                break;
+        }
+
+        mediaInformation.put("media_type", mediaTypeString);
+
+        if(mediaType.equals("TV Show")){
+            if(!seriesTitleItem.textArea.getText().isBlank()) mediaInformation.put("show", seriesTitleItem.textArea.getText());
+            if(!seasonNumberItem.textField.getText().isBlank()) mediaInformation.put("season_number", seasonNumberItem.textField.getText());
+            if(!episodeNumberItem.textField.getText().isBlank()) mediaInformation.put("episode_sort", episodeNumberItem.textField.getText());
+            if(!networkItem.textArea.getText().isBlank()) mediaInformation.put("network", networkItem.textArea.getText());
+        }
+        else {
+           seriesTitleItem.textArea.setText("");
+           seasonNumberItem.textField.setText("");
+           episodeNumberItem.textField.setText("");
+           networkItem.textArea.setText("");
+        }
+
+        if(mediaType.equals("Music video") || mediaType.equals("Movie") || mediaType.equals("TV Show")){
+            if(!composerItem.textArea.getText().isBlank()) mediaInformation.put("composer", composerItem.textArea.getText());
+            if(!albumArtistItem.textArea.getText().isBlank()) mediaInformation.put("album_artist", albumArtistItem.textArea.getText());
+        }
+        else {
+            composerItem.textArea.setText("");
+            albumArtistItem.textArea.setText("");
+        }
+        if(!genreItem.textArea.getText().isBlank()) mediaInformation.put("genre", genreItem.textArea.getText());
+        if(!descriptionItem.textArea.getText().isBlank()) mediaInformation.put("description", descriptionItem.textArea.getText());
+        if(!synopsisItem.textArea.getText().isBlank()) mediaInformation.put("synopsis", synopsisItem.textArea.getText());
+
+        if(mediaType.equals("Music video")) {
+            if(!lyricsItem.textArea.getText().isBlank()) mediaInformation.put("lyrics", lyricsItem.textArea.getText());
+            if(!albumItem.textArea.getText().isBlank()) mediaInformation.put("album", albumItem.textArea.getText());
+            if(!trackItem.textField1.getText().isBlank()){
+                String trackString = trackItem.textField1.getText();
+                if(!trackItem.textField2.getText().isBlank()) trackString = trackString.concat("/" + trackItem.textField2.getText());
+                mediaInformation.put("track", trackString);
+            }
+        }
+        else {
+            lyricsItem.textArea.setText("");
+            albumItem.textArea.setText("");
+            trackItem.textField1.setText("");
+            trackItem.textField2.setText("");
+        }
+        if(!releaseDateItem.textArea.getText().isBlank()) mediaInformation.put("date", releaseDateItem.textArea.getText());
+        if(!commentItem.textArea.getText().isBlank()) mediaInformation.put("comment", commentItem.textArea.getText());
+
+        return mediaInformation;
 
         //TODO: update placeholder cover when changing mediatype!
     }

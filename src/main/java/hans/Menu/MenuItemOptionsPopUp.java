@@ -200,9 +200,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
 
 
     public void openFileLocation(String path){
-        String os = System.getProperty("os.name");
-
-        if(os.toLowerCase().contains("windows")){
+        if(App.isWindows){
             Shell32Util.SHOpenFolderAndSelectItems(new File(path));
         }
         else if(Desktop.isDesktopSupported()){

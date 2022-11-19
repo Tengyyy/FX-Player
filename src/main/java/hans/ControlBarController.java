@@ -515,8 +515,18 @@ public class ControlBarController implements Initializable {
 
         durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 
+            durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
 
             if (mediaInterface.mediaActive.get()) {
+
+                if (mainController.miniplayerActive) {
+                    mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
+                    if (mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue() || newValue.doubleValue() == 0) {
+                        mainController.miniplayer.miniplayerController.slider.setValue(newValue.doubleValue());
+                    }
+                }
+
+                mediaInterface.updateMedia(newValue.doubleValue());
 
                 if (oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5) {
 
@@ -562,16 +572,6 @@ public class ControlBarController implements Initializable {
                         if(previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.showTooltip();
                     }
 
-                }
-
-                mediaInterface.updateMedia(newValue.doubleValue());
-                durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
-
-                if (mainController.miniplayerActive) {
-                    mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
-                    if (mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue()) {
-                        mainController.miniplayer.miniplayerController.slider.setValue(newValue.doubleValue());
-                    }
                 }
 
                 captionsController.updateCaptions(newValue.doubleValue() * 1000 + 1000);

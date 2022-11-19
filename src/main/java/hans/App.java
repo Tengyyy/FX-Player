@@ -29,6 +29,7 @@ public class App extends Application {
 
 
     public static boolean fullScreen;
+    public static boolean isWindows = false;
 
 
     ControlBarController controlBarController;
@@ -229,6 +230,7 @@ public class App extends Application {
             primaryStage.show();
 
             if(System.getProperty("os.name").toLowerCase().contains("windows")){
+                isWindows = true;
                 // program is being run on a windows operating system so we can take advantage of windows features
 
                 mainController.addTaskBarButtons(primaryStage);

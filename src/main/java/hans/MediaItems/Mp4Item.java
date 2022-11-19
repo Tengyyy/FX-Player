@@ -5,6 +5,8 @@ import hans.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.bytedeco.ffmpeg.avcodec.AVPacket;
+import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.*;
 
 import java.io.File;
@@ -41,6 +43,10 @@ public class Mp4Item implements MediaItem {
     Image cover;
     Image placeholderCover;
 
+    int width = 0;
+    int height = 0;
+    int audioChannels = 0;
+
 
     public Mp4Item(File file, MainController mainController) {
         this.file = file;
@@ -72,7 +78,11 @@ public class Mp4Item implements MediaItem {
             if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
 
 
-            if(fFmpegFrameGrabber.hasVideo()) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
+            if(fFmpegFrameGrabber.hasVideo()){
+                width = fFmpegFrameGrabber.getImageWidth();
+                height = fFmpegFrameGrabber.getImageHeight();
+                duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
+            }
             else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
 
 
@@ -85,6 +95,7 @@ public class Mp4Item implements MediaItem {
             mediaDetails.put("hasVideo", String.valueOf(fFmpegFrameGrabber.hasVideo()));
             mediaDetails.put("hasAudio", String.valueOf(fFmpegFrameGrabber.hasAudio()));
             if(fFmpegFrameGrabber.hasAudio()){
+                audioChannels = fFmpegFrameGrabber.getAudioChannels();
                 if(fFmpegFrameGrabber.getAudioChannels() == 2) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (stereo)");
                 else if(fFmpegFrameGrabber.getAudioChannels() == 6) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (5.1 surround sound)");
                 else if(fFmpegFrameGrabber.getAudioChannels() == 8) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (7.1 surround sound)");
@@ -106,6 +117,7 @@ public class Mp4Item implements MediaItem {
             if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));
             else if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("21")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcastGraphic.png")).toExternalForm()));
             else placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
+
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -180,7 +192,42 @@ public class Mp4Item implements MediaItem {
 
     @Override
     public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
+
+        ArrayList<String> arguments = new ArrayList<>();
+        String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+
+        arguments.add(ffmpeg);
+        arguments.add("-i");
+        arguments.add(file.getAbsolutePath());
+        arguments.add("-map");
+        arguments.add("0");
+        arguments.add("-map_metadata:g");
+        arguments.add("-1");
+        if(!map.isEmpty()){
+            for(Map.Entry<String, String> entry : map.entrySet()){
+                arguments.add("-metadata");
+                arguments.add(entry.getKey() + "=" + entry.getValue());
+            }
+        }
+        arguments.add("-c");
+        arguments.add("copy");
+        arguments.add(file.getParent().concat("/test.mp4"));
+        ProcessBuilder pb = new ProcessBuilder(arguments);
+
+        //ProcessBuilder pb = new ProcessBuilder(ffmpeg, "-i", file.getAbsolutePath(), "-map", "0", "-map_metadata:g" , "-1", "-metadata", "title=Testing title", "-c", "copy", file.getParent().concat("/test.mp4")); // normal code to  copy over video, remove all metadata, add new metadata and keep all streams including cover art
+
+        //ProcessBuilder pb = new ProcessBuilder(ffmpeg, "-i", file.getAbsolutePath(), "-map", "0:V?", "-map", "0:a?", "-map", "0:s?", "-map_metadata:g" , "-1", "-metadata", "title=Testing title", "-c", "copy", file.getParent().concat("/test.mp4")); // same as normal but removes cover image
+
+        //ProcessBuilder pb = new ProcessBuilder(ffmpeg, "-i", file.getAbsolutePath(), "-i", file.getParent().concat("/menu.png"), "-map", "0:V?", "-map", "0:a?", "-map", "0:s?", "-map_metadata:g" , "-1", "-map", "1", "-metadata", "title=Testing title", "-c", "copy", "-disposition:v:1", "attached_pic", file.getParent().concat("/test.mp4")); // changes cover image
+        try {
+            pb.inheritIO().start().waitFor();
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        }
+
+
         return false;
+
     }
 
     @Override
@@ -223,6 +270,7 @@ public class Mp4Item implements MediaItem {
     @Override
     public boolean setCover(File imagePath, Image image, boolean updateFile) {
         cover = image;
+        // ignore updateFile and never alter the file inside this method
         return false;
     }
 }

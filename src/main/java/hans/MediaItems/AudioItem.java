@@ -180,6 +180,11 @@ public class AudioItem implements MediaItem {
         return mediaDetails;
     }
 
+    @Override
+    public void setMediaDetails(Map<String, String> map) {
+        mediaDetails = map;
+    }
+
 
     @Override
     public File getFile() {return this.file;}
@@ -211,8 +216,7 @@ public class AudioItem implements MediaItem {
     }
 
     @Override
-    public boolean setCover(File imagePath, Image image, boolean updateFile) {
-        cover = image;
+    public boolean setCover(File imagePath, Image image, Color color, boolean updateFile) {
 
         if(updateFile){
             try {
@@ -222,8 +226,11 @@ public class AudioItem implements MediaItem {
                 else {
                     tag.setField(ArtworkFactory.createArtworkFromFile(imagePath));
                 }
-
                 f.commit();
+
+                cover = image;
+                backgroundColor = color;
+                hasCover = image != null;
 
                 return true;
 
@@ -233,6 +240,10 @@ public class AudioItem implements MediaItem {
             }
         }
         else {
+            cover = image;
+            backgroundColor = color;
+            hasCover = image != null;
+
             return true;
         }
     }
@@ -248,11 +259,6 @@ public class AudioItem implements MediaItem {
     }
 
     @Override
-    public void setCoverBackgroundColor(Color color) {
-        this.backgroundColor = color;
-    }
-
-    @Override
     public boolean hasVideo() {
         return false;
     }
@@ -260,11 +266,6 @@ public class AudioItem implements MediaItem {
     @Override
     public boolean hasCover() {
         return hasCover;
-    }
-
-    @Override
-    public void setHasCover(boolean value) {
-        hasCover = value;
     }
 
     @Override

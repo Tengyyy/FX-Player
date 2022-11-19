@@ -20,6 +20,8 @@ public interface MediaItem {
 
     Map<String, String> getMediaDetails();
 
+    void setMediaDetails(Map<String, String> map);
+
     File getFile();
 
     File getSubtitles();
@@ -32,19 +34,15 @@ public interface MediaItem {
 
     Image getCover();
 
-    boolean setCover(File imagePath, Image image, boolean updateFile);
+    boolean setCover(File imagePath, Image image, Color color, boolean updateFile);
 
     void setSubtitles(File file);
 
     Color getCoverBackgroundColor();
 
-    void setCoverBackgroundColor(Color color);
-
     boolean hasVideo();
 
     boolean hasCover();
-
-    void setHasCover(boolean value);
 
     Image getPlaceholderCover();
     void setPlaceHolderCover(Image image);

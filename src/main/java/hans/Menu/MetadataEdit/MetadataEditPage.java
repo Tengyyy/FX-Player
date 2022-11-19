@@ -3,6 +3,9 @@ package hans.Menu.MetadataEdit;
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.AudioItem;
+import hans.MediaItems.MediaItem;
+import hans.MediaItems.MovItem;
+import hans.MediaItems.Mp4Item;
 import hans.Menu.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -372,23 +375,17 @@ public class MetadataEditPage {
     public void saveMetadata(){
         Map<String,String> mediaInformation = metadataEditItem.saveMetadata();
 
+        MediaItem mediaItem = menuObject.getMediaItem();
+
         boolean imageEditSuccess = true;
         if(imageRemoved){
-            imageEditSuccess = menuObject.getMediaItem().setCover(null, null, true);
-            if(imageEditSuccess){
-                menuObject.getMediaItem().setCoverBackgroundColor(null);
-                menuObject.getMediaItem().setHasCover(false);
-            }
+            imageEditSuccess = mediaItem.setCover(null, null, null, true);
         }
         else if(newImage != null){
-            imageEditSuccess = menuObject.getMediaItem().setCover(newFile, newImage, true);
-            if(imageEditSuccess){
-                menuObject.getMediaItem().setCoverBackgroundColor(newColor);
-                menuObject.getMediaItem().setHasCover(true);
-            }
+            imageEditSuccess = mediaItem.setCover(newFile, newImage, newColor, true);
         }
 
-        boolean metadataEditSuccess = menuObject.getMediaItem().setMediaInformation(mediaInformation, true);
+        boolean metadataEditSuccess = mediaItem.setMediaInformation(mediaInformation, true);
 
         if(metadataEditSuccess && imageEditSuccess){
             menuObject.update();
@@ -396,15 +393,16 @@ public class MetadataEditPage {
 
             for(MenuObject duplicate : duplicates){
                 duplicate.getMediaItem().setMediaInformation(mediaInformation, false);
+                duplicate.getMediaItem().setMediaDetails(menuObject.getMediaItem().getMediaDetails());
+                if(mediaItem instanceof Mp4Item || mediaItem instanceof MovItem){
+                    duplicate.getMediaItem().setPlaceHolderCover(menuObject.getMediaItem().getPlaceholderCover());
+                }
+
                 if(imageRemoved){
-                    duplicate.getMediaItem().setCover(null, null, false);
-                    duplicate.getMediaItem().setCoverBackgroundColor(null);
-                    duplicate.getMediaItem().setHasCover(false);
+                    duplicate.getMediaItem().setCover(null, mediaItem.getCover(), mediaItem.getCoverBackgroundColor(), false);
                 }
                 else if(newImage != null){
-                    duplicate.getMediaItem().setCover(newFile, newImage, false);
-                    duplicate.getMediaItem().setCoverBackgroundColor(newColor);
-                    duplicate.getMediaItem().setHasCover(true);
+                    duplicate.getMediaItem().setCover(newFile, newImage, newColor, false);
                 }
                 duplicate.update();
             }
@@ -413,7 +411,7 @@ public class MetadataEditPage {
             if(menuController.activeItem != null && menuController.activeItem == menuObject){
                 menuController.mainController.videoTitleLabel.setText(menuObject.getTitle());
 
-                if(!menuObject.getMediaItem().hasVideo()) menuController.mainController.setCoverImageView(menuObject);
+                if(!mediaItem.hasVideo()) menuController.mainController.setCoverImageView(menuObject);
             }
 
             changesMade.set(false);

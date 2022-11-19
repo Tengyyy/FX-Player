@@ -217,10 +217,11 @@ public class Utilities {
             int totalFrames = fFmpegFrameGrabber.getLengthInFrames();
 
             fFmpegFrameGrabber.setFrameNumber(Math.floorDiv(totalFrames, 2));
-            Frame frame = fFmpegFrameGrabber.grabImage();
+            Frame frame = null;
+            if(fFmpegFrameGrabber.hasVideo()) frame = fFmpegFrameGrabber.grabImage();
 
             JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
-            image = javaFXFrameConverter.convert(frame);
+            if(frame != null) image = javaFXFrameConverter.convert(frame);
 
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();

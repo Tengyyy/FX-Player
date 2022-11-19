@@ -247,7 +247,6 @@ public class Mp4EditItem implements MetadataEditItem{
 
         return mediaInformation;
 
-        //TODO: update placeholder cover when changing mediatype!
     }
 }
 

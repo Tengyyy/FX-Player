@@ -15,7 +15,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="javafx-media-player-new" options="--add-exports javafx.graphics/com.sun.glass.ui=hans" />
+      <module name="javafx-media-player-new" options="" />
     </option>
   </component>
 </project>

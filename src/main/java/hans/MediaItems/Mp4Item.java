@@ -5,7 +5,6 @@ import hans.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import org.bytedeco.ffmpeg.avcodec.AVPacket;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.*;
 
@@ -13,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_ATTACHED_PIC;
@@ -42,6 +42,11 @@ public class Mp4Item implements MediaItem {
 
     Image cover;
     Image placeholderCover;
+
+    File newCover = null;
+    Color newColor = null;
+    boolean coverRemoved = false;
+
 
     int width = 0;
     int height = 0;
@@ -150,11 +155,6 @@ public class Mp4Item implements MediaItem {
     }
 
     @Override
-    public void setCoverBackgroundColor(Color color) {
-        this.backgroundColor = color;
-    }
-
-    @Override
     public boolean hasVideo() {
         return hasVideo;
     }
@@ -162,11 +162,6 @@ public class Mp4Item implements MediaItem {
     @Override
     public boolean hasCover() {
         return hasCover;
-    }
-
-    @Override
-    public void setHasCover(boolean value) {
-        hasCover = value;
     }
 
     @Override
@@ -193,46 +188,142 @@ public class Mp4Item implements MediaItem {
     @Override
     public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
 
-        ArrayList<String> arguments = new ArrayList<>();
-        String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+        if(updateFile){
+            ArrayList<String> arguments = new ArrayList<>();
+            String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
 
-        arguments.add(ffmpeg);
-        arguments.add("-i");
-        arguments.add(file.getAbsolutePath());
-        arguments.add("-map");
-        arguments.add("0");
-        arguments.add("-map_metadata:g");
-        arguments.add("-1");
-        if(!map.isEmpty()){
-            for(Map.Entry<String, String> entry : map.entrySet()){
-                arguments.add("-metadata");
-                arguments.add(entry.getKey() + "=" + entry.getValue());
+            arguments.add(ffmpeg);
+            arguments.add("-i");
+            arguments.add(file.getAbsolutePath());
+            if(newCover != null || coverRemoved){
+                if(newCover != null){
+                    arguments.add("-i");
+                    arguments.add(newCover.getAbsolutePath());
+                }
+
+                arguments.add("-map");
+                arguments.add("0:V?");
+                arguments.add("-map");
+                arguments.add("0:a?");
+                arguments.add("-map");
+                arguments.add("0:s?");
+
+                if(newCover != null){
+                    arguments.add("-map");
+                    arguments.add("1");
+                }
+            }
+            else {
+                arguments.add("-map");
+                arguments.add("0");
+            }
+            arguments.add("-map_metadata:g");
+            arguments.add("-1");
+            if(!map.isEmpty()){
+                for(Map.Entry<String, String> entry : map.entrySet()){
+                    arguments.add("-metadata");
+                    arguments.add(entry.getKey() + "=" + entry.getValue());
+                }
+            }
+            arguments.add("-c");
+            arguments.add("copy");
+            if(newCover != null){
+                arguments.add("-disposition:v:1");
+                arguments.add("attached_pic");
+            }
+
+            String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".mp4";
+
+            arguments.add(outputPath);
+            ProcessBuilder pb = new ProcessBuilder(arguments);
+
+            try {
+                pb.inheritIO().start().waitFor();
+
+                //overwrite curr file with new file, if its playing, stop it, rewrite and then start playing again and seek to same time
+                if(mainController.getMenuController().activeItem != null && mainController.getMenuController().activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                    double time = mainController.getControlBarController().durationSlider.getValue();
+                    mainController.getMediaInterface().resetMediaPlayer(true);
+
+                    boolean deleteSuccess = file.delete();
+                    if(deleteSuccess){
+                        File tempFile = new File(outputPath);
+                        boolean renameSuccess = tempFile.renameTo(file);
+                        if(!renameSuccess){
+                            throw new IOException("Failed to rename new file");
+                        }
+                    }
+                    else throw new IOException("Failed to delete old file");
+
+
+                    mainController.getMediaInterface().createMedia(mainController.getMenuController().activeItem);
+                }
+                else {
+                    boolean deleteSuccess = file.delete();
+                    if(deleteSuccess){
+                        File tempFile = new File(outputPath);
+                        boolean renameSuccess = tempFile.renameTo(file);
+                        if(!renameSuccess){
+                            throw new IOException("Failed to rename new file");
+                        }
+                    }
+                    else throw new IOException("Failed to delete old file");
+                }
+
+                mediaDetails.put("size", Utilities.formatFileSize(file.length()));
+                mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
+
+                if(newCover != null){
+                    cover = new Image(newCover.getAbsolutePath());
+                    hasCover = true;
+                    backgroundColor = newColor;
+                }
+                else if(coverRemoved){
+                    hasCover = false;
+                    cover = Utilities.grabMiddleFrame(file);
+                    if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+                    else backgroundColor = null;
+                }
+
+                switch (map.getOrDefault("media_type", null)) {
+                    case "6" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));
+                    case "21" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcastGraphic.png")).toExternalForm()));
+                    default -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
+                }
+
+
+                mediaInformation = map;
+                return true;
+
+
+
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            finally {
+                newCover = null;
+                newColor = null;
+                coverRemoved = false;
             }
         }
-        arguments.add("-c");
-        arguments.add("copy");
-        arguments.add(file.getParent().concat("/test.mp4"));
-        ProcessBuilder pb = new ProcessBuilder(arguments);
-
-        //ProcessBuilder pb = new ProcessBuilder(ffmpeg, "-i", file.getAbsolutePath(), "-map", "0", "-map_metadata:g" , "-1", "-metadata", "title=Testing title", "-c", "copy", file.getParent().concat("/test.mp4")); // normal code to  copy over video, remove all metadata, add new metadata and keep all streams including cover art
-
-        //ProcessBuilder pb = new ProcessBuilder(ffmpeg, "-i", file.getAbsolutePath(), "-map", "0:V?", "-map", "0:a?", "-map", "0:s?", "-map_metadata:g" , "-1", "-metadata", "title=Testing title", "-c", "copy", file.getParent().concat("/test.mp4")); // same as normal but removes cover image
-
-        //ProcessBuilder pb = new ProcessBuilder(ffmpeg, "-i", file.getAbsolutePath(), "-i", file.getParent().concat("/menu.png"), "-map", "0:V?", "-map", "0:a?", "-map", "0:s?", "-map_metadata:g" , "-1", "-map", "1", "-metadata", "title=Testing title", "-c", "copy", "-disposition:v:1", "attached_pic", file.getParent().concat("/test.mp4")); // changes cover image
-        try {
-            pb.inheritIO().start().waitFor();
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
+        else {
+            newCover = null;
+            newColor = null;
+            coverRemoved = false;
+            mediaInformation = map;
+            return true;
         }
-
-
-        return false;
-
     }
 
     @Override
     public Map<String, String> getMediaDetails() {
         return mediaDetails;
+    }
+
+    @Override
+    public void setMediaDetails(Map<String, String> map) {
+        mediaDetails = map;
     }
 
 
@@ -268,10 +359,20 @@ public class Mp4Item implements MediaItem {
     }
 
     @Override
-    public boolean setCover(File imagePath, Image image, boolean updateFile) {
-        cover = image;
-        // ignore updateFile and never alter the file inside this method
-        return false;
+    public boolean setCover(File imagePath, Image image, Color color, boolean updateFile) {
+
+        if(updateFile){
+            newCover = imagePath;
+            newColor = color;
+            coverRemoved = imagePath == null;
+        }
+        else {
+            hasCover = image != null;
+            cover = image;
+            backgroundColor = color;
+        }
+
+        return true;
     }
 }
 

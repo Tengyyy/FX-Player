@@ -84,6 +84,8 @@ public class MetadataEditPage {
 
     MetadataExitConfirmation metadataExitConfirmation;
 
+    boolean imageEditEnabled = false;
+
 
     public MetadataEditPage(MenuController menuController){
         this.menuController = menuController;
@@ -291,13 +293,16 @@ public class MetadataEditPage {
             case "mp4":
             case "mov":
                 metadataEditItem = new Mp4EditItem(this, menuObject.getMediaItem());
+                enableImageEdit();
                 break;
             case "mp3":
             case "flac":
                 metadataEditItem = new AudioEditItem(this, (AudioItem) menuObject.getMediaItem());
+                enableImageEdit();
                 break;
             case "avi":
                 metadataEditItem = new AviEditItem(this, menuObject.getMediaItem());
+                disableImageEdit();
                 break;
             default:
                 //TODO: find out if ffmpeg supports metadata for wav files
@@ -342,6 +347,14 @@ public class MetadataEditPage {
         imageViewContainer.setStyle("-fx-background-color: transparent;");
 
         menuController.menuState = MenuState.QUEUE_OPEN;
+    }
+
+    public void enableImageEdit(){
+        imageEditEnabled = true;
+    }
+
+    public void disableImageEdit(){
+        imageEditEnabled = false;
     }
 
     public void editImage(){

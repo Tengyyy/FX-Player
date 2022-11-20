@@ -228,6 +228,8 @@ public class Mp4Item implements MediaItem {
             arguments.add("-c");
             arguments.add("copy");
             if(newCover != null){
+                arguments.add("-c:v:1");
+                arguments.add("png");
                 arguments.add("-disposition:v:1");
                 arguments.add("attached_pic");
             }

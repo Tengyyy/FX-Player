@@ -176,24 +176,27 @@ public class MovItem implements MediaItem {
             }
             arguments.add("-map_metadata:g");
             arguments.add("-1");
+
             if(!map.isEmpty()){
-                arguments.add("-movflags");
-                arguments.add("use_metadata_tags");
+                //arguments.add("-movflags");
+                //arguments.add("use_metadata_keys");
                 for(Map.Entry<String, String> entry : map.entrySet()){
                     arguments.add("-metadata");
                     arguments.add(entry.getKey() + "=" + entry.getValue());
                 }
             }
-
             arguments.add("-c");
             arguments.add("copy");
 
             if(newCover != null){
+                arguments.add("-c:v:1");
+                arguments.add("png");
                 arguments.add("-disposition:v:1");
                 arguments.add("attached_pic");
             }
 
-            String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".mov";
+            // converts to mp4 and back to mov, have to test how reliable this actually is
+            String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".mp4";
 
             arguments.add(outputPath);
             ProcessBuilder pb = new ProcessBuilder(arguments);
@@ -202,7 +205,7 @@ public class MovItem implements MediaItem {
                 pb.inheritIO().start().waitFor();
 
                 //overwrite curr file with new file, if its playing, stop it, rewrite and then start playing again and seek to same time
-                /*if(mainController.getMenuController().activeItem != null && mainController.getMenuController().activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                if(mainController.getMenuController().activeItem != null && mainController.getMenuController().activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
                     mainController.getMediaInterface().resetMediaPlayer(true);
 
                     boolean deleteSuccess = file.delete();
@@ -228,7 +231,7 @@ public class MovItem implements MediaItem {
                         }
                     }
                     else throw new IOException("Failed to delete old file");
-                }*/
+                }
 
                 mediaDetails.put("size", Utilities.formatFileSize(file.length()));
                 mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));

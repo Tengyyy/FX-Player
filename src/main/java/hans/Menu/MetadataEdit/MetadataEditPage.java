@@ -90,7 +90,7 @@ public class MetadataEditPage {
 
         fileChooser = new FileChooser();
         fileChooser.setTitle("Choose image");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Supported images", "*.jpg", ".jpeg", ".png"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Supported images", "*.jpg", "*.jpeg", "*.png"));
 
         editIconSVG.setContent(App.svgMap.get(SVG.EDIT));
         saveIconSVG.setContent(App.svgMap.get(SVG.SAVE));

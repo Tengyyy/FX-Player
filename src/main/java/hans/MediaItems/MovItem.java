@@ -6,6 +6,7 @@ import hans.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.JavaFXFrameConverter;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_ATTACHED_PIC;
@@ -34,6 +36,10 @@ public class MovItem implements MediaItem {
 
     boolean hasVideo;
     boolean hasCover;
+
+    File newCover = null;
+    Color newColor = null;
+    boolean coverRemoved = false;
 
     MainController mainController;
 
@@ -138,7 +144,136 @@ public class MovItem implements MediaItem {
 
     @Override
     public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
-        return false;
+
+        if(updateFile){
+            ArrayList<String> arguments = new ArrayList<>();
+            String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+
+            arguments.add(ffmpeg);
+            arguments.add("-i");
+            arguments.add(file.getAbsolutePath());
+            if(newCover != null || coverRemoved){
+                if(newCover != null){
+                    arguments.add("-i");
+                    arguments.add(newCover.getAbsolutePath());
+                }
+
+                arguments.add("-map");
+                arguments.add("0:V?");
+                arguments.add("-map");
+                arguments.add("0:a?");
+                arguments.add("-map");
+                arguments.add("0:s?");
+
+                if(newCover != null){
+                    arguments.add("-map");
+                    arguments.add("1");
+                }
+            }
+            else {
+                arguments.add("-map");
+                arguments.add("0");
+            }
+            arguments.add("-map_metadata:g");
+            arguments.add("-1");
+            if(!map.isEmpty()){
+                arguments.add("-movflags");
+                arguments.add("use_metadata_tags");
+                for(Map.Entry<String, String> entry : map.entrySet()){
+                    arguments.add("-metadata");
+                    arguments.add(entry.getKey() + "=" + entry.getValue());
+                }
+            }
+
+            arguments.add("-c");
+            arguments.add("copy");
+
+            if(newCover != null){
+                arguments.add("-disposition:v:1");
+                arguments.add("attached_pic");
+            }
+
+            String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".mov";
+
+            arguments.add(outputPath);
+            ProcessBuilder pb = new ProcessBuilder(arguments);
+
+            try {
+                pb.inheritIO().start().waitFor();
+
+                //overwrite curr file with new file, if its playing, stop it, rewrite and then start playing again and seek to same time
+                /*if(mainController.getMenuController().activeItem != null && mainController.getMenuController().activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                    mainController.getMediaInterface().resetMediaPlayer(true);
+
+                    boolean deleteSuccess = file.delete();
+                    if(deleteSuccess){
+                        File tempFile = new File(outputPath);
+                        boolean renameSuccess = tempFile.renameTo(file);
+                        if(!renameSuccess){
+                            throw new IOException("Failed to rename new file");
+                        }
+                    }
+                    else throw new IOException("Failed to delete old file");
+
+
+                    mainController.getMediaInterface().createMedia(mainController.getMenuController().activeItem);
+                }
+                else {
+                    boolean deleteSuccess = file.delete();
+                    if(deleteSuccess){
+                        File tempFile = new File(outputPath);
+                        boolean renameSuccess = tempFile.renameTo(file);
+                        if(!renameSuccess){
+                            throw new IOException("Failed to rename new file");
+                        }
+                    }
+                    else throw new IOException("Failed to delete old file");
+                }*/
+
+                mediaDetails.put("size", Utilities.formatFileSize(file.length()));
+                mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
+
+                if(newCover != null){
+                    cover = new Image(newCover.getAbsolutePath());
+                    hasCover = true;
+                    backgroundColor = newColor;
+                }
+                else if(coverRemoved){
+                    hasCover = false;
+                    cover = Utilities.grabMiddleFrame(file);
+                    if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+                    else backgroundColor = null;
+                }
+
+                switch (map.getOrDefault("media_type", null)) {
+                    case "6" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));
+                    case "21" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcastGraphic.png")).toExternalForm()));
+                    default -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
+                }
+
+
+                mediaInformation = map;
+                return true;
+
+
+
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            finally {
+                newCover = null;
+                newColor = null;
+                coverRemoved = false;
+            }
+        }
+        else {
+            newCover = null;
+            newColor = null;
+            coverRemoved = false;
+            mediaInformation = map;
+            return true;
+        }
     }
 
     @Override
@@ -184,8 +319,19 @@ public class MovItem implements MediaItem {
 
     @Override
     public boolean setCover(File imagePath, Image image, Color color, boolean updateFile) {
-        cover =  image;
-        return false;
+
+        if(updateFile){
+            newCover = imagePath;
+            newColor = color;
+            coverRemoved = imagePath == null;
+        }
+        else {
+            hasCover = image != null;
+            cover = image;
+            backgroundColor = color;
+        }
+
+        return true;
     }
 
     @Override

@@ -242,7 +242,6 @@ public class Mp4Item implements MediaItem {
 
                 //overwrite curr file with new file, if its playing, stop it, rewrite and then start playing again and seek to same time
                 if(mainController.getMenuController().activeItem != null && mainController.getMenuController().activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                    double time = mainController.getControlBarController().durationSlider.getValue();
                     mainController.getMediaInterface().resetMediaPlayer(true);
 
                     boolean deleteSuccess = file.delete();

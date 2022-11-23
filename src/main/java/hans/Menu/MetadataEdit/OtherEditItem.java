@@ -3,6 +3,7 @@ package hans.Menu.MetadataEdit;
 import com.jfoenix.controls.JFXButton;
 import hans.App;
 import hans.MediaItems.MediaItem;
+import hans.MediaItems.MkvItem;
 import hans.SVG;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -68,12 +69,13 @@ public class OtherEditItem implements MetadataEditItem{
         content.getChildren().add(addButton);
 
         if(metadata != null) {
-            titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
+            titleItem = new TextAreaItem(metadataEditPage, mediaItem instanceof MkvItem ? "TITLE" : "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
+
             content.getChildren().add(0, titleItem);
 
 
             for(Map.Entry<String, String> entry : metadata.entrySet()){
-                if(!entry.getKey().equalsIgnoreCase("title") && !entry.getValue().trim().isEmpty()){
+                if(!entry.getKey().equalsIgnoreCase("title") && !entry.getKey().equalsIgnoreCase("encoder") && !entry.getValue().trim().isEmpty()){
                     items.add(new CustomTextAreaItem(this, entry.getKey(), entry.getValue()));
                 }
             }
@@ -88,6 +90,9 @@ public class OtherEditItem implements MetadataEditItem{
     public Map<String, String> saveMetadata(){
         Map<String, String> mediaInformation = new HashMap<>();
 
+        if(!titleItem.textArea.getText().isBlank()){
+            mediaInformation.put("title", titleItem.textArea.getText());
+        }
         for(CustomTextAreaItem item : items){
             if(!item.keyField.getText().isBlank() && !item.textArea.getText().isBlank()){
                 mediaInformation.put(item.keyField.getText(), item.textArea.getText());

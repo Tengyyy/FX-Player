@@ -187,7 +187,8 @@ public class MovItem implements MediaItem {
             }
             arguments.add("-c");
             arguments.add("copy");
-
+            arguments.add("-movflags");
+            arguments.add("faststart");
             if(newCover != null){
                 arguments.add("-c:v:1");
                 arguments.add("png");

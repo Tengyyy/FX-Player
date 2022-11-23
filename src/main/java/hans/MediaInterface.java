@@ -32,6 +32,8 @@ import uk.co.caprica.vlcj.support.version.LibVlcVersion;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_DEFAULT;
+
 
 public class MediaInterface {
 
@@ -218,7 +220,7 @@ public class MediaInterface {
         currentTime = 0;
 
         fFmpegFrameGrabber = new FFmpegFrameGrabber(menuController.activeItem.getMediaItem().getFile());
-
+        fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
 
         try {
             fFmpegFrameGrabber.start();

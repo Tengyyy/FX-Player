@@ -177,13 +177,10 @@ public class MediaInterface {
             if (controlBarController.durationSlider.isValueChanging() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
                 seekedToEnd = true;
             }
+            else endMedia();
 
             atEnd = true;
             playing.set(false);
-
-            if (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive && !mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
-                endMedia();
-            }
         }
     }
 

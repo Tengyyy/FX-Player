@@ -5,9 +5,20 @@ import hans.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.CannotWriteException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.images.Artwork;
+import org.jaudiotagger.tag.images.ArtworkFactory;
+import org.jaudiotagger.tag.wav.WavTag;
 
-
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -20,7 +31,7 @@ public class WavItem implements MediaItem {
     File file;
     File subtitles;
     boolean subtitlesOn = false;
-    Color backgroundColor = null;
+    Color backgroundColor;
     Duration duration;
 
     Image cover;
@@ -30,22 +41,37 @@ public class WavItem implements MediaItem {
 
     boolean hasCover;
 
-    Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    Map<String, String> mediaInformation = new HashMap<>();
     Map<String, String> mediaDetails = new HashMap<>();
 
-    public WavItem(File file, MainController mainController) {
+
+    public WavItem(File file, MainController mainController){
         this.file = file;
         this.mainController = mainController;
 
+
         try {
-            FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+            AudioFile f = AudioFileIO.read(file);
 
+            duration = Duration.seconds(f.getAudioHeader().getTrackLength());
 
-            fFmpegFrameGrabber.start();
-            duration = Duration.seconds((int) (fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate()));
+            WavTag tag = (WavTag) f.getTag();
+            Artwork artwork = tag.getFirstArtwork();
+            if(artwork != null){
+                byte[] coverBinaryData = artwork.getBinaryData();
+                cover = new Image(new ByteArrayInputStream(coverBinaryData));
+            }
 
-
-            mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
+            mediaInformation.put("title", tag.getFirst(FieldKey.TITLE));
+            mediaInformation.put("artist", tag.getFirst(FieldKey.ARTIST));
+            mediaInformation.put("album", tag.getFirst(FieldKey.ALBUM));
+            mediaInformation.put("album_artist", tag.getFirst(FieldKey.ALBUM_ARTIST));
+            mediaInformation.put("track", tag.getFirst(FieldKey.TRACK));
+            mediaInformation.put("year", tag.getFirst(FieldKey.YEAR));
+            mediaInformation.put("genre", tag.getFirst(FieldKey.GENRE));
+            mediaInformation.put("comment", tag.getFirst(FieldKey.COMMENT));
+            mediaInformation.put("composer", tag.getFirst(FieldKey.COMPOSER));
+            mediaInformation.put("record_label", tag.getFirst(FieldKey.RECORD_LABEL));
 
 
             mediaDetails.put("size", Utilities.formatFileSize(file.length()));
@@ -53,45 +79,42 @@ public class WavItem implements MediaItem {
             mediaDetails.put("path", file.getAbsolutePath());
             mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
             mediaDetails.put("hasVideo", "false");
-            mediaDetails.put("hasAudio", String.valueOf(fFmpegFrameGrabber.hasAudio()));
-            if(fFmpegFrameGrabber.hasAudio()){
-                if(fFmpegFrameGrabber.getAudioChannels() == 2) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (stereo)");
-                else if(fFmpegFrameGrabber.getAudioChannels() == 6) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (5.1 surround sound)");
-                else if(fFmpegFrameGrabber.getAudioChannels() == 8) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (7.1 surround sound)");
-                else mediaDetails.put("audioChannels", String.valueOf(fFmpegFrameGrabber.getAudioChannels()));
-            }
-            if(fFmpegFrameGrabber.getAudioCodecName() != null) mediaDetails.put("audioCodec", fFmpegFrameGrabber.getAudioCodecName());
-            if(fFmpegFrameGrabber.hasAudio() && fFmpegFrameGrabber.getAudioBitrate() != 0) mediaDetails.put("audioBitrate", Utilities.formatBitrate(fFmpegFrameGrabber.getAudioBitrate()));
+            mediaDetails.put("hasAudio", "true");
+            mediaDetails.put("audioChannels", f.getAudioHeader().getChannels());
+            mediaDetails.put("audioCodec", f.getAudioHeader().getEncodingType());
+            mediaDetails.put("audioBitrate", Utilities.formatBitrate(f.getAudioHeader().getBitRateAsNumber() * 1000));
+            mediaDetails.put("audioBitDepth", f.getAudioHeader().getBitsPerSample() + " bits");
             mediaDetails.put("duration", Utilities.getTime(duration));
-            mediaDetails.put("format", fFmpegFrameGrabber.getFormat());
-            if(fFmpegFrameGrabber.hasAudio()) mediaDetails.put("sampleRate", NumberFormat.getInstance().format(fFmpegFrameGrabber.getSampleRate()) + " Hz");
+            mediaDetails.put("format", f.getAudioHeader().getFormat());
+            mediaDetails.put("sampleRate", NumberFormat.getInstance().format(f.getAudioHeader().getSampleRateAsNumber()) + " Hz");
 
-
-            fFmpegFrameGrabber.stop();
-            fFmpegFrameGrabber.close();
-
-        } catch (IOException e) {
+        } catch (IOException | CannotReadException | TagException | ReadOnlyFileException | InvalidAudioFrameException e) {
             throw new RuntimeException(e);
         }
 
+
         hasCover = cover != null;
-        if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+
+        if(cover != null){
+            backgroundColor = Utilities.findDominantColor(cover);
+        }
 
         placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));
+
     }
 
-    public WavItem(WavItem wavItem, MainController mainController){
+    public WavItem(WavItem audioItem, MainController mainController){
         this.mainController = mainController;
 
-        this.file = wavItem.getFile();
-        duration = wavItem.getDuration();
-        cover = wavItem.getCover();
-        placeholderCover = wavItem.getPlaceholderCover();
-        subtitles = wavItem.getSubtitles();
-        backgroundColor = wavItem.getCoverBackgroundColor();
-        hasCover = wavItem.hasCover();
-        mediaInformation = wavItem.getMediaInformation();
-        mediaDetails = wavItem.getMediaDetails();
+        this.file = audioItem.getFile();
+        duration = audioItem.getDuration();
+        cover = audioItem.getCover();
+        placeholderCover = audioItem.getPlaceholderCover();
+        subtitles = audioItem.getSubtitles();
+        backgroundColor = audioItem.getCoverBackgroundColor();
+        hasCover = audioItem.hasCover();
+        mediaInformation = audioItem.getMediaInformation();
+        mediaDetails = audioItem.getMediaDetails();
     }
 
     @Override
@@ -106,7 +129,41 @@ public class WavItem implements MediaItem {
 
     @Override
     public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
-        return false;
+
+        if(updateFile){
+            try {
+                AudioFile f = AudioFileIO.read(file);
+                WavTag tag = (WavTag) f.getTag();
+
+                tag.setField(FieldKey.TITLE, map.get("title"));
+                tag.setField(FieldKey.ARTIST, map.get("artist"));
+                tag.setField(FieldKey.ALBUM, map.get("album"));
+                tag.setField(FieldKey.ALBUM_ARTIST, map.get("album_artist"));
+                tag.setField(FieldKey.TRACK, map.get("track"));
+                tag.setField(FieldKey.YEAR, map.get("year"));
+                tag.setField(FieldKey.GENRE, map.get("genre"));
+                tag.setField(FieldKey.COMMENT, map.get("comment"));
+                tag.setField(FieldKey.COMPOSER, map.get("composer"));
+                tag.setField(FieldKey.RECORD_LABEL, map.get("record_label"));
+
+                f.commit();
+
+                mediaInformation = map;
+
+                return true;
+
+
+            } catch (CannotReadException | TagException | InvalidAudioFrameException | ReadOnlyFileException | IOException | CannotWriteException e) {
+                e.printStackTrace();
+
+                return false;
+            }
+        }
+        else {
+            mediaInformation = map;
+
+            return true;
+        }
     }
 
     @Override
@@ -121,9 +178,7 @@ public class WavItem implements MediaItem {
 
 
     @Override
-    public File getFile() {
-        return this.file;
-    }
+    public File getFile() {return this.file;}
 
     @Override
     public File getSubtitles() {
@@ -140,6 +195,7 @@ public class WavItem implements MediaItem {
         subtitlesOn = value;
     }
 
+
     @Override
     public Duration getDuration() {
         return duration;
@@ -152,13 +208,39 @@ public class WavItem implements MediaItem {
 
     @Override
     public boolean setCover(File imagePath, Image image, Color color, boolean updateFile) {
-        cover = image;
 
-        return false;
+        if(updateFile){
+            try {
+                AudioFile f = AudioFileIO.read(file);
+                Tag tag = f.getTag();
+                if(imagePath == null) tag.deleteArtworkField();
+                else {
+                    tag.setField(ArtworkFactory.createArtworkFromFile(imagePath));
+                }
+                f.commit();
+
+                cover = image;
+                backgroundColor = color;
+                hasCover = image != null;
+
+                return true;
+
+            } catch (CannotReadException | IOException | TagException | ReadOnlyFileException | InvalidAudioFrameException | CannotWriteException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        else {
+            cover = image;
+            backgroundColor = color;
+            hasCover = image != null;
+
+            return true;
+        }
     }
 
     @Override
-    public void setSubtitles(File file) {
+    public void setSubtitles(File file){
         this.subtitles = file;
     }
 
@@ -186,5 +268,4 @@ public class WavItem implements MediaItem {
     public void setPlaceHolderCover(Image image) {
         placeholderCover = image;
     }
-
 }

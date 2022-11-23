@@ -66,15 +66,15 @@ public class AudioItem implements MediaItem {
             mediaInformation.put("album", tag.getFirst(FieldKey.ALBUM));
             mediaInformation.put("album_artist", tag.getFirst(FieldKey.ALBUM_ARTIST));
             mediaInformation.put("track", tag.getFirst(FieldKey.TRACK));
-            mediaInformation.put("track_total", tag.getFirst(FieldKey.TRACK_TOTAL));
+            //mediaInformation.put("track_total", tag.getFirst(FieldKey.TRACK_TOTAL));
             mediaInformation.put("year", tag.getFirst(FieldKey.YEAR));
             mediaInformation.put("genre", tag.getFirst(FieldKey.GENRE));
             mediaInformation.put("comment", tag.getFirst(FieldKey.COMMENT));
             mediaInformation.put("composer", tag.getFirst(FieldKey.COMPOSER));
-            mediaInformation.put("disc_no", tag.getFirst(FieldKey.DISC_NO));
-            mediaInformation.put("disc_total", tag.getFirst(FieldKey.DISC_TOTAL));
-            mediaInformation.put("lyrics", tag.getFirst(FieldKey.LYRICS));
-            mediaInformation.put("language", tag.getFirst(FieldKey.LANGUAGE));
+            //mediaInformation.put("disc_no", tag.getFirst(FieldKey.DISC_NO));
+            //mediaInformation.put("disc_total", tag.getFirst(FieldKey.DISC_TOTAL));
+            //mediaInformation.put("lyrics", tag.getFirst(FieldKey.LYRICS));
+            //mediaInformation.put("language", tag.getFirst(FieldKey.LANGUAGE));
             mediaInformation.put("record_label", tag.getFirst(FieldKey.RECORD_LABEL));
 
 

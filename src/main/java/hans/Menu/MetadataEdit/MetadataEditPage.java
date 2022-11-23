@@ -295,6 +295,10 @@ public class MetadataEditPage {
                 metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
                 disableImageEdit();
             }
+            case "wav" -> {
+                metadataEditItem = new WavEditItem(this, menuObject.getMediaItem());
+                enableImageEdit();
+            }
             default -> {
                 metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
                 enableImageEdit();

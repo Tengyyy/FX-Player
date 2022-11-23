@@ -6,6 +6,7 @@ import hans.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.JavaFXFrameConverter;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_ATTACHED_PIC;
@@ -33,7 +35,6 @@ public class FlvItem implements MediaItem {
     Image placeholderCover;
 
     boolean hasVideo;
-    boolean hasCover;
     MainController mainController;
 
     Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -47,20 +48,6 @@ public class FlvItem implements MediaItem {
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
 
-            fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_ATTACHED_PIC);
-
-            fFmpegFrameGrabber.start();
-
-
-            if(fFmpegFrameGrabber.getVideoStream() != 0){
-                Frame frame = fFmpegFrameGrabber.grabImage();
-                JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
-                if(frame != null) cover = javaFXFrameConverter.convert(frame);
-            }
-
-
-            fFmpegFrameGrabber.stop();
-
             fFmpegFrameGrabber.setVideoStream(0);
             fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
 
@@ -68,8 +55,7 @@ public class FlvItem implements MediaItem {
 
             hasVideo = fFmpegFrameGrabber.hasVideo();
 
-            hasCover = cover != null;
-            if(!hasCover && hasVideo) cover = Utilities.grabMiddleFrame(file);
+            if(hasVideo) cover = Utilities.grabMiddleFrame(file);
             if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
 
             if(hasVideo) duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
@@ -123,7 +109,6 @@ public class FlvItem implements MediaItem {
         placeholderCover = flvItem.getPlaceholderCover();
         subtitles = flvItem.getSubtitles();
         backgroundColor = flvItem.getCoverBackgroundColor();
-        hasCover = flvItem.hasCover();
         mediaInformation = flvItem.getMediaInformation();
         mediaDetails = flvItem.getMediaDetails();
         hasVideo = flvItem.hasVideo();
@@ -141,7 +126,85 @@ public class FlvItem implements MediaItem {
 
     @Override
     public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
-        return false;
+
+        if(updateFile){
+            ArrayList<String> arguments = new ArrayList<>();
+            String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+
+            arguments.add(ffmpeg);
+            arguments.add("-i");
+            arguments.add(file.getAbsolutePath());
+
+            arguments.add("-map");
+            arguments.add("0");
+
+            arguments.add("-map_metadata:g");
+            arguments.add("-1");
+
+            if(!map.isEmpty()){
+                for(Map.Entry<String, String> entry : map.entrySet()){
+                    arguments.add("-metadata");
+                    arguments.add(entry.getKey() + "=" + entry.getValue());
+                }
+            }
+            arguments.add("-c");
+            arguments.add("copy");
+
+            String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".flv";
+
+            arguments.add(outputPath);
+            ProcessBuilder pb = new ProcessBuilder(arguments);
+
+            try {
+                pb.inheritIO().start().waitFor();
+
+                //overwrite curr file with new file, if its playing, stop it, rewrite and then start playing again and seek to same time
+                if(mainController.getMenuController().activeItem != null && mainController.getMenuController().activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                    mainController.getMediaInterface().resetMediaPlayer(true);
+
+                    boolean deleteSuccess = file.delete();
+                    if(deleteSuccess){
+                        File tempFile = new File(outputPath);
+                        boolean renameSuccess = tempFile.renameTo(file);
+                        if(!renameSuccess){
+                            throw new IOException("Failed to rename new file");
+                        }
+                    }
+                    else throw new IOException("Failed to delete old file");
+
+
+                    mainController.getMediaInterface().createMedia(mainController.getMenuController().activeItem);
+                }
+                else {
+                    boolean deleteSuccess = file.delete();
+                    if(deleteSuccess){
+                        File tempFile = new File(outputPath);
+                        boolean renameSuccess = tempFile.renameTo(file);
+                        if(!renameSuccess){
+                            throw new IOException("Failed to rename new file");
+                        }
+                    }
+                    else throw new IOException("Failed to delete old file");
+                }
+
+                mediaDetails.put("size", Utilities.formatFileSize(file.length()));
+                mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
+
+                mediaInformation = map;
+                return true;
+
+
+
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        else {
+
+            mediaInformation = map;
+            return true;
+        }
     }
 
     @Override
@@ -187,7 +250,6 @@ public class FlvItem implements MediaItem {
 
     @Override
     public boolean setCover(File imagePath, Image image, Color color, boolean updateFile) {
-        cover = image;
         return false;
     }
 
@@ -208,7 +270,7 @@ public class FlvItem implements MediaItem {
 
     @Override
     public boolean hasCover() {
-        return hasCover;
+        return false;
     }
 
     @Override

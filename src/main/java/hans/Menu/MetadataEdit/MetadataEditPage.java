@@ -291,9 +291,14 @@ public class MetadataEditPage {
                 metadataEditItem = new AviEditItem(this, menuObject.getMediaItem());
                 disableImageEdit();
             }
-            default ->
-                    //TODO: find out if ffmpeg supports metadata for wav files
-                    metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
+            case "flv" -> {
+                metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
+                disableImageEdit();
+            }
+            default -> {
+                metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
+                enableImageEdit();
+            }
         }
 
 

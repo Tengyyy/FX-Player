@@ -189,8 +189,6 @@ public class AviItem implements MediaItem {
                 mediaInformation = map;
                 return true;
 
-
-
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
                 return false;

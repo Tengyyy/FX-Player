@@ -15,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -23,6 +22,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ public class MetadataEditPage {
     SVGPath closeIconSVG = new SVGPath();
     SVGPath backIconSVG = new SVGPath();
     SVGPath editIconSVG = new SVGPath();
+    SVGPath editIconOffSVG = new SVGPath();
     SVGPath saveIconSVG = new SVGPath();
 
     StackPane closeButtonBar = new StackPane();
@@ -95,6 +96,7 @@ public class MetadataEditPage {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Supported images", "*.jpg", "*.jpeg", "*.png"));
 
         editIconSVG.setContent(App.svgMap.get(SVG.EDIT));
+        editIconOffSVG.setContent(App.svgMap.get(SVG.EDIT_OFF));
         saveIconSVG.setContent(App.svgMap.get(SVG.SAVE));
 
         backIconSVG.setContent(App.svgMap.get(SVG.ARROW_LEFT));
@@ -135,9 +137,7 @@ public class MetadataEditPage {
         closeButton.setCursor(Cursor.HAND);
         closeButton.setBackground(Background.EMPTY);
 
-        closeButton.setOnAction(e -> {
-            requestExitMetadataEditPage(true);
-        });
+        closeButton.setOnAction(e -> requestExitMetadataEditPage(true));
 
         closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.AnimateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
@@ -204,19 +204,10 @@ public class MetadataEditPage {
         editImageButton.setCursor(Cursor.HAND);
 
         Platform.runLater(() -> {
-            editImageTooltip = new ControlTooltip(menuController.mainController, "Edit image", editImageButton, 1000);
-
+            editImageTooltip = new ControlTooltip(menuController.mainController, "Edit cover", editImageButton, 1000);
             editImagePopUp = new EditImagePopUp(this);
 
-            editImageButton.setOnAction(e -> {
-
-                if(hasCover){
-                    editImagePopUp.showOptions(menuObject);
-                }
-                else {
-                    editImage();
-                }
-            });
+            editImageButton.setOnAction(e -> editImageButtonClick());
         });
 
         content.setAlignment(Pos.TOP_CENTER);
@@ -237,9 +228,7 @@ public class MetadataEditPage {
         applyButton.setPadding(new Insets(8, 10, 8, 8));
         applyButton.setCursor(Cursor.HAND);
         applyButton.setDisable(true);
-        applyButton.setOnAction(e -> {
-            saveMetadata();
-        });
+        applyButton.setOnAction(e -> saveMetadata());
 
         changesMade.addListener((observableValue, oldValue, newValue) -> applyButton.setDisable(!newValue));
 
@@ -290,24 +279,21 @@ public class MetadataEditPage {
         String extension = Utilities.getFileExtension(menuObject.getMediaItem().getFile());
 
         switch (extension) {
-            case "mp4":
-            case "mov":
+            case "mp4", "mov" -> {
                 metadataEditItem = new Mp4EditItem(this, menuObject.getMediaItem());
                 enableImageEdit();
-                break;
-            case "mp3":
-            case "flac":
+            }
+            case "mp3", "flac" -> {
                 metadataEditItem = new AudioEditItem(this, (AudioItem) menuObject.getMediaItem());
                 enableImageEdit();
-                break;
-            case "avi":
+            }
+            case "avi" -> {
                 metadataEditItem = new AviEditItem(this, menuObject.getMediaItem());
                 disableImageEdit();
-                break;
-            default:
-                //TODO: find out if ffmpeg supports metadata for wav files
-                metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
-                break;
+            }
+            default ->
+                    //TODO: find out if ffmpeg supports metadata for wav files
+                    metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
         }
 
 
@@ -349,12 +335,29 @@ public class MetadataEditPage {
         menuController.menuState = MenuState.QUEUE_OPEN;
     }
 
-    public void enableImageEdit(){
+    private void enableImageEdit(){
         imageEditEnabled = true;
+        editImageButton.setOnAction(e -> editImageButtonClick());
+        editImageIcon.setShape(editIconSVG);
+        editImageTooltip.updateDelay(Duration.seconds(1));
+        editImageTooltip.updateText("Edit cover");
     }
 
-    public void disableImageEdit(){
+    private void disableImageEdit(){
         imageEditEnabled = false;
+        editImageButton.setOnAction(null);
+        editImageIcon.setShape(editIconOffSVG);
+        editImageTooltip.updateDelay(Duration.ZERO);
+        editImageTooltip.updateText("Cover editing unavailable for this media format");
+    }
+
+    private void editImageButtonClick(){
+        if(hasCover){
+            editImagePopUp.showOptions(menuObject);
+        }
+        else {
+            editImage();
+        }
     }
 
     public void editImage(){

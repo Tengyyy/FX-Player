@@ -93,6 +93,7 @@ public class App extends Application {
             svgMap.put(ARROW_LEFT, "M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z");
             svgMap.put(COPY, "M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z");
             svgMap.put(EDIT, "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z");
+            svgMap.put(EDIT_OFF, "M18.66,2C18.4,2 18.16,2.09 17.97,2.28L16.13,4.13L19.88,7.88L21.72,6.03C22.11,5.64 22.11,5 21.72,4.63L19.38,2.28C19.18,2.09 18.91,2 18.66,2M3.28,4L2,5.28L8.5,11.75L4,16.25V20H7.75L12.25,15.5L18.72,22L20,20.72L13.5,14.25L9.75,10.5L3.28,4M15.06,5.19L11.03,9.22L14.78,12.97L18.81,8.94L15.06,5.19Z");
             svgMap.put(DETAILS, "M14.75 7.46L12 3.93L13.97 3.54L16.71 7.07L14.75 7.46M21.62 6.1L20.84 2.18L16.91 2.96L19.65 6.5L21.62 6.1M11.81 8.05L9.07 4.5L7.1 4.91L9.85 8.44L11.81 8.05M4.16 5.5L3.18 5.69C2.1 5.9 1.39 6.96 1.61 8.04L2 10L6.9 9.03L4.16 5.5M4 20V12H20V12.08C20.71 12.18 21.38 12.39 22 12.69V10H2V20C2 21.11 2.9 22 4 22H12.68C12.39 21.38 12.18 20.71 12.08 20H4M23.8 20.4C23.9 20.4 23.9 20.5 23.8 20.6L22.8 22.3C22.7 22.4 22.6 22.4 22.5 22.4L21.3 22C21 22.2 20.8 22.3 20.5 22.5L20.3 23.8C20.3 23.9 20.2 24 20.1 24H18.1C18 24 17.9 23.9 17.8 23.8L17.6 22.5C17.3 22.4 17 22.2 16.8 22L15.6 22.5C15.5 22.5 15.4 22.5 15.3 22.4L14.3 20.7C14.2 20.6 14.3 20.5 14.4 20.4L15.5 19.6V18.6L14.4 17.8C14.3 17.7 14.3 17.6 14.3 17.5L15.3 15.8C15.4 15.7 15.5 15.7 15.6 15.7L16.8 16.2C17.1 16 17.3 15.9 17.6 15.7L17.8 14.4C17.8 14.3 17.9 14.2 18.1 14.2H20.1C20.2 14.2 20.3 14.3 20.3 14.4L20.5 15.7C20.8 15.8 21.1 16 21.4 16.2L22.6 15.7C22.7 15.7 22.9 15.7 22.9 15.8L23.9 17.5C24 17.6 23.9 17.7 23.8 17.8L22.7 18.6V19.6L23.8 20.4M20.5 19C20.5 18.2 19.8 17.5 19 17.5S17.5 18.2 17.5 19 18.2 20.5 19 20.5 20.5 19.8 20.5 19Z");
             svgMap.put(IMAGE, "M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z");
             svgMap.put(FOLDER, "M20,18H4V8H20M20,6H12L10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6Z");
@@ -146,70 +147,38 @@ public class App extends Application {
                 else if(event.getCode() == KeyCode.TAB) mainController.pressTAB(event);
                 else if(!(event.getTarget() instanceof ExpandableTextArea || event.getTarget() instanceof TextField)){
                     switch (event.getCode()) {
-
-                        case RIGHT: mainController.pressRIGHT(event);
-                            break;
-                        case LEFT: mainController.pressLEFT(event);
-                            break;
-                        case UP: mainController.pressUP(event);
-                            break;
-                        case DOWN: mainController.pressDOWN(event);
-                            break;
-                        case L: mainController.pressL(event);
-                            break;
-                        case J: mainController.pressJ();
-                            break;
-                        case DIGIT1: mainController.press1();
-                            break;
-                        case DIGIT2: mainController.press2();
-                            break;
-                        case DIGIT3: mainController.press3();
-                            break;
-                        case DIGIT4: mainController.press4();
-                            break;
-                        case DIGIT5: mainController.press5();
-                            break;
-                        case DIGIT6: mainController.press6();
-                            break;
-                        case DIGIT7: mainController.press7();
-                            break;
-                        case DIGIT8: mainController.press8();
-                            break;
-                        case DIGIT9: mainController.press9();
-                            break;
-                        case DIGIT0:
-                        case HOME: mainController.press0();
-                            break;
-                        case END: mainController.pressEND();
-                            break;
-                        case K: mainController.pressK();
-                            break;
-                        case M: mainController.pressM();
-                            break;
-                        case F: mainController.pressF();
-                            break;
-                        case F12: mainController.pressF12();
-                            break;
-                        case SPACE: mainController.pressSPACE(event);
-                            break;
-                        case C: mainController.pressC();
-                            break;
-                        case S: mainController.pressS();
-                            break;
-                        case Q: mainController.pressQ();
-                            break;
-                        case P: mainController.pressP(event);
-                            break;
-                        case I: mainController.pressI();
-                            break;
-                        case N: mainController.pressN(event);
-                            break;
-                        case COMMA: mainController.pressCOMMA(event);
-                            break;
-                        case PERIOD: mainController.pressPERIOD(event);
-                            break;
-                        default:
-                            break;
+                        case RIGHT -> mainController.pressRIGHT(event);
+                        case LEFT -> mainController.pressLEFT(event);
+                        case UP -> mainController.pressUP(event);
+                        case DOWN -> mainController.pressDOWN(event);
+                        case L -> mainController.pressL(event);
+                        case J -> mainController.pressJ();
+                        case DIGIT1 -> mainController.press1();
+                        case DIGIT2 -> mainController.press2();
+                        case DIGIT3 -> mainController.press3();
+                        case DIGIT4 -> mainController.press4();
+                        case DIGIT5 -> mainController.press5();
+                        case DIGIT6 -> mainController.press6();
+                        case DIGIT7 -> mainController.press7();
+                        case DIGIT8 -> mainController.press8();
+                        case DIGIT9 -> mainController.press9();
+                        case DIGIT0, HOME -> mainController.press0();
+                        case END -> mainController.pressEND();
+                        case K -> mainController.pressK();
+                        case M -> mainController.pressM();
+                        case F -> mainController.pressF();
+                        case F12 -> mainController.pressF12();
+                        case SPACE -> mainController.pressSPACE(event);
+                        case C -> mainController.pressC();
+                        case S -> mainController.pressS();
+                        case Q -> mainController.pressQ();
+                        case P -> mainController.pressP(event);
+                        case I -> mainController.pressI();
+                        case N -> mainController.pressN(event);
+                        case COMMA -> mainController.pressCOMMA(event);
+                        case PERIOD -> mainController.pressPERIOD(event);
+                        default -> {
+                        }
                     }
                 }
             });

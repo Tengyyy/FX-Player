@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class OtherEditItem implements MetadataEditItem{
@@ -85,7 +86,15 @@ public class OtherEditItem implements MetadataEditItem{
 
     @Override
     public Map<String, String> saveMetadata(){
-        return null;
+        Map<String, String> mediaInformation = new HashMap<>();
+
+        for(CustomTextAreaItem item : items){
+            if(!item.keyField.getText().isBlank() && !item.textArea.getText().isBlank()){
+                mediaInformation.put(item.keyField.getText(), item.textArea.getText());
+            }
+        }
+
+        return mediaInformation;
     }
 }
 

@@ -200,6 +200,11 @@ public class ControlTooltip extends Tooltip {
         }
     }
 
+    public void updateDelay(Duration duration){
+        delay = (int) duration.toSeconds();
+        countdown.setDuration(duration);
+    }
+
 
     private void createTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay){
         this.tooltipText = tooltipText;

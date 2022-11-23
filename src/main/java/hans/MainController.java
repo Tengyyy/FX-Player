@@ -559,15 +559,11 @@ public class MainController implements Initializable {
     public void takeScreenshot(){
         if(menuController.activeItem == null || miniplayerActive) return;
 
-
         // snapshot file name formatting
         String out = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date());
         String videoName = menuController.activeItem.videoTitle.getText();
 
         mediaInterface.embeddedMediaPlayer.snapshots().save(new File(snapshotDirectory.concat(videoName).concat(" ").concat(out).concat(".png")));
-
-
-
     }
 
     public void openMiniplayer(){

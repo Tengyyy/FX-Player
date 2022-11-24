@@ -8,8 +8,9 @@ import javafx.util.Duration;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -239,10 +240,28 @@ public class Mp4Item implements MediaItem {
             String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".mp4";
 
             arguments.add(outputPath);
-            ProcessBuilder pb = new ProcessBuilder(arguments);
 
             try {
-                pb.inheritIO().start().waitFor();
+                Process process = new ProcessBuilder(arguments).redirectErrorStream(true).start();
+                StringBuilder strBuild = new StringBuilder();
+
+                BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()));
+                String line;
+                while ((line = processOutputReader.readLine()) != null) {
+                    strBuild.append(line).append(System.lineSeparator());
+                }
+                process.waitFor();
+                String output = strBuild.toString().trim();
+                System.out.println(output);
+
+                // parse string and find out if metadata edit was successful or not
+                if(output.endsWith("Invalid argument") || output.endsWith("Conversion failed!")){
+                    //TODO: delete the empty filed that was created
+                    System.out.println("Metadata update failed");
+                    return false;
+                }
+
+
 
                 //overwrite curr file with new file, if its playing, stop it, rewrite and then start playing again and seek to same time
                 if(mainController.getMenuController().activeItem != null && mainController.getMenuController().activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){

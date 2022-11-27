@@ -36,44 +36,47 @@
 }
 
 .text-field {
+    -fx-text-fill        : rgb(200,200,200);
+    -fx-font-family      : "Roboto";
+    -fx-font-size        : 16;
+    -fx-padding          : 0 0 0 10;
+}
+
+.customTextField {
     -fx-background-color : rgba(30,30,30,0.4);
     -fx-background-radius: 5;
     -fx-border-style     : solid;
     -fx-border-color     : rgb(100,100,100);
     -fx-border-radius    : 5;
-    -fx-text-fill        : rgb(200,200,200);
-    -fx-font-family      : "Roboto";
-    -fx-font-size        : 16;
-    -fx-padding: 0;
 }
 
-.text-field:focused {
+.customTextField:focused {
     -fx-border-color: rgb(200,200,200);
     -fx-border-width: 2;
     -fx-border-insets: -1;
 }
 
-.text-field .menu-item .label{
+.customTextField .menu-item .label{
     -fx-text-fill: white;
 }
 
-.text-field .menu-item:disabled .label{
+.customTextField .menu-item:disabled .label{
     -fx-text-fill: rgb(150,150,150);
 }
 
-.text-field .context-menu{
+.customTextField .context-menu{
     -fx-background-color: rgba(30,30,30,0.95);
 }
 
-.text-field .menu-item{
+.customTextField .menu-item{
     -fx-background-color: transparent;
 }
 
-.text-field .menu-item:hover{
+.customTextField .menu-item:hover{
     -fx-background-color: rgb(50,50,50);
 }
 
-.text-field .menu-item:disabled{
+.customTextField .menu-item:disabled{
     -fx-background-color: transparent;
 }
 
@@ -85,6 +88,7 @@
     -fx-background-radius: 0;
     -fx-border-style: none;
     -fx-border-width: 0;
+    -fx-padding: 0;
 }
 
 .key-text-field:focused {
@@ -173,6 +177,43 @@
 .combo-box .combo-box-popup .list-cell:hover {
     -fx-text-fill: white ;
     -fx-background-color: rgba(60,60,60,1);
+}
+
+.spinner {
+    -fx-background-color : rgba(30,30,30,0.4);
+    -fx-background-radius: 5;
+    -fx-border-style     : solid;
+    -fx-border-color     : rgb(100,100,100);
+    -fx-border-radius    : 5;
+}
+
+.spinner:focused,
+.spinner:contains-focus {
+    -fx-background-color : rgba(30,30,30,0.4);
+    -fx-border-color: rgb(200,200,200);
+    -fx-border-width: 2;
+    -fx-border-insets: -1;
+}
+
+.spinner .increment-arrow-button, .spinner .decrement-arrow-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.spinner .increment-arrow-button:hover, .spinner .decrement-arrow-button:hover, .spinner .increment-arrow-button:pressed, .spinner .decrement-arrow-button:pressed {
+    -fx-background-color: rgba(60,60,60,0.9);
+}
+
+.spinner .text-field {
+    -fx-background-color: transparent;
+}
+
+.spinner .increment-arrow-button .increment-arrow, .spinner .decrement-arrow-button .decrement-arrow {
+    -fx-background-color: rgb(200,200,200);
+}
+
+.spinner .increment-arrow-button:hover .increment-arrow, .spinner .decrement-arrow-button:hover .decrement-arrow, .spinner .increment-arrow-button:pressed .increment-arrow, .spinner .decrement-arrow-button:pressed .decrement-arrow {
+    -fx-background-color: rgb(255,255,255);
 }
 
 

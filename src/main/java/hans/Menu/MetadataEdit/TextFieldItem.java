@@ -24,6 +24,7 @@ public class TextFieldItem extends VBox{
         label.getStyleClass().add("metadataKey");
 
         textField = new TextField(value);
+        textField.getStyleClass().add("customTextField");
         textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
             metadataEditPage.changesMade.set(true);
         });

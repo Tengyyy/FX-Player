@@ -178,7 +178,7 @@ public class TechnicalDetailsPage {
         label.setMaxWidth(Double.MAX_VALUE);
         label.setWrapText(true);
         label.setLineSpacing(5);
-        label.setPadding(new Insets(0, 0, 5, 0));
+        label.setPadding(new Insets(20, 0, 5, 0));
 
         textBox.getChildren().add(label);
     }
@@ -191,6 +191,7 @@ public class TechnicalDetailsPage {
         keyText.getStyleClass().add("keyText");
         keyText.setMinWidth(125);
         keyText.setMaxWidth(125);
+        hBox.setPadding(new Insets(0, 0, 0, 20));
 
         TextFlow textFlow = new TextFlow();
         Text valueText = new Text(value);
@@ -244,10 +245,10 @@ public class TechnicalDetailsPage {
         if(map.containsKey("duration")) createItem("Duration:", map.get("duration"));
         if(map.containsKey("format")) createItem("Format:", map.get("format"));
 
-        if(map.containsKey("videoCodec")) createItem("Video codec:", map.get("videoCodec"));
+        if(map.containsKey("videoCodec")) createItem("Codec:", map.get("videoCodec"));
         if(map.containsKey("frameRate")) createItem("Frame rate:", map.get("frameRate"));
         if(map.containsKey("resolution")) createItem("Resolution:", map.get("resolution"));
-        if(map.containsKey("videoBitrate")) createItem("Video Bitrate:", map.get("videoBitrate"));
+        if(map.containsKey("videoBitrate")) createItem("Bitrate:", map.get("videoBitrate"));
     }
 
     private void createAudioSection(Map<String, String> map){

@@ -1,9 +1,6 @@
 package hans.Menu;
 
-import hans.Menu.MetadataEdit.MetadataEditPage;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
@@ -22,7 +19,22 @@ public class ExpandableTextArea extends TextArea {
         setMaxHeight(36);
 
         disableKeys();
+
     }
+
+    public void initializeText(String string){
+        int lines = (int) string.lines().count();
+
+        if(lines > 1){
+            setMinHeight(lines * 20 + 16);
+            setPrefHeight(lines * 20 + 16);
+            setMaxHeight(lines * 20 + 16);
+        }
+
+
+        setText(string);
+    }
+
 
     @Override
     protected void layoutChildren() {

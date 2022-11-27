@@ -15,7 +15,7 @@ public class AviEditItem implements  MetadataEditItem{
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;
     TextAreaItem albumItem = null;
-    TwoTextFieldItem trackItem = null;
+    TwoSpinnerItem trackItem = null;
     TextAreaItem genreItem = null;
     TextAreaItem languageItem = null;
     TextAreaItem releaseDateItem = null;
@@ -41,7 +41,7 @@ public class AviEditItem implements  MetadataEditItem{
             albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("product") && !metadata.get("product").isBlank() ? metadata.get("product") : "", content, true);
 
             String[] trackString = Utilities.splitString(metadata.getOrDefault("track", ""));
-            trackItem = new TwoTextFieldItem(metadataEditPage, "Track number", trackString[0], trackString[1], content, true);
+            trackItem = new TwoSpinnerItem(metadataEditPage, "Track number", trackString[0], trackString[1], content, true);
 
             genreItem = new TextAreaItem(metadataEditPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").isBlank() ? metadata.get("genre") : "", content, true);
             languageItem = new TextAreaItem(metadataEditPage, "Language", metadata.containsKey("language") && !metadata.get("language").isBlank() ? metadata.get("language") : "", content, true);
@@ -61,9 +61,9 @@ public class AviEditItem implements  MetadataEditItem{
         if(!artistItem.textArea.getText().isBlank()) mediaInformation.put("artist", artistItem.textArea.getText());
         if(!albumItem.textArea.getText().isBlank()) mediaInformation.put("IPRD", albumItem.textArea.getText());
         if(!releaseDateItem.textArea.getText().isBlank()) mediaInformation.put("date", releaseDateItem.textArea.getText());
-        if(!trackItem.textField1.getText().isBlank()){
-            String trackString = trackItem.textField1.getText();
-            if(!trackItem.textField2.getText().isBlank()) trackString = trackString.concat("/" + trackItem.textField2.getText());
+        if(trackItem.numberSpinner1.spinner.getValue() != 0){
+            String trackString = String.valueOf(trackItem.numberSpinner1.spinner.getValue());
+            if(trackItem.numberSpinner2.spinner.getValue() != 0) trackString = trackString.concat("/" + trackItem.numberSpinner2.spinner.getValue());
             mediaInformation.put("track", trackString);
         }
         if(!genreItem.textArea.getText().isBlank()) mediaInformation.put("genre", genreItem.textArea.getText());

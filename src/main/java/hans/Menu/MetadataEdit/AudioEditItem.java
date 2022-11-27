@@ -17,8 +17,8 @@ public class AudioEditItem implements MetadataEditItem{
     TextAreaItem artistItem = null;
     TextAreaItem albumItem = null;
     TextAreaItem releaseDateItem = null;
-    TwoTextFieldItem trackItem = null;
-    TwoTextFieldItem discItem = null;
+    TwoSpinnerItem trackItem = null;
+    TwoSpinnerItem discItem = null;
     TextAreaItem albumArtistItem = null;
     TextAreaItem composerItem = null;
     TextAreaItem publisherItem = null;
@@ -46,8 +46,8 @@ public class AudioEditItem implements MetadataEditItem{
             artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.get("artist").isBlank() ? "" : metadata.get("artist"), content, true);
             albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.get("album").isBlank() ? "" : metadata.get("album"), content, true);
             releaseDateItem = new TextAreaItem(metadataEditPage, "Release date", metadata.get("year").isBlank() ? "" : metadata.get("year"), content, true);
-            trackItem = new TwoTextFieldItem(metadataEditPage, "Track number", metadata.get("track"), metadata.get("track_total"), content, true); // keep an eye on potential problems for the twofield items
-            discItem = new TwoTextFieldItem(metadataEditPage, "Disc number", metadata.get("disc_no"), metadata.get("disc_total"), content, true);
+            trackItem = new TwoSpinnerItem(metadataEditPage, "Track number", metadata.get("track"), metadata.get("track_total"), content, true); // keep an eye on potential problems for the twofield items
+            discItem = new TwoSpinnerItem(metadataEditPage, "Disc number", metadata.get("disc_no"), metadata.get("disc_total"), content, true);
             albumArtistItem = new TextAreaItem(metadataEditPage, "Album artist", metadata.get("album_artist").isBlank() ? "" : metadata.get("album_artist"), content, true);
             composerItem = new TextAreaItem(metadataEditPage, "Composer", metadata.get("composer").isBlank() ? "" : metadata.get("composer"), content, true);
             publisherItem = new TextAreaItem(metadataEditPage, "Publisher", metadata.get("record_label").isBlank() ? "" : metadata.get("record_label"), content, true);
@@ -68,10 +68,10 @@ public class AudioEditItem implements MetadataEditItem{
         mediaInformation.put("artist", artistItem.textArea.getText());
         mediaInformation.put("album", albumItem.textArea.getText());
         mediaInformation.put("year", releaseDateItem.textArea.getText());
-        mediaInformation.put("track", trackItem.textField1.getText());
-        mediaInformation.put("track_total", trackItem.textField2.getText());
-        mediaInformation.put("disc_no", discItem.textField1.getText());
-        mediaInformation.put("disc_total", discItem.textField2.getText());
+        mediaInformation.put("track", String.valueOf(trackItem.numberSpinner1.spinner.getValue()));
+        mediaInformation.put("track_total", String.valueOf(trackItem.numberSpinner2.spinner.getValue()));
+        mediaInformation.put("disc_no", String.valueOf(discItem.numberSpinner1.spinner.getValue()));
+        mediaInformation.put("disc_total", String.valueOf(discItem.numberSpinner2.spinner.getValue()));
         mediaInformation.put("album_artist", albumArtistItem.textArea.getText());
         mediaInformation.put("composer", composerItem.textArea.getText());
         mediaInformation.put("record_label", publisherItem.textArea.getText());

@@ -23,7 +23,7 @@ public class TextAreaItem extends VBox{
         label.getStyleClass().add("metadataKey");
 
         textArea = new ExpandableTextArea();
-        textArea.setText(value);
+        textArea.initializeText(value);
         textArea.textProperty().addListener((observableValue, s, t1) -> {
             metadataEditPage.changesMade.set(true);
         });

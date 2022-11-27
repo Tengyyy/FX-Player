@@ -1,11 +1,7 @@
 package hans.Menu.MetadataEdit;
 
-import hans.MediaItems.AudioItem;
 import hans.MediaItems.MediaItem;
-import hans.Menu.MenuObject;
-import hans.Utilities;
 import javafx.scene.layout.VBox;
-import org.jaudiotagger.tag.FieldKey;
 
 import java.util.*;
 
@@ -18,7 +14,7 @@ public class WavEditItem implements MetadataEditItem{
     TextAreaItem artistItem = null;
     TextAreaItem albumItem = null;
     TextAreaItem releaseDateItem = null;
-    TextFieldItem trackItem = null;
+    SpinnerItem trackItem = null;
     TextAreaItem albumArtistItem = null;
     TextAreaItem composerItem = null;
     TextAreaItem publisherItem = null;
@@ -44,7 +40,7 @@ public class WavEditItem implements MetadataEditItem{
             artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.get("artist").isBlank() ? "" : metadata.get("artist"), content, true);
             albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.get("album").isBlank() ? "" : metadata.get("album"), content, true);
             releaseDateItem = new TextAreaItem(metadataEditPage, "Release date", metadata.get("year").isBlank() ? "" : metadata.get("year"), content, true);
-            trackItem = new TextFieldItem(metadataEditPage, "Track number", metadata.get("track").isBlank() ? "" : metadata.get("track"), content, true); // keep an eye on potential problems for the twofield items
+            trackItem = new SpinnerItem(metadataEditPage, "Track number", metadata.get("track").isBlank() ? "" : metadata.get("track"), content, true); // keep an eye on potential problems for the twofield items
             albumArtistItem = new TextAreaItem(metadataEditPage, "Album artist", metadata.get("album_artist").isBlank() ? "" : metadata.get("album_artist"), content, true);
             composerItem = new TextAreaItem(metadataEditPage, "Composer", metadata.get("composer").isBlank() ? "" : metadata.get("composer"), content, true);
             publisherItem = new TextAreaItem(metadataEditPage, "Publisher", metadata.get("record_label").isBlank() ? "" : metadata.get("record_label"), content, true);
@@ -63,7 +59,7 @@ public class WavEditItem implements MetadataEditItem{
         mediaInformation.put("artist", artistItem.textArea.getText());
         mediaInformation.put("album", albumItem.textArea.getText());
         mediaInformation.put("year", releaseDateItem.textArea.getText());
-        mediaInformation.put("track", trackItem.textField.getText());
+        mediaInformation.put("track", String.valueOf(trackItem.numberSpinner.spinner.getValue()));
         mediaInformation.put("album_artist", albumArtistItem.textArea.getText());
         mediaInformation.put("composer", composerItem.textArea.getText());
         mediaInformation.put("record_label", publisherItem.textArea.getText());

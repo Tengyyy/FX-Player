@@ -16,11 +16,11 @@ public class Mp4EditItem implements MetadataEditItem{
     TextAreaItem titleItem = null;
     ComboBoxItem comboboxItem = null;
     TextAreaItem seriesTitleItem = null;
-    TextFieldItem seasonNumberItem = null;
-    TextFieldItem episodeNumberItem = null;
+    SpinnerItem seasonNumberItem = null;
+    SpinnerItem episodeNumberItem = null;
     TextAreaItem networkItem = null;
     TextAreaItem artistItem = null;
-    TwoTextFieldItem trackItem = null;
+    TwoSpinnerItem trackItem = null;
     TextAreaItem albumItem = null;
     TextAreaItem albumArtistItem = null;
     TextAreaItem composerItem = null;
@@ -77,8 +77,8 @@ public class Mp4EditItem implements MetadataEditItem{
             });
 
             seriesTitleItem = new TextAreaItem(metadataEditPage, "Series title", metadata.containsKey("show") && !metadata.get("show").isBlank() ? metadata.get("show") : "", content, false);
-            seasonNumberItem = new TextFieldItem(metadataEditPage, "Season number", metadata.containsKey("season_number") && !metadata.get("season_number").isBlank() ? metadata.get("season_number") : "", content, false);
-            episodeNumberItem = new TextFieldItem(metadataEditPage, "Episode number", metadata.containsKey("episode_sort") && !metadata.get("episode_sort").isBlank() ? metadata.get("episode_sort") : "", content, false);
+            seasonNumberItem = new SpinnerItem(metadataEditPage, "Season number", metadata.containsKey("season_number") && !metadata.get("season_number").isBlank() ? metadata.get("season_number") : "", content, false);
+            episodeNumberItem = new SpinnerItem(metadataEditPage, "Episode number", metadata.containsKey("episode_sort") && !metadata.get("episode_sort").isBlank() ? metadata.get("episode_sort") : "", content, false);
             networkItem = new TextAreaItem(metadataEditPage, "Network", metadata.containsKey("network") && !metadata.get("network").isBlank() ? metadata.get("network") : "", content, false);
 
             if (mediaType.equals("TV Show")) {
@@ -94,7 +94,7 @@ public class Mp4EditItem implements MetadataEditItem{
             }
 
             String[] trackString = Utilities.splitString(metadata.getOrDefault("track", ""));
-            trackItem = new TwoTextFieldItem(metadataEditPage, "Track number", trackString[0], trackString[1], content, false);
+            trackItem = new TwoSpinnerItem(metadataEditPage, "Track number", trackString[0], trackString[1], content, false);
 
             albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("album") && !metadata.get("album").isBlank() ? metadata.get("album") : "", content, false);
 
@@ -204,14 +204,14 @@ public class Mp4EditItem implements MetadataEditItem{
 
         if(mediaType.equals("TV Show")){
             if(!seriesTitleItem.textArea.getText().isBlank()) mediaInformation.put("show", seriesTitleItem.textArea.getText());
-            if(!seasonNumberItem.textField.getText().isBlank()) mediaInformation.put("season_number", seasonNumberItem.textField.getText());
-            if(!episodeNumberItem.textField.getText().isBlank()) mediaInformation.put("episode_sort", episodeNumberItem.textField.getText());
+            if(seasonNumberItem.numberSpinner.spinner.getValue() != 0) mediaInformation.put("season_number", String.valueOf(seasonNumberItem.numberSpinner.spinner.getValue()));
+            if(episodeNumberItem.numberSpinner.spinner.getValue() != 0) mediaInformation.put("episode_sort", String.valueOf(episodeNumberItem.numberSpinner.spinner.getValue()));
             if(!networkItem.textArea.getText().isBlank()) mediaInformation.put("network", networkItem.textArea.getText());
         }
         else {
            seriesTitleItem.textArea.setText("");
-           seasonNumberItem.textField.setText("");
-           episodeNumberItem.textField.setText("");
+           seasonNumberItem.numberSpinner.spinner.getValueFactory().setValue(0);
+           episodeNumberItem.numberSpinner.spinner.getValueFactory().setValue(0);
            networkItem.textArea.setText("");
         }
 
@@ -230,17 +230,17 @@ public class Mp4EditItem implements MetadataEditItem{
         if(mediaType.equals("Music video")) {
             if(!lyricsItem.textArea.getText().isBlank()) mediaInformation.put("lyrics", lyricsItem.textArea.getText());
             if(!albumItem.textArea.getText().isBlank()) mediaInformation.put("album", albumItem.textArea.getText());
-            if(!trackItem.textField1.getText().isBlank()){
-                String trackString = trackItem.textField1.getText();
-                if(!trackItem.textField2.getText().isBlank()) trackString = trackString.concat("/" + trackItem.textField2.getText());
+            if(trackItem.numberSpinner1.spinner.getValue() != 0){
+                String trackString = String.valueOf(trackItem.numberSpinner1.spinner.getValue());
+                if(trackItem.numberSpinner2.spinner.getValue() != 0) trackString = trackString.concat("/" + trackItem.numberSpinner2.spinner.getValue());
                 mediaInformation.put("track", trackString);
             }
         }
         else {
             lyricsItem.textArea.setText("");
             albumItem.textArea.setText("");
-            trackItem.textField1.setText("");
-            trackItem.textField2.setText("");
+            trackItem.numberSpinner1.spinner.getValueFactory().setValue(0);
+            trackItem.numberSpinner2.spinner.getValueFactory().setValue(0);
         }
         if(!releaseDateItem.textArea.getText().isBlank()) mediaInformation.put("date", releaseDateItem.textArea.getText());
         if(!commentItem.textArea.getText().isBlank()) mediaInformation.put("comment", commentItem.textArea.getText());

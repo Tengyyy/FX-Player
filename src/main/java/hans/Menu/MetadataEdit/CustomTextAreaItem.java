@@ -160,7 +160,7 @@ public class CustomTextAreaItem extends VBox{
         editButton.setOnAction(e -> {
             removeEditButton();
             keyField.requestFocus();
-            keyField.positionCaret(keyField.getText().length());
+            //keyField.positionCaret(keyField.getText().length());
         });
 
         editButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, editButton, 0, 1, false, 1, true));
@@ -205,7 +205,7 @@ public class CustomTextAreaItem extends VBox{
         labelBox.maxWidthProperty().bind(labelContainer.widthProperty().subtract(30));
 
         textArea = new ExpandableTextArea();
-        textArea.setText(value);
+        textArea.initializeText(value);
         textArea.textProperty().addListener((observableValue, oldValue, newValue) -> {
             otherEditItem.metadataEditPage.changesMade.set(true);
         });

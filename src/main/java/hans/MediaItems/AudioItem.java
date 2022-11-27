@@ -12,6 +12,7 @@ import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.InvalidFrameException;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.images.Artwork;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class AudioItem implements MediaItem {
 
@@ -61,6 +63,9 @@ public class AudioItem implements MediaItem {
                 cover = new Image(new ByteArrayInputStream(coverBinaryData));
             }
 
+            System.out.println(tag.isEmpty());
+
+
             mediaInformation.put("title", tag.getFirst(FieldKey.TITLE));
             mediaInformation.put("artist", tag.getFirst(FieldKey.ARTIST));
             mediaInformation.put("album", tag.getFirst(FieldKey.ALBUM));
@@ -94,8 +99,11 @@ public class AudioItem implements MediaItem {
             mediaDetails.put("format", f.getAudioHeader().getFormat());
             mediaDetails.put("sampleRate", NumberFormat.getInstance().format(f.getAudioHeader().getSampleRateAsNumber()) + " Hz");
 
+            for(Map.Entry<String, String> entry : mediaInformation.entrySet()){
+                System.out.println(entry.getKey() + " : " + entry.getValue());
+            }
+
         } catch (IOException | CannotReadException | TagException | ReadOnlyFileException | InvalidAudioFrameException e) {
-            System.out.println("test");
             throw new RuntimeException(e);
         }
 
@@ -139,6 +147,7 @@ public class AudioItem implements MediaItem {
 
         if(updateFile){
             try {
+                Logger logger = Logger.getLogger("org.jaudiotagger");
                 AudioFile f = AudioFileIO.read(file);
                 Tag tag = f.getTag();
 

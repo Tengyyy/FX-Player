@@ -13,7 +13,7 @@ public class WavEditItem implements MetadataEditItem{
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;
     TextAreaItem albumItem = null;
-    TextAreaItem releaseDateItem = null;
+    DatePickerItem releaseDateItem = null;
     SpinnerItem trackItem = null;
     TextAreaItem albumArtistItem = null;
     TextAreaItem composerItem = null;
@@ -39,7 +39,7 @@ public class WavEditItem implements MetadataEditItem{
             titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.get("title").isBlank() ? "" : metadata.get("title"), content, true);
             artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.get("artist").isBlank() ? "" : metadata.get("artist"), content, true);
             albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.get("album").isBlank() ? "" : metadata.get("album"), content, true);
-            releaseDateItem = new TextAreaItem(metadataEditPage, "Release date", metadata.get("year").isBlank() ? "" : metadata.get("year"), content, true);
+            releaseDateItem = new DatePickerItem(metadataEditPage, metadata.get("year").isBlank() ? "" : metadata.get("year"), content, true);
             trackItem = new SpinnerItem(metadataEditPage, "Track number", metadata.get("track").isBlank() ? "" : metadata.get("track"), content, true); // keep an eye on potential problems for the twofield items
             albumArtistItem = new TextAreaItem(metadataEditPage, "Album artist", metadata.get("album_artist").isBlank() ? "" : metadata.get("album_artist"), content, true);
             composerItem = new TextAreaItem(metadataEditPage, "Composer", metadata.get("composer").isBlank() ? "" : metadata.get("composer"), content, true);
@@ -58,7 +58,7 @@ public class WavEditItem implements MetadataEditItem{
         mediaInformation.put("title", titleItem.textArea.getText());
         mediaInformation.put("artist", artistItem.textArea.getText());
         mediaInformation.put("album", albumItem.textArea.getText());
-        mediaInformation.put("year", releaseDateItem.textArea.getText());
+        mediaInformation.put("year", releaseDateItem.datePicker.getValue().format(releaseDateItem.dateTimeFormatter));
         mediaInformation.put("track", String.valueOf(trackItem.numberSpinner.spinner.getValue()));
         mediaInformation.put("album_artist", albumArtistItem.textArea.getText());
         mediaInformation.put("composer", composerItem.textArea.getText());

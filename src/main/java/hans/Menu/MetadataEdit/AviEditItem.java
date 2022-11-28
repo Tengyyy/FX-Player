@@ -18,7 +18,7 @@ public class AviEditItem implements  MetadataEditItem{
     TwoSpinnerItem trackItem = null;
     TextAreaItem genreItem = null;
     TextAreaItem languageItem = null;
-    TextAreaItem releaseDateItem = null;
+    DatePickerItem releaseDateItem = null;
     TextAreaItem copyrightItem = null;
     TextAreaItem commentItem = null;
 
@@ -45,7 +45,7 @@ public class AviEditItem implements  MetadataEditItem{
 
             genreItem = new TextAreaItem(metadataEditPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").isBlank() ? metadata.get("genre") : "", content, true);
             languageItem = new TextAreaItem(metadataEditPage, "Language", metadata.containsKey("language") && !metadata.get("language").isBlank() ? metadata.get("language") : "", content, true);
-            releaseDateItem = new TextAreaItem(metadataEditPage, "Release date", metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
+            releaseDateItem = new DatePickerItem(metadataEditPage, metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
             copyrightItem = new TextAreaItem(metadataEditPage, "Copyright", metadata.containsKey("copyright") && !metadata.get("copyright").isBlank() ? metadata.get("copyright") : "", content, true);
             commentItem = new TextAreaItem(metadataEditPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").isBlank() ? metadata.get("comment") : "", content, true);
         }
@@ -60,7 +60,7 @@ public class AviEditItem implements  MetadataEditItem{
         if(!titleItem.textArea.getText().isBlank()) mediaInformation.put("title", titleItem.textArea.getText());
         if(!artistItem.textArea.getText().isBlank()) mediaInformation.put("artist", artistItem.textArea.getText());
         if(!albumItem.textArea.getText().isBlank()) mediaInformation.put("IPRD", albumItem.textArea.getText());
-        if(!releaseDateItem.textArea.getText().isBlank()) mediaInformation.put("date", releaseDateItem.textArea.getText());
+        if(releaseDateItem.datePicker.getValue() != null) mediaInformation.put("date", releaseDateItem.datePicker.getValue().format(releaseDateItem.dateTimeFormatter));
         if(trackItem.numberSpinner1.spinner.getValue() != 0){
             String trackString = String.valueOf(trackItem.numberSpinner1.spinner.getValue());
             if(trackItem.numberSpinner2.spinner.getValue() != 0) trackString = trackString.concat("/" + trackItem.numberSpinner2.spinner.getValue());

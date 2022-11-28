@@ -28,7 +28,7 @@ public class Mp4EditItem implements MetadataEditItem{
     TextAreaItem descriptionItem = null;
     TextAreaItem synopsisItem = null;
     TextAreaItem lyricsItem = null;
-    TextAreaItem releaseDateItem = null;
+    DatePickerItem releaseDateItem = null;
     TextAreaItem commentItem = null;
 
     VBox content = new VBox();
@@ -48,21 +48,11 @@ public class Mp4EditItem implements MetadataEditItem{
             String type = metadata.get("media_type");
 
             switch (type) {
-                case "6":
-                    mediaType = "Music video";
-                    break;
-                case "9":
-                    mediaType = "Movie";
-                    break;
-                case "10":
-                    mediaType = "TV Show";
-                    break;
-                case "21":
-                    mediaType = "Podcast";
-                    break;
-                default:
-                    mediaType = "Home video";
-                    break;
+                case "6" -> mediaType = "Music video";
+                case "9" -> mediaType = "Movie";
+                case "10" -> mediaType = "TV Show";
+                case "21" -> mediaType = "Podcast";
+                default -> mediaType = "Home video";
             }
         }
         else {
@@ -134,7 +124,7 @@ public class Mp4EditItem implements MetadataEditItem{
                 content.getChildren().add(lyricsItem);
             }
 
-            releaseDateItem = new TextAreaItem(metadataEditPage, "Release date", metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
+            releaseDateItem = new DatePickerItem(metadataEditPage, metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
             commentItem = new TextAreaItem(metadataEditPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").isBlank() ? metadata.get("comment") : "", content, true);
         }
 
@@ -143,37 +133,39 @@ public class Mp4EditItem implements MetadataEditItem{
 
     public void updateMediaType(String value){
         mediaType = value;
-        if(value.equals("TV Show")){
-            content.getChildren().removeAll(trackItem, albumItem, lyricsItem);
-            content.getChildren().addAll(2, Arrays.asList(seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem));
-            artistItem.label.setText("Cast");
-            albumArtistItem.label.setText("Director");
-            if(!content.getChildren().contains(albumArtistItem)) content.getChildren().add(7, albumArtistItem);
-            composerItem.label.setText("Writers");
-            if(!content.getChildren().contains(composerItem)) content.getChildren().add(8, composerItem);
-        }
-        else if(value.equals("Movie")){
-            content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem);
-            artistItem.label.setText("Cast");
-            albumArtistItem.label.setText("Director");
-            if(!content.getChildren().contains(albumArtistItem)) content.getChildren().add(3, albumArtistItem);
-            composerItem.label.setText("Writers");
-            if(!content.getChildren().contains(composerItem)) content.getChildren().add(4, composerItem);
-        }
-        else if(value.equals("Music video")){
-            content.getChildren().removeAll(seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem);
-            artistItem.label.setText("Artist");
-            if(!content.getChildren().contains(trackItem)) content.getChildren().add(3, trackItem);
-            if(!content.getChildren().contains(albumItem)) content.getChildren().add(4, albumItem);
-            albumArtistItem.label.setText("Album artist");
-            if(!content.getChildren().contains(albumArtistItem)) content.getChildren().add(5, albumArtistItem);
-            composerItem.label.setText("Composer");
-            if(!content.getChildren().contains(composerItem)) content.getChildren().add(6, composerItem);
-            if(!content.getChildren().contains(lyricsItem)) content.getChildren().add(10, lyricsItem);
-        }
-        else if(value.equals("Podcast") || value.equals("Home video")){
-            content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem, albumArtistItem, composerItem);
-            artistItem.label.setText("Artist");
+        switch (value) {
+            case "TV Show" -> {
+                content.getChildren().removeAll(trackItem, albumItem, lyricsItem);
+                content.getChildren().addAll(2, Arrays.asList(seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem));
+                artistItem.label.setText("Cast");
+                albumArtistItem.label.setText("Director");
+                if (!content.getChildren().contains(albumArtistItem)) content.getChildren().add(7, albumArtistItem);
+                composerItem.label.setText("Writers");
+                if (!content.getChildren().contains(composerItem)) content.getChildren().add(8, composerItem);
+            }
+            case "Movie" -> {
+                content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem);
+                artistItem.label.setText("Cast");
+                albumArtistItem.label.setText("Director");
+                if (!content.getChildren().contains(albumArtistItem)) content.getChildren().add(3, albumArtistItem);
+                composerItem.label.setText("Writers");
+                if (!content.getChildren().contains(composerItem)) content.getChildren().add(4, composerItem);
+            }
+            case "Music video" -> {
+                content.getChildren().removeAll(seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem);
+                artistItem.label.setText("Artist");
+                if (!content.getChildren().contains(trackItem)) content.getChildren().add(3, trackItem);
+                if (!content.getChildren().contains(albumItem)) content.getChildren().add(4, albumItem);
+                albumArtistItem.label.setText("Album artist");
+                if (!content.getChildren().contains(albumArtistItem)) content.getChildren().add(5, albumArtistItem);
+                composerItem.label.setText("Composer");
+                if (!content.getChildren().contains(composerItem)) content.getChildren().add(6, composerItem);
+                if (!content.getChildren().contains(lyricsItem)) content.getChildren().add(10, lyricsItem);
+            }
+            case "Podcast", "Home video" -> {
+                content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem, albumArtistItem, composerItem);
+                artistItem.label.setText("Artist");
+            }
         }
     }
 
@@ -184,21 +176,13 @@ public class Mp4EditItem implements MetadataEditItem{
         if(!titleItem.textArea.getText().isBlank()) mediaInformation.put("title", titleItem.textArea.getText());
         if(!artistItem.textArea.getText().isBlank()) mediaInformation.put("artist", artistItem.textArea.getText());
 
-        String mediaTypeString = "0";
-        switch (mediaType) {
-            case "Music video":
-                mediaTypeString = "6";
-                break;
-            case "Movie":
-                mediaTypeString = "9";
-                break;
-            case "TV Show":
-                mediaTypeString = "10";
-                break;
-            case "Podcast":
-                mediaTypeString = "21";
-                break;
-        }
+        String mediaTypeString = switch (mediaType) {
+            case "Music video" -> "6";
+            case "Movie" -> "9";
+            case "TV Show" -> "10";
+            case "Podcast" -> "21";
+            default -> "0";
+        };
 
         mediaInformation.put("media_type", mediaTypeString);
 
@@ -242,7 +226,7 @@ public class Mp4EditItem implements MetadataEditItem{
             trackItem.numberSpinner1.spinner.getValueFactory().setValue(0);
             trackItem.numberSpinner2.spinner.getValueFactory().setValue(0);
         }
-        if(!releaseDateItem.textArea.getText().isBlank()) mediaInformation.put("date", releaseDateItem.textArea.getText());
+        if(releaseDateItem.datePicker.getValue() != null) mediaInformation.put("date", releaseDateItem.datePicker.getValue().format(releaseDateItem.dateTimeFormatter));
         if(!commentItem.textArea.getText().isBlank()) mediaInformation.put("comment", commentItem.textArea.getText());
 
         return mediaInformation;

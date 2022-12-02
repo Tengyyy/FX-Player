@@ -1,11 +1,18 @@
 package hans;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.sun.jna.Pointer;
@@ -23,6 +30,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
+import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.*;
 
 public class Utilities {
@@ -102,31 +110,29 @@ public class Utilities {
     }
 
     public static MediaItem createMediaItem(File file, MainController mainController){
-        switch(Utilities.getFileExtension(file)){
-            case "mp4": return new Mp4Item(file, mainController);
-            case "mp3":
-            case "flac": return new AudioItem(file, mainController);
-            case "wav": return new WavItem(file, mainController);
-            case "avi": return new AviItem(file, mainController);
-            case "mkv": return new MkvItem(file, mainController);
-            case "flv": return new FlvItem(file, mainController);
-            case "mov": return new MovItem(file, mainController);
-            default: return null;
-        }
+        return switch (Utilities.getFileExtension(file)) {
+            case "mp4" -> new Mp4Item(file, mainController);
+            case "mp3", "flac" -> new AudioItem(file, mainController);
+            case "wav" -> new WavItem(file, mainController);
+            case "avi" -> new AviItem(file, mainController);
+            case "mkv" -> new MkvItem(file, mainController);
+            case "flv" -> new FlvItem(file, mainController);
+            case "mov" -> new MovItem(file, mainController);
+            default -> null;
+        };
     }
 
     public static MediaItem copyMediaItem(MediaItem mediaItem, MainController mainController){
-        switch(Utilities.getFileExtension(mediaItem.getFile())){
-            case "mp4": return new Mp4Item((Mp4Item) mediaItem, mainController);
-            case "mp3":
-            case "flac": return new AudioItem((AudioItem) mediaItem, mainController);
-            case "wav": return new WavItem((WavItem) mediaItem, mainController);
-            case "avi": return new AviItem((AviItem) mediaItem, mainController);
-            case "mkv": return new MkvItem((MkvItem) mediaItem, mainController);
-            case "flv": return new FlvItem((FlvItem) mediaItem, mainController);
-            case "mov": return new MovItem((MovItem) mediaItem, mainController);
-            default: return null;
-        }
+        return switch (Utilities.getFileExtension(mediaItem.getFile())) {
+            case "mp4" -> new Mp4Item((Mp4Item) mediaItem, mainController);
+            case "mp3", "flac" -> new AudioItem((AudioItem) mediaItem, mainController);
+            case "wav" -> new WavItem((WavItem) mediaItem, mainController);
+            case "avi" -> new AviItem((AviItem) mediaItem, mainController);
+            case "mkv" -> new MkvItem((MkvItem) mediaItem, mainController);
+            case "flv" -> new FlvItem((FlvItem) mediaItem, mainController);
+            case "mov" -> new MovItem((MovItem) mediaItem, mainController);
+            default -> null;
+        };
     }
 
     public static String[] splitLines(String str) {
@@ -339,4 +345,151 @@ public class Utilities {
         }
     }
 
+
+
+    public static String getLog(String filePath){
+
+        String log = "";
+
+        ArrayList<String> arguments = new ArrayList<>();
+        String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+
+        arguments.add(ffmpeg);
+        arguments.add("-i");
+        arguments.add(filePath);
+
+        try {
+            Process process = new ProcessBuilder(arguments).redirectErrorStream(true).start();
+            StringBuilder strBuild = new StringBuilder();
+
+            BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()));
+            String line;
+            while ((line = processOutputReader.readLine()) != null) {
+                strBuild.append(line).append(System.lineSeparator());
+            }
+            process.waitFor();
+            log = strBuild.toString().trim();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return log;
+    }
+
+    public static Map<String, ArrayList<Map<String, String>>> parseLog(String log){
+        Map<String, ArrayList<Map<String, String>>> map = new HashMap<>();
+        map.put("video streams", new ArrayList<>());
+        map.put("audio streams", new ArrayList<>());
+        map.put("subtitle streams", new ArrayList<>());
+
+        String[] lines = log.split(System.lineSeparator());
+        for (String line : lines) {
+            String strippedLine = line.strip();
+            if(strippedLine.endsWith("(attached pic)")) continue;
+            if(strippedLine.endsWith(")")){
+                strippedLine = strippedLine.substring(0, strippedLine.lastIndexOf("("));
+            }
+            if (strippedLine.startsWith("Stream #")) {
+                Map<String, String> streamInfo = new HashMap<>();
+
+                String infoString = strippedLine.substring(nthOccurrence(strippedLine, ":", 3) + 1).strip();
+                if(infoString.contains(",")){
+                    streamInfo.put("codec", infoString.substring(0, infoString.indexOf(",")).strip());
+                }
+                else {
+                    streamInfo.put("codec", infoString);
+                }
+                String languageSection = strippedLine.substring(strippedLine.indexOf(":") + 1, nthOccurrence(strippedLine, ":", 2));
+                if(languageSection.contains("(")){
+                    String languageCode = languageSection.substring(languageSection.indexOf("(") + 1, languageSection.indexOf(")"));
+                    Locale locale = Locale.forLanguageTag(languageCode.toUpperCase(Locale.ROOT));
+                    streamInfo.put("language", locale.getDisplayLanguage());
+
+                }
+                else {
+                    streamInfo.put("language", "Unknown");
+                }
+
+
+
+                String streamType = strippedLine.substring(nthOccurrence(strippedLine, ":", 2) + 1, nthOccurrence(strippedLine, ":", 3)).strip();
+                switch (streamType) {
+                    case "Video" -> map.get("video streams").add(streamInfo);
+                    case "Audio" -> map.get("audio streams").add(streamInfo);
+                    case "Subtitle" -> map.get("subtitle streams").add(streamInfo);
+                }
+            }
+        }
+
+         return map;
+    }
+
+    public static void extractSubtitles(MediaItem mediaItem){
+
+        String subtitlesDirectory = System.getProperty("user.home").concat("/FXPlayer/subtitles/");
+        try {
+            Files.createDirectory(Paths.get(subtitlesDirectory));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<String> arguments = new ArrayList<>();
+        String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+
+        arguments.add(ffmpeg);
+        arguments.add("-i");
+        arguments.add(mediaItem.getFile().getAbsolutePath());
+
+        ArrayList<Map<String, String>> subtitleStreams = mediaItem.getLog().get("subtitle streams");
+
+        for(int i = 0; i < subtitleStreams.size(); i++){
+            arguments.add("-map");
+            arguments.add("0:s:" + i);
+            arguments.add(subtitlesDirectory.concat("sub" + i + ".srt"));
+        }
+
+
+        try {
+            Process process = new ProcessBuilder(arguments).redirectErrorStream(true).start();
+            StringBuilder strBuild = new StringBuilder();
+
+            BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()));
+            String line;
+            while ((line = processOutputReader.readLine()) != null) {
+                strBuild.append(line).append(System.lineSeparator());
+            }
+            process.waitFor();
+            String log = strBuild.toString().trim();
+            System.out.println(log);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void cleanDirectory(String path){
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+
+        if(files != null)
+            for(File file : files){
+            file.delete();
+        }
+    }
+
+    public static int nthOccurrence(String str1, String str2, int n) {
+
+        String tempStr = str1;
+        int tempIndex = -1;
+        int finalIndex = 0;
+        for(int occurrence = 0; occurrence < n ; ++occurrence){
+            tempIndex = tempStr.indexOf(str2);
+            if(tempIndex==-1){
+                finalIndex = 0;
+                break;
+            }
+            tempStr = tempStr.substring(++tempIndex);
+            finalIndex+=tempIndex;
+        }
+        return --finalIndex;
+    }
 }

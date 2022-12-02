@@ -49,9 +49,13 @@ public class MovItem implements MediaItem {
     Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     Map<String, String> mediaDetails = new HashMap<>();
 
+    Map<String, ArrayList<Map<String, String>>> log;
+
     public MovItem(File file, MainController mainController){
         this.file = file;
         this.mainController = mainController;
+
+        log = Utilities.parseLog(Utilities.getLog(file.getAbsolutePath()));
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
@@ -216,7 +220,7 @@ public class MovItem implements MediaItem {
                 process.waitFor();
                 String output = strBuild.toString().trim();
                 System.out.println(output);
-                if(output.endsWith("Invalid argument") || output.endsWith("Conversion failed!")){
+                if(output.endsWith("Invalid argument") || output.endsWith("Conversion failed!") || output.endsWith("Error splitting the argument list: Option not found")){
                     //TODO: delete the empty filed that was created
                     System.out.println("Metadata update failed");
                     return false;
@@ -383,5 +387,10 @@ public class MovItem implements MediaItem {
     @Override
     public void setPlaceHolderCover(Image image) {
         placeholderCover = image;
+    }
+
+    @Override
+    public Map<String, ArrayList<Map<String, String>>> getLog() {
+        return log;
     }
 }

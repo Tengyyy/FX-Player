@@ -8,6 +8,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -21,6 +22,9 @@ import java.io.File;
 public class CaptionsPane {
 
     CaptionsController captionsController;
+
+
+
     VBox captionsBox = new VBox();
 
     HBox captionsTitle = new HBox();

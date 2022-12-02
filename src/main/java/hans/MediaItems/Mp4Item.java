@@ -53,10 +53,13 @@ public class Mp4Item implements MediaItem {
     int height = 0;
     int audioChannels = 0;
 
+    Map<String, ArrayList<Map<String, String>>> log;
 
     public Mp4Item(File file, MainController mainController) {
         this.file = file;
         this.mainController = mainController;
+
+        log = Utilities.parseLog(Utilities.getLog(file.getAbsolutePath()));
 
         try {
             FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
@@ -175,6 +178,11 @@ public class Mp4Item implements MediaItem {
         placeholderCover = image;
     }
 
+    @Override
+    public Map<String, ArrayList<Map<String, String>>> getLog() {
+        return log;
+    }
+
 
     @Override
     public float getFrameDuration() {
@@ -255,7 +263,7 @@ public class Mp4Item implements MediaItem {
                 System.out.println(output);
 
                 // parse string and find out if metadata edit was successful or not
-                if(output.endsWith("Invalid argument") || output.endsWith("Conversion failed!")){
+                if(output.endsWith("Invalid argument") || output.endsWith("Conversion failed!") || output.endsWith("Error splitting the argument list: Option not found")){
                     //TODO: delete the empty filed that was created
                     System.out.println("Metadata update failed");
                     return false;

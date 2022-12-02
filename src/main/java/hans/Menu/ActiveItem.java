@@ -85,7 +85,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         this.activeBox = activeBox;
 
 
-        column3.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) to take up all available space
+        column3.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
         this.getRowConstraints().addAll(row1);
 

@@ -140,7 +140,7 @@ public class MainController implements Initializable {
 
         playbackOptionsPopUp = new PlaybackOptionsPopUp(settingsController);
 
-        snapshotDirectory = System.getProperty("user.home").concat("/vlcj-snapshots/");
+        snapshotDirectory = System.getProperty("user.home").concat("/FXPlayer/screenshots/");
 
 
         // declaring media control images

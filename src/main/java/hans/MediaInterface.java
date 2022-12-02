@@ -29,6 +29,8 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 import uk.co.caprica.vlcj.support.version.LibVlcVersion;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -256,9 +258,15 @@ public class MediaInterface {
 
         controlBarController.updateTooltips();
 
+        //TODO: parse mediaitem log and then extract subtitles to temporary srt files inside FXPlayer/temp folder
+        // preferrably do this in a separate thread/task
+
+        settingsController.captionsController.extractCaptions(menuObject);
+
 
         embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());
         embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
+
 
     }
 
@@ -294,6 +302,8 @@ public class MediaInterface {
             controlBarController.disablePreviousVideoButton();
             controlBarController.disableNextVideoButton();
         }
+
+        settingsController.captionsController.resetCaptions();
 
         try {
             fFmpegFrameGrabber.close();

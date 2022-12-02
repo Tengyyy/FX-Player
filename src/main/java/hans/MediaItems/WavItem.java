@@ -268,4 +268,9 @@ public class WavItem implements MediaItem {
     public void setPlaceHolderCover(Image image) {
         placeholderCover = image;
     }
+
+    @Override
+    public Map<String, ArrayList<Map<String, String>>> getLog() {
+        return null;
+    }
 }

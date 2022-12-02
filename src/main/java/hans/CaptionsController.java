@@ -3,6 +3,7 @@ package hans;
 
 import hans.Menu.HistoryItem;
 import hans.Menu.MenuController;
+import hans.Menu.MenuObject;
 import hans.Menu.MenuState;
 import hans.SRTParser.srt.SRTParser;
 import hans.SRTParser.srt.Subtitle;
@@ -31,6 +32,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class CaptionsController {
 
@@ -290,6 +292,17 @@ public class CaptionsController {
 
     }
 
+    public void extractCaptions(MenuObject menuObject){
+        Map<String, ArrayList<Map<String, String>>> log = menuObject.getMediaItem().getLog();
+        if(log != null){
+            ArrayList<Map<String, String>> subtitleStreams = log.get("subtitle streams");
+            Utilities.extractSubtitles(menuObject.getMediaItem());
+        }
+    }
+
+    public void resetCaptions(){
+        Utilities.cleanDirectory(System.getProperty("user.home").concat("/FXPlayer/subtitles/"));
+    }
 
 
     public void loadCaptions(File file, boolean toggleOn){

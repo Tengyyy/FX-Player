@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Map;
 
 public interface MediaItem {
@@ -46,6 +47,8 @@ public interface MediaItem {
 
     Image getPlaceholderCover();
     void setPlaceHolderCover(Image image);
+
+    Map<String, ArrayList<Map<String, String>>> getLog();
 
 
     // 1024 is int value for attached pic disposition

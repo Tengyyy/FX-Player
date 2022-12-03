@@ -146,7 +146,6 @@ public class SeekIndicator {
 
         double miniplayerMultiplier = 1;
         if(mainController.miniplayerActive) miniplayerMultiplier = 1.35;
-        else miniplayerMultiplier = 1;
 
         background.setMinSize(150 * mainController.sizeMultiplier.doubleValue(),150 * mainController.sizeMultiplier.doubleValue());
         background.setPrefSize(150 * mainController.sizeMultiplier.doubleValue(),150 * mainController.sizeMultiplier.doubleValue());

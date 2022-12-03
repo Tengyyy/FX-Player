@@ -387,84 +387,6 @@ public class QueueBox extends VBox {
 
     }
 
-    public void moveAll(int firstBound, int secondBound, int newIndex){
-
-        cancelDragAndDrop();
-
-        cancelDrag();
-
-        if(this.getChildren().size() < 3 ||
-                firstBound == newIndex ||
-                firstBound < 0 ||
-                firstBound >= this.getChildren().size() - 1 ||
-                newIndex < -1 ||
-                newIndex >= this.getChildren().size() - 1 ||
-                secondBound < 0 ||
-                secondBound >= this.getChildren().size() ||
-                secondBound - firstBound + newIndex >= this.getChildren().size() ||
-                firstBound >= secondBound) return;
-
-        ParallelTransition parallelTransition = new ParallelTransition();
-
-        ArrayList<QueueItem> nodesInRange = new ArrayList<>();
-
-        for(int i = firstBound; i <= secondBound; i++){
-            // all the children that will be moved
-            nodesInRange.add((QueueItem) this.getChildren().get(i));
-            FadeTransition fadeTransition = AnimationsClass.fadeOut(this.getChildren().get(i));
-            parallelTransition.getChildren().add(fadeTransition);
-        }
-
-        menuController.queue.removeAll(nodesInRange);
-        if(newIndex == -1) menuController.queue.addAll(nodesInRange);
-        else menuController.queue.addAll(newIndex, nodesInRange);
-
-        parallelTransition.setOnFinished((e) -> {
-            ArrayList<QueueItem> childrenToBeMoved = new ArrayList<>();
-            ParallelTransition parallelTranslateTransition = new ParallelTransition();
-
-            if(newIndex > firstBound || newIndex == -1){
-                // move items down
-                int loopTo = newIndex == -1 ? this.getChildren().size() : secondBound - firstBound + newIndex + 1;
-                for(int i = secondBound + 1; i < loopTo; i++){
-                    childrenToBeMoved.add((QueueItem) this.getChildren().get(i));
-                    parallelTranslateTransition.getChildren().add(AnimationsClass.animateUp(this.getChildren().get(i), QueueItem.height * (secondBound - firstBound + 1)));
-                }
-            }
-            else {
-                // move items up
-                for(int i = firstBound - 1; i>= newIndex; i--){
-                    childrenToBeMoved.add((QueueItem) this.getChildren().get(i));
-                    parallelTranslateTransition.getChildren().add(AnimationsClass.animateDown(this.getChildren().get(i), QueueItem.height * (secondBound - firstBound + 1)));
-                }
-            }
-
-            parallelTranslateTransition.setOnFinished((ev) -> {
-                this.getChildren().removeAll(nodesInRange);
-                for (QueueItem queueItem : childrenToBeMoved) {
-                    queueItem.setTranslateY(0);
-                }
-                if(newIndex == -1) this.getChildren().addAll(nodesInRange);
-                else this.getChildren().addAll(newIndex, nodesInRange);
-
-                ParallelTransition parallelFadeTransition = new ParallelTransition();
-                for(QueueItem queueItem : nodesInRange){
-                    parallelFadeTransition.getChildren().add(AnimationsClass.fadeIn(queueItem));
-                }
-                menuController.animationsInProgress.remove(parallelTranslateTransition);
-                parallelFadeTransition.playFromStart();
-
-            });
-            menuController.animationsInProgress.remove(parallelTransition);
-            menuController.animationsInProgress.add(parallelTranslateTransition);
-            parallelTranslateTransition.playFromStart();
-        });
-
-        menuController.animationsInProgress.add(parallelTransition);
-        parallelTransition.playFromStart();
-
-    }
-
     public void addAll(Collection<? extends QueueItem> collection){
 
         cancelDragAndDrop();
@@ -579,7 +501,6 @@ public class QueueBox extends VBox {
 
         // move to bottom if newIndex = -1
 
-        // massive guard clause
         if(this.getChildren().size() < 2 ||
                 oldIndex == newIndex ||
                 oldIndex < 0 ||

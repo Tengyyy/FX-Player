@@ -27,4 +27,6 @@ module hans {
     opens hans.Menu to javafx.fxml, javafx.graphics;
     exports hans.Menu.MetadataEdit;
     opens hans.Menu.MetadataEdit to javafx.fxml, javafx.graphics;
+    exports hans.Captions;
+    opens hans.Captions to javafx.fxml, javafx.graphics;
 }

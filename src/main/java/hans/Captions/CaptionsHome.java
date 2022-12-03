@@ -1,6 +1,8 @@
-package hans.Settings;
+package hans.Captions;
 
 import hans.*;
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.animation.*;
 import javafx.geometry.Insets;
@@ -8,7 +10,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -19,13 +20,13 @@ import javafx.util.Duration;
 
 import java.io.File;
 
-public class CaptionsPane {
+public class CaptionsHome {
 
     CaptionsController captionsController;
 
 
 
-    VBox captionsBox = new VBox();
+    VBox captionsWrapper = new VBox();
 
     HBox captionsTitle = new HBox();
     HBox captionsChooserTab = new HBox();
@@ -54,7 +55,7 @@ public class CaptionsPane {
 
     FileChooser fileChooser;
 
-    public CaptionsPane(CaptionsController captionsController){
+    public CaptionsHome(CaptionsController captionsController){
         this.captionsController = captionsController;
 
         backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
@@ -64,15 +65,15 @@ public class CaptionsPane {
         fileChooser.setTitle("Select subtitles");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Subtitles", "*.srt"));
 
-        captionsBox.setPrefSize(235, 214);
-        captionsBox.setMaxSize(235, 214);
-        captionsBox.setPadding(new Insets(8, 0, 8, 0));
-        captionsBox.setAlignment(Pos.BOTTOM_CENTER);
-        captionsBox.setVisible(false);
-        captionsBox.setMouseTransparent(true);
-        StackPane.setAlignment(captionsBox, Pos.BOTTOM_RIGHT);
+        captionsWrapper.setPrefSize(235, 214);
+        captionsWrapper.setMaxSize(235, 214);
+        captionsWrapper.setPadding(new Insets(8, 0, 8, 0));
+        captionsWrapper.setAlignment(Pos.BOTTOM_CENTER);
+        captionsWrapper.setVisible(false);
+        captionsWrapper.setMouseTransparent(true);
+        StackPane.setAlignment(captionsWrapper, Pos.BOTTOM_RIGHT);
 
-        captionsBox.getChildren().addAll(captionsTitle, captionsChooserTab, currentCaptionsTab, toggleBox);
+        captionsWrapper.getChildren().addAll(captionsTitle, captionsChooserTab, currentCaptionsTab, toggleBox);
 
         captionsTitle.getChildren().addAll(captionsBackPane, captionsTitleLabel, captionsOptionsLabel);
         captionsTitle.setMinSize(235, 40);
@@ -87,7 +88,6 @@ public class CaptionsPane {
         captionsBackPane.setMaxSize(24, 40);
         captionsBackPane.getChildren().add(captionsBackIcon);
         captionsBackPane.setCursor(Cursor.HAND);
-        captionsBackPane.setOnMouseClicked((e) -> closeCaptionsPane());
 
         captionsBackIcon.setMinSize(8, 13);
         captionsBackIcon.setPrefSize(8, 13);
@@ -102,7 +102,6 @@ public class CaptionsPane {
         captionsTitleLabel.setText("Subtitles/CC");
         captionsTitleLabel.setCursor(Cursor.HAND);
         captionsTitleLabel.getStyleClass().add("settingsPaneText");
-        captionsTitleLabel.setOnMouseClicked((e) -> closeCaptionsPane());
 
 
         captionsOptionsLabel.getStyleClass().addAll("settingsPaneText", "settingsPaneSubText");
@@ -187,69 +186,36 @@ public class CaptionsPane {
         captionsToggle.setContentDisposition(ContentDisplay.RIGHT);
         captionsToggle.setOnAction(e -> {
             if(captionsToggle.isSelected()){
-                captionsController.controlBarController.openCaptions();
+                //TODO: add logic
             }
             else {
-                captionsController.controlBarController.closeCaptions();
+                //TODO: add logic
             }
         });
 
-        captionsController.settingsController.settingsPane.getChildren().add(captionsBox);
+        captionsController.captionsPane.getChildren().add(captionsWrapper);
     }
 
-
-    public void closeCaptionsPane(){
-        if(captionsController.settingsController.animating.get()) return;
-
-        captionsController.settingsController.settingsState = SettingsState.HOME_OPEN;
-
-        captionsController.settingsController.settingsHomeController.settingsHome.setVisible(true);
-        captionsController.settingsController.settingsHomeController.settingsHome.setMouseTransparent(false);
-
-        Timeline clipTimeline = new Timeline();
-        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.heightProperty(), captionsController.settingsController.settingsHomeController.settingsHome.getHeight())));
-
-        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsController.settingsController.settingsHomeController.settingsHome);
-        homeTransition.setFromX(-captionsController.settingsController.settingsHomeController.settingsHome.getWidth());
-        homeTransition.setToX(0);
-
-        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsBox);
-        captionsTransition.setFromX(0);
-        captionsTransition.setToX(captionsController.settingsController.settingsHomeController.settingsHome.getWidth());
-
-
-        ParallelTransition parallelTransition = new ParallelTransition(clipTimeline, homeTransition, captionsTransition);
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.setOnFinished((e) -> {
-            captionsController.settingsController.animating.set(false);
-            captionsBox.setVisible(false);
-            captionsBox.setMouseTransparent(true);
-        });
-
-        parallelTransition.play();
-        captionsController.settingsController.animating.set(true);
-
-    }
 
 
     public void openCaptionsOptions(){
-        if(captionsController.settingsController.animating.get()) return;
+        if(captionsController.animating.get()) return;
 
-        captionsController.settingsController.settingsState = SettingsState.CAPTIONS_OPTIONS_OPEN;
+        captionsController.captionsState = CaptionsState.CAPTIONS_OPTIONS_OPEN;
 
         captionsController.captionsOptionsPane.scrollPane.setVisible(true);
         captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(false);
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
 
 
         Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
 
 
 
-        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsBox);
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsWrapper);
         captionsTransition.setFromX(0);
         captionsTransition.setToX(-captionsController.captionsOptionsPane.scrollPane.getWidth());
 
@@ -261,15 +227,15 @@ public class CaptionsPane {
         ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, captionsTransition, captionsOptionsTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
-            captionsController.settingsController.animating.set(false);
-            captionsBox.setVisible(false);
-            captionsBox.setMouseTransparent(true);
-            captionsBox.setTranslateX(0);
-            captionsController.settingsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
+            captionsController.animating.set(false);
+            captionsWrapper.setVisible(false);
+            captionsWrapper.setMouseTransparent(true);
+            captionsWrapper.setTranslateX(0);
+            captionsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
         });
 
         parallelTransition.play();
-        captionsController.settingsController.animating.set(true);
+        captionsController.animating.set(true);
     }
 
 

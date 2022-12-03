@@ -1,8 +1,10 @@
 package hans.Settings;
 
 import hans.*;
+import hans.Captions.CaptionsState;
 import hans.Menu.MenuController;
 import hans.Menu.MenuState;
+import hans.Captions.CaptionsController;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
@@ -27,7 +29,7 @@ public class SettingsController {
     SettingsHomeController settingsHomeController;
     public PlaybackOptionsController playbackOptionsController;
     public PlaybackSpeedController playbackSpeedController;
-    public CaptionsController captionsController;
+    CaptionsController captionsController;
 
     public StackPane settingsBuffer = new StackPane();
     StackPane settingsPane = new StackPane();
@@ -36,12 +38,12 @@ public class SettingsController {
 
     Rectangle clip = new Rectangle();
 
-    BooleanProperty animating = new SimpleBooleanProperty(); // animating state of the settings pane
+    public BooleanProperty animating = new SimpleBooleanProperty(); // animating state of the settings pane
 
 
     public SettingsState settingsState = SettingsState.CLOSED;
 
-    static final int ANIMATION_SPEED = 200;
+    public static final int ANIMATION_SPEED = 200;
 
     public SettingsController(MainController mainController, ControlBarController controlBarController, MenuController menuController){
 
@@ -56,7 +58,7 @@ public class SettingsController {
         settingsBuffer.setClip(clip);
         settingsBuffer.getChildren().add(settingsBackground);
         settingsBuffer.setMouseTransparent(true);
-        settingsBackground.setId("settingsBackground");
+        settingsBackground.getStyleClass().add("settingsBackground");
         settingsBackground.setVisible(false);
         settingsBackground.setMouseTransparent(true);
         settingsBackground.setOpacity(0);
@@ -94,7 +96,8 @@ public class SettingsController {
 
     public void openSettings(){
 
-        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuState != MenuState.CLOSED || captionsController.captionsDragActive) return;
+        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuState != MenuState.CLOSED || captionsController.captionsBox.captionsDragActive || captionsController.animating.get()) return;
+        else if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
 
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 0, 45, false, 1, true);
 
@@ -148,14 +151,14 @@ public class SettingsController {
 
             controlBarController.miniplayer = new ControlTooltip(mainController, "Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
-            if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else controlBarController.captions = new ControlTooltip(mainController,"Subtitles/CC not selected", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             if (App.fullScreen)
                 controlBarController.fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             else
                 controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        } else if (controlBarController.captionsButtonHover) {
+        }
+        else if (controlBarController.captionsButtonHover) {
             if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             else controlBarController.captions = new ControlTooltip(mainController,"Subtitles/CC not selected", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
@@ -176,8 +179,7 @@ public class SettingsController {
                 controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             }
 
-            if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else controlBarController.captions = new ControlTooltip(mainController,"Subtitles/CC not selected", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             controlBarController.miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             controlBarController.miniplayer.showTooltip();
@@ -192,14 +194,13 @@ public class SettingsController {
             }
             controlBarController.fullScreen.showTooltip();
 
-            if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else controlBarController.captions = new ControlTooltip(mainController,"Subtitles/CC not selected", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             controlBarController.miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             controlBarController.settings = new ControlTooltip(mainController,"Settings (s)", controlBarController.settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        } else {
-            if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else controlBarController.captions = new ControlTooltip(mainController,"Subtitles/CC not selected", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        }
+        else {
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             controlBarController.settings = new ControlTooltip(mainController,"Settings (s)", controlBarController.settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
@@ -211,36 +212,13 @@ public class SettingsController {
                 controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
         }
 
-        switch(settingsState){
-            case HOME_OPEN: closeSettingsFromHome();
-            break;
-            case PLAYBACK_SPEED_OPEN: closeSettingsFromPlaybackSpeed();
-            break;
-            case PLAYBACK_OPTIONS_OPEN: closeSettingsFromPlaybackOptions();
-            break;
-            case CUSTOM_SPEED_OPEN: closeSettingsFromCustomSpeed();
-            break;
-            case CAPTIONS_PANE_OPEN: closeSettingsFromCaptions();
-            break;
-            case CAPTIONS_OPTIONS_OPEN: closeSettingsFromCaptionsOptions();
-            break;
-            case FONT_FAMILY_OPEN: closeSettingsFromFontFamily();
-            break;
-            case FONT_COLOR_OPEN: closeSettingsFromFontColor();
-            break;
-            case FONT_SIZE_OPEN: closeSettingsFromFontSize();
-            break;
-            case TEXT_ALIGNMENT_OPEN: closeSettingsFromTextAlignment();
-            break;
-            case BACKGROUND_COLOR_OPEN: closeSettingsFromBackgroundColor();
-            break;
-            case BACKGROUND_OPACITY_OPEN: closeSettingsFromBackgroundOpacity();
-            break;
-            case LINE_SPACING_OPEN: closeSettingsFromLineSpacing();
-            break;
-            case OPACITY_OPEN: closeSettingsFromOpacity();
-            break;
-            default: break;
+        switch (settingsState) {
+            case HOME_OPEN -> closeSettingsFromHome();
+            case PLAYBACK_SPEED_OPEN -> closeSettingsFromPlaybackSpeed();
+            case PLAYBACK_OPTIONS_OPEN -> closeSettingsFromPlaybackOptions();
+            case CUSTOM_SPEED_OPEN -> closeSettingsFromCustomSpeed();
+            default -> {
+            }
         }
 
         settingsState = SettingsState.CLOSED;
@@ -352,285 +330,6 @@ public class SettingsController {
             playbackSpeedController.customSpeedPane.customSpeedBox.setMouseTransparent(true);
             playbackSpeedController.customSpeedPane.customSpeedBox.setOpacity(1);
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromCaptions(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition captionsPaneTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsPane.captionsBox);
-        captionsPaneTransition.setFromValue(1);
-        captionsPaneTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, captionsPaneTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsPane.captionsBox.setVisible(false);
-            captionsController.captionsPane.captionsBox.setMouseTransparent(true);
-            captionsController.captionsPane.captionsBox.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromCaptionsOptions(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition captionsOptionsTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.scrollPane);
-        captionsOptionsTransition.setFromValue(1);
-        captionsOptionsTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, captionsOptionsTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.scrollPane.setVisible(false);
-            captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.scrollPane.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            clip.setWidth(settingsHomeController.settingsHome.getWidth());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromFontFamily(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition fontFamilyTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontFamilyPane.scrollPane);
-        fontFamilyTransition.setFromValue(1);
-        fontFamilyTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, fontFamilyTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setVisible(false);
-            captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontFamilyPane.scrollPane.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            clip.setWidth(settingsHomeController.settingsHome.getWidth());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromFontColor(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition fontColorTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontColorPane.scrollPane);
-        fontColorTransition.setFromValue(1);
-        fontColorTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, fontColorTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontColorPane.scrollPane.setVisible(false);
-            captionsController.captionsOptionsPane.fontColorPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontColorPane.scrollPane.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            clip.setWidth(settingsHomeController.settingsHome.getWidth());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromFontSize(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition fontSizeTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontSizePane.scrollPane);
-        fontSizeTransition.setFromValue(1);
-        fontSizeTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, fontSizeTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontSizePane.scrollPane.setVisible(false);
-            captionsController.captionsOptionsPane.fontSizePane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontSizePane.scrollPane.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            clip.setWidth(settingsHomeController.settingsHome.getWidth());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromTextAlignment(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition textAlignmentTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.textAlignmentPane.scrollPane);
-        textAlignmentTransition.setFromValue(1);
-        textAlignmentTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, textAlignmentTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setVisible(false);
-            captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.textAlignmentPane.scrollPane.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            clip.setWidth(settingsHomeController.settingsHome.getWidth());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromBackgroundColor(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition backgroundColorTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.backgroundColorPane.scrollPane);
-        backgroundColorTransition.setFromValue(1);
-        backgroundColorTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, backgroundColorTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setVisible(false);
-            captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.backgroundColorPane.scrollPane.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            clip.setWidth(settingsHomeController.settingsHome.getWidth());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromBackgroundOpacity(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition backgroundOpacityTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane);
-        backgroundOpacityTransition.setFromValue(1);
-        backgroundOpacityTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, backgroundOpacityTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setVisible(false);
-            captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.backgroundOpacityPane.scrollPane.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            clip.setWidth(settingsHomeController.settingsHome.getWidth());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromLineSpacing(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition lineSpacingTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.lineSpacingPane.scrollPane);
-        lineSpacingTransition.setFromValue(1);
-        lineSpacingTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, lineSpacingTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setVisible(false);
-            captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.lineSpacingPane.scrollPane.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            clip.setWidth(settingsHomeController.settingsHome.getWidth());
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSettingsFromOpacity(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), settingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition opacityTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsController.captionsOptionsPane.fontOpacityPane.scrollPane);
-        opacityTransition.setFromValue(1);
-        opacityTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, opacityTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            settingsBuffer.setMouseTransparent(true);
-            settingsBackground.setVisible(false);
-            settingsBackground.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setVisible(false);
-            captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setMouseTransparent(true);
-            captionsController.captionsOptionsPane.fontOpacityPane.scrollPane.setOpacity(1);
-            clip.setHeight(settingsHomeController.settingsHome.getHeight());
-            clip.setWidth(settingsHomeController.settingsHome.getWidth());
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);

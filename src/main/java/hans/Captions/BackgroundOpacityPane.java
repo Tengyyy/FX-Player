@@ -1,6 +1,9 @@
-package hans.Settings;
+package hans.Captions;
 
 import hans.*;
+import hans.Settings.CheckTab;
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -111,16 +114,16 @@ public class BackgroundOpacityPane {
             _0Tab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundOpacityTab.subText.setText("0%");
 
-            captionsController.currentBackgroundOpacity = 0;
-            captionsController.currentBackground = Color.rgb(captionsController.currentBackgroundRed, captionsController.currentBackgroundGreen, captionsController.currentBackgroundBlue, captionsController.currentBackgroundOpacity);
+            captionsController.captionsBox.currentBackgroundOpacity = 0;
+            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
 
-            captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
-            captionsController.captionsLabel1.setEffect(new DropShadow());
-            captionsController.captionsLabel2.setEffect(new DropShadow());
+            captionsController.captionsBox.captionsLabel1.setEffect(new DropShadow());
+            captionsController.captionsBox.captionsLabel2.setEffect(new DropShadow());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _25Tab.setOnMouseClicked(e -> {
@@ -132,16 +135,16 @@ public class BackgroundOpacityPane {
             _25Tab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundOpacityTab.subText.setText("25%");
 
-            captionsController.currentBackgroundOpacity = 0.25;
-            captionsController.currentBackground = Color.rgb(captionsController.currentBackgroundRed, captionsController.currentBackgroundGreen, captionsController.currentBackgroundBlue, captionsController.currentBackgroundOpacity);
+            captionsController.captionsBox.currentBackgroundOpacity = 0.25;
+            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
 
-            captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
-            captionsController.captionsLabel1.setEffect(null);
-            captionsController.captionsLabel2.setEffect(null);
+            captionsController.captionsBox.captionsLabel1.setEffect(null);
+            captionsController.captionsBox.captionsLabel2.setEffect(null);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
 
         });
 
@@ -154,16 +157,16 @@ public class BackgroundOpacityPane {
             _50Tab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundOpacityTab.subText.setText("50%");
 
-            captionsController.currentBackgroundOpacity = 0.5;
-            captionsController.currentBackground = Color.rgb(captionsController.currentBackgroundRed, captionsController.currentBackgroundGreen, captionsController.currentBackgroundBlue, captionsController.currentBackgroundOpacity);
+            captionsController.captionsBox.currentBackgroundOpacity = 0.5;
+            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
 
-            captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
-            captionsController.captionsLabel1.setEffect(null);
-            captionsController.captionsLabel2.setEffect(null);
+            captionsController.captionsBox.captionsLabel1.setEffect(null);
+            captionsController.captionsBox.captionsLabel2.setEffect(null);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
 
         });
 
@@ -176,16 +179,16 @@ public class BackgroundOpacityPane {
             _75Tab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundOpacityTab.subText.setText("75%");
 
-            captionsController.currentBackgroundOpacity = 0.75;
-            captionsController.currentBackground = Color.rgb(captionsController.currentBackgroundRed, captionsController.currentBackgroundGreen, captionsController.currentBackgroundBlue, captionsController.currentBackgroundOpacity);
+            captionsController.captionsBox.currentBackgroundOpacity = 0.75;
+            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
 
-            captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
-            captionsController.captionsLabel1.setEffect(null);
-            captionsController.captionsLabel2.setEffect(null);
+            captionsController.captionsBox.captionsLabel1.setEffect(null);
+            captionsController.captionsBox.captionsLabel2.setEffect(null);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _100Tab.setOnMouseClicked(e -> {
@@ -197,38 +200,38 @@ public class BackgroundOpacityPane {
             _100Tab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundOpacityTab.subText.setText("100%");
 
-            captionsController.currentBackgroundOpacity = 1;
-            captionsController.currentBackground = Color.rgb(captionsController.currentBackgroundRed, captionsController.currentBackgroundGreen, captionsController.currentBackgroundBlue, captionsController.currentBackgroundOpacity);
+            captionsController.captionsBox.currentBackgroundOpacity = 1;
+            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
 
-            captionsController.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
-            captionsController.captionsLabel1.setEffect(null);
-            captionsController.captionsLabel2.setEffect(null);
+            captionsController.captionsBox.captionsLabel1.setEffect(null);
+            captionsController.captionsBox.captionsLabel2.setEffect(null);
 
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
-        captionsController.settingsController.settingsBuffer.getChildren().add(scrollPane);
+        captionsController.captionsPane.getChildren().add(scrollPane);
     }
 
 
     public void closeBackgroundOpacityPane(){
-        if(captionsController.settingsController.animating.get()) return;
+        if(captionsController.animating.get()) return;
 
-        captionsController.settingsController.settingsState = SettingsState.CAPTIONS_OPTIONS_OPEN;
+        captionsController.captionsState = CaptionsState.CAPTIONS_OPTIONS_OPEN;
 
         captionsController.captionsOptionsPane.scrollPane.setVisible(true);
         captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(false);
 
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
 
 
         Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
 
 
 
@@ -244,15 +247,15 @@ public class BackgroundOpacityPane {
         ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, fontColorTransition, captionsOptionsTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
-            captionsController.settingsController.animating.set(false);
+            captionsController.animating.set(false);
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
-            captionsController.settingsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
+            captionsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
         });
 
         parallelTransition.play();
-        captionsController.settingsController.animating.set(true);
+        captionsController.animating.set(true);
     }
 }
 

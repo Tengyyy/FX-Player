@@ -1,6 +1,9 @@
-package hans.Settings;
+package hans.Captions;
 
 import hans.*;
+import hans.Settings.CheckTab;
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -117,12 +120,12 @@ public class FontSizePane {
             _50Tab.checkIcon.setVisible(true);
             captionsOptionsPane.fontSizeTab.subText.setText("50%");
 
-            captionsController.currentFontSize = (int) (captionsController.defaultFontSize * 0.75);
+            captionsController.captionsBox.currentFontSize = (int) (captionsController.captionsBox.defaultFontSize * 0.75);
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _75Tab.setOnMouseClicked(e -> {
@@ -134,12 +137,12 @@ public class FontSizePane {
             _75Tab.checkIcon.setVisible(true);
             captionsOptionsPane.fontSizeTab.subText.setText("75%");
 
-            captionsController.currentFontSize = (int) (captionsController.defaultFontSize * 0.875);
+            captionsController.captionsBox.currentFontSize = (int) (captionsController.captionsBox.defaultFontSize * 0.875);
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _100Tab.setOnMouseClicked(e -> {
@@ -152,12 +155,12 @@ public class FontSizePane {
             captionsOptionsPane.fontSizeTab.subText.setText("100%");
 
 
-            captionsController.currentFontSize = (int) (captionsController.defaultFontSize * 1);
+            captionsController.captionsBox.currentFontSize = captionsController.captionsBox.defaultFontSize;
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _150Tab.setOnMouseClicked(e -> {
@@ -170,12 +173,12 @@ public class FontSizePane {
             captionsOptionsPane.fontSizeTab.subText.setText("150%");
 
 
-            captionsController.currentFontSize = (int) (captionsController.defaultFontSize * 1.25);
+            captionsController.captionsBox.currentFontSize = (int) (captionsController.captionsBox.defaultFontSize * 1.25);
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _200Tab.setOnMouseClicked(e -> {
@@ -188,12 +191,12 @@ public class FontSizePane {
             captionsOptionsPane.fontSizeTab.subText.setText("200%");
 
 
-            captionsController.currentFontSize = (int) (captionsController.defaultFontSize * 1.5);
+            captionsController.captionsBox.currentFontSize = (int) (captionsController.captionsBox.defaultFontSize * 1.5);
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _300Tab.setOnMouseClicked(e -> {
@@ -206,12 +209,12 @@ public class FontSizePane {
             captionsOptionsPane.fontSizeTab.subText.setText("300%");
 
 
-            captionsController.currentFontSize = (int) (captionsController.defaultFontSize * 2);
+            captionsController.captionsBox.currentFontSize = (int) (captionsController.captionsBox.defaultFontSize * 2);
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _400Tab.setOnMouseClicked(e -> {
@@ -224,34 +227,34 @@ public class FontSizePane {
             captionsOptionsPane.fontSizeTab.subText.setText("400%");
 
 
-            captionsController.currentFontSize = (int) (captionsController.defaultFontSize * 2.25);
+            captionsController.captionsBox.currentFontSize = (int) (captionsController.captionsBox.defaultFontSize * 2.25);
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
 
-        captionsController.settingsController.settingsBuffer.getChildren().add(scrollPane);
+        captionsController.captionsPane.getChildren().add(scrollPane);
     }
 
 
     public void closeFontSizePane(){
-        if(captionsController.settingsController.animating.get()) return;
+        if(captionsController.animating.get()) return;
 
-        captionsController.settingsController.settingsState = SettingsState.CAPTIONS_OPTIONS_OPEN;
+        captionsController.captionsState = CaptionsState.CAPTIONS_OPTIONS_OPEN;
 
         captionsController.captionsOptionsPane.scrollPane.setVisible(true);
         captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(false);
 
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
 
 
         Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
 
 
 
@@ -267,15 +270,15 @@ public class FontSizePane {
         ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, fontColorTransition, captionsOptionsTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
-            captionsController.settingsController.animating.set(false);
+            captionsController.animating.set(false);
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
-            captionsController.settingsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
+            captionsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
         });
 
         parallelTransition.play();
-        captionsController.settingsController.animating.set(true);
+        captionsController.animating.set(true);
     }
 }
 

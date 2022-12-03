@@ -1,9 +1,7 @@
-package hans.Settings;
+package hans.Captions;
 
 import hans.App;
-import hans.CaptionsController;
 import hans.SVG;
-import hans.Settings.CaptionsOptionsPane;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

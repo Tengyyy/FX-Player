@@ -3,9 +3,9 @@ package hans.Menu;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
-import hans.MediaItems.*;
 import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.Settings.SettingsController;
+import hans.Captions.CaptionsController;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
@@ -146,9 +146,9 @@ public class MenuController implements Initializable {
     // the lower bound of the bottom drag detection area
     DoubleProperty lowerBottomBound = new SimpleDoubleProperty();
 
-    private Timeline scrollTimeline = new Timeline();
+    private final Timeline scrollTimeline = new Timeline();
     private double scrollVelocity = 0;
-    private int scrollSpeed = 4;
+    private final int scrollSpeed = 4;
 
 
     @Override
@@ -670,7 +670,7 @@ public class MenuController implements Initializable {
         AnimationsClass.closeMenu(this, mainController);
         controlBarController.mouseEventTracker.move();
 
-        captionsController.captionsBox.setMouseTransparent(false);
+        captionsController.captionsBox.captionsContainer.setMouseTransparent(false);
 
     }
 
@@ -811,8 +811,7 @@ public class MenuController implements Initializable {
     private ScrollBar getVerticalScrollbar() {
         ScrollBar result = null;
         for (Node n : queueScroll.lookupAll(".scroll-bar")) {
-            if (n instanceof ScrollBar) {
-                ScrollBar bar = (ScrollBar) n;
+            if (n instanceof ScrollBar bar) {
                 if (bar.getOrientation().equals(Orientation.VERTICAL)) {
                     result = bar;
                 }

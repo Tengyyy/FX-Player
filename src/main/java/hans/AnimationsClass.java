@@ -1,6 +1,7 @@
 package hans;
 
 import hans.Menu.MenuController;
+import hans.Captions.CaptionsController;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -72,18 +73,18 @@ public class AnimationsClass {
 
         controlBarController.controlBarOpen = true;
 
-        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox);
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox.captionsContainer);
         captionsTransition.setCycleCount(1);
-        captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
+        captionsTransition.setFromY(captionsController.captionsBox.captionsContainer.getTranslateY());
 
-        if((captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT) && !captionsController.mainController.miniplayerActive){
+        if((captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT) && !mainController.miniplayerActive){
             captionsTransition.setToY(-90);
         }
-        else if((captionsController.captionsLocation == Pos.TOP_CENTER || captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.TOP_RIGHT) && !captionsController.mainController.miniplayerActive){
+        else if((captionsController.captionsBox.captionsLocation == Pos.TOP_CENTER || captionsController.captionsBox.captionsLocation == Pos.TOP_LEFT || captionsController.captionsBox.captionsLocation == Pos.TOP_RIGHT) && !mainController.miniplayerActive){
             captionsTransition.setToY(70);
         }
         else {
-            captionsTransition.setToY(captionsController.captionsBox.getTranslateY());
+            captionsTransition.setToY(captionsController.captionsBox.captionsContainer.getTranslateY());
         }
         FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarWrapper);
         controlBarFade.setFromValue(controlBarController.controlBarWrapper.getOpacity());
@@ -117,26 +118,26 @@ public class AnimationsClass {
 
     public static void hideControls(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
 
-        if(captionsController.captionsTransition != null && captionsController.captionsTransition.getStatus() == Animation.Status.RUNNING) captionsController.captionsTransition.stop();
+        if(captionsController.captionsBox.captionsTransition != null && captionsController.captionsBox.captionsTransition.getStatus() == Animation.Status.RUNNING) captionsController.captionsBox.captionsTransition.stop();
 
-        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox);
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox.captionsContainer);
         captionsTransition.setCycleCount(1);
-        captionsTransition.setFromY(captionsController.captionsBox.getTranslateY());
+        captionsTransition.setFromY(captionsController.captionsBox.captionsContainer.getTranslateY());
 
-        if((captionsController.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT) && !captionsController.mainController.miniplayerActive){
+        if((captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT) && !mainController.miniplayerActive){
             captionsTransition.setToY(-30);
         }
-        else if((captionsController.captionsLocation == Pos.TOP_CENTER || captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.TOP_RIGHT) && !captionsController.mainController.miniplayerActive){
+        else if((captionsController.captionsBox.captionsLocation == Pos.TOP_CENTER || captionsController.captionsBox.captionsLocation == Pos.TOP_LEFT || captionsController.captionsBox.captionsLocation == Pos.TOP_RIGHT) && !mainController.miniplayerActive){
             captionsTransition.setToY(30);
         }
         else {
             captionsTransition.setToY(0);
         }
 
-        if(captionsController.captionsLocation == Pos.CENTER_LEFT || captionsController.captionsLocation == Pos.TOP_LEFT || captionsController.captionsLocation == Pos.BOTTOM_LEFT){
+        if(captionsController.captionsBox.captionsLocation == Pos.CENTER_LEFT || captionsController.captionsBox.captionsLocation == Pos.TOP_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT){
             captionsTransition.setToX(70);
         }
-        else if(captionsController.captionsLocation == Pos.TOP_RIGHT || captionsController.captionsLocation == Pos.CENTER_RIGHT || captionsController.captionsLocation == Pos.BOTTOM_RIGHT){
+        else if(captionsController.captionsBox.captionsLocation == Pos.TOP_RIGHT || captionsController.captionsBox.captionsLocation == Pos.CENTER_RIGHT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
             captionsTransition.setToX(-30);
         }
         else {
@@ -170,8 +171,8 @@ public class AnimationsClass {
             controlBarController.mouseEventTracker.mouseMoving.set(false);
             mainController.videoTitleBox.setVisible(false);
             mainController.videoTitleBackground.setVisible(false);
-            captionsController.captionsAnimating = false;
-            captionsController.captionsBox.setStyle("-fx-background-color: transparent;");
+            captionsController.captionsBox.captionsAnimating = false;
+            captionsController.captionsBox.captionsContainer.setStyle("-fx-background-color: transparent;");
         });
         parallelTransition.play();
 

@@ -4,6 +4,7 @@ package hans;
 import hans.Menu.ExpandableTextArea;
 import hans.Menu.MenuController;
 import hans.Settings.SettingsController;
+import hans.Captions.CaptionsController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +12,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -85,6 +85,7 @@ public class App extends Application {
             svgMap.put(DOUBLE_RIGHT, "M13,6V18L21.5,12M4,18L12.5,12L4,6V18Z");
             svgMap.put(DOUBLE_LEFT, "M11.5,12L20,18V6M11,18V6L2.5,12L11,18Z");
             svgMap.put(TUNE, "M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z");
+            svgMap.put(TUNE_VERTICAL, "M8 12.14V2H6V12.14C4.28 12.59 3 14.14 3 16S4.28 19.41 6 19.86V22H8V19.86C9.72 19.41 11 17.86 11 16S9.72 12.59 8 12.14M7 14C8.1 14 9 14.9 9 16S8.1 18 7 18C5.9 18 5 17.1 5 16S5.9 14 7 14M18 2H16V4.14C14.28 4.59 13 6.14 13 8S14.28 11.41 16 11.86V22H18V11.86C19.72 11.41 21 9.86 21 8S19.72 4.59 18 4.14V2M17 6C18.1 6 19 6.9 19 8S18.1 10 17 10C15.9 10 15 9.1 15 8S15.9 6 17 6Z");
             svgMap.put(FORWARD, "M13,6V18L21.5,12M4,18L12.5,12L4,6V18Z");
             svgMap.put(REWIND, "M11.5,12L20,18V6M11,18V6L2.5,12L11,18Z");
             svgMap.put(MINIPLAYER, "M19,11H11V17H19V11M23,19V5C23,3.88 22.1,3 21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19M21,19H3V4.97H21V19Z");
@@ -194,13 +195,13 @@ public class App extends Application {
             });
 
             primaryStage.setScene(scene);
-            primaryStage.setTitle("MP4 Player");
-            primaryStage.getIcons().add(new Image(getClass().getResource("images/appIcon.png").toExternalForm()));
+            primaryStage.setTitle("FXPlayer");
+            primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("images/appIcon.png")).toExternalForm()));
             primaryStage.show();
 
             if(System.getProperty("os.name").toLowerCase().contains("windows")){
                 isWindows = true;
-                // program is being run on a windows operating system so we can take advantage of windows features
+                // program is being run on a windows operating system, so we can take advantage of windows features
 
                 mainController.addTaskBarButtons(primaryStage);
             }

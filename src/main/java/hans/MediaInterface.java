@@ -2,6 +2,7 @@ package hans;
 
 
 import com.sun.jna.NativeLibrary;
+import hans.Captions.CaptionsController;
 import hans.MediaItems.MediaItem;
 import hans.Menu.HistoryItem;
 import hans.Menu.MenuController;
@@ -43,6 +44,7 @@ public class MediaInterface {
     ControlBarController controlBarController;
     SettingsController settingsController;
     MenuController menuController;
+    CaptionsController captionsController;
 
     public MediaPlayerFactory mediaPlayerFactory;
 
@@ -66,12 +68,12 @@ public class MediaInterface {
     FrameGrabberTask frameGrabberTask;
 
 
-    MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController) {
+    MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController, CaptionsController captionsController) {
         this.mainController = mainController;
         this.controlBarController = controlBarController;
         this.settingsController = settingsController;
         this.menuController = menuController;
-
+        this.captionsController = captionsController;
 
         mediaActive.addListener((observableValue, oldValue, newValue) -> {
             controlBarController.durationPane.setMouseTransparent(!newValue);
@@ -228,14 +230,14 @@ public class MediaInterface {
         }
 
 
-        if(mediaItem.getSubtitles() != null){
-            settingsController.captionsController.loadCaptions(mediaItem.getSubtitles(), mediaItem.getSubtitlesOn());
+        /*if(mediaItem.getSubtitles() != null){
+            captionsController.loadCaptions(mediaItem.getSubtitles(), mediaItem.getSubtitlesOn());
         }
-        else if(settingsController.captionsController.captionsSelected){
-            mediaItem.setSubtitles(settingsController.captionsController.captionsFile);
+        else if(captionsController.captionsSelected){
+            mediaItem.setSubtitles(captionsController.captionsFile);
             if(menuController.captionsController.captionsOn.get()) mediaItem.setSubtitlesOn(true);
             if(menuController.activeItem != null && !menuController.activeItem.subTextWrapper.getChildren().contains(menuController.activeItem.captionsPane)) menuController.activeItem.subTextWrapper.getChildren().add(0, menuController.activeItem.captionsPane);
-        }
+        }*/
 
         mainController.videoTitleLabel.setText(menuObject.getTitle());
 
@@ -261,7 +263,7 @@ public class MediaInterface {
         //TODO: parse mediaitem log and then extract subtitles to temporary srt files inside FXPlayer/temp folder
         // preferrably do this in a separate thread/task
 
-        settingsController.captionsController.extractCaptions(menuObject);
+        captionsController.extractCaptions(menuObject);
 
 
         embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());
@@ -303,7 +305,7 @@ public class MediaInterface {
             controlBarController.disableNextVideoButton();
         }
 
-        settingsController.captionsController.resetCaptions();
+        captionsController.resetCaptions();
 
         try {
             fFmpegFrameGrabber.close();
@@ -384,7 +386,7 @@ public class MediaInterface {
         // add logic to update all the play icons
         controlBarController.end();
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.end();
-        if(menuController.activeItem != null)menuController.activeItem.updateIconToPlay();
+        if(menuController.activeItem != null) menuController.activeItem.updateIconToPlay();
 
         playing.set(false);
 

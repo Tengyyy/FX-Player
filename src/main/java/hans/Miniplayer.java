@@ -65,59 +65,33 @@ public class Miniplayer {
         stage.setX(Math.max(0, Screen.getPrimary().getBounds().getMaxX() - 700));
 
         stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            switch(event.getCode()){
-                case RIGHT: miniplayerController.pressRIGHT(event);
-                break;
-                case LEFT: miniplayerController.pressLEFT(event);
-                break;
-                case UP: mainController.pressUP(event);
-                break;
-                case DOWN: mainController.pressDOWN(event);
-                break;
-                case J: mainController.pressJ();
-                break;
-                case K: mainController.pressK();
-                break;
-                case L: mainController.pressL(event);
-                break;
-                case P: mainController.pressP(event);
-                break;
-                case N: mainController.pressN(event);
-                break;
-                case COMMA: mainController.pressCOMMA(event);
-                break;
-                case PERIOD: mainController.pressPERIOD(event);
-                break;
-                case C: mainController.pressC();
-                break;
-                case M: mainController.pressM();
-                break;
-                case I: mainController.pressI();
-                break;
-                case SPACE: mainController.pressSPACE(event);
-                break;
-                case DIGIT1: mainController.press1();
-                break;
-                case DIGIT2: mainController.press2();
-                break;
-                case DIGIT3: mainController.press3();
-                break;
-                case DIGIT4: mainController.press4();
-                break;
-                case DIGIT5: mainController.press5();
-                break;
-                case DIGIT6: mainController.press6();
-                break;
-                case DIGIT7: mainController.press7();
-                break;
-                case DIGIT8: mainController.press8();
-                break;
-                case DIGIT9: mainController.press9();
-                break;
-                case DIGIT0:
-                case HOME: mainController.press0();
-                break;
-                case END: mainController.pressEND();
+            switch (event.getCode()) {
+                case RIGHT -> miniplayerController.pressRIGHT(event);
+                case LEFT -> miniplayerController.pressLEFT(event);
+                case UP -> mainController.pressUP(event);
+                case DOWN -> mainController.pressDOWN(event);
+                case J -> mainController.pressJ();
+                case K -> mainController.pressK();
+                case L -> mainController.pressL(event);
+                case P -> mainController.pressP(event);
+                case N -> mainController.pressN(event);
+                case COMMA -> mainController.pressCOMMA(event);
+                case PERIOD -> mainController.pressPERIOD(event);
+                case C -> mainController.pressC();
+                case M -> mainController.pressM();
+                case I -> mainController.pressI();
+                case SPACE -> mainController.pressSPACE(event);
+                case DIGIT1 -> mainController.press1();
+                case DIGIT2 -> mainController.press2();
+                case DIGIT3 -> mainController.press3();
+                case DIGIT4 -> mainController.press4();
+                case DIGIT5 -> mainController.press5();
+                case DIGIT6 -> mainController.press6();
+                case DIGIT7 -> mainController.press7();
+                case DIGIT8 -> mainController.press8();
+                case DIGIT9 -> mainController.press9();
+                case DIGIT0, HOME -> mainController.press0();
+                case END -> mainController.pressEND();
             }
         });
 

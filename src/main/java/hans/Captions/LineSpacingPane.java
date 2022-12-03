@@ -1,6 +1,9 @@
-package hans.Settings;
+package hans.Captions;
 
 import hans.*;
+import hans.Settings.CheckTab;
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -116,10 +119,10 @@ public class LineSpacingPane {
             _0Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("0%");
 
-            captionsController.currentSpacing = 0;
-            captionsController.captionsBox.setSpacing(captionsController.currentSpacing);
+            captionsController.captionsBox.currentSpacing = 0;
+            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _50Tab.setOnMouseClicked(e -> {
@@ -131,10 +134,10 @@ public class LineSpacingPane {
             _50Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("50%");
 
-            captionsController.currentSpacing = (int) (captionsController.defaultSpacing * 0.5);
-            captionsController.captionsBox.setSpacing(captionsController.currentSpacing);
+            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 0.5);
+            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _75Tab.setOnMouseClicked(e -> {
@@ -146,10 +149,10 @@ public class LineSpacingPane {
             _75Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("75%");
 
-            captionsController.currentSpacing = (int) (captionsController.defaultSpacing * 0.75);
-            captionsController.captionsBox.setSpacing(captionsController.currentSpacing);
+            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 0.75);
+            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _100Tab.setOnMouseClicked(e -> {
@@ -161,10 +164,10 @@ public class LineSpacingPane {
             _100Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("100%");
 
-            captionsController.currentSpacing = captionsController.defaultSpacing;
-            captionsController.captionsBox.setSpacing(captionsController.currentSpacing);
+            captionsController.captionsBox.currentSpacing = captionsController.captionsBox.defaultSpacing;
+            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _125Tab.setOnMouseClicked(e -> {
@@ -176,10 +179,10 @@ public class LineSpacingPane {
             _125Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("125%");
 
-            captionsController.currentSpacing = (int) (captionsController.defaultSpacing * 1.25);
-            captionsController.captionsBox.setSpacing(captionsController.currentSpacing);
+            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 1.25);
+            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _150Tab.setOnMouseClicked(e -> {
@@ -191,10 +194,10 @@ public class LineSpacingPane {
             _150Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("150%");
 
-            captionsController.currentSpacing = (int) (captionsController.defaultSpacing * 1.5);
-            captionsController.captionsBox.setSpacing(captionsController.currentSpacing);
+            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 1.5);
+            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         _200Tab.setOnMouseClicked(e -> {
@@ -206,31 +209,31 @@ public class LineSpacingPane {
             _200Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("200%");
 
-            captionsController.currentSpacing = (int) (captionsController.defaultSpacing * 2.0);
-            captionsController.captionsBox.setSpacing(captionsController.currentSpacing);
+            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 2.0);
+            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
-        captionsController.settingsController.settingsBuffer.getChildren().add(scrollPane);
+        captionsController.captionsPane.getChildren().add(scrollPane);
     }
 
 
     public void closeLineSpacingPane(){
-        if(captionsController.settingsController.animating.get()) return;
+        if(captionsController.animating.get()) return;
 
-        captionsController.settingsController.settingsState = SettingsState.CAPTIONS_OPTIONS_OPEN;
+        captionsController.captionsState = CaptionsState.CAPTIONS_OPTIONS_OPEN;
 
         captionsController.captionsOptionsPane.scrollPane.setVisible(true);
         captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(false);
 
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
 
 
         Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
 
 
 
@@ -246,15 +249,15 @@ public class LineSpacingPane {
         ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, fontColorTransition, captionsOptionsTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
-            captionsController.settingsController.animating.set(false);
+            captionsController.animating.set(false);
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
-            captionsController.settingsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
+            captionsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
         });
 
         parallelTransition.play();
-        captionsController.settingsController.animating.set(true);
+        captionsController.animating.set(true);
     }
 }
 

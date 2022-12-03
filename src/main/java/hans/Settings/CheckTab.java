@@ -14,13 +14,13 @@ import javafx.scene.text.Font;
 public class CheckTab extends HBox {
 
     StackPane checkIconPane = new StackPane();
-    Region checkIcon = new Region();
+    public Region checkIcon = new Region();
     SVGPath checkSVG = new SVGPath();
 
     Label valueLabel = new Label();
 
 
-    CheckTab(boolean selected, String value){
+    public CheckTab(boolean selected, String value){
 
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
 

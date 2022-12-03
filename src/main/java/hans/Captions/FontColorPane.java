@@ -1,6 +1,9 @@
-package hans.Settings;
+package hans.Captions;
 
 import hans.*;
+import hans.Settings.CheckTab;
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -120,11 +123,11 @@ public class FontColorPane {
             whiteTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("White");
 
-            captionsController.currentTextFill = Color.WHITE;
-            captionsController.captionsLabel1.setTextFill(captionsController.currentTextFill);
-            captionsController.captionsLabel2.setTextFill(captionsController.currentTextFill);
+            captionsController.captionsBox.currentTextFill = Color.WHITE;
+            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         yellowTab.setOnMouseClicked(e -> {
@@ -136,12 +139,12 @@ public class FontColorPane {
             yellowTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Yellow");
 
-            captionsController.currentTextFill = Color.YELLOW;
+            captionsController.captionsBox.currentTextFill = Color.YELLOW;
 
-            captionsController.captionsLabel1.setTextFill(captionsController.currentTextFill);
-            captionsController.captionsLabel2.setTextFill(captionsController.currentTextFill);
+            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         greenTab.setOnMouseClicked(e -> {
@@ -153,12 +156,12 @@ public class FontColorPane {
             greenTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Green");
 
-            captionsController.currentTextFill = Color.LIME;
+            captionsController.captionsBox.currentTextFill = Color.LIME;
 
-            captionsController.captionsLabel1.setTextFill(captionsController.currentTextFill);
-            captionsController.captionsLabel2.setTextFill(captionsController.currentTextFill);
+            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         cyanTab.setOnMouseClicked(e -> {
@@ -170,12 +173,12 @@ public class FontColorPane {
             cyanTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Cyan");
 
-            captionsController.currentTextFill = Color.CYAN;
+            captionsController.captionsBox.currentTextFill = Color.CYAN;
 
-            captionsController.captionsLabel1.setTextFill(captionsController.currentTextFill);
-            captionsController.captionsLabel2.setTextFill(captionsController.currentTextFill);
+            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         blueTab.setOnMouseClicked(e -> {
@@ -187,12 +190,12 @@ public class FontColorPane {
             blueTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Blue");
 
-            captionsController.currentTextFill = Color.BLUE;
+            captionsController.captionsBox.currentTextFill = Color.BLUE;
 
-            captionsController.captionsLabel1.setTextFill(captionsController.currentTextFill);
-            captionsController.captionsLabel2.setTextFill(captionsController.currentTextFill);
+            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         magentaTab.setOnMouseClicked(e -> {
@@ -204,12 +207,12 @@ public class FontColorPane {
             magentaTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Magenta");
 
-            captionsController.currentTextFill = Color.MAGENTA;
+            captionsController.captionsBox.currentTextFill = Color.MAGENTA;
 
-            captionsController.captionsLabel1.setTextFill(captionsController.currentTextFill);
-            captionsController.captionsLabel2.setTextFill(captionsController.currentTextFill);
+            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         redTab.setOnMouseClicked(e -> {
@@ -221,12 +224,12 @@ public class FontColorPane {
             redTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Red");
 
-            captionsController.currentTextFill = Color.RED;
+            captionsController.captionsBox.currentTextFill = Color.RED;
 
-            captionsController.captionsLabel1.setTextFill(captionsController.currentTextFill);
-            captionsController.captionsLabel2.setTextFill(captionsController.currentTextFill);
+            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         blackTab.setOnMouseClicked(e -> {
@@ -238,32 +241,32 @@ public class FontColorPane {
             blackTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Black");
 
-            captionsController.currentTextFill = Color.BLACK;
-            captionsController.captionsLabel1.setTextFill(captionsController.currentTextFill);
-            captionsController.captionsLabel2.setTextFill(captionsController.currentTextFill);
+            captionsController.captionsBox.currentTextFill = Color.BLACK;
+            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
-        captionsController.settingsController.settingsBuffer.getChildren().add(scrollPane);
+        captionsController.captionsPane.getChildren().add(scrollPane);
     }
 
 
     public void closeFontColorPane(){
-        if(captionsController.settingsController.animating.get()) return;
+        if(captionsController.animating.get()) return;
 
-        captionsController.settingsController.settingsState = SettingsState.CAPTIONS_OPTIONS_OPEN;
+        captionsController.captionsState = CaptionsState.CAPTIONS_OPTIONS_OPEN;
 
         captionsController.captionsOptionsPane.scrollPane.setVisible(true);
         captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(false);
 
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
 
 
         Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
 
 
 
@@ -279,14 +282,14 @@ public class FontColorPane {
         ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, fontColorTransition, captionsOptionsTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
-            captionsController.settingsController.animating.set(false);
+            captionsController.animating.set(false);
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
-            captionsController.settingsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
+            captionsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
         });
 
         parallelTransition.play();
-        captionsController.settingsController.animating.set(true);
+        captionsController.animating.set(true);
     }
 }

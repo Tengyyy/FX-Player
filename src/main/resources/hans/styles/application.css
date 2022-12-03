@@ -289,7 +289,7 @@
     -fx-border-insets: 0 0 -1 0;
 }
 
-#settingsBackground {
+.settingsBackground {
     -fx-background-color: rgba(30,30,30,0.8);
     -fx-background-radius: 2;
 }

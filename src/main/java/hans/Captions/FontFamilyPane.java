@@ -1,6 +1,9 @@
-package hans.Settings;
+package hans.Captions;
 
 import hans.*;
+import hans.Settings.CheckTab;
+import hans.Settings.SettingsController;
+import hans.Settings.SettingsState;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -116,12 +119,12 @@ public class FontFamilyPane {
             sansSerifRegularTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Sans-Serif Regular");
 
-            captionsController.currentFontFamily = "\"Roboto\"";
+            captionsController.captionsBox.currentFontFamily = "\"Roboto\"";
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         sansSerifMediumTab.setOnMouseClicked(e -> {
@@ -133,12 +136,12 @@ public class FontFamilyPane {
             sansSerifMediumTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Sans-Serif Medium");
 
-            captionsController.currentFontFamily = "\"Roboto Medium\"";
+            captionsController.captionsBox.currentFontFamily = "\"Roboto Medium\"";
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         sansSerifBoldTab.setOnMouseClicked(e -> {
@@ -150,12 +153,12 @@ public class FontFamilyPane {
             sansSerifBoldTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Sans-Serif Bold");
 
-            captionsController.currentFontFamily = "\"Roboto Bold\"";
+            captionsController.captionsBox.currentFontFamily = "\"Roboto Bold\"";
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         serifTab.setOnMouseClicked(e -> {
@@ -167,12 +170,12 @@ public class FontFamilyPane {
             serifTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Serif");
 
-            captionsController.currentFontFamily = "\"EB Garamond Medium\"";
+            captionsController.captionsBox.currentFontFamily = "\"EB Garamond Medium\"";
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
 
@@ -185,12 +188,12 @@ public class FontFamilyPane {
             casualTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Casual");
 
-            captionsController.currentFontFamily = "\"Comic Neue Bold\"";
+            captionsController.captionsBox.currentFontFamily = "\"Comic Neue Bold\"";
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
 
@@ -203,12 +206,12 @@ public class FontFamilyPane {
             cursiveTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Cursive");
 
-            captionsController.currentFontFamily = "\"Kalam Bold\"";
+            captionsController.captionsBox.currentFontFamily = "\"Kalam Bold\"";
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         smallCapitalsTab.setOnMouseClicked(e -> {
@@ -220,34 +223,34 @@ public class FontFamilyPane {
             smallCapitalsTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Small Capitals");
 
-            captionsController.currentFontFamily = "\"Alegreya Sans SC Medium\"";
+            captionsController.captionsBox.currentFontFamily = "\"Alegreya Sans SC Medium\"";
 
-            captionsController.captionsLabel1.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
-            captionsController.captionsLabel2.setStyle("-fx-font-family: " + captionsController.currentFontFamily + "; -fx-font-size: " + captionsController.mediaWidthMultiplier.multiply(captionsController.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
 
-        captionsController.settingsController.settingsBuffer.getChildren().add(scrollPane);
+        captionsController.captionsPane.getChildren().add(scrollPane);
     }
 
 
     public void closeFontFamilyPane(){
-        if(captionsController.settingsController.animating.get()) return;
+        if(captionsController.animating.get()) return;
 
-        captionsController.settingsController.settingsState = SettingsState.CAPTIONS_OPTIONS_OPEN;
+        captionsController.captionsState = CaptionsState.CAPTIONS_OPTIONS_OPEN;
 
         captionsController.captionsOptionsPane.scrollPane.setVisible(true);
         captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(false);
 
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
 
 
         Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
 
 
 
@@ -263,14 +266,14 @@ public class FontFamilyPane {
         ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, fontFamilyTransition, captionsOptionsTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
-            captionsController.settingsController.animating.set(false);
+            captionsController.animating.set(false);
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
-            captionsController.settingsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
+            captionsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
         });
 
         parallelTransition.play();
-        captionsController.settingsController.animating.set(true);
+        captionsController.animating.set(true);
     }
 }

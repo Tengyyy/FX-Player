@@ -26,9 +26,9 @@ public class SettingsHomeController {
     SVGPath repeatOnceSVG = new SVGPath();
     SVGPath magnifySVG = new SVGPath();
     SVGPath speedSVG = new SVGPath();
-    SVGPath captionsSVG = new SVGPath();
+    SVGPath equalizerSVG = new SVGPath();
 
-    SettingsHomeTab playbackOptionsTab, playbackSpeedTab, captionsTab, videoSelectionTab;
+    SettingsHomeTab playbackOptionsTab, playbackSpeedTab, equalizerTab, videoSelectionTab;
 
 
     FileChooser fileChooser;
@@ -45,7 +45,7 @@ public class SettingsHomeController {
         repeatOnceSVG.setContent(App.svgMap.get(SVG.REPEAT_ONCE));
         magnifySVG.setContent(App.svgMap.get(SVG.MAGNIFY));
         speedSVG.setContent(App.svgMap.get(SVG.SPEED));
-        captionsSVG.setContent(App.svgMap.get(SVG.CAPTIONS_OUTLINE));
+        equalizerSVG.setContent(App.svgMap.get(SVG.TUNE_VERTICAL));
         tuneSVG.setContent(App.svgMap.get(SVG.TUNE));
 
         settingsController.settingsPane.getChildren().add(settingsHome);
@@ -61,12 +61,12 @@ public class SettingsHomeController {
 
         playbackOptionsTab = new SettingsHomeTab(this, false, tuneSVG, "Playback options", null);
         playbackSpeedTab = new SettingsHomeTab(this, true, speedSVG, "Playback Speed", "Normal");
-        captionsTab = new SettingsHomeTab(this, false, captionsSVG, "Subtitles/CC", null);
+        equalizerTab = new SettingsHomeTab(this, false, equalizerSVG, "Equalizer", null);
         videoSelectionTab = new SettingsHomeTab(this, false, magnifySVG, "Select a video", null);
 
         playbackOptionsTab.setOnMouseClicked((e) -> openPlaybackOptionsPane());
         playbackSpeedTab.setOnMouseClicked((e) -> openPlaybackSpeedPane());
-        captionsTab.setOnMouseClicked((e) -> openCaptionsPane());
+        equalizerTab.setOnMouseClicked((e) -> System.out.println("equalizer tab test"));
         videoSelectionTab.setOnMouseClicked((e) -> openVideoChooser());
 
     }
@@ -141,38 +141,6 @@ public class SettingsHomeController {
 
     }
 
-    public void openCaptionsPane(){
-        if(settingsController.animating.get()) return;
-
-        settingsController.settingsState = SettingsState.CAPTIONS_PANE_OPEN;
-
-        settingsController.captionsController.captionsPane.captionsBox.setVisible(true);
-        settingsController.captionsController.captionsPane.captionsBox.setMouseTransparent(false);
-
-        Timeline clipTimeline = new Timeline();
-        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(settingsController.clip.heightProperty(), settingsController.captionsController.captionsPane.captionsBox.getHeight())));
-
-        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), settingsHome);
-        homeTransition.setFromX(0);
-        homeTransition.setToX(-settingsHome.getWidth());
-
-        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), settingsController.captionsController.captionsPane.captionsBox);
-        captionsTransition.setFromX(settingsHome.getWidth());
-        captionsTransition.setToX(0);
-
-
-        ParallelTransition parallelTransition = new ParallelTransition(clipTimeline, homeTransition, captionsTransition);
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.setOnFinished((e) -> {
-            settingsController.animating.set(false);
-            settingsHome.setVisible(false);
-            settingsHome.setMouseTransparent(true);
-            settingsHome.setTranslateX(0);
-        });
-
-        parallelTransition.play();
-        settingsController.animating.set(true);
-    }
 
     public void openVideoChooser(){
         File selectedFile = fileChooser.showOpenDialog(App.stage);

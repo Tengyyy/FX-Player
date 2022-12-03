@@ -37,6 +37,7 @@ public enum SVG {
     DOUBLE_RIGHT,
     DOUBLE_LEFT,
     TUNE,
+    TUNE_VERTICAL,
     FORWARD,
     REWIND,
     MINIPLAYER,

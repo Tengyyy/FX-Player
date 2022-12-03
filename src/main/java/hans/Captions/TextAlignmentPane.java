@@ -1,12 +1,10 @@
-package hans.Settings;
+package hans.Captions;
 
 import hans.App;
-import hans.CaptionsController;
-import hans.SVG;
-import hans.Settings.CaptionsOptionsPane;
 import hans.Settings.CheckTab;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
+import hans.SVG;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -115,10 +113,10 @@ public class TextAlignmentPane {
             leftTab.checkIcon.setVisible(true);
             captionsOptionsPane.textAlignmentTab.subText.setText("Left");
 
-            captionsController.currentTextAlignment = Pos.CENTER_LEFT;
-            captionsController.captionsBox.setAlignment(captionsController.currentTextAlignment);
+            captionsController.captionsBox.currentTextAlignment = Pos.CENTER_LEFT;
+            captionsController.captionsBox.captionsContainer.setAlignment(captionsController.captionsBox.currentTextAlignment);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         centerTab.setOnMouseClicked(e -> {
@@ -130,10 +128,10 @@ public class TextAlignmentPane {
             centerTab.checkIcon.setVisible(true);
             captionsOptionsPane.textAlignmentTab.subText.setText("Center");
 
-            captionsController.currentTextAlignment = Pos.CENTER;
-            captionsController.captionsBox.setAlignment(captionsController.currentTextAlignment);
+            captionsController.captionsBox.currentTextAlignment = Pos.CENTER;
+            captionsController.captionsBox.captionsContainer.setAlignment(captionsController.captionsBox.currentTextAlignment);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
         rightTab.setOnMouseClicked(e -> {
@@ -145,32 +143,32 @@ public class TextAlignmentPane {
             rightTab.checkIcon.setVisible(true);
             captionsOptionsPane.textAlignmentTab.subText.setText("Right");
 
-            captionsController.currentTextAlignment = Pos.CENTER_RIGHT;
-            captionsController.captionsBox.setAlignment(captionsController.currentTextAlignment);
+            captionsController.captionsBox.currentTextAlignment = Pos.CENTER_RIGHT;
+            captionsController.captionsBox.captionsContainer.setAlignment(captionsController.captionsBox.currentTextAlignment);
 
-            captionsController.showCaptions();
+            captionsController.captionsBox.showCaptions();
         });
 
 
-        captionsController.settingsController.settingsBuffer.getChildren().add(scrollPane);
+        captionsController.captionsPane.getChildren().add(scrollPane);
     }
 
 
     public void closeTextAlignmentPane(){
-        if(captionsController.settingsController.animating.get()) return;
+        if(captionsController.animating.get()) return;
 
-        captionsController.settingsController.settingsState = SettingsState.CAPTIONS_OPTIONS_OPEN;
+        captionsController.captionsState = CaptionsState.CAPTIONS_OPTIONS_OPEN;
 
         captionsController.captionsOptionsPane.scrollPane.setVisible(true);
         captionsController.captionsOptionsPane.scrollPane.setMouseTransparent(false);
 
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsOptionsPane.scrollPane.getHeight())));
 
 
         Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.settingsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsOptionsPane.scrollPane.getWidth())));
 
 
 
@@ -186,15 +184,15 @@ public class TextAlignmentPane {
         ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, textAlignmentTransition, captionsOptionsTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
-            captionsController.settingsController.animating.set(false);
+            captionsController.animating.set(false);
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
-            captionsController.settingsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
+            captionsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
         });
 
         parallelTransition.play();
-        captionsController.settingsController.animating.set(true);
+        captionsController.animating.set(true);
     }
 }
 

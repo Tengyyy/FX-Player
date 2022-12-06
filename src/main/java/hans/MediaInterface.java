@@ -213,6 +213,7 @@ public class MediaInterface {
 
         MediaItem mediaItem = menuObject.getMediaItem();
 
+
         // resets all media state variables before creating a new player
         atEnd = false;
         seekedToEnd = false;
@@ -228,16 +229,6 @@ public class MediaInterface {
         } catch (FFmpegFrameGrabber.Exception e) {
             e.printStackTrace();
         }
-
-
-        /*if(mediaItem.getSubtitles() != null){
-            captionsController.loadCaptions(mediaItem.getSubtitles(), mediaItem.getSubtitlesOn());
-        }
-        else if(captionsController.captionsSelected){
-            mediaItem.setSubtitles(captionsController.captionsFile);
-            if(menuController.captionsController.captionsOn.get()) mediaItem.setSubtitlesOn(true);
-            if(menuController.activeItem != null && !menuController.activeItem.subTextWrapper.getChildren().contains(menuController.activeItem.captionsPane)) menuController.activeItem.subTextWrapper.getChildren().add(0, menuController.activeItem.captionsPane);
-        }*/
 
         mainController.videoTitleLabel.setText(menuObject.getTitle());
 
@@ -263,6 +254,7 @@ public class MediaInterface {
         //TODO: parse mediaitem log and then extract subtitles to temporary srt files inside FXPlayer/temp folder
         // preferrably do this in a separate thread/task
 
+        captionsController.resetCaptions();
         captionsController.extractCaptions(menuObject);
 
 
@@ -305,7 +297,6 @@ public class MediaInterface {
             controlBarController.disableNextVideoButton();
         }
 
-        captionsController.resetCaptions();
 
         try {
             fFmpegFrameGrabber.close();

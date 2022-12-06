@@ -77,6 +77,7 @@ public class ControlBarController implements Initializable {
     Label durationLabel;
 
     @FXML
+    public
     Line captionsButtonLine;
 
     @FXML
@@ -227,9 +228,6 @@ public class ControlBarController implements Initializable {
 
         miniplayerIcon.setShape(miniplayerSVG);
         fullScreenIcon.setShape(maximizeSVG);
-
-        captionsIcon.getStyleClass().add("controlIconDisabled");
-
 
         playButton.setBackground(Background.EMPTY);
         nextVideoButton.setBackground(Background.EMPTY);

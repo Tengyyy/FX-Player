@@ -238,7 +238,7 @@ public class CaptionsBox {
             if(newValue){
                 captionsContainer.setVisible(true);
 
-                if(captionsController.menuController.activeItem != null && captionsController.captionsSelected && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
+                if(captionsController.menuController.activeItem != null && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
                     showCaptionsTimer.stop();
                 }
 
@@ -247,10 +247,6 @@ public class CaptionsBox {
             }
             else {
                 if(showCaptionsTimer == null || showCaptionsTimer.getStatus() != Animation.Status.RUNNING) captionsContainer.setVisible(false);
-            }
-
-            if(captionsController.menuController.activeItem != null){
-                captionsController.menuController.activeItem.getMediaItem().setSubtitlesOn(newValue);
             }
         });
     }
@@ -268,7 +264,7 @@ public class CaptionsBox {
     public void showCaptions(){
         // if necessary, show captions with text "Captions look like this"
 
-        if(captionsController.menuController.activeItem != null && captionsController.captionsSelected && captionsController.captionsOn.get()) return;
+        if(captionsController.menuController.activeItem != null && captionsController.captionsSelected.get() && captionsController.captionsOn.get()) return;
 
         if(showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
             showCaptionsTimer.playFromStart();

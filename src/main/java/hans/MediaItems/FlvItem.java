@@ -28,8 +28,6 @@ public class FlvItem implements MediaItem {
 
 
     File file;
-    File subtitles;
-    boolean subtitlesOn = false;
     Color backgroundColor = null;
     Duration duration;
 
@@ -113,7 +111,6 @@ public class FlvItem implements MediaItem {
         duration = flvItem.getDuration();
         cover = flvItem.getCover();
         placeholderCover = flvItem.getPlaceholderCover();
-        subtitles = flvItem.getSubtitles();
         backgroundColor = flvItem.getCoverBackgroundColor();
         mediaInformation = flvItem.getMediaInformation();
         mediaDetails = flvItem.getMediaDetails();
@@ -243,20 +240,6 @@ public class FlvItem implements MediaItem {
         return file;
     }
 
-    @Override
-    public File getSubtitles() {
-        return subtitles;
-    }
-
-    @Override
-    public boolean getSubtitlesOn() {
-        return subtitlesOn;
-    }
-
-    @Override
-    public void setSubtitlesOn(boolean value) {
-        subtitlesOn = value;
-    }
 
     @Override
     public Duration getDuration() {
@@ -273,10 +256,6 @@ public class FlvItem implements MediaItem {
         return false;
     }
 
-    @Override
-    public void setSubtitles(File file) {
-        subtitles = file;
-    }
 
     @Override
     public Color getCoverBackgroundColor() {

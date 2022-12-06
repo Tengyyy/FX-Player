@@ -28,8 +28,6 @@ public class MkvItem implements MediaItem {
 
 
     File file;
-    File subtitles;
-    boolean subtitlesOn = false;
     Color backgroundColor = null;
     Duration duration;
 
@@ -132,7 +130,6 @@ public class MkvItem implements MediaItem {
         duration = mkvItem.getDuration();
         cover = mkvItem.getCover();
         placeholderCover = mkvItem.getPlaceholderCover();
-        subtitles = mkvItem.getSubtitles();
         backgroundColor = mkvItem.getCoverBackgroundColor();
         hasCover = mkvItem.hasCover();
         mediaInformation = mkvItem.getMediaInformation();
@@ -308,20 +305,6 @@ public class MkvItem implements MediaItem {
         return file;
     }
 
-    @Override
-    public File getSubtitles() {
-        return subtitles;
-    }
-
-    @Override
-    public boolean getSubtitlesOn() {
-        return subtitlesOn;
-    }
-
-    @Override
-    public void setSubtitlesOn(boolean value) {
-        subtitlesOn = value;
-    }
 
     @Override
     public Duration getDuration() {
@@ -350,10 +333,6 @@ public class MkvItem implements MediaItem {
         return true;
     }
 
-    @Override
-    public void setSubtitles(File file) {
-        subtitles = file;
-    }
 
     @Override
     public Color getCoverBackgroundColor() {

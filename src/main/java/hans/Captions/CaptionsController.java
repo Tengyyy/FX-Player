@@ -15,6 +15,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
@@ -40,11 +42,10 @@ public class CaptionsController {
     public CaptionsBox captionsBox;
 
     public File captionsFile;
-
     ArrayList<Subtitle> subtitles  = new ArrayList<>();
     int captionsPosition = 0;
 
-    public boolean captionsSelected = false;
+    public BooleanProperty captionsSelected = new SimpleBooleanProperty();
     public BooleanProperty captionsOn = new SimpleBooleanProperty();
     boolean showedCurrentCaption = false;
 
@@ -104,6 +105,10 @@ public class CaptionsController {
         captionsOptionsPane = new CaptionsOptionsPane(this);
 
         captionsOn.set(false);
+        captionsOn.addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) AnimationsClass.scaleAnimation(100, controlBarController.captionsButtonLine, 0, 1, 1, 1, false, 1, true);
+            else AnimationsClass.scaleAnimation(100, controlBarController.captionsButtonLine, 1, 0, 1, 1, false, 1, true);
+        });
 
     }
 
@@ -115,6 +120,7 @@ public class CaptionsController {
         Map<String, ArrayList<Map<String, String>>> log = menuObject.getMediaItem().getLog();
         if(log != null){
             ArrayList<Map<String, String>> subtitleStreams = log.get("subtitle streams");
+            if(!subtitleStreams.isEmpty() && menuController.activeItem != null) menuController.activeItem.addSubtitlesIcon();
             Utilities.extractSubtitles(menuObject.getMediaItem());
         }
     }
@@ -124,70 +130,42 @@ public class CaptionsController {
     }
 
 
-    public void loadCaptions(File file, boolean toggleOn){
+    public void loadCaptions(File file){
 
-        if(!captionsSelected){
+        if(!captionsSelected.get()){
             captionsHome.currentCaptionsTab.getChildren().add(captionsHome.currentCaptionsNameLabel);
             captionsHome.currentCaptionsLabel.setText("Active subtitles:");
         }
 
         captionsHome.currentCaptionsNameLabel.setText(file.getName());
 
-
-        if(menuController.activeItem != null){
-            menuController.activeItem.getMediaItem().setSubtitles(file);
-            if(!menuController.activeItem.subTextWrapper.getChildren().contains(menuController.activeItem.captionsPane)) menuController.activeItem.subTextWrapper.getChildren().add(0, menuController.activeItem.captionsPane);
-        }
-
-        if(menuController.historyBox.index > -1){
-            HistoryItem activeHistoryItem = menuController.history.get(menuController.historyBox.index);
-            activeHistoryItem.getMediaItem().setSubtitles(file);
-            if(toggleOn) activeHistoryItem.getMediaItem().setSubtitlesOn(true);
-            if(!activeHistoryItem.subTextWrapper.getChildren().contains(activeHistoryItem.captionsPane)) activeHistoryItem.subTextWrapper.getChildren().add(0, activeHistoryItem.captionsPane);
-        }
-
         this.captionsFile = file;
-
         subtitles = SRTParser.getSubtitlesFromFile(file.getPath(), true);
 
-        captionsSelected = true;
-
-        if(!captionsOn.get() && toggleOn){
-            captionsHome.captionsToggle.fire();
-        }
+        captionsSelected.set(true);
+        captionsHome.captionsToggle.setDisable(false);
+        captionsHome.captionsToggle.setSelected(true);
     }
 
 
 
     public void removeCaptions(){
-        if(captionsSelected){
-            this.captionsFile = null;
-            captionsSelected = false;
+        this.captionsFile = null;
+        captionsSelected.set(false);
 
-            subtitles.clear();
-            captionsPosition = 0;
-            showedCurrentCaption = false;
-
-            boolean temp = false;
-            if(menuController.activeItem != null){
-                temp = menuController.activeItem.getMediaItem().getSubtitlesOn();
-            }
+        subtitles.clear();
+        captionsPosition = 0;
+        showedCurrentCaption = false;
 
 
-            captionsBox.captionsLabel1.setOpacity(0);
-            captionsBox.captionsLabel2.setOpacity(0);
+        captionsBox.captionsLabel1.setOpacity(0);
+        captionsBox.captionsLabel2.setOpacity(0);
 
-            captionsHome.currentCaptionsTab.getChildren().remove(captionsHome.currentCaptionsNameLabel);
-            captionsHome.currentCaptionsLabel.setText("No subtitles active");
+        captionsHome.currentCaptionsTab.getChildren().remove(captionsHome.currentCaptionsNameLabel);
+        captionsHome.currentCaptionsLabel.setText("No subtitles active");
 
-            captionsHome.captionsToggle.setSelected(false);
-            captionsHome.captionsToggle.setDisable(true);
-
-            if(temp && menuController.activeItem != null){
-                menuController.activeItem.getMediaItem().setSubtitlesOn(true);
-            }
-
-        }
+        captionsHome.captionsToggle.setSelected(false);
+        captionsHome.captionsToggle.setDisable(true);
     }
 
     public void updateCaptions(double time){

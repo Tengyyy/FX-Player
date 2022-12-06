@@ -24,11 +24,7 @@ public class Mp4Item implements MediaItem {
 
     File file;
 
-    File subtitles;
-    boolean subtitlesOn;
-
     Color backgroundColor = null;
-
 
     Duration duration;
 
@@ -140,7 +136,6 @@ public class Mp4Item implements MediaItem {
         duration = mp4Item.getDuration();
         cover = mp4Item.getCover();
         placeholderCover = mp4Item.getPlaceholderCover();
-        subtitles = mp4Item.getSubtitles();
         backgroundColor = mp4Item.getCoverBackgroundColor();
         hasCover = mp4Item.hasCover();
         mediaInformation = mp4Item.getMediaInformation();
@@ -148,10 +143,6 @@ public class Mp4Item implements MediaItem {
         hasVideo = mp4Item.hasVideo();
     }
 
-    @Override
-    public void setSubtitles(File file){
-        this.subtitles = file;
-    }
 
     @Override
     public Color getCoverBackgroundColor() {
@@ -360,21 +351,6 @@ public class Mp4Item implements MediaItem {
     @Override
     public File getFile() {
         return this.file;
-    }
-
-    @Override
-    public File getSubtitles() {
-        return subtitles;
-    }
-
-    @Override
-    public boolean getSubtitlesOn() {
-        return subtitlesOn;
-    }
-
-    @Override
-    public void setSubtitlesOn(boolean value) {
-        subtitlesOn = value;
     }
 
     @Override

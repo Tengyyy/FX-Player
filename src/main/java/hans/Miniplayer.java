@@ -77,7 +77,6 @@ public class Miniplayer {
                 case N -> mainController.pressN(event);
                 case COMMA -> mainController.pressCOMMA(event);
                 case PERIOD -> mainController.pressPERIOD(event);
-                case C -> mainController.pressC();
                 case M -> mainController.pressM();
                 case I -> mainController.pressI();
                 case SPACE -> mainController.pressSPACE(event);

@@ -21,8 +21,6 @@ public interface MenuObject {
 
     void showTechnicalDetails();
 
-    void addSubtitles(File file);
-
     MenuController getMenuController();
 
     String getTitle();

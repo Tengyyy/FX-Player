@@ -5,11 +5,14 @@ import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.animation.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -36,9 +39,6 @@ public class CaptionsHome {
     Label toggleLabel = new Label();
     public MFXToggleButton captionsToggle = new MFXToggleButton();
 
-    StackPane captionsBackPane = new StackPane();
-    Region captionsBackIcon = new Region();
-    SVGPath backSVG = new SVGPath();
 
     Label captionsTitleLabel = new Label();
     Label captionsOptionsLabel = new Label();
@@ -58,7 +58,6 @@ public class CaptionsHome {
     public CaptionsHome(CaptionsController captionsController){
         this.captionsController = captionsController;
 
-        backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
         searchSVG.setContent(App.svgMap.get(SVG.MAGNIFY));
 
         fileChooser = new FileChooser();
@@ -75,7 +74,7 @@ public class CaptionsHome {
 
         captionsWrapper.getChildren().addAll(captionsTitle, captionsChooserTab, currentCaptionsTab, toggleBox);
 
-        captionsTitle.getChildren().addAll(captionsBackPane, captionsTitleLabel, captionsOptionsLabel);
+        captionsTitle.getChildren().addAll(captionsTitleLabel, captionsOptionsLabel);
         captionsTitle.setMinSize(235, 40);
         captionsTitle.setPrefSize(235, 40);
         captionsTitle.setMaxSize(235, 40);
@@ -83,22 +82,10 @@ public class CaptionsHome {
         VBox.setMargin(captionsTitle, new Insets(0, 0, 10, 0));
         captionsTitle.getStyleClass().add("settingsPaneTitle");
 
-        captionsBackPane.setMinSize(24, 40);
-        captionsBackPane.setPrefSize(24, 40);
-        captionsBackPane.setMaxSize(24, 40);
-        captionsBackPane.getChildren().add(captionsBackIcon);
-        captionsBackPane.setCursor(Cursor.HAND);
-
-        captionsBackIcon.setMinSize(8, 13);
-        captionsBackIcon.setPrefSize(8, 13);
-        captionsBackIcon.setMaxSize(8, 13);
-        captionsBackIcon.getStyleClass().add("settingsPaneIcon");
-        captionsBackIcon.setShape(backSVG);
-
         captionsTitleLabel.setMinHeight(40);
         captionsTitleLabel.setPrefHeight(40);
         captionsTitleLabel.setMaxHeight(40);
-        captionsTitleLabel.setPrefWidth(100);
+        captionsTitleLabel.setPrefWidth(124);
         captionsTitleLabel.setText("Subtitles/CC");
         captionsTitleLabel.setCursor(Cursor.HAND);
         captionsTitleLabel.getStyleClass().add("settingsPaneText");
@@ -184,14 +171,7 @@ public class CaptionsHome {
         captionsToggle.setDisable(true);
         captionsToggle.setCursor(Cursor.HAND);
         captionsToggle.setContentDisposition(ContentDisplay.RIGHT);
-        captionsToggle.setOnAction(e -> {
-            if(captionsToggle.isSelected()){
-                //TODO: add logic
-            }
-            else {
-                //TODO: add logic
-            }
-        });
+        captionsToggle.selectedProperty().addListener((observableValue, oldValue, newValue) -> captionsController.captionsOn.set(newValue));
 
         captionsController.captionsPane.getChildren().add(captionsWrapper);
     }
@@ -248,6 +228,6 @@ public class CaptionsHome {
         }
         File selectedFile = fileChooser.showOpenDialog(App.stage);
 
-        if (selectedFile != null) captionsController.loadCaptions(selectedFile, true);
+        if (selectedFile != null) captionsController.loadCaptions(selectedFile);
     }
 }

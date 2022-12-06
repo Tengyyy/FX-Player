@@ -194,7 +194,7 @@ public class MenuItemOptionsPopUp extends ContextMenu {
         File selectedFile = fileChooser.showOpenDialog(App.stage);
 
         if(selectedFile != null){
-            menuObject.addSubtitles(selectedFile);
+            //menuObject.addSubtitles(selectedFile);
         }
     }
 

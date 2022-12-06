@@ -25,19 +25,11 @@ public interface MediaItem {
 
     File getFile();
 
-    File getSubtitles();
-
-    boolean getSubtitlesOn();
-
-    void setSubtitlesOn(boolean value);
-
     Duration getDuration();
 
     Image getCover();
 
     boolean setCover(File imagePath, Image image, Color color, boolean updateFile);
-
-    void setSubtitles(File file);
 
     Color getCoverBackgroundColor();
 

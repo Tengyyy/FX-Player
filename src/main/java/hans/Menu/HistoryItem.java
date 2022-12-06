@@ -53,7 +53,7 @@ public class HistoryItem extends GridPane implements MenuObject {
 
     MenuController menuController;
 
-    Region optionsIcon, playIcon, captionsIcon;
+    Region optionsIcon, playIcon;
 
     StackPane playIconWrapper = new StackPane();
 
@@ -70,7 +70,7 @@ public class HistoryItem extends GridPane implements MenuObject {
     BooleanProperty isActive = new SimpleBooleanProperty(false);
 
 
-    SVGPath playSVG, optionsSVG, captionsPath;
+    SVGPath playSVG, optionsSVG;
 
     // the options popup for this queue item
     MenuItemOptionsPopUp optionsPopUp;
@@ -80,8 +80,6 @@ public class HistoryItem extends GridPane implements MenuObject {
     static double height = 90;
 
     HistoryBox historyBox;
-
-    public StackPane captionsPane;
 
 
     HistoryItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, HistoryBox historyBox){
@@ -198,26 +196,8 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         artist.getStyleClass().add("subText");
 
-        captionsPane = new StackPane();
-        captionsPane.setMinSize(21, 14);
-        captionsPane.setPrefSize(21, 14);
-        captionsPane.setMaxSize(21, 14);
-        captionsPane.setPadding(new Insets(1, 6, 1, 0));
-        captionsPane.setMouseTransparent(true);
 
-        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
-
-        captionsIcon = new Region();
-        captionsIcon.setId("captionsSelectedIcon");
-        captionsIcon.setMinSize(15, 12);
-        captionsIcon.setPrefSize(15,12);
-        captionsIcon.setMaxSize(15, 12);
-
-        captionsPath = new SVGPath();
-        captionsPath.setContent(App.svgMap.get(SVG.CAPTIONS));
-
-        captionsIcon.setShape(captionsPath);
-        captionsPane.getChildren().add(captionsIcon);
+        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
 
         String formattedDuration = Utilities.getTime(mediaItem.getDuration());
 
@@ -230,8 +210,6 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         subTextWrapper.setAlignment(Pos.CENTER_LEFT);
         subTextWrapper.getChildren().addAll(duration, artist);
-
-        if(mediaItem.getSubtitles() != null) subTextWrapper.getChildren().add(0, captionsPane);
 
         textWrapper.setAlignment(Pos.CENTER_LEFT);
         textWrapper.setPrefHeight(70);
@@ -424,21 +402,6 @@ public class HistoryItem extends GridPane implements MenuObject {
         if(menuController.menuInTransition) return;
 
         menuController.technicalDetailsPage.enterTechnicalDetailsPage(this);
-    }
-
-    @Override
-    public void addSubtitles(File file) {
-        this.getMediaItem().setSubtitles(file);
-        this.getMediaItem().setSubtitlesOn(true);
-
-        if(!subTextWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
-
-        if(menuController.historyBox.index == menuController.history.indexOf(this)){
-            // this historyitem is active, have to load captions to the mediaplayer
-            // make subtitles selected icon visible for ActiveItem
-
-            menuController.captionsController.loadCaptions(file, true);
-        }
     }
 
     @Override

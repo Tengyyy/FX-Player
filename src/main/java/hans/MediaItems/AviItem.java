@@ -22,8 +22,6 @@ import java.util.*;
 public class AviItem implements MediaItem {
 
     File file;
-    File subtitles;
-    boolean subtitlesOn = false;
     Color backgroundColor = null;
     Duration duration;
 
@@ -104,7 +102,6 @@ public class AviItem implements MediaItem {
         duration = aviItem.getDuration();
         cover = aviItem.getCover();
         placeholderCover = aviItem.getPlaceholderCover();
-        subtitles = aviItem.getSubtitles();
         backgroundColor = aviItem.getCoverBackgroundColor();
         mediaInformation = aviItem.getMediaInformation();
         mediaDetails = aviItem.getMediaDetails();
@@ -236,20 +233,6 @@ public class AviItem implements MediaItem {
         return file;
     }
 
-    @Override
-    public File getSubtitles() {
-        return subtitles;
-    }
-
-    @Override
-    public boolean getSubtitlesOn() {
-        return subtitlesOn;
-    }
-
-    @Override
-    public void setSubtitlesOn(boolean value) {
-        subtitlesOn = value;
-    }
 
     @Override
     public Duration getDuration() {
@@ -266,10 +249,6 @@ public class AviItem implements MediaItem {
         return true;
     }
 
-    @Override
-    public void setSubtitles(File file) {
-        subtitles = file;
-    }
 
     @Override
     public Color getCoverBackgroundColor() {

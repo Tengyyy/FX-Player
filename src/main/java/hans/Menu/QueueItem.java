@@ -92,10 +92,6 @@ public class QueueItem extends GridPane implements MenuObject {
     double minimumY = 0;
     double maximumY = 0;
 
-    StackPane captionsPane;
-    Region captionsIcon;
-    SVGPath captionsPath;
-
     QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, QueueBox queueBox) {
 
         this.mediaItem = mediaItem;
@@ -196,24 +192,6 @@ public class QueueItem extends GridPane implements MenuObject {
 
         artist.getStyleClass().add("subText");
 
-        captionsPane = new StackPane();
-        captionsPane.setMinSize(21, 14);
-        captionsPane.setPrefSize(21, 14);
-        captionsPane.setMaxSize(21, 14);
-        captionsPane.setPadding(new Insets(1, 6, 1, 0));
-        captionsPane.setMouseTransparent(true);
-
-        captionsIcon = new Region();
-        captionsIcon.setId("captionsSelectedIcon");
-        captionsIcon.setMinSize(15, 12);
-        captionsIcon.setPrefSize(15,12);
-        captionsIcon.setMaxSize(15, 12);
-
-        captionsPath = new SVGPath();
-        captionsPath.setContent(App.svgMap.get(SVG.CAPTIONS));
-
-        captionsIcon.setShape(captionsPath);
-        captionsPane.getChildren().add(captionsIcon);
 
 
         String formattedDuration = Utilities.getTime(mediaItem.getDuration());
@@ -228,14 +206,13 @@ public class QueueItem extends GridPane implements MenuObject {
         subTextWrapper.setAlignment(Pos.CENTER_LEFT);
         subTextWrapper.getChildren().addAll(duration, artist);
 
-        if(mediaItem.getSubtitles() != null) subTextWrapper.getChildren().add(0, captionsPane);
 
         textWrapper.setAlignment(Pos.CENTER_LEFT);
         textWrapper.setPrefHeight(90);
         textWrapper.getChildren().addAll(videoTitle,subTextWrapper);
         GridPane.setMargin(textWrapper, new Insets(0, 0, 0, 10));
 
-        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
+        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
 
         removeButton.setPrefWidth(30);
         removeButton.setPrefHeight(30);
@@ -440,13 +417,6 @@ public class QueueItem extends GridPane implements MenuObject {
         menuController.technicalDetailsPage.enterTechnicalDetailsPage(this);
     }
 
-    @Override
-    public void addSubtitles(File file) {
-        this.getMediaItem().setSubtitles(file);
-        this.getMediaItem().setSubtitlesOn(true);
-
-        if(!subTextWrapper.getChildren().contains(captionsPane))subTextWrapper.getChildren().add(0, captionsPane);
-    }
 
     @Override
     public MenuController getMenuController() {

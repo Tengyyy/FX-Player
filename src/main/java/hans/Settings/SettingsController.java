@@ -159,8 +159,7 @@ public class SettingsController {
                 controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
         }
         else if (controlBarController.captionsButtonHover) {
-            if(captionsController.captionsSelected) controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else controlBarController.captions = new ControlTooltip(mainController,"Subtitles/CC not selected", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             controlBarController.captions.showTooltip();
 

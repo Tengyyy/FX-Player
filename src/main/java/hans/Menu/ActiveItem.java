@@ -309,20 +309,12 @@ public class ActiveItem extends GridPane implements MenuObject {
 
                 this.setStyle("-fx-background-color: transparent;");
             }
-
         });
 
 
-        playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
+        playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200));
 
-            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
-        });
-
-        playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-
-            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
-
-        });
+        playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200));
 
         playButton.setOnAction((e) -> {
 
@@ -427,6 +419,19 @@ public class ActiveItem extends GridPane implements MenuObject {
         columns.play();
     }
 
+    public void addSubtitles(File file) {
+        menuController.captionsController.loadCaptions(file);
+    }
+
+    public void addSubtitlesIcon(){
+        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
+        if (!textWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
+    }
+
+    public void removeSubtitlesIcon(){
+        subTextWrapper.getChildren().remove(captionsPane);
+        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
+    }
 
     @Override
     public MediaItem getMediaItem() {
@@ -463,12 +468,6 @@ public class ActiveItem extends GridPane implements MenuObject {
         if(menuController.menuInTransition) return;
 
         menuController.technicalDetailsPage.enterTechnicalDetailsPage(this);
-    }
-
-    @Override
-    public void addSubtitles(File file) {
-        menuController.captionsController.loadCaptions(file, true);
-
     }
 
     @Override

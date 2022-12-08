@@ -42,7 +42,7 @@ public class PlaybackSpeedController {
         }
 
         if (speed * 4 != Math.round(speed * 4)){ // make custom speed tab active
-            playbackSpeedPane.customSpeedTab.checkIcon.setVisible(true);
+            if(playbackSpeedPane.customSpeedTab != null) playbackSpeedPane.customSpeedTab.checkIcon.setVisible(true);
             playbackSpeedPane.scrollPane.setVvalue(0);
         }
         else { // make one of the default tabs active

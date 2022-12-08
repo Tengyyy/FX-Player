@@ -141,20 +141,20 @@ public class CaptionsOptionsPane {
 
         captionsController.captionsState = CaptionsState.HOME_OPEN;
 
-        captionsController.captionsHome.captionsWrapper.setVisible(true);
-        captionsController.captionsHome.captionsWrapper.setMouseTransparent(false);
+        captionsController.captionsHome.scrollPane.setVisible(true);
+        captionsController.captionsHome.scrollPane.setMouseTransparent(false);
 
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsHome.captionsWrapper.getHeight())));
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsHome.scrollPane.getHeight())));
 
 
         Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsHome.captionsWrapper.getWidth())));
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsHome.scrollPane.getWidth())));
 
 
 
-        TranslateTransition captionsPaneTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsController.captionsHome.captionsWrapper);
+        TranslateTransition captionsPaneTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsController.captionsHome.scrollPane);
         captionsPaneTransition.setFromX(-scrollPane.getWidth());
         captionsPaneTransition.setToX(0);
 

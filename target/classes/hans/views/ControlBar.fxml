@@ -143,7 +143,7 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </Button>
-                        <Region fx:id="captionsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="17.0" prefWidth="21.0" />
+                        <Region fx:id="captionsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="17.0" prefWidth="21.0" styleClass="controlIcon" />
                         <Line fx:id="captionsButtonLine" endX="10.0" mouseTransparent="true" scaleX="0.0" startX="-10.0" stroke="RED" strokeLineCap="ROUND" strokeWidth="3.0" StackPane.alignment="BOTTOM_CENTER">
                            <StackPane.margin>
                               <Insets />

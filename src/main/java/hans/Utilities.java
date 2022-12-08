@@ -386,11 +386,14 @@ public class Utilities {
         for (String line : lines) {
             String strippedLine = line.strip();
             if(strippedLine.endsWith("(attached pic)")) continue;
-            if(strippedLine.endsWith(")")){
-                strippedLine = strippedLine.substring(0, strippedLine.lastIndexOf("("));
-            }
+
             if (strippedLine.startsWith("Stream #")) {
                 Map<String, String> streamInfo = new HashMap<>();
+
+                if(strippedLine.endsWith(")")){
+                    streamInfo.put("disposition", strippedLine.substring(strippedLine.lastIndexOf("(") + 1, strippedLine.length() - 1));
+                    strippedLine = strippedLine.substring(0, strippedLine.lastIndexOf("("));
+                }
 
                 String infoString = strippedLine.substring(nthOccurrence(strippedLine, ":", 3) + 1).strip();
                 if(infoString.contains(",")){
@@ -421,7 +424,16 @@ public class Utilities {
             }
         }
 
-         return map;
+        for(Map.Entry<String, ArrayList<Map<String, String>>> entry : map.entrySet()){
+            System.out.println(entry.getKey());
+            for(Map<String, String> entrymap : entry.getValue()){
+                for(Map.Entry<String, String> entry2 : entrymap.entrySet()){
+                    System.out.println(entry2.getKey() + ": " + entry2.getValue());
+                }
+            }
+        }
+
+        return map;
     }
 
     public static void extractSubtitles(MediaItem mediaItem){

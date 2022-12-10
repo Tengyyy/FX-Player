@@ -13,7 +13,6 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -21,7 +20,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
-import java.io.File;
 import java.util.Map;
 
 public class HistoryItem extends GridPane implements MenuObject {
@@ -73,7 +71,7 @@ public class HistoryItem extends GridPane implements MenuObject {
     SVGPath playSVG, optionsSVG;
 
     // the options popup for this queue item
-    MenuItemOptionsPopUp optionsPopUp;
+    MenuItemContextMenu menuItemContextMenu;
 
     MediaInterface mediaInterface;
 
@@ -90,7 +88,7 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         isActive.addListener((observableValue, oldValue, newValue) -> {
             if(newValue) playIcon.setVisible(true);
-            else if(!mouseHover && !optionsPopUp.showing) playIcon.setVisible(false);
+            else if(!mouseHover && !menuItemContextMenu.showing) playIcon.setVisible(false);
         });
 
 
@@ -225,18 +223,16 @@ public class HistoryItem extends GridPane implements MenuObject {
         optionsButton.setText(null);
 
         optionsButton.setOnAction((e) -> {
-            if(optionsPopUp.isShowing()) optionsPopUp.hide();
-            else optionsPopUp.showOptions();
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            menuItemContextMenu.showOptions();
         });
 
         this.setOnMouseClicked(e -> {
-            if(!menuController.animationsInProgress.isEmpty()) return;
-
-            if(optionsPopUp.isShowing()) optionsPopUp.hide();
-            else if(!this.isActive.get() && e.getButton() == MouseButton.PRIMARY) play();
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            else if(!this.isActive.get() && e.getButton() == MouseButton.PRIMARY && menuController.animationsInProgress.isEmpty()) play();
         });
 
-        this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
+        this.setOnContextMenuRequested(e -> menuItemContextMenu.show(this, e.getScreenX(), e.getScreenY()));
 
         optionsIcon = new Region();
         optionsIcon.setShape(optionsSVG);
@@ -270,7 +266,7 @@ public class HistoryItem extends GridPane implements MenuObject {
         this.setOnMouseExited((e) -> {
             mouseHover = false;
 
-            if(!optionsPopUp.showing) {
+            if(!menuItemContextMenu.showing) {
 
                 if (!isActive.get()) playIcon.setVisible(false);
 
@@ -296,7 +292,7 @@ public class HistoryItem extends GridPane implements MenuObject {
             HistoryItem historyItem = menuController.history.get(historyBox.index);
             historyItem.isActive.set(false);
             historyItem.playIcon.setStyle("-fx-background-color: rgb(200,200,200);");
-            if(!historyItem.mouseHover && !historyItem.optionsPopUp.showing) {
+            if(!historyItem.mouseHover && !historyItem.menuItemContextMenu.showing) {
                 historyItem.playIcon.setVisible(false);
                 historyItem.setStyle("-fx-background-color: transparent;");
             }

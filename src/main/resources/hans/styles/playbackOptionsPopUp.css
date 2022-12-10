@@ -3,13 +3,6 @@
     src: url('../fonts/Roboto-Medium.ttf');
 }
 
-
-#playbackOptionsMenu {
-    -fx-background-color: #101010;
-    -fx-background-radius: 5;
-    -fx-background-opacity: 0.7;
-}
-
 .playbackOptionsPopUpLabel {
     -fx-text-fill: white;
     -fx-font-family: "Roboto Medium";
@@ -29,6 +22,5 @@
 }
 
 .menuItem:hover {
-      -fx-background-color: #303030;
-
+    -fx-background-color: rgba(50,50,50,0.9);
 }

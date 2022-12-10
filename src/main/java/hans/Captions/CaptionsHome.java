@@ -215,10 +215,14 @@ public class CaptionsHome {
         File selectedFile = fileChooser.showOpenDialog(App.stage);
 
         if (selectedFile != null){
-            CaptionsTab captionsTab = new CaptionsTab(captionsController, this, selectedFile.getName(), selectedFile, true);
-            captionsWrapper.getChildren().add(captionsWrapper.getChildren().size() -2, captionsTab);
-            captionsTabs.add(captionsTab);
-            captionsTab.selectSubtitles();
+            createTab(selectedFile);
         }
+    }
+
+    public void createTab(File selectedFile){
+        CaptionsTab captionsTab = new CaptionsTab(captionsController, this, selectedFile.getName(), selectedFile, true);
+        captionsWrapper.getChildren().add(captionsWrapper.getChildren().size() -2, captionsTab);
+        captionsTabs.add(captionsTab);
+        captionsTab.selectSubtitles();
     }
 }

@@ -126,6 +126,8 @@ public class CaptionsBox {
 
         captionsContainer.setOnMousePressed(e -> {
 
+            if (mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+
             if(captionsController.menuController.menuInTransition || captionsController.menuController.menuState != MenuState.CLOSED){
                 e.consume();
                 return;

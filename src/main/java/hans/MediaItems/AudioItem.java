@@ -54,14 +54,14 @@ public class AudioItem implements MediaItem {
 
             duration = Duration.seconds(f.getAudioHeader().getTrackLength());
 
-            Tag tag = f.getTag();
+            Tag tag = f.getTagOrCreateAndSetDefault();
+            System.out.println(tag.toString());
             Artwork artwork = tag.getFirstArtwork();
             if(artwork != null){
                 byte[] coverBinaryData = artwork.getBinaryData();
                 cover = new Image(new ByteArrayInputStream(coverBinaryData));
             }
 
-            System.out.println(tag.isEmpty());
 
 
             mediaInformation.put("title", tag.getFirst(FieldKey.TITLE));
@@ -97,9 +97,6 @@ public class AudioItem implements MediaItem {
             mediaDetails.put("format", f.getAudioHeader().getFormat());
             mediaDetails.put("sampleRate", NumberFormat.getInstance().format(f.getAudioHeader().getSampleRateAsNumber()) + " Hz");
 
-            for(Map.Entry<String, String> entry : mediaInformation.entrySet()){
-                System.out.println(entry.getKey() + " : " + entry.getValue());
-            }
 
         } catch (IOException | CannotReadException | TagException | ReadOnlyFileException | InvalidAudioFrameException e) {
             throw new RuntimeException(e);
@@ -144,9 +141,9 @@ public class AudioItem implements MediaItem {
 
         if(updateFile){
             try {
-                Logger logger = Logger.getLogger("org.jaudiotagger");
                 AudioFile f = AudioFileIO.read(file);
-                Tag tag = f.getTag();
+                Tag tag = f.getTagOrCreateAndSetDefault();
+
 
                 tag.setField(FieldKey.TITLE, map.get("title"));
                 tag.setField(FieldKey.ARTIST, map.get("artist"));
@@ -213,7 +210,7 @@ public class AudioItem implements MediaItem {
         if(updateFile){
             try {
                 AudioFile f = AudioFileIO.read(file);
-                Tag tag = f.getTag();
+                Tag tag = f.getTagOrCreateAndSetDefault();
                 if(imagePath == null) tag.deleteArtworkField();
                 else {
                     tag.setField(ArtworkFactory.createArtworkFromFile(imagePath));

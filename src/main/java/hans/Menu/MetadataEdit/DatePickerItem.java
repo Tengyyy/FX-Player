@@ -35,8 +35,7 @@ public class DatePickerItem extends VBox{
             LocalDate date = LocalDate.parse(value, dateTimeFormatter);
             datePicker.setValue(date);
         }
-        catch (DateTimeParseException e){
-            e.printStackTrace();
+        catch (DateTimeParseException ignored){
         }
 
         datePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {

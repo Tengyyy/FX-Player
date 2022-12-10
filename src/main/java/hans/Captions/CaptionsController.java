@@ -154,6 +154,11 @@ public class CaptionsController {
         captionsHome.captionsToggle.setSelected(true);
     }
 
+    public void clearCaptions(){
+        for(CaptionsTab captionsTab : captionsHome.captionsTabs){
+            captionsTab.removeItem();
+        }
+    }
 
 
     public void removeCaptions(){
@@ -171,12 +176,6 @@ public class CaptionsController {
 
         captionsHome.captionsToggle.setSelected(false);
         captionsHome.captionsToggle.setDisable(true);
-
-        for(CaptionsTab captionsTab : captionsHome.captionsTabs){
-            captionsHome.captionsWrapper.getChildren().remove(captionsTab);
-        }
-
-        captionsHome.captionsTabs.clear();
 
         captionsHome.captionsWrapper.setPrefHeight(159);
         captionsHome.captionsWrapper.setMaxHeight(159);
@@ -245,7 +244,8 @@ public class CaptionsController {
     public void openCaptions(){
 
         if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuState != MenuState.CLOSED || captionsBox.captionsDragActive || settingsController.animating.get()) return;
-        else if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+
+        if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 
         captionsState = CaptionsState.HOME_OPEN;
 

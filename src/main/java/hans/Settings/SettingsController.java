@@ -97,7 +97,8 @@ public class SettingsController {
     public void openSettings(){
 
         if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuState != MenuState.CLOSED || captionsController.captionsBox.captionsDragActive || captionsController.animating.get()) return;
-        else if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+
+        if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
 
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 0, 45, false, 1, true);
 

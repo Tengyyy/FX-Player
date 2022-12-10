@@ -143,8 +143,6 @@ public class ControlBarController implements Initializable {
 
     double lastKnownSliderHoverPosition = -1000;
 
-    boolean sliderPrimaryDown = false;
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -202,11 +200,10 @@ public class ControlBarController implements Initializable {
         volumeTrack.setTranslateX(-60);
 
         durationLabel.setTranslateX(-60);
-
+        durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
+        durationLabel.setMouseTransparent(true);
 
         durationPane.setMouseTransparent(true);
-
-        durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
 
 
         controlBarBackground.setStyle("-fx-background-color: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));");
@@ -327,6 +324,8 @@ public class ControlBarController implements Initializable {
             if (captionsController.captionsState != CaptionsState.CLOSED) {
                 captionsController.closeCaptions();
             }
+
+
         });
 
 
@@ -341,6 +340,7 @@ public class ControlBarController implements Initializable {
             durationSlider.lookup(".track").setCursor(Cursor.HAND);
 
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+                if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
                 if (e.getButton() == MouseButton.PRIMARY){
                     durationSlider.setValueChanging(true);
                 }
@@ -722,6 +722,11 @@ public class ControlBarController implements Initializable {
     }
 
     public void toggleDurationLabel() {
+
+        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+
         if (showingTimeLeft && mediaInterface.mediaActive.get()) {
             Utilities.setCurrentTimeLabel(durationLabel, durationSlider, Duration.millis(mediaInterface.embeddedMediaPlayer.media().info().duration()));
             showingTimeLeft = false;
@@ -733,21 +738,15 @@ public class ControlBarController implements Initializable {
 
 
     public void playButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
-        }
-        else if (captionsController.captionsState != CaptionsState.CLOSED) {
-            captionsController.closeCaptions();
-        }
-        else {
+        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
 
-            if (mediaInterface.atEnd) mediaInterface.replay();
-            else if (mediaInterface.playing.get()) {
-                mediaInterface.wasPlaying = false;
-                mediaInterface.pause();
-            } else mediaInterface.play();
-
-        }
+        if (mediaInterface.atEnd) mediaInterface.replay();
+        else if (mediaInterface.playing.get()) {
+            mediaInterface.wasPlaying = false;
+            mediaInterface.pause();
+        } else mediaInterface.play();
     }
 
 
@@ -855,18 +854,14 @@ public class ControlBarController implements Initializable {
 
 
     public void volumeButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
-        }
-        else if (captionsController.captionsState != CaptionsState.CLOSED) {
-            captionsController.closeCaptions();
-        }
-        else {
-            if (!muted)
-                mute();
-            else
-                unmute();
-        }
+        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+
+        if (!muted)
+            mute();
+        else
+            unmute();
     }
 
     public void mute() {
@@ -882,85 +877,62 @@ public class ControlBarController implements Initializable {
 
 
     public void previousVideoButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
-        }
-        else if (captionsController.captionsState != CaptionsState.CLOSED) {
-            captionsController.closeCaptions();
-        }
-        else {
-            if (!menuController.animationsInProgress.isEmpty()) return;
-            mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition etc
-        }
+        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+
+        if (!menuController.animationsInProgress.isEmpty()) return;
+        mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition etc
     }
 
     public void nextVideoButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
-        }
-        else if (captionsController.captionsState != CaptionsState.CLOSED) {
-            captionsController.closeCaptions();
-        }
-        else {
-            if (!menuController.animationsInProgress.isEmpty()) return;
-            mediaInterface.playNext();
-        }
+        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+
+        if (!menuController.animationsInProgress.isEmpty()) return;
+        mediaInterface.playNext();
     }
 
 
     public void settingsButtonClick() {
-        if (captionsController.captionsState != CaptionsState.CLOSED){
-            captionsController.closeCaptions();
-        }
-        else if (settingsController.settingsState != SettingsState.CLOSED)
-            settingsController.closeSettings();
-        else
-            settingsController.openSettings();
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+
+        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+        else settingsController.openSettings();
     }
 
 
     public void fullScreenButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED)
-            settingsController.closeSettings();
-        else if (captionsController.captionsState != CaptionsState.CLOSED) {
-            captionsController.closeCaptions();
-        }
-        else
-            toggleFullScreen();
+        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+
+        toggleFullScreen();
     }
 
     public void miniplayerButtonClick() {
 
-        if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
-        }
-        else if (captionsController.captionsState != CaptionsState.CLOSED) {
-            captionsController.closeCaptions();
-        }
-        else {
-            if (mainController.miniplayerActive) mainController.closeMiniplayer();
-            else mainController.openMiniplayer();
-        }
+        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+
+        if (mainController.miniplayerActive) mainController.closeMiniplayer();
+        else mainController.openMiniplayer();
     }
 
 
     public void controlBarClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
-        }
-        else if (captionsController.captionsState != CaptionsState.CLOSED) {
-            captionsController.closeCaptions();
-        }
+        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
     }
 
     public void captionsButtonClick() {
 
-        if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
-        }
-        else if (captionsController.captionsState != CaptionsState.CLOSED) {
-            captionsController.closeCaptions();
-        }
+        if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
         else captionsController.openCaptions();
     }
 

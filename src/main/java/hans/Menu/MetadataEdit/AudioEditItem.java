@@ -6,6 +6,7 @@ import hans.Utilities;
 import javafx.scene.layout.VBox;
 import org.jaudiotagger.tag.FieldKey;
 
+import java.time.DateTimeException;
 import java.util.*;
 
 public class AudioEditItem implements MetadataEditItem{
@@ -67,7 +68,8 @@ public class AudioEditItem implements MetadataEditItem{
         mediaInformation.put("title", titleItem.textArea.getText());
         mediaInformation.put("artist", artistItem.textArea.getText());
         mediaInformation.put("album", albumItem.textArea.getText());
-        mediaInformation.put("year", releaseDateItem.datePicker.getValue().format(releaseDateItem.dateTimeFormatter));
+        if(releaseDateItem.datePicker.getValue() != null) mediaInformation.put("year", releaseDateItem.datePicker.getValue().format(releaseDateItem.dateTimeFormatter));
+        else mediaInformation.put("year", "");
         mediaInformation.put("track", String.valueOf(trackItem.numberSpinner1.spinner.getValue()));
         mediaInformation.put("track_total", String.valueOf(trackItem.numberSpinner2.spinner.getValue()));
         mediaInformation.put("disc_no", String.valueOf(discItem.numberSpinner1.spinner.getValue()));

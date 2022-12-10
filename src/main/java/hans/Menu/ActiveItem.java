@@ -11,7 +11,6 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -70,7 +69,7 @@ public class ActiveItem extends GridPane implements MenuObject {
     SVGPath playSVG, pauseSVG, removeSVG, optionsSVG, captionsPath;
 
     // the options popup for this queue item
-    MenuItemOptionsPopUp optionsPopUp;
+    public ActiveItemContextMenu activeItemContextMenu;
 
     MediaInterface mediaInterface;
 
@@ -258,14 +257,14 @@ public class ActiveItem extends GridPane implements MenuObject {
 
 
         optionsButton.setOnAction((e) -> {
-            if(optionsPopUp.isShowing()) optionsPopUp.hide();
-            else optionsPopUp.showOptions();
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            activeItemContextMenu.showOptions();
         });
 
         this.setOnMouseClicked(e -> {
-            if(optionsPopUp.isShowing()) optionsPopUp.hide();
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
         });
-        this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
+        this.setOnContextMenuRequested(e -> activeItemContextMenu.show(this, e.getScreenX(), e.getScreenY()));
 
         optionsIcon = new Region();
         optionsIcon.setShape(optionsSVG);
@@ -303,7 +302,7 @@ public class ActiveItem extends GridPane implements MenuObject {
             mouseHover = false;
 
             // show bouncing columns and start animation
-            if(!optionsPopUp.showing) {
+            if(!activeItemContextMenu.showing) {
                 playIcon.setVisible(false);
                 iconBackground.setVisible(false);
 
@@ -318,8 +317,9 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         playButton.setOnAction((e) -> {
 
-            if(optionsPopUp.showing) optionsPopUp.hide();
-            else if(mediaInterface.atEnd) mediaInterface.replay();
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+
+            if(mediaInterface.atEnd) mediaInterface.replay();
             else if (mediaInterface.playing.get()){
                 mediaInterface.wasPlaying = false;
                 mediaInterface.pause();
@@ -336,8 +336,8 @@ public class ActiveItem extends GridPane implements MenuObject {
         removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
 
         removeButton.setOnAction((e) -> {
-            if(optionsPopUp.showing) optionsPopUp.hide();
-            else remove();
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            remove();
         });
 
     }

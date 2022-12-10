@@ -2,11 +2,13 @@ package hans.Captions;
 
 import hans.AnimationsClass;
 import hans.App;
+import hans.Menu.ActiveItem;
 import hans.SVG;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
@@ -33,18 +35,21 @@ public class CaptionsTab extends HBox {
     Region removeIcon = new Region();
     StackPane removePane = new StackPane();
     Button removeButton = new Button();
-    Label valueLabel = new Label();
+    public Label valueLabel = new Label();
 
-    boolean selected = false;
+    public boolean selected = false;
+
+    public boolean removable;
+
+    MenuItem menuItem;
 
     CaptionsTab(CaptionsController captionsController, CaptionsHome captionsHome, String value, File file, boolean removable){
 
         this.captionsController = captionsController;
         this.captionsHome = captionsHome;
         this.captionFile = file;
+        this.removable = removable;
 
-        System.out.println(value);
-        System.out.println(file.getAbsolutePath());
 
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
         removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
@@ -127,6 +132,11 @@ public class CaptionsTab extends HBox {
             captionsController.clip.setHeight(height + 35);
         }
 
+        ActiveItem activeItem = captionsController.menuController.activeItem;
+        if(activeItem != null){
+            this.menuItem = activeItem.activeItemContextMenu.createSubtitleItem(this);
+        }
+
     }
 
     public void selectSubtitles(){
@@ -149,6 +159,10 @@ public class CaptionsTab extends HBox {
         }
 
         captionsHome.captionsTabs.remove(this);
+        ActiveItem activeItem = captionsController.menuController.activeItem;
+        if(activeItem != null){
+            activeItem.activeItemContextMenu.subtitles.getItems().remove(menuItem);
+        }
         boolean removed = captionsHome.captionsWrapper.getChildren().remove(this);
         if(removed){
             double height = captionsHome.scrollPane.getHeight();

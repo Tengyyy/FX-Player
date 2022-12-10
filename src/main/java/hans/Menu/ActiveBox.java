@@ -6,7 +6,6 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 public class ActiveBox extends StackPane {
@@ -25,7 +24,7 @@ public class ActiveBox extends StackPane {
     public void clear(){
         if(this.getChildren().isEmpty()) return;
 
-        menuController.captionsController.removeCaptions();
+        menuController.captionsController.clearCaptions();
 
         menuController.activeItem = null;
 
@@ -47,7 +46,7 @@ public class ActiveBox extends StackPane {
 
     public void set(ActiveItem activeItem, boolean pause){
 
-        menuController.captionsController.removeCaptions();
+        menuController.captionsController.clearCaptions();
         menuController.activeItem = activeItem;
 
         if(this.getChildren().isEmpty()){
@@ -113,7 +112,7 @@ public class ActiveBox extends StackPane {
 
     public void initialize(ActiveItem activeItem){
         Platform.runLater(() -> {
-            activeItem.optionsPopUp = new MenuItemOptionsPopUp(activeItem);
+            activeItem.activeItemContextMenu = new ActiveItemContextMenu(activeItem, menuController.captionsController);
             activeItem.playButtonTooltip = new ControlTooltip(menuController.mainController, "Play video", activeItem.playButton, 1000);
             activeItem.removeButtonTooltip = new ControlTooltip(menuController.mainController, "Remove video", activeItem.removeButton, 1000);
             activeItem.optionsButtonTooltip = new ControlTooltip(menuController.mainController, "Options", activeItem.optionsButton, 1000);

@@ -56,27 +56,27 @@
     -fx-border-insets: -1;
 }
 
-.customTextField .menu-item .label{
+.customTextField .menu-item .label, .expandable-text-area .menu-item .label, .spinner .text-field .menu-item .label, .date-picker .text-field .menu-item .label{
     -fx-text-fill: white;
 }
 
-.customTextField .menu-item:disabled .label{
+.customTextField .menu-item:disabled .label, .expandable-text-area .menu-item:disabled .label, .spinner .text-field .menu-item:disabled .label, .date-picker .text-field .menu-item:disabled .label{
     -fx-text-fill: rgb(150,150,150);
 }
 
-.customTextField .context-menu{
+.customTextField .context-menu, .expandable-text-area .context-menu, .spinner .text-field .context-menu, .date-picker .text-field .context-menu{
     -fx-background-color: rgba(30,30,30,0.95);
 }
 
-.customTextField .menu-item{
+.customTextField .menu-item, .expandable-text-area .menu-item, .spinner .text-field .menu-item, .date-picker .text-field .menu-item{
     -fx-background-color: transparent;
 }
 
-.customTextField .menu-item:hover{
+.customTextField .menu-item:hover, .expandable-text-area .menu-item:hover, .spinner .text-field .menu-item:hover, .date-picker .text-field .menu-item:hover{
     -fx-background-color: rgb(50,50,50);
 }
 
-.customTextField .menu-item:disabled{
+.customTextField .menu-item:disabled, .expandable-text-area .menu-item:disabled, .spinner .text-field .menu-item:disabled, .date-picker .text-field .menu-item:disabled{
     -fx-background-color: transparent;
 }
 
@@ -96,31 +96,6 @@
     -fx-border-style: none;
     -fx-border-insets: 0;
 }
-
-.expandable-text-area .menu-item .label{
-    -fx-text-fill: white;
-}
-
-.expandable-text-area .menu-item:disabled .label{
-    -fx-text-fill: rgb(150,150,150);
-}
-
-.expandable-text-area .context-menu{
-    -fx-background-color: rgba(30,30,30,0.95);
-}
-
-.expandable-text-area .menu-item{
-    -fx-background-color: transparent;
-}
-
-.expandable-text-area .menu-item:hover{
-    -fx-background-color: rgb(50,50,50);
-}
-
-.expandable-text-area .menu-item:disabled{
-    -fx-background-color: transparent;
-}
-
 
 .combo-box {
      -fx-background-color : rgba(30,30,30,0.4);

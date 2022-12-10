@@ -397,7 +397,10 @@ public class MainController implements Initializable {
         menuButton.setMaxSize(50, 50);
         menuButton.setBackground(Background.EMPTY);
         menuButton.setCursor(Cursor.HAND);
-        menuButton.setOnAction(e -> openMenu());
+        menuButton.setOnAction(e -> {
+            if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
+            openMenu();
+        });
 
 
         menuIcon.setShape(menuSVG);
@@ -416,7 +419,9 @@ public class MainController implements Initializable {
         videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 20");
         videoTitleLabel.setEffect(new DropShadow());
         videoTitleLabel.setOnMouseClicked(e -> {
+            if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
             if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+            if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
             e.consume();
         });
 
@@ -467,13 +472,18 @@ public class MainController implements Initializable {
         if(e.getButton() == MouseButton.SECONDARY){
             // open/close loop toggle pop-up
             playbackOptionsPopUp.show(videoImageViewInnerWrapper, e.getScreenX(), e.getScreenY());
-
-
+            if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+            if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
             return;
         }
 
         if(playbackOptionsPopUp.isShowing()){
             playbackOptionsPopUp.hide();
+            return;
+        }
+
+        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()){
+            menuController.activeMenuItemContextMenu.hide();
             return;
         }
 
@@ -519,6 +529,8 @@ public class MainController implements Initializable {
         if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
         if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
 
+        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
+
         controlBarController.controlBarWrapper.setMouseTransparent(true);
 
         if(controlBarController.controlBarOpen) AnimationsClass.hideControls(controlBarController, captionsController, this);
@@ -543,7 +555,9 @@ public class MainController implements Initializable {
         if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
         if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
 
-       AnimationsClass.hideControls(controlBarController, captionsController, this);
+        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
+
+        AnimationsClass.hideControls(controlBarController, captionsController, this);
 
     }
 
@@ -1154,7 +1168,7 @@ public class MainController implements Initializable {
     public void pressQ(){
 
         if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
-        if(menuController.activeMenuItemOptionsPopUp != null && menuController.activeMenuItemOptionsPopUp.isShowing()) menuController.activeMenuItemOptionsPopUp.hide();
+        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
 
         if(menuController.menuState != MenuState.CLOSED){
             if(menuController.menuState == MenuState.METADATA_EDIT_OPEN && menuController.metadataEditPage.changesMade.get()){
@@ -1230,7 +1244,7 @@ public class MainController implements Initializable {
         controlBarController.toggleFullScreen();
 
         if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
-        if(menuController.activeMenuItemOptionsPopUp != null && menuController.activeMenuItemOptionsPopUp.isShowing()) menuController.activeMenuItemOptionsPopUp.hide();
+        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
     }
 
     public void pressF12(){
@@ -1433,7 +1447,7 @@ public class MainController implements Initializable {
         App.fullScreen = false;
 
         if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
-        if(menuController.activeMenuItemOptionsPopUp != null && menuController.activeMenuItemOptionsPopUp.isShowing()) menuController.activeMenuItemOptionsPopUp.hide();
+        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
 
         controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
         App.stage.setFullScreen(false);

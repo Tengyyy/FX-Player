@@ -133,7 +133,7 @@
                         </StackPane>
                         <Label id="durationLabel" fx:id="durationLabel" maxHeight="-Infinity" minWidth="150.0" prefHeight="30.0" prefWidth="160.0" styleClass="focusableProperty" textFill="WHITE" GridPane.columnIndex="6">
                             <cursor>
-                                <Cursor fx:constant="HAND" />
+                                <Cursor fx:constant="DEFAULT" />
                             </cursor>
                         </Label>
                   <StackPane fx:id="captionsButtonPane" minWidth="45.0" onMouseEntered="#enterCaptionsButton" onMouseExited="#exitCaptionsButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="7">

@@ -1,7 +1,6 @@
 package hans.Menu;
 
 import hans.*;
-import hans.MediaItems.*;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -748,7 +747,7 @@ public class QueueBox extends VBox {
         Platform.runLater(() -> {
             queueItem.removeButtonTooltip = new ControlTooltip(menuController.mainController,"Remove video", queueItem.removeButton, 1000);
             queueItem.optionsButtonTooltip = new ControlTooltip(menuController.mainController, "Options", queueItem.optionsButton, 1000);
-            queueItem.optionsPopUp = new MenuItemOptionsPopUp(queueItem);
+            queueItem.menuItemContextMenu = new MenuItemContextMenu(queueItem);
 
             QueueItem.height = queueItem.getBoundsInParent().getHeight();
 

@@ -12,7 +12,6 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
@@ -21,7 +20,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
-import java.io.File;
 import java.util.Map;
 
 public class QueueItem extends GridPane implements MenuObject {
@@ -80,7 +78,7 @@ public class QueueItem extends GridPane implements MenuObject {
 
     SVGPath playSVG, removeSVG, optionsSVG;
 
-    MenuItemOptionsPopUp optionsPopUp;
+    MenuItemContextMenu menuItemContextMenu;
 
     MediaInterface mediaInterface;
 
@@ -241,19 +239,16 @@ public class QueueItem extends GridPane implements MenuObject {
         optionsButton.setText(null);
 
         optionsButton.setOnAction((e) -> {
-            if(optionsPopUp.isShowing()) optionsPopUp.hide();
-            else optionsPopUp.showOptions();
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            menuItemContextMenu.showOptions();
         });
 
         this.setOnMouseClicked(e -> {
-
-            if(!menuController.animationsInProgress.isEmpty()) return;
-
-            if(optionsPopUp.isShowing()) optionsPopUp.hide();
-            else if(e.getButton() == MouseButton.PRIMARY) play(true);
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            else if (e.getButton() == MouseButton.PRIMARY && menuController.animationsInProgress.isEmpty()) play(true);
         });
 
-        this.setOnContextMenuRequested(e -> optionsPopUp.show(this, e.getScreenX(), e.getScreenY()));
+        this.setOnContextMenuRequested(e -> menuItemContextMenu.show(this, e.getScreenX(), e.getScreenY()));
 
         optionsIcon = new Region();
         optionsIcon.setShape(optionsSVG);
@@ -316,7 +311,7 @@ public class QueueItem extends GridPane implements MenuObject {
             playIcon.setVisible(true);
             indexLabel.setVisible(false);
 
-            if (optionsPopUp.isShowing()) optionsPopUp.hide();
+            if (menuItemContextMenu.isShowing()) menuItemContextMenu.hide();
 
             dragPosition = e.getY();
             minimumY = this.getBoundsInParent().getMinY(); // this is the maximum negative translation that can be applied
@@ -332,7 +327,7 @@ public class QueueItem extends GridPane implements MenuObject {
         this.setOnMouseExited((e) -> {
             mouseHover = false;
 
-            if(!queueBox.dragActive && !optionsPopUp.showing){
+            if(!queueBox.dragActive && !menuItemContextMenu.showing){
                 this.setStyle("-fx-background-color: transparent;");
 
                 indexLabel.setVisible(true);
@@ -349,11 +344,8 @@ public class QueueItem extends GridPane implements MenuObject {
         removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
 
         removeButton.setOnAction((e) -> {
-
-            if(!menuController.animationsInProgress.isEmpty()) return;
-
-            if(optionsPopUp.showing) optionsPopUp.hide();
-            else queueBox.remove(this, true);
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            if(menuController.animationsInProgress.isEmpty()) queueBox.remove(this, true);
 
         });
 

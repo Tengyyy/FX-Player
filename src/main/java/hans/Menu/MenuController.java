@@ -141,7 +141,7 @@ public class MenuController implements Initializable {
     Button closeButton = new Button();
     Region closeIcon = new Region();
 
-    public MenuItemOptionsPopUp activeMenuItemOptionsPopUp;
+    public MenuItemContextMenu activeMenuItemContextMenu;
 
     // the lower bound of the bottom drag detection area
     DoubleProperty lowerBottomBound = new SimpleDoubleProperty();
@@ -217,6 +217,8 @@ public class MenuController implements Initializable {
 
 
         historyButton.setOnAction((e) -> {
+            if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
+
             if(historyBox.open) historyBox.close();
             else historyBox.open();
         });
@@ -289,7 +291,10 @@ public class MenuController implements Initializable {
         shuffleToggle.setRipplerFill(Color.rgb(255,255,255,0.6));
         shuffleToggle.setOpacity(0);
 
-        shuffleToggle.setOnAction(e -> settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!settingsController.playbackOptionsController.shuffleTab.toggle.isSelected()));
+        shuffleToggle.setOnAction(e -> {
+            if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
+            settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!settingsController.playbackOptionsController.shuffleTab.toggle.isSelected());
+        });
 
         shuffleToggle.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, shuffleToggle, 0, 0.5, false, 1, true));
 
@@ -326,7 +331,10 @@ public class MenuController implements Initializable {
         addButton.setRipplerFill(Color.rgb(255,255,255,0.6));
         addButton.setOpacity(0);
 
-        addButton.setOnAction(e -> openVideoChooser());
+        addButton.setOnAction(e -> {
+            if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
+            openVideoChooser();
+        });
 
         addButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, addButton, 0, 0.5, false, 1, true));
 
@@ -344,7 +352,10 @@ public class MenuController implements Initializable {
         clearQueueButton.setText("CLEAR");
         clearQueueButton.setDisable(true);
 
-        clearQueueButton.setOnAction((e) -> clearQueue());
+        clearQueueButton.setOnAction((e) -> {
+            if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
+            clearQueue();
+        });
 
         queueHeader = new HBox();
         queueHeader.setAlignment(Pos.CENTER_LEFT);
@@ -591,7 +602,10 @@ public class MenuController implements Initializable {
         closeButton.setCursor(Cursor.HAND);
         closeButton.setBackground(Background.EMPTY);
 
-        closeButton.setOnAction(e -> closeMenu());
+        closeButton.setOnAction(e -> {
+            if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
+            closeMenu();
+        });
 
         closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.AnimateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 

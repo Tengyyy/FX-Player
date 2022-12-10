@@ -14,6 +14,7 @@ import javafx.application.Platform;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.Cursor;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
@@ -234,7 +235,14 @@ public class MediaInterface {
 
         controlBarController.durationSlider.setValue(0);
 
-        mainController.metadataButton.setOnAction(e -> menuObject.showMetadata());
+        mainController.metadataButton.setOnAction(e -> {
+            if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+            menuObject.showMetadata();
+        });
+
+        controlBarController.durationLabel.setCursor(Cursor.HAND);
+        controlBarController.durationLabel.setMouseTransparent(false);
+
 
 
         if(!menuObject.getMediaItem().hasVideo()){
@@ -277,6 +285,9 @@ public class MediaInterface {
         mainController.miniplayerActiveText.setVisible(false);
 
         controlBarController.durationSlider.setValue(0);
+
+        controlBarController.durationLabel.setCursor(Cursor.DEFAULT);
+        controlBarController.durationLabel.setMouseTransparent(true);
 
         embeddedMediaPlayer.controls().stop();
 

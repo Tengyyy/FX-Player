@@ -3,6 +3,7 @@ package hans.Menu.MetadataEdit;
 import hans.MediaItems.MediaItem;
 import javafx.scene.layout.VBox;
 
+import java.time.DateTimeException;
 import java.util.*;
 
 public class WavEditItem implements MetadataEditItem{
@@ -58,7 +59,11 @@ public class WavEditItem implements MetadataEditItem{
         mediaInformation.put("title", titleItem.textArea.getText());
         mediaInformation.put("artist", artistItem.textArea.getText());
         mediaInformation.put("album", albumItem.textArea.getText());
-        mediaInformation.put("year", releaseDateItem.datePicker.getValue().format(releaseDateItem.dateTimeFormatter));
+        try {
+            mediaInformation.put("year", releaseDateItem.datePicker.getValue().format(releaseDateItem.dateTimeFormatter));
+        } catch (DateTimeException e){
+            mediaInformation.put("year", "");
+        }
         mediaInformation.put("track", String.valueOf(trackItem.numberSpinner.spinner.getValue()));
         mediaInformation.put("album_artist", albumArtistItem.textArea.getText());
         mediaInformation.put("composer", composerItem.textArea.getText());

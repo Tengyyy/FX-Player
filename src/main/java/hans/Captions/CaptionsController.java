@@ -155,8 +155,8 @@ public class CaptionsController {
     public void clearCaptions(){
 
         if(menuController.activeItem != null){
-            menuController.activeItem.activeItemContextMenu.subtitles.getItems().clear();
-            menuController.activeItem.activeItemContextMenu.subtitles.getItems().add(menuController.activeItem.activeItemContextMenu.externalSubtitles);
+            menuController.activeItem.activeItemContextMenu.subtitleContainer.getChildren().clear();
+            menuController.activeItem.activeItemContextMenu.subtitleContainer.getChildren().add(menuController.activeItem.activeItemContextMenu.externalSubtitlesWrapper);
         }
 
         for(CaptionsTab captionsTab : captionsHome.captionsTabs) {

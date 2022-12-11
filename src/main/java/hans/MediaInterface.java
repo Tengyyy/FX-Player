@@ -108,7 +108,7 @@ public class MediaInterface {
 
 
         embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(mainController.videoImageView));
-        embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
+        embeddedMediaPlayer.audio().setVolume(50);
 
         embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
 
@@ -116,11 +116,6 @@ public class MediaInterface {
             @Override
             public void finished(MediaPlayer mediaPlayer) {
                 Platform.runLater(() -> controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax()));
-            }
-
-            @Override
-            public void stopped(MediaPlayer mediaPlayer){
-                // mediaplayer is stoppped when opening/closing miniplayer, have to make sure this code here doesnt mess with that
             }
 
             @Override
@@ -216,11 +211,11 @@ public class MediaInterface {
 
 
         // resets all media state variables before creating a new player
-        atEnd = false;
+        /*atEnd = false;
         seekedToEnd = false;
         playing.set(false);
         wasPlaying = false;
-        currentTime = 0;
+        currentTime = 0;*/
 
         fFmpegFrameGrabber = new FFmpegFrameGrabber(menuController.activeItem.getMediaItem().getFile());
         fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
@@ -267,7 +262,10 @@ public class MediaInterface {
 
 
         embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());
-        embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
+        Platform.runLater(() -> {
+            embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
+        });
+
 
 
     }
@@ -307,6 +305,12 @@ public class MediaInterface {
             controlBarController.disablePreviousVideoButton();
             controlBarController.disableNextVideoButton();
         }
+
+        atEnd = false;
+        seekedToEnd = false;
+        playing.set(false);
+        wasPlaying = false;
+        currentTime = 0;
 
 
         try {

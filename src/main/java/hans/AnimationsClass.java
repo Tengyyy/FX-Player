@@ -131,17 +131,7 @@ public class AnimationsClass {
             captionsTransition.setToY(30);
         }
         else {
-            captionsTransition.setToY(0);
-        }
-
-        if(captionsController.captionsBox.captionsLocation == Pos.CENTER_LEFT || captionsController.captionsBox.captionsLocation == Pos.TOP_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT){
-            captionsTransition.setToX(70);
-        }
-        else if(captionsController.captionsBox.captionsLocation == Pos.TOP_RIGHT || captionsController.captionsBox.captionsLocation == Pos.CENTER_RIGHT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-            captionsTransition.setToX(-30);
-        }
-        else {
-            captionsTransition.setToX(0);
+            captionsTransition.setToY(captionsController.captionsBox.captionsContainer.getTranslateY());
         }
 
         FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarWrapper);

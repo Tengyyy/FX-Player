@@ -112,7 +112,7 @@ public class CaptionsBox {
 
 
         captionsContainer.setSpacing(mediaWidthMultiplier.multiply(defaultSpacing).get());
-        captionsContainer.setTranslateY(-50);
+        captionsContainer.setTranslateY(-90);
         captionsContainer.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         captionsContainer.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         captionsContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
@@ -216,7 +216,7 @@ public class CaptionsBox {
 
             minimumY = 70; // maximum negative translation that can be applied (70px margin from top edge)
 
-            minimumX = 70; // 70px from left edge due to the button in top left corner
+            minimumX = 30; // 70px from left edge due to the button in top left corner
 
             maximumY = mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90;
             maximumX = mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30;
@@ -233,7 +233,7 @@ public class CaptionsBox {
 
 
         StackPane.setAlignment(captionsContainer, Pos.BOTTOM_CENTER);
-        mainController.videoImageViewInnerWrapper.getChildren().add(1, captionsContainer);
+        mainController.videoImageViewInnerWrapper.getChildren().add(captionsContainer);
 
 
         captionsController.captionsOn.addListener((observableValue, oldValue, newValue) -> {
@@ -292,14 +292,17 @@ public class CaptionsBox {
 
     public Pos findClosestCaptionsPosition(double x, double y){
 
-        Point2D topLeft = new Point2D(70, 70);
+        double width = captionsContainer.getLayoutBounds().getWidth();
+        double height = captionsContainer.getLayoutBounds().getHeight();
+
+        Point2D topLeft = new Point2D(30, 70);
         Point2D topCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, 70);
         Point2D topRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30, 70);
         Point2D centerRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
         Point2D bottomRight = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX() - 30,mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90);
         Point2D bottomCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90);
-        Point2D bottomLeft = new Point2D(70, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90);
-        Point2D centerLeft = new Point2D(70, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
+        Point2D bottomLeft = new Point2D(30, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY() - 90);
+        Point2D centerLeft = new Point2D(30, mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxY()/2);
 
         ArrayList<Point2D> captionsPositions = new ArrayList<>();
         captionsPositions.add(topLeft);
@@ -368,7 +371,7 @@ public class CaptionsBox {
         translateTransition.setFromY(captionsContainer.getTranslateY());
 
         if(position == Pos.CENTER_LEFT || position == Pos.TOP_LEFT || position == Pos.BOTTOM_LEFT){
-            translateTransition.setToX(70);
+            translateTransition.setToX(30);
         }
         else if(position == Pos.TOP_RIGHT || position == Pos.CENTER_RIGHT || position == Pos.BOTTOM_RIGHT){
             translateTransition.setToX(-30);
@@ -511,7 +514,7 @@ public class CaptionsBox {
             }
             break;
             case BOTTOM_LEFT: {
-                captionsContainer.setTranslateX(70);
+                captionsContainer.setTranslateX(30);
 
                 if(captionsController.controlBarController.controlBarOpen) captionsContainer.setTranslateY(-90);
                 else captionsContainer.setTranslateY(-30);
@@ -523,12 +526,12 @@ public class CaptionsBox {
             }
             break;
             case CENTER_LEFT: {
-                captionsContainer.setTranslateX(70);
+                captionsContainer.setTranslateX(30);
                 captionsContainer.setTranslateY(0);
             }
             break;
             case TOP_LEFT: {
-                captionsContainer.setTranslateX(70);
+                captionsContainer.setTranslateX(30);
                 captionsContainer.setTranslateY(70);
             }
             break;

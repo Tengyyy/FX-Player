@@ -192,7 +192,7 @@ public class MainController implements Initializable {
         miniplayerActiveText.setVisible(false);
         StackPane.setAlignment(miniplayerActiveText, Pos.CENTER);
 
-        videoImageViewInnerWrapper.getChildren().addAll(miniplayerActiveText, controlBarController.controlBarBackground, videoTitleBackground, videoTitleBox);
+        videoImageViewInnerWrapper.getChildren().addAll(controlBarController.controlBarBackground, videoTitleBackground, miniplayerActiveText, videoTitleBox);
 
         Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 0, TooltipType.MENU_TOOLTIP);

@@ -8,10 +8,8 @@ import javafx.animation.FadeTransition;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.awt.*;

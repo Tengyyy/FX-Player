@@ -399,7 +399,6 @@ public class ControlBarController implements Initializable {
                     pauseTransition.playFromStart();
                 }
 
-
             });
 
             durationSlider.lookup(".track").setOnMouseEntered((e) -> {

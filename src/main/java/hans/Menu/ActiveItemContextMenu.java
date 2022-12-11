@@ -7,15 +7,10 @@ import hans.Captions.CaptionsTab;
 import hans.SVG;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
@@ -28,13 +23,15 @@ public class ActiveItemContextMenu extends MenuItemContextMenu {
     CaptionsController captionsController;
 
     public Menu subtitles = new Menu("Subtitles");
-    public MenuItem externalSubtitles = new MenuItem();
+    public CustomMenuItem subtitleContent;
 
+    ScrollPane subtitleScroll = new ScrollPane();
+    public VBox subtitleContainer = new VBox();
 
     SVGPath subtitlesPath = new SVGPath(), externalSubtitlesPath = new SVGPath();
     Region subtitlesIcon = new Region(), externalSubtitlesIcon = new Region();
     StackPane externalSubtitlesIconPane = new StackPane();
-    HBox externalSubtitlesWrapper = new HBox();
+    public HBox externalSubtitlesWrapper = new HBox();
     Label externalSubtitlesLabel = new Label("Add external subtitles");
 
     ActiveItemContextMenu(ActiveItem activeItem, CaptionsController captionsController){
@@ -56,6 +53,9 @@ public class ActiveItemContextMenu extends MenuItemContextMenu {
         externalSubtitlesWrapper.setMinSize(220, 39);
         externalSubtitlesWrapper.setPrefSize(220, 39);
         externalSubtitlesWrapper.setMaxSize(220, 39);
+        externalSubtitlesWrapper.getStyleClass().add("subtitle-menu-item");
+        externalSubtitlesWrapper.setOnMouseClicked(e -> System.out.println("test"));
+
 
         externalSubtitlesWrapper.setPadding(new Insets(0, 10, 0, 10));
 
@@ -76,13 +76,22 @@ public class ActiveItemContextMenu extends MenuItemContextMenu {
         externalSubtitlesLabel.setMaxSize(170, 39);
 
         externalSubtitlesWrapper.getChildren().addAll(externalSubtitlesIconPane, externalSubtitlesLabel);
-        externalSubtitles.setOnAction(e -> openSubtitleChooser());
-        externalSubtitles.setGraphic(externalSubtitlesWrapper);
-        externalSubtitles.getStyleClass().add("subtitle-menu-item");
 
-        subtitles.getItems().add(externalSubtitles);
+        subtitleScroll.setPrefSize(240, 100);
+        subtitleScroll.setContent(subtitleContainer);
+        subtitleScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        subtitleScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        subtitleScroll.getStyleClass().add("subtitle-menu-scroll");
+
+        subtitleContainer.getChildren().add(externalSubtitlesWrapper);
+        subtitleContent = new CustomMenuItem(subtitleScroll, false);
+        subtitleContent.getStyleClass().add("subtitle-menu");
+
+
+        subtitles.getItems().add(subtitleContent);
 
         this.getItems().add(3, subtitles);
+
     }
 
 

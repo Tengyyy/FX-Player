@@ -2,10 +2,7 @@ package hans.Captions;
 
 
 import hans.*;
-import hans.Menu.HistoryItem;
-import hans.Menu.MenuController;
-import hans.Menu.MenuObject;
-import hans.Menu.MenuState;
+import hans.Menu.*;
 import hans.SRTParser.srt.SRTParser;
 import hans.SRTParser.srt.Subtitle;
 import hans.Settings.SettingsController;
@@ -79,12 +76,12 @@ public class CaptionsController {
         captionsBackground.setVisible(false);
         captionsBackground.setMouseTransparent(true);
         captionsBackground.setOpacity(0);
-        StackPane.setMargin(captionsBuffer, new Insets(0, 50, 80, 0));
+        StackPane.setMargin(captionsBuffer, new Insets(0, 20, 80, 0));
         StackPane.setAlignment(captionsBackground, Pos.BOTTOM_RIGHT);
 
 
         Platform.runLater(() -> {
-            captionsBuffer.maxHeightProperty().bind(Bindings.subtract(mainController.videoImageViewHeight, 120));
+            captionsBuffer.maxHeightProperty().bind(Bindings.min(Bindings.subtract(mainController.videoImageViewHeight, 120), 400));
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.translateYProperty().bind(Bindings.subtract(captionsBuffer.heightProperty(), clip.heightProperty()));
             captionsBackground.maxHeightProperty().bind(clip.heightProperty());
@@ -154,10 +151,31 @@ public class CaptionsController {
         captionsHome.captionsToggle.setSelected(true);
     }
 
+
     public void clearCaptions(){
-        for(CaptionsTab captionsTab : captionsHome.captionsTabs){
-            captionsTab.removeItem();
+
+        if(menuController.activeItem != null){
+            menuController.activeItem.activeItemContextMenu.subtitles.getItems().clear();
+            menuController.activeItem.activeItemContextMenu.subtitles.getItems().add(menuController.activeItem.activeItemContextMenu.externalSubtitles);
         }
+
+        for(CaptionsTab captionsTab : captionsHome.captionsTabs) {
+            captionsHome.captionsWrapper.getChildren().remove(captionsTab);
+        }
+        captionsHome.captionsTabs.clear();
+
+        captionsHome.captionsWrapper.setPrefHeight(159);
+        captionsHome.captionsWrapper.setMaxHeight(159);
+
+        captionsHome.scrollPane.setPrefHeight(162);
+        captionsHome.scrollPane.setMaxHeight(162);
+
+
+        if(captionsState == CaptionsState.HOME_OPEN || captionsState == CaptionsState.CLOSED){
+            clip.setHeight(162);
+        }
+
+        removeCaptions();
     }
 
 
@@ -176,19 +194,8 @@ public class CaptionsController {
 
         captionsHome.captionsToggle.setSelected(false);
         captionsHome.captionsToggle.setDisable(true);
-
-        captionsHome.captionsWrapper.setPrefHeight(159);
-        captionsHome.captionsWrapper.setMaxHeight(159);
-
-        captionsHome.scrollPane.setPrefHeight(162);
-        captionsHome.scrollPane.setMaxHeight(162);
-
-
-        if(captionsState == CaptionsState.HOME_OPEN || captionsState == CaptionsState.CLOSED){
-            clip.setHeight(162);
-        }
-
     }
+
 
     public void updateCaptions(double time){
         if(!subtitles.isEmpty() &&
@@ -398,6 +405,7 @@ public class CaptionsController {
             captionsHome.scrollPane.setVisible(false);
             captionsHome.scrollPane.setMouseTransparent(true);
             captionsHome.scrollPane.setOpacity(1);
+            captionsHome.scrollPane.setVvalue(0);
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);

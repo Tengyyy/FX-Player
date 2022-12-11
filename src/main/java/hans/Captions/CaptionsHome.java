@@ -197,6 +197,7 @@ public class CaptionsHome {
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
+            scrollPane.setVvalue(0);
             captionsController.clip.setHeight(captionsController.captionsOptionsPane.scrollPane.getPrefHeight());
         });
 

@@ -425,7 +425,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
     public void addSubtitlesIcon(){
         artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
-        if (!textWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
+        if (!subTextWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
     }
 
     public void removeSubtitlesIcon(){

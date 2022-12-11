@@ -72,7 +72,7 @@ public class MenuController implements Initializable {
     ControlBarController controlBarController;
     SettingsController settingsController;
     public CaptionsController captionsController;
-    MediaInterface mediaInterface;
+    public MediaInterface mediaInterface;
 
     public MetadataEditPage metadataEditPage;
     public TechnicalDetailsPage technicalDetailsPage;

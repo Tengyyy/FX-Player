@@ -67,7 +67,7 @@ public class SettingsController {
 
 
         Platform.runLater(() -> {
-            settingsBuffer.maxHeightProperty().bind(Bindings.subtract(mainController.videoImageViewHeight, 120));
+            settingsBuffer.maxHeightProperty().bind(Bindings.min(Bindings.subtract(mainController.videoImageViewHeight, 120), 400));
             clip.setHeight(settingsHomeController.settingsHome.getHeight());
             clip.translateYProperty().bind(Bindings.subtract(settingsBuffer.heightProperty(), clip.heightProperty()));
             settingsBackground.maxHeightProperty().bind(clip.heightProperty());

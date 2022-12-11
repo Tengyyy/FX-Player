@@ -221,33 +221,16 @@ public class MkvItem implements MediaItem {
                 }
 
                 //overwrite curr file with new file, if its playing, stop it, rewrite and then start playing again
-                if(mainController.getMenuController().activeItem != null && mainController.getMenuController().activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                    mainController.getMediaInterface().resetMediaPlayer(true);
 
-                    boolean deleteSuccess = file.delete();
-                    if(deleteSuccess){
-                        File tempFile = new File(outputPath);
-                        boolean renameSuccess = tempFile.renameTo(file);
-                        if(!renameSuccess){
-                            throw new IOException("Failed to rename new file");
-                        }
+                boolean deleteSuccess = file.delete();
+                if(deleteSuccess){
+                    File tempFile = new File(outputPath);
+                    boolean renameSuccess = tempFile.renameTo(file);
+                    if(!renameSuccess){
+                        throw new IOException("Failed to rename new file");
                     }
-                    else throw new IOException("Failed to delete old file");
-
-
-                    mainController.getMediaInterface().createMedia(mainController.getMenuController().activeItem);
                 }
-                else {
-                    boolean deleteSuccess = file.delete();
-                    if(deleteSuccess){
-                        File tempFile = new File(outputPath);
-                        boolean renameSuccess = tempFile.renameTo(file);
-                        if(!renameSuccess){
-                            throw new IOException("Failed to rename new file");
-                        }
-                    }
-                    else throw new IOException("Failed to delete old file");
-                }
+                else throw new IOException("Failed to delete old file");
 
                 mediaDetails.put("size", Utilities.formatFileSize(file.length()));
                 mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));

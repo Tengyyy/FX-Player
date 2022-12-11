@@ -18,7 +18,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -29,11 +28,14 @@ public class ActiveItemContextMenu extends MenuItemContextMenu {
     CaptionsController captionsController;
 
     public Menu subtitles = new Menu("Subtitles");
-    MenuItem externalSubtitles = new MenuItem("Add external subtitles");
+    public MenuItem externalSubtitles = new MenuItem();
 
 
     SVGPath subtitlesPath = new SVGPath(), externalSubtitlesPath = new SVGPath();
     Region subtitlesIcon = new Region(), externalSubtitlesIcon = new Region();
+    StackPane externalSubtitlesIconPane = new StackPane();
+    HBox externalSubtitlesWrapper = new HBox();
+    Label externalSubtitlesLabel = new Label("Add external subtitles");
 
     ActiveItemContextMenu(ActiveItem activeItem, CaptionsController captionsController){
         super(activeItem);
@@ -51,14 +53,32 @@ public class ActiveItemContextMenu extends MenuItemContextMenu {
         subtitles.getStyleClass().add("popUpItem");
 
         externalSubtitlesPath.setContent(App.svgMap.get(SVG.MAGNIFY));
-        externalSubtitlesIcon.setShape(externalSubtitlesPath);
-        externalSubtitlesIcon.getStyleClass().add("icon");
+        externalSubtitlesWrapper.setMinSize(220, 39);
+        externalSubtitlesWrapper.setPrefSize(220, 39);
+        externalSubtitlesWrapper.setMaxSize(220, 39);
+
+        externalSubtitlesWrapper.setPadding(new Insets(0, 10, 0, 10));
+
+        externalSubtitlesIconPane.setMinSize(30, 39);
+        externalSubtitlesIconPane.setPrefSize(30, 39);
+        externalSubtitlesIconPane.setMaxSize(30, 39);
+        externalSubtitlesIconPane.setPadding(new Insets(0, 5, 0, 0));
+        externalSubtitlesIconPane.getChildren().add(externalSubtitlesIcon);
+
+        externalSubtitlesIcon.setMinSize(17, 17);
         externalSubtitlesIcon.setPrefSize(17, 17);
         externalSubtitlesIcon.setMaxSize(17, 17);
+        externalSubtitlesIcon.setShape(externalSubtitlesPath);
+        externalSubtitlesIcon.getStyleClass().add("icon");
 
-        externalSubtitles.setGraphic(externalSubtitlesIcon);
-        externalSubtitles.getStyleClass().add("popUpItem");
+        externalSubtitlesLabel.setMinSize(170, 39);
+        externalSubtitlesLabel.setPrefSize(170, 39);
+        externalSubtitlesLabel.setMaxSize(170, 39);
+
+        externalSubtitlesWrapper.getChildren().addAll(externalSubtitlesIconPane, externalSubtitlesLabel);
         externalSubtitles.setOnAction(e -> openSubtitleChooser());
+        externalSubtitles.setGraphic(externalSubtitlesWrapper);
+        externalSubtitles.getStyleClass().add("subtitle-menu-item");
 
         subtitles.getItems().add(externalSubtitles);
 
@@ -83,6 +103,7 @@ public class ActiveItemContextMenu extends MenuItemContextMenu {
     public MenuItem createSubtitleItem(CaptionsTab captionsTab){
 
         MenuItem menuItem = new MenuItem();
+        menuItem.getStyleClass().add("subtitle-menu-item");
 
         HBox menuItemWrapper = new HBox();
 
@@ -99,21 +120,17 @@ public class ActiveItemContextMenu extends MenuItemContextMenu {
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
         removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
 
-        menuItemWrapper.setMinSize(235, 35);
-        menuItemWrapper.setPrefSize(235, 35);
-        menuItemWrapper.setMaxSize(235, 35);
+        menuItemWrapper.setMinSize(220, 39);
+        menuItemWrapper.setPrefSize(220, 39);
+        menuItemWrapper.setMaxSize(220, 39);
 
         menuItemWrapper.setPadding(new Insets(0, 10, 0, 10));
 
-        checkIconPane.setMinSize(30, 30);
-        checkIconPane.setPrefSize(30, 30);
-        checkIconPane.setMaxSize(30, 30);
+        checkIconPane.setMinSize(30, 39);
+        checkIconPane.setPrefSize(30, 39);
+        checkIconPane.setMaxSize(30, 39);
         checkIconPane.setPadding(new Insets(0, 5, 0, 0));
         checkIconPane.getChildren().add(checkIcon);
-        checkIconPane.setOnMouseClicked(e -> {
-            System.out.println("test");
-            captionsTab.selectSubtitles();
-        });
 
         checkIcon.setMinSize(17, 13);
         checkIcon.setPrefSize(17, 13);
@@ -122,34 +139,37 @@ public class ActiveItemContextMenu extends MenuItemContextMenu {
         checkIcon.getStyleClass().add("icon");
         checkIcon.visibleProperty().bind(captionsTab.checkIcon.visibleProperty());
 
-        valueLabel.setMinHeight(35);
-        valueLabel.setPrefHeight(35);
-        valueLabel.setMaxHeight(35);
+        valueLabel.setMinHeight(39);
+        valueLabel.setPrefHeight(39);
+        valueLabel.setMaxHeight(39);
         valueLabel.setText(captionsTab.valueLabel.getText());
-        valueLabel.setOnMouseClicked(e -> {
-            System.out.println("test");
-            captionsTab.selectSubtitles();
-        });
+
+        menuItem.setOnAction(e -> captionsTab.selectSubtitles());
 
         if(captionsTab.removable){
-            valueLabel.setMinWidth(150);
-            valueLabel.setPrefWidth(150);
-            valueLabel.setMaxWidth(150);
+            valueLabel.setMinWidth(140);
+            valueLabel.setPrefWidth(140);
+            valueLabel.setMaxWidth(140);
 
-            removePane.setMinSize(35, 35);
-            removePane.setPrefSize(35, 35);
-            removePane.setMaxSize(35, 35);
+            removePane.setMinSize(30, 39);
+            removePane.setPrefSize(30, 39);
+            removePane.setMaxSize(30, 39);
 
             removePane.getChildren().addAll(removeButton, removeIcon);
 
-            removeButton.setMinSize(25, 25);
-            removeButton.setPrefSize(25, 25);
-            removeButton.setMaxSize(25, 25);
+            removeButton.setMinSize(25, 29);
+            removeButton.setPrefSize(25, 29);
+            removeButton.setMaxSize(25, 29);
             removeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.AnimateBackgroundColor(removeIcon, (Color) removeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
             removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> AnimationsClass.AnimateBackgroundColor(removeIcon, (Color) removeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200));
             removeButton.setCursor(Cursor.HAND);
             removeButton.setBackground(Background.EMPTY);
-            removeButton.setOnAction(e -> captionsTab.removeItem());
+            removeButton.setOnAction(e -> {
+                captionsTab.removeItem();
+                e.consume();
+                if(subtitles.isShowing()) subtitles.hide();
+                if(this.showing) this.hide();
+            });
 
             removeIcon.setMinSize(16, 16);
             removeIcon.setPrefSize(16, 16);
@@ -161,9 +181,9 @@ public class ActiveItemContextMenu extends MenuItemContextMenu {
             menuItemWrapper.getChildren().addAll(checkIconPane, valueLabel, removePane);
         }
         else {
-            valueLabel.setMinWidth(185);
-            valueLabel.setPrefWidth(185);
-            valueLabel.setMaxWidth(185);
+            valueLabel.setMinWidth(170);
+            valueLabel.setPrefWidth(170);
+            valueLabel.setMaxWidth(170);
 
             menuItemWrapper.getChildren().addAll(checkIconPane, valueLabel);
         }

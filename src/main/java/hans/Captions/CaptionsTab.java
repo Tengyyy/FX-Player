@@ -120,16 +120,16 @@ public class CaptionsTab extends HBox {
             this.getChildren().addAll(checkIconPane, valueLabel);
         }
 
+        double height = captionsHome.captionsWrapper.getPrefHeight();
+        captionsHome.captionsWrapper.setPrefHeight(height + 35);
+        captionsHome.captionsWrapper.setMaxHeight(height + 35);
 
-        double height = captionsHome.scrollPane.getHeight();
-        captionsHome.scrollPane.setPrefHeight(height + 35);
-        captionsHome.scrollPane.setMaxHeight(height + 35);
+        captionsHome.scrollPane.setPrefHeight(height + 38);
+        captionsHome.scrollPane.setMaxHeight(height + 38);
 
-        captionsHome.captionsWrapper.setPrefHeight(height + 32);
-        captionsHome.captionsWrapper.setMaxHeight(height + 32);
 
         if(captionsController.captionsState == CaptionsState.HOME_OPEN || captionsController.captionsState == CaptionsState.CLOSED){
-            captionsController.clip.setHeight(height + 35);
+            captionsController.clip.setHeight(height + 38);
         }
 
         ActiveItem activeItem = captionsController.menuController.activeItem;
@@ -140,16 +140,21 @@ public class CaptionsTab extends HBox {
     }
 
     public void selectSubtitles(){
-        if(selected) return;
-
-        for(CaptionsTab captionsTab : captionsHome.captionsTabs){
-            captionsTab.checkIcon.setVisible(false);
-            captionsTab.selected = false;
+        if(selected){
+            captionsController.removeCaptions();
+            selected = false;
+            checkIcon.setVisible(false);
         }
+        else {
+            for(CaptionsTab captionsTab : captionsHome.captionsTabs){
+                captionsTab.checkIcon.setVisible(false);
+                captionsTab.selected = false;
+            }
 
-        checkIcon.setVisible(true);
-        selected = true;
-        captionsController.loadCaptions(this.captionFile);
+            checkIcon.setVisible(true);
+            selected = true;
+            captionsController.loadCaptions(this.captionFile);
+        }
     }
 
     public void removeItem(){
@@ -165,14 +170,16 @@ public class CaptionsTab extends HBox {
         }
         boolean removed = captionsHome.captionsWrapper.getChildren().remove(this);
         if(removed){
-            double height = captionsHome.scrollPane.getHeight();
-            captionsHome.scrollPane.setPrefHeight(height - 35);
-            captionsHome.scrollPane.setMaxHeight(height - 35);
 
-            captionsHome.captionsWrapper.setPrefHeight(height - 38);
-            captionsHome.captionsWrapper.setMaxHeight(height - 38);
+            double height = captionsHome.captionsWrapper.getPrefHeight();
 
-            captionsController.clip.setHeight(height - 35);
+            captionsHome.captionsWrapper.setPrefHeight(height - 35);
+            captionsHome.captionsWrapper.setMaxHeight(height - 35);
+
+            captionsHome.scrollPane.setPrefHeight(height - 32);
+            captionsHome.scrollPane.setMaxHeight(height - 32);
+
+            captionsController.clip.setHeight(height - 32);
         }
     }
 }

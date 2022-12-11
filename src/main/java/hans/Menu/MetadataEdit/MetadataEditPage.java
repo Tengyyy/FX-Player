@@ -402,6 +402,12 @@ public class MetadataEditPage {
 
         MediaItem mediaItem = menuObject.getMediaItem();
 
+        if(menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(mediaItem.getFile().getAbsolutePath())){
+            menuController.mediaInterface.resetMediaPlayer(true);
+            menuController.captionsController.clearCaptions();
+            //TODO: when creating media player again, reload the manually selected subtitle tabs and select the one that was active
+        }
+
         boolean imageEditSuccess = true;
         if(imageRemoved){
             imageEditSuccess = mediaItem.setCover(null, null, null, true);
@@ -430,13 +436,15 @@ public class MetadataEditPage {
                     duplicate.getMediaItem().setCover(newFile, newImage, newColor, false);
                 }
                 duplicate.update();
+
+                if(duplicate instanceof ActiveItem){
+                    menuController.mediaInterface.createMedia(duplicate);
+                }
             }
 
             menuController.mainController.getControlBarController().updateTooltips();
             if(menuController.activeItem != null && menuController.activeItem == menuObject){
-                menuController.mainController.videoTitleLabel.setText(menuObject.getTitle());
-
-                if(!mediaItem.hasVideo()) menuController.mainController.setCoverImageView(menuObject);
+                menuController.mediaInterface.createMedia(menuObject);
             }
 
             changesMade.set(false);

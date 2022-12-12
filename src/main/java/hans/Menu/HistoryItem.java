@@ -224,7 +224,7 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         optionsButton.setOnAction((e) -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-            menuItemContextMenu.showOptions();
+            menuItemContextMenu.showOptions(true);
         });
 
         this.setOnMouseClicked(e -> {
@@ -232,7 +232,6 @@ public class HistoryItem extends GridPane implements MenuObject {
             else if(!this.isActive.get() && e.getButton() == MouseButton.PRIMARY && menuController.animationsInProgress.isEmpty()) play();
         });
 
-        this.setOnContextMenuRequested(e -> menuItemContextMenu.show(this, e.getScreenX(), e.getScreenY()));
 
         optionsIcon = new Region();
         optionsIcon.setShape(optionsSVG);

@@ -89,7 +89,6 @@ public class MenuItemContextMenu extends ContextMenu {
         technicalDetails.getStyleClass().add("popUpItem");
         technicalDetails.setOnAction((e) -> menuObject.showTechnicalDetails());
 
-
         folderPath.setContent(App.svgMap.get(SVG.FOLDER));
         folderIcon.setShape(folderPath);
         folderIcon.getStyleClass().add("icon");
@@ -106,32 +105,34 @@ public class MenuItemContextMenu extends ContextMenu {
         buttonWidth = menuObject.getOptionsButton().getWidth();
 
         this.getStyleableNode().setOpacity(0);
-
     }
 
-    public void showOptions(){
+
+    public void showOptions(boolean animate){
         this.show(menuObjectNode, // might not work
                 menuObject.getOptionsButton().localToScreen(menuObject.getOptionsButton().getBoundsInLocal()).getMinX() + buttonWidth/2 - popUpWidth/2,
-                menuObject.getOptionsButton().localToScreen(menuObject.getOptionsButton().getBoundsInLocal()).getMaxY() + 5);
+                menuObject.getOptionsButton().localToScreen(menuObject.getOptionsButton().getBoundsInLocal()).getMaxY() + 5, animate);
     }
 
 
-    @Override
-    public void show(Node node, double v, double v1) {
+    public void show(Node node, double v, double v1, boolean animate) {
 
         if(hideTransition != null && hideTransition.getStatus() == Animation.Status.RUNNING) hideTransition.stop();
 
-        this.getStyleableNode().setOpacity(0);
+        if(animate) this.getStyleableNode().setOpacity(0);
+        else this.getStyleableNode().setOpacity(1);
 
         super.show(node, v, v1);
         showing = true;
-        showTransition = new FadeTransition(Duration.millis(150), this.getStyleableNode());
-        showTransition.setFromValue(0);
-        showTransition.setToValue(1);
-        showTransition.playFromStart();
+
+        if(animate){
+            showTransition = new FadeTransition(Duration.millis(150), this.getStyleableNode());
+            showTransition.setFromValue(0);
+            showTransition.setToValue(1);
+            showTransition.playFromStart();
+        }
 
         menuObject.getMenuController().activeMenuItemContextMenu = this;
-
     }
 
     @Override

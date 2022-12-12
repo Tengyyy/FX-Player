@@ -221,9 +221,18 @@ public class CaptionsHome {
     }
 
     public void createTab(File selectedFile){
+
+        for(CaptionsTab captionsTab : captionsTabs){
+            if(captionsTab.captionFile.getAbsolutePath().equals(selectedFile.getAbsolutePath())){
+                captionsTab.selectSubtitles(false);
+                return;
+            }
+        }
+
         CaptionsTab captionsTab = new CaptionsTab(captionsController, this, selectedFile.getName(), selectedFile, true);
-        captionsWrapper.getChildren().add(captionsWrapper.getChildren().size() -2, captionsTab);
+        captionsWrapper.getChildren().add(2, captionsTab);
         captionsTabs.add(captionsTab);
-        captionsTab.selectSubtitles();
+        scrollPane.setVvalue(0);
+        captionsTab.selectSubtitles(true);
     }
 }

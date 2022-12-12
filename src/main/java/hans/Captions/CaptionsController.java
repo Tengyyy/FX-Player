@@ -123,14 +123,18 @@ public class CaptionsController {
 
                 for(int i =0; i<subtitleStreams.size(); i++){
                     // add subtitle tab to captions home
-                    CaptionsTab captionsTab = new CaptionsTab(this, captionsHome, subtitleStreams.get(i).get("language"), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat("sub" + i + ".srt")), false);
+
+                    CaptionsTab captionsTab;
+                    if(subtitleStreams.get(i).containsKey("disposition") && subtitleStreams.get(i).get("disposition").equals("default")){
+                        captionsTab = new CaptionsTab(this, captionsHome, subtitleStreams.get(i).get("language") + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat("sub" + i + ".srt")), false);
+                        captionsTab.selectSubtitles(true);
+                    }
+                    else {
+                        captionsTab = new CaptionsTab(this, captionsHome, subtitleStreams.get(i).get("language"), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat("sub" + i + ".srt")), false);
+                    }
+
                     captionsHome.captionsWrapper.getChildren().add(i + 1, captionsTab);
                     captionsHome.captionsTabs.add(captionsTab);
-
-                    if(subtitleStreams.get(i).containsKey("disposition") && subtitleStreams.get(i).get("disposition").equals("default")){
-                        captionsTab.valueLabel.setText(captionsTab.valueLabel.getText() + " (Default)");
-                        captionsTab.selectSubtitles();
-                    }
                 }
             }
         }
@@ -157,6 +161,8 @@ public class CaptionsController {
         if(menuController.activeItem != null){
             menuController.activeItem.activeItemContextMenu.subtitleContainer.getChildren().clear();
             menuController.activeItem.activeItemContextMenu.subtitleContainer.getChildren().add(menuController.activeItem.activeItemContextMenu.externalSubtitlesWrapper);
+            menuController.activeItem.activeItemContextMenu.subtitleScroll.setPrefHeight(39);
+            menuController.activeItem.activeItemContextMenu.subtitleContainer.setPrefHeight(39);
         }
 
         for(CaptionsTab captionsTab : captionsHome.captionsTabs) {

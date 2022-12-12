@@ -240,15 +240,13 @@ public class QueueItem extends GridPane implements MenuObject {
 
         optionsButton.setOnAction((e) -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-            menuItemContextMenu.showOptions();
+            menuItemContextMenu.showOptions(true);
         });
 
         this.setOnMouseClicked(e -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
             else if (e.getButton() == MouseButton.PRIMARY && menuController.animationsInProgress.isEmpty()) play(true);
         });
-
-        this.setOnContextMenuRequested(e -> menuItemContextMenu.show(this, e.getScreenX(), e.getScreenY()));
 
         optionsIcon = new Region();
         optionsIcon.setShape(optionsSVG);

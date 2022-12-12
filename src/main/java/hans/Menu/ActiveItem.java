@@ -258,13 +258,12 @@ public class ActiveItem extends GridPane implements MenuObject {
 
         optionsButton.setOnAction((e) -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-            activeItemContextMenu.showOptions();
+            activeItemContextMenu.showOptions(true);
         });
 
         this.setOnMouseClicked(e -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
         });
-        this.setOnContextMenuRequested(e -> activeItemContextMenu.show(this, e.getScreenX(), e.getScreenY()));
 
         optionsIcon = new Region();
         optionsIcon.setShape(optionsSVG);

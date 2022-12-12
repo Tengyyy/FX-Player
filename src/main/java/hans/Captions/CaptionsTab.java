@@ -2,13 +2,16 @@ package hans.Captions;
 
 import hans.AnimationsClass;
 import hans.App;
+import hans.ControlTooltip;
 import hans.Menu.ActiveItem;
 import hans.SVG;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
@@ -17,6 +20,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import java.io.File;
 
@@ -41,7 +46,7 @@ public class CaptionsTab extends HBox {
 
     public boolean removable;
 
-    MenuItem menuItem;
+    HBox menuItem;
 
     CaptionsTab(CaptionsController captionsController, CaptionsHome captionsHome, String value, File file, boolean removable){
 
@@ -67,7 +72,7 @@ public class CaptionsTab extends HBox {
         checkIconPane.setMaxSize(30, 35);
         checkIconPane.setPadding(new Insets(0, 5, 0, 0));
         checkIconPane.getChildren().add(checkIcon);
-        checkIconPane.setOnMouseClicked(e -> selectSubtitles());
+        checkIconPane.setOnMouseClicked(e -> selectSubtitles(true));
 
         checkIcon.setMinSize(14, 11);
         checkIcon.setPrefSize(14, 11);
@@ -82,7 +87,7 @@ public class CaptionsTab extends HBox {
         valueLabel.setMaxHeight(35);
         valueLabel.setText(value);
         valueLabel.getStyleClass().add("settingsPaneText");
-        valueLabel.setOnMouseClicked(e -> selectSubtitles());
+        valueLabel.setOnMouseClicked(e -> selectSubtitles(true));
         if(removable){
             valueLabel.setMinWidth(150);
             valueLabel.setPrefWidth(150);
@@ -137,10 +142,24 @@ public class CaptionsTab extends HBox {
             this.menuItem = activeItem.activeItemContextMenu.createSubtitleItem(this);
         }
 
+        Platform.runLater(() -> {
+            Text textnode = (Text) valueLabel.lookup(".text");
+            String visibleText = textnode.getText();
+
+            if(!visibleText.equals(valueLabel.getText())){
+                Tooltip tooltip = new Tooltip(value);
+                tooltip.setShowDelay(Duration.millis(1000));
+                tooltip.setHideDelay(Duration.ZERO);
+                tooltip.setShowDuration(Duration.seconds(4));
+                Tooltip.install(this, tooltip);
+            }
+        });
+
     }
 
-    public void selectSubtitles(){
+    public void selectSubtitles(boolean checkSelected){
         if(selected){
+            if(!checkSelected) return;
             captionsController.removeCaptions();
             selected = false;
             checkIcon.setVisible(false);
@@ -166,7 +185,12 @@ public class CaptionsTab extends HBox {
         captionsHome.captionsTabs.remove(this);
         ActiveItem activeItem = captionsController.menuController.activeItem;
         if(activeItem != null){
-            activeItem.activeItemContextMenu.subtitles.getItems().remove(menuItem);
+            boolean removed = activeItem.activeItemContextMenu.subtitleContainer.getChildren().remove(menuItem);
+            if (removed) {
+                double newHeight = activeItem.activeItemContextMenu.subtitleContainer.getPrefHeight() - 39;
+                activeItem.activeItemContextMenu.subtitleContainer.setPrefHeight(newHeight);
+                activeItem.activeItemContextMenu.subtitleScroll.setPrefHeight(Math.min(200, newHeight));
+            }
         }
         boolean removed = captionsHome.captionsWrapper.getChildren().remove(this);
         if(removed){

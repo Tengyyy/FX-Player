@@ -31,15 +31,23 @@
     -fx-scale-y: 1.3;
 }
 
-.subtitle-menu-item {
+.custom-menu-item, .subtitle-menu-scroll {
     -fx-padding: 0;
     -fx-insets: 0;
     -fx-background-color: transparent;
+
 }
 
-.subtitle-menu-item > .label {
-    -fx-padding: 0;
-    -fx-insets: 0;
+.custom-menu-item:focused, .custom-menu-item:showing, .custom-menu-item:hover {
+    -fx-background-color: transparent;
+}
+
+.subtitle-menu-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.subtitle-menu-item {
+    -fx-background-color: transparent;
 }
 
 .subtitle-menu-item:hover {

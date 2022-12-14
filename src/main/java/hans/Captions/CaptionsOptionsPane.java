@@ -48,32 +48,31 @@ public class CaptionsOptionsPane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(265, 384);
-        scrollPane.setMaxSize(265, 384);
+        scrollPane.setPrefSize(270, 384);
+        scrollPane.setMaxSize(270, 384);
         scrollPane.setContent(captionsOptionsBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
 
 
         captionsOptionsBox.setAlignment(Pos.BOTTOM_CENTER);
-        captionsOptionsBox.setMinSize(265, 381);
-        captionsOptionsBox.setPrefSize(265, 381);
-        captionsOptionsBox.setMaxSize(265, 381);
-        captionsOptionsBox.setPadding(new Insets(8, 5, 8, 0));
+        captionsOptionsBox.setMinSize(270, 381);
+        captionsOptionsBox.setPrefSize(270, 381);
+        captionsOptionsBox.setMaxSize(270, 381);
+        captionsOptionsBox.setPadding(new Insets(8, 0, 8, 0));
         captionsOptionsBox.getChildren().add(captionsOptionsTitle);
 
-
-        captionsOptionsTitle.setMinSize(255, 40);
-        captionsOptionsTitle.setPrefSize(255, 40);
-        captionsOptionsTitle.setMaxSize(255, 40);
+        captionsOptionsTitle.setMinSize(260, 40);
+        captionsOptionsTitle.setPrefSize(270, 40);
+        captionsOptionsTitle.setMaxSize(270, 40);
         captionsOptionsTitle.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(captionsOptionsTitle, new Insets(0, 0, 10, 0));
 
         captionsOptionsTitle.getStyleClass().add("settingsPaneTitle");
         captionsOptionsTitle.getChildren().addAll(captionsOptionsBackPane, captionsOptionsTitleLabel);
-
 
 
         captionsOptionsBackPane.setMinSize(24, 40);

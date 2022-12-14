@@ -36,6 +36,7 @@ import javafx.util.Duration;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -179,7 +180,7 @@ public class MenuController implements Initializable {
         });
 
 
-        fileChooser.setTitle("Open video");
+        fileChooser.setTitle("Add media to queue");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All supported formats", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov", "*.mp3", "*.flac", "*.wav"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav"));
@@ -644,20 +645,21 @@ public class MenuController implements Initializable {
 
     public void openVideoChooser() {
 
-        File selectedFile = fileChooser.showOpenDialog(menu.getScene().getWindow());
+        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(menu.getScene().getWindow());
 
-        if(selectedFile != null){
+        if(selectedFiles!= null && !selectedFiles.isEmpty()){
 
-            notificationText.setText("Added 1 video to the queue");
-            AnimationsClass.openMenuNotification(this);
-
-            QueueItem item = new QueueItem(Utilities.searchDuplicateOrCreate(selectedFile, this), this, mediaInterface, queueBox);
-
-            if (settingsController.playbackOptionsController.shuffleOn) {
-                // add new media item to random position in queue
-                queueBox.addRand(item);
+            for(File file : selectedFiles){
+                QueueItem queueItem = new QueueItem(Utilities.searchDuplicateOrCreate(file, this), this, mediaInterface, queueBox);
+                if (settingsController.playbackOptionsController.shuffleOn) queueBox.addRand(queueItem);
+                else queueBox.add(queueItem);
             }
-            else queueBox.add(item);
+
+
+
+            if(selectedFiles.size() == 1) notificationText.setText("Added 1 video to the queue");
+            else notificationText.setText(String.format("Added %s videos to the queue", selectedFiles.size()));
+            AnimationsClass.openMenuNotification(this);
         }
     }
 

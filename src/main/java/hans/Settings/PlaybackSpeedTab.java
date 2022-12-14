@@ -34,7 +34,7 @@ public class PlaybackSpeedTab extends HBox {
 
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
 
-        this.setMinSize(235, 35);
+        this.setMinSize(215, 35);
         this.setPrefSize(235, 35);
         this.setMaxSize(235, 35);
 
@@ -59,6 +59,7 @@ public class PlaybackSpeedTab extends HBox {
 
         valueLabel.setFont(new Font(15));
         valueLabel.setPrefHeight(35);
+        valueLabel.setMinWidth(165);
         valueLabel.setPrefWidth(185);
 
         if(isCustom) speedValue = playbackSpeedController.customSpeedPane.lastCustomValue;

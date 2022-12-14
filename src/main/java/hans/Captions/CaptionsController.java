@@ -1,6 +1,5 @@
 package hans.Captions;
 
-
 import hans.*;
 import hans.Menu.*;
 import hans.SRTParser.srt.SRTParser;
@@ -12,8 +11,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
@@ -42,8 +39,7 @@ public class CaptionsController {
     ArrayList<Subtitle> subtitles  = new ArrayList<>();
     int captionsPosition = 0;
 
-    public BooleanProperty captionsSelected = new SimpleBooleanProperty();
-    public BooleanProperty captionsOn = new SimpleBooleanProperty();
+    public BooleanProperty captionsSelected = new SimpleBooleanProperty(false);
     boolean showedCurrentCaption = false;
 
     public StackPane captionsBuffer = new StackPane();
@@ -55,9 +51,7 @@ public class CaptionsController {
 
     public BooleanProperty animating = new SimpleBooleanProperty(); // animating state of the captions pane
 
-
     public CaptionsState captionsState = CaptionsState.CLOSED;
-
 
     public CaptionsController(SettingsController settingsController, MainController mainController, ControlBarController controlBarController, MenuController menuController){
         this.settingsController = settingsController;
@@ -67,8 +61,8 @@ public class CaptionsController {
 
         animating.set(false);
 
-        captionsBuffer.setPrefSize(235, 162);
-        captionsBuffer.setMaxWidth(260);
+        captionsBuffer.setPrefSize(245, 106);
+        captionsBuffer.setMaxWidth(270);
         captionsBuffer.setClip(clip);
         captionsBuffer.getChildren().add(captionsBackground);
         captionsBuffer.setMouseTransparent(true);
@@ -95,14 +89,15 @@ public class CaptionsController {
         captionsBuffer.getChildren().add(captionsPane);
         StackPane.setAlignment(captionsBuffer, Pos.BOTTOM_RIGHT);
 
-        captionsPane.setPrefSize(235, 162);
+        //captionsPane.setMinSize(245, 106);
+        captionsPane.setPrefSize(245, 106);
 
         captionsBox = new CaptionsBox(this, mainController);
         captionsHome = new CaptionsHome(this);
         captionsOptionsPane = new CaptionsOptionsPane(this);
 
-        captionsOn.set(false);
-        captionsOn.addListener((observableValue, oldValue, newValue) -> {
+        captionsSelected.addListener((observableValue, oldValue, newValue) -> {
+            captionsBox.toggleVisibility(newValue);
             if(newValue) AnimationsClass.scaleAnimation(100, controlBarController.captionsButtonLine, 0, 1, 1, 1, false, 1, true);
             else AnimationsClass.scaleAnimation(100, controlBarController.captionsButtonLine, 1, 0, 1, 1, false, 1, true);
         });
@@ -151,8 +146,6 @@ public class CaptionsController {
         subtitles = SRTParser.getSubtitlesFromFile(file.getPath(), true);
 
         captionsSelected.set(true);
-        captionsHome.captionsToggle.setDisable(false);
-        captionsHome.captionsToggle.setSelected(true);
     }
 
 
@@ -170,15 +163,15 @@ public class CaptionsController {
         }
         captionsHome.captionsTabs.clear();
 
-        captionsHome.captionsWrapper.setPrefHeight(159);
-        captionsHome.captionsWrapper.setMaxHeight(159);
+        captionsHome.captionsWrapper.setPrefHeight(103);
+        captionsHome.captionsWrapper.setMaxHeight(103);
 
-        captionsHome.scrollPane.setPrefHeight(162);
-        captionsHome.scrollPane.setMaxHeight(162);
+        captionsHome.scrollPane.setPrefHeight(106);
+        captionsHome.scrollPane.setMaxHeight(106);
 
 
         if(captionsState == CaptionsState.HOME_OPEN || captionsState == CaptionsState.CLOSED){
-            clip.setHeight(162);
+            clip.setHeight(106);
         }
 
         removeCaptions();
@@ -193,13 +186,8 @@ public class CaptionsController {
         captionsPosition = 0;
         showedCurrentCaption = false;
 
-
         captionsBox.captionsLabel1.setOpacity(0);
         captionsBox.captionsLabel2.setOpacity(0);
-
-
-        captionsHome.captionsToggle.setSelected(false);
-        captionsHome.captionsToggle.setDisable(true);
     }
 
 
@@ -207,7 +195,7 @@ public class CaptionsController {
         if(!subtitles.isEmpty() &&
                 captionsPosition >= 0 &&
                 captionsPosition < subtitles.size() &&
-                captionsOn.get() &&
+                captionsSelected.get() &&
                 !captionsBox.captionsDragActive) {
 
 

@@ -2,15 +2,13 @@ package hans.Captions;
 
 import hans.AnimationsClass;
 import hans.App;
-import hans.ControlTooltip;
 import hans.Menu.ActiveItem;
 import hans.SVG;
-import javafx.application.Platform;
+
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -20,7 +18,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -55,13 +52,12 @@ public class CaptionsTab extends HBox {
         this.captionFile = file;
         this.removable = removable;
 
-
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
         removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
 
-        this.setMinSize(235, 35);
-        this.setPrefSize(235, 35);
-        this.setMaxSize(235, 35);
+        this.setMinSize(225, 35);
+        this.setPrefSize(245, 35);
+        this.setMaxSize(245, 35);
 
         this.setPadding(new Insets(0, 10, 0, 10));
 
@@ -70,6 +66,7 @@ public class CaptionsTab extends HBox {
         checkIconPane.setMinSize(30, 35);
         checkIconPane.setPrefSize(30, 35);
         checkIconPane.setMaxSize(30, 35);
+
         checkIconPane.setPadding(new Insets(0, 5, 0, 0));
         checkIconPane.getChildren().add(checkIcon);
         checkIconPane.setOnMouseClicked(e -> selectSubtitles(true));
@@ -77,6 +74,7 @@ public class CaptionsTab extends HBox {
         checkIcon.setMinSize(14, 11);
         checkIcon.setPrefSize(14, 11);
         checkIcon.setMaxSize(14, 11);
+
         checkIcon.setShape(checkSVG);
         checkIcon.getStyleClass().add("settingsPaneIcon");
         checkIcon.setVisible(false);
@@ -89,9 +87,9 @@ public class CaptionsTab extends HBox {
         valueLabel.getStyleClass().add("settingsPaneText");
         valueLabel.setOnMouseClicked(e -> selectSubtitles(true));
         if(removable){
-            valueLabel.setMinWidth(150);
-            valueLabel.setPrefWidth(150);
-            valueLabel.setMaxWidth(150);
+            valueLabel.setMinWidth(140);
+            valueLabel.setPrefWidth(160);
+            valueLabel.setMaxWidth(160);
 
             removePane.setMinSize(35, 35);
             removePane.setPrefSize(35, 35);
@@ -118,9 +116,9 @@ public class CaptionsTab extends HBox {
             this.getChildren().addAll(checkIconPane, valueLabel, removePane);
         }
         else {
-            valueLabel.setMinWidth(185);
-            valueLabel.setPrefWidth(185);
-            valueLabel.setMaxWidth(185);
+            valueLabel.setMinWidth(175);
+            valueLabel.setPrefWidth(195);
+            valueLabel.setMaxWidth(195);
 
             this.getChildren().addAll(checkIconPane, valueLabel);
         }
@@ -132,7 +130,6 @@ public class CaptionsTab extends HBox {
         captionsHome.scrollPane.setPrefHeight(height + 38);
         captionsHome.scrollPane.setMaxHeight(height + 38);
 
-
         if(captionsController.captionsState == CaptionsState.HOME_OPEN || captionsController.captionsState == CaptionsState.CLOSED){
             captionsController.clip.setHeight(height + 38);
         }
@@ -142,18 +139,12 @@ public class CaptionsTab extends HBox {
             this.menuItem = activeItem.activeItemContextMenu.createSubtitleItem(this);
         }
 
-        Platform.runLater(() -> {
-            Text textnode = (Text) valueLabel.lookup(".text");
-            String visibleText = textnode.getText();
 
-            if(!visibleText.equals(valueLabel.getText())){
-                Tooltip tooltip = new Tooltip(value);
-                tooltip.setShowDelay(Duration.millis(1000));
-                tooltip.setHideDelay(Duration.ZERO);
-                tooltip.setShowDuration(Duration.seconds(4));
-                Tooltip.install(this, tooltip);
-            }
-        });
+        Tooltip tooltip = new Tooltip(value);
+        tooltip.setShowDelay(Duration.millis(1000));
+        tooltip.setHideDelay(Duration.ZERO);
+        tooltip.setShowDuration(Duration.seconds(4));
+        Tooltip.install(this, tooltip);
 
     }
 

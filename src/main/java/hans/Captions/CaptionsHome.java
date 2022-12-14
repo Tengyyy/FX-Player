@@ -38,11 +38,6 @@ public class CaptionsHome {
     HBox captionsTitle = new HBox();
     HBox captionsChooserTab = new HBox();
 
-    HBox toggleBox = new HBox();
-    Label toggleLabel = new Label();
-    public MFXToggleButton captionsToggle = new MFXToggleButton();
-
-
     Label captionsTitleLabel = new Label();
     Label captionsOptionsLabel = new Label();
 
@@ -68,34 +63,34 @@ public class CaptionsHome {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(245, 162);
-        scrollPane.setMaxSize(245, 162);
+        scrollPane.setPrefSize(245, 106);
+        scrollPane.setMaxSize(245, 106);
         scrollPane.setContent(captionsWrapper);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
 
-        captionsWrapper.setPrefSize(235, 159);
-        captionsWrapper.setMaxSize(235, 159);
+        captionsWrapper.setMinSize(225, 103);
+        captionsWrapper.setPrefSize(245, 103);
+        captionsWrapper.setMaxSize(245, 103);
         captionsWrapper.setPadding(new Insets(8, 0, 8, 0));
         captionsWrapper.setAlignment(Pos.BOTTOM_LEFT);
-        StackPane.setAlignment(captionsWrapper, Pos.BOTTOM_RIGHT);
 
-        captionsWrapper.getChildren().addAll(captionsTitle, captionsChooserTab, toggleBox);
+        captionsWrapper.getChildren().addAll(captionsTitle, captionsChooserTab);
 
         captionsTitle.getChildren().addAll(captionsTitleLabel, captionsOptionsLabel);
-        captionsTitle.setMinSize(235, 40);
-        captionsTitle.setPrefSize(235, 40);
-        captionsTitle.setMaxSize(235, 40);
+        captionsTitle.setMinSize(225, 40);
+        captionsTitle.setPrefSize(245, 40);
+        captionsTitle.setMaxSize(245, 40);
         captionsTitle.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(captionsTitle, new Insets(0, 0, 10, 0));
         captionsTitle.getStyleClass().add("settingsPaneTitle");
 
-        captionsTitleLabel.setMinHeight(40);
-        captionsTitleLabel.setPrefHeight(40);
-        captionsTitleLabel.setMaxHeight(40);
-        captionsTitleLabel.setPrefWidth(124);
+        captionsTitleLabel.setMinSize(145, 40);
+        captionsTitleLabel.setPrefSize(165, 40);
+        captionsTitleLabel.setMaxSize(165, 40);
         captionsTitleLabel.setText("Subtitles/CC");
         captionsTitleLabel.getStyleClass().add("settingsPaneText");
 
@@ -103,24 +98,21 @@ public class CaptionsHome {
         captionsOptionsLabel.getStyleClass().addAll("settingsPaneText", "settingsPaneSubText");
         captionsOptionsLabel.setText("Options");
         captionsOptionsLabel.setUnderline(true);
-        captionsOptionsLabel.setMinHeight(40);
-        captionsOptionsLabel.setPrefHeight(40);
-        captionsOptionsLabel.setMaxHeight(40);
-        captionsOptionsLabel.setPrefWidth(60);
+        captionsOptionsLabel.setMinSize(60, 40);
+        captionsOptionsLabel.setPrefSize(60, 40);
+        captionsOptionsLabel.setMaxSize(60, 40);
         captionsOptionsLabel.setCursor(Cursor.HAND);
         captionsOptionsLabel.setOnMouseClicked((e) -> openCaptionsOptions());
         captionsOptionsLabel.setAlignment(Pos.CENTER_RIGHT);
-        HBox.setMargin(captionsOptionsLabel, new Insets(0, 0, 0, 31));
 
 
-        captionsChooserTab.setMinSize(235, 35);
-        captionsChooserTab.setPrefSize(235, 35);
-        captionsChooserTab.setMaxSize(235, 35);
+        captionsChooserTab.setMinSize(225, 35);
+        captionsChooserTab.setPrefSize(245, 35);
+        captionsChooserTab.setMaxSize(245, 35);
         captionsChooserTab.setPadding(new Insets(0, 10, 0, 10));
         captionsChooserTab.getStyleClass().add("settingsPaneTab");
         captionsChooserTab.getChildren().addAll(chooseCaptionsIconPane, chooseCaptionsLabel);
         captionsChooserTab.setOnMouseClicked(e -> openCaptionsChooser());
-
 
         chooseCaptionsIconPane.setMinSize(30, 35);
         chooseCaptionsIconPane.setPrefSize(30, 35);
@@ -128,7 +120,6 @@ public class CaptionsHome {
         chooseCaptionsIconPane.setPadding(new Insets(0, 5, 0, 0));
         chooseCaptionsIconPane.getChildren().add(chooseCaptionsIcon);
 
-        chooseCaptionsIcon.setMinSize(15, 15);
         chooseCaptionsIcon.setPrefSize(15, 15);
         chooseCaptionsIcon.setMaxSize(15, 15);
         chooseCaptionsIcon.setId("captionsSearchIcon");
@@ -136,30 +127,11 @@ public class CaptionsHome {
 
         chooseCaptionsLabel.setText("Add subtitles");
         chooseCaptionsLabel.getStyleClass().add("settingsPaneText");
-        chooseCaptionsLabel.setMinSize(190, 35);
-        chooseCaptionsLabel.setPrefSize(190, 35);
-        chooseCaptionsLabel.setMaxSize(190,35);
-
-        toggleBox.setMinSize(235, 56);
-        toggleBox.setPrefSize(235, 56);
-        toggleBox.setMaxSize(235,56);
-        toggleBox.setPadding(new Insets(15, 10, 0, 10));
-        toggleBox.getChildren().addAll(toggleLabel, captionsToggle);
-        toggleBox.setAlignment(Pos.CENTER_RIGHT);
-
-
-        toggleLabel.setText("Toggle subtitles");
-        toggleLabel.getStyleClass().add("settingsPaneText");
-
-        captionsToggle.setLength(38);
-        captionsToggle.setRadius(10);
-        captionsToggle.setDisable(true);
-        captionsToggle.setCursor(Cursor.HAND);
-        captionsToggle.setContentDisposition(ContentDisplay.RIGHT);
-        captionsToggle.selectedProperty().addListener((observableValue, oldValue, newValue) -> captionsController.captionsOn.set(newValue));
+        chooseCaptionsLabel.setMinSize(175, 35);
+        chooseCaptionsLabel.setPrefSize(195, 35);
+        chooseCaptionsLabel.setMaxSize(195, 35);
 
         captionsController.captionsPane.getChildren().add(scrollPane);
-
     }
 
 

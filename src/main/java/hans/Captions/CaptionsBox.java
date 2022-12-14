@@ -234,23 +234,6 @@ public class CaptionsBox {
 
         StackPane.setAlignment(captionsContainer, Pos.BOTTOM_CENTER);
         mainController.videoImageViewInnerWrapper.getChildren().add(captionsContainer);
-
-
-        captionsController.captionsOn.addListener((observableValue, oldValue, newValue) -> {
-            if(newValue){
-                captionsContainer.setVisible(true);
-
-                if(captionsController.menuController.activeItem != null && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
-                    showCaptionsTimer.stop();
-                }
-
-                captionsLabel1.setOpacity(0);
-                captionsLabel2.setOpacity(0);
-            }
-            else {
-                if(showCaptionsTimer == null || showCaptionsTimer.getStatus() != Animation.Status.RUNNING) captionsContainer.setVisible(false);
-            }
-        });
     }
 
 
@@ -262,11 +245,27 @@ public class CaptionsBox {
         captionsContainer.setSpacing(mediaWidthMultiplier.multiply(currentSpacing).get());
     }
 
+    public void toggleVisibility(boolean newValue){
+        if(newValue){
+            captionsContainer.setVisible(true);
+
+            if(captionsController.menuController.activeItem != null && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
+                showCaptionsTimer.stop();
+            }
+
+            captionsLabel1.setOpacity(0);
+            captionsLabel2.setOpacity(0);
+        }
+        else {
+            if(showCaptionsTimer == null || showCaptionsTimer.getStatus() != Animation.Status.RUNNING) captionsContainer.setVisible(false);
+        }
+    }
+
 
     public void showCaptions(){
         // if necessary, show captions with text "Captions look like this"
 
-        if(captionsController.menuController.activeItem != null && captionsController.captionsSelected.get() && captionsController.captionsOn.get()) return;
+        if(captionsController.menuController.activeItem != null && captionsController.captionsSelected.get()) return;
 
         if(showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
             showCaptionsTimer.playFromStart();

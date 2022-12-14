@@ -32,9 +32,9 @@ public class CaptionsOptionsTab extends HBox {
 
         arrowSVG.setContent(App.svgMap.get(SVG.CHEVRON_RIGHT));
 
-        this.setMinSize(255, 35);
-        this.setPrefSize(255, 35);
-        this.setMaxSize(255, 35);
+        this.setMinSize(260, 35);
+        this.setPrefSize(270, 35);
+        this.setMaxSize(270, 35);
         this.setPadding(new Insets(0, 10, 0, 10));
         this.getStyleClass().add("settingsPaneTab");
         this.setCursor(Cursor.HAND);
@@ -52,7 +52,10 @@ public class CaptionsOptionsTab extends HBox {
         if(requiresSubText){
             subText.setText(subTextValue);
             subText.setPrefHeight(35);
-            Platform.runLater(() -> subText.setPrefWidth(220 - mainText.getWidth()));
+            Platform.runLater(() -> {
+                subText.setPrefWidth(225 - mainText.getWidth());
+                subText.setMinWidth(215 - mainText.getWidth());
+            });
             subText.setPadding(new Insets(0, 5, 0, 0));
             subText.setAlignment(Pos.CENTER_RIGHT);
             subText.setTextAlignment(TextAlignment.RIGHT);
@@ -63,6 +66,7 @@ public class CaptionsOptionsTab extends HBox {
             arrowPane.setMinSize(15, 35);
             arrowPane.setPrefSize(15, 35);
             arrowPane.setMaxSize(15, 35);
+            arrowPane.setPadding(new Insets(0, 0, 0, 10));
             arrowPane.getChildren().add(arrowIcon);
 
             arrowIcon.setMinSize(8, 13);

@@ -58,6 +58,8 @@
 
 .settingsScroll {
     -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-insets: 0;
 }
 
 .settingsScroll .scroll-bar:vertical {
@@ -290,8 +292,8 @@
 }
 
 .settingsBackground {
-    -fx-background-color: rgba(30,30,30,0.8);
-    -fx-background-radius: 2;
+    -fx-background-color: rgba(15,15,15,0.88);
+    -fx-background-radius: 10;
 }
 
 

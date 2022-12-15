@@ -20,7 +20,6 @@ public class SliderHoverPreview {
     SliderHoverPreview(StackPane parent, ControlBarController controlBarController){
         this.controlBarController = controlBarController;
 
-
         pane.setMouseTransparent(true);
         pane.setId("sliderHoverPreviewPane");
         pane.setPrefSize(164, 94);

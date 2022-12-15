@@ -209,6 +209,7 @@ public class App extends Application {
             primaryStage.setOnCloseRequest(event -> {
 
                 mediaInterface.embeddedMediaPlayer.release();
+                SleepSuppressor.allowSleep();
 
                 Platform.exit();
                 System.exit(0);

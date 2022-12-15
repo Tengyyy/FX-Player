@@ -293,7 +293,7 @@ public class MediaInterface {
         controlBarController.durationLabel.setMouseTransparent(true);
 
         embeddedMediaPlayer.controls().stop();
-
+        SleepSuppressor.allowSleep();
 
         if(controlBarController.showingTimeLeft) controlBarController.durationLabel.setText("−00:00/00:00");
         else controlBarController.durationLabel.setText("00:00/00:00");
@@ -411,6 +411,7 @@ public class MediaInterface {
         if(!playing.get()){
             playing.set(true);
             embeddedMediaPlayer.controls().play();
+            SleepSuppressor.preventSleep();
         }
 
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.play();
@@ -430,6 +431,7 @@ public class MediaInterface {
         if(playing.get()) {
             playing.set(false);
             embeddedMediaPlayer.controls().pause();
+            SleepSuppressor.allowSleep();
         }
 
 

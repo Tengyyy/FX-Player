@@ -102,8 +102,13 @@ public class MediaInterface {
 
     public void init(){
 
+        String[] VLC_GLOBAL_OPTIONS = {
+                "--no-sub-autodetect-file",
+                "--no-spu",
+                "--disable-screensaver"
+        };
 
-        this.mediaPlayerFactory = new MediaPlayerFactory();
+        this.mediaPlayerFactory = new MediaPlayerFactory(VLC_GLOBAL_OPTIONS);
         this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 
 

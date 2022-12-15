@@ -144,6 +144,7 @@ public class ControlBarController implements Initializable {
     double lastKnownSliderHoverPosition = -1000;
 
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -575,7 +576,7 @@ public class ControlBarController implements Initializable {
 
                 }
 
-                captionsController.updateCaptions(newValue.doubleValue() * 1000 + 1000);
+                captionsController.updateCaptions(newValue.doubleValue() * 1000);
 
 
                 if (durationSlider.isValueChanging() && !mainController.seekingWithKeys) {

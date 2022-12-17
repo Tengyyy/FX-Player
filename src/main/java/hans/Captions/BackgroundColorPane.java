@@ -120,14 +120,7 @@ public class BackgroundColorPane {
             whiteTab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundColorTab.subText.setText("White");
 
-            captionsController.captionsBox.currentBackgroundRed = 255;
-            captionsController.captionsBox.currentBackgroundGreen = 255;
-            captionsController.captionsBox.currentBackgroundBlue = 255;
-
-            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
-
-            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.currentBackgroundColor.set(Color.rgb(255, 255, 255, captionsController.captionsBox.currentBackgroundColor.get().getOpacity()));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -141,14 +134,7 @@ public class BackgroundColorPane {
             yellowTab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundColorTab.subText.setText("Yellow");
 
-            captionsController.captionsBox.currentBackgroundRed = 255;
-            captionsController.captionsBox.currentBackgroundGreen = 255;
-            captionsController.captionsBox.currentBackgroundBlue = 0;
-
-            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
-
-            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.currentBackgroundColor.set(Color.rgb(255, 255, 0, captionsController.captionsBox.currentBackgroundColor.get().getOpacity()));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -162,14 +148,8 @@ public class BackgroundColorPane {
             greenTab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundColorTab.subText.setText("Green");
 
-            captionsController.captionsBox.currentBackgroundRed = 0;
-            captionsController.captionsBox.currentBackgroundGreen = 255;
-            captionsController.captionsBox.currentBackgroundBlue = 0;
+            captionsController.captionsBox.currentBackgroundColor.set(Color.rgb(0, 255, 0, captionsController.captionsBox.currentBackgroundColor.get().getOpacity()));
 
-            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
-
-            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -183,14 +163,9 @@ public class BackgroundColorPane {
             cyanTab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundColorTab.subText.setText("Cyan");
 
-            captionsController.captionsBox.currentBackgroundRed = 0;
-            captionsController.captionsBox.currentBackgroundGreen = 255;
-            captionsController.captionsBox.currentBackgroundBlue = 255;
 
-            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
+            captionsController.captionsBox.currentBackgroundColor.set(Color.rgb(0, 255, 255, captionsController.captionsBox.currentBackgroundColor.get().getOpacity()));
 
-            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -204,14 +179,8 @@ public class BackgroundColorPane {
             blueTab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundColorTab.subText.setText("Blue");
 
-            captionsController.captionsBox.currentBackgroundRed = 0;
-            captionsController.captionsBox.currentBackgroundGreen = 0;
-            captionsController.captionsBox.currentBackgroundBlue = 255;
 
-            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
-
-            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
+            captionsController.captionsBox.currentBackgroundColor.set(Color.rgb(0, 0, 255, captionsController.captionsBox.currentBackgroundColor.get().getOpacity()));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -225,14 +194,8 @@ public class BackgroundColorPane {
             magentaTab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundColorTab.subText.setText("Magenta");
 
-            captionsController.captionsBox.currentBackgroundRed = 255;
-            captionsController.captionsBox.currentBackgroundGreen = 0;
-            captionsController.captionsBox.currentBackgroundBlue = 255;
+            captionsController.captionsBox.currentBackgroundColor.set(Color.rgb(255, 0, 255, captionsController.captionsBox.currentBackgroundColor.get().getOpacity()));
 
-            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
-
-            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -246,14 +209,9 @@ public class BackgroundColorPane {
             redTab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundColorTab.subText.setText("Red");
 
-            captionsController.captionsBox.currentBackgroundRed = 255;
-            captionsController.captionsBox.currentBackgroundGreen = 0;
-            captionsController.captionsBox.currentBackgroundBlue = 0;
 
-            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
+            captionsController.captionsBox.currentBackgroundColor.set(Color.rgb(255, 0, 0, captionsController.captionsBox.currentBackgroundColor.get().getOpacity()));
 
-            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -267,14 +225,8 @@ public class BackgroundColorPane {
             blackTab.checkIcon.setVisible(true);
             captionsOptionsPane.backgroundColorTab.subText.setText("Black");
 
-            captionsController.captionsBox.currentBackgroundRed = 0;
-            captionsController.captionsBox.currentBackgroundGreen = 0;
-            captionsController.captionsBox.currentBackgroundBlue = 0;
+            captionsController.captionsBox.currentBackgroundColor.set(Color.rgb(0, 0, 0, captionsController.captionsBox.currentBackgroundColor.get().getOpacity()));
 
-            captionsController.captionsBox.currentBackground = Color.rgb(captionsController.captionsBox.currentBackgroundRed, captionsController.captionsBox.currentBackgroundGreen, captionsController.captionsBox.currentBackgroundBlue, captionsController.captionsBox.currentBackgroundOpacity);
-
-            captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-            captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.currentBackground, CornerRadii.EMPTY, Insets.EMPTY)));
 
             captionsController.captionsBox.showCaptions();
         });

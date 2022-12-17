@@ -113,8 +113,7 @@ public class TextAlignmentPane {
             leftTab.checkIcon.setVisible(true);
             captionsOptionsPane.textAlignmentTab.subText.setText("Left");
 
-            captionsController.captionsBox.currentTextAlignment = Pos.CENTER_LEFT;
-            captionsController.captionsBox.captionsContainer.setAlignment(captionsController.captionsBox.currentTextAlignment);
+            captionsController.captionsBox.currentTextAlignment.set(Pos.CENTER_LEFT);
 
             captionsController.captionsBox.showCaptions();
         });
@@ -128,8 +127,7 @@ public class TextAlignmentPane {
             centerTab.checkIcon.setVisible(true);
             captionsOptionsPane.textAlignmentTab.subText.setText("Center");
 
-            captionsController.captionsBox.currentTextAlignment = Pos.CENTER;
-            captionsController.captionsBox.captionsContainer.setAlignment(captionsController.captionsBox.currentTextAlignment);
+            captionsController.captionsBox.currentTextAlignment.set(Pos.CENTER);
 
             captionsController.captionsBox.showCaptions();
         });
@@ -143,8 +141,7 @@ public class TextAlignmentPane {
             rightTab.checkIcon.setVisible(true);
             captionsOptionsPane.textAlignmentTab.subText.setText("Right");
 
-            captionsController.captionsBox.currentTextAlignment = Pos.CENTER_RIGHT;
-            captionsController.captionsBox.captionsContainer.setAlignment(captionsController.captionsBox.currentTextAlignment);
+            captionsController.captionsBox.currentTextAlignment.set(Pos.CENTER_RIGHT);
 
             captionsController.captionsBox.showCaptions();
         });

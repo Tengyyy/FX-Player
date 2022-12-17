@@ -6,8 +6,11 @@ import hans.Settings.SettingsState;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -17,6 +20,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -26,46 +30,25 @@ public class CaptionsBox {
     CaptionsController captionsController;
     MainController mainController;
 
-
     public VBox captionsContainer = new VBox();
-    public Label captionsLabel1 = new Label();
-    public Label captionsLabel2 = new Label();
 
-    public int defaultFontSize = 30;
     public String defaultFontFamily = "\"Roboto Medium\"";
-
+    public int defaultFontSize = 30;
     public double defaultTextOpacity = 1.0;
-
-
-    public Color defaultTextFill = Color.WHITE;
-
     public int defaultSpacing = 10;
-    public int defaultBackgroundRed = 0;
-    public int defaultBackgroundGreen = 0;
-    public int defaultBackgroundBlue = 0;
-    public double defaultBackgroundOpacity = 0.75;
+    public Color defaultBackgroundColor = Color.rgb(0, 0, 0, 0.75);
+    public Color defaultTextColor = Color.WHITE;
     public Pos defaultTextAlignment = Pos.CENTER;
-
-    public Color defaultBackground = Color.rgb(defaultBackgroundRed, defaultBackgroundGreen, defaultBackgroundBlue, defaultBackgroundOpacity);
 
     public DoubleProperty mediaWidthMultiplier = new SimpleDoubleProperty(0.4);
 
-
-    public int currentFontSize = defaultFontSize;
-    public String currentFontFamily = defaultFontFamily;
-
-    public double currentTextOpacity = defaultTextOpacity;
-
-    public Color currentTextFill = defaultTextFill;
-    public int currentSpacing = defaultSpacing;
-    public int currentBackgroundRed = defaultBackgroundRed;
-    public int currentBackgroundGreen = defaultBackgroundGreen;
-    public int currentBackgroundBlue = defaultBackgroundBlue;
-    public double currentBackgroundOpacity = defaultBackgroundOpacity;
-    public Pos currentTextAlignment = defaultTextAlignment;
-
-    public Color currentBackground = defaultBackground;
-
+    public StringProperty currentFontFamily = new SimpleStringProperty(defaultFontFamily);
+    public DoubleProperty currentFontSize = new SimpleDoubleProperty(defaultFontSize);
+    public DoubleProperty currentTextOpacity = new SimpleDoubleProperty(defaultTextOpacity);
+    public IntegerProperty currentSpacing = new SimpleIntegerProperty(defaultSpacing);
+    public ObjectProperty<Color> currentBackgroundColor = new SimpleObjectProperty<>(defaultBackgroundColor);
+    public ObjectProperty<Color> currentTextColor = new SimpleObjectProperty<>(defaultTextColor);
+    public ObjectProperty<Pos> currentTextAlignment = new SimpleObjectProperty<>(defaultTextAlignment);
 
     public Pos captionsLocation = Pos.BOTTOM_CENTER;
 
@@ -95,32 +78,18 @@ public class CaptionsBox {
         this.captionsController = captionsController;
         this.mainController = mainController;
 
-        captionsLabel1.setBackground(new Background(new BackgroundFill(defaultBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-        captionsLabel1.setTextFill(defaultTextFill);
-        captionsLabel1.getStyleClass().add("captionsLabel");
-        captionsLabel1.setStyle("-fx-font-family: " + defaultFontFamily + "; -fx-font-size: " + mediaWidthMultiplier.multiply(defaultFontSize).get());
-        captionsLabel1.setOpacity(0);
-        captionsLabel1.setPadding(new Insets(2, 4, 2, 4));
-
-        captionsLabel2.setBackground(new Background(new BackgroundFill(defaultBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-        captionsLabel2.setTextFill(defaultTextFill);
-        captionsLabel2.setText("Subtitles look like this");
-        captionsLabel2.getStyleClass().add("captionsLabel"); // 4 sec timer
-        captionsLabel2.setStyle("-fx-font-family: " + defaultFontFamily + "; -fx-font-size: " + mediaWidthMultiplier.multiply(defaultFontSize).get());
-        captionsLabel2.setOpacity(0);
-        captionsLabel2.setPadding(new Insets(2, 4, 2, 4));
-
-
-        captionsContainer.setSpacing(mediaWidthMultiplier.multiply(defaultSpacing).get());
+        captionsContainer.spacingProperty().bind(mediaWidthMultiplier.multiply(currentSpacing));
         captionsContainer.setTranslateY(-90);
-        captionsContainer.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        captionsContainer.minWidthProperty().bind(mediaWidthMultiplier.multiply(400));
+        captionsContainer.minHeightProperty().bind(Bindings.createObjectBinding(() -> {
+            return mediaWidthMultiplier.get() * (currentFontSize.get() * 3 + currentSpacing.get()) + 10;
+        }, mediaWidthMultiplier, currentFontSize, currentSpacing));
         captionsContainer.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         captionsContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        captionsContainer.getChildren().addAll(captionsLabel1, captionsLabel2);
-        captionsContainer.setAlignment(defaultTextAlignment);
+        captionsContainer.alignmentProperty().bind(currentTextAlignment);
         captionsContainer.setVisible(false);
         captionsContainer.setPadding(new Insets(5, 10, 5, 10));
-        captionsContainer.setOpacity(defaultTextOpacity);
+        captionsContainer.opacityProperty().bind(currentTextOpacity);
         captionsContainer.setCursor(Cursor.OPEN_HAND);
 
 
@@ -236,15 +205,6 @@ public class CaptionsBox {
         mainController.videoImageViewInnerWrapper.getChildren().add(captionsContainer);
     }
 
-
-    public void resizeCaptions(){
-
-        captionsLabel1.setStyle("-fx-font-family: " + currentFontFamily + "; -fx-font-size: " + mediaWidthMultiplier.multiply(currentFontSize).get());
-        captionsLabel2.setStyle("-fx-font-family: " + currentFontFamily + "; -fx-font-size: " + mediaWidthMultiplier.multiply(currentFontSize).get());
-
-        captionsContainer.setSpacing(mediaWidthMultiplier.multiply(currentSpacing).get());
-    }
-
     public void toggleVisibility(boolean newValue){
         if(newValue){
             captionsContainer.setVisible(true);
@@ -252,9 +212,6 @@ public class CaptionsBox {
             if(captionsController.menuController.activeItem != null && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
                 showCaptionsTimer.stop();
             }
-
-            captionsLabel1.setOpacity(0);
-            captionsLabel2.setOpacity(0);
         }
         else {
             if(showCaptionsTimer == null || showCaptionsTimer.getStatus() != Animation.Status.RUNNING) captionsContainer.setVisible(false);
@@ -271,18 +228,15 @@ public class CaptionsBox {
             showCaptionsTimer.playFromStart();
         }
         else {
-
+             captionsContainer.getChildren().clear();
+             captionsContainer.getChildren().add(createLabel("Captions look like this"));
             captionsContainer.setVisible(true);
-            captionsLabel1.setOpacity(0);
 
-            captionsLabel2.setOpacity(1);
-            captionsLabel2.setText("Captions look like this");
 
             showCaptionsTimer = new PauseTransition(Duration.millis(4000));
             showCaptionsTimer.setOnFinished(e -> {
                 captionsContainer.setVisible(false);
-                captionsLabel1.setOpacity(0);
-                captionsLabel2.setOpacity(0);
+                captionsContainer.getChildren().clear();
             });
 
             showCaptionsTimer.playFromStart();
@@ -291,8 +245,6 @@ public class CaptionsBox {
 
     public Pos findClosestCaptionsPosition(double x, double y){
 
-        double width = captionsContainer.getLayoutBounds().getWidth();
-        double height = captionsContainer.getLayoutBounds().getHeight();
 
         Point2D topLeft = new Point2D(30, 70);
         Point2D topCenter = new Point2D(mainController.videoImageViewInnerWrapper.getLayoutBounds().getMaxX()/2, 70);
@@ -436,6 +388,23 @@ public class CaptionsBox {
         });
 
         captionsTransition.play();
+    }
+
+    public Label createLabel(String text){
+        Label label = new Label(text);
+
+        ObjectProperty<Background> background = label.backgroundProperty();
+        background.bind(Bindings.createObjectBinding(() -> {
+            BackgroundFill fill = new BackgroundFill(currentBackgroundColor.getValue(), CornerRadii.EMPTY, Insets.EMPTY);
+            return new Background(fill);
+        }, currentBackgroundColor));
+
+        label.styleProperty().bind(Bindings.concat("-fx-font-family: ", currentFontFamily, ";",
+                                                  "-fx-font-size: ", mediaWidthMultiplier.multiply(currentFontSize).asString(), ";"));
+        label.textFillProperty().bind(currentTextColor);
+        label.setPadding(new Insets(2, 4, 2, 4));
+
+        return label;
     }
 
     public void moveToMiniplayer(){

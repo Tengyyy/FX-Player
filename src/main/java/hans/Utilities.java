@@ -136,7 +136,7 @@ public class Utilities {
     }
 
     public static String[] splitLines(String str) {
-        return str.split("\\R", 2);
+        return str.split("\\R");
     }
 
 

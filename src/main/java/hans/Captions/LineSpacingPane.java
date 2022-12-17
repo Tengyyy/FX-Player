@@ -119,8 +119,7 @@ public class LineSpacingPane {
             _0Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("0%");
 
-            captionsController.captionsBox.currentSpacing = 0;
-            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
+            captionsController.captionsBox.currentSpacing.set(0);
 
             captionsController.captionsBox.showCaptions();
         });
@@ -134,8 +133,7 @@ public class LineSpacingPane {
             _50Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("50%");
 
-            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 0.5);
-            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
+            captionsController.captionsBox.currentSpacing.set((int) (captionsController.captionsBox.defaultSpacing * 0.5));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -149,8 +147,7 @@ public class LineSpacingPane {
             _75Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("75%");
 
-            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 0.75);
-            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
+            captionsController.captionsBox.currentSpacing.set((int) (captionsController.captionsBox.defaultSpacing * 0.75));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -164,8 +161,7 @@ public class LineSpacingPane {
             _100Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("100%");
 
-            captionsController.captionsBox.currentSpacing = captionsController.captionsBox.defaultSpacing;
-            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
+            captionsController.captionsBox.currentSpacing.set((int) (captionsController.captionsBox.defaultSpacing));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -179,8 +175,7 @@ public class LineSpacingPane {
             _125Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("125%");
 
-            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 1.25);
-            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
+            captionsController.captionsBox.currentSpacing.set((int) (captionsController.captionsBox.defaultSpacing * 1.25));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -194,8 +189,7 @@ public class LineSpacingPane {
             _150Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("150%");
 
-            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 1.5);
-            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
+            captionsController.captionsBox.currentSpacing.set((int) (captionsController.captionsBox.defaultSpacing * 1.5));
 
             captionsController.captionsBox.showCaptions();
         });
@@ -209,8 +203,7 @@ public class LineSpacingPane {
             _200Tab.checkIcon.setVisible(true);
             captionsOptionsPane.lineSpacingTab.subText.setText("200%");
 
-            captionsController.captionsBox.currentSpacing = (int) (captionsController.captionsBox.defaultSpacing * 2.0);
-            captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.currentSpacing);
+            captionsController.captionsBox.currentSpacing.set((int) (captionsController.captionsBox.defaultSpacing * 2.0));
 
             captionsController.captionsBox.showCaptions();
         });

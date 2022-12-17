@@ -113,8 +113,7 @@ public class FontOpacityPane {
             _25Tab.checkIcon.setVisible(true);
             captionsOptionsPane.fontOpacityTab.subText.setText("25%");
 
-            captionsController.captionsBox.currentTextOpacity = 0.25;
-            captionsController.captionsBox.captionsContainer.setOpacity(captionsController.captionsBox.currentTextOpacity);
+            captionsController.captionsBox.currentTextOpacity.set(0.25);
 
 
             captionsController.captionsBox.showCaptions();
@@ -129,8 +128,7 @@ public class FontOpacityPane {
             _50Tab.checkIcon.setVisible(true);
             captionsOptionsPane.fontOpacityTab.subText.setText("50%");
 
-            captionsController.captionsBox.currentTextOpacity = 0.5;
-            captionsController.captionsBox.captionsContainer.setOpacity(captionsController.captionsBox.currentTextOpacity);
+            captionsController.captionsBox.currentTextOpacity.set(0.5);
 
 
             captionsController.captionsBox.showCaptions();
@@ -145,8 +143,7 @@ public class FontOpacityPane {
             _75Tab.checkIcon.setVisible(true);
             captionsOptionsPane.fontOpacityTab.subText.setText("75%");
 
-            captionsController.captionsBox.currentTextOpacity = 0.75;
-            captionsController.captionsBox.captionsContainer.setOpacity(captionsController.captionsBox.currentTextOpacity);
+            captionsController.captionsBox.currentTextOpacity.set(0.75);
 
 
 
@@ -162,8 +159,7 @@ public class FontOpacityPane {
             _100Tab.checkIcon.setVisible(true);
             captionsOptionsPane.fontOpacityTab.subText.setText("100%");
 
-            captionsController.captionsBox.currentTextOpacity = 1.0;
-            captionsController.captionsBox.captionsContainer.setOpacity(captionsController.captionsBox.currentTextOpacity);
+            captionsController.captionsBox.currentTextOpacity.set(1.0);
 
 
 

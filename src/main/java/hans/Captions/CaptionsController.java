@@ -89,7 +89,6 @@ public class CaptionsController {
         captionsBuffer.getChildren().add(captionsPane);
         StackPane.setAlignment(captionsBuffer, Pos.BOTTOM_RIGHT);
 
-        //captionsPane.setMinSize(245, 106);
         captionsPane.setPrefSize(245, 106);
 
         captionsBox = new CaptionsBox(this, mainController);
@@ -142,6 +141,8 @@ public class CaptionsController {
 
     public void loadCaptions(File file){
 
+        captionsBox.captionsContainer.getChildren().clear();
+
         this.captionsFile = file;
         subtitles = SRTParser.getSubtitlesFromFile(file.getPath(), true);
 
@@ -186,8 +187,7 @@ public class CaptionsController {
         captionsPosition = 0;
         showedCurrentCaption = false;
 
-        captionsBox.captionsLabel1.setOpacity(0);
-        captionsBox.captionsLabel2.setOpacity(0);
+        captionsBox.captionsContainer.getChildren().clear();
     }
 
 
@@ -225,21 +225,15 @@ public class CaptionsController {
 
                 String[] subtitleLines = Utilities.splitLines(text);
 
-                if (subtitleLines.length == 2) {
-                        captionsBox.captionsLabel1.setOpacity(1);
-                        captionsBox.captionsLabel2.setOpacity(1);
-                        captionsBox.captionsLabel1.setText(subtitleLines[0]);
-                        captionsBox.captionsLabel2.setText(subtitleLines[1]);
-                } else {
-                        captionsBox.captionsLabel1.setOpacity(0);
-                        captionsBox.captionsLabel2.setOpacity(1);
-                        captionsBox.captionsLabel2.setText(subtitleLines[0]);
+                captionsBox.captionsContainer.getChildren().clear();
+
+                for(String line : subtitleLines){
+                    captionsBox.captionsContainer.getChildren().add(captionsBox.createLabel(line));
                 }
 
                 menuController.captionsController.showedCurrentCaption = true;
             } else if ((adjustedTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && menuController.captionsController.captionsPosition >= menuController.captionsController.subtitles.size() - 1) || (adjustedTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && adjustedTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn) || (adjustedTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition <= 0)) {
-                    captionsBox.captionsLabel1.setOpacity(0);
-                    captionsBox.captionsLabel2.setOpacity(0);
+                    captionsBox.captionsContainer.getChildren().clear();
             }
         }
     }

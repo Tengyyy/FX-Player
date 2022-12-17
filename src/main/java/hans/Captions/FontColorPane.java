@@ -123,9 +123,8 @@ public class FontColorPane {
             whiteTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("White");
 
-            captionsController.captionsBox.currentTextFill = Color.WHITE;
-            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
-            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.currentTextColor.set(Color.WHITE);
+
 
             captionsController.captionsBox.showCaptions();
         });
@@ -139,10 +138,8 @@ public class FontColorPane {
             yellowTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Yellow");
 
-            captionsController.captionsBox.currentTextFill = Color.YELLOW;
+            captionsController.captionsBox.currentTextColor.set(Color.YELLOW);
 
-            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
-            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
             captionsController.captionsBox.showCaptions();
         });
@@ -156,10 +153,8 @@ public class FontColorPane {
             greenTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Green");
 
-            captionsController.captionsBox.currentTextFill = Color.LIME;
+            captionsController.captionsBox.currentTextColor.set(Color.LIME);
 
-            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
-            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
             captionsController.captionsBox.showCaptions();
         });
@@ -173,10 +168,8 @@ public class FontColorPane {
             cyanTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Cyan");
 
-            captionsController.captionsBox.currentTextFill = Color.CYAN;
+            captionsController.captionsBox.currentTextColor.set(Color.CYAN);
 
-            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
-            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
 
             captionsController.captionsBox.showCaptions();
         });
@@ -190,10 +183,8 @@ public class FontColorPane {
             blueTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Blue");
 
-            captionsController.captionsBox.currentTextFill = Color.BLUE;
-
-            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
-            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.currentTextColor.set(Color.BLUE);
+;
 
             captionsController.captionsBox.showCaptions();
         });
@@ -207,10 +198,7 @@ public class FontColorPane {
             magentaTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Magenta");
 
-            captionsController.captionsBox.currentTextFill = Color.MAGENTA;
-
-            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
-            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.currentTextColor.set(Color.MAGENTA);
 
             captionsController.captionsBox.showCaptions();
         });
@@ -224,10 +212,7 @@ public class FontColorPane {
             redTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Red");
 
-            captionsController.captionsBox.currentTextFill = Color.RED;
-
-            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
-            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.currentTextColor.set(Color.RED);
 
             captionsController.captionsBox.showCaptions();
         });
@@ -241,9 +226,7 @@ public class FontColorPane {
             blackTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontColorTab.subText.setText("Black");
 
-            captionsController.captionsBox.currentTextFill = Color.BLACK;
-            captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.currentTextFill);
-            captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.currentTextFill);
+            captionsController.captionsBox.currentTextColor.set(Color.BLACK);
 
             captionsController.captionsBox.showCaptions();
         });

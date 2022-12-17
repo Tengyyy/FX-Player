@@ -3,7 +3,6 @@ package hans.Captions;
 import hans.*;
 import hans.Settings.CheckTab;
 import hans.Settings.SettingsController;
-import hans.Settings.SettingsState;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,6 +14,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -119,11 +119,7 @@ public class FontFamilyPane {
             sansSerifRegularTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Sans-Serif Regular");
 
-            captionsController.captionsBox.currentFontFamily = "\"Roboto\"";
-
-            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
-            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
-
+            captionsController.captionsBox.currentFontFamily.set("\"Roboto\"");
             captionsController.captionsBox.showCaptions();
         });
 
@@ -136,10 +132,7 @@ public class FontFamilyPane {
             sansSerifMediumTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Sans-Serif Medium");
 
-            captionsController.captionsBox.currentFontFamily = "\"Roboto Medium\"";
-
-            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
-            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.currentFontFamily.set("\"Roboto Medium\"");
 
             captionsController.captionsBox.showCaptions();
         });
@@ -153,10 +146,8 @@ public class FontFamilyPane {
             sansSerifBoldTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Sans-Serif Bold");
 
-            captionsController.captionsBox.currentFontFamily = "\"Roboto Bold\"";
+            captionsController.captionsBox.currentFontFamily.set("\"Roboto Bold\"");
 
-            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
-            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
             captionsController.captionsBox.showCaptions();
         });
@@ -170,10 +161,7 @@ public class FontFamilyPane {
             serifTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Serif");
 
-            captionsController.captionsBox.currentFontFamily = "\"EB Garamond Medium\"";
-
-            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
-            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.currentFontFamily.set("\"EB Garamond Medium\"");
 
             captionsController.captionsBox.showCaptions();
         });
@@ -188,10 +176,7 @@ public class FontFamilyPane {
             casualTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Casual");
 
-            captionsController.captionsBox.currentFontFamily = "\"Comic Neue Bold\"";
-
-            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
-            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
+            captionsController.captionsBox.currentFontFamily.set("\"Comic Neue Bold\"");
 
             captionsController.captionsBox.showCaptions();
         });
@@ -206,10 +191,8 @@ public class FontFamilyPane {
             cursiveTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Cursive");
 
-            captionsController.captionsBox.currentFontFamily = "\"Kalam Bold\"";
+            captionsController.captionsBox.currentFontFamily.set("\"Kalam Bold\"");
 
-            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
-            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
             captionsController.captionsBox.showCaptions();
         });
@@ -223,10 +206,8 @@ public class FontFamilyPane {
             smallCapitalsTab.checkIcon.setVisible(true);
             captionsOptionsPane.fontFamilyTab.subText.setText("Small Capitals");
 
-            captionsController.captionsBox.currentFontFamily = "\"Alegreya Sans SC Medium\"";
+            captionsController.captionsBox.currentFontFamily.set("\"Alegreya Sans SC Medium\"");
 
-            captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
-            captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.currentFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.currentFontSize).get());
 
             captionsController.captionsBox.showCaptions();
         });

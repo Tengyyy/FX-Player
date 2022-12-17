@@ -211,7 +211,6 @@ public class MainController implements Initializable {
 
             if(newValue.doubleValue() < 800){
                 captionsController.captionsBox.mediaWidthMultiplier.set(0.4);
-                captionsController.captionsBox.resizeCaptions();
 
                 sizeMultiplier.set(0.55);
                 if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
@@ -221,7 +220,6 @@ public class MainController implements Initializable {
             }
             else if((newValue.doubleValue() >= 800 && newValue.doubleValue() < 1200)){
                 captionsController.captionsBox.mediaWidthMultiplier.set(0.6);
-                captionsController.captionsBox.resizeCaptions();
 
                 sizeMultiplier.set(0.65);
                 if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
@@ -232,7 +230,6 @@ public class MainController implements Initializable {
             }
             else if((newValue.doubleValue() >= 1200 && newValue.doubleValue() < 1800)){
                 captionsController.captionsBox.mediaWidthMultiplier.set(0.8);
-                captionsController.captionsBox.resizeCaptions();
 
                 sizeMultiplier.set(0.8);
                 if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
@@ -243,7 +240,6 @@ public class MainController implements Initializable {
             }
             else if((newValue.doubleValue() >= 1800 && newValue.doubleValue() < 2400)){
                 captionsController.captionsBox.mediaWidthMultiplier.set(1.0);
-                captionsController.captionsBox.resizeCaptions();
 
 
                 sizeMultiplier.set(1);
@@ -255,7 +251,6 @@ public class MainController implements Initializable {
             }
             else if(newValue.doubleValue() >= 2400){
                 captionsController.captionsBox.mediaWidthMultiplier.set(1.2);
-                captionsController.captionsBox.resizeCaptions();
 
                 sizeMultiplier.set(1.2);
                 if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
@@ -474,6 +469,7 @@ public class MainController implements Initializable {
             playbackOptionsPopUp.show(videoImageViewInnerWrapper, e.getScreenX(), e.getScreenY());
             if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
             if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
             return;
         }
 
@@ -483,7 +479,6 @@ public class MainController implements Initializable {
         }
 
         if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()){
-            menuController.activeMenuItemContextMenu.hide();
             return;
         }
 
@@ -697,7 +692,6 @@ public class MainController implements Initializable {
     public void resizeIndicators(){
         if(videoImageViewInnerWrapper.getWidth() < 800){
             captionsController.captionsBox.mediaWidthMultiplier.set(0.4);
-            captionsController.captionsBox.resizeCaptions();
 
             sizeMultiplier.set(0.55);
             forwardsIndicator.resize();
@@ -706,7 +700,6 @@ public class MainController implements Initializable {
         }
         else if(videoImageViewInnerWrapper.getWidth() >= 800 && videoImageViewInnerWrapper.getWidth() < 1200){
             captionsController.captionsBox.mediaWidthMultiplier.set(0.6);
-            captionsController.captionsBox.resizeCaptions();
 
             sizeMultiplier.set(0.65);
             forwardsIndicator.resize();
@@ -716,7 +709,6 @@ public class MainController implements Initializable {
         }
         else if(videoImageViewInnerWrapper.getWidth() >= 1200 && videoImageViewInnerWrapper.getWidth() < 1800){
             captionsController.captionsBox.mediaWidthMultiplier.set(0.8);
-            captionsController.captionsBox.resizeCaptions();
 
             sizeMultiplier.set(0.8);
             forwardsIndicator.resize();
@@ -726,7 +718,6 @@ public class MainController implements Initializable {
         }
         else if(videoImageViewInnerWrapper.getWidth() >= 1800 && videoImageViewInnerWrapper.getWidth() < 2400){
             captionsController.captionsBox.mediaWidthMultiplier.set(1.0);
-            captionsController.captionsBox.resizeCaptions();
 
 
             sizeMultiplier.set(1);
@@ -737,7 +728,6 @@ public class MainController implements Initializable {
         }
         else if(videoImageViewInnerWrapper.getWidth() >= 2400){
             captionsController.captionsBox.mediaWidthMultiplier.set(1.2);
-            captionsController.captionsBox.resizeCaptions();
 
             sizeMultiplier.set(1.2);
             forwardsIndicator.resize();

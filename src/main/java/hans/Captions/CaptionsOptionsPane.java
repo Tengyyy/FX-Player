@@ -9,6 +9,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
@@ -506,7 +507,8 @@ public class CaptionsOptionsPane {
         fontFamilyPane.sansSerifMediumTab.checkIcon.setVisible(true);
         fontFamilyTab.subText.setText("Sans-Serif Medium");
 
-        captionsController.captionsBox.currentFontFamily = captionsController.captionsBox.defaultFontFamily;
+        captionsController.captionsBox.currentFontFamily.set(captionsController.captionsBox.defaultFontFamily);
+        captionsController.captionsBox.currentFontSize.set(captionsController.captionsBox.defaultFontSize);
 
         for(CheckTab checkTab : fontColorPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -515,7 +517,7 @@ public class CaptionsOptionsPane {
         fontColorPane.whiteTab.checkIcon.setVisible(true);
         fontColorTab.subText.setText("White");
 
-        captionsController.captionsBox.currentTextFill = captionsController.captionsBox.defaultTextFill;
+        captionsController.captionsBox.currentTextColor.set(captionsController.captionsBox.defaultTextColor);
 
         for(CheckTab checkTab : fontSizePane.checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -524,7 +526,6 @@ public class CaptionsOptionsPane {
         fontSizePane._100Tab.checkIcon.setVisible(true);
         fontSizeTab.subText.setText("100%");
 
-        captionsController.captionsBox.currentFontSize = captionsController.captionsBox.defaultFontSize;
 
         for(CheckTab checkTab : textAlignmentPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -533,7 +534,7 @@ public class CaptionsOptionsPane {
         textAlignmentPane.centerTab.checkIcon.setVisible(true);
         textAlignmentTab.subText.setText("Center");
 
-        captionsController.captionsBox.currentTextAlignment = captionsController.captionsBox.defaultTextAlignment;
+        captionsController.captionsBox.currentTextAlignment.set(captionsController.captionsBox.defaultTextAlignment);
 
         for(CheckTab checkTab : backgroundOpacityPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -542,7 +543,6 @@ public class CaptionsOptionsPane {
         backgroundOpacityPane._75Tab.checkIcon.setVisible(true);
         backgroundOpacityTab.subText.setText("75%");
 
-        captionsController.captionsBox.currentBackgroundOpacity = captionsController.captionsBox.defaultBackgroundOpacity;
 
         for(CheckTab checkTab : backgroundColorPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -551,10 +551,7 @@ public class CaptionsOptionsPane {
         backgroundColorPane.blackTab.checkIcon.setVisible(true);
         backgroundColorTab.subText.setText("Black");
 
-        captionsController.captionsBox.currentBackgroundRed = captionsController.captionsBox.defaultBackgroundRed;
-        captionsController.captionsBox.currentBackgroundGreen = captionsController.captionsBox.defaultBackgroundGreen;
-        captionsController.captionsBox.currentBackgroundBlue = captionsController.captionsBox.defaultBackgroundBlue;
-        captionsController.captionsBox.currentBackground = captionsController.captionsBox.defaultBackground;
+        captionsController.captionsBox.currentBackgroundColor.set(captionsController.captionsBox.defaultBackgroundColor);
 
         for(CheckTab checkTab : lineSpacingPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -563,7 +560,7 @@ public class CaptionsOptionsPane {
         lineSpacingPane._100Tab.checkIcon.setVisible(true);
         lineSpacingTab.subText.setText("100%");
 
-        captionsController.captionsBox.currentSpacing = captionsController.captionsBox.defaultSpacing;
+        captionsController.captionsBox.currentSpacing.set(captionsController.captionsBox.defaultSpacing);
 
         for(CheckTab checkTab : fontOpacityPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -572,22 +569,7 @@ public class CaptionsOptionsPane {
         fontOpacityPane._100Tab.checkIcon.setVisible(true);
         fontOpacityTab.subText.setText("100%");
 
-        captionsController.captionsBox.currentTextOpacity = captionsController.captionsBox.defaultTextOpacity;
-
-        captionsController.captionsBox.captionsContainer.setSpacing(captionsController.captionsBox.defaultSpacing);
-        captionsController.captionsBox.captionsContainer.setOpacity(captionsController.captionsBox.defaultTextOpacity);
-        captionsController.captionsBox.captionsContainer.setAlignment(captionsController.captionsBox.defaultTextAlignment);
-
-        captionsController.captionsBox.captionsLabel1.setTextFill(captionsController.captionsBox.defaultTextFill);
-        captionsController.captionsBox.captionsLabel1.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.defaultBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-        captionsController.captionsBox.captionsLabel1.setStyle("-fx-font-family: " + captionsController.captionsBox.defaultFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.defaultFontSize).get());
-
-        captionsController.captionsBox.captionsLabel2.setTextFill(captionsController.captionsBox.defaultTextFill);
-        captionsController.captionsBox.captionsLabel2.setBackground(new Background(new BackgroundFill(captionsController.captionsBox.defaultBackground, CornerRadii.EMPTY, Insets.EMPTY)));
-        captionsController.captionsBox.captionsLabel2.setStyle("-fx-font-family: " + captionsController.captionsBox.defaultFontFamily + "; -fx-font-size: " + captionsController.captionsBox.mediaWidthMultiplier.multiply(captionsController.captionsBox.defaultFontSize).get());
-
-
-
+        captionsController.captionsBox.currentTextOpacity.set(captionsController.captionsBox.defaultTextOpacity);
     }
 
 

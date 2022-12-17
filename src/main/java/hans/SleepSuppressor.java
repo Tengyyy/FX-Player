@@ -7,14 +7,14 @@ public class SleepSuppressor {
     public static void preventSleep(){
         if(sleepPreventActive) return;
 
-        PowerManagement.INSTANCE.preventScreensaver();
+        if(App.isWindows) PowerManagement.INSTANCE.preventScreensaver();
         sleepPreventActive = true;
     }
 
     public static void allowSleep(){
         if(!sleepPreventActive) return;
 
-        PowerManagement.INSTANCE.allowScreensaver();
+        if(App.isWindows) PowerManagement.INSTANCE.allowScreensaver();
         sleepPreventActive = false;
     }
 }

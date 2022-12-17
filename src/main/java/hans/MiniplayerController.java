@@ -160,7 +160,6 @@ public class MiniplayerController {
 
 
         mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.4);
-        mainController.captionsController.captionsBox.resizeCaptions();
 
 
         mainController.sizeMultiplier.set(0.6);
@@ -364,7 +363,6 @@ public class MiniplayerController {
             if(newValue.doubleValue() < 400){
 
                 mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.3);
-                mainController.captionsController.captionsBox.resizeCaptions();
 
                 mainController.sizeMultiplier.set(0.35);
                 if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
@@ -375,7 +373,6 @@ public class MiniplayerController {
             else if((newValue.doubleValue() >= 400 && newValue.doubleValue() < 600)){
 
                 mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.4);
-                mainController.captionsController.captionsBox.resizeCaptions();
 
                 mainController.sizeMultiplier.set(0.5);
                 if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
@@ -387,7 +384,6 @@ public class MiniplayerController {
             else if((newValue.doubleValue() >= 600 && newValue.doubleValue() < 800)){
 
                 mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.55);
-                mainController.captionsController.captionsBox.resizeCaptions();
 
                 mainController.sizeMultiplier.set(0.6);
                 if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
@@ -399,7 +395,6 @@ public class MiniplayerController {
             else if(newValue.doubleValue() >= 800){
 
                 mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.65);
-                mainController.captionsController.captionsBox.resizeCaptions();
 
                 mainController.sizeMultiplier.set(0.7);
                 if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();

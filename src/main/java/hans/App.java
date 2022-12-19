@@ -202,8 +202,7 @@ public class App extends Application {
             if(System.getProperty("os.name").toLowerCase().contains("windows")){
                 isWindows = true;
                 // program is being run on a windows operating system, so we can take advantage of windows features
-
-                mainController.addTaskBarButtons(primaryStage);
+                mainController.addTaskBarButtons();
             }
 
             primaryStage.setOnCloseRequest(event -> {

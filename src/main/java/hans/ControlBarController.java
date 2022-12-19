@@ -756,6 +756,8 @@ public class ControlBarController implements Initializable {
         playIcon.setPrefSize(20, 20);
 
         if(play != null) play.updateText("Pause (k)");
+
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.play();
     }
 
     public void pause() {
@@ -764,6 +766,8 @@ public class ControlBarController implements Initializable {
         playIcon.setPrefSize(20, 20);
 
         if (play != null) play.updateText("Play (k)");
+
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.pause();
     }
 
     public void end() {
@@ -771,6 +775,8 @@ public class ControlBarController implements Initializable {
         playIcon.setPrefSize(24, 24);
 
         if (play != null) play.updateText("Replay (k)");
+
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.end();
     }
 
     public void enterArea() {
@@ -1050,6 +1056,8 @@ public class ControlBarController implements Initializable {
         }
 
         if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enablePreviousVideoButton();
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.enablePreviousVideoButton();
+
 
         Platform.runLater(() -> {
             if (durationSlider.getValue() > 5)
@@ -1085,6 +1093,8 @@ public class ControlBarController implements Initializable {
         if (mainController.miniplayerActive)
             mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
 
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.disablePreviousVideoButton();
+
 
         previousVideoButton.setOnMouseEntered(null);
         if (previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
@@ -1098,6 +1108,9 @@ public class ControlBarController implements Initializable {
         } else {
             playIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
+
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.enablePlayButton();
+
 
 
         Platform.runLater(() -> {
@@ -1118,6 +1131,9 @@ public class ControlBarController implements Initializable {
             playIcon.setStyle("-fx-background-color: rgb(120, 120, 120);");
         }
 
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.disablePlayButton();
+
+
 
         playButton.setOnMouseEntered(null);
         if (play != null && play.isShowing()) play.hide();
@@ -1133,6 +1149,8 @@ public class ControlBarController implements Initializable {
         }
 
         if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.enableNextVideoButton();
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.enableNextVideoButton();
+
 
         Platform.runLater(() -> {
 
@@ -1162,6 +1180,8 @@ public class ControlBarController implements Initializable {
         }
 
         if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disableNextVideoButton();
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.disableNextVideoButton();
+
 
         nextVideoButton.setOnMouseEntered(null);
         if (nextVideoTooltip != null){

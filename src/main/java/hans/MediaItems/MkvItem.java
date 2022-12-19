@@ -157,25 +157,30 @@ public class MkvItem implements MediaItem {
             arguments.add(ffmpeg);
             arguments.add("-i");
             arguments.add(file.getAbsolutePath());
-            if(newCover != null || coverRemoved){
-                if(newCover != null){
-                    arguments.add("-attach");
-                    arguments.add(newCover.getAbsolutePath());
-                }
+            if(newCover != null){
+                arguments.add("-attach");
+                arguments.add(newCover.getAbsolutePath());
+            }
 
+            if(newCover != null || coverRemoved){
                 arguments.add("-map");
                 arguments.add("0:V?");
-                arguments.add("-map");
-                arguments.add("0:a?");
-                arguments.add("-map");
-                arguments.add("0:s?");
             }
             else {
                 arguments.add("-map");
-                arguments.add("0");
+                arguments.add("0:v?");
             }
+
+            arguments.add("-map");
+            arguments.add("0:a?");
+            arguments.add("-map");
+            arguments.add("0:s?");
+            arguments.add("-map");
+            arguments.add("0:t?");
+
             arguments.add("-map_metadata:g");
             arguments.add("-1");
+
             if(!map.isEmpty()){
                 for(Map.Entry<String, String> entry : map.entrySet()){
                     arguments.add("-metadata");

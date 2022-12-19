@@ -125,6 +125,8 @@ public class MainController implements Initializable {
     Button metadataButton = new Button();
     Region metadataIcon = new Region();
 
+    WindowsTaskBarController windowsTaskBarController;
+
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -807,31 +809,8 @@ public class MainController implements Initializable {
 
     }
 
-    public void addTaskBarButtons(Stage stage){
-        var handle = WindowHandleFinder.getFromActiveWindow();
-        System.out.println(Objects.requireNonNull(getClass().getResource("images/skip-previous.ico")).getPath());
-
-        IWindowsTaskbar taskbar = TaskbarBuilder.builder()
-                .autoInit()
-                .setHWnd(handle)
-                .addButtons(TaskbarButtonListBuilder.builder()
-                        .buttonBuilder()
-                        .withFlag(TaskbarButtonFlag.ENABLED)
-                        .setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-previous.ico")).getPath()))
-                        .setOnClicked((TaskbarButtonClickEvent e) -> System.out.println("test"))
-                        .build()
-                        .buttonBuilder()
-                        .withFlag(TaskbarButtonFlag.DISABLED)
-                        .setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/play.ico")).getPath()))
-                        .build()
-                        .buttonBuilder()
-                        .withFlag(TaskbarButtonFlag.ENABLED)
-                        .setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-next.ico")).getPath()))
-                        .setOnClicked((TaskbarButtonClickEvent e) -> System.out.println("test"))
-                        .build()
-                        .build())
-                .build();
-
+    public void addTaskBarButtons(){
+        windowsTaskBarController = new WindowsTaskBarController(menuController, mediaInterface);
     }
 
 

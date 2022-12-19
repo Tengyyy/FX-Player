@@ -228,6 +228,7 @@ public class MkvItem implements MediaItem {
             }
 
             String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".mkv";
+            File tempFile = new File(outputPath);
 
             arguments.add(outputPath);
 
@@ -243,12 +244,17 @@ public class MkvItem implements MediaItem {
                 process.waitFor();
                 String output = strBuild.toString().trim();
                 System.out.println(output);
-                if(output.endsWith("Invalid argument") || output.endsWith("Conversion failed!") || output.endsWith("Error splitting the argument list: Option not found")){
+                if(output.endsWith("Invalid argument") || output.endsWith("Conversion failed!") || output.endsWith("Error splitting the argument list: Option not found") || !tempFile.exists()){
                     //TODO: delete the empty file that was created
                     System.out.println("Metadata update failed");
                     if(currentImageFile != null && currentImageFile.exists()){
                         currentImageFile.delete();
                     }
+
+                    if(tempFile.exists()){
+                        tempFile.delete();
+                    }
+
                     return false;
                 }
 
@@ -256,7 +262,6 @@ public class MkvItem implements MediaItem {
 
                 boolean deleteSuccess = file.delete();
                 if(deleteSuccess){
-                    File tempFile = new File(outputPath);
                     boolean renameSuccess = tempFile.renameTo(file);
                     if(!renameSuccess){
                         throw new IOException("Failed to rename new file");

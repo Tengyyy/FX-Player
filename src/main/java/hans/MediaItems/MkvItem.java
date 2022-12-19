@@ -1,8 +1,8 @@
 package hans.MediaItems;
 
 import hans.MainController;
-import hans.MediaItems.MediaItem;
 import hans.Utilities;
+import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -11,6 +11,8 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.JavaFXFrameConverter;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -162,15 +164,37 @@ public class MkvItem implements MediaItem {
                 arguments.add(newCover.getAbsolutePath());
             }
 
-            if(newCover != null || coverRemoved){
-                arguments.add("-map");
-                arguments.add("0:V?");
-            }
-            else {
-                arguments.add("-map");
-                arguments.add("0:v?");
+            File currentImageFile = null;
+
+            if(newCover == null && !coverRemoved && hasCover && cover != null){
+                // save current cover to temporary file and then attach it when editing metadata,
+                // because otherwise ffmpeg will convert the attached picture to a normal video stream
+
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(cover, null);
+                String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".png";
+                File outputFile = new File(outputPath);
+
+                try {
+                    ImageIO.write(bufferedImage, "png",  outputFile);
+
+                    currentImageFile = outputFile;
+
+                    arguments.add("-attach");
+                    arguments.add(outputPath);
+
+                    arguments.add("-metadata:s:t:0");
+                    arguments.add("mimetype=image/png");
+                    arguments.add("-metadata:s:t:0");
+                    arguments.add("filename=cover.png");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
 
+            arguments.add("-map");
+            arguments.add("0:V?");
             arguments.add("-map");
             arguments.add("0:a?");
             arguments.add("-map");
@@ -222,6 +246,9 @@ public class MkvItem implements MediaItem {
                 if(output.endsWith("Invalid argument") || output.endsWith("Conversion failed!") || output.endsWith("Error splitting the argument list: Option not found")){
                     //TODO: delete the empty file that was created
                     System.out.println("Metadata update failed");
+                    if(currentImageFile != null && currentImageFile.exists()){
+                        currentImageFile.delete();
+                    }
                     return false;
                 }
 
@@ -236,6 +263,10 @@ public class MkvItem implements MediaItem {
                     }
                 }
                 else throw new IOException("Failed to delete old file");
+
+                if(currentImageFile != null && currentImageFile.exists()){
+                    currentImageFile.delete();
+                }
 
                 mediaDetails.put("size", Utilities.formatFileSize(file.length()));
                 mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));

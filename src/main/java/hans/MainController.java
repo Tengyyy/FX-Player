@@ -810,7 +810,7 @@ public class MainController implements Initializable {
     }
 
     public void addTaskBarButtons(){
-        windowsTaskBarController = new WindowsTaskBarController(menuController, mediaInterface);
+        //windowsTaskBarController = new WindowsTaskBarController(menuController, mediaInterface);
     }
 
 

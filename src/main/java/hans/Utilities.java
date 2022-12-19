@@ -352,9 +352,9 @@ public class Utilities {
         String log = "";
 
         ArrayList<String> arguments = new ArrayList<>();
-        String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+        String ffprobe = Loader.load(org.bytedeco.ffmpeg.ffprobe.class);
 
-        arguments.add(ffmpeg);
+        arguments.add(ffprobe);
         arguments.add("-i");
         arguments.add(filePath);
 
@@ -369,6 +369,7 @@ public class Utilities {
             }
             process.waitFor();
             log = strBuild.toString().trim();
+            System.out.println(log);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -385,7 +386,6 @@ public class Utilities {
         String[] lines = log.split(System.lineSeparator());
         for (String line : lines) {
             String strippedLine = line.strip();
-            if(strippedLine.endsWith("(attached pic)")) continue;
 
             if (strippedLine.startsWith("Stream #")) {
                 Map<String, String> streamInfo = new HashMap<>();

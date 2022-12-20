@@ -99,7 +99,7 @@ public class WindowsTaskBarController {
     }
 
     public void disablePlayButton() {
-        if(taskbarButtons.length < 100) return;
+        if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[1];
         button.setDisabled(true);
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/play-disabled.ico")).getPath()));
@@ -110,7 +110,7 @@ public class WindowsTaskBarController {
     public void play() {
         if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[1];
-
+        button.setDisabled(false);
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/pause.ico")).getPath()));
 
         taskbar.updateButton(button.getId());
@@ -119,7 +119,7 @@ public class WindowsTaskBarController {
     public void pause() {
         if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[1];
-
+        button.setDisabled(false);
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/play.ico")).getPath()));
 
         taskbar.updateButton(button.getId());
@@ -128,6 +128,7 @@ public class WindowsTaskBarController {
     public void end() {
         if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[1];
+        button.setDisabled(false);
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/replay.ico")).getPath()));
         taskbar.updateButton(button.getId());
     }

@@ -66,7 +66,7 @@ public class SettingsHomeController {
 
         playbackOptionsTab.setOnMouseClicked((e) -> openPlaybackOptionsPane());
         playbackSpeedTab.setOnMouseClicked((e) -> openPlaybackSpeedPane());
-        equalizerTab.setOnMouseClicked((e) -> System.out.println("equalizer tab test"));
+        equalizerTab.setOnMouseClicked((e) -> openEqualizer());
         videoSelectionTab.setOnMouseClicked((e) -> openVideoChooser());
 
     }
@@ -139,6 +139,44 @@ public class SettingsHomeController {
         parallelTransition.play();
         settingsController.animating.set(true);
 
+    }
+
+
+    public void openEqualizer(){
+        if(settingsController.animating.get()) return;
+
+        settingsController.settingsState = SettingsState.EQUALIZER_OPEN;
+
+        settingsController.equalizerController.scrollPane.setVisible(true);
+        settingsController.equalizerController.scrollPane.setMouseTransparent(false);
+
+        Timeline clipHeightTimeline = new Timeline();
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(settingsController.clip.heightProperty(), settingsController.equalizerController.scrollPane.getHeight())));
+
+        Timeline clipWidthTimeline = new Timeline();
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(settingsController.clip.widthProperty(), settingsController.equalizerController.scrollPane.getWidth())));
+
+        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), settingsHome);
+        homeTransition.setFromX(0);
+        homeTransition.setToX(-settingsHome.getWidth());
+
+        TranslateTransition optionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), settingsController.equalizerController.scrollPane);
+        optionsTransition.setFromX(settingsHome.getWidth());
+        optionsTransition.setToX(0);
+
+
+        ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, homeTransition, optionsTransition);
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.setOnFinished((e) -> {
+            settingsController.animating.set(false);
+            settingsHome.setVisible(false);
+            settingsHome.setMouseTransparent(true);
+            settingsHome.setTranslateX(0);
+            settingsController.clip.setHeight(settingsController.equalizerController.scrollPane.getPrefHeight());
+        });
+
+        parallelTransition.play();
+        settingsController.animating.set(true);
     }
 
 

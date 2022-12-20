@@ -13,7 +13,6 @@ module hans {
     requires org.bytedeco.javacv;
     requires jaudiotagger;
     requires org.bytedeco.ffmpeg;
-    requires win.taskbar;
     requires com.sun.jna.platform;
     requires java.logging;
 
@@ -29,4 +28,5 @@ module hans {
     opens hans.Menu.MetadataEdit to javafx.fxml, javafx.graphics;
     exports hans.Captions;
     opens hans.Captions to javafx.fxml, javafx.graphics;
+    exports hans.windowstoolbar;
 }

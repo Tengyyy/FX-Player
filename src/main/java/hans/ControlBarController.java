@@ -532,9 +532,6 @@ public class ControlBarController implements Initializable {
 
                 if (oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5) {
 
-                    previousVideoButton.setOnAction((e) -> mediaInterface.replay());
-
-
                     if (!previousVideoButtonEnabled) enablePreviousVideoButton();
                     else {
                         if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
@@ -547,9 +544,6 @@ public class ControlBarController implements Initializable {
                             mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
                     }
                 } else if (oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5) {
-
-                    previousVideoButton.setOnAction((e) -> previousVideoButtonClick());
-
 
                     if ((menuController.history.isEmpty() || menuController.historyBox.index == 0) && previousVideoButtonEnabled) {
                         disablePreviousVideoButton();
@@ -887,8 +881,13 @@ public class ControlBarController implements Initializable {
         if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
         if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
 
-        if (!menuController.animationsInProgress.isEmpty()) return;
-        mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition etc
+        if(durationSlider.getValue() > 5){
+            mediaInterface.replay();
+        }
+        else {
+            if (!menuController.animationsInProgress.isEmpty()) return;
+            mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition et
+        }
     }
 
     public void nextVideoButtonClick() {

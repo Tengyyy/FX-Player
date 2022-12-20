@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-import de.intelligence.windowstoolbar.*;
+import hans.windowstoolbar.*;
 import hans.Captions.CaptionsState;
 import hans.Menu.ActiveItem;
 import hans.Menu.MenuController;
@@ -810,7 +810,7 @@ public class MainController implements Initializable {
     }
 
     public void addTaskBarButtons(){
-        //windowsTaskBarController = new WindowsTaskBarController(menuController, mediaInterface);
+        windowsTaskBarController = new WindowsTaskBarController(menuController, mediaInterface);
     }
 
 

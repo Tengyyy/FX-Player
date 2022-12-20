@@ -1,8 +1,12 @@
 package hans;
 
-import de.intelligence.windowstoolbar.*;
+import hans.windowstoolbar.*;
 import hans.Menu.MenuController;
+import javafx.application.Platform;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 public class WindowsTaskBarController {
@@ -26,17 +30,17 @@ public class WindowsTaskBarController {
                 .overrideWndProc()
                 .addButtons(TaskbarButtonListBuilder.builder()
                         .buttonBuilder()
-                        .withFlag(TaskbarButtonFlag.ENABLED)
+                        .withFlag(TaskbarButtonFlag.DISABLED)
                         .setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-previous-disabled.ico")).getPath()))
                         .setOnClicked(e -> previousVideoButtonClick())
                         .build()
                         .buttonBuilder()
-                        .withFlag(TaskbarButtonFlag.ENABLED)
+                        .withFlag(TaskbarButtonFlag.DISABLED)
                         .setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/play-disabled.ico")).getPath()))
                         .setOnClicked(e -> playButtonClick())
                         .build()
                         .buttonBuilder()
-                        .withFlag(TaskbarButtonFlag.ENABLED)
+                        .withFlag(TaskbarButtonFlag.DISABLED)
                         .setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-next-disabled.ico")).getPath()))
                         .setOnClicked(e -> nextVideoButtonClick())
                         .build()
@@ -49,64 +53,58 @@ public class WindowsTaskBarController {
     public void disablePreviousVideoButton(){
         if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[0];
-        button.getFlags().clear();
-        button.getFlags().add(TaskbarButtonFlag.DISABLED);
+        button.setDisabled(true);
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-previous-disabled.ico")).getPath()));
-        taskbar.updateButton(1);
+
+        taskbar.updateButton(button.getId());
     }
 
     public void enablePreviousVideoButton(){
         if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[0];
-        button.getFlags().clear();
-        button.getFlags().add(TaskbarButtonFlag.ENABLED);
+        button.setDisabled(false);
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-previous.ico")).getPath()));
 
-        taskbar.updateButton(1);
+        taskbar.updateButton(button.getId());
     }
 
     public void disableNextVideoButton(){
         if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[2];
-        button.getFlags().clear();
-        button.getFlags().add(TaskbarButtonFlag.DISABLED);
+        button.setDisabled(true);
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-next-disabled.ico")).getPath()));
 
-        taskbar.updateButton(3);
+        taskbar.updateButton(button.getId());
     }
 
     public void enableNextVideoButton(){
         if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[2];
-        button.getFlags().clear();
-        button.getFlags().add(TaskbarButtonFlag.ENABLED);
+        button.setDisabled(false);
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/skip-next.ico")).getPath()));
 
-        taskbar.updateButton(3);
+        taskbar.updateButton(button.getId());
     }
 
     public void enablePlayButton() {
         if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[1];
-        button.getFlags().clear();
-        button.getFlags().add(TaskbarButtonFlag.ENABLED);
+        button.setDisabled(false);
 
         if (mediaInterface.atEnd) button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/replay.ico")).getPath()));
         else if (mediaInterface.playing.get()) button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/pause.ico")).getPath()));
         else button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/play.ico")).getPath()));
 
-        taskbar.updateButton(2);
+        taskbar.updateButton(button.getId());
     }
 
     public void disablePlayButton() {
-        if(taskbarButtons.length == 0) return;
+        if(taskbarButtons.length < 100) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[1];
-        button.getFlags().clear();
-        button.getFlags().add(TaskbarButtonFlag.DISABLED);
-
+        button.setDisabled(true);
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/play-disabled.ico")).getPath()));
 
-        taskbar.updateButton(2);
+        taskbar.updateButton(button.getId());
     }
 
     public void play() {
@@ -115,7 +113,7 @@ public class WindowsTaskBarController {
 
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/pause.ico")).getPath()));
 
-        taskbar.updateButton(2);
+        taskbar.updateButton(button.getId());
     }
 
     public void pause() {
@@ -124,19 +122,18 @@ public class WindowsTaskBarController {
 
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/play.ico")).getPath()));
 
-        taskbar.updateButton(2);
+        taskbar.updateButton(button.getId());
     }
 
     public void end() {
         if(taskbarButtons.length == 0) return;
         TaskbarButton button = (TaskbarButton) taskbarButtons[1];
-
         button.setIcon(Icon.fromPath("icon1", Objects.requireNonNull(getClass().getResource("images/replay.ico")).getPath()));
-
-        taskbar.updateButton(2);
+        taskbar.updateButton(button.getId());
     }
 
     public void playButtonClick(){
+
         if (mediaInterface.atEnd) mediaInterface.replay();
         else if (mediaInterface.playing.get()) {
             mediaInterface.wasPlaying = false;
@@ -148,8 +145,13 @@ public class WindowsTaskBarController {
 
     public void previousVideoButtonClick() {
 
-        if (!menuController.animationsInProgress.isEmpty()) return;
-        mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition etc
+        if(menuController.mainController.getControlBarController().durationSlider.getValue() > 5){
+            mediaInterface.replay();
+        }
+        else {
+            if (!menuController.animationsInProgress.isEmpty()) return;
+            mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition et
+        }
     }
 
     public void nextVideoButtonClick() {

@@ -518,7 +518,7 @@ public class MainController implements Initializable {
 
     public void openMenu() {
 
-        if(menuController.menuInTransition || controlBarController.durationSlider.isValueChanging() || controlBarController.volumeSlider.isValueChanging() || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || captionsController.captionsBox.captionsDragActive) return;
+        if(menuController.menuInTransition || controlBarController.durationSlider.isValueChanging() || controlBarController.volumeSlider.isValueChanging() || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || captionsController.captionsBox.captionsDragActive || settingsController.equalizerController.sliderActive) return;
 
         menuController.menuInTransition = true;
         menuController.menuState = MenuState.QUEUE_OPEN;

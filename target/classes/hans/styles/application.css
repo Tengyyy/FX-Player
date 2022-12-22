@@ -319,8 +319,39 @@
 }
 
 
-.equalizer-slider {
+.equalizer-slider .track {
 
+	-fx-background-color: null;
+}
+
+
+.equalizer-slider-track {
+	-fx-accent: red;
+}
+
+.equalizer-slider-track > .track {
+	-fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-text-box-border: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.equalizer-slider-track > .bar {
+	-fx-padding: 1px;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.equalizer-slider > .thumb {
+	-fx-background-color: red;
+	-fx-padding: 7;
+}
+
+.equalizer-label {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 11;
 }
 
 

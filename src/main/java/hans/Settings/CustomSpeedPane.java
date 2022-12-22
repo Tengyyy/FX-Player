@@ -106,7 +106,7 @@ public class CustomSpeedPane {
 
             formattedSliderValue = Math.floor(newValue.doubleValue() * 20) / 20; // floored to .05 precision
 
-            double progress = (newValue.doubleValue() - 0.25) * 1 / 1.75; // adjust the slider scale ( 0.25 - 2 ) to match with the progress bar scale ( 0 - 1 )
+            double progress = (newValue.doubleValue() - 0.25) / 1.75; // adjust the slider scale ( 0.25 - 2 ) to match with the progress bar scale ( 0 - 1 )
 
             sliderTrack.setProgress(progress);
 

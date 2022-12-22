@@ -158,10 +158,10 @@ public class SettingsHomeController {
 
         TranslateTransition homeTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), settingsHome);
         homeTransition.setFromX(0);
-        homeTransition.setToX(-settingsHome.getWidth());
+        homeTransition.setToX(-settingsController.equalizerController.scrollPane.getWidth());
 
         TranslateTransition optionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), settingsController.equalizerController.scrollPane);
-        optionsTransition.setFromX(settingsHome.getWidth());
+        optionsTransition.setFromX(settingsController.equalizerController.scrollPane.getWidth());
         optionsTransition.setToX(0);
 
 

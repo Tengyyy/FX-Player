@@ -241,7 +241,7 @@ public class CaptionsController {
 
     public void openCaptions(){
 
-        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuState != MenuState.CLOSED || captionsBox.captionsDragActive || settingsController.animating.get()) return;
+        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuState != MenuState.CLOSED || captionsBox.captionsDragActive || settingsController.animating.get() || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || settingsController.equalizerController.sliderActive) return;
 
         if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
 

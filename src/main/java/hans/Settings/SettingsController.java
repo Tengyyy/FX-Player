@@ -29,7 +29,7 @@ public class SettingsController {
     SettingsHomeController settingsHomeController;
     public PlaybackOptionsController playbackOptionsController;
     public PlaybackSpeedController playbackSpeedController;
-    EqualizerController equalizerController;
+    public EqualizerController equalizerController;
     CaptionsController captionsController;
 
     public StackPane settingsBuffer = new StackPane();
@@ -55,7 +55,7 @@ public class SettingsController {
         animating.set(false);
 
         settingsBuffer.setPrefSize(235, 156);
-        settingsBuffer.setMaxWidth(500);
+        settingsBuffer.setMaxWidth(550);
         settingsBuffer.setClip(clip);
         settingsBuffer.getChildren().add(settingsBackground);
         settingsBuffer.setMouseTransparent(true);
@@ -143,7 +143,7 @@ public class SettingsController {
 
     public void closeSettings(){
 
-        if(animating.get() || playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging()) return;
+        if(animating.get() || playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || equalizerController.sliderActive) return;
 
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 45, 0, false, 1, true);
 

@@ -3,7 +3,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="outerPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MainController">
+<StackPane fx:id="outerPane" stylesheets="@../styles/text-fields.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MainController">
    <children>
       <StackPane fx:id="videoImageViewWrapper" minWidth="0.0" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefWidth="601.0">
          <children>

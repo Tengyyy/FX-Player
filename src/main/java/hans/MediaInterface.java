@@ -23,6 +23,7 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.JavaFXFrameConverter;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
+import uk.co.caprica.vlcj.player.base.Equalizer;
 import uk.co.caprica.vlcj.player.base.LibVlcConst;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
@@ -113,7 +114,10 @@ public class MediaInterface {
 
 
         embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(mainController.videoImageView));
+        embeddedMediaPlayer.audio().setEqualizer(new Equalizer(10));
+        embeddedMediaPlayer.audio().equalizer().setPreamp(0);
         embeddedMediaPlayer.audio().setVolume(50);
+
 
         embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
 
@@ -222,14 +226,17 @@ public class MediaInterface {
         wasPlaying = false;
         currentTime = 0;*/
 
-        fFmpegFrameGrabber = new FFmpegFrameGrabber(menuController.activeItem.getMediaItem().getFile());
-        fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+        if(menuObject.getMediaItem().hasVideo()){
+            fFmpegFrameGrabber = new FFmpegFrameGrabber(menuController.activeItem.getMediaItem().getFile());
+            fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
 
-        try {
-            fFmpegFrameGrabber.start();
-        } catch (FFmpegFrameGrabber.Exception e) {
-            e.printStackTrace();
+            try {
+                fFmpegFrameGrabber.start();
+            } catch (FFmpegFrameGrabber.Exception e) {
+                e.printStackTrace();
+            }
         }
+
 
         mainController.videoTitleLabel.setText(menuObject.getTitle());
 
@@ -259,8 +266,6 @@ public class MediaInterface {
 
         controlBarController.updateTooltips();
 
-        //TODO: parse mediaitem log and then extract subtitles to temporary srt files inside FXPlayer/temp folder
-        // preferrably do this in a separate thread/task
 
         captionsController.resetCaptions();
         captionsController.extractCaptions(menuObject);

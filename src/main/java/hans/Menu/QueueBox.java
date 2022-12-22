@@ -681,7 +681,7 @@ public class QueueBox extends VBox {
         ArrayList<QueueItem> newItems = new ArrayList<>();
 
         for (File file : dragBoardMedia) {
-            newItems.add(new QueueItem(Utilities.searchDuplicateOrCreate(file, menuController), menuController, menuController.mediaInterface, this));
+            newItems.add(new QueueItem(file, menuController, menuController.mediaInterface, this));
         }
 
         addAll(getChildren().indexOf(queueLine), newItems);

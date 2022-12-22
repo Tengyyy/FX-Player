@@ -650,7 +650,7 @@ public class MenuController implements Initializable {
         if(selectedFiles!= null && !selectedFiles.isEmpty()){
 
             for(File file : selectedFiles){
-                QueueItem queueItem = new QueueItem(Utilities.searchDuplicateOrCreate(file, this), this, mediaInterface, queueBox);
+                QueueItem queueItem = new QueueItem(file, this, mediaInterface, queueBox);
                 if (settingsController.playbackOptionsController.shuffleOn) queueBox.addRand(queueItem);
                 else queueBox.add(queueItem);
             }

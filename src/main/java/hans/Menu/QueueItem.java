@@ -5,6 +5,8 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
 import javafx.animation.Animation;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,7 +22,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
+import java.io.File;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class QueueItem extends GridPane implements MenuObject {
 
@@ -45,8 +50,6 @@ public class QueueItem extends GridPane implements MenuObject {
     JFXButton optionsButton = new JFXButton();
 
     JFXButton removeButton = new JFXButton();
-
-    MediaItem mediaItem;
 
     MenuController menuController;
 
@@ -90,13 +93,48 @@ public class QueueItem extends GridPane implements MenuObject {
     double minimumY = 0;
     double maximumY = 0;
 
+    File file;
+    MediaItem mediaItem;
+    BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
+
+    QueueItem(File file, MenuController menuController, MediaInterface mediaInterface, QueueBox queueBox) {
+
+        this.file = file;
+        this.menuController = menuController;
+        this.mediaInterface = mediaInterface;
+        this.queueBox = queueBox;
+
+        initialize();
+
+        MediaItemTask mediaItemTask = new MediaItemTask(this.file, menuController);
+
+        mediaItemTask.setOnSucceeded((succeededEvent) -> {
+            this.mediaItem = mediaItemTask.getValue();
+            applyMediaItem();
+            mediaItemGenerated.set(true);
+        });
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        executorService.execute(mediaItemTask);
+        executorService.shutdown();
+    }
+
     QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, QueueBox queueBox) {
 
+        this.file = mediaItem.getFile();
         this.mediaItem = mediaItem;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
         this.queueBox = queueBox;
 
+        mediaItemGenerated.set(true);
+
+        initialize();
+        applyMediaItem();
+
+    }
+
+    private void initialize(){
         column3.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
         this.getRowConstraints().addAll(row1);
@@ -147,14 +185,7 @@ public class QueueItem extends GridPane implements MenuObject {
         optionsSVG.setContent(App.svgMap.get(SVG.OPTIONS));
 
 
-        if(mediaItem.getCover() != null) {
-            coverImage.setImage(mediaItem.getCover());
-            imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
-        }
-        else {
-            imageWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
-            coverImage.setImage(mediaItem.getPlaceholderCover());
-        }
+        imageWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
 
 
         imageWrapper.setMaxSize(125,70);
@@ -162,43 +193,12 @@ public class QueueItem extends GridPane implements MenuObject {
 
         videoTitle.getStyleClass().add("videoTitle");
 
-        Map<String, String> mediaInformation = mediaItem.getMediaInformation();
-
-        if(mediaInformation != null){
-            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
-                videoTitle.setText(mediaInformation.get("title"));
-            }
-            else {
-                videoTitle.setText(mediaItem.getFile().getName());
-            }
-
-            if(mediaInformation.containsKey("media_type") && mediaInformation.containsKey("artist")){
-                if(mediaInformation.get("media_type").equals("6")){
-                    artist.setText(mediaInformation.get("artist"));
-                }
-            }
-            else {
-                String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
-                if((fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) && mediaInformation.containsKey("artist")){
-                    artist.setText(mediaInformation.get("artist"));
-                }
-            }
-        }
 
         videoTitle.setWrapText(true);
         videoTitle.setMaxHeight(40);
 
         artist.getStyleClass().add("subText");
 
-
-
-        String formattedDuration = Utilities.getTime(mediaItem.getDuration());
-
-        if(!artist.getText().isEmpty()){
-            formattedDuration = formattedDuration + " • ";
-        }
-
-        if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
         duration.getStyleClass().add("subText");
 
         subTextWrapper.setAlignment(Pos.CENTER_LEFT);
@@ -237,6 +237,7 @@ public class QueueItem extends GridPane implements MenuObject {
         optionsButton.setCursor(Cursor.HAND);
         optionsButton.setOpacity(0);
         optionsButton.setText(null);
+        optionsButton.disableProperty().bind(mediaItemGenerated.not());
 
         optionsButton.setOnAction((e) -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
@@ -346,8 +347,53 @@ public class QueueItem extends GridPane implements MenuObject {
             if(menuController.animationsInProgress.isEmpty()) queueBox.remove(this, true);
 
         });
-
     }
+
+
+    private void applyMediaItem(){
+        if(mediaItem.getCover() != null) {
+            coverImage.setImage(mediaItem.getCover());
+            imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
+        }
+        else {
+            coverImage.setImage(mediaItem.getPlaceholderCover());
+        }
+
+        Map<String, String> mediaInformation = mediaItem.getMediaInformation();
+
+        if(mediaInformation != null){
+            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
+                videoTitle.setText(mediaInformation.get("title"));
+            }
+            else {
+                videoTitle.setText(mediaItem.getFile().getName());
+            }
+
+            if(mediaInformation.containsKey("media_type") && mediaInformation.containsKey("artist")){
+                if(mediaInformation.get("media_type").equals("6")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
+            else {
+                String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
+                if((fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) && mediaInformation.containsKey("artist")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
+        }
+
+        String formattedDuration = Utilities.getTime(mediaItem.getDuration());
+
+        if(!artist.getText().isEmpty()){
+            formattedDuration = formattedDuration + " • ";
+        }
+
+        if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
+    }
+
+
+
+
 
     public void updateIndex(int i){
         videoIndex = i + 1;
@@ -394,7 +440,7 @@ public class QueueItem extends GridPane implements MenuObject {
 
     @Override
     public void showMetadata(){
-
+        // must be disabled until ffprobe has returned
         if(menuController.menuInTransition) return;
 
         menuController.metadataEditPage.enterMetadataEditPage(this);
@@ -402,6 +448,7 @@ public class QueueItem extends GridPane implements MenuObject {
 
     @Override
     public void showTechnicalDetails() {
+        // must be disabled until ffprobe has returned
         if(menuController.menuInTransition) return;
 
         menuController.technicalDetailsPage.enterTechnicalDetailsPage(this);
@@ -446,6 +493,8 @@ public class QueueItem extends GridPane implements MenuObject {
     @Override
     public void update(){
 
+        if(mediaItem == null) return;
+
         if(mediaItem.getCover() != null) {
             coverImage.setImage(mediaItem.getCover());
             imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
@@ -481,6 +530,11 @@ public class QueueItem extends GridPane implements MenuObject {
         else if(artist.getText().isBlank() && duration.getText().contains(" • ")){
             duration.setText(duration.getText().substring(0, duration.getText().length() - 3));
         }
+    }
+
+    @Override
+    public BooleanProperty getMediaItemGenerated() {
+        return mediaItemGenerated;
     }
 
 }

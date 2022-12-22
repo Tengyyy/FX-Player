@@ -79,6 +79,9 @@ public class HistoryItem extends GridPane implements MenuObject {
 
     HistoryBox historyBox;
 
+    BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
+
+
 
     HistoryItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, HistoryBox historyBox){
         this.mediaItem = mediaItem;
@@ -452,6 +455,11 @@ public class HistoryItem extends GridPane implements MenuObject {
         else if(artist.getText().isBlank() && duration.getText().contains(" • ")){
             duration.setText(duration.getText().substring(0, duration.getText().length() - 3));
         }
+    }
+
+    @Override
+    public BooleanProperty getMediaItemGenerated() {
+        return mediaItemGenerated;
     }
 
 }

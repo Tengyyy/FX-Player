@@ -477,15 +477,11 @@ public class MediaInterface {
 
         frameGrabberTask = new FrameGrabberTask(fFmpegFrameGrabber, controlBarController);
 
-        frameGrabberTask.setOnSucceeded((succeededEvent) -> {
-            mainController.sliderHoverPreview.imageView.setImage(frameGrabberTask.getValue());
-        });
-
+        frameGrabberTask.setOnSucceeded((succeededEvent) -> mainController.sliderHoverPreview.imageView.setImage(frameGrabberTask.getValue()));
 
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(frameGrabberTask);
         executorService.shutdown();
-
     }
 }

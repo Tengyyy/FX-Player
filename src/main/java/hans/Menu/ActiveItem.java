@@ -4,6 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
 import javafx.animation.Animation;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -76,6 +78,9 @@ public class ActiveItem extends GridPane implements MenuObject {
     ActiveBox activeBox;
 
     Columns columns = new Columns();
+
+    BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
+
 
     public ActiveItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, ActiveBox activeBox){
         this.mediaItem = mediaItem;
@@ -522,6 +527,11 @@ public class ActiveItem extends GridPane implements MenuObject {
         else if(artist.getText().isBlank() && duration.getText().contains(" • ")){
             duration.setText(duration.getText().substring(0, duration.getText().length() - 3));
         }
+    }
+
+    @Override
+    public BooleanProperty getMediaItemGenerated() {
+        return mediaItemGenerated;
     }
 
 }

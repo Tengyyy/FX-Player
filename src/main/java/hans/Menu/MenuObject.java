@@ -2,6 +2,7 @@ package hans.Menu;
 
 import hans.MediaItems.MediaItem;
 import hans.Menu.MenuController;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -28,5 +29,7 @@ public interface MenuObject {
     boolean getHover();
 
     void update();
+
+    BooleanProperty getMediaItemGenerated();
 
 }

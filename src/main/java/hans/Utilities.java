@@ -1,20 +1,5 @@
 package hans;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
 import hans.MediaItems.*;
@@ -31,7 +16,22 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import org.bytedeco.javacpp.Loader;
-import org.bytedeco.javacv.*;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.JavaFXFrameConverter;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class Utilities {
 
@@ -84,21 +84,21 @@ public class Utilities {
     public static MediaItem searchDuplicateOrCreate(File file, MenuController menuController){
         MediaItem temp = null;
         for(QueueItem queueItem : menuController.queue){
-            if(queueItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+            if(queueItem.getMediaItem() != null && queueItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
                 temp = Utilities.copyMediaItem(queueItem.getMediaItem(), menuController.mainController);
                 break;
             }
         }
         if(temp == null){
             for (HistoryItem historyItem : menuController.history){
-                if(historyItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                if(historyItem.getMediaItem() != null && historyItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
                     temp = Utilities.copyMediaItem(historyItem.getMediaItem(), menuController.mainController);
                     break;
                 }
             }
         }
         if(temp == null){
-            if(menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+            if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
                 temp = Utilities.copyMediaItem(menuController.activeItem.getMediaItem(), menuController.mainController);
             }
         }

@@ -4,6 +4,8 @@ import hans.Menu.MenuObject;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -44,15 +46,22 @@ public class VideoTooltip extends Tooltip {
     MainController mainController;
     MenuObject menuObject;
 
-    public VideoTooltip(MainController mainController, String tooltipText, Region tooltipParent, MenuObject menuObject){
+    boolean isPrevious;
+
+    Label graphicLabel = new Label();
+
+
+    public VideoTooltip(MainController mainController, Region tooltipParent, boolean isPrevious){
 
         this.mainController = mainController;
-        this.menuObject = menuObject;
         this.tooltipParent = tooltipParent;
-
-        this.setStyle("-fx-padding: 0;");
+        this.isPrevious = isPrevious;
 
         this.getStyleClass().add("tooltip");
+        this.setStyle("-fx-padding: 0;");
+
+        graphicLabel.getStyleClass().add("graphicLabel");
+
 
         graphicBackground.setPadding(new Insets(2));
         graphicBackground.setBackground(Background.EMPTY);
@@ -63,9 +72,6 @@ public class VideoTooltip extends Tooltip {
         StackPane.setAlignment(imageViewBackground, Pos.CENTER_LEFT);
         imageViewBackground.setPrefSize(160, 90);
         imageViewBackground.setMaxSize(160, 90);
-
-        if(menuObject.getMediaItem() == null) imageViewBackground.setStyle("-fx-background-color: rgba(64, 64, 64, 0.7);");
-
         imageViewBackground.getChildren().addAll(imageView, durationLabel);
 
 
@@ -76,7 +82,7 @@ public class VideoTooltip extends Tooltip {
         StackPane.setAlignment(durationLabel, Pos.BOTTOM_RIGHT);
 
 
-        durationLabel.setId("tooltipSubText");
+        durationLabel.getStyleClass().add("tooltipSubText");
         StackPane.setMargin(durationLabel, new Insets(0, 5, 3, 0));
 
 
@@ -88,56 +94,62 @@ public class VideoTooltip extends Tooltip {
         textContainer.setPadding(new Insets(0, 5, 0, 5));
         StackPane.setAlignment(textContainer, Pos.TOP_RIGHT);
 
-        mainTextLabel.setText(tooltipText);
         mainTextLabel.setId("tooltipMainText");
         mainTextLabel.setPadding(new Insets(2, 0,0,0));
+        if(isPrevious) mainTextLabel.setText("PREVIOUS (SHIFT+P)");
+        else mainTextLabel.setText("NEXT (SHIFT+N)");
 
         titleLabel.setWrapText(true);
         titleLabel.setId("tooltipTitle");
         titleLabel.setTextAlignment(TextAlignment.CENTER);
 
 
-        this.setGraphic(graphicBackground);
 
         mouseHover.addListener((observableValue, oldValue, newValue) -> {
             if(newValue) showTooltip();
-        });
-
-
-        tooltipParent.setOnMouseEntered((e) -> mouseHover.set(true));
-
-        tooltipParent.setOnMouseExited((e) -> {
-            this.hide();
-            mouseHover.set(false);
-        });
-
-        if(menuObject.getMediaItem() != null){
-            loadTooltip();
-        }
-        else menuObject.getMediaItemGenerated().addListener((observableValue, oldValue, newValue) -> {
-            if(newValue) loadTooltip();
+            else hide();
         });
     }
 
-    // previous video button tooltip with text replay, shown when video has played for 5 secs or longer
-    public VideoTooltip(MainController mainController, ControlBarController controlBarController){
-        this.getStyleClass().add("tooltip");
-        this.setStyle("-fx-padding: 10;");
-        this.setText("Replay");
 
-        this.mainController = mainController;
-        this.tooltipParent = controlBarController.previousVideoButton;
+    public void updateTooltip(MenuObject menuObject){
+        this.menuObject = menuObject;
 
-        mouseHover.addListener((observableValue, oldValue, newValue) -> {
-            if(newValue) showTooltip();
-        });
+        boolean isShowing = this.isShowing();
 
-        controlBarController.previousVideoButton.setOnMouseEntered((e) -> mouseHover.set(true));
+        if(isShowing) this.hide();
 
-        controlBarController.previousVideoButton.setOnMouseExited((e) -> {
-            this.hide();
-            mouseHover.set(false);
-        });
+        if(menuObject == null){
+            graphicLabel.setText("Replay");
+            this.setGraphic(graphicLabel);
+        }
+        else {
+            if(menuObject.getMediaItem() != null){
+                loadTooltip();
+            }
+            else {
+
+                if(isPrevious) graphicLabel.setText("Previous video");
+                else graphicLabel.setText("Next video");
+
+                this.setGraphic(graphicLabel);
+
+                menuObject.getMediaItemGenerated().addListener((observableValue, oldValue, newValue) -> {
+                    if((!isPrevious || mainController.getControlBarController().durationSlider.getValue() <= 5) && newValue && this.menuObject == menuObject){
+                        if(this.isShowing()){
+                            this.hide();
+
+                            loadTooltip();
+
+                            this.showTooltip();
+                        }
+                        else loadTooltip();
+                    }
+                });
+            }
+        }
+
+        if(isShowing) this.showTooltip();
     }
 
     public void showTooltip() {
@@ -170,7 +182,10 @@ public class VideoTooltip extends Tooltip {
         }
         else {
             imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+            imageViewBackground.setStyle("-fx-background-color: rgba(64,64,64,0.7);");
         }
+
+        this.setGraphic(graphicBackground);
     }
 }
 

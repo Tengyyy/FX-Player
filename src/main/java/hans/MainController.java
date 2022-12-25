@@ -622,7 +622,9 @@ public class MainController implements Initializable {
                 mediaInterface.embeddedMediaPlayer.controls().nextFrame();
             }
 
-            if(menuController.activeItem != null && !menuController.activeItem.getMediaItem().hasVideo()) setCoverImageView(menuController.activeItem);
+            if(menuController.activeItem.getMediaItem() != null && !menuController.activeItem.getMediaItem().hasVideo()){
+                setCoverImageView(menuController.activeItem);
+            }
         }
 
         videoImageView.setImage(null);
@@ -772,17 +774,20 @@ public class MainController implements Initializable {
     }
 
 
-    public void setCoverImageView(MenuObject menuObject){
+    public void setCoverImageView(ActiveItem activeItem){
 
 
         Image image;
-        if(menuObject.getMediaItem().hasCover()){
-            image = menuObject.getMediaItem().getCover();
+        if(activeItem.getMediaItem().hasCover()){
+            image = activeItem.getMediaItem().getCover();
         }
-        else image = menuObject.getMediaItem().getPlaceholderCover();
+        else image = activeItem.getMediaItem().getPlaceholderCover();
 
         double width = image.getWidth();
         double height = image.getHeight();
+
+        System.out.println(width);
+        System.out.println(height);
 
 
         coverImageView.fitWidthProperty().bind(Bindings.min(width *2, videoImageViewWrapper.widthProperty().multiply(0.7)));
@@ -790,8 +795,8 @@ public class MainController implements Initializable {
 
 
         coverImageView.setImage(image);
-        Color color = menuObject.getMediaItem().getCoverBackgroundColor();
-        if(menuObject.getMediaItem().hasCover()) coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
+        Color color = activeItem.getMediaItem().getCoverBackgroundColor();
+        if(activeItem.getMediaItem().hasCover()) coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
         else coverImageContainer.setStyle("-fx-background-color: rgb(64,64,64);");
 
         coverImageContainer.setVisible(true);
@@ -801,7 +806,7 @@ public class MainController implements Initializable {
             miniplayer.miniplayerController.coverImageView.fitHeightProperty().bind(Bindings.min(height * 2, miniplayer.miniplayerController.videoImageViewWrapper.heightProperty().multiply(0.7)));
 
             miniplayer.miniplayerController.coverImageView.setImage(image);
-            if(menuObject.getMediaItem().hasCover()) miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
+            if(activeItem.getMediaItem().hasCover()) miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
             else miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: rgb(64,64,64);");
 
             miniplayer.miniplayerController.coverImageContainer.setVisible(true);

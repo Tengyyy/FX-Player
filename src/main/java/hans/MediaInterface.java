@@ -216,7 +216,7 @@ public class MediaInterface {
 
     public void createMedia(ActiveItem activeItem) {
 
-        mainController.coverImageView.setVisible(false);
+        mainController.coverImageContainer.setVisible(false);
         mainController.miniplayerActiveText.setVisible(false);
         if(mainController.miniplayerActive){
             mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
@@ -284,6 +284,8 @@ public class MediaInterface {
         mainController.coverImageContainer.setVisible(false);
         mainController.miniplayerActiveText.setVisible(false);
 
+        mediaActive.set(false);
+
         controlBarController.durationSlider.setValue(0);
 
         controlBarController.durationLabel.setCursor(Cursor.DEFAULT);
@@ -298,8 +300,6 @@ public class MediaInterface {
         mainController.videoTitleLabel.setText(null);
 
         if(settingsController.playbackOptionsController.loopOn) settingsController.playbackOptionsController.loopTab.toggle.fire();
-
-        mediaActive.set(false);
 
         mainController.sliderHoverPreview.setImage(null);
 

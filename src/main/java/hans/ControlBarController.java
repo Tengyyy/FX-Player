@@ -154,6 +154,8 @@ public class ControlBarController implements Initializable {
             fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            previousVideoTooltip = new VideoTooltip(mainController, previousVideoButton, true);
+            nextVideoTooltip = new VideoTooltip(mainController, nextVideoButton, false);
         });
 
         previousVideoSVG = new SVGPath();
@@ -528,20 +530,16 @@ public class ControlBarController implements Initializable {
 
                 mediaInterface.updateMedia(newValue.doubleValue());
 
-                if (oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5) {
+                if (oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5 && mediaInterface.mediaActive.get()) {
 
                     if (!previousVideoButtonEnabled) enablePreviousVideoButton();
                     else {
-                        if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
-
-                        previousVideoTooltip = new VideoTooltip(mainController, this);
-                        if(previousVideoButtonHover) previousVideoTooltip.showTooltip();
-
+                        previousVideoTooltip.updateTooltip(null);
 
                         if (mainController.miniplayerActive)
                             mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
                     }
-                } else if (oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5) {
+                } else if (oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5 && mediaInterface.mediaActive.get()) {
 
                     if ((menuController.history.isEmpty() || menuController.historyBox.index == 0) && previousVideoButtonEnabled) {
                         disablePreviousVideoButton();
@@ -557,11 +555,7 @@ public class ControlBarController implements Initializable {
                             historyItem = menuController.history.get(menuController.historyBox.index - 1);
                         }
 
-                        if(previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
-
-                        if(historyItem != null) previousVideoTooltip = new VideoTooltip(mainController, "PREVIOUS (SHIFT + P)", previousVideoButton, historyItem);
-
-                        if(previousVideoButtonHover && previousVideoTooltip != null) previousVideoTooltip.showTooltip();
+                        if(historyItem != null) previousVideoTooltip.updateTooltip(historyItem);
                     }
 
                 }
@@ -1054,23 +1048,27 @@ public class ControlBarController implements Initializable {
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.enablePreviousVideoButton();
 
 
-        Platform.runLater(() -> {
-            if (durationSlider.getValue() > 5)
-                previousVideoTooltip = new VideoTooltip(mainController, this);
-            else {
-                HistoryItem historyItem = null;
-                if (menuController.historyBox.index == -1 && !menuController.history.isEmpty()) {
-                    historyItem = menuController.history.get(menuController.history.size() - 1);
+        if (durationSlider.getValue() > 5)
+            previousVideoTooltip.updateTooltip(null);
+        else {
+            HistoryItem historyItem = null;
+            if (menuController.historyBox.index == -1 && !menuController.history.isEmpty()) {
+                historyItem = menuController.history.get(menuController.history.size() - 1);
 
-                } else if(!menuController.history.isEmpty()){
-                    historyItem = menuController.history.get(menuController.historyBox.index - 1);
+            } else if(!menuController.history.isEmpty()){
+                historyItem = menuController.history.get(menuController.historyBox.index - 1);
 
-                }
-                if(historyItem != null) previousVideoTooltip = new VideoTooltip(mainController,"PREVIOUS (SHIFT+P)", previousVideoButton, historyItem);
             }
+            if(historyItem != null) previousVideoTooltip.updateTooltip(historyItem);
+        }
 
-            if (previousVideoButtonHover) previousVideoTooltip.showTooltip();
-        });
+        previousVideoButton.setOnMouseEntered((e) -> previousVideoTooltip.mouseHover.set(true));
+        previousVideoButton.setOnMouseExited((e) -> previousVideoTooltip.mouseHover.set(false));
+
+        if (previousVideoButtonHover){
+            previousVideoTooltip.mouseHover.set(true);
+            //previousVideoTooltip.showTooltip();
+        }
     }
 
     public void disablePreviousVideoButton() {
@@ -1087,9 +1085,10 @@ public class ControlBarController implements Initializable {
 
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.disablePreviousVideoButton();
 
-
         previousVideoButton.setOnMouseEntered(null);
-        if (previousVideoTooltip != null && previousVideoTooltip.isShowing()) previousVideoTooltip.hide();
+        previousVideoButton.setOnMouseExited(null);
+
+        previousVideoTooltip.mouseHover.set(false);
     }
 
     public void enablePlayButton() {
@@ -1105,13 +1104,11 @@ public class ControlBarController implements Initializable {
 
 
 
-        Platform.runLater(() -> {
             if (mediaInterface.atEnd) play = new ControlTooltip(mainController,"Replay (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             else if (mediaInterface.playing.get()) play = new ControlTooltip(mainController,"Pause (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             else play = new ControlTooltip(mainController,"Play (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             if (playButtonHover) play.showTooltip();
-        });
     }
 
     public void disablePlayButton() {
@@ -1144,19 +1141,22 @@ public class ControlBarController implements Initializable {
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.enableNextVideoButton();
 
 
-        Platform.runLater(() -> {
+        if ((menuController.historyBox.index == -1 || menuController.historyBox.index == menuController.history.size() - 1) && !menuController.queue.isEmpty()) {
+            QueueItem queueItem = menuController.queue.get(0);
+            if(queueItem != null) nextVideoTooltip.updateTooltip(queueItem);
+        }
+        else if (menuController.historyBox.index < menuController.history.size() - 1 && !menuController.history.isEmpty()) {
+            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index + 1);
+            if(historyItem != null) nextVideoTooltip.updateTooltip(historyItem);
+        }
 
-            if ((menuController.historyBox.index == -1 || menuController.historyBox.index == menuController.history.size() - 1) && !menuController.queue.isEmpty()) {
-                QueueItem queueItem = menuController.queue.get(0);
-                if(queueItem != null) nextVideoTooltip = new VideoTooltip(mainController,"NEXT (SHIFT+N)", nextVideoButton, queueItem);
-            }
-            else if (menuController.historyBox.index < menuController.history.size() - 1 && !menuController.history.isEmpty()) {
-                HistoryItem historyItem = menuController.history.get(menuController.historyBox.index + 1);
-                if(historyItem != null) nextVideoTooltip = new VideoTooltip(mainController,"NEXT (SHIFT+N)", nextVideoButton, historyItem);
-            }
+        nextVideoButton.setOnMouseEntered((e) -> nextVideoTooltip.mouseHover.set(true));
+        nextVideoButton.setOnMouseExited((e) -> nextVideoTooltip.mouseHover.set(false));
 
-            if (nextVideoButtonHover && nextVideoTooltip != null) nextVideoTooltip.showTooltip();
-        });
+        if (nextVideoButtonHover){
+            nextVideoTooltip.mouseHover.set(true);
+            //nextVideoTooltip.showTooltip();
+        }
     }
 
     public void disableNextVideoButton() {
@@ -1173,9 +1173,9 @@ public class ControlBarController implements Initializable {
 
 
         nextVideoButton.setOnMouseEntered(null);
-        if (nextVideoTooltip != null){
-            nextVideoTooltip.hide();
-        }
+        nextVideoButton.setOnMouseExited(null);
+
+        nextVideoTooltip.mouseHover.set(false);
     }
 
     public void updateTooltips(){

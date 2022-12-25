@@ -4,10 +4,7 @@ package hans;
 import com.sun.jna.NativeLibrary;
 import hans.Captions.CaptionsController;
 import hans.MediaItems.MediaItem;
-import hans.Menu.HistoryItem;
-import hans.Menu.MenuController;
-import hans.Menu.MenuObject;
-import hans.Menu.QueueItem;
+import hans.Menu.*;
 import hans.Settings.SettingsController;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -23,6 +20,7 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.JavaFXFrameConverter;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
+import uk.co.caprica.vlcj.media.TrackType;
 import uk.co.caprica.vlcj.player.base.Equalizer;
 import uk.co.caprica.vlcj.player.base.LibVlcConst;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
@@ -65,7 +63,7 @@ public class MediaInterface {
 
     double currentTime;
 
-    FFmpegFrameGrabber fFmpegFrameGrabber;
+    public FFmpegFrameGrabber fFmpegFrameGrabber;
 
     FrameGrabberTask frameGrabberTask;
 
@@ -145,6 +143,8 @@ public class MediaInterface {
 
                     mediaActive.set(true);
 
+                    embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
+
                     play();
                 });
 
@@ -214,70 +214,62 @@ public class MediaInterface {
 
     }
 
-    public void createMedia(MenuObject menuObject) {
+    public void createMedia(ActiveItem activeItem) {
 
-        MediaItem mediaItem = menuObject.getMediaItem();
-
-
-        // resets all media state variables before creating a new player
-        /*atEnd = false;
-        seekedToEnd = false;
-        playing.set(false);
-        wasPlaying = false;
-        currentTime = 0;*/
-
-        if(menuObject.getMediaItem().hasVideo()){
-            fFmpegFrameGrabber = new FFmpegFrameGrabber(menuController.activeItem.getMediaItem().getFile());
-            fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
-
-            try {
-                fFmpegFrameGrabber.start();
-            } catch (FFmpegFrameGrabber.Exception e) {
-                e.printStackTrace();
-            }
+        mainController.coverImageView.setVisible(false);
+        mainController.miniplayerActiveText.setVisible(false);
+        if(mainController.miniplayerActive){
+            mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
+            mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
         }
 
+        MediaItem mediaItem = activeItem.getMediaItem();
 
-        mainController.videoTitleLabel.setText(menuObject.getTitle());
+        if (mediaItem != null) {
+            if(mediaItem.hasVideo()){
+                fFmpegFrameGrabber = new FFmpegFrameGrabber(menuController.activeItem.getMediaItem().getFile());
+                fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+
+                try {
+                    fFmpegFrameGrabber.start();
+                } catch (FFmpegFrameGrabber.Exception e) {
+                    e.printStackTrace();
+                }
+
+                if(mainController.miniplayerActive){
+                    mainController.miniplayerActiveText.setVisible(true);
+                }
+            }
+            else {
+                mainController.setCoverImageView(activeItem);
+            }
+
+            mainController.videoTitleLabel.setText(activeItem.getTitle());
+        }
+
 
         controlBarController.durationSlider.setValue(0);
 
         mainController.metadataButton.setOnAction(e -> {
             if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
-            menuObject.showMetadata();
+            if(activeItem.getMediaItem() != null) activeItem.showMetadata();
         });
 
         controlBarController.durationLabel.setCursor(Cursor.HAND);
         controlBarController.durationLabel.setMouseTransparent(false);
 
 
-
-        if(!menuObject.getMediaItem().hasVideo()){
-            mainController.miniplayerActiveText.setVisible(false);
-            mainController.setCoverImageView(menuObject);
-        }
-        else {
-            if(mainController.miniplayerActive){
-                mainController.miniplayerActiveText.setVisible(true);
-                mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
-            }
-            mainController.coverImageContainer.setVisible(false);
-        }
-
         controlBarController.updateTooltips();
 
 
         captionsController.resetCaptions();
-        captionsController.extractCaptions(menuObject);
 
 
-        embeddedMediaPlayer.media().start(mediaItem.getFile().getAbsolutePath());
-        Platform.runLater(() -> {
-            embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
-        });
+        //TODO: create task and not block UI thread
+        //captionsController.extractCaptions(menuObject);
 
 
-
+        embeddedMediaPlayer.media().start(activeItem.file.getAbsolutePath());
     }
 
 
@@ -324,7 +316,7 @@ public class MediaInterface {
 
 
         try {
-            fFmpegFrameGrabber.close();
+            if(fFmpegFrameGrabber != null) fFmpegFrameGrabber.close();
         } catch (FrameGrabber.Exception e) {
             e.printStackTrace();
         }

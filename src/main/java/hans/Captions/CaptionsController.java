@@ -152,7 +152,7 @@ public class CaptionsController {
 
     public void clearCaptions(){
 
-        if(menuController.activeItem != null){
+        if(menuController.activeItem != null && menuController.activeItem.activeItemContextMenu != null){
             menuController.activeItem.activeItemContextMenu.subtitleContainer.getChildren().clear();
             menuController.activeItem.activeItemContextMenu.subtitleContainer.getChildren().add(menuController.activeItem.activeItemContextMenu.externalSubtitlesWrapper);
             menuController.activeItem.activeItemContextMenu.subtitleScroll.setPrefHeight(39);

@@ -439,8 +439,8 @@ public class MainController implements Initializable {
 
         metadataButtonPane.setVisible(false);
         metadataButtonPane.setMouseTransparent(true);
-        metadataButtonPane.visibleProperty().bind(mediaInterface.mediaActive);
-        metadataButtonPane.mouseTransparentProperty().bind(mediaInterface.mediaActive.not());
+        metadataButtonPane.visibleProperty().bind(menuController.activeMediaItemGenerated);
+        metadataButtonPane.mouseTransparentProperty().bind(menuController.activeMediaItemGenerated.not());
 
 
         metadataButton.setPrefSize(50, 50);
@@ -575,7 +575,7 @@ public class MainController implements Initializable {
 
         actionIndicator.animate();
 
-        ActiveItem activeItem = new ActiveItem(Utilities.searchDuplicateOrCreate(file, menuController), menuController, mediaInterface, menuController.activeBox);
+        ActiveItem activeItem = new ActiveItem(file, menuController, mediaInterface, menuController.activeBox);
         activeItem.play(true);
 
     }

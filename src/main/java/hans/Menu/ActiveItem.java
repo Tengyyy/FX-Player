@@ -6,6 +6,8 @@ import hans.MediaItems.MediaItem;
 import javafx.animation.Animation;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,9 +20,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_DEFAULT;
 
 public class ActiveItem extends GridPane implements MenuObject {
 
@@ -47,7 +54,6 @@ public class ActiveItem extends GridPane implements MenuObject {
 
     JFXButton removeButton = new JFXButton();
 
-    MediaItem mediaItem;
 
     MenuController menuController;
 
@@ -79,16 +85,171 @@ public class ActiveItem extends GridPane implements MenuObject {
 
     Columns columns = new Columns();
 
+    public File file;
+    MediaItem mediaItem;
     BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
 
 
-    public ActiveItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, ActiveBox activeBox){
-        this.mediaItem = mediaItem;
+    // this constructor will be used when playing media directly and not through the queue
+    public ActiveItem(File file, MenuController menuController, MediaInterface mediaInterface, ActiveBox activeBox){
+        this.file = file;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
         this.activeBox = activeBox;
 
+        initialize();
 
+        MediaItemTask mediaItemTask = new MediaItemTask(this.file, menuController);
+
+        mediaItemTask.setOnSucceeded((succeededEvent) -> {
+            this.mediaItem = mediaItemTask.getValue();
+            applyMediaItem();
+            mediaItemGenerated.set(true);
+
+            if(menuController.activeItem == this){
+                menuController.activeMediaItemGenerated.set(true);
+
+                if(mediaItem.hasVideo()){
+                    mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+                    mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+
+                    try {
+                        mediaInterface.fFmpegFrameGrabber.start();
+                    } catch (FFmpegFrameGrabber.Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if(menuController.mainController.miniplayerActive){
+                        menuController.mainController.miniplayerActiveText.setVisible(true);
+                    }
+                }
+                else {
+                    menuController.mainController.setCoverImageView(this);
+                }
+
+                menuController.mainController.videoTitleLabel.setText(this.getTitle());
+            }
+        });
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        executorService.execute(mediaItemTask);
+        executorService.shutdown();
+    }
+
+    public ActiveItem(QueueItem queueItem, MenuController menuController, MediaInterface mediaInterface, ActiveBox activeBox){
+        this.menuController = menuController;
+        this.mediaInterface = mediaInterface;
+        this.activeBox = activeBox;
+        this.file = queueItem.file;
+
+        initialize();
+
+        activeBox.set(this, true);
+
+        if(queueItem.mediaItemGenerated.get()){
+            this.mediaItem = queueItem.mediaItem;
+
+            menuController.activeMediaItemGenerated.set(true);
+
+            applyMediaItem();
+            mediaItemGenerated.set(true);
+        }
+        else {
+            queueItem.mediaItemGenerated.addListener((observableValue, oldValue, newValue) -> {
+                if(newValue){
+                    this.mediaItem = queueItem.mediaItem;
+
+
+                    applyMediaItem();
+                    mediaItemGenerated.set(true);
+
+                    if(menuController.activeItem == this){ // if we never enter this code block, it means that this activeitem was skipped over before it could properly load
+
+                        menuController.activeMediaItemGenerated.set(true);
+
+                        if(mediaItem.hasVideo()){
+                            mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+                            mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+
+                            try {
+                                mediaInterface.fFmpegFrameGrabber.start();
+                            } catch (FFmpegFrameGrabber.Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            if(menuController.mainController.miniplayerActive){
+                                menuController.mainController.miniplayerActiveText.setVisible(true);
+                            }
+                        }
+                        else {
+                            menuController.mainController.setCoverImageView(this);
+                        }
+
+                        menuController.mainController.videoTitleLabel.setText(this.getTitle());
+                    }
+                }
+            });
+        }
+    }
+
+    public ActiveItem(HistoryItem historyItem, MenuController menuController, MediaInterface mediaInterface, ActiveBox activeBox){
+        this.menuController = menuController;
+        this.mediaInterface = mediaInterface;
+        this.activeBox = activeBox;
+        this.file = historyItem.file;
+
+        initialize();
+
+        activeBox.set(this, true);
+
+        if(historyItem.mediaItemGenerated.get()){
+            this.mediaItem = historyItem.mediaItem;
+            this.file = historyItem.file;
+
+            menuController.activeMediaItemGenerated.set(true);
+
+            applyMediaItem();
+            mediaItemGenerated.set(true);
+
+        }
+        else {
+            historyItem.mediaItemGenerated.addListener((observableValue, oldValue, newValue) -> {
+                if(newValue){
+                    this.mediaItem = historyItem.mediaItem;
+
+                    applyMediaItem();
+                    mediaItemGenerated.set(true);
+
+                    if(menuController.activeItem == this){ // if we never enter this code block, it means that this activeitem was skipped over before it could properly load
+
+                        menuController.activeMediaItemGenerated.set(true);
+
+                        if(mediaItem.hasVideo()){
+                            mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+                            mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+
+                            try {
+                                mediaInterface.fFmpegFrameGrabber.start();
+                            } catch (FFmpegFrameGrabber.Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            if(menuController.mainController.miniplayerActive){
+                                menuController.mainController.miniplayerActiveText.setVisible(true);
+                            }
+                        }
+                        else {
+                            menuController.mainController.setCoverImageView(this);
+                        }
+
+                        menuController.mainController.videoTitleLabel.setText(this.getTitle());
+                    }
+                }
+            });
+        }
+    }
+
+    private void initialize(){
         column3.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
         this.getRowConstraints().addAll(row1);
@@ -143,53 +304,22 @@ public class ActiveItem extends GridPane implements MenuObject {
         playIcon.setId("playIcon");
         playIcon.setVisible(false);
 
-
-
         iconBackground = new StackPane();
         iconBackground.setPrefSize(125, 70);
         iconBackground.setMaxSize(125, 70);
 
-        if(mediaItem.getCover() != null) {
-            coverImage.setImage(mediaItem.getCover());
-            playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
-        }
-        else {
-            playButtonWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
-            coverImage.setImage(mediaItem.getPlaceholderCover());
-        }
 
         iconBackground.getStyleClass().add("iconBackground");
         iconBackground.setMouseTransparent(true);
         iconBackground.setVisible(false);
 
-
+        playButtonWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
         playButtonWrapper.getChildren().addAll(coverImage, iconBackground, playButton, playIcon);
         playButtonWrapper.setMaxSize(125,70);
 
 
 
         videoTitle.getStyleClass().add("videoTitle");
-
-        Map<String, String> mediaInformation = mediaItem.getMediaInformation();
-
-        if(mediaInformation != null){
-            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
-                videoTitle.setText(mediaInformation.get("title"));
-            }
-            else {
-                videoTitle.setText(mediaItem.getFile().getName());
-            }
-
-            if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6") && mediaInformation.containsKey("artist")){
-                artist.setText(mediaInformation.get("artist"));
-            }
-            else {
-                String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
-                if((fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) && mediaInformation.containsKey("artist")){
-                    artist.setText(mediaInformation.get("artist"));
-                }
-            }
-        }
         videoTitle.setWrapText(true);
         videoTitle.setMaxHeight(40);
 
@@ -216,13 +346,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         captionsIcon.setShape(captionsPath);
         captionsPane.getChildren().add(captionsIcon);
 
-        String formattedDuration = Utilities.getTime(mediaItem.getDuration());
 
-        if(!artist.getText().isEmpty()){
-            formattedDuration = formattedDuration + " • ";
-        }
-
-        if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
         duration.getStyleClass().add("subText");
 
         subTextWrapper.setAlignment(Pos.CENTER_LEFT);
@@ -259,6 +383,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         optionsButton.setCursor(Cursor.HAND);
         optionsButton.setOpacity(0);
         optionsButton.setText(null);
+        optionsButton.disableProperty().bind(mediaItemGenerated.not());
 
 
         optionsButton.setOnAction((e) -> {
@@ -343,7 +468,48 @@ public class ActiveItem extends GridPane implements MenuObject {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
             remove();
         });
+    }
 
+
+    private void applyMediaItem(){
+        if(mediaItem.getCover() != null) {
+            coverImage.setImage(mediaItem.getCover());
+            playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
+        }
+        else {
+            coverImage.setImage(mediaItem.getPlaceholderCover());
+        }
+
+        Map<String, String> mediaInformation = mediaItem.getMediaInformation();
+
+        if(mediaInformation != null){
+            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
+                videoTitle.setText(mediaInformation.get("title"));
+            }
+            else {
+                videoTitle.setText(mediaItem.getFile().getName());
+            }
+
+            if(mediaInformation.containsKey("media_type") && mediaInformation.containsKey("artist")){
+                if(mediaInformation.get("media_type").equals("6")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
+            else {
+                String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
+                if((fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) && mediaInformation.containsKey("artist")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
+        }
+
+        String formattedDuration = Utilities.getTime(mediaItem.getDuration());
+
+        if(!artist.getText().isEmpty()){
+            formattedDuration = formattedDuration + " • ";
+        }
+
+        if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
     }
 
     public void remove() {
@@ -381,7 +547,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         if(menuController.historyBox.index == -1 && mediaInterface.mediaActive.get() && addToHistory){
             // add active item to history
 
-            HistoryItem historyItem = new HistoryItem(menuController.activeItem.getMediaItem(), menuController, mediaInterface, menuController.historyBox);
+            HistoryItem historyItem = new HistoryItem(menuController.activeItem, menuController, mediaInterface, menuController.historyBox);
 
             menuController.historyBox.add(historyItem);
         }

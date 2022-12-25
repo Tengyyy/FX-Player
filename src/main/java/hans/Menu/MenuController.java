@@ -8,7 +8,9 @@ import hans.Settings.SettingsController;
 import hans.Captions.CaptionsController;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -114,7 +116,9 @@ public class MenuController implements Initializable {
 
     public ObservableList<QueueItem> queue = FXCollections.observableArrayList();
     public ArrayList<HistoryItem> history = new ArrayList<>();
+
     public ActiveItem activeItem = null;
+    public BooleanProperty activeMediaItemGenerated = new SimpleBooleanProperty(false);
 
     JFXButton historyButton = new JFXButton();
     JFXButton clearQueueButton = new JFXButton();

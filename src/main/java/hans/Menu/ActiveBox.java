@@ -27,6 +27,7 @@ public class ActiveBox extends StackPane {
         menuController.captionsController.clearCaptions();
 
         menuController.activeItem = null;
+        menuController.activeMediaItemGenerated.set(false);
 
         if(menuController.mainController.miniplayerActive){
             menuController.mainController.miniplayerActiveText.setVisible(false);
@@ -48,6 +49,7 @@ public class ActiveBox extends StackPane {
 
         menuController.captionsController.clearCaptions();
         menuController.activeItem = activeItem;
+        menuController.activeMediaItemGenerated.set(false);
 
         if(this.getChildren().isEmpty()){
             // add new item

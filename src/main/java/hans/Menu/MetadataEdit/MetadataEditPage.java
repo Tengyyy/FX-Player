@@ -438,13 +438,13 @@ public class MetadataEditPage {
                 duplicate.update();
 
                 if(duplicate instanceof ActiveItem){
-                    menuController.mediaInterface.createMedia(duplicate);
+                    menuController.mediaInterface.createMedia((ActiveItem) duplicate);
                 }
             }
 
             menuController.mainController.getControlBarController().updateTooltips();
             if(menuController.activeItem != null && menuController.activeItem == menuObject){
-                menuController.mediaInterface.createMedia(menuObject);
+                menuController.mediaInterface.createMedia(menuController.activeItem);
             }
 
             changesMade.set(false);

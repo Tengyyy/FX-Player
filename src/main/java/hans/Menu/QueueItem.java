@@ -310,7 +310,7 @@ public class QueueItem extends GridPane implements MenuObject {
             playIcon.setVisible(true);
             indexLabel.setVisible(false);
 
-            if (menuItemContextMenu.isShowing()) menuItemContextMenu.hide();
+            if (menuItemContextMenu != null && menuItemContextMenu.isShowing()) menuItemContextMenu.hide();
 
             dragPosition = e.getY();
             minimumY = this.getBoundsInParent().getMinY(); // this is the maximum negative translation that can be applied
@@ -326,7 +326,7 @@ public class QueueItem extends GridPane implements MenuObject {
         this.setOnMouseExited((e) -> {
             mouseHover = false;
 
-            if(!queueBox.dragActive && !menuItemContextMenu.showing){
+            if(!queueBox.dragActive && menuItemContextMenu != null && !menuItemContextMenu.showing){
                 this.setStyle("-fx-background-color: transparent;");
 
                 indexLabel.setVisible(true);
@@ -410,7 +410,7 @@ public class QueueItem extends GridPane implements MenuObject {
         if(menuController.historyBox.index == -1 && menuController.activeItem != null && addToHistory){
             // add active item to history
 
-            HistoryItem historyItem = new HistoryItem(menuController.activeItem.getMediaItem(), menuController, mediaInterface, menuController.historyBox);
+            HistoryItem historyItem = new HistoryItem(menuController.activeItem, menuController, mediaInterface, menuController.historyBox);
 
             menuController.historyBox.add(historyItem);
         }
@@ -419,15 +419,13 @@ public class QueueItem extends GridPane implements MenuObject {
             historyItem.setInactive();
         }
 
-        ActiveItem activeItem = new ActiveItem(getMediaItem(), menuController, mediaInterface, menuController.activeBox);
+        new ActiveItem(this, menuController, mediaInterface, menuController.activeBox);
 
         if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer(true);
         else {
             menuController.controlBarController.disablePreviousVideoButton();
             menuController.controlBarController.disableNextVideoButton();
         }
-
-        menuController.activeBox.set(activeItem, true);
 
         if(menuController.settingsController.playbackOptionsController.shuffleOn || menuController.queue.indexOf(this) == menuController.queue.size() -1){
             queueBox.remove(this, false);

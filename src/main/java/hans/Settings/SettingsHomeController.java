@@ -185,7 +185,7 @@ public class SettingsHomeController {
 
         if (selectedFile != null) {
 
-            ActiveItem activeItem = new ActiveItem(Utilities.searchDuplicateOrCreate(selectedFile, settingsController.menuController), settingsController.menuController, settingsController.mediaInterface, settingsController.menuController.activeBox);
+            ActiveItem activeItem = new ActiveItem(selectedFile, settingsController.menuController, settingsController.mediaInterface, settingsController.menuController.activeBox);
             activeItem.play(true);
         }
     }

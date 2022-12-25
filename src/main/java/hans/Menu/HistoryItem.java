@@ -6,6 +6,8 @@ import hans.MediaItems.MediaItem;
 import javafx.animation.Animation;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,6 +22,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
+import java.io.File;
 import java.util.Map;
 
 public class HistoryItem extends GridPane implements MenuObject {
@@ -47,7 +50,6 @@ public class HistoryItem extends GridPane implements MenuObject {
     JFXButton optionsButton = new JFXButton();
 
 
-    MediaItem mediaItem;
 
     MenuController menuController;
 
@@ -80,15 +82,38 @@ public class HistoryItem extends GridPane implements MenuObject {
     HistoryBox historyBox;
 
     BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
+    public File file;
+    MediaItem mediaItem;
 
 
-
-    HistoryItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, HistoryBox historyBox){
-        this.mediaItem = mediaItem;
+    HistoryItem(ActiveItem activeItem, MenuController menuController, MediaInterface mediaInterface, HistoryBox historyBox){
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
         this.historyBox = historyBox;
+        this.file = activeItem.file;
 
+        initialize();
+
+        if(activeItem.mediaItemGenerated.get()){
+            this.mediaItem = activeItem.mediaItem;
+
+
+            applyMediaItem();
+            mediaItemGenerated.set(true);
+        }
+        else {
+            activeItem.mediaItemGenerated.addListener((observableValue, oldValue, newValue) -> {
+                if(newValue){
+                    this.mediaItem = activeItem.mediaItem;
+                    mediaItemGenerated.set(true);
+                    applyMediaItem();
+                }
+            });
+        }
+
+    }
+
+    private void initialize(){
         isActive.addListener((observableValue, oldValue, newValue) -> {
             if(newValue) playIcon.setVisible(true);
             else if(!mouseHover && !menuItemContextMenu.showing) playIcon.setVisible(false);
@@ -118,7 +143,6 @@ public class HistoryItem extends GridPane implements MenuObject {
         coverImage.setFitHeight(70);
         coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
-        coverImage.setImage(mediaItem.getCover());
         coverImage.setPreserveRatio(true);
 
 
@@ -143,15 +167,7 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         playIconWrapper.getChildren().add(playIcon);
 
-
-        if(mediaItem.getCover() != null) {
-            coverImage.setImage(mediaItem.getCover());
-            imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
-        }
-        else {
-            imageWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
-            coverImage.setImage(mediaItem.getPlaceholderCover());
-        }
+        imageWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
 
 
         imageWrapper.setPrefSize(129, 74); // has to be changed
@@ -168,30 +184,6 @@ public class HistoryItem extends GridPane implements MenuObject {
 
 
         videoTitle.getStyleClass().add("videoTitle");
-
-        Map<String, String> mediaInformation = mediaItem.getMediaInformation();
-
-        if(mediaInformation != null){
-            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
-                videoTitle.setText(mediaInformation.get("title"));
-            }
-            else {
-                videoTitle.setText(mediaItem.getFile().getName());
-            }
-
-            if(mediaInformation.containsKey("media_type") && mediaInformation.containsKey("artist")){
-                if(mediaInformation.get("media_type").equals("6")){
-                    artist.setText(mediaInformation.get("artist"));
-                }
-            }
-            else {
-                String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
-                if((fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) && mediaInformation.containsKey("artist")){
-                    artist.setText(mediaInformation.get("artist"));
-                }
-            }
-        }
-
         videoTitle.setWrapText(true);
         videoTitle.setMaxHeight(40);
 
@@ -200,13 +192,6 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
 
-        String formattedDuration = Utilities.getTime(mediaItem.getDuration());
-
-        if(!artist.getText().isEmpty()){
-            formattedDuration = formattedDuration + " • ";
-        }
-
-        if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
         duration.getStyleClass().add("subText");
 
         subTextWrapper.setAlignment(Pos.CENTER_LEFT);
@@ -224,7 +209,7 @@ public class HistoryItem extends GridPane implements MenuObject {
         optionsButton.setCursor(Cursor.HAND);
         optionsButton.setOpacity(0);
         optionsButton.setText(null);
-
+        optionsButton.disableProperty().bind(mediaItemGenerated.not());
         optionsButton.setOnAction((e) -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
             menuItemContextMenu.showOptions(true);
@@ -285,7 +270,49 @@ public class HistoryItem extends GridPane implements MenuObject {
         optionsButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
             AnimationsClass.fadeAnimation(200, optionsButton, 1, 0, false, 1, true);
         });
+    }
 
+    private void applyMediaItem(){
+
+        if(mediaItem.getCover() != null) {
+            coverImage.setImage(mediaItem.getCover());
+            imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
+        }
+        else {
+            coverImage.setImage(mediaItem.getPlaceholderCover());
+        }
+
+
+        Map<String, String> mediaInformation = mediaItem.getMediaInformation();
+
+        if(mediaInformation != null){
+            if(mediaInformation.containsKey("title") && !mediaInformation.get("title").isBlank()){
+                videoTitle.setText(mediaInformation.get("title"));
+            }
+            else {
+                videoTitle.setText(mediaItem.getFile().getName());
+            }
+
+            if(mediaInformation.containsKey("media_type") && mediaInformation.containsKey("artist")){
+                if(mediaInformation.get("media_type").equals("6")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
+            else {
+                String fileExtension = Utilities.getFileExtension(mediaItem.getFile());
+                if((fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) && mediaInformation.containsKey("artist")){
+                    artist.setText(mediaInformation.get("artist"));
+                }
+            }
+        }
+
+        String formattedDuration = Utilities.getTime(mediaItem.getDuration());
+
+        if(!artist.getText().isEmpty()){
+            formattedDuration = formattedDuration + " • ";
+        }
+
+        if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
     }
 
     public void setActive(){
@@ -342,12 +369,12 @@ public class HistoryItem extends GridPane implements MenuObject {
         if(historyBox.index == -1 && menuController.activeItem != null){
             // add active item to history
 
-            HistoryItem historyItem = new HistoryItem(menuController.activeItem.getMediaItem(), menuController, mediaInterface, historyBox);
+            HistoryItem historyItem = new HistoryItem(menuController.activeItem, menuController, mediaInterface, historyBox);
 
             historyBox.add(historyItem);
         }
 
-        ActiveItem newActive = new ActiveItem(this.getMediaItem(), menuController, mediaInterface, menuController.activeBox);
+        ActiveItem newActive = new ActiveItem(this, menuController, mediaInterface, menuController.activeBox);
 
         if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer(true);
         else {
@@ -355,7 +382,6 @@ public class HistoryItem extends GridPane implements MenuObject {
             menuController.controlBarController.disableNextVideoButton();
         }
 
-        menuController.activeBox.set(newActive, true);
 
         this.setActive();
 

@@ -18,7 +18,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 import static hans.AnimationsClass.ANIMATION_SPEED;
@@ -111,7 +113,10 @@ public class CaptionsController {
         Map<String, ArrayList<Map<String, String>>> log = activeItem.getMediaItem().getLog();
         if(log != null){
             ArrayList<Map<String, String>> subtitleStreams = log.get("subtitle streams");
-            if(!subtitleStreams.isEmpty()) Utilities.extractSubtitles(activeItem.getMediaItem());
+            if(!subtitleStreams.isEmpty()){
+                activeItem.captionGenerationTime = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss-SSS").format(new Date()) + "-";
+                Utilities.extractSubtitles(activeItem.getMediaItem(), activeItem.captionGenerationTime);
+            }
         }
     }
 
@@ -129,11 +134,11 @@ public class CaptionsController {
 
                     CaptionsTab captionsTab;
                     if(subtitleStreams.get(i).containsKey("disposition") && subtitleStreams.get(i).get("disposition").equals("default")){
-                        captionsTab = new CaptionsTab(this, captionsHome, subtitleStreams.get(i).get("language") + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat("sub" + i + ".srt")), false);
+                        captionsTab = new CaptionsTab(this, captionsHome, subtitleStreams.get(i).get("language") + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(activeItem.captionGenerationTime + i + ".srt")), false);
                         captionsTab.selectSubtitles(true);
                     }
                     else {
-                        captionsTab = new CaptionsTab(this, captionsHome, subtitleStreams.get(i).get("language"), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat("sub" + i + ".srt")), false);
+                        captionsTab = new CaptionsTab(this, captionsHome, subtitleStreams.get(i).get("language"), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(activeItem.captionGenerationTime + i + ".srt")), false);
                     }
 
                     captionsHome.captionsWrapper.getChildren().add(i + 1, captionsTab);

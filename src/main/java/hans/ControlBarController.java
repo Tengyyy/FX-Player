@@ -1092,12 +1092,11 @@ public class ControlBarController implements Initializable {
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.enablePlayButton();
 
 
+        if (mediaInterface.atEnd) play = new ControlTooltip(mainController,"Replay (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        else if (mediaInterface.playing.get()) play = new ControlTooltip(mainController,"Pause (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        else play = new ControlTooltip(mainController,"Play (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
-            if (mediaInterface.atEnd) play = new ControlTooltip(mainController,"Replay (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else if (mediaInterface.playing.get()) play = new ControlTooltip(mainController,"Pause (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else play = new ControlTooltip(mainController,"Play (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            if (playButtonHover) play.showTooltip();
+        if (playButtonHover) play.showTooltip();
     }
 
     public void disablePlayButton() {

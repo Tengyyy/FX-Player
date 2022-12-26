@@ -38,6 +38,10 @@ public class ActiveBox extends StackPane {
         fadeTransition.setOnFinished(e -> {
             this.getChildren().clear();
             menuController.animationsInProgress.remove(fadeTransition);
+
+            if(!menuController.history.isEmpty() && menuController.historyBox.index != 0){
+                menuController.controlBarController.enablePreviousVideoButton();
+            }
         });
 
         menuController.animationsInProgress.add(fadeTransition);

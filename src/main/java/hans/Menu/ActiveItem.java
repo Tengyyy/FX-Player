@@ -91,6 +91,8 @@ public class ActiveItem extends GridPane implements MenuObject {
     MediaItem mediaItem;
     BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
 
+    public String captionGenerationTime = "";
+
 
     // this constructor will be used when playing media directly and not through the queue
     public ActiveItem(File file, MenuController menuController, MediaInterface mediaInterface, ActiveBox activeBox){
@@ -135,12 +137,9 @@ public class ActiveItem extends GridPane implements MenuObject {
                 mediaInterface.subtitleExtractionTask = new SubtitleExtractionTask(menuController.captionsController, this);
                 mediaInterface.subtitleExtractionTask.setOnSucceeded(e -> {
                     if(menuController.activeItem == this) menuController.captionsController.createSubtitleTabs(this);
-                    else menuController.captionsController.resetCaptions();
-
-                    mediaInterface.executorService.shutdown();
-                    mediaInterface.executorService = null;
                 });
                 mediaInterface.executorService.execute(mediaInterface.subtitleExtractionTask);
+                mediaInterface.executorService.shutdown();
             }
         });
 
@@ -204,12 +203,9 @@ public class ActiveItem extends GridPane implements MenuObject {
                         mediaInterface.subtitleExtractionTask = new SubtitleExtractionTask(menuController.captionsController, this);
                         mediaInterface.subtitleExtractionTask.setOnSucceeded(e -> {
                             if(menuController.activeItem == this) menuController.captionsController.createSubtitleTabs(this);
-                            else menuController.captionsController.resetCaptions();
-
-                            if(mediaInterface.executorService != null) mediaInterface.executorService.shutdown();
-                            mediaInterface.executorService = null;
                         });
                         mediaInterface.executorService.execute(mediaInterface.subtitleExtractionTask);
+                        mediaInterface.executorService.shutdown();
                     }
                 }
             });
@@ -272,12 +268,9 @@ public class ActiveItem extends GridPane implements MenuObject {
                         mediaInterface.subtitleExtractionTask = new SubtitleExtractionTask(menuController.captionsController, this);
                         mediaInterface.subtitleExtractionTask.setOnSucceeded(e -> {
                             if(menuController.activeItem == this) menuController.captionsController.createSubtitleTabs(this);
-                            else menuController.captionsController.resetCaptions();
-
-                            if(mediaInterface.executorService != null) mediaInterface.executorService.shutdown();
-                            mediaInterface.executorService = null;
                         });
                         mediaInterface.executorService.execute(mediaInterface.subtitleExtractionTask);
+                        mediaInterface.executorService.shutdown();
                     }
                 }
             });
@@ -564,7 +557,7 @@ public class ActiveItem extends GridPane implements MenuObject {
 
             if(menuController.historyBox.index != -1) menuController.history.get(menuController.historyBox.index).setInactive();
 
-            mediaInterface.resetMediaPlayer(false);
+            mediaInterface.resetMediaPlayer();
             activeBox.clear();
         }
     }
@@ -591,7 +584,7 @@ public class ActiveItem extends GridPane implements MenuObject {
             historyItem.setInactive();
         }
 
-        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer(true);
+        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer();
         else {
             menuController.controlBarController.disablePreviousVideoButton();
             menuController.controlBarController.disableNextVideoButton();

@@ -1,12 +1,8 @@
 package hans;
 
-import hans.windowstoolbar.*;
 import hans.Menu.MenuController;
-import javafx.application.Platform;
+import hans.windowstoolbar.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Objects;
 
 public class WindowsTaskBarController {

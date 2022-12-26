@@ -403,7 +403,7 @@ public class MetadataEditPage {
         MediaItem mediaItem = menuObject.getMediaItem();
 
         if(menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(mediaItem.getFile().getAbsolutePath())){
-            menuController.mediaInterface.resetMediaPlayer(true);
+            menuController.mediaInterface.resetMediaPlayer();
             menuController.captionsController.clearCaptions();
             //TODO: when creating media player again, reload the manually selected subtitle tabs and select the one that was active
         }

@@ -436,7 +436,7 @@ public class Utilities {
         return map;
     }
 
-    public static void extractSubtitles(MediaItem mediaItem){
+    public static void extractSubtitles(MediaItem mediaItem, String filePrefix){
 
         String subtitlesDirectory = System.getProperty("user.home").concat("/FXPlayer/subtitles/");
         try {
@@ -456,7 +456,7 @@ public class Utilities {
         for(int i = 0; i < subtitleStreams.size(); i++){
             arguments.add("-map");
             arguments.add("0:s:" + i);
-            arguments.add(subtitlesDirectory.concat("sub" + i + ".srt"));
+            arguments.add(subtitlesDirectory.concat(filePrefix + i + ".srt"));
         }
 
 

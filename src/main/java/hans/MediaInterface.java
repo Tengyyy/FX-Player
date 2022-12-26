@@ -259,17 +259,10 @@ public class MediaInterface {
             subtitleExtractionTask.setOnSucceeded(e -> {
                 if(menuController.activeItem == activeItem){
                     captionsController.createSubtitleTabs(activeItem);
-                    System.out.println("test1");
                 }
-                else {
-                    captionsController.clearCaptions();
-                    System.out.println("test2");
-                }
-
-                if(executorService != null) executorService.shutdown();
-                executorService = null;
             });
             executorService.execute(subtitleExtractionTask);
+            executorService.shutdown();
         }
 
 
@@ -291,7 +284,7 @@ public class MediaInterface {
     }
 
 
-    public void resetMediaPlayer(boolean disableButtons){
+    public void resetMediaPlayer(){
 
         mainController.videoImageView.setImage(null);
         if(mainController.miniplayerActive){
@@ -321,22 +314,15 @@ public class MediaInterface {
 
         mainController.sliderHoverPreview.setImage(null);
 
-        if(disableButtons){
-            controlBarController.disablePreviousVideoButton();
-            controlBarController.disableNextVideoButton();
-        }
+
+        controlBarController.disablePreviousVideoButton();
+        controlBarController.disableNextVideoButton();
 
         atEnd = false;
         seekedToEnd = false;
         playing.set(false);
         wasPlaying = false;
         currentTime = 0;
-
-        if(executorService != null){
-            executorService.shutdownNow();
-            executorService = null;
-        }
-
 
         try {
             if(fFmpegFrameGrabber != null) fFmpegFrameGrabber.close();

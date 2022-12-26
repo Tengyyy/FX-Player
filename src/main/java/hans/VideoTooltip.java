@@ -2,6 +2,7 @@ package hans;
 
 import hans.Menu.MenuObject;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -17,6 +18,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
 
 public class VideoTooltip extends Tooltip {
@@ -73,11 +75,20 @@ public class VideoTooltip extends Tooltip {
         imageViewBackground.setPrefSize(160, 90);
         imageViewBackground.setMaxSize(160, 90);
         imageViewBackground.getChildren().addAll(imageView, durationLabel);
+        imageViewBackground.getStyleClass().add("imageViewBackground");
 
 
         imageView.setFitWidth(160);
         imageView.setFitHeight(90);
         imageView.setPreserveRatio(true);
+
+        Rectangle imageClip = new Rectangle();
+        imageClip.setWidth(160);
+        imageClip.setHeight(90);
+        imageClip.setArcWidth(10);
+        imageClip.setArcHeight(10);
+
+        imageView.setClip(imageClip);
 
         StackPane.setAlignment(durationLabel, Pos.BOTTOM_RIGHT);
 

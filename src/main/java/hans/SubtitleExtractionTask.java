@@ -17,9 +17,7 @@ public class SubtitleExtractionTask extends Task<Boolean> {
 
     @Override
     protected Boolean call() {
-
         captionsController.extractCaptions(activeItem);
-
         return true;
     }
 }

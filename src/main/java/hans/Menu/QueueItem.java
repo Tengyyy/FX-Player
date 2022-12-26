@@ -421,7 +421,7 @@ public class QueueItem extends GridPane implements MenuObject {
 
         new ActiveItem(this, menuController, mediaInterface, menuController.activeBox);
 
-        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer(true);
+        if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer();
         else {
             menuController.controlBarController.disablePreviousVideoButton();
             menuController.controlBarController.disableNextVideoButton();

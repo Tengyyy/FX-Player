@@ -22,5 +22,5 @@
 }
 
 .menuItem:hover {
-    -fx-background-color: rgba(50,50,50,0.9);
+    -fx-background-color: rgba(40,40,40,0.9);
 }

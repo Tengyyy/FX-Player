@@ -261,7 +261,8 @@
 }
 
 .tooltip {
-    -fx-background-radius: 2;
+    -fx-background-color: rgba(15,15,15,0.9);
+    -fx-background-radius: 5;
     -fx-font-family: "Roboto Medium";
 }
 
@@ -325,6 +326,12 @@
     -fx-font-family: "Roboto Medium";
     -fx-font-size: 13;
 }
+
+.imageViewBackground {
+    -fx-background-radius: 5;
+}
+
+
 
 
 .equalizer-slider .track {

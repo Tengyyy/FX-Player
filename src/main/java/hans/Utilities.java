@@ -441,8 +441,7 @@ public class Utilities {
         String subtitlesDirectory = System.getProperty("user.home").concat("/FXPlayer/subtitles/");
         try {
             Files.createDirectory(Paths.get(subtitlesDirectory));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored){
         }
 
         ArrayList<String> arguments = new ArrayList<>();
@@ -482,9 +481,10 @@ public class Utilities {
         File directory = new File(path);
         File[] files = directory.listFiles();
 
-        if(files != null)
+        if(files != null){
             for(File file : files){
-            file.delete();
+                file.delete();
+            }
         }
     }
 

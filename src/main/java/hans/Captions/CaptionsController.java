@@ -107,15 +107,24 @@ public class CaptionsController {
         this.mediaInterface = mediaInterface;
     }
 
-    public void extractCaptions(MenuObject menuObject){
-        Map<String, ArrayList<Map<String, String>>> log = menuObject.getMediaItem().getLog();
+    public void extractCaptions(ActiveItem activeItem){
+        Map<String, ArrayList<Map<String, String>>> log = activeItem.getMediaItem().getLog();
         if(log != null){
             ArrayList<Map<String, String>> subtitleStreams = log.get("subtitle streams");
-            if(!subtitleStreams.isEmpty() && menuController.activeItem != null){
-                menuController.activeItem.addSubtitlesIcon();
-                Utilities.extractSubtitles(menuObject.getMediaItem());
+            if(!subtitleStreams.isEmpty()) Utilities.extractSubtitles(activeItem.getMediaItem());
+        }
+    }
 
-                for(int i =0; i<subtitleStreams.size(); i++){
+    public void createSubtitleTabs(ActiveItem activeItem){
+        Map<String, ArrayList<Map<String, String>>> log = activeItem.getMediaItem().getLog();
+
+        if(log != null){
+            ArrayList<Map<String, String>> subtitleStreams = log.get("subtitle streams");
+
+            if(!subtitleStreams.isEmpty()){
+                activeItem.addSubtitlesIcon();
+
+                for(int i =0; i <subtitleStreams.size(); i++){
                     // add subtitle tab to captions home
 
                     CaptionsTab captionsTab;

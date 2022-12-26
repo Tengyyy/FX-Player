@@ -3,6 +3,7 @@ package hans;
 
 import com.sun.jna.NativeLibrary;
 import hans.Captions.CaptionsController;
+import hans.Captions.CaptionsTab;
 import hans.MediaItems.MediaItem;
 import hans.Menu.*;
 import hans.Settings.SettingsController;
@@ -30,6 +31,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 import uk.co.caprica.vlcj.support.version.LibVlcVersion;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -66,6 +68,9 @@ public class MediaInterface {
     public FFmpegFrameGrabber fFmpegFrameGrabber;
 
     FrameGrabberTask frameGrabberTask;
+
+    public SubtitleExtractionTask subtitleExtractionTask;
+    public ExecutorService executorService;
 
 
     MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController, CaptionsController captionsController) {
@@ -218,10 +223,13 @@ public class MediaInterface {
 
         mainController.coverImageContainer.setVisible(false);
         mainController.miniplayerActiveText.setVisible(false);
+
         if(mainController.miniplayerActive){
             mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
             mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
         }
+
+        captionsController.resetCaptions();
 
         MediaItem mediaItem = activeItem.getMediaItem();
 
@@ -245,6 +253,23 @@ public class MediaInterface {
             }
 
             mainController.videoTitleLabel.setText(activeItem.getTitle());
+
+            executorService = Executors.newFixedThreadPool(1);
+            subtitleExtractionTask = new SubtitleExtractionTask(captionsController, activeItem);
+            subtitleExtractionTask.setOnSucceeded(e -> {
+                if(menuController.activeItem == activeItem){
+                    captionsController.createSubtitleTabs(activeItem);
+                    System.out.println("test1");
+                }
+                else {
+                    captionsController.clearCaptions();
+                    System.out.println("test2");
+                }
+
+                if(executorService != null) executorService.shutdown();
+                executorService = null;
+            });
+            executorService.execute(subtitleExtractionTask);
         }
 
 
@@ -260,13 +285,6 @@ public class MediaInterface {
 
 
         controlBarController.updateTooltips();
-
-
-        captionsController.resetCaptions();
-
-
-        //TODO: create task and not block UI thread
-        //captionsController.extractCaptions(menuObject);
 
 
         embeddedMediaPlayer.media().start(activeItem.file.getAbsolutePath());
@@ -313,6 +331,11 @@ public class MediaInterface {
         playing.set(false);
         wasPlaying = false;
         currentTime = 0;
+
+        if(executorService != null){
+            executorService.shutdownNow();
+            executorService = null;
+        }
 
 
         try {

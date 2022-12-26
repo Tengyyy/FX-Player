@@ -1,5 +1,3 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
-
 
 @font-face {
     src: url('../fonts/Roboto-Bold.ttf');
@@ -297,9 +295,19 @@
 }
 
 
-#tooltipSubText {
+.tooltipSubText {
     -fx-padding: 2 2 2 2;
     -fx-background-color: rgba(30,30,30,0.8);
+    -fx-text-fill: white;
+    -fx-font-size: 13;
+}
+
+.graphicLabel {
+    -fx-background-color: transparent;
+    -fx-background-radius: 2;
+    -fx-text-fill: white;
+    -fx-padding: 10;
+    -fx-font-family: "Roboto Medium";
     -fx-font-size: 13;
 }
 

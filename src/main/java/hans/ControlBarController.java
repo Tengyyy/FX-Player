@@ -139,7 +139,7 @@ public class ControlBarController implements Initializable {
     StackPane controlBarBackground = new StackPane();
 
 
-    PauseTransition pauseTransition;
+    public PauseTransition pauseTransition;
 
     double lastKnownSliderHoverPosition = -1000;
 
@@ -359,9 +359,11 @@ public class ControlBarController implements Initializable {
 
             durationSlider.lookup(".track").setOnMouseMoved(e -> {
 
+                String newTime = Utilities.getTime(Duration.seconds((e.getX()) / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                mainController.sliderHoverLabel.label.setText(newTime);
 
                 double offset = 0;
-                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null &&  menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
 
                 double labelMinTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                 double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX() - offset + 13;
@@ -372,7 +374,7 @@ public class ControlBarController implements Initializable {
 
                 if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
                     mainController.sliderHoverLabel.label.setVisible(true);
-                    if (menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+                    if (menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
 
                 }
 
@@ -384,13 +386,10 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-                String newTime = Utilities.getTime(Duration.seconds((e.getX()) / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
-                mainController.sliderHoverLabel.label.setText(newTime);
-
                 lastKnownSliderHoverPosition = e.getX() / durationSlider.lookup(".track").getBoundsInLocal().getMaxX();
 
 
-                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
 
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
@@ -406,8 +405,11 @@ public class ControlBarController implements Initializable {
                 durationSliderHover = true;
                 durationSliderHoverOn();
 
+                String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                mainController.sliderHoverLabel.label.setText(newTime);
+
                 double offset = 0;
-                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
 
                 double labelMinTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                 double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX() - offset + 13;
@@ -424,19 +426,15 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-
-                String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
-                mainController.sliderHoverLabel.label.setText(newTime);
-
                 if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
                     mainController.sliderHoverLabel.label.setVisible(true);
-                    if (menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+                    if (menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
                 }
 
                 lastKnownSliderHoverPosition = e.getX() / durationSlider.lookup(".track").getBoundsInLocal().getMaxX();
 
 
-                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     mediaInterface.updatePreviewFrame();
@@ -470,8 +468,11 @@ public class ControlBarController implements Initializable {
 
                     e.consume();
 
+                    String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                    mainController.sliderHoverLabel.label.setText(newTime);
+
                     double offset = 0;
-                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
+                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
 
                     double labelMinTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                     double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX() - offset + 13;
@@ -488,15 +489,10 @@ public class ControlBarController implements Initializable {
 
                     mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
-
-                    String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
-                    mainController.sliderHoverLabel.label.setText(newTime);
-
-
                     lastKnownSliderHoverPosition = e.getX() / durationSlider.lookup(".track").getBoundsInLocal().getMaxX();
 
 
-                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                         if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                         pauseTransition = new PauseTransition(Duration.millis(50));
@@ -507,10 +503,7 @@ public class ControlBarController implements Initializable {
                         pauseTransition.playFromStart();
                     }
                 }
-
             });
-
-
         });
 
 
@@ -565,8 +558,10 @@ public class ControlBarController implements Initializable {
 
                 if (durationSlider.isValueChanging() && !mainController.seekingWithKeys) {
 
+                    mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
+
                     double offset = 0;
-                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
+                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
 
                     double labelMinTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                     double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX() - offset + 13;
@@ -583,20 +578,14 @@ public class ControlBarController implements Initializable {
 
                     mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
-
-                    mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
-
-
                     lastKnownSliderHoverPosition = newValue.doubleValue()/durationSlider.getMax();
 
 
-                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                         if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                         pauseTransition = new PauseTransition(Duration.millis(50));
-                        pauseTransition.setOnFinished(e -> {
-                            mediaInterface.updatePreviewFrame();
-                        });
+                        pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame());
 
                         pauseTransition.playFromStart();
                     }
@@ -615,8 +604,10 @@ public class ControlBarController implements Initializable {
                 if (mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
                 mediaInterface.playing.set(false);
 
+                mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
+
                 double offset = 0;
-                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
 
                 double labelMinTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                 double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX() - offset + 13;
@@ -634,18 +625,16 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-                mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
-
                 if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
                     mainController.sliderHoverLabel.label.setVisible(true);
-                    if (menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+                    if (menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
                 }
 
 
                 lastKnownSliderHoverPosition = durationSlider.getValue()/durationSlider.getMax();
 
 
-                if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));

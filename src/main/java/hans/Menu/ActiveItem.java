@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
 import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -20,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
@@ -128,6 +130,17 @@ public class ActiveItem extends GridPane implements MenuObject {
                 }
 
                 menuController.mainController.videoTitleLabel.setText(this.getTitle());
+
+                mediaInterface.executorService = Executors.newFixedThreadPool(1);
+                mediaInterface.subtitleExtractionTask = new SubtitleExtractionTask(menuController.captionsController, this);
+                mediaInterface.subtitleExtractionTask.setOnSucceeded(e -> {
+                    if(menuController.activeItem == this) menuController.captionsController.createSubtitleTabs(this);
+                    else menuController.captionsController.resetCaptions();
+
+                    mediaInterface.executorService.shutdown();
+                    mediaInterface.executorService = null;
+                });
+                mediaInterface.executorService.execute(mediaInterface.subtitleExtractionTask);
             }
         });
 
@@ -186,6 +199,17 @@ public class ActiveItem extends GridPane implements MenuObject {
                         }
 
                         menuController.mainController.videoTitleLabel.setText(this.getTitle());
+
+                        mediaInterface.executorService = Executors.newFixedThreadPool(1);
+                        mediaInterface.subtitleExtractionTask = new SubtitleExtractionTask(menuController.captionsController, this);
+                        mediaInterface.subtitleExtractionTask.setOnSucceeded(e -> {
+                            if(menuController.activeItem == this) menuController.captionsController.createSubtitleTabs(this);
+                            else menuController.captionsController.resetCaptions();
+
+                            if(mediaInterface.executorService != null) mediaInterface.executorService.shutdown();
+                            mediaInterface.executorService = null;
+                        });
+                        mediaInterface.executorService.execute(mediaInterface.subtitleExtractionTask);
                     }
                 }
             });
@@ -243,6 +267,17 @@ public class ActiveItem extends GridPane implements MenuObject {
                         }
 
                         menuController.mainController.videoTitleLabel.setText(this.getTitle());
+
+                        mediaInterface.executorService = Executors.newFixedThreadPool(1);
+                        mediaInterface.subtitleExtractionTask = new SubtitleExtractionTask(menuController.captionsController, this);
+                        mediaInterface.subtitleExtractionTask.setOnSucceeded(e -> {
+                            if(menuController.activeItem == this) menuController.captionsController.createSubtitleTabs(this);
+                            else menuController.captionsController.resetCaptions();
+
+                            if(mediaInterface.executorService != null) mediaInterface.executorService.shutdown();
+                            mediaInterface.executorService = null;
+                        });
+                        mediaInterface.executorService.execute(mediaInterface.subtitleExtractionTask);
                     }
                 }
             });

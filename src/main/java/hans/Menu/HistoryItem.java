@@ -253,7 +253,7 @@ public class HistoryItem extends GridPane implements MenuObject {
         this.setOnMouseExited((e) -> {
             mouseHover = false;
 
-            if(!menuItemContextMenu.showing) {
+            if(menuItemContextMenu != null && !menuItemContextMenu.showing) {
 
                 if (!isActive.get()) playIcon.setVisible(false);
 

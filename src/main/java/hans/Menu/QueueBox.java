@@ -3,6 +3,7 @@ package hans.Menu;
 import hans.*;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -22,7 +23,6 @@ import java.util.Random;
 
 public class QueueBox extends VBox {
 
-    double animationSpeed = 200;
     MenuController menuController;
 
 
@@ -42,6 +42,9 @@ public class QueueBox extends VBox {
         this.menuController = menuController;
         this.setAlignment(Pos.TOP_CENTER);
         this.setFillWidth(true);
+        //this.setMinHeight(100);
+        //this.setPrefHeight(Double.MAX_VALUE);
+        //this.setMaxHeight(Double.MAX_VALUE);
 
         VBox.setVgrow(this, Priority.ALWAYS);
 

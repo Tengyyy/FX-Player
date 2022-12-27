@@ -1,7 +1,7 @@
 
 
 .context-menu {
-    -fx-background-color: rgba(20,20,20,0.9);
+    -fx-background-color: rgba(15,15,15,0.9);
     -fx-background-radius: 0;
     -fx-padding: 0;
     -fx-insets: 0;
@@ -22,7 +22,7 @@
 }
 
 .popUpItem:hover {
-  -fx-background-color: rgba(50,50,50,0.9);
+  -fx-background-color: rgba(40,40,40,0.9);
 }
 
 .menu .arrow {
@@ -51,7 +51,7 @@
 }
 
 .subtitle-menu-item:hover {
-    -fx-background-color: rgba(50,50,50,0.9);
+    -fx-background-color: rgba(40,40,40,0.9);
 }
 
 

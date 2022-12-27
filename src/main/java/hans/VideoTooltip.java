@@ -189,7 +189,7 @@ public class VideoTooltip extends Tooltip {
         if(menuObject.getMediaItem().getCover() != null){
             imageView.setImage(menuObject.getMediaItem().getCover());
             Color color = menuObject.getMediaItem().getCoverBackgroundColor();
-            imageViewBackground.setStyle("-fx-background-color: rgba(" +  color.getRed() * 256 + "," + color.getGreen() * 256 + "," + color.getBlue() + ",0.7);");
+            imageViewBackground.setStyle("-fx-background-color: rgba(" +  color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ",0.7);");
         }
         else {
             imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());

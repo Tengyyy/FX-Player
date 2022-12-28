@@ -4,8 +4,11 @@ import hans.*;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.input.DragEvent;
@@ -29,12 +32,12 @@ public class QueueBox extends VBox {
     ArrayList<File> dragBoardFiles = new ArrayList<>();
     ArrayList<File> dragBoardMedia = new ArrayList<>();
 
-    ArrayList<Animation> dragAnimationsInProgress = new ArrayList<>();
+    public ArrayList<Animation> dragAnimationsInProgress = new ArrayList<>();
 
     boolean dragAndDropActive = false;
-    boolean dragActive = false;
+    public boolean dragActive = false;
 
-    QueueItem draggedNode;
+    public QueueItem draggedNode;
     QueueLine queueLine;
 
 
@@ -47,12 +50,15 @@ public class QueueBox extends VBox {
         //this.setMaxHeight(Double.MAX_VALUE);
 
         VBox.setVgrow(this, Priority.ALWAYS);
+        this.setPadding(new Insets(0, 0, 100, 0));
 
 
         this.setOnDragEntered(this::handleDragEntered);
         this.setOnDragOver(this::handleDragOver);
         this.setOnDragDropped(this::handleDragDropped);
-        this.setOnDragExited(e -> handleDragExited());
+        this.setOnDragExited(this::handleDragExited);
+
+
 
 
         this.setOnMouseDragOver((e) -> {
@@ -67,65 +73,75 @@ public class QueueBox extends VBox {
                 draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
 
                 if(draggedNode.runningTranslate >= QueueItem.height){
+                    do {
+                        if(menuController.queue.get(draggedNode.newPosition).getTranslateY() > 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
+                            QueueItem queueItem = menuController.queue.get(draggedNode.newPosition);
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED),queueItem);
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queueItem.getTranslateY());
+                            translateTransition.setToY(0);
+                            translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
+                            dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+                        else {
+                            QueueItem queueItem = menuController.queue.get(draggedNode.newPosition + 1);
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueItem);
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queueItem.getTranslateY());
+                            translateTransition.setToY(-QueueItem.height);
+                            translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
+                            dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
 
-                    if(menuController.queue.get(draggedNode.newPosition).getTranslateY() > 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
-                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition));
-                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                        translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition).getTranslateY());
-                        translateTransition.setToY(0);
-                        translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
-                        dragAnimationsInProgress.add(translateTransition);
-                        translateTransition.play();
+
+                        draggedNode.newPosition+=1;
+                        draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
                     }
-                    else {
-                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition + 1));
-                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                        translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition + 1).getTranslateY());
-                        translateTransition.setToY(-QueueItem.height);
-                        translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
-                        dragAnimationsInProgress.add(translateTransition);
-                        translateTransition.play();
-                    }
-
-
-                    draggedNode.newPosition+=1;
-                    draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
+                    while(draggedNode.runningTranslate >= QueueItem.height);
                 }
                 else if(draggedNode.runningTranslate <= -QueueItem.height){
+                    do {
+                        if(menuController.queue.get(draggedNode.newPosition).getTranslateY() < 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
 
-                    if(menuController.queue.get(draggedNode.newPosition).getTranslateY() < 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
+                            QueueItem queueItem = menuController.queue.get(draggedNode.newPosition);
 
-                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition));
-                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                        translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition).getTranslateY());
-                        translateTransition.setToY(0);
-                        translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
-                        dragAnimationsInProgress.add(translateTransition);
-                        translateTransition.play();
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueItem);
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queueItem.getTranslateY());
+                            translateTransition.setToY(0);
+                            translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
+                            dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+                        else {
+                            QueueItem queueItem = menuController.queue.get(draggedNode.newPosition - 1);
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueItem);
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queueItem.getTranslateY());
+                            translateTransition.setToY(QueueItem.height);
+                            translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
+                            dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+
+
+                        draggedNode.newPosition-=1;
+                        draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
                     }
-                    else {
-
-                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition -1));
-                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                        translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition - 1).getTranslateY());
-                        translateTransition.setToY(QueueItem.height);
-                        translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
-                        dragAnimationsInProgress.add(translateTransition);
-                        translateTransition.play();
-                    }
-
-
-                    draggedNode.newPosition-=1;
-                    draggedNode.runningTranslate = draggedNode.getTranslateY() - (draggedNode.newPosition - (draggedNode.videoIndex-1)) * QueueItem.height;
+                    while(draggedNode.runningTranslate <= -QueueItem.height);
                 }
                 else {
                     if(draggedNode.getTranslateY() == -draggedNode.minimumY && draggedNode.newPosition != 0){
 
                         if(menuController.queue.get(draggedNode.newPosition).getTranslateY() < 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
 
-                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition));
+                            QueueItem queueItem = menuController.queue.get(draggedNode.newPosition);
+
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueItem);
                             translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                            translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition).getTranslateY());
+                            translateTransition.setFromY(queueItem.getTranslateY());
                             translateTransition.setToY(0);
                             translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
                             dragAnimationsInProgress.add(translateTransition);
@@ -133,9 +149,11 @@ public class QueueBox extends VBox {
                         }
                         else {
 
-                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition - 1));
+                            QueueItem queueItem = menuController.queue.get(draggedNode.newPosition - 2);
+
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueItem);
                             translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                            translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition - 1).getTranslateY());
+                            translateTransition.setFromY(queueItem.getTranslateY());
                             translateTransition.setToY(QueueItem.height);
                             translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
                             dragAnimationsInProgress.add(translateTransition);
@@ -148,25 +166,28 @@ public class QueueBox extends VBox {
                     }
                     else if(draggedNode.getTranslateY() == draggedNode.maximumY - draggedNode.minimumY && draggedNode.newPosition != menuController.queue.size() -1){
 
-                        if(menuController.queue.get(draggedNode.newPosition).getTranslateY() > 0 && !menuController.queue.get(draggedNode.newPosition).equals(draggedNode)){
+                        for(int i=draggedNode.newPosition; i < menuController.queue.size(); i++){
+                            QueueItem queueItem = menuController.queue.get(i);
+                            if(queueItem.equals(draggedNode)) continue;
 
-                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition));
-                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                            translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition).getTranslateY());
-                            translateTransition.setToY(0);
-                            translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
-                            dragAnimationsInProgress.add(translateTransition);
-                            translateTransition.play();
-                        }
-                        else {
-
-                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), menuController.queue.get(draggedNode.newPosition + 1));
-                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                            translateTransition.setFromY(menuController.queue.get(draggedNode.newPosition + 1).getTranslateY());
-                            translateTransition.setToY(-QueueItem.height);
-                            translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
-                            dragAnimationsInProgress.add(translateTransition);
-                            translateTransition.play();
+                            if(queueItem.getTranslateY() > 0){
+                                TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueItem);
+                                translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                                translateTransition.setFromY(queueItem.getTranslateY());
+                                translateTransition.setToY(0);
+                                translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
+                                dragAnimationsInProgress.add(translateTransition);
+                                translateTransition.play();
+                            }
+                            else {
+                                TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueItem);
+                                translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                                translateTransition.setFromY(queueItem.getTranslateY());
+                                translateTransition.setToY(-QueueItem.height);
+                                translateTransition.setOnFinished(ev -> dragAnimationsInProgress.remove(translateTransition));
+                                dragAnimationsInProgress.add(translateTransition);
+                                translateTransition.play();
+                            }
                         }
 
                         draggedNode.newPosition = menuController.queue.size() -1;
@@ -692,7 +713,7 @@ public class QueueBox extends VBox {
         dragBoardMedia.clear();
     }
 
-    public void handleDragExited(){
+    public void handleDragExited(DragEvent e){
         cancelDragAndDrop();
     }
 

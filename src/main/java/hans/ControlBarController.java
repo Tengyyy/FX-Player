@@ -464,44 +464,43 @@ public class ControlBarController implements Initializable {
 
 
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
-                if (!e.isPrimaryButtonDown()) {
+                if (e.isPrimaryButtonDown()) return;
 
-                    e.consume();
+                e.consume();
 
-                    String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
-                    mainController.sliderHoverLabel.label.setText(newTime);
+                String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                mainController.sliderHoverLabel.label.setText(newTime);
 
-                    double offset = 0;
-                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
+                double offset = 0;
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
 
-                    double labelMinTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
-                    double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX() - offset + 13;
+                double labelMinTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
+                double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX() - offset + 13;
 
-                    double labelNewTranslation = Math.max(labelMinTranslation, Math.min(labelMaxTranslation, e.getSceneX() - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
+                double labelNewTranslation = Math.max(labelMinTranslation, Math.min(labelMaxTranslation, e.getSceneX() - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
 
-                    mainController.sliderHoverLabel.label.setTranslateX(labelNewTranslation);
-
-
-                    double paneMinTranslation = (mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMinX() - mainController.sliderHoverPreview.pane.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
-                    double paneMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMaxX() + mainController.sliderHoverPreview.pane.getTranslateX();
-
-                    double paneNewTranslation = Math.max(paneMinTranslation, Math.min(paneMaxTranslation, e.getSceneX() - (mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMinX() + mainController.sliderHoverPreview.pane.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverPreview.pane.getTranslateX() - 4));
-
-                    mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
-
-                    lastKnownSliderHoverPosition = e.getX() / durationSlider.lookup(".track").getBoundsInLocal().getMaxX();
+                mainController.sliderHoverLabel.label.setTranslateX(labelNewTranslation);
 
 
-                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
-                        if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
+                double paneMinTranslation = (mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMinX() - mainController.sliderHoverPreview.pane.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
+                double paneMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMaxX() + mainController.sliderHoverPreview.pane.getTranslateX();
 
-                        pauseTransition = new PauseTransition(Duration.millis(50));
-                        pauseTransition.setOnFinished(j -> {
-                            mediaInterface.updatePreviewFrame();
-                        });
+                double paneNewTranslation = Math.max(paneMinTranslation, Math.min(paneMaxTranslation, e.getSceneX() - (mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMinX() + mainController.sliderHoverPreview.pane.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverPreview.pane.getTranslateX() - 4));
 
-                        pauseTransition.playFromStart();
-                    }
+                mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
+
+                lastKnownSliderHoverPosition = e.getX() / durationSlider.lookup(".track").getBoundsInLocal().getMaxX();
+
+
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
+                    if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
+
+                    pauseTransition = new PauseTransition(Duration.millis(50));
+                    pauseTransition.setOnFinished(j -> {
+                        mediaInterface.updatePreviewFrame();
+                    });
+
+                    pauseTransition.playFromStart();
                 }
             });
         });
@@ -512,85 +511,84 @@ public class ControlBarController implements Initializable {
 
             durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
 
-            if (mediaInterface.mediaActive.get()) {
+            if (!mediaInterface.mediaActive.get()) return;
 
-                if (mainController.miniplayerActive) {
-                    mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
-                    if (mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue() || newValue.doubleValue() == 0) {
-                        mainController.miniplayer.miniplayerController.slider.setValue(newValue.doubleValue());
+            if (mainController.miniplayerActive) {
+                mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
+                if (mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue() || newValue.doubleValue() == 0) {
+                    mainController.miniplayer.miniplayerController.slider.setValue(newValue.doubleValue());
+                }
+            }
+
+            mediaInterface.updateMedia(newValue.doubleValue());
+
+            if (oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5 && mediaInterface.mediaActive.get()) {
+
+                if (!previousVideoButtonEnabled) enablePreviousVideoButton();
+                else {
+                    previousVideoTooltip.updateTooltip(null);
+
+                    if (mainController.miniplayerActive)
+                        mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
+                }
+            } else if (oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5 && mediaInterface.mediaActive.get()) {
+
+                if ((menuController.history.isEmpty() || menuController.historyBox.index == 0) && previousVideoButtonEnabled) {
+                    disablePreviousVideoButton();
+                } else {
+                    if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Previous video (SHIFT + P)");
+
+                    HistoryItem historyItem = null;
+                    if (menuController.historyBox.index == -1 && !menuController.history.isEmpty()) {
+                        historyItem = menuController.history.get(menuController.history.size() - 1);
+
                     }
+                    else if(menuController.historyBox.index > 0){
+                        historyItem = menuController.history.get(menuController.historyBox.index - 1);
+                    }
+
+                    if(historyItem != null) previousVideoTooltip.updateTooltip(historyItem);
                 }
 
-                mediaInterface.updateMedia(newValue.doubleValue());
+            }
 
-                if (oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5 && mediaInterface.mediaActive.get()) {
+            captionsController.updateCaptions(newValue.doubleValue() * 1000);
 
-                    if (!previousVideoButtonEnabled) enablePreviousVideoButton();
-                    else {
-                        previousVideoTooltip.updateTooltip(null);
 
-                        if (mainController.miniplayerActive)
-                            mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
-                    }
-                } else if (oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5 && mediaInterface.mediaActive.get()) {
+            if (durationSlider.isValueChanging() && !mainController.seekingWithKeys) {
 
-                    if ((menuController.history.isEmpty() || menuController.historyBox.index == 0) && previousVideoButtonEnabled) {
-                        disablePreviousVideoButton();
-                    } else {
-                        if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Previous video (SHIFT + P)");
+                mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
 
-                        HistoryItem historyItem = null;
-                        if (menuController.historyBox.index == -1 && !menuController.history.isEmpty()) {
-                            historyItem = menuController.history.get(menuController.history.size() - 1);
+                double offset = 0;
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
 
-                        }
-                        else if(menuController.historyBox.index > 0){
-                            historyItem = menuController.history.get(menuController.historyBox.index - 1);
-                        }
+                double labelMinTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
+                double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX() - offset + 13;
 
-                        if(historyItem != null) previousVideoTooltip.updateTooltip(historyItem);
-                    }
+                double labelNewTranslation = Math.max(labelMinTranslation, Math.min(labelMaxTranslation, durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX() + durationSlider.lookup(".track").getBoundsInLocal().getMaxX() * (newValue.doubleValue() / durationSlider.getMax()) - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
 
+                mainController.sliderHoverLabel.label.setTranslateX(labelNewTranslation);
+
+
+                double paneMinTranslation = (mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMinX() - mainController.sliderHoverPreview.pane.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
+                double paneMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMaxX() + mainController.sliderHoverPreview.pane.getTranslateX();
+
+                double paneNewTranslation = Math.max(paneMinTranslation, Math.min(paneMaxTranslation, durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX() + durationSlider.lookup(".track").getBoundsInLocal().getMaxX() * (newValue.doubleValue() / durationSlider.getMax()) - (mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMinX() + mainController.sliderHoverPreview.pane.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverPreview.pane.getTranslateX() - 4));
+
+                mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
+
+                lastKnownSliderHoverPosition = newValue.doubleValue()/durationSlider.getMax();
+
+
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
+                    if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
+
+                    pauseTransition = new PauseTransition(Duration.millis(50));
+                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame());
+
+                    pauseTransition.playFromStart();
                 }
 
-                captionsController.updateCaptions(newValue.doubleValue() * 1000);
-
-
-                if (durationSlider.isValueChanging() && !mainController.seekingWithKeys) {
-
-                    mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
-
-                    double offset = 0;
-                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.label.getLayoutBounds().getMaxX())/2;
-
-                    double labelMinTranslation = (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.label.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
-                    double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.label.getTranslateX() - offset + 13;
-
-                    double labelNewTranslation = Math.max(labelMinTranslation, Math.min(labelMaxTranslation, durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX() + durationSlider.lookup(".track").getBoundsInLocal().getMaxX() * (newValue.doubleValue() / durationSlider.getMax()) - (mainController.sliderHoverLabel.label.localToScene(mainController.sliderHoverLabel.label.getBoundsInLocal()).getMinX() + mainController.sliderHoverLabel.label.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverLabel.label.getTranslateX() - 4));
-
-                    mainController.sliderHoverLabel.label.setTranslateX(labelNewTranslation);
-
-
-                    double paneMinTranslation = (mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMinX() - mainController.sliderHoverPreview.pane.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
-                    double paneMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMaxX() + mainController.sliderHoverPreview.pane.getTranslateX();
-
-                    double paneNewTranslation = Math.max(paneMinTranslation, Math.min(paneMaxTranslation, durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX() + durationSlider.lookup(".track").getBoundsInLocal().getMaxX() * (newValue.doubleValue() / durationSlider.getMax()) - (mainController.sliderHoverPreview.pane.localToScene(mainController.sliderHoverPreview.pane.getBoundsInLocal()).getMinX() + mainController.sliderHoverPreview.pane.getBoundsInLocal().getMaxX() / 2) + mainController.sliderHoverPreview.pane.getTranslateX() - 4));
-
-                    mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
-
-                    lastKnownSliderHoverPosition = newValue.doubleValue()/durationSlider.getMax();
-
-
-                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
-                        if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
-
-                        pauseTransition = new PauseTransition(Duration.millis(50));
-                        pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame());
-
-                        pauseTransition.playFromStart();
-                    }
-
-                }
             }
 
         });
@@ -600,7 +598,6 @@ public class ControlBarController implements Initializable {
 
             if (newValue) { // pause video when user starts seeking
                 seekTimer.playFromStart();
-                //replace with mediainterface.pause() after done refactoring
                 if (mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
                 mediaInterface.playing.set(false);
 
@@ -645,7 +642,8 @@ public class ControlBarController implements Initializable {
 
 
 
-            } else {
+            }
+            else {
 
                 mainController.sliderHoverPreview.pane.setVisible(false);
                 mainController.sliderHoverLabel.label.setVisible(false);
@@ -701,10 +699,10 @@ public class ControlBarController implements Initializable {
         if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
 
         if (showingTimeLeft && mediaInterface.mediaActive.get()) {
-            Utilities.setCurrentTimeLabel(durationLabel, durationSlider, Duration.millis(mediaInterface.embeddedMediaPlayer.media().info().duration()));
+            Utilities.setCurrentTimeLabel(durationLabel, Duration.seconds(durationSlider.getValue()), Duration.seconds(durationSlider.getMax()));
             showingTimeLeft = false;
         } else if (!showingTimeLeft && mediaInterface.mediaActive.get()) {
-            Utilities.setTimeLeftLabel(durationLabel, durationSlider, Duration.millis(mediaInterface.embeddedMediaPlayer.media().info().duration()));
+            Utilities.setTimeLeftLabel(durationLabel, Duration.seconds(durationSlider.getValue()), Duration.seconds(durationSlider.getMax()));
             showingTimeLeft = true;
         }
     }

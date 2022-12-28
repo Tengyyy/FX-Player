@@ -840,7 +840,7 @@ public class MainController implements Initializable {
             forwardsIndicator.setVisible(true);
             forwardsIndicator.animate();
 
-            if (mediaInterface.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
+            if (controlBarController.durationSlider.getValue() + 5 >= controlBarController.durationSlider.getMax()) {
                 mediaInterface.seekedToEnd = true;
             }
 
@@ -971,27 +971,6 @@ public class MainController implements Initializable {
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);
-        }
-    }
-
-    public void pressK(){
-        controlBarController.mouseEventTracker.move();
-        if (!controlBarController.durationSlider.isValueChanging() && mediaInterface.mediaActive.get() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())) {  // wont let user play/pause video while media slider is seeking
-            if (mediaInterface.atEnd) {
-                mediaInterface.replay();
-                actionIndicator.setIcon(REPLAY);
-            } else {
-                if (mediaInterface.playing.get()) {
-                    mediaInterface.wasPlaying = false;
-                    mediaInterface.pause();
-                    actionIndicator.setIcon(PAUSE);
-                } else {
-                    mediaInterface.play();
-                    actionIndicator.setIcon(PLAY);
-                }
-            }
-            actionIndicator.setVisible(true);
-            actionIndicator.animate();
         }
     }
 
@@ -1170,18 +1149,7 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
 
         if(e.isShiftDown()){
-
-            if((menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1) || ((menuController.historyBox.index == menuController.history.size() -1 || menuController.historyBox.index == -1) && !menuController.queue.isEmpty())){
-
-                if(!menuController.animationsInProgress.isEmpty()) return;
-
-                actionIndicator.setIcon(NEXT_VIDEO);
-                actionIndicator.setVisible(true);
-                actionIndicator.animate();
-
-                mediaInterface.playNext();
-            }
-
+            pressNextTrack();
         }
     }
 
@@ -1189,27 +1157,46 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
 
         if(e.isShiftDown()){
+            pressPreviousTrack();
+        }
+    }
 
-            if(mediaInterface.mediaActive.get() && controlBarController.durationSlider.getValue() > 5){ // restart current video
-                actionIndicator.setIcon(REPLAY);
-                actionIndicator.setVisible(true);
-                actionIndicator.animate();
+    public void pressPreviousTrack(){
+        controlBarController.mouseEventTracker.move();
 
-                mediaInterface.seekedToEnd = false;
-                controlBarController.durationSlider.setValue(0);
+        if(mediaInterface.mediaActive.get() && controlBarController.durationSlider.getValue() > 5){ // restart current video
+            actionIndicator.setIcon(REPLAY);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
 
-            }
-            else if((!menuController.history.isEmpty() && menuController.historyBox.index == -1) || menuController.historyBox.index > 0){ // play previous video
+            mediaInterface.seekedToEnd = false;
+            controlBarController.durationSlider.setValue(0);
 
-                if(!menuController.animationsInProgress.isEmpty()) return;
+        }
+        else if((!menuController.history.isEmpty() && menuController.historyBox.index == -1) || menuController.historyBox.index > 0){ // play previous video
 
-                actionIndicator.setIcon(PREVIOUS_VIDEO);
-                actionIndicator.setVisible(true);
-                actionIndicator.animate();
+            if(!menuController.animationsInProgress.isEmpty() || menuController.queueBox.dragActive) return;
 
-                mediaInterface.playPrevious();
-            }
+            actionIndicator.setIcon(PREVIOUS_VIDEO);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
 
+            mediaInterface.playPrevious();
+        }
+    }
+
+    public void pressNextTrack(){
+        controlBarController.mouseEventTracker.move();
+
+        if((menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1) || ((menuController.historyBox.index == menuController.history.size() -1 || menuController.historyBox.index == -1) && !menuController.queue.isEmpty())){
+
+            if(!menuController.animationsInProgress.isEmpty() || menuController.queueBox.dragActive) return;
+
+            actionIndicator.setIcon(NEXT_VIDEO);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+
+            mediaInterface.playNext();
         }
     }
 

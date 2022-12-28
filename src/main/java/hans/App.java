@@ -152,8 +152,8 @@ public class App extends Application {
                         case LEFT -> mainController.pressLEFT(event);
                         case UP -> mainController.pressUP(event);
                         case DOWN -> mainController.pressDOWN(event);
-                        case L -> mainController.pressL(event);
-                        case J -> mainController.pressJ();
+                        case L, FAST_FWD -> mainController.pressL(event);
+                        case J, REWIND -> mainController.pressJ();
                         case DIGIT1 -> mainController.press1();
                         case DIGIT2 -> mainController.press2();
                         case DIGIT3 -> mainController.press3();
@@ -165,15 +165,16 @@ public class App extends Application {
                         case DIGIT9 -> mainController.press9();
                         case DIGIT0, HOME -> mainController.press0();
                         case END -> mainController.pressEND();
-                        case K -> mainController.pressK();
-                        case M -> mainController.pressM();
+                        case M, MUTE -> mainController.pressM();
                         case F -> mainController.pressF();
                         case F12 -> mainController.pressF12();
-                        case SPACE -> mainController.pressSPACE(event);
+                        case SPACE, K, PLAY, PAUSE -> mainController.pressSPACE(event);
                         case C -> mainController.pressC();
                         case S -> mainController.pressS();
                         case Q -> mainController.pressQ();
                         case P -> mainController.pressP(event);
+                        case TRACK_PREV -> mainController.pressPreviousTrack();
+                        case TRACK_NEXT -> mainController.pressNextTrack();
                         case I -> mainController.pressI();
                         case N -> mainController.pressN(event);
                         case COMMA -> mainController.pressCOMMA(event);
@@ -189,7 +190,7 @@ public class App extends Application {
                     settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(false);
                 }
 
-                if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.J || event.getCode() == KeyCode.L || event.getCode() == KeyCode.DIGIT1 || event.getCode() == KeyCode.DIGIT2 || event.getCode() == KeyCode.DIGIT3 || event.getCode() == KeyCode.DIGIT4 || event.getCode() == KeyCode.DIGIT5 || event.getCode() == KeyCode.DIGIT6 || event.getCode() == KeyCode.DIGIT7 || event.getCode() == KeyCode.DIGIT8 || event.getCode() == KeyCode.DIGIT9 || event.getCode() == KeyCode.DIGIT0 || event.getCode() == KeyCode.HOME || event.getCode() == KeyCode.END){
+                if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.J || event.getCode() == KeyCode.L || event.getCode() == KeyCode.REWIND || event.getCode() == KeyCode.FAST_FWD || event.getCode() == KeyCode.DIGIT1 || event.getCode() == KeyCode.DIGIT2 || event.getCode() == KeyCode.DIGIT3 || event.getCode() == KeyCode.DIGIT4 || event.getCode() == KeyCode.DIGIT5 || event.getCode() == KeyCode.DIGIT6 || event.getCode() == KeyCode.DIGIT7 || event.getCode() == KeyCode.DIGIT8 || event.getCode() == KeyCode.DIGIT9 || event.getCode() == KeyCode.DIGIT0 || event.getCode() == KeyCode.HOME || event.getCode() == KeyCode.END){
                     mainController.seekingWithKeys = false;
                 }
             });

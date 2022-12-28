@@ -7,7 +7,10 @@ import hans.Captions.CaptionsTab;
 import hans.MediaItems.MediaItem;
 import hans.Menu.*;
 import hans.Settings.SettingsController;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
 import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 
 import javafx.beans.property.BooleanProperty;
@@ -142,20 +145,19 @@ public class MediaInterface {
             @Override
             public void mediaPlayerReady(MediaPlayer mediaPlayer) {
 
+                mediaActive.set(true);
+
                 Platform.runLater(() -> {
                     controlBarController.durationSlider.setMax((double)mediaPlayer.media().info().duration()/1000);
                     if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.slider.setMax((double)mediaPlayer.media().info().duration()/1000);
 
-                    mediaActive.set(true);
-
-                    embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
+                    Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
 
                     play();
+
                 });
 
             }
-
-
         });
 
     }
@@ -163,39 +165,49 @@ public class MediaInterface {
     public void updateMedia(double newValue) {
 
         if (!controlBarController.showingTimeLeft)
-                Utilities.setCurrentTimeLabel(controlBarController.durationLabel, controlBarController.durationSlider, Duration.millis(embeddedMediaPlayer.media().info().duration()));
-            else
-                Utilities.setTimeLeftLabel(controlBarController.durationLabel, controlBarController.durationSlider, Duration.millis(embeddedMediaPlayer.media().info().duration()));
+            Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.seconds(controlBarController.durationSlider.getValue()), Duration.seconds(controlBarController.durationSlider.getMax()));
+        else
+            Utilities.setTimeLeftLabel(controlBarController.durationLabel, Duration.seconds(controlBarController.durationSlider.getValue()), Duration.seconds(controlBarController.durationSlider.getMax()));
 
-        if(newValue == 0){
-            currentTime = 0;
-            seek(Duration.ZERO);
-        }
-        else if(Math.abs(currentTime/1000 - newValue) > 0.5 || (!playing.get() && Math.abs(currentTime/1000 - newValue) >= 0.1)) {
-            currentTime = newValue;
-            seek(Duration.seconds(newValue));
-        }
-
-        if (atEnd) {
-            atEnd = false;
-            seekedToEnd = false;
-
-            if (wasPlaying && (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging()))) {
-                play();
-            } else {
-                pause();
-            }
-        }
-        // this final block will probably have to be modified
-        else if (newValue >= controlBarController.durationSlider.getMax()) {
+        if (newValue >= controlBarController.durationSlider.getMax()) {
             if (controlBarController.durationSlider.isValueChanging() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
                 seekedToEnd = true;
             }
             else endMedia();
 
             atEnd = true;
+
+            currentTime = controlBarController.durationSlider.getMax();
+
             playing.set(false);
+            embeddedMediaPlayer.controls().setPause(true);
+            SleepSuppressor.allowSleep();
+
+            seek(Duration.seconds(newValue));
+
         }
+        else {
+            if(newValue == 0){
+                currentTime = 0;
+                seek(Duration.ZERO);
+            }
+            else if(Math.abs(currentTime/1000 - newValue) > 0.5 || (!playing.get() && Math.abs(currentTime/1000 - newValue) >= 0.1)) {
+                currentTime = newValue;
+                seek(Duration.seconds(newValue));
+            }
+
+            if (atEnd) {
+                atEnd = false;
+                seekedToEnd = false;
+
+                if (wasPlaying && (!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging()))) {
+                    play();
+                } else {
+                    pause();
+                }
+            }
+        }
+
     }
 
     public void endMedia() {
@@ -368,11 +380,45 @@ public class MediaInterface {
         else if((menuController.historyBox.index == menuController.history.size() -1 || menuController.historyBox.index == -1) && !menuController.queue.isEmpty()) {
             // play first item in queue
 
+            if(menuController.queueBox.dragActive){
+                // cancel dragging of queueitem
+                menuController.scrollTimeline.stop();
+
+                menuController.queueBox.draggedNode.setViewOrder(1);
+                menuController.queueBox.draggedNode.setStyle("-fx-background-color: transparent");
+                menuController.queueBox.draggedNode.dragPosition = 0;
+                menuController.queueBox.draggedNode.minimumY = 0;
+                menuController.queueBox.draggedNode.maximumY = 0;
+                menuController.queueBox.dragActive = false;
+                menuController.queueBox.draggedNode.setMouseTransparent(false);
+                menuController.queueBox.draggedNode.playIcon.setVisible(false);
+                menuController.queueBox.draggedNode.indexLabel.setVisible(true);
+
+                if(menuController.queue.indexOf(menuController.queueBox.draggedNode) != menuController.queueBox.draggedNode.newPosition){
+                    menuController.queue.remove(menuController.queueBox.draggedNode);
+                    menuController.queueBox.getChildren().remove(menuController.queueBox.draggedNode);
+
+                    menuController.queue.add(menuController.queueBox.draggedNode.newPosition, menuController.queueBox.draggedNode);
+                    menuController.queueBox.getChildren().add(menuController.queueBox.draggedNode.newPosition, menuController.queueBox.draggedNode);
+
+                    for(QueueItem queueItem : menuController.queue){
+                        queueItem.setTranslateY(0);
+                    }
+                    controlBarController.enableNextVideoButton();
+                }
+
+                menuController.queueBox.draggedNode = null;
+            }
+            else if (!menuController.queueBox.dragAnimationsInProgress.isEmpty()){
+                for(int i = 0; i < menuController.queueBox.dragAnimationsInProgress.size(); i ++){
+                    menuController.queueBox.dragAnimationsInProgress.get(i).stop();
+                }
+                menuController.queueBox.dragAnimationsInProgress.clear();
+            }
+
             QueueItem queueItem = menuController.queue.get(0);
             queueItem.play(true);
-
         }
-
     }
 
     public void playPrevious(){
@@ -393,10 +439,9 @@ public class MediaInterface {
     }
 
     public void defaultEnd(){
-
         controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
 
-        controlBarController.durationLabel.setText(Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)) + "/" + Utilities.getTime(new Duration(controlBarController.durationSlider.getMax() * 1000)));
+        controlBarController.durationLabel.setText(Utilities.getTime(Duration.seconds(controlBarController.durationSlider.getMax())) + "/" + Utilities.getTime(Duration.seconds(controlBarController.durationSlider.getMax())));
 
         controlBarController.mouseEventTracker.move();
 

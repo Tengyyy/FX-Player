@@ -59,12 +59,12 @@ public class Utilities {
     }
 
 
-    public static void setCurrentTimeLabel(Label durationLabel, Slider slider, Duration duration) {
-        durationLabel.setText(getTime(Duration.seconds(slider.getValue())) + "/" + getTime(duration));
+    public static void setCurrentTimeLabel(Label durationLabel, Duration currentTime, Duration duration) {
+        durationLabel.setText(getTime(currentTime) + "/" + getTime(duration));
     }
 
-    public static void setTimeLeftLabel(Label durationLabel, Slider slider, Duration duration) {
-        durationLabel.setText("−" + getTime(duration.subtract(Duration.seconds(slider.getValue()))) + "/" + getTime(duration));
+    public static void setTimeLeftLabel(Label durationLabel, Duration currentTime, Duration duration) {
+        durationLabel.setText("−" + getTime(duration.subtract(currentTime)) + "/" + getTime(duration));
     }
 
 

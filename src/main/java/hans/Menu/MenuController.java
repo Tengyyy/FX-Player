@@ -12,6 +12,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -151,7 +153,7 @@ public class MenuController implements Initializable {
     // the lower bound of the bottom drag detection area
     DoubleProperty lowerBottomBound = new SimpleDoubleProperty();
 
-    private final Timeline scrollTimeline = new Timeline();
+    public final Timeline scrollTimeline = new Timeline();
     private double scrollVelocity = 0;
     private final int scrollSpeed = 4;
 
@@ -416,6 +418,7 @@ public class MenuController implements Initializable {
             // maybe make scrolling speed static and not depend on the amount of media items
 
 
+
             if(e.getY() <= 60){
                 scrollVelocity = - scrollSpeed * (1/(menuContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
 
@@ -466,30 +469,34 @@ public class MenuController implements Initializable {
 
                 if(queueBox.draggedNode.newPosition != 0){
 
-                    if(queue.get(queueBox.draggedNode.newPosition).getTranslateY() < 0 && !queue.get(queueBox.draggedNode.newPosition).equals(queueBox.draggedNode)){
 
-                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition));
-                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                        translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition).getTranslateY());
-                        translateTransition.setToY(0);
-                        translateTransition.setOnFinished(ev -> queueBox.dragAnimationsInProgress.remove(translateTransition));
-                        queueBox.dragAnimationsInProgress.add(translateTransition);
-                        translateTransition.play();
+                    for(int i=0; i<=queueBox.draggedNode.newPosition; i++){
+
+                        QueueItem queueItem = queue.get(i);
+                        if(queueItem.equals(queueBox.draggedNode)) continue;
+
+                        if(queueItem.getTranslateY() < 0){
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueItem);
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queueItem.getTranslateY());
+                            translateTransition.setToY(0);
+                            translateTransition.setOnFinished(ev -> queueBox.dragAnimationsInProgress.remove(translateTransition));
+                            queueBox.dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
+                        else {
+                            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueItem);
+                            translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                            translateTransition.setFromY(queueItem.getTranslateY());
+                            translateTransition.setToY(QueueItem.height);
+                            translateTransition.setOnFinished(ev -> queueBox.dragAnimationsInProgress.remove(translateTransition));
+                            queueBox.dragAnimationsInProgress.add(translateTransition);
+                            translateTransition.play();
+                        }
                     }
-                    else {
-
-                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queue.get(queueBox.draggedNode.newPosition - 1));
-                        translateTransition.setInterpolator(Interpolator.EASE_OUT);
-                        translateTransition.setFromY(queue.get(queueBox.draggedNode.newPosition - 1).getTranslateY());
-                        translateTransition.setToY(QueueItem.height);
-                        translateTransition.setOnFinished(ev -> queueBox.dragAnimationsInProgress.remove(translateTransition));
-                        queueBox.dragAnimationsInProgress.add(translateTransition);
-                        translateTransition.play();
-                    }
-
 
                     queueBox.draggedNode.newPosition = 0;
-                    queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (queueBox.draggedNode.newPosition - (queueBox.draggedNode.videoIndex-1)) * QueueItem.height;
+                    queueBox.draggedNode.runningTranslate = queueBox.draggedNode.getTranslateY() - (1 - queueBox.draggedNode.videoIndex) * QueueItem.height;
                 }
             }
         });
@@ -508,9 +515,38 @@ public class MenuController implements Initializable {
 
                 TranslateTransition translateTransition = new TranslateTransition(Duration.millis(AnimationsClass.ANIMATION_SPEED), queueBox.draggedNode);
                 translateTransition.setInterpolator(Interpolator.EASE_OUT);
+                double toValue = queueBox.draggedNode.getTranslateY() - queueBox.draggedNode.runningTranslate;
                 translateTransition.setFromY(queueBox.draggedNode.getTranslateY());
-                translateTransition.setToY(queueBox.draggedNode.getTranslateY() - queueBox.draggedNode.runningTranslate);
+                translateTransition.setToY(toValue);
+
+                translateTransition.statusProperty().addListener((observableValue, oldValue, newValue) -> {
+                    if(newValue == Animation.Status.STOPPED){
+                        if(queueBox.draggedNode == null) return;
+                        queueBox.draggedNode.setMouseTransparent(false);
+                        queueBox.draggedNode.setViewOrder(1);
+                        queueBox.draggedNode.setStyle("-fx-background-color: transparent;");
+                        queueBox.draggedNode.playIcon.setVisible(false);
+                        queueBox.draggedNode.indexLabel.setVisible(true);
+
+                        if(queue.indexOf(queueBox.draggedNode) != queueBox.draggedNode.newPosition){
+                            queue.remove(queueBox.draggedNode);
+                            queueBox.getChildren().remove(queueBox.draggedNode);
+
+                            queue.add(queueBox.draggedNode.newPosition, queueBox.draggedNode);
+                            queueBox.getChildren().add(queueBox.draggedNode.newPosition, queueBox.draggedNode);
+
+                            for(QueueItem queueItem : queue){
+                                queueItem.setTranslateY(0);
+                            }
+                            controlBarController.enableNextVideoButton();
+                        }
+
+                        queueBox.draggedNode = null;
+                    }
+                });
+
                 translateTransition.setOnFinished(event -> {
+                    if(queueBox.draggedNode == null) return;
                     queueBox.draggedNode.setMouseTransparent(false);
                     queueBox.draggedNode.setViewOrder(1);
                     queueBox.draggedNode.setStyle("-fx-background-color: transparent;");
@@ -555,7 +591,35 @@ public class MenuController implements Initializable {
                 translateTransition.setInterpolator(Interpolator.EASE_OUT);
                 translateTransition.setFromY(queueBox.draggedNode.getTranslateY());
                 translateTransition.setToY(queueBox.draggedNode.getTranslateY() - queueBox.draggedNode.runningTranslate);
+
+                translateTransition.statusProperty().addListener((observableValue, oldValue, newValue) -> {
+                    if(newValue == Animation.Status.STOPPED){
+                        if(queueBox.draggedNode == null) return;
+                        queueBox.draggedNode.setMouseTransparent(false);
+                        queueBox.draggedNode.setViewOrder(1);
+                        queueBox.draggedNode.setStyle("-fx-background-color: transparent;");
+                        queueBox.draggedNode.playIcon.setVisible(false);
+                        queueBox.draggedNode.indexLabel.setVisible(true);
+
+                        if(queue.indexOf(queueBox.draggedNode) != queueBox.draggedNode.newPosition){
+                            queue.remove(queueBox.draggedNode);
+                            queueBox.getChildren().remove(queueBox.draggedNode);
+
+                            queue.add(queueBox.draggedNode.newPosition, queueBox.draggedNode);
+                            queueBox.getChildren().add(queueBox.draggedNode.newPosition, queueBox.draggedNode);
+
+                            for(QueueItem queueItem : queue){
+                                queueItem.setTranslateY(0);
+                            }
+                            controlBarController.enableNextVideoButton();
+                        }
+
+                        queueBox.draggedNode = null;
+                    }
+                });
+
                 translateTransition.setOnFinished(event -> {
+                    if(queueBox.draggedNode == null) return;
                     queueBox.draggedNode.setMouseTransparent(false);
                     queueBox.draggedNode.setViewOrder(1);
                     queueBox.draggedNode.setStyle("-fx-background-color: transparent;");

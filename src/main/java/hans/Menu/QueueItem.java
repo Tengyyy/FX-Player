@@ -65,13 +65,13 @@ public class QueueItem extends GridPane implements MenuObject {
 
 
     StackPane indexPane = new StackPane();
-    Label indexLabel = new Label();
+    public Label indexLabel = new Label();
     int videoIndex;
-    Region playIcon = new Region();
+    public Region playIcon = new Region();
 
 
-    int newPosition; // keeps track of the position where the queueitem should move to when being dragged
-    double runningTranslate; // mirrors draggable nodes translateY value and if it goes over QueueItem.height or below -QueueItem.height will update the visual order of queueitems
+    public int newPosition; // keeps track of the position where the queueitem should move to when being dragged
+    public double runningTranslate; // mirrors draggable nodes translateY value and if it goes over QueueItem.height or below -QueueItem.height will update the visual order of queueitems
 
     ControlTooltip removeButtonTooltip, optionsButtonTooltip;
 
@@ -89,9 +89,10 @@ public class QueueItem extends GridPane implements MenuObject {
 
     QueueBox queueBox;
 
-    double dragPosition = 0;
-    double minimumY = 0;
-    double maximumY = 0;
+    public double dragPosition = 0;
+    public double minimumY = 0;
+    public double maximumY = 0;
+
 
     File file;
     MediaItem mediaItem;

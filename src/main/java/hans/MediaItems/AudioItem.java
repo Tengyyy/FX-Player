@@ -109,7 +109,7 @@ public class AudioItem implements MediaItem {
             backgroundColor = Utilities.findDominantColor(cover);
         }
 
-        placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));
+        placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm());
 
     }
 

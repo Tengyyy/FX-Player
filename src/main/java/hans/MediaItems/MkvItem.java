@@ -118,7 +118,7 @@ public class MkvItem implements MediaItem {
             fFmpegFrameGrabber.stop();
             fFmpegFrameGrabber.close();
 
-            placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
+            placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm()));
 
         } catch (IOException e) {
             throw new RuntimeException(e);

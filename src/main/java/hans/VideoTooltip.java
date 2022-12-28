@@ -193,7 +193,7 @@ public class VideoTooltip extends Tooltip {
         }
         else {
             imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
-            imageViewBackground.setStyle("-fx-background-color: rgba(64,64,64,0.7);");
+            imageViewBackground.setStyle("-fx-background-color: rgba(255, 0, 0, 0.7);");
         }
 
         this.setGraphic(graphicBackground);

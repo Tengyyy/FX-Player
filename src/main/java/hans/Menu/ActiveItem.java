@@ -16,6 +16,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -26,6 +27,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -303,6 +305,9 @@ public class ActiveItem extends GridPane implements MenuObject {
         coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
         coverImage.setPreserveRatio(true);
+        String fileExtension = Utilities.getFileExtension(file);
+        if(fileExtension.equals("mp4") || fileExtension.equals("mov") || fileExtension.equals("mkv") || fileExtension.equals("flv") || fileExtension.equals("avi")) coverImage.setImage(new Image(Objects.requireNonNull(menuController.mainController.getClass().getResource("images/video.png")).toExternalForm()));
+        else if(fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) coverImage.setImage(new Image(Objects.requireNonNull(menuController.mainController.getClass().getResource("images/music.png")).toExternalForm()));
 
 
         playButton.setPrefWidth(125);
@@ -341,7 +346,7 @@ public class ActiveItem extends GridPane implements MenuObject {
         iconBackground.setMouseTransparent(true);
         iconBackground.setVisible(false);
 
-        playButtonWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
+        playButtonWrapper.setStyle("-fx-background-color: red;");
         playButtonWrapper.getChildren().addAll(coverImage, iconBackground, playButton, playIcon);
         playButtonWrapper.setMaxSize(125,70);
 

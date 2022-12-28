@@ -24,7 +24,7 @@
             <Insets right="5.0" />
          </StackPane.margin>
       </ScrollPane>
-      <HBox fx:id="notificationPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" style="-fx-background-color: #303030; -fx-background-radius: 8; -fx-border-color: #404040; -fx-border-radius: 8;" StackPane.alignment="BOTTOM_LEFT">
+      <HBox fx:id="notificationPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" style="-fx-background-color: #0F0F0F; -fx-background-radius: 8; -fx-border-color: #202020; -fx-border-radius: 8;" StackPane.alignment="BOTTOM_LEFT">
          <children>
             <Label fx:id="notificationText" text="Video willl play next" textFill="WHITE">
                <font>

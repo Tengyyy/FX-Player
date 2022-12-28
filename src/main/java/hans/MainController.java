@@ -32,6 +32,7 @@ import javafx.scene.control.Button;
 
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -39,6 +40,7 @@ import javafx.scene.layout.*;
 
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -50,7 +52,7 @@ import static hans.SVG.*;
 public class MainController implements Initializable {
 
     @FXML
-    public ImageView videoImageView, coverImageView;
+    public ImageView videoImageView, coverBackground, coverImage;
 
 
     @FXML
@@ -60,7 +62,7 @@ public class MainController implements Initializable {
     @FXML
     public StackPane videoImageViewInnerWrapper;
     @FXML
-    StackPane coverImageContainer;
+    StackPane coverImageContainer, coverFilter, coverImageWrapper;
 
 
     @FXML
@@ -455,10 +457,27 @@ public class MainController implements Initializable {
         metadataIcon.setMouseTransparent(true);
         metadataIcon.getStyleClass().add("controlIcon");
 
-        coverImageContainer.setStyle("-fx-background-color:red;");
         coverImageContainer.setVisible(false);
         coverImageContainer.setMouseTransparent(true);
+        coverImageContainer.setStyle("-fx-background-color: black;");
 
+
+        coverBackground.fitWidthProperty().bind(videoImageViewWrapper.widthProperty());
+        coverBackground.fitHeightProperty().bind(videoImageViewWrapper.heightProperty());
+        coverBackground.setPreserveRatio(false);
+        coverBackground.setEffect(new GaussianBlur(60));
+
+
+        Rectangle rectangle = new Rectangle();
+        rectangle.widthProperty().bind(coverImage.fitWidthProperty());
+        rectangle.heightProperty().bind(coverImage.fitHeightProperty());
+        rectangle.setArcWidth(40);
+        rectangle.setArcHeight(40);
+        coverImage.setClip(rectangle);
+
+        coverImageWrapper.maxWidthProperty().bind(coverImage.fitWidthProperty());
+        coverImageWrapper.maxHeightProperty().bind(coverImage.fitHeightProperty());
+        coverImageWrapper.setEffect(new DropShadow(20, Color.BLACK));
     }
 
     public void mediaClick(MouseEvent e) {
@@ -785,19 +804,18 @@ public class MainController implements Initializable {
 
         double width = image.getWidth();
         double height = image.getHeight();
+        double ratio = width/height;
 
-        System.out.println(width);
-        System.out.println(height);
+        if(activeItem.getMediaItem().hasCover()){
+            coverBackground.setImage(image);
+        }
+        else {
+            coverBackground.setImage(null);
+        }
 
-
-        coverImageView.fitWidthProperty().bind(Bindings.min(width *2, videoImageViewWrapper.widthProperty().multiply(0.7)));
-        coverImageView.fitHeightProperty().bind(Bindings.min(height * 2, videoImageViewWrapper.heightProperty().multiply(0.7)));
-
-
-        coverImageView.setImage(image);
-        Color color = activeItem.getMediaItem().getCoverBackgroundColor();
-        if(activeItem.getMediaItem().hasCover()) coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
-        else coverImageContainer.setStyle("-fx-background-color: rgb(64,64,64);");
+        coverImage.fitWidthProperty().bind(Bindings.min(width*2, Bindings.min(videoImageViewWrapper.widthProperty().multiply(0.6), videoImageViewWrapper.heightProperty().multiply(0.6).multiply(ratio))));
+        coverImage.fitHeightProperty().bind(Bindings.min(height*2, coverImage.fitWidthProperty().divide(ratio)));
+        coverImage.setImage(image);
 
         coverImageContainer.setVisible(true);
 
@@ -806,8 +824,8 @@ public class MainController implements Initializable {
             miniplayer.miniplayerController.coverImageView.fitHeightProperty().bind(Bindings.min(height * 2, miniplayer.miniplayerController.videoImageViewWrapper.heightProperty().multiply(0.7)));
 
             miniplayer.miniplayerController.coverImageView.setImage(image);
-            if(activeItem.getMediaItem().hasCover()) miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
-            else miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: rgb(64,64,64);");
+            //if(activeItem.getMediaItem().hasCover()) miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
+            //else miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: black;");
 
             miniplayer.miniplayerController.coverImageContainer.setVisible(true);
         }

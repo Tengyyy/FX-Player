@@ -14,6 +14,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
@@ -23,7 +24,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -161,6 +164,9 @@ public class QueueItem extends GridPane implements MenuObject {
         coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
         coverImage.setPreserveRatio(true);
+        String fileExtension = Utilities.getFileExtension(file);
+        if(fileExtension.equals("mp4") || fileExtension.equals("mov") || fileExtension.equals("mkv") || fileExtension.equals("flv") || fileExtension.equals("avi")) coverImage.setImage(new Image(Objects.requireNonNull(menuController.mainController.getClass().getResource("images/video.png")).toExternalForm()));
+        else if(fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) coverImage.setImage(new Image(Objects.requireNonNull(menuController.mainController.getClass().getResource("images/music.png")).toExternalForm()));
 
 
         indexLabel.setText(String.valueOf(videoIndex));
@@ -186,7 +192,7 @@ public class QueueItem extends GridPane implements MenuObject {
         optionsSVG.setContent(App.svgMap.get(SVG.OPTIONS));
 
 
-        imageWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
+        imageWrapper.setStyle("-fx-background-color: red;");
 
 
         imageWrapper.setMaxSize(125,70);

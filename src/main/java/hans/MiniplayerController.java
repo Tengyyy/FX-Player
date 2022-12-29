@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -38,8 +39,8 @@ public class MiniplayerController {
     StackPane videoImageViewWrapper = new StackPane();
     public StackPane videoImageViewInnerWrapper = new StackPane();
 
-    public StackPane coverImageContainer = new StackPane();
-    public ImageView coverImageView = new ImageView();
+    public StackPane coverImageContainer = new StackPane(), coverImageWrapper = new StackPane(), coverFilter = new StackPane();
+    public ImageView coverImage = new ImageView(), coverBackground = new ImageView();
 
     StackPane previousVideoButtonPane = new StackPane();
     StackPane playButtonPane = new StackPane();
@@ -132,8 +133,32 @@ public class MiniplayerController {
 
         coverImageContainer.setVisible(false);
         coverImageContainer.setMouseTransparent(true);
-        coverImageContainer.getChildren().add(coverImageView);
-        coverImageView.setPreserveRatio(true);
+        coverImageContainer.setStyle("-fx-background-color: black;");
+        coverImageContainer.setMinHeight(0);
+        coverImageContainer.getChildren().addAll(coverBackground, coverFilter);
+
+        coverFilter.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        coverFilter.getChildren().add(coverImageWrapper);
+
+        coverImageWrapper.getChildren().add(coverImage);
+
+
+        coverBackground.fitWidthProperty().bind(videoImageViewWrapper.widthProperty());
+        coverBackground.fitHeightProperty().bind(videoImageViewWrapper.heightProperty());
+        coverBackground.setPreserveRatio(false);
+        coverBackground.setEffect(new GaussianBlur(100));
+
+
+        Rectangle rectangle = new Rectangle();
+        rectangle.widthProperty().bind(coverImage.fitWidthProperty());
+        rectangle.heightProperty().bind(coverImage.fitHeightProperty());
+        rectangle.setArcWidth(40);
+        rectangle.setArcHeight(40);
+        coverImage.setClip(rectangle);
+
+        coverImageWrapper.maxWidthProperty().bind(coverImage.fitWidthProperty());
+        coverImageWrapper.maxHeightProperty().bind(coverImage.fitHeightProperty());
+        coverImageWrapper.setEffect(new DropShadow(20, Color.BLACK));
 
         videoImageViewInnerWrapper.setBackground(Background.EMPTY);
         videoImageViewInnerWrapper.setMouseTransparent(true);

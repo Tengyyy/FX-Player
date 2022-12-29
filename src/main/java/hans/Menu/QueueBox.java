@@ -710,6 +710,7 @@ public class QueueBox extends VBox {
 
         addAll(getChildren().indexOf(queueLine), newItems);
 
+
         dragBoardMedia.clear();
     }
 

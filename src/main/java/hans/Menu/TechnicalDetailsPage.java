@@ -134,18 +134,17 @@ public class TechnicalDetailsPage {
 
     public void enterTechnicalDetailsPage(MenuObject menuObject){
 
-        Color color;
 
         if(menuObject.getMediaItem().getCover() != null){
             imageView.setImage(menuObject.getMediaItem().getCover());
-            color = menuObject.getMediaItem().getCoverBackgroundColor();
+            Color color = menuObject.getMediaItem().getCoverBackgroundColor();
+            imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
         }
         else {
             imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
-            color = Color.rgb(64,64,64);
+            imageViewContainer.setStyle("-fx-background-color: red;");
         }
 
-        imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
 
         Map<String, String> map = menuObject.getMediaItem().getMediaDetails();
         if(map != null && !map.isEmpty()){

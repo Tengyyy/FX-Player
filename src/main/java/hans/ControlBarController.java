@@ -669,7 +669,7 @@ public class ControlBarController implements Initializable {
                 }
 
                 if (mediaInterface.atEnd) {
-                    mediaInterface.endMedia();
+                    mediaInterface.defaultEnd();
                 } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
                     mediaInterface.play();
                     mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging

@@ -143,17 +143,27 @@ public class App extends Application {
             //press F11 to set full screen
             primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 
-                if(event.getCode() ==KeyCode.ESCAPE) mainController.pressESCAPE();
-                else if(event.getCode() == KeyCode.F11) mainController.pressF();
-                else if(event.getCode() == KeyCode.TAB) mainController.pressTAB(event);
-                else if(!(event.getTarget() instanceof ExpandableTextArea || event.getTarget() instanceof TextField)){
+
+                switch (event.getCode()){
+                    case ESCAPE -> mainController.pressESCAPE();
+                    case F11 -> mainController.pressF();
+                    case TAB -> mainController.pressTAB(event);
+                    case FAST_FWD -> mainController.pressL(event);
+                    case REWIND -> mainController.pressJ();
+                    case MUTE -> mainController.pressM();
+                    case PLAY, PAUSE -> mainController.pressSPACE(event);
+                    case TRACK_PREV ->  mainController.pressPreviousTrack();
+                    case TRACK_NEXT -> mainController.pressNextTrack();
+                }
+
+                if(!(event.getTarget() instanceof ExpandableTextArea || event.getTarget() instanceof TextField)){
                     switch (event.getCode()) {
                         case RIGHT -> mainController.pressRIGHT(event);
                         case LEFT -> mainController.pressLEFT(event);
                         case UP -> mainController.pressUP(event);
                         case DOWN -> mainController.pressDOWN(event);
-                        case L, FAST_FWD -> mainController.pressL(event);
-                        case J, REWIND -> mainController.pressJ();
+                        case L -> mainController.pressL(event);
+                        case J -> mainController.pressJ();
                         case DIGIT1 -> mainController.press1();
                         case DIGIT2 -> mainController.press2();
                         case DIGIT3 -> mainController.press3();
@@ -165,16 +175,14 @@ public class App extends Application {
                         case DIGIT9 -> mainController.press9();
                         case DIGIT0, HOME -> mainController.press0();
                         case END -> mainController.pressEND();
-                        case M, MUTE -> mainController.pressM();
+                        case M -> mainController.pressM();
                         case F -> mainController.pressF();
                         case F12 -> mainController.pressF12();
-                        case SPACE, K, PLAY, PAUSE -> mainController.pressSPACE(event);
+                        case SPACE, K -> mainController.pressSPACE(event);
                         case C -> mainController.pressC();
                         case S -> mainController.pressS();
                         case Q -> mainController.pressQ();
                         case P -> mainController.pressP(event);
-                        case TRACK_PREV -> mainController.pressPreviousTrack();
-                        case TRACK_NEXT -> mainController.pressNextTrack();
                         case I -> mainController.pressI();
                         case N -> mainController.pressN(event);
                         case COMMA -> mainController.pressCOMMA(event);

@@ -260,20 +260,17 @@ public class MetadataEditPage {
         this.menuObject = menuObject;
 
 
-        Color color;
-
         if(menuObject.getMediaItem().getCover() != null){
             imageView.setImage(menuObject.getMediaItem().getCover());
-            color = menuObject.getMediaItem().getCoverBackgroundColor();
+            Color color = menuObject.getMediaItem().getCoverBackgroundColor();
+            imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
         }
         else {
             imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
-            color = Color.rgb(64,64,64);
+            imageViewContainer.setStyle("-fx-background-color: red;");
         }
 
         hasCover = menuObject.getMediaItem().hasCover();
-
-        imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
 
 
         String extension = Utilities.getFileExtension(menuObject.getMediaItem().getFile());
@@ -392,7 +389,7 @@ public class MetadataEditPage {
         newFile = null;
         hasCover = false;
         imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
-        imageViewContainer.setStyle("-fx-background-color: rgba(64,64,64,0.7);");
+        imageViewContainer.setStyle("-fx-background-color: red;");
 
         changesMade.set(true);
     }
@@ -404,8 +401,6 @@ public class MetadataEditPage {
 
         if(menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(mediaItem.getFile().getAbsolutePath())){
             menuController.mediaInterface.resetMediaPlayer();
-            menuController.captionsController.clearCaptions();
-            //TODO: when creating media player again, reload the manually selected subtitle tabs and select the one that was active
         }
 
         boolean imageEditSuccess = true;

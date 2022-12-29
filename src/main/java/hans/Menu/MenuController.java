@@ -723,8 +723,6 @@ public class MenuController implements Initializable {
                 else queueBox.add(queueItem);
             }
 
-
-
             if(selectedFiles.size() == 1) notificationText.setText("Added 1 video to the queue");
             else notificationText.setText(String.format("Added %s videos to the queue", selectedFiles.size()));
             AnimationsClass.openMenuNotification(this);

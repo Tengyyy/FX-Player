@@ -13,12 +13,14 @@
                   <StackPane fx:id="coverImageContainer">
                      <children>
                         <ImageView fx:id="coverBackground" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
-                        <StackPane fx:id="coverFilter" style="-fx-background-color: rgba(0,0,0,0.3);" />
-                        <StackPane fx:id="coverImageWrapper">
+                        <StackPane fx:id="coverFilter" style="-fx-background-color: rgba(0,0,0,0.5);">
                            <children>
-                              <ImageView fx:id="coverImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                           </children>
-                        </StackPane>
+                              <StackPane fx:id="coverImageWrapper">
+                                 <children>
+                                    <ImageView fx:id="coverImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                                 </children>
+                              </StackPane>
+                           </children></StackPane>
                      </children>
                   </StackPane>
                </children>

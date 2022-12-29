@@ -148,6 +148,7 @@ public class MediaInterface {
                 mediaActive.set(true);
 
                 Platform.runLater(() -> {
+                    mediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
                     controlBarController.durationSlider.setMax((double)mediaPlayer.media().info().duration()/1000);
                     if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.slider.setMax((double)mediaPlayer.media().info().duration()/1000);
 
@@ -172,6 +173,9 @@ public class MediaInterface {
         if (newValue >= controlBarController.durationSlider.getMax()) {
             if (controlBarController.durationSlider.isValueChanging() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging())) {
                 seekedToEnd = true;
+            }
+            else if(seekedToEnd){
+                defaultEnd();
             }
             else endMedia();
 

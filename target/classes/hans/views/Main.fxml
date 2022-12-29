@@ -12,7 +12,15 @@
                   <ImageView fx:id="videoImageView" fitHeight="150.0" fitWidth="200.0" preserveRatio="true" />
                   <StackPane fx:id="coverImageContainer">
                      <children>
-                        <ImageView fx:id="coverImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+                        <ImageView fx:id="coverBackground" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+                        <StackPane fx:id="coverFilter" style="-fx-background-color: rgba(0,0,0,0.5);">
+                           <children>
+                              <StackPane fx:id="coverImageWrapper">
+                                 <children>
+                                    <ImageView fx:id="coverImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                                 </children>
+                              </StackPane>
+                           </children></StackPane>
                      </children>
                   </StackPane>
                </children>

@@ -228,7 +228,7 @@ public class SettingsController {
 
         if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()){
             mainController.sliderHoverLabel.label.setVisible(true);
-            if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+            if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
         }
 
     }

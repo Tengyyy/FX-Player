@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
 import javafx.animation.Animation;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
@@ -276,14 +277,26 @@ public class QueueItem extends GridPane implements MenuObject {
 
         this.setViewOrder(1);
 
+        Platform.runLater(() -> {
+            this.setOnMouseEntered((e) -> {
+                mouseHover = true;
 
-        this.setOnMouseEntered((e) -> {
-            mouseHover = true;
+                this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
+                indexLabel.setVisible(false);
+                playIcon.setVisible(true);
 
-            this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
-            indexLabel.setVisible(false);
-            playIcon.setVisible(true);
+            });
 
+            this.setOnMouseExited((e) -> {
+                mouseHover = false;
+
+                if(!queueBox.dragActive && menuItemContextMenu != null && !menuItemContextMenu.showing){
+                    this.setStyle("-fx-background-color: transparent;");
+
+                    indexLabel.setVisible(true);
+                    playIcon.setVisible(false);
+                }
+            });
         });
 
         this.addEventHandler(DragEvent.DRAG_OVER, e -> {
@@ -328,19 +341,6 @@ public class QueueItem extends GridPane implements MenuObject {
             this.startFullDrag();
         });
 
-
-
-        this.setOnMouseExited((e) -> {
-            mouseHover = false;
-
-            if(!queueBox.dragActive && menuItemContextMenu != null && !menuItemContextMenu.showing){
-                this.setStyle("-fx-background-color: transparent;");
-
-                indexLabel.setVisible(true);
-                playIcon.setVisible(false);
-            }
-        });
-
         optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, optionsButton, 0, 1, false, 1, true));
 
         optionsButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, optionsButton, 1, 0, false, 1, true));
@@ -358,6 +358,7 @@ public class QueueItem extends GridPane implements MenuObject {
 
 
     private void applyMediaItem(){
+        if(mediaItem == null) return;
         if(mediaItem.getCover() != null) {
             coverImage.setImage(mediaItem.getCover());
             imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");

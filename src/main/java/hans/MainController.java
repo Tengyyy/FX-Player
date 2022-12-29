@@ -460,12 +460,13 @@ public class MainController implements Initializable {
         coverImageContainer.setVisible(false);
         coverImageContainer.setMouseTransparent(true);
         coverImageContainer.setStyle("-fx-background-color: black;");
+        coverImageContainer.setMinHeight(0);
 
 
         coverBackground.fitWidthProperty().bind(videoImageViewWrapper.widthProperty());
         coverBackground.fitHeightProperty().bind(videoImageViewWrapper.heightProperty());
         coverBackground.setPreserveRatio(false);
-        coverBackground.setEffect(new GaussianBlur(60));
+        coverBackground.setEffect(new GaussianBlur(100));
 
 
         Rectangle rectangle = new Rectangle();
@@ -820,12 +821,17 @@ public class MainController implements Initializable {
         coverImageContainer.setVisible(true);
 
         if(miniplayerActive){
-            miniplayer.miniplayerController.coverImageView.fitWidthProperty().bind(Bindings.min(width *2, miniplayer.miniplayerController.videoImageViewWrapper.widthProperty().multiply(0.7)));
-            miniplayer.miniplayerController.coverImageView.fitHeightProperty().bind(Bindings.min(height * 2, miniplayer.miniplayerController.videoImageViewWrapper.heightProperty().multiply(0.7)));
 
-            miniplayer.miniplayerController.coverImageView.setImage(image);
-            //if(activeItem.getMediaItem().hasCover()) miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
-            //else miniplayer.miniplayerController.coverImageContainer.setStyle("-fx-background-color: black;");
+            if(activeItem.getMediaItem().hasCover()){
+                miniplayer.miniplayerController.coverBackground.setImage(image);
+            }
+            else {
+                miniplayer.miniplayerController.coverBackground.setImage(null);
+            }
+
+            miniplayer.miniplayerController.coverImage.fitWidthProperty().bind(Bindings.min(width*2, Bindings.min(miniplayer.miniplayerController.videoImageViewWrapper.widthProperty().multiply(0.7), miniplayer.miniplayerController.videoImageViewWrapper.heightProperty().multiply(0.7).multiply(ratio))));
+            miniplayer.miniplayerController.coverImage.fitHeightProperty().bind(Bindings.min(height*2, miniplayer.miniplayerController.coverImage.fitWidthProperty().divide(ratio)));
+            miniplayer.miniplayerController.coverImage.setImage(image);
 
             miniplayer.miniplayerController.coverImageContainer.setVisible(true);
         }

@@ -235,15 +235,15 @@ public class TechnicalDetailsPage {
         }
         if(map.containsKey("size")) createItem("File size:", map.get("size"));
         if(map.containsKey("modified")) createItem("Last modified:", map.get("modified"));
+        if(map.containsKey("format")) createItem("Format:", map.get("format"));
 
     }
 
     private void createVideoSection(Map<String, String> map){
         createTitle("Video");
 
-        if(map.containsKey("duration")) createItem("Duration:", map.get("duration"));
-        if(map.containsKey("format")) createItem("Format:", map.get("format"));
-
+        if(map.containsKey("videoDuration")) createItem("Duration:", map.get("videoDuration"));
+        else if(map.containsKey("duration")) createItem("Duration:", map.get("duration"));
         if(map.containsKey("videoCodec")) createItem("Codec:", map.get("videoCodec"));
         if(map.containsKey("frameRate")) createItem("Frame rate:", map.get("frameRate"));
         if(map.containsKey("resolution")) createItem("Resolution:", map.get("resolution"));
@@ -252,11 +252,10 @@ public class TechnicalDetailsPage {
 
     private void createAudioSection(Map<String, String> map){
         createTitle("Audio");
-        if(!map.containsKey("hasVideo") || Objects.equals(map.get("hasVideo"), "false")){
-            if(map.containsKey("duration")) createItem("Duration:", map.get("duration"));
-            if(map.containsKey("format")) createItem("Format:", map.get("format"));
+        if(map.containsKey("audioDuration")) createItem("Duration:", map.get("audioDuration"));
+        else if((!map.containsKey("hasVideo") || Objects.equals(map.get("hasVideo"), "false")) && map.containsKey("duration")){
+            createItem("Duration:", map.get("duration"));
         }
-
         if(map.containsKey("audioCodec")) createItem("Codec:", map.get("audioCodec"));
         if(map.containsKey("audioBitrate")) createItem("Bitrate:", map.get("audioBitrate"));
         if(map.containsKey("audioBitDepth")) createItem("Bit depth", map.get("audioBitDepth"));

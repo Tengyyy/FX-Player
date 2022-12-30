@@ -115,11 +115,6 @@ public class WavItem implements MediaItem {
     }
 
     @Override
-    public float getFrameDuration() {
-        return 0;
-    }
-
-    @Override
     public Map<String, String> getMediaInformation() {
         return mediaInformation;
     }

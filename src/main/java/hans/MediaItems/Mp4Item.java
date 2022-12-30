@@ -3,9 +3,12 @@ package hans.MediaItems;
 import com.github.kokorin.jaffree.LogLevel;
 import com.github.kokorin.jaffree.Rational;
 import com.github.kokorin.jaffree.StreamType;
-import com.github.kokorin.jaffree.ffmpeg.*;
+import com.github.kokorin.jaffree.ffmpeg.FFmpeg;
+import com.github.kokorin.jaffree.ffmpeg.FFmpegResult;
 import com.github.kokorin.jaffree.ffmpeg.UrlInput;
-import com.github.kokorin.jaffree.ffprobe.*;
+import com.github.kokorin.jaffree.ffmpeg.UrlOutput;
+import com.github.kokorin.jaffree.ffprobe.FFprobe;
+import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import com.github.kokorin.jaffree.ffprobe.Stream;
 import hans.MainController;
 import hans.Utilities;
@@ -14,8 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -25,8 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 
 public class Mp4Item implements MediaItem {
-
-    File file;
 
     Color backgroundColor = null;
 
@@ -60,10 +61,14 @@ public class Mp4Item implements MediaItem {
     FFprobeResult probeResult = null;
 
     int numberOfNonPictureVideoStreams = 0;
+    int numberOfAttachmentStreams = 0;
+
+    File file;
 
     public Mp4Item(File file, MainController mainController) {
         this.file = file;
         this.mainController = mainController;
+
 
         log = Utilities.parseLog(Utilities.getLog(file.getAbsolutePath()));
 
@@ -71,7 +76,7 @@ public class Mp4Item implements MediaItem {
                 .setShowStreams(true)
                 .setShowFormat(true)
                 .setInput(file.getAbsolutePath())
-                .setLogLevel(LogLevel.VERBOSE)
+                .setLogLevel(LogLevel.INFO)
                 .execute();
 
         Pair<Boolean, Image> pair = MediaUtilities.getCover(probeResult, file);
@@ -99,6 +104,9 @@ public class Mp4Item implements MediaItem {
             else if(stream.getCodecType() == StreamType.AUDIO){
                 if(firstAudioStreamIndex == -1) firstAudioStreamIndex  = stream.getIndex();
             }
+            else if(stream.getCodecType() == StreamType.ATTACHMENT){
+                numberOfAttachmentStreams++;
+            }
         }
 
         if(videoStream == null && firstVideoStreamIndex != -1) videoStream = probeResult.getStreams().get(firstVideoStreamIndex);
@@ -113,7 +121,12 @@ public class Mp4Item implements MediaItem {
             this.width = videoStream.getWidth();
             this.height = videoStream.getHeight();
 
-            duration = Duration.seconds(videoStream.getDuration(TimeUnit.SECONDS));
+            Long durationLong = videoStream.getDuration(TimeUnit.SECONDS);
+            if(durationLong != null){
+                duration = Duration.seconds(durationLong);
+                mediaDetails.put("videoDuration", Utilities.getTime(duration));
+            }
+
             Rational rational = videoStream.getAvgFrameRate();
             if(rational != null) mediaDetails.put("frameRate", rational.intValue() + " fps");
             Long bitrate = videoStream.getBitRate();
@@ -121,16 +134,26 @@ public class Mp4Item implements MediaItem {
             if(videoStream.getWidth() != null && videoStream.getHeight() != null) mediaDetails.put("resolution", this.width + "x" + this.height);
             String videoCodec = videoStream.getCodecName();
             if(videoCodec != null) mediaDetails.put("videoCodec", videoCodec);
-            if(probeResult.getFormat() != null) mediaDetails.put("format", probeResult.getFormat().getFormatName());
+            String formatName = probeResult.getFormat().getFormatName();
+            if(formatName != null) mediaDetails.put("format", formatName);
         }
 
         if(audioStream != null){
-            if(duration == null) duration = Duration.seconds(audioStream.getDuration(TimeUnit.SECONDS));
+            Long durationLong = audioStream.getDuration(TimeUnit.SECONDS);
+            if(durationLong != null){
+                Duration audioDuration = Duration.seconds(durationLong);
+                if(duration == null || durationLong > duration.toSeconds()) duration = audioDuration;
+                mediaDetails.put("audioDuration", Utilities.getTime(audioDuration));
+            }
+
             Integer channels = audioStream.getChannels();
             if(channels != null){
                 audioChannels = channels;
                 String channelLayout = audioStream.getChannelLayout();
-                if(channelLayout != null) mediaDetails.put("audioChannels", audioChannels + " (" + channelLayout + ")");
+                if(channelLayout != null){
+                    if(Character.isDigit(channelLayout.charAt(0))) mediaDetails.put("audioChannels", channelLayout);
+                    else mediaDetails.put("audioChannels", audioChannels + " (" + channelLayout + ")");
+                }
                 else mediaDetails.put("audioChannels", String.valueOf(audioChannels));
             }
 
@@ -143,6 +166,16 @@ public class Mp4Item implements MediaItem {
 
             Integer sampleRate = audioStream.getSampleRate();
             if(sampleRate != null) mediaDetails.put("sampleRate", NumberFormat.getInstance().format(sampleRate) + " Hz");
+
+            if(videoStream == null){
+                String formatName = probeResult.getFormat().getFormatName();
+                if(formatName != null) mediaDetails.put("format", formatName);
+            }
+        }
+
+        if(duration == null){
+            Float durationFloat = probeResult.getFormat().getDuration();
+            if(durationFloat != null) this.duration = Duration.seconds(durationFloat);
         }
 
         mediaDetails.put("size", Utilities.formatFileSize(file.length()));
@@ -151,13 +184,23 @@ public class Mp4Item implements MediaItem {
         mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
         mediaDetails.put("hasVideo", String.valueOf(videoStream != null));
         mediaDetails.put("hasAudio", String.valueOf(audioStream != null));
-        mediaDetails.put("duration", Utilities.getTime(duration));
+        if(duration != null) mediaDetails.put("duration", Utilities.getTime(duration));
 
         //mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
 
-        if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm()));
-        else if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("21")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm()));
-        else placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm()));
+        String extension = Utilities.getFileExtension(this.file);
+
+        if(extension.equals("mp4") || extension.equals("mov")){
+            if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6")) placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm());
+            else if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("21")) placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm());
+            else placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm());
+        }
+        else if(extension.equals("mkv") || extension.equals("flv") || extension.equals("avi")){
+            placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm());
+        }
+        else {
+            placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm());
+        }
     }
 
     public Mp4Item(Mp4Item mp4Item, MainController mainController){
@@ -172,6 +215,9 @@ public class Mp4Item implements MediaItem {
         mediaInformation = mp4Item.getMediaInformation();
         mediaDetails = mp4Item.getMediaDetails();
         hasVideo = mp4Item.hasVideo();
+        hasAudio = mp4Item.hasAudio();
+        log = mp4Item.getLog();
+        probeResult = mp4Item.getProbeResult();
     }
 
 
@@ -187,6 +233,10 @@ public class Mp4Item implements MediaItem {
 
     public boolean hasAudio(){
         return hasAudio;
+    }
+
+    public FFprobeResult getProbeResult(){
+        return probeResult;
     }
 
     @Override
@@ -211,11 +261,6 @@ public class Mp4Item implements MediaItem {
 
 
     @Override
-    public float getFrameDuration() {
-        return 0;
-    }
-
-    @Override
     public Map<String, String> getMediaInformation() {
         return mediaInformation;
     }
@@ -223,72 +268,14 @@ public class Mp4Item implements MediaItem {
     @Override
     public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
 
+        boolean metadataEditSuccess = false;
+
         if(updateFile){
-            FFmpeg fFmpeg = FFmpeg.atPath()
-                    .addInput(UrlInput.fromUrl(file.getAbsolutePath()));
 
-            if(newCover != null || coverRemoved){
-                if(newCover != null){
-                    fFmpeg.addInput(UrlInput.fromUrl(newCover.getAbsolutePath()));
-                }
-                fFmpeg.addArguments("-map", "0:V?")
-                        .addArguments("-map", "0:a?")
-                        .addArguments("-map", "0:s?");
+            boolean success = MediaUtilities.updateMetadata(file, map, hasCover, cover, newCover, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration);
 
-                if(newCover != null){
-                    fFmpeg.addArguments("-map", "1");
-                }
-            }
-            else {
-                fFmpeg.addArguments("-map", "0");
-            }
-
-            fFmpeg.addArguments("-map_metadata:g", "-1");
-
-            if(!map.isEmpty()){
-                for(Map.Entry<String, String> entry : map.entrySet()){
-                    fFmpeg.addArguments("-metadata", entry.getKey() + "=" + entry.getValue());
-                }
-            }
-
-            fFmpeg.addArguments("-c", "copy")
-                            .addArguments("-movflags", "faststart");
-
-
-            if(newCover != null){
-                fFmpeg.addArguments("-c:v:" + numberOfNonPictureVideoStreams, "png");
-                fFmpeg.addArguments("-disposition:v:" + numberOfNonPictureVideoStreams, "attached_pic");
-            }
-
-            if(this.duration != null){
-                fFmpeg.setProgressListener(progress -> {
-                    double percentage = 100. * progress.getTimeMillis() / duration.toMillis();
-                    System.out.println("Progress: " + percentage + "%");
-                });
-            }
-
-            String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".mp4";
-
-            fFmpeg.addOutput(UrlOutput.toUrl(outputPath));
-            FFmpegResult fFmpegResult = fFmpeg.execute();
-            System.out.println(fFmpegResult.getVideoSize());
-
-
-            try {
-
-
+            if(success){
                 //overwrite curr file with new file
-
-                /*boolean deleteSuccess = file.delete();
-                if(deleteSuccess){
-                    File tempFile = new File(outputPath);
-                    boolean renameSuccess = tempFile.renameTo(file);
-                    if(!renameSuccess){
-                        throw new IOException("Failed to rename new file");
-                    }
-                }
-                else throw new IOException("Failed to delete old file");*/
-
 
                 mediaDetails.put("size", Utilities.formatFileSize(file.length()));
                 mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
@@ -300,36 +287,34 @@ public class Mp4Item implements MediaItem {
                 }
                 else if(coverRemoved){
                     hasCover = false;
-                    cover = Utilities.grabMiddleFrame(file);
+                    if(hasVideo) cover = Utilities.grabMiddleFrame(file);
                     if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
                     else backgroundColor = null;
                 }
 
-                switch (map.getOrDefault("media_type", null)) {
-                    case "6" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm()));
-                    case "21" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm()));
-                    default -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm()));
+                String extension = Utilities.getFileExtension(file);
+                if(extension.equals("mp4") || extension.equals("mov")){
+                    switch (map.getOrDefault("media_type", null)) {
+                        case "6" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm()));
+                        case "21" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm()));
+                        default -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm()));
+                    }
                 }
 
-
                 mediaInformation = map;
-                return true;
-
-
-
-            } finally {
-                newCover = null;
-                newColor = null;
-                coverRemoved = false;
+                metadataEditSuccess = true;
             }
         }
         else {
-            newCover = null;
-            newColor = null;
-            coverRemoved = false;
             mediaInformation = map;
-            return true;
+            metadataEditSuccess = true;
         }
+
+        newCover = null;
+        newColor = null;
+        coverRemoved = false;
+
+        return metadataEditSuccess;
     }
 
     @Override

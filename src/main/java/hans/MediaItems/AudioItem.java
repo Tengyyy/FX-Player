@@ -126,10 +126,6 @@ public class AudioItem implements MediaItem {
         mediaDetails = audioItem.getMediaDetails();
     }
 
-    @Override
-    public float getFrameDuration() {
-        return 0;
-    }
 
     @Override
     public Map<String, String> getMediaInformation() {

@@ -3,8 +3,8 @@ package hans.Menu.MetadataEdit;
 import com.jfoenix.controls.JFXButton;
 import hans.App;
 import hans.MediaItems.MediaItem;
-import hans.MediaItems.MkvItem;
 import hans.SVG;
+import hans.Utilities;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Region;
@@ -69,7 +69,7 @@ public class OtherEditItem implements MetadataEditItem{
         content.getChildren().add(addButton);
 
         if(metadata != null) {
-            titleItem = new TextAreaItem(metadataEditPage, mediaItem instanceof MkvItem ? "TITLE" : "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
+            titleItem = new TextAreaItem(metadataEditPage, Utilities.getFileExtension(mediaItem.getFile()).equals("mkv") ? "TITLE" : "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
 
             content.getChildren().add(0, titleItem);
 

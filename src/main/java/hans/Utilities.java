@@ -111,26 +111,18 @@ public class Utilities {
 
     public static MediaItem createMediaItem(File file, MainController mainController){
         return switch (Utilities.getFileExtension(file)) {
-            case "mp4" -> new Mp4Item(file, mainController);
+            case "mp4", "mov", "mkv", "avi", "flv" -> new Mp4Item(file, mainController);
             case "mp3", "flac" -> new AudioItem(file, mainController);
             case "wav" -> new WavItem(file, mainController);
-            case "avi" -> new AviItem(file, mainController);
-            case "mkv" -> new MkvItem(file, mainController);
-            case "flv" -> new FlvItem(file, mainController);
-            case "mov" -> new MovItem(file, mainController);
             default -> null;
         };
     }
 
     public static MediaItem copyMediaItem(MediaItem mediaItem, MainController mainController){
         return switch (Utilities.getFileExtension(mediaItem.getFile())) {
-            case "mp4" -> new Mp4Item((Mp4Item) mediaItem, mainController);
+            case "mp4", "mov", "mkv", "avi", "flv" -> new Mp4Item((Mp4Item) mediaItem, mainController);
             case "mp3", "flac" -> new AudioItem((AudioItem) mediaItem, mainController);
             case "wav" -> new WavItem((WavItem) mediaItem, mainController);
-            case "avi" -> new AviItem((AviItem) mediaItem, mainController);
-            case "mkv" -> new MkvItem((MkvItem) mediaItem, mainController);
-            case "flv" -> new FlvItem((FlvItem) mediaItem, mainController);
-            case "mov" -> new MovItem((MovItem) mediaItem, mainController);
             default -> null;
         };
     }
@@ -210,6 +202,7 @@ public class Utilities {
 
     public static Image grabMiddleFrame(File file){
 
+        //TODO: replace with jaffree equivalent method
 
         FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
 

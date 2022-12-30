@@ -13,8 +13,6 @@ import java.util.Map;
 public interface MediaItem {
 
 
-    float getFrameDuration();
-
     Map<String, String> getMediaInformation();
 
     boolean setMediaInformation(Map<String, String> map, boolean updateFile);

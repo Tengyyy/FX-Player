@@ -4,7 +4,6 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.AudioItem;
 import hans.MediaItems.MediaItem;
-import hans.MediaItems.MovItem;
 import hans.MediaItems.Mp4Item;
 import hans.Menu.*;
 import javafx.application.Platform;
@@ -420,7 +419,7 @@ public class MetadataEditPage {
             for(MenuObject duplicate : duplicates){
                 duplicate.getMediaItem().setMediaInformation(mediaInformation, false);
                 duplicate.getMediaItem().setMediaDetails(menuObject.getMediaItem().getMediaDetails());
-                if(mediaItem instanceof Mp4Item || mediaItem instanceof MovItem){
+                if(mediaItem instanceof Mp4Item){
                     duplicate.getMediaItem().setPlaceHolderCover(menuObject.getMediaItem().getPlaceholderCover());
                 }
 

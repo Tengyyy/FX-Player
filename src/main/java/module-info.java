@@ -15,6 +15,7 @@ module hans {
     requires org.bytedeco.ffmpeg;
     requires com.sun.jna.platform;
     requires java.logging;
+    requires jaffree;
 
     opens hans to javafx.graphics, javafx.fxml;
     exports hans;

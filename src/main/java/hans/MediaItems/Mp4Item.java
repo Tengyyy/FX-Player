@@ -1,23 +1,27 @@
 package hans.MediaItems;
 
+import com.github.kokorin.jaffree.LogLevel;
+import com.github.kokorin.jaffree.Rational;
+import com.github.kokorin.jaffree.StreamType;
+import com.github.kokorin.jaffree.ffmpeg.*;
+import com.github.kokorin.jaffree.ffmpeg.UrlInput;
+import com.github.kokorin.jaffree.ffprobe.*;
+import com.github.kokorin.jaffree.ffprobe.Stream;
 import hans.MainController;
 import hans.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import org.bytedeco.javacpp.Loader;
-import org.bytedeco.javacv.*;
+import javafx.util.Pair;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
-import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_ATTACHED_PIC;
-import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_DEFAULT;
 
 
 public class Mp4Item implements MediaItem {
@@ -26,10 +30,11 @@ public class Mp4Item implements MediaItem {
 
     Color backgroundColor = null;
 
-    Duration duration;
+    Duration duration = null;
 
-    boolean hasVideo;
-    boolean hasCover;
+    boolean hasVideo = false;
+    boolean hasAudio = false;
+    boolean hasCover = false;
 
     MainController mainController;
 
@@ -37,8 +42,8 @@ public class Mp4Item implements MediaItem {
     Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     Map<String, String> mediaDetails = new HashMap<>();
 
-    Image cover;
-    Image placeholderCover;
+    Image cover = null;
+    Image placeholderCover = null;
 
     File newCover = null;
     Color newColor = null;
@@ -49,7 +54,12 @@ public class Mp4Item implements MediaItem {
     int height = 0;
     int audioChannels = 0;
 
+
     Map<String, ArrayList<Map<String, String>>> log;
+
+    FFprobeResult probeResult = null;
+
+    int numberOfNonPictureVideoStreams = 0;
 
     public Mp4Item(File file, MainController mainController) {
         this.file = file;
@@ -57,76 +67,97 @@ public class Mp4Item implements MediaItem {
 
         log = Utilities.parseLog(Utilities.getLog(file.getAbsolutePath()));
 
-        try {
-            FFmpegFrameGrabber fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+        probeResult = FFprobe.atPath()
+                .setShowStreams(true)
+                .setShowFormat(true)
+                .setInput(file.getAbsolutePath())
+                .setLogLevel(LogLevel.VERBOSE)
+                .execute();
 
-            fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_ATTACHED_PIC);
-            fFmpegFrameGrabber.start();
+        Pair<Boolean, Image> pair = MediaUtilities.getCover(probeResult, file);
+        this.cover = pair.getValue();
+        this.hasCover = pair.getKey();
 
-            if(fFmpegFrameGrabber.getVideoStream() != 0){
-                Frame frame = fFmpegFrameGrabber.grabImage();
-                JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
-                if(frame != null) cover = javaFXFrameConverter.convert(frame);
+        Stream videoStream = null;
+        Stream audioStream = null;
+
+        int firstVideoStreamIndex = -1;
+        int firstAudioStreamIndex = -1;
+
+        for(Stream stream : probeResult.getStreams()){
+            if(stream.getCodecType() == StreamType.VIDEO && stream.getDisposition().getDefault() == 1 && stream.getDisposition().getAttachedPic() == 0){
+                videoStream = stream;
+                numberOfNonPictureVideoStreams++;
             }
-
-            fFmpegFrameGrabber.stop();
-
-            fFmpegFrameGrabber.setVideoStream(0);
-            fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
-
-            fFmpegFrameGrabber.start();
-
-            hasVideo = fFmpegFrameGrabber.hasVideo();
-
-            hasCover = cover != null;
-            if(!hasCover && hasVideo) cover = Utilities.grabMiddleFrame(file);
-            if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
-
-
-            if(fFmpegFrameGrabber.hasVideo()){
-                width = fFmpegFrameGrabber.getImageWidth();
-                height = fFmpegFrameGrabber.getImageHeight();
-                duration = Duration.seconds(fFmpegFrameGrabber.getLengthInFrames() / fFmpegFrameGrabber.getFrameRate());
+            else if(stream.getCodecType() == StreamType.AUDIO && stream.getDisposition().getDefault() == 1){
+                audioStream = stream;
             }
-            else duration = Duration.seconds(fFmpegFrameGrabber.getLengthInAudioFrames() / fFmpegFrameGrabber.getAudioFrameRate());
-
-
-            mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
-
-            mediaDetails.put("size", Utilities.formatFileSize(file.length()));
-            mediaDetails.put("name", file.getName());
-            mediaDetails.put("path", file.getAbsolutePath());
-            mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
-            mediaDetails.put("hasVideo", String.valueOf(fFmpegFrameGrabber.hasVideo()));
-            mediaDetails.put("hasAudio", String.valueOf(fFmpegFrameGrabber.hasAudio()));
-            if(fFmpegFrameGrabber.hasAudio()){
-                audioChannels = fFmpegFrameGrabber.getAudioChannels();
-                if(fFmpegFrameGrabber.getAudioChannels() == 2) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (stereo)");
-                else if(fFmpegFrameGrabber.getAudioChannels() == 6) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (5.1 surround sound)");
-                else if(fFmpegFrameGrabber.getAudioChannels() == 8) mediaDetails.put("audioChannels", fFmpegFrameGrabber.getAudioChannels() + " (7.1 surround sound)");
-                else mediaDetails.put("audioChannels", String.valueOf(fFmpegFrameGrabber.getAudioChannels()));
+            else if(stream.getCodecType() == StreamType.VIDEO && stream.getDisposition().getAttachedPic() == 0){
+                if(firstVideoStreamIndex == -1) firstVideoStreamIndex  = stream.getIndex();
+                numberOfNonPictureVideoStreams++;
             }
-            if(fFmpegFrameGrabber.getAudioCodecName() != null) mediaDetails.put("audioCodec", fFmpegFrameGrabber.getAudioCodecName());
-            if(fFmpegFrameGrabber.hasAudio() && fFmpegFrameGrabber.getAudioBitrate() != 0) mediaDetails.put("audioBitrate", Utilities.formatBitrate(fFmpegFrameGrabber.getAudioBitrate()));
-            mediaDetails.put("duration", Utilities.getTime(duration));
-            mediaDetails.put("format", fFmpegFrameGrabber.getFormat());
-            if(fFmpegFrameGrabber.hasAudio()) mediaDetails.put("sampleRate", NumberFormat.getInstance().format(fFmpegFrameGrabber.getSampleRate()) + " Hz");
-            if(fFmpegFrameGrabber.getVideoCodecName() != null) mediaDetails.put("videoCodec", fFmpegFrameGrabber.getVideoCodecName());
-            if(fFmpegFrameGrabber.hasVideo() && fFmpegFrameGrabber.getVideoBitrate() != 0) mediaDetails.put("videoBitrate", Utilities.formatBitrate(fFmpegFrameGrabber.getVideoBitrate()));
-            mediaDetails.put("frameRate", Math.round(fFmpegFrameGrabber.getFrameRate()) + " fps");
-            if(fFmpegFrameGrabber.hasVideo()) mediaDetails.put("resolution", fFmpegFrameGrabber.getImageWidth() + "×" + fFmpegFrameGrabber.getImageHeight());
-
-            fFmpegFrameGrabber.stop();
-            fFmpegFrameGrabber.close();
-
-            if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm()));
-            else if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("21")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm()));
-            else placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm()));
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            else if(stream.getCodecType() == StreamType.AUDIO){
+                if(firstAudioStreamIndex == -1) firstAudioStreamIndex  = stream.getIndex();
+            }
         }
+
+        if(videoStream == null && firstVideoStreamIndex != -1) videoStream = probeResult.getStreams().get(firstVideoStreamIndex);
+        if(audioStream == null && firstAudioStreamIndex != -1) audioStream = probeResult.getStreams().get(firstAudioStreamIndex);
+
+        hasVideo = videoStream != null;
+        hasAudio = audioStream != null;
+
+        if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+
+        if(videoStream != null){
+            this.width = videoStream.getWidth();
+            this.height = videoStream.getHeight();
+
+            duration = Duration.seconds(videoStream.getDuration(TimeUnit.SECONDS));
+            Rational rational = videoStream.getAvgFrameRate();
+            if(rational != null) mediaDetails.put("frameRate", rational.intValue() + " fps");
+            Long bitrate = videoStream.getBitRate();
+            if(bitrate != null) mediaDetails.put("videoBitrate", Utilities.formatBitrate(bitrate));
+            if(videoStream.getWidth() != null && videoStream.getHeight() != null) mediaDetails.put("resolution", this.width + "x" + this.height);
+            String videoCodec = videoStream.getCodecName();
+            if(videoCodec != null) mediaDetails.put("videoCodec", videoCodec);
+            if(probeResult.getFormat() != null) mediaDetails.put("format", probeResult.getFormat().getFormatName());
+        }
+
+        if(audioStream != null){
+            if(duration == null) duration = Duration.seconds(audioStream.getDuration(TimeUnit.SECONDS));
+            Integer channels = audioStream.getChannels();
+            if(channels != null){
+                audioChannels = channels;
+                String channelLayout = audioStream.getChannelLayout();
+                if(channelLayout != null) mediaDetails.put("audioChannels", audioChannels + " (" + channelLayout + ")");
+                else mediaDetails.put("audioChannels", String.valueOf(audioChannels));
+            }
+
+
+            String audioCodec = audioStream.getCodecName();
+            if(audioCodec != null) mediaDetails.put("audioCodec", audioCodec);
+
+            Long bitrate = audioStream.getBitRate();
+            if(bitrate != null) mediaDetails.put("audioBitrate", Utilities.formatBitrate(bitrate));
+
+            Integer sampleRate = audioStream.getSampleRate();
+            if(sampleRate != null) mediaDetails.put("sampleRate", NumberFormat.getInstance().format(sampleRate) + " Hz");
+        }
+
+        mediaDetails.put("size", Utilities.formatFileSize(file.length()));
+        mediaDetails.put("name", file.getName());
+        mediaDetails.put("path", file.getAbsolutePath());
+        mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
+        mediaDetails.put("hasVideo", String.valueOf(videoStream != null));
+        mediaDetails.put("hasAudio", String.valueOf(audioStream != null));
+        mediaDetails.put("duration", Utilities.getTime(duration));
+
+        //mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
+
+        if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm()));
+        else if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("21")) placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm()));
+        else placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm()));
     }
 
     public Mp4Item(Mp4Item mp4Item, MainController mainController){
@@ -152,6 +183,10 @@ public class Mp4Item implements MediaItem {
     @Override
     public boolean hasVideo() {
         return hasVideo;
+    }
+
+    public boolean hasAudio(){
+        return hasAudio;
     }
 
     @Override
@@ -189,82 +224,62 @@ public class Mp4Item implements MediaItem {
     public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
 
         if(updateFile){
-            ArrayList<String> arguments = new ArrayList<>();
-            String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+            FFmpeg fFmpeg = FFmpeg.atPath()
+                    .addInput(UrlInput.fromUrl(file.getAbsolutePath()));
 
-            arguments.add(ffmpeg);
-            arguments.add("-i");
-            arguments.add(file.getAbsolutePath());
             if(newCover != null || coverRemoved){
                 if(newCover != null){
-                    arguments.add("-i");
-                    arguments.add(newCover.getAbsolutePath());
+                    fFmpeg.addInput(UrlInput.fromUrl(newCover.getAbsolutePath()));
                 }
-
-                arguments.add("-map");
-                arguments.add("0:V?");
-                arguments.add("-map");
-                arguments.add("0:a?");
-                arguments.add("-map");
-                arguments.add("0:s?");
+                fFmpeg.addArguments("-map", "0:V?")
+                        .addArguments("-map", "0:a?")
+                        .addArguments("-map", "0:s?");
 
                 if(newCover != null){
-                    arguments.add("-map");
-                    arguments.add("1");
+                    fFmpeg.addArguments("-map", "1");
                 }
             }
             else {
-                arguments.add("-map");
-                arguments.add("0");
+                fFmpeg.addArguments("-map", "0");
             }
-            arguments.add("-map_metadata:g");
-            arguments.add("-1");
+
+            fFmpeg.addArguments("-map_metadata:g", "-1");
+
             if(!map.isEmpty()){
                 for(Map.Entry<String, String> entry : map.entrySet()){
-                    arguments.add("-metadata");
-                    arguments.add(entry.getKey() + "=" + entry.getValue());
+                    fFmpeg.addArguments("-metadata", entry.getKey() + "=" + entry.getValue());
                 }
             }
-            arguments.add("-c");
-            arguments.add("copy");
-            arguments.add("-movflags");
-            arguments.add("faststart");
+
+            fFmpeg.addArguments("-c", "copy")
+                            .addArguments("-movflags", "faststart");
+
+
             if(newCover != null){
-                arguments.add("-c:v:1");
-                arguments.add("png");
-                arguments.add("-disposition:v:1");
-                arguments.add("attached_pic");
+                fFmpeg.addArguments("-c:v:" + numberOfNonPictureVideoStreams, "png");
+                fFmpeg.addArguments("-disposition:v:" + numberOfNonPictureVideoStreams, "attached_pic");
+            }
+
+            if(this.duration != null){
+                fFmpeg.setProgressListener(progress -> {
+                    double percentage = 100. * progress.getTimeMillis() / duration.toMillis();
+                    System.out.println("Progress: " + percentage + "%");
+                });
             }
 
             String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".mp4";
 
-            arguments.add(outputPath);
+            fFmpeg.addOutput(UrlOutput.toUrl(outputPath));
+            FFmpegResult fFmpegResult = fFmpeg.execute();
+            System.out.println(fFmpegResult.getVideoSize());
+
 
             try {
-                Process process = new ProcessBuilder(arguments).redirectErrorStream(true).start();
-                StringBuilder strBuild = new StringBuilder();
-
-                BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()));
-                String line;
-                while ((line = processOutputReader.readLine()) != null) {
-                    strBuild.append(line).append(System.lineSeparator());
-                }
-                process.waitFor();
-                String output = strBuild.toString().trim();
-                System.out.println(output);
-
-                // parse string and find out if metadata edit was successful or not
-                if(output.endsWith("Invalid argument") || output.endsWith("Conversion failed!") || output.endsWith("Error splitting the argument list: Option not found")){
-                    //TODO: delete the empty filed that was created
-                    System.out.println("Metadata update failed");
-                    return false;
-                }
-
 
 
                 //overwrite curr file with new file
 
-                boolean deleteSuccess = file.delete();
+                /*boolean deleteSuccess = file.delete();
                 if(deleteSuccess){
                     File tempFile = new File(outputPath);
                     boolean renameSuccess = tempFile.renameTo(file);
@@ -272,7 +287,7 @@ public class Mp4Item implements MediaItem {
                         throw new IOException("Failed to rename new file");
                     }
                 }
-                else throw new IOException("Failed to delete old file");
+                else throw new IOException("Failed to delete old file");*/
 
 
                 mediaDetails.put("size", Utilities.formatFileSize(file.length()));
@@ -291,9 +306,9 @@ public class Mp4Item implements MediaItem {
                 }
 
                 switch (map.getOrDefault("media_type", null)) {
-                    case "6" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/musicGraphic.png")).toExternalForm()));
-                    case "21" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcastGraphic.png")).toExternalForm()));
-                    default -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/videoGraphic.png")).toExternalForm()));
+                    case "6" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm()));
+                    case "21" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm()));
+                    default -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm()));
                 }
 
 
@@ -302,11 +317,7 @@ public class Mp4Item implements MediaItem {
 
 
 
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-            finally {
+            } finally {
                 newCover = null;
                 newColor = null;
                 coverRemoved = false;

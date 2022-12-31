@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.AudioItem;
 import hans.MediaItems.MediaItem;
+import hans.MediaItems.MediaUtilities;
 import hans.MediaItems.Mp4Item;
 import hans.Menu.*;
 import javafx.application.Platform;
@@ -374,7 +375,7 @@ public class MetadataEditPage {
             newFile = selectedFile;
             imageView.setImage(newImage);
 
-            newColor = Utilities.findDominantColor(newImage);
+            newColor = MediaUtilities.findDominantColor(newImage);
             if(newColor != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + newColor.getRed() * 256 +  "," + newColor.getGreen() * 256 + "," + newColor.getBlue() * 256 + ",0.7);");
 
             changesMade.set(true);

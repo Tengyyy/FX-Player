@@ -65,6 +65,9 @@ public class Mp4Item implements MediaItem {
 
     File file;
 
+    Stream videoStream = null;
+    Stream audioStream = null;
+
     public Mp4Item(File file, MainController mainController) {
         this.file = file;
         this.mainController = mainController;
@@ -82,9 +85,6 @@ public class Mp4Item implements MediaItem {
         Pair<Boolean, Image> pair = MediaUtilities.getCover(probeResult, file);
         this.cover = pair.getValue();
         this.hasCover = pair.getKey();
-
-        Stream videoStream = null;
-        Stream audioStream = null;
 
         int firstVideoStreamIndex = -1;
         int firstAudioStreamIndex = -1;
@@ -115,7 +115,7 @@ public class Mp4Item implements MediaItem {
         hasVideo = videoStream != null;
         hasAudio = audioStream != null;
 
-        if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+        if(cover != null) backgroundColor = MediaUtilities.findDominantColor(cover);
 
         if(videoStream != null){
             this.width = videoStream.getWidth();
@@ -287,17 +287,24 @@ public class Mp4Item implements MediaItem {
                 }
                 else if(coverRemoved){
                     hasCover = false;
-                    if(hasVideo) cover = Utilities.grabMiddleFrame(file);
-                    if(cover != null) backgroundColor = Utilities.findDominantColor(cover);
+                    if(hasVideo){
+                        int videoStreamIndex = probeResult.getStreams().indexOf(this.videoStream);
+                        if(videoStreamIndex != -1){
+                            Long durationLong = videoStream.getDuration(TimeUnit.SECONDS);
+                            if(durationLong == null && this.duration != null) durationLong = (long) this.duration.toSeconds() ;
+                            if(durationLong != null) cover = MediaUtilities.getVideoFrame(file, videoStreamIndex, durationLong/2);
+                        }
+                        if(cover != null) backgroundColor = MediaUtilities.findDominantColor(cover);
+                    }
                     else backgroundColor = null;
                 }
 
                 String extension = Utilities.getFileExtension(file);
                 if(extension.equals("mp4") || extension.equals("mov")){
                     switch (map.getOrDefault("media_type", null)) {
-                        case "6" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm()));
-                        case "21" -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm()));
-                        default -> placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm()));
+                        case "6" -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm());
+                        case "21" -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm());
+                        default -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm());
                     }
                 }
 

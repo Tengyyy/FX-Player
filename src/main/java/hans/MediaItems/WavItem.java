@@ -94,7 +94,7 @@ public class WavItem implements MediaItem {
         hasCover = cover != null;
 
         if(cover != null){
-            backgroundColor = Utilities.findDominantColor(cover);
+            backgroundColor = MediaUtilities.findDominantColor(cover);
         }
 
         placeholderCover = new Image(Objects.requireNonNull(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm()));

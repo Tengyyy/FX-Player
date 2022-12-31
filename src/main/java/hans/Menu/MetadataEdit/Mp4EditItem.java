@@ -2,11 +2,13 @@ package hans.Menu.MetadataEdit;
 
 import hans.MediaItems.MediaItem;
 import hans.Utilities;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Mp4EditItem implements MetadataEditItem{
 
@@ -36,10 +38,18 @@ public class Mp4EditItem implements MetadataEditItem{
     String mediaType;
     Map<String, String> metadata;
 
+    Image podcastImage;
+    Image musicImage;
+    Image videoImage;
+
 
     Mp4EditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
         this.metadataEditPage = metadataEditPage;
         this.mediaItem = mediaItem;
+
+        podcastImage = new Image(Objects.requireNonNull(metadataEditPage.menuController.mainController.getClass().getResource("images/podcast.png")).toExternalForm());
+        musicImage = new Image(Objects.requireNonNull(metadataEditPage.menuController.mainController.getClass().getResource("images/music.png")).toExternalForm());
+        videoImage = new Image(Objects.requireNonNull(metadataEditPage.menuController.mainController.getClass().getResource("images/video.png")).toExternalForm());
 
         content.setSpacing(15);
 
@@ -135,6 +145,11 @@ public class Mp4EditItem implements MetadataEditItem{
         mediaType = value;
         switch (value) {
             case "TV Show" -> {
+
+                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                    metadataEditPage.imageView.setImage(videoImage);
+                }
+
                 content.getChildren().removeAll(trackItem, albumItem, lyricsItem);
                 content.getChildren().addAll(2, Arrays.asList(seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem));
                 artistItem.label.setText("Cast");
@@ -144,6 +159,11 @@ public class Mp4EditItem implements MetadataEditItem{
                 if (!content.getChildren().contains(composerItem)) content.getChildren().add(8, composerItem);
             }
             case "Movie" -> {
+
+                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                    metadataEditPage.imageView.setImage(videoImage);
+                }
+
                 content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem);
                 artistItem.label.setText("Cast");
                 albumArtistItem.label.setText("Director");
@@ -152,6 +172,11 @@ public class Mp4EditItem implements MetadataEditItem{
                 if (!content.getChildren().contains(composerItem)) content.getChildren().add(4, composerItem);
             }
             case "Music video" -> {
+
+                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                    metadataEditPage.imageView.setImage(musicImage);
+                }
+
                 content.getChildren().removeAll(seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem);
                 artistItem.label.setText("Artist");
                 if (!content.getChildren().contains(trackItem)) content.getChildren().add(3, trackItem);
@@ -162,7 +187,21 @@ public class Mp4EditItem implements MetadataEditItem{
                 if (!content.getChildren().contains(composerItem)) content.getChildren().add(6, composerItem);
                 if (!content.getChildren().contains(lyricsItem)) content.getChildren().add(10, lyricsItem);
             }
-            case "Podcast", "Home video" -> {
+            case "Home video" -> {
+
+                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                    metadataEditPage.imageView.setImage(videoImage);
+                }
+
+                content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem, albumArtistItem, composerItem);
+                artistItem.label.setText("Artist");
+            }
+            case "Podcast" -> {
+
+                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                    metadataEditPage.imageView.setImage(podcastImage);
+                }
+
                 content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem, albumArtistItem, composerItem);
                 artistItem.label.setText("Artist");
             }

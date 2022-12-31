@@ -1,6 +1,7 @@
 package hans.Captions;
 
 import hans.*;
+import hans.MediaItems.MediaUtilities;
 import hans.Menu.*;
 import hans.SRTParser.srt.SRTParser;
 import hans.SRTParser.srt.Subtitle;
@@ -115,7 +116,7 @@ public class CaptionsController {
             ArrayList<Map<String, String>> subtitleStreams = log.get("subtitle streams");
             if(!subtitleStreams.isEmpty()){
                 activeItem.captionGenerationTime = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss-SSS").format(new Date()) + "-";
-                Utilities.extractSubtitles(activeItem.getMediaItem(), activeItem.captionGenerationTime);
+                MediaUtilities.extractSubtitles(activeItem.getMediaItem(), activeItem.captionGenerationTime);
             }
         }
     }

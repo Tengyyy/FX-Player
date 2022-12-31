@@ -8,15 +8,26 @@ import com.github.kokorin.jaffree.ffprobe.Stream;
 import hans.Utilities;
 import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
+import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.JavaFXFrameConverter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -55,65 +66,27 @@ public class MediaUtilities {
 
             hasCover = true;
 
-            FFmpeg.atPath()
-                    .addInput(UrlInput.fromUrl(file.getAbsolutePath()))
-                    .addArguments("-map", "0:" + coverIndex + "?")
-                    .addArguments("-map_metadata", "-1")
-                    .addArguments("-frames:v", "1")
-                    .addArguments("-update", "1")
-                    .addOutput(
-                            PipeOutput.pumpTo(outputStream)
-                                .setFormat("image2")
-                                .setCodec("0", "png")
-                    )
-                    .execute();
+            grabFrame(file, coverIndex, 0, outputStream);
 
         }
         else if(defaultVideoIndex != -1){
-            Long duration = ffProbeResult.getStreams().get(defaultVideoIndex).getDuration(TimeUnit.MILLISECONDS);
+            Long duration = ffProbeResult.getStreams().get(defaultVideoIndex).getDuration(TimeUnit.SECONDS);
             if(duration == null){
                 Float durationFloat = ffProbeResult.getFormat().getDuration();
-                if(durationFloat != null) duration = durationFloat.longValue() * 1000;
+                if(durationFloat != null) duration = durationFloat.longValue();
             }
             if(duration == null) return new Pair<>(false, null);
+            else grabFrame(file, defaultVideoIndex, duration.doubleValue()/2, outputStream);
 
-            FFmpeg.atPath()
-                    .addInput(UrlInput.fromUrl(file.getAbsolutePath())
-                            .setPosition(duration/2, TimeUnit.MILLISECONDS)
-                    )
-                    .addArguments("-map", "0:" + defaultVideoIndex + "?")
-                    .addArguments("-map_metadata", "-1")
-                    .addArguments("-frames:v", "1")
-                    .addArguments("-update", "1")
-                    .addOutput(
-                            PipeOutput.pumpTo(outputStream)
-                                    .setFormat("image2")
-                                    .setCodec("0", "png")
-                    )
-                    .execute();
         }
         else {
-            Long duration = ffProbeResult.getStreams().get(firstVideoIndex).getDuration(TimeUnit.MILLISECONDS);
+            Long duration = ffProbeResult.getStreams().get(firstVideoIndex).getDuration(TimeUnit.SECONDS);
             if(duration == null){
                 Float durationFloat = ffProbeResult.getFormat().getDuration();
-                if(durationFloat != null) duration = durationFloat.longValue() * 1000;
+                if(durationFloat != null) duration = durationFloat.longValue();
             }
             if(duration == null) return new Pair<>(false, null);
-
-            FFmpeg.atPath()
-                    .addInput(UrlInput.fromUrl(file.getAbsolutePath())
-                            .setPosition(duration/2, TimeUnit.MILLISECONDS)
-                    )
-                    .addArguments("-map", "0:" + firstVideoIndex + "?")
-                    .addArguments("-map_metadata", "-1")
-                    .addArguments("-frames:v", "1")
-                    .addArguments("-update", "1")
-                    .addOutput(
-                            PipeOutput.pumpTo(outputStream)
-                                    .setFormat("image2")
-                                    .setCodec("0", "png")
-                    )
-                    .execute();
+            else grabFrame(file, firstVideoIndex, duration.doubleValue()/2, outputStream);
         }
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
@@ -130,6 +103,23 @@ public class MediaUtilities {
 
 
         return new Pair<>(hasCover, cover);
+    }
+
+    public static Image getVideoFrame(File file, int stream, long positionInMillis){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        grabFrame(file, stream, positionInMillis, outputStream);
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        Image cover = new Image(inputStream);
+
+        try {
+            outputStream.close();
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return cover;
     }
 
     public static boolean updateMetadata(File file, Map<String, String> metadata, boolean hasCover, Image oldCover, File newCover, boolean coverRemoved, int videoStreams, int attachmentStreams, Duration duration){
@@ -254,6 +244,135 @@ public class MediaUtilities {
         if(currentImageFile != null && currentImageFile.exists()) currentImageFile.delete();
 
         return success;
+    }
+
+    public static void extractSubtitles(MediaItem mediaItem, String filePrefix){
+
+        String subtitlesDirectory = System.getProperty("user.home").concat("/FXPlayer/subtitles/");
+        try {
+            Files.createDirectory(Paths.get(subtitlesDirectory));
+        } catch (IOException ignored){
+        }
+
+        ArrayList<String> arguments = new ArrayList<>();
+        String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+
+        arguments.add(ffmpeg);
+        arguments.add("-i");
+        arguments.add(mediaItem.getFile().getAbsolutePath());
+
+        ArrayList<Map<String, String>> subtitleStreams = mediaItem.getLog().get("subtitle streams");
+
+        for(int i = 0; i < subtitleStreams.size(); i++){
+            arguments.add("-map");
+            arguments.add("0:s:" + i);
+            arguments.add(subtitlesDirectory.concat(filePrefix + i + ".srt"));
+        }
+
+
+        try {
+            Process process = new ProcessBuilder(arguments).redirectErrorStream(true).start();
+            StringBuilder strBuild = new StringBuilder();
+
+            BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()));
+            String line;
+            while ((line = processOutputReader.readLine()) != null) {
+                strBuild.append(line).append(System.lineSeparator());
+            }
+            process.waitFor();
+            String log = strBuild.toString().trim();
+            System.out.println(log);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public static Color findDominantColor(Image image){
+
+        double aspectRatio = image.getWidth() / image.getHeight();
+
+        PixelReader pr = image.getPixelReader();
+        Map<Color, Long> colCount = new HashMap<>();
+
+        if(aspectRatio < (double) 16/9){
+            // scan left and right edges to find the dominant color
+
+            for(int x = 0; x < Math.min(image.getWidth(), 5); x++) {
+                for(int y = 0; y < image.getHeight(); y++) {
+                    final Color col = pr.getColor(x, y);
+                    if(colCount.containsKey(col)) {
+                        colCount.put(col, colCount.get(col) + 1);
+                    } else {
+                        colCount.put(col, 1L);
+                    }
+                }
+            }
+
+            if(image.getWidth() > 5){
+                for(int x = (int) Math.max((image.getWidth() - 5), 5); x < image.getWidth(); x++){
+                    for(int y = 0; y < image.getHeight(); y++) {
+                        final Color col = pr.getColor(x, y);
+                        if(colCount.containsKey(col)) {
+                            colCount.put(col, colCount.get(col) + 1);
+                        } else {
+                            colCount.put(col, 1L);
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            //scan top and bottom edges
+
+            for(int y = 0; y < Math.min(image.getHeight(), 5); y++) {
+                for(int x = 0; x < image.getWidth(); x++) {
+                    final Color col = pr.getColor(x, y);
+                    if(colCount.containsKey(col)) {
+                        colCount.put(col, colCount.get(col) + 1);
+                    } else {
+                        colCount.put(col, 1L);
+                    }
+                }
+            }
+
+            if(image.getHeight() > 5){
+                for(int y = (int) Math.max((image.getHeight() - 5), 5); y < image.getHeight(); y++){
+                    for(int x = 0; x < image.getWidth(); x++) {
+                        final Color col = pr.getColor(x, y);
+                        if(colCount.containsKey(col)) {
+                            colCount.put(col, colCount.get(col) + 1);
+                        } else {
+                            colCount.put(col, 1L);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // Return the color with the highest number of occurrences .
+        return colCount.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
+    }
+
+
+    public static void grabFrame(File file, int streamIndex, double positionInMillis, OutputStream outputStream){
+
+        FFmpeg.atPath()
+                .addInput(UrlInput.fromUrl(file.getAbsolutePath())
+                        .setPosition(positionInMillis, TimeUnit.MILLISECONDS)
+                )
+                .addArguments("-map", "0:" + streamIndex + "?")
+                .addArguments("-map_metadata", "-1")
+                .addArguments("-frames:v", "1")
+                .addArguments("-update", "1")
+                .addOutput(
+                        PipeOutput.pumpTo(outputStream)
+                                .setFormat("image2")
+                                .setCodec("0", "png")
+                )
+                .execute();
     }
 }
 

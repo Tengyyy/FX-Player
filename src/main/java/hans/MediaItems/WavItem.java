@@ -1,5 +1,6 @@
 package hans.MediaItems;
 
+import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import hans.MainController;
 import hans.Utilities;
 import javafx.scene.image.Image;
@@ -243,7 +244,7 @@ public class WavItem implements MediaItem {
     }
 
     @Override
-    public Map<String, ArrayList<Map<String, String>>> getLog() {
+    public FFprobeResult getProbeResult() {
         return null;
     }
 }

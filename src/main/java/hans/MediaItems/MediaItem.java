@@ -1,6 +1,7 @@
 package hans.MediaItems;
 
 
+import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
@@ -38,7 +39,7 @@ public interface MediaItem {
     Image getPlaceholderCover();
     void setPlaceHolderCover(Image image);
 
-    Map<String, ArrayList<Map<String, String>>> getLog();
+    FFprobeResult getProbeResult();
 
 
     // 1024 is int value for attached pic disposition

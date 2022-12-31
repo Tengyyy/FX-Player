@@ -2,6 +2,7 @@ package hans.Captions;
 
 import hans.*;
 import hans.MediaItems.MediaUtilities;
+import hans.MediaItems.Mp4Item;
 import hans.Menu.*;
 import hans.SRTParser.srt.SRTParser;
 import hans.SRTParser.srt.Subtitle;
@@ -111,35 +112,31 @@ public class CaptionsController {
     }
 
     public void extractCaptions(ActiveItem activeItem){
-        Map<String, ArrayList<Map<String, String>>> log = activeItem.getMediaItem().getLog();
-        if(log != null){
-            ArrayList<Map<String, String>> subtitleStreams = log.get("subtitle streams");
-            if(!subtitleStreams.isEmpty()){
+        if(activeItem.getMediaItem() instanceof Mp4Item mp4Item){
+            if(mp4Item.numberOfSubtitleStreams > 0){
                 activeItem.captionGenerationTime = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss-SSS").format(new Date()) + "-";
-                MediaUtilities.extractSubtitles(activeItem.getMediaItem(), activeItem.captionGenerationTime);
+                MediaUtilities.extractSubtitles(mp4Item, activeItem.captionGenerationTime);
             }
         }
     }
 
     public void createSubtitleTabs(ActiveItem activeItem){
-        Map<String, ArrayList<Map<String, String>>> log = activeItem.getMediaItem().getLog();
 
-        if(log != null){
-            ArrayList<Map<String, String>> subtitleStreams = log.get("subtitle streams");
+        if(activeItem.getMediaItem() instanceof Mp4Item mp4Item){
 
-            if(!subtitleStreams.isEmpty()){
+            if(mp4Item.numberOfSubtitleStreams > 0 && mp4Item.subtitleStreamLanguages.size() == mp4Item.numberOfSubtitleStreams){
                 activeItem.addSubtitlesIcon();
 
-                for(int i =0; i <subtitleStreams.size(); i++){
+                for(int i =0; i < mp4Item.numberOfSubtitleStreams; i++){
                     // add subtitle tab to captions home
 
                     CaptionsTab captionsTab;
-                    if(subtitleStreams.get(i).containsKey("disposition") && subtitleStreams.get(i).get("disposition").equals("default")){
-                        captionsTab = new CaptionsTab(this, captionsHome, subtitleStreams.get(i).get("language") + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(activeItem.captionGenerationTime + i + ".srt")), false);
+                    if(i == mp4Item.defaultSubtitleStream){
+                        captionsTab = new CaptionsTab(this, captionsHome, mp4Item.subtitleStreamLanguages.get(i) + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(activeItem.captionGenerationTime + i + ".srt")), false);
                         captionsTab.selectSubtitles(true);
                     }
                     else {
-                        captionsTab = new CaptionsTab(this, captionsHome, subtitleStreams.get(i).get("language"), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(activeItem.captionGenerationTime + i + ".srt")), false);
+                        captionsTab = new CaptionsTab(this, captionsHome, mp4Item.subtitleStreamLanguages.get(i), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(activeItem.captionGenerationTime + i + ".srt")), false);
                     }
 
                     captionsHome.captionsWrapper.getChildren().add(i + 1, captionsTab);

@@ -9,6 +9,7 @@ import com.github.kokorin.jaffree.ffmpeg.UrlInput;
 import com.github.kokorin.jaffree.ffmpeg.UrlOutput;
 import com.github.kokorin.jaffree.ffprobe.FFprobe;
 import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
+import com.github.kokorin.jaffree.ffprobe.Program;
 import com.github.kokorin.jaffree.ffprobe.Stream;
 import hans.MainController;
 import hans.Utilities;
@@ -55,13 +56,13 @@ public class Mp4Item implements MediaItem {
     int height = 0;
     int audioChannels = 0;
 
-
-    Map<String, ArrayList<Map<String, String>>> log;
-
     FFprobeResult probeResult = null;
 
     int numberOfNonPictureVideoStreams = 0;
     int numberOfAttachmentStreams = 0;
+    public int numberOfSubtitleStreams = 0;
+    public ArrayList<String> subtitleStreamLanguages = new ArrayList<>();
+    public int defaultSubtitleStream = -1;
 
     File file;
 
@@ -72,15 +73,14 @@ public class Mp4Item implements MediaItem {
         this.file = file;
         this.mainController = mainController;
 
-
-        log = Utilities.parseLog(Utilities.getLog(file.getAbsolutePath()));
-
         probeResult = FFprobe.atPath()
                 .setShowStreams(true)
                 .setShowFormat(true)
+                .setShowData(true)
                 .setInput(file.getAbsolutePath())
                 .setLogLevel(LogLevel.INFO)
                 .execute();
+
 
         Pair<Boolean, Image> pair = MediaUtilities.getCover(probeResult, file);
         this.cover = pair.getValue();
@@ -106,6 +106,16 @@ public class Mp4Item implements MediaItem {
             }
             else if(stream.getCodecType() == StreamType.ATTACHMENT){
                 numberOfAttachmentStreams++;
+            }
+            else if(stream.getCodecType() == StreamType.SUBTITLE){
+                if(stream.getDisposition().getDefault() == 1) defaultSubtitleStream = numberOfSubtitleStreams;
+                numberOfSubtitleStreams++;
+                String languageCode = stream.getTag("language");
+                if(languageCode == null || languageCode.equals("und")) subtitleStreamLanguages.add("Undefined");
+                else {
+                    Locale locale = Locale.forLanguageTag(languageCode.toUpperCase(Locale.ROOT));
+                    subtitleStreamLanguages.add(locale.getDisplayLanguage());
+                }
             }
         }
 
@@ -206,18 +216,27 @@ public class Mp4Item implements MediaItem {
     public Mp4Item(Mp4Item mp4Item, MainController mainController){
         this.mainController = mainController;
 
-        this.file = mp4Item.getFile();
-        duration = mp4Item.getDuration();
-        cover = mp4Item.getCover();
-        placeholderCover = mp4Item.getPlaceholderCover();
-        backgroundColor = mp4Item.getCoverBackgroundColor();
-        hasCover = mp4Item.hasCover();
-        mediaInformation = mp4Item.getMediaInformation();
-        mediaDetails = mp4Item.getMediaDetails();
-        hasVideo = mp4Item.hasVideo();
-        hasAudio = mp4Item.hasAudio();
-        log = mp4Item.getLog();
-        probeResult = mp4Item.getProbeResult();
+        file = mp4Item.file;
+        duration = mp4Item.duration;
+        cover = mp4Item.cover;
+        placeholderCover = mp4Item.placeholderCover;
+        backgroundColor = mp4Item.backgroundColor;
+        hasCover = mp4Item.hasCover;
+        mediaInformation = mp4Item.mediaInformation;
+        mediaDetails = mp4Item.mediaDetails;
+        hasVideo = mp4Item.hasVideo;
+        hasAudio = mp4Item.hasAudio;
+        probeResult = mp4Item.probeResult;
+        width = mp4Item.width;
+        height = mp4Item.height;
+        audioChannels = mp4Item.audioChannels;
+        numberOfNonPictureVideoStreams = mp4Item.numberOfNonPictureVideoStreams;
+        numberOfAttachmentStreams = mp4Item.numberOfAttachmentStreams;
+        numberOfSubtitleStreams = mp4Item.numberOfSubtitleStreams;
+        videoStream = mp4Item.videoStream;
+        audioStream = mp4Item.audioStream;
+        subtitleStreamLanguages = mp4Item.subtitleStreamLanguages;
+        defaultSubtitleStream = mp4Item.defaultSubtitleStream;
     }
 
 
@@ -233,10 +252,6 @@ public class Mp4Item implements MediaItem {
 
     public boolean hasAudio(){
         return hasAudio;
-    }
-
-    public FFprobeResult getProbeResult(){
-        return probeResult;
     }
 
     @Override
@@ -255,8 +270,8 @@ public class Mp4Item implements MediaItem {
     }
 
     @Override
-    public Map<String, ArrayList<Map<String, String>>> getLog() {
-        return log;
+    public FFprobeResult getProbeResult() {
+        return probeResult;
     }
 
 

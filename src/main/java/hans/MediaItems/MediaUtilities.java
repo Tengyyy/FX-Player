@@ -12,20 +12,13 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
-import org.bytedeco.javacpp.Loader;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.JavaFXFrameConverter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +69,9 @@ public class MediaUtilities {
                 if(durationFloat != null) duration = durationFloat.longValue();
             }
             if(duration == null) return new Pair<>(false, null);
-            else grabFrame(file, defaultVideoIndex, duration.doubleValue()/2, outputStream);
+            else{
+                grabFrame(file, defaultVideoIndex, duration/2, outputStream);
+            }
 
         }
         else {
@@ -86,7 +81,7 @@ public class MediaUtilities {
                 if(durationFloat != null) duration = durationFloat.longValue();
             }
             if(duration == null) return new Pair<>(false, null);
-            else grabFrame(file, firstVideoIndex, duration.doubleValue()/2, outputStream);
+            else grabFrame(file, firstVideoIndex, duration/2, outputStream);
         }
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
@@ -246,7 +241,7 @@ public class MediaUtilities {
         return success;
     }
 
-    public static void extractSubtitles(MediaItem mediaItem, String filePrefix){
+    public static void extractSubtitles(Mp4Item mediaItem, String filePrefix){
 
         String subtitlesDirectory = System.getProperty("user.home").concat("/FXPlayer/subtitles/");
         try {
@@ -254,37 +249,16 @@ public class MediaUtilities {
         } catch (IOException ignored){
         }
 
-        ArrayList<String> arguments = new ArrayList<>();
-        String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
 
-        arguments.add(ffmpeg);
-        arguments.add("-i");
-        arguments.add(mediaItem.getFile().getAbsolutePath());
+        FFmpeg fFmpeg = FFmpeg.atPath()
+                .addInput(UrlInput.fromUrl(mediaItem.getFile().getAbsolutePath()));
 
-        ArrayList<Map<String, String>> subtitleStreams = mediaItem.getLog().get("subtitle streams");
-
-        for(int i = 0; i < subtitleStreams.size(); i++){
-            arguments.add("-map");
-            arguments.add("0:s:" + i);
-            arguments.add(subtitlesDirectory.concat(filePrefix + i + ".srt"));
+        for(int i =0; i < mediaItem.numberOfSubtitleStreams; i++){
+            fFmpeg.addArguments("-map", "0:s:" + i);
+            fFmpeg.addOutput(UrlOutput.toUrl(subtitlesDirectory.concat(filePrefix + i + ".srt")));
         }
 
-
-        try {
-            Process process = new ProcessBuilder(arguments).redirectErrorStream(true).start();
-            StringBuilder strBuild = new StringBuilder();
-
-            BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()));
-            String line;
-            while ((line = processOutputReader.readLine()) != null) {
-                strBuild.append(line).append(System.lineSeparator());
-            }
-            process.waitFor();
-            String log = strBuild.toString().trim();
-            System.out.println(log);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        fFmpeg.execute();
     }
 
 
@@ -357,11 +331,11 @@ public class MediaUtilities {
     }
 
 
-    public static void grabFrame(File file, int streamIndex, double positionInMillis, OutputStream outputStream){
+    public static void grabFrame(File file, int streamIndex, long positionInMillis, OutputStream outputStream){
 
         FFmpeg.atPath()
                 .addInput(UrlInput.fromUrl(file.getAbsolutePath())
-                        .setPosition(positionInMillis, TimeUnit.MILLISECONDS)
+                        .setPosition(positionInMillis, TimeUnit.SECONDS)
                 )
                 .addArguments("-map", "0:" + streamIndex + "?")
                 .addArguments("-map_metadata", "-1")

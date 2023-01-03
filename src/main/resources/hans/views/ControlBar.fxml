@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
@@ -31,14 +32,21 @@
                   <children>
                       <StackPane fx:id="durationPane" maxHeight="-Infinity" prefHeight="16.0" GridPane.columnIndex="1">
                           <children>
-                              <ProgressBar fx:id="durationTrack" focusTraversable="false" maxWidth="1.7976931348623157E308" pickOnBounds="false" prefHeight="4.0" prefWidth="584.0" progress="0.0" styleClass="durationTrack" StackPane.alignment="CENTER">
-                                  <StackPane.margin>
-                                      <Insets left="11.0" right="11.0" />
-                                  </StackPane.margin>
-                                  <cursor>
-                                      <Cursor fx:constant="DEFAULT" />
-                                  </cursor>
-                              </ProgressBar>
+                        <HBox fx:id="trackContainer" alignment="CENTER" maxWidth="1.7976931348623157E308" prefWidth="573.0" spacing="4.0" StackPane.alignment="CENTER">
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                           <children>
+                                    <ProgressBar fx:id="durationTrack" focusTraversable="false" maxWidth="1.7976931348623157E308" pickOnBounds="false" prefHeight="4.0" prefWidth="573.0" progress="0.0" styleClass="durationTrack" HBox.hgrow="ALWAYS">
+                                        <cursor>
+                                            <Cursor fx:constant="DEFAULT" />
+                                        </cursor>
+                                    </ProgressBar>
+                           </children>
+                           <padding>
+                              <Insets left="11.0" right="11.0" />
+                           </padding>
+                        </HBox>
                               <Slider fx:id="durationSlider" blockIncrement="5.0" focusTraversable="false" maxHeight="-Infinity" minHeight="-Infinity" pickOnBounds="false" prefHeight="16.0" prefWidth="600.0" StackPane.alignment="CENTER">
                                   <cursor>
                                       <Cursor fx:constant="DEFAULT" />

@@ -21,10 +21,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -83,6 +80,9 @@ public class ControlBarController implements Initializable {
     @FXML
     public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, captionsIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
 
+    @FXML
+    HBox trackContainer;
+
 
     SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
 
@@ -90,6 +90,7 @@ public class ControlBarController implements Initializable {
     SettingsController settingsController;
     MenuController menuController;
     CaptionsController captionsController;
+    ChapterController chapterController;
 
 
     double volumeValue;
@@ -509,7 +510,7 @@ public class ControlBarController implements Initializable {
 
         durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 
-            durationTrack.setProgress(durationSlider.getValue() / durationSlider.getMax());
+            updateProgress(newValue.doubleValue() / durationSlider.getMax());
 
             if (!mediaInterface.mediaActive.get()) return;
 
@@ -682,12 +683,13 @@ public class ControlBarController implements Initializable {
 
     }
 
-    public void init(MainController mainController, SettingsController settingsController, MenuController menuController, MediaInterface mediaInterface, CaptionsController captionsController) {
+    public void init(MainController mainController, SettingsController settingsController, MenuController menuController, MediaInterface mediaInterface, CaptionsController captionsController, ChapterController chapterController) {
         this.mainController = mainController;
         this.settingsController = settingsController;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
         this.captionsController = captionsController;
+        this.chapterController = chapterController;
 
         mouseEventTracker = new MouseEventTracker(4, mainController, this, settingsController); // creates instance of the MouseEventTracker class which keeps track of when to hide and show the control-bar
     }
@@ -1179,6 +1181,10 @@ public class ControlBarController implements Initializable {
         else {
             enablePreviousVideoButton();
         }
+    }
+
+    public void updateProgress(double progress){
+        durationTrack.setProgress(progress);
     }
 
 }

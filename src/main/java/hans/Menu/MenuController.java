@@ -79,6 +79,8 @@ public class MenuController implements Initializable {
     public CaptionsController captionsController;
     public MediaInterface mediaInterface;
 
+    ChapterController chapterController;
+
     public MetadataEditPage metadataEditPage;
     public TechnicalDetailsPage technicalDetailsPage;
 
@@ -903,12 +905,13 @@ public class MenuController implements Initializable {
     }
 
 
-    public void init(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MediaInterface mediaInterface, CaptionsController captionsController){
+    public void init(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MediaInterface mediaInterface, CaptionsController captionsController, ChapterController chapterController){
         this.mainController = mainController;
         this.controlBarController = controlBarController;
         this.settingsController = settingsController;
         this.mediaInterface = mediaInterface;
         this.captionsController = captionsController;
+        this.chapterController = chapterController;
     }
 
     public void enableHistoryButton(){

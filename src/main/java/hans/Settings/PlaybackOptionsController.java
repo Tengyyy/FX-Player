@@ -134,6 +134,7 @@ public class PlaybackOptionsController {
         loopTab.toggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) { // OFF
                 loopOn = false;
+                settingsController.mediaInterface.embeddedMediaPlayer.controls().setRepeat(false);
 
                 settingsController.mainController.playbackOptionsPopUp.loopCheckIcon.setVisible(false);
 
@@ -143,6 +144,7 @@ public class PlaybackOptionsController {
 
             } else { // ON
                 loopOn = true;
+                settingsController.mediaInterface.embeddedMediaPlayer.controls().setRepeat(true);
 
                 settingsController.mainController.playbackOptionsPopUp.loopCheckIcon.setVisible(true);
 

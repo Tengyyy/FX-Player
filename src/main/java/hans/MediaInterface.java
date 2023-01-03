@@ -15,6 +15,7 @@ import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.base.ChapterDescription;
 import uk.co.caprica.vlcj.player.base.Equalizer;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
@@ -22,6 +23,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,6 +37,7 @@ public class MediaInterface {
     SettingsController settingsController;
     MenuController menuController;
     CaptionsController captionsController;
+    ChapterController chapterController;
 
     public MediaPlayerFactory mediaPlayerFactory;
 
@@ -92,7 +95,9 @@ public class MediaInterface {
         });
     }
 
-    public void init(){
+    public void init(ChapterController chapterController){
+
+        this.chapterController = chapterController;
 
         String[] VLC_GLOBAL_OPTIONS = {
                 "--no-sub-autodetect-file",
@@ -141,6 +146,15 @@ public class MediaInterface {
 
                     play();
 
+
+                    System.out.println("Number of chapters: " + mediaPlayer.chapters().count());
+                    List<ChapterDescription> chapterDescriptions = mediaPlayer.chapters().descriptions();
+                    if(chapterDescriptions == null) return;
+                    for(ChapterDescription chapterDescription : chapterDescriptions){
+                        System.out.println("Name: " + chapterDescription.name());
+                        System.out.println("Duration: " + chapterDescription.duration());
+                        System.out.println("Offset: " + chapterDescription.offset());
+                    }
                 });
 
             }
@@ -161,6 +175,9 @@ public class MediaInterface {
             }
             else if(seekedToEnd){
                 defaultEnd();
+            }
+            else if(settingsController.playbackOptionsController.loopOn){
+                return;
             }
             else endMedia();
 
@@ -209,8 +226,6 @@ public class MediaInterface {
             controlBarController.mouseEventTracker.move();
 
             // restart current video
-            embeddedMediaPlayer.controls().start();
-
         }
         else {
             if((menuController.historyBox.index == -1 || menuController.historyBox.index >= menuController.history.size() -1) && menuController.queue.isEmpty()) defaultEnd();

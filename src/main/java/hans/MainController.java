@@ -76,6 +76,8 @@ public class MainController implements Initializable {
 
     MediaInterface mediaInterface;
 
+    ChapterController chapterController;
+
     DoubleProperty videoImageViewWidth;
     public DoubleProperty videoImageViewHeight;
 
@@ -136,13 +138,13 @@ public class MainController implements Initializable {
         settingsController = new SettingsController(this, controlBarController, menuController);
         captionsController = new CaptionsController(settingsController, this, controlBarController, menuController);
         mediaInterface = new MediaInterface(this, controlBarController, settingsController, menuController, captionsController);
+        chapterController = new ChapterController(this, controlBarController, menuController, mediaInterface);
 
-
-        controlBarController.init(this, settingsController, menuController, mediaInterface, captionsController); // shares references of all the controllers between eachother
-        menuController.init(this, controlBarController, settingsController, mediaInterface, captionsController);
+        controlBarController.init(this, settingsController, menuController, mediaInterface, captionsController, chapterController); // shares references of all the controllers between eachother
+        menuController.init(this, controlBarController, settingsController, mediaInterface, captionsController, chapterController);
         settingsController.init(mediaInterface, captionsController);
         captionsController.init(mediaInterface);
-        mediaInterface.init();
+        mediaInterface.init(chapterController);
 
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
         sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
@@ -1078,7 +1080,7 @@ public class MainController implements Initializable {
             return;
         }
 
-        // seek backwards by 1 frame
+        // seek backwards by 100 milliseconds
         if(!mediaInterface.playing.get() && mediaInterface.mediaActive.get()) {
             mediaInterface.seekedToEnd = false;
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 0.1);
@@ -1108,7 +1110,7 @@ public class MainController implements Initializable {
             return;
         }
 
-        // seek forward by 1 frame
+        // seek forward by 100 milliseconds
         if(!mediaInterface.playing.get() && mediaInterface.mediaActive.get()){
             if (mediaInterface.getCurrentTime().toSeconds() + 0.1 >= controlBarController.durationSlider.getMax()) {
                 mediaInterface.seekedToEnd = true;

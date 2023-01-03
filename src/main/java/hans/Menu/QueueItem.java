@@ -25,7 +25,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -503,10 +502,10 @@ public class QueueItem extends GridPane implements MenuObject {
 
         if(mediaItem.getCover() != null) {
             coverImage.setImage(mediaItem.getCover());
-            imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
+            if(mediaItem.getCoverBackgroundColor() != null) imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 255) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 255) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 255) + ", 0.7);");
         }
         else {
-            imageWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
+            imageWrapper.setStyle("-fx-background-color: red;");
             coverImage.setImage(mediaItem.getPlaceholderCover());
         }
 

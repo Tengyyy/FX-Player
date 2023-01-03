@@ -2,10 +2,8 @@ package hans.Menu.MetadataEdit;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
-import hans.MediaItems.AudioItem;
 import hans.MediaItems.MediaItem;
 import hans.MediaItems.MediaUtilities;
-import hans.MediaItems.Mp4Item;
 import hans.Menu.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -280,21 +278,37 @@ public class MetadataEditPage {
                 metadataEditItem = new Mp4EditItem(this, menuObject.getMediaItem());
                 enableImageEdit();
             }
-            case "mp3", "flac" -> {
-                metadataEditItem = new AudioEditItem(this, (AudioItem) menuObject.getMediaItem());
+            case "m4a" -> {
+                metadataEditItem = new M4aEditItem(this, menuObject.getMediaItem());
                 enableImageEdit();
+            }
+            case "mp3", "aiff" -> {
+                metadataEditItem = new Mp3EditItem(this, menuObject.getMediaItem());
+                enableImageEdit();
+            }
+            case "aac" -> {
+                metadataEditItem = new Mp3EditItem(this, menuObject.getMediaItem());
+                disableImageEdit();
+            }
+            case "flac" -> {
+                metadataEditItem = new FlacEditItem(this, menuObject.getMediaItem());
+                enableImageEdit();
+            }
+            case "ogg", "opus" -> {
+                metadataEditItem = new OggEditItem(this, menuObject.getMediaItem());
+                disableImageEdit();
             }
             case "avi" -> {
                 metadataEditItem = new AviEditItem(this, menuObject.getMediaItem());
                 disableImageEdit();
             }
-            case "flv" -> {
+            case "flv", "wma" -> {
                 metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
                 disableImageEdit();
             }
             case "wav" -> {
                 metadataEditItem = new WavEditItem(this, menuObject.getMediaItem());
-                enableImageEdit();
+                disableImageEdit();
             }
             default -> {
                 metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
@@ -420,7 +434,7 @@ public class MetadataEditPage {
             for(MenuObject duplicate : duplicates){
                 duplicate.getMediaItem().setMediaInformation(mediaInformation, false);
                 duplicate.getMediaItem().setMediaDetails(menuObject.getMediaItem().getMediaDetails());
-                if(mediaItem instanceof Mp4Item){
+                if(Utilities.getFileExtension(mediaItem.getFile()).equals("mp4") || Utilities.getFileExtension(mediaItem.getFile()).equals("mov")){
                     duplicate.getMediaItem().setPlaceHolderCover(menuObject.getMediaItem().getPlaceholderCover());
                 }
 

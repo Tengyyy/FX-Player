@@ -111,18 +111,14 @@ public class Utilities {
 
     public static MediaItem createMediaItem(File file, MainController mainController){
         return switch (Utilities.getFileExtension(file)) {
-            case "mp4", "mov", "mkv", "avi", "flv" -> new Mp4Item(file, mainController);
-            case "mp3", "flac" -> new AudioItem(file, mainController);
-            case "wav" -> new WavItem(file, mainController);
+            case "mp4", "mov", "mkv", "avi", "flv", "mp3", "flac", "wav", "ogg", "opus", "aiff", "m4a", "wma", "aac" -> new MediaItem(file, mainController);
             default -> null;
         };
     }
 
     public static MediaItem copyMediaItem(MediaItem mediaItem, MainController mainController){
         return switch (Utilities.getFileExtension(mediaItem.getFile())) {
-            case "mp4", "mov", "mkv", "avi", "flv" -> new Mp4Item((Mp4Item) mediaItem, mainController);
-            case "mp3", "flac" -> new AudioItem((AudioItem) mediaItem, mainController);
-            case "wav" -> new WavItem((WavItem) mediaItem, mainController);
+            case "mp4", "mov", "mkv", "avi", "flv", "mp3", "flac", "wav", "ogg", "opus", "aiff", "m4a", "wma", "aac"  -> new MediaItem(mediaItem, mainController);
             default -> null;
         };
     }
@@ -234,97 +230,6 @@ public class Utilities {
             System.err.println("Unable to determine native handle for window");
             return null;
         }
-    }
-
-
-
-    public static String getLog(String filePath){
-
-        String log = "";
-
-        ArrayList<String> arguments = new ArrayList<>();
-        String ffprobe = Loader.load(org.bytedeco.ffmpeg.ffprobe.class);
-
-        arguments.add(ffprobe);
-        arguments.add("-i");
-        arguments.add(filePath);
-
-        try {
-            Process process = new ProcessBuilder(arguments).redirectErrorStream(true).start();
-            StringBuilder strBuild = new StringBuilder();
-
-            BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()));
-            String line;
-            while ((line = processOutputReader.readLine()) != null) {
-                strBuild.append(line).append(System.lineSeparator());
-            }
-            process.waitFor();
-            log = strBuild.toString().trim();
-            System.out.println(log);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return log;
-    }
-
-    public static Map<String, ArrayList<Map<String, String>>> parseLog(String log){
-        Map<String, ArrayList<Map<String, String>>> map = new HashMap<>();
-        map.put("video streams", new ArrayList<>());
-        map.put("audio streams", new ArrayList<>());
-        map.put("subtitle streams", new ArrayList<>());
-
-        String[] lines = log.split(System.lineSeparator());
-        for (String line : lines) {
-            String strippedLine = line.strip();
-
-            if (strippedLine.startsWith("Stream #")) {
-                Map<String, String> streamInfo = new HashMap<>();
-
-                if(strippedLine.endsWith(")")){
-                    streamInfo.put("disposition", strippedLine.substring(strippedLine.lastIndexOf("(") + 1, strippedLine.length() - 1));
-                    strippedLine = strippedLine.substring(0, strippedLine.lastIndexOf("("));
-                }
-
-                String infoString = strippedLine.substring(nthOccurrence(strippedLine, ":", 3) + 1).strip();
-                if(infoString.contains(",")){
-                    streamInfo.put("codec", infoString.substring(0, infoString.indexOf(",")).strip());
-                }
-                else {
-                    streamInfo.put("codec", infoString);
-                }
-                String languageSection = strippedLine.substring(strippedLine.indexOf(":") + 1, nthOccurrence(strippedLine, ":", 2));
-                if(languageSection.contains("(")){
-                    String languageCode = languageSection.substring(languageSection.indexOf("(") + 1, languageSection.indexOf(")"));
-                    Locale locale = Locale.forLanguageTag(languageCode.toUpperCase(Locale.ROOT));
-                    streamInfo.put("language", locale.getDisplayLanguage());
-
-                }
-                else {
-                    streamInfo.put("language", "Unknown");
-                }
-
-
-
-                String streamType = strippedLine.substring(nthOccurrence(strippedLine, ":", 2) + 1, nthOccurrence(strippedLine, ":", 3)).strip();
-                switch (streamType) {
-                    case "Video" -> map.get("video streams").add(streamInfo);
-                    case "Audio" -> map.get("audio streams").add(streamInfo);
-                    case "Subtitle" -> map.get("subtitle streams").add(streamInfo);
-                }
-            }
-        }
-
-        for(Map.Entry<String, ArrayList<Map<String, String>>> entry : map.entrySet()){
-            System.out.println(entry.getKey());
-            for(Map<String, String> entrymap : entry.getValue()){
-                for(Map.Entry<String, String> entry2 : entrymap.entrySet()){
-                    System.out.println(entry2.getKey() + ": " + entry2.getValue());
-                }
-            }
-        }
-
-        return map;
     }
 
     public static void cleanDirectory(String path){

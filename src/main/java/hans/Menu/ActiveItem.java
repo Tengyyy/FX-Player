@@ -4,11 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
 import javafx.animation.Animation;
-import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,7 +19,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
@@ -696,7 +692,7 @@ public class ActiveItem extends GridPane implements MenuObject {
             playButtonWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
         }
         else {
-            playButtonWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
+            playButtonWrapper.setStyle("-fx-background-color: red;");
             coverImage.setImage(mediaItem.getPlaceholderCover());
         }
 

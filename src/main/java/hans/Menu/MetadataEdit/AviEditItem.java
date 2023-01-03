@@ -4,7 +4,6 @@ import hans.MediaItems.MediaItem;
 import hans.Utilities;
 import javafx.scene.layout.VBox;
 
-import java.time.DateTimeException;
 import java.util.HashMap;
 import java.util.Map;
 

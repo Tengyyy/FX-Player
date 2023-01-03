@@ -563,7 +563,20 @@ public class MainController implements Initializable {
 
     public void handleDragEntered(DragEvent e){
         File file = e.getDragboard().getFiles().get(0);
-        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3") && !Utilities.getFileExtension(file).equals("wav") && !Utilities.getFileExtension(file).equals("mov") && !Utilities.getFileExtension(file).equals("mkv")&& !Utilities.getFileExtension(file).equals("flv") && !Utilities.getFileExtension(file).equals("flac")&& !Utilities.getFileExtension(file).equals("avi")) return;
+        if(!Utilities.getFileExtension(file).equals("mp4") &&
+                !Utilities.getFileExtension(file).equals("mp3") &&
+                !Utilities.getFileExtension(file).equals("wav") &&
+                !Utilities.getFileExtension(file).equals("mov") &&
+                !Utilities.getFileExtension(file).equals("mkv") &&
+                !Utilities.getFileExtension(file).equals("flv") &&
+                !Utilities.getFileExtension(file).equals("flac") &&
+                !Utilities.getFileExtension(file).equals("avi") &&
+                !Utilities.getFileExtension(file).equals("opus") &&
+                !Utilities.getFileExtension(file).equals("aiff") &&
+                !Utilities.getFileExtension(file).equals("m4a") &&
+                !Utilities.getFileExtension(file).equals("wma") &&
+                !Utilities.getFileExtension(file).equals("aac") &&
+                !Utilities.getFileExtension(file).equals("ogg")) return;
 
 
         actionIndicator.setIcon(PLUS);
@@ -584,7 +597,20 @@ public class MainController implements Initializable {
 
     public void handleDragOver(DragEvent e){
         File file = e.getDragboard().getFiles().get(0);
-        if(!Utilities.getFileExtension(file).equals("mp4") && !Utilities.getFileExtension(file).equals("mp3") && !Utilities.getFileExtension(file).equals("wav") && !Utilities.getFileExtension(file).equals("mov") && !Utilities.getFileExtension(file).equals("mkv")&& !Utilities.getFileExtension(file).equals("flv") && !Utilities.getFileExtension(file).equals("flac")&& !Utilities.getFileExtension(file).equals("avi")) return;
+        if(!Utilities.getFileExtension(file).equals("mp4") &&
+                !Utilities.getFileExtension(file).equals("mp3") &&
+                !Utilities.getFileExtension(file).equals("wav") &&
+                !Utilities.getFileExtension(file).equals("mov") &&
+                !Utilities.getFileExtension(file).equals("mkv") &&
+                !Utilities.getFileExtension(file).equals("flv") &&
+                !Utilities.getFileExtension(file).equals("flac")&&
+                !Utilities.getFileExtension(file).equals("avi") &&
+                !Utilities.getFileExtension(file).equals("opus") &&
+                !Utilities.getFileExtension(file).equals("aiff") &&
+                !Utilities.getFileExtension(file).equals("m4a") &&
+                !Utilities.getFileExtension(file).equals("wma") &&
+                !Utilities.getFileExtension(file).equals("aac") &&
+                !Utilities.getFileExtension(file).equals("ogg")) return;
 
         e.acceptTransferModes(TransferMode.COPY);
     }

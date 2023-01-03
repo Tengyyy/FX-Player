@@ -668,7 +668,14 @@ public class QueueBox extends VBox {
                 Utilities.getFileExtension(file).equals("flv") ||
                 Utilities.getFileExtension(file).equals("mkv") ||
                 Utilities.getFileExtension(file).equals("mov") ||
-                Utilities.getFileExtension(file).equals("wav"))
+                Utilities.getFileExtension(file).equals("wav") ||
+                Utilities.getFileExtension(file).equals("opus") ||
+                Utilities.getFileExtension(file).equals("aiff") ||
+                Utilities.getFileExtension(file).equals("m4a") ||
+                Utilities.getFileExtension(file).equals("wma") ||
+                Utilities.getFileExtension(file).equals("aac") ||
+                Utilities.getFileExtension(file).equals("ogg"))
+
             {
                 dragBoardMedia.add(file);
             }

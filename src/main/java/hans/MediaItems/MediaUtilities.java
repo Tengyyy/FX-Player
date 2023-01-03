@@ -59,7 +59,19 @@ public class MediaUtilities {
 
             hasCover = true;
 
-            grabFrame(file, coverIndex, 0, outputStream);
+            FFmpeg.atPath()
+                    .addInput(UrlInput.fromUrl(file.getAbsolutePath())
+                    )
+                    .addArguments("-map", "0:" + coverIndex + "?")
+                    .addArguments("-map_metadata", "-1")
+                    .addArguments("-frames:v", "1")
+                    .addArguments("-update", "1")
+                    .addArguments("-c", "copy")
+                    .addOutput(
+                            PipeOutput.pumpTo(outputStream)
+                                    .setFormat("image2")
+                    )
+                    .execute();
 
         }
         else if(defaultVideoIndex != -1){
@@ -81,23 +93,33 @@ public class MediaUtilities {
                 if(durationFloat != null) duration = durationFloat.longValue();
             }
             if(duration == null) return new Pair<>(false, null);
-            else grabFrame(file, firstVideoIndex, duration/2, outputStream);
+            else {
+                grabFrame(file, firstVideoIndex, duration/2, outputStream);
+            }
         }
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+        Image cover = null;
+        ByteArrayInputStream inputStream = null;
+        System.out.println(outputStream.size());
+        if(outputStream.size() > 0){
+            inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            cover = new Image(inputStream);
+        }
 
 
-        Image cover = new Image(inputStream);
 
         try {
             outputStream.close();
-            inputStream.close();
+            if(inputStream != null) inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
-        return new Pair<>(hasCover, cover);
+        if(cover != null)
+            return new Pair<>(hasCover, cover);
+        else
+            return new Pair<>(false, null);
     }
 
     public static Image getVideoFrame(File file, int stream, long positionInMillis){
@@ -158,6 +180,7 @@ public class MediaUtilities {
                     e.printStackTrace();
                 }
             }
+
             if(extension.equals("mkv")) fFmpeg.addArguments("-map", "0:V?");
             else fFmpeg.addArguments("-map", "0:v?");
         }
@@ -168,15 +191,32 @@ public class MediaUtilities {
 
         if(newCover != null && !extension.equals("mkv")) fFmpeg.addArguments("-map", "1");
 
-        fFmpeg.addArguments("-map_metadata:g", "-1");
+        if(extension.equals("ogg")){
+            fFmpeg.addArguments("-map_metadata", "-1");
+        }
+        else fFmpeg.addArguments("-map_metadata:g", "-1");
 
         if(!metadata.isEmpty()){
-            for(Map.Entry<String, String> entry : metadata.entrySet()){
-                fFmpeg.addArguments("-metadata", entry.getKey() + "=" + entry.getValue());
+            if(extension.equals("ogg") || extension.equals("opus")){
+                for(Map.Entry<String, String> entry : metadata.entrySet()){
+                    fFmpeg.addArguments("-metadata:s", entry.getKey() + "=" + entry.getValue());
+                }
+            }
+            else {
+                for(Map.Entry<String, String> entry : metadata.entrySet()){
+                    fFmpeg.addArguments("-metadata", entry.getKey() + "=" + entry.getValue());
+                }
+            }
+
+            if(extension.equals("wav")){
+                fFmpeg.addArguments("-id3v2_version", "3");
+            }
+            else if(extension.equals("aiff") || extension.equals("aac")){
+                fFmpeg.addArguments("-write_id3v2", "1");
             }
         }
 
-        if(extension.equals("mp4") || extension.equals("mov")) fFmpeg.addArguments("-movflags", "faststart");
+        if(extension.equals("mp4") || extension.equals("mov") || extension.equals("m4a")) fFmpeg.addArguments("-movflags", "faststart");
         fFmpeg.addArguments("-c", "copy");
 
 
@@ -186,10 +226,12 @@ public class MediaUtilities {
         //arguments.add("hevc_mp4toannexb");
 
         if(newCover != null){
-            if(extension.equals("mp4") || extension.equals("mov")){
-                fFmpeg.addArguments("-c:v:" + videoStreams, "png");
-                fFmpeg.addArguments("-disposition:v:" + videoStreams, "attached_pic");
+            if(extension.equals("mp4") || extension.equals("mov") || extension.equals("flac") || extension.equals("mp3") || extension.equals("m4a") || extension.equals("aiff") || extension.equals("wma")){
+                fFmpeg.addArguments("-metadata:s:v:"+videoStreams, "title=Album cover");
+                fFmpeg.addArguments("-metadata:s:v:"+videoStreams, "comment=Cover (front)");
+                fFmpeg.addArguments("-disposition:v:"+videoStreams, "attached_pic");
             }
+
             else if(extension.equals("mkv")){
                 if(Utilities.getFileExtension(newCover).equals("png")){
                     fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "mimetype=image/png");
@@ -241,7 +283,7 @@ public class MediaUtilities {
         return success;
     }
 
-    public static void extractSubtitles(Mp4Item mediaItem, String filePrefix){
+    public static void extractSubtitles(MediaItem mediaItem, String filePrefix){
 
         String subtitlesDirectory = System.getProperty("user.home").concat("/FXPlayer/subtitles/");
         try {
@@ -341,6 +383,7 @@ public class MediaUtilities {
                 .addArguments("-map_metadata", "-1")
                 .addArguments("-frames:v", "1")
                 .addArguments("-update", "1")
+                .addArguments("-c", "copy")
                 .addOutput(
                         PipeOutput.pumpTo(outputStream)
                                 .setFormat("image2")

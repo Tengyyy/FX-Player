@@ -1,42 +1,27 @@
 package hans;
 
 
-import com.sun.jna.NativeLibrary;
 import hans.Captions.CaptionsController;
-import hans.Captions.CaptionsTab;
 import hans.MediaItems.MediaItem;
 import hans.Menu.*;
 import hans.Settings.SettingsController;
-import javafx.animation.Animation;
-import javafx.animation.Interpolator;
 import javafx.animation.PauseTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Cursor;
-import javafx.scene.image.Image;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.JavaFXFrameConverter;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
-import uk.co.caprica.vlcj.media.TrackType;
 import uk.co.caprica.vlcj.player.base.Equalizer;
-import uk.co.caprica.vlcj.player.base.LibVlcConst;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
-import uk.co.caprica.vlcj.support.version.LibVlcVersion;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

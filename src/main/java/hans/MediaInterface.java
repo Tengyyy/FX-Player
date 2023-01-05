@@ -128,7 +128,7 @@ public class MediaInterface {
                 currentTime = newTime;
 
                 Platform.runLater(() -> {
-                    if(Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.5) controlBarController.durationSlider.setValue((double)newTime/1000);
+                    if(!controlBarController.durationSlider.isValueChanging() && !mainController.seekingWithKeys && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.5) controlBarController.durationSlider.setValue((double)newTime/1000);
                 });
             }
 
@@ -144,17 +144,11 @@ public class MediaInterface {
 
                     Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
 
-                    play();
-
-
-                    System.out.println("Number of chapters: " + mediaPlayer.chapters().count());
-                    List<ChapterDescription> chapterDescriptions = mediaPlayer.chapters().descriptions();
-                    if(chapterDescriptions == null) return;
-                    for(ChapterDescription chapterDescription : chapterDescriptions){
-                        System.out.println("Name: " + chapterDescription.name());
-                        System.out.println("Duration: " + chapterDescription.duration());
-                        System.out.println("Offset: " + chapterDescription.offset());
+                    if(mediaPlayer.chapters().count() > 0){
+                        chapterController.initializeChapters(mediaPlayer.chapters().descriptions());
                     }
+
+                    play();
                 });
 
             }
@@ -312,6 +306,7 @@ public class MediaInterface {
         mainController.miniplayerActiveText.setVisible(false);
 
         mediaActive.set(false);
+        chapterController.resetChapters();
 
         controlBarController.durationSlider.setValue(0);
 

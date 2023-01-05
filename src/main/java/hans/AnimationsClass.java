@@ -12,6 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.util.List;
+
 public class AnimationsClass {
 
     public static final double ANIMATION_SPEED = 200;
@@ -197,7 +199,7 @@ public class AnimationsClass {
         return scaleTransition;
     }
 
-    public static RotateTransition rotateTransition(double duration, Node node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
+    public static void rotateTransition(double duration, Node node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
         RotateTransition rotateTransition = new RotateTransition();
         rotateTransition.setDuration(Duration.millis(duration));
         rotateTransition.setNode(node);
@@ -207,13 +209,22 @@ public class AnimationsClass {
         rotateTransition.setCycleCount(cycleCount);
         if(play) rotateTransition.play();
 
-        return rotateTransition;
+    }
+
+    public static void parallelAnimation(boolean play, List<Transition> transitions){
+        ParallelTransition parallelTransition = new ParallelTransition();
+        for(Transition transition :  transitions){
+            if(transition != null) parallelTransition.getChildren().add(transition);
+        }
+
+        if(play) parallelTransition.play();
+
     }
 
     public static ParallelTransition parallelAnimation(boolean play, Transition... transitions){
         ParallelTransition parallelTransition = new ParallelTransition();
         for(Transition transition :  transitions){
-            parallelTransition.getChildren().add(transition);
+            if(transition != null) parallelTransition.getChildren().add(transition);
         }
 
         if(play) parallelTransition.play();

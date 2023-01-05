@@ -10,6 +10,7 @@ import hans.Captions.CaptionsController;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
+import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,6 +30,8 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ControlBarController implements Initializable {
@@ -65,7 +68,7 @@ public class ControlBarController implements Initializable {
     public Slider volumeSlider, durationSlider;
 
     @FXML
-    public ProgressBar volumeTrack, durationTrack;
+    public ProgressBar volumeTrack;
 
     @FXML
     StackPane volumeSliderPane, previousVideoPane, playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, miniplayerButtonPane, fullScreenButtonPane, durationPane;
@@ -83,6 +86,9 @@ public class ControlBarController implements Initializable {
     @FXML
     HBox trackContainer;
 
+    ArrayList<DurationTrack> durationTracks = new ArrayList<>();
+    DurationTrack defaultTrack = new DurationTrack(0 , 1);
+    DurationTrack activeTrack = null;
 
     SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
 
@@ -144,10 +150,13 @@ public class ControlBarController implements Initializable {
 
     double lastKnownSliderHoverPosition = -1000;
 
+    double thumbScale = 0;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        trackContainer.getChildren().add(defaultTrack.progressBar);
 
         Platform.runLater(() -> {
             mute = new ControlTooltip(mainController,"Mute (m)", volumeButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
@@ -360,6 +369,8 @@ public class ControlBarController implements Initializable {
 
             durationSlider.lookup(".track").setOnMouseMoved(e -> {
 
+                updateSliderHover(Math.min(1,Math.max(0, e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+
                 String newTime = Utilities.getTime(Duration.seconds((e.getX()) / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverLabel.label.setText(newTime);
 
@@ -387,9 +398,6 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-                lastKnownSliderHoverPosition = e.getX() / durationSlider.lookup(".track").getBoundsInLocal().getMaxX();
-
-
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
 
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
@@ -404,7 +412,7 @@ public class ControlBarController implements Initializable {
 
             durationSlider.lookup(".track").setOnMouseEntered((e) -> {
                 durationSliderHover = true;
-                durationSliderHoverOn();
+                durationSliderHoverOn(Math.min(1,Math.max(0, e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
 
                 String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverLabel.label.setText(newTime);
@@ -432,8 +440,6 @@ public class ControlBarController implements Initializable {
                     if (menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
                 }
 
-                lastKnownSliderHoverPosition = e.getX() / durationSlider.lookup(".track").getBoundsInLocal().getMaxX();
-
 
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
@@ -453,8 +459,7 @@ public class ControlBarController implements Initializable {
 
 
                 if (!e.isPrimaryButtonDown()) {
-
-                    durationSliderHoverOff();
+                    durationSliderHoverOff(Math.min(1,Math.max(0, e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
                     mainController.sliderHoverLabel.label.setVisible(false);
                     mainController.sliderHoverPreview.pane.setVisible(false);
                     mainController.sliderHoverPreview.setImage(null);
@@ -466,6 +471,9 @@ public class ControlBarController implements Initializable {
 
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
                 if (e.isPrimaryButtonDown()) return;
+
+                updateSliderHover(Math.min(1,Math.max(0, e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+
 
                 e.consume();
 
@@ -490,8 +498,6 @@ public class ControlBarController implements Initializable {
 
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
-                lastKnownSliderHoverPosition = e.getX() / durationSlider.lookup(".track").getBoundsInLocal().getMaxX();
-
 
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
@@ -510,7 +516,7 @@ public class ControlBarController implements Initializable {
 
         durationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 
-            updateProgress(newValue.doubleValue() / durationSlider.getMax());
+            updateProgress(Math.min(1, Math.max(0, newValue.doubleValue() / durationSlider.getMax())));
 
             if (!mediaInterface.mediaActive.get()) return;
 
@@ -558,6 +564,8 @@ public class ControlBarController implements Initializable {
 
             if (durationSlider.isValueChanging() && !mainController.seekingWithKeys) {
 
+                updateSliderHover(Math.min(1, Math.max(0, newValue.doubleValue() / durationSlider.getMax())));
+
                 mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
 
                 double offset = 0;
@@ -578,8 +586,6 @@ public class ControlBarController implements Initializable {
 
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
-                lastKnownSliderHoverPosition = newValue.doubleValue()/durationSlider.getMax();
-
 
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
@@ -598,9 +604,12 @@ public class ControlBarController implements Initializable {
 
 
             if (newValue) { // pause video when user starts seeking
+
                 seekTimer.playFromStart();
                 if (mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
                 mediaInterface.playing.set(false);
+
+                updateProgress(Math.min(1, Math.max(0, durationSlider.getValue() / durationSlider.getMax())));
 
                 mainController.sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
 
@@ -629,9 +638,6 @@ public class ControlBarController implements Initializable {
                 }
 
 
-                lastKnownSliderHoverPosition = durationSlider.getValue()/durationSlider.getMax();
-
-
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
@@ -651,7 +657,7 @@ public class ControlBarController implements Initializable {
 
                 if(!durationSliderHover){
                     mainController.sliderHoverPreview.setImage(null);
-                    durationSliderHoverOff();
+                    durationSliderHoverOff(Math.min(1, Math.max(0, durationSlider.getValue() / durationSlider.getMax())));
                 }
 
 
@@ -920,17 +926,108 @@ public class ControlBarController implements Initializable {
         else captionsController.openCaptions();
     }
 
-    public void durationSliderHoverOn() {
-        ScaleTransition sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1, durationSlider.lookup(".thumb").getScaleY(), 1, false, 1, false);
-        ScaleTransition sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, durationTrack, 1, 1, durationTrack.getScaleY(), 1.6, false, 1, false);
+    public void durationSliderHoverOn(double value) {
+        lastKnownSliderHoverPosition = value;
+
+        if(durationSlider.isValueChanging()) return;
+        ScaleTransition sliderThumbHoverOn = null;
+        ScaleTransition sliderTrackHoverOn = null;
+        if(durationTracks.isEmpty()){
+            if(thumbScale != 1.1) {
+                sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.1, durationSlider.lookup(".thumb").getScaleY(), 1.1, false, 1, false);
+                thumbScale = 1.1;
+            }
+            sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, defaultTrack.progressBar, 1, 1, defaultTrack.progressBar.getScaleY(), 1.8, false, 1, false);
+        }
+        else {
+            for(DurationTrack durationTrack : durationTracks){
+                if(durationTrack.startTime <= value && durationTrack.endTime >= value){
+                    activeTrack = durationTrack;
+                    if(durationTrack.startTime <= durationSlider.getValue()/durationSlider.getMax() && durationTrack.endTime >= durationSlider.getValue()/durationSlider.getMax()){
+                        if(thumbScale != 1.25) {
+                            sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.25, durationSlider.lookup(".thumb").getScaleY(), 1.25, false, 1, false);
+                            thumbScale = 1.25;
+                        }
+                    }
+                    sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, durationTrack.progressBar, 1, 1, durationTrack.progressBar.getScaleY(), 3, false, 1 , false);
+                    break;
+                }
+            }
+
+            if(sliderThumbHoverOn == null){
+                if(thumbScale != 0.9) {
+                    sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0.9, durationSlider.lookup(".thumb").getScaleY(), 0.9, false, 1, false);
+                    thumbScale = 0.9;
+                }
+            }
+
+        }
         AnimationsClass.parallelAnimation(true, sliderThumbHoverOn, sliderTrackHoverOn);
     }
 
 
-    public void durationSliderHoverOff() {
-        ScaleTransition sliderThumbHoverOff = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0, durationSlider.lookup(".thumb").getScaleY(), 0, false, 1, false);
-        ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, durationTrack, 1, 1, durationTrack.getScaleY(), 1, false, 1, false);
-        AnimationsClass.parallelAnimation(true, sliderThumbHoverOff, sliderTrackHoverOff);
+    public void durationSliderHoverOff(double value) {
+        if(durationSlider.isValueChanging()){
+            lastKnownSliderHoverPosition = value;
+            return;
+        }
+
+        List<Transition> sliderHoverTransitions = new ArrayList<>();
+        sliderHoverTransitions.add(AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0, durationSlider.lookup(".thumb").getScaleY(), 0, false, 1, false));
+        thumbScale = 0;
+
+        if(durationTracks.isEmpty()){
+            sliderHoverTransitions.add(AnimationsClass.scaleAnimation(100, defaultTrack.progressBar, 1, 1, defaultTrack.progressBar.getScaleY(), 1, false, 1, false));
+        }
+        else {
+            for(DurationTrack durationTrack : durationTracks){
+                if(durationTrack.progressBar.getScaleY() > 1){
+                    sliderHoverTransitions.add(AnimationsClass.scaleAnimation(100, durationTrack.progressBar, 1, 1, durationTrack.progressBar.getScaleY(), 1, false, 1 , false));
+                }
+            }
+        }
+
+        AnimationsClass.parallelAnimation(true, sliderHoverTransitions);
+
+        activeTrack = null;
+        lastKnownSliderHoverPosition = value;
+    }
+
+    public void updateSliderHover(double value){
+
+        if(!durationTracks.isEmpty()){
+            if(activeTrack != null && (activeTrack.startTime > value || activeTrack.endTime < value)){
+                ScaleTransition sliderThumbHover = null;
+                ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, activeTrack.progressBar, 1, 1, activeTrack.progressBar.getScaleY(), 1, false, 1 , false);
+                ScaleTransition sliderTrackHoverOn = null;
+
+                for(DurationTrack durationTrack : durationTracks){
+                    if(durationTrack.startTime <= value && durationTrack.endTime >= value){
+                        activeTrack = durationTrack;
+                        if(durationTrack.startTime <= durationSlider.getValue()/durationSlider.getMax() && durationTrack.endTime >= durationSlider.getValue()/durationSlider.getMax() && !durationSlider.isValueChanging()){
+                            if(thumbScale != 1.25){
+                                sliderThumbHover = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.25, durationSlider.lookup(".thumb").getScaleY(), 1.25, false, 1, false);
+                                thumbScale = 1.25;
+                            }
+                        }
+                        sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, durationTrack.progressBar, 1, 1, durationTrack.progressBar.getScaleY(), 3, false, 1 , false);
+                        break;
+                    }
+                }
+
+                if(sliderThumbHover == null && !durationSlider.isValueChanging()){
+                    if(thumbScale != 0.9){
+                        sliderThumbHover = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0.9, durationSlider.lookup(".thumb").getScaleY(), 0.9, false, 1, false);
+                        thumbScale = 0.9;
+                    }
+                }
+
+
+                AnimationsClass.parallelAnimation(true, sliderTrackHoverOn, sliderTrackHoverOff, sliderThumbHover);
+            }
+        }
+
+        lastKnownSliderHoverPosition = value;
     }
 
     public void enterCaptionsButton() {
@@ -1184,7 +1281,50 @@ public class ControlBarController implements Initializable {
     }
 
     public void updateProgress(double progress){
-        durationTrack.setProgress(progress);
+        if(durationTracks.isEmpty()){
+            defaultTrack.progressBar.setProgress(progress);
+        }
+        else {
+            for(DurationTrack durationTrack : durationTracks){
+                if(progress >= durationTrack.endTime){
+                    durationTrack.progressBar.setProgress(1);
+                    if(durationSliderHover && activeTrack == durationTrack){
+                        if(thumbScale != 0.9){
+                            durationSlider.lookup(".thumb").setScaleX(0.9);
+                            durationSlider.lookup(".thumb").setScaleY(0.9);
+
+                            thumbScale = 0.9;
+                        }
+                    }
+                }
+                else if(progress > durationTrack.startTime){
+                    double max = durationTrack.endTime - durationTrack.startTime;
+                    double curr = progress - durationTrack.startTime;
+                    durationTrack.progressBar.setProgress(curr/max);
+
+                    if(durationSliderHover && activeTrack == durationTrack){
+                        if(thumbScale != 1.25){
+                            durationSlider.lookup(".thumb").setScaleX(1.25);
+                            durationSlider.lookup(".thumb").setScaleY(1.25);
+
+                            thumbScale = 1.25;
+                        }
+                    }
+                }
+                else {
+                    durationTrack.progressBar.setProgress(0);
+
+                    if(durationSliderHover && activeTrack == durationTrack){
+                        if(thumbScale != 0.9){
+                            durationSlider.lookup(".thumb").setScaleX(0.9);
+                            durationSlider.lookup(".thumb").setScaleY(0.9);
+
+                            thumbScale = 0.9;
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

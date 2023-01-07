@@ -14,6 +14,8 @@ public class ChapterController {
 
     List<ChapterDescription> chapterDescriptions = null;
 
+    int activeChapter = -1;
+
     ChapterController(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface){
         this.mainController = mainController;
         this.controlBarController = controlBarController;
@@ -55,13 +57,26 @@ public class ChapterController {
 
             }
         }
+
+        setActiveChapter(0);
     }
 
     public void resetChapters(){
         chapterDescriptions = null;
         controlBarController.durationTracks.clear();
+        controlBarController.hoverTrack = null;
         controlBarController.activeTrack = null;
         controlBarController.trackContainer.getChildren().clear();
         controlBarController.trackContainer.getChildren().add(controlBarController.defaultTrack.progressBar);
+        activeChapter = -1;
+        controlBarController.chapterLabel.setText("");
+    }
+
+    public void setActiveChapter(int newChapter){
+        if(chapterDescriptions != null){
+            this.activeChapter = newChapter;
+            ChapterDescription chapterDescription = chapterDescriptions.get(newChapter);
+            controlBarController.chapterLabel.setText(" • " + chapterDescription.name());
+        }
     }
 }

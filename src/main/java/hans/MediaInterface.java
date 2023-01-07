@@ -283,8 +283,7 @@ public class MediaInterface {
             if(activeItem.getMediaItem() != null) activeItem.showMetadata();
         });
 
-        controlBarController.durationLabel.setCursor(Cursor.HAND);
-        controlBarController.durationLabel.setMouseTransparent(false);
+        controlBarController.labelBox.setMouseTransparent(false);
 
 
         controlBarController.updateTooltips();
@@ -310,8 +309,7 @@ public class MediaInterface {
 
         controlBarController.durationSlider.setValue(0);
 
-        controlBarController.durationLabel.setCursor(Cursor.DEFAULT);
-        controlBarController.durationLabel.setMouseTransparent(true);
+        controlBarController.labelBox.setMouseTransparent(true);
 
         embeddedMediaPlayer.controls().stop();
         SleepSuppressor.allowSleep();

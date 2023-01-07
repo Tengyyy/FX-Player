@@ -28,14 +28,14 @@ public class AnimationsClass {
 
 
 
-    public static void volumeSliderHoverOn(Slider volumeSlider, Label durationLabel, ProgressBar volumeTrack) {
+    public static void volumeSliderHoverOn(Slider volumeSlider, HBox labelBox, ProgressBar volumeTrack) {
         volumeSliderTranslateTransition1 = new TranslateTransition(Duration.millis(100), volumeSlider);
         volumeSliderTranslateTransition1.setFromX(-60);
         volumeSliderTranslateTransition1.setToX(0);
         volumeSliderTranslateTransition1.setInterpolator(Interpolator.EASE_OUT);
         volumeSliderTranslateTransition1.play();
 
-        volumeSliderTranslateTransition2 = new TranslateTransition(Duration.millis(100), durationLabel);
+        volumeSliderTranslateTransition2 = new TranslateTransition(Duration.millis(100), labelBox);
         volumeSliderTranslateTransition2.setFromX(-60);
         volumeSliderTranslateTransition2.setToX(0);
         volumeSliderTranslateTransition2.setInterpolator(Interpolator.EASE_OUT);
@@ -48,7 +48,7 @@ public class AnimationsClass {
         volumeSliderTranslateTransition3.play();
     }
 
-    public static void volumeSliderHoverOff(Slider volumeSlider, Label durationLabel, ProgressBar volumeTrack) {
+    public static void volumeSliderHoverOff(Slider volumeSlider, HBox labelBox, ProgressBar volumeTrack) {
         volumeSliderTranslateTransition1.stop();
         volumeSliderTranslateTransition1 = new TranslateTransition(Duration.millis(100), volumeSlider);
         volumeSliderTranslateTransition1.setFromX(0);
@@ -57,7 +57,7 @@ public class AnimationsClass {
         volumeSliderTranslateTransition1.play();
 
         volumeSliderTranslateTransition2.stop();
-        volumeSliderTranslateTransition2 = new TranslateTransition(Duration.millis(100), durationLabel);
+        volumeSliderTranslateTransition2 = new TranslateTransition(Duration.millis(100), labelBox);
         volumeSliderTranslateTransition2.setFromX(0);
         volumeSliderTranslateTransition2.setToX(-60);
         volumeSliderTranslateTransition2.setInterpolator(Interpolator.EASE_OUT);

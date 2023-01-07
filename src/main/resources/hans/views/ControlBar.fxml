@@ -129,11 +129,27 @@
                         <Insets right="8.0" />
                      </padding>
                         </StackPane>
-                        <Label id="durationLabel" fx:id="durationLabel" maxHeight="-Infinity" minWidth="150.0" prefHeight="30.0" prefWidth="160.0" styleClass="focusableProperty" textFill="WHITE" GridPane.columnIndex="6">
-                            <cursor>
-                                <Cursor fx:constant="DEFAULT" />
-                            </cursor>
-                        </Label>
+                  <HBox fx:id="labelBox" GridPane.columnIndex="6">
+                     <children>
+                              <Label fx:id="durationLabel" maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="30.0" textFill="WHITE" HBox.hgrow="ALWAYS">
+                                  <cursor>
+                                      <Cursor fx:constant="HAND" />
+                                  </cursor>
+                           <styleClass>
+                              <String fx:value="focusableProperty" />
+                              <String fx:value="controlBarLabel" />
+                           </styleClass>
+                              </Label>
+                        <Label fx:id="chapterLabel" maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="30.0" textFill="WHITE" HBox.hgrow="SOMETIMES">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <styleClass>
+                              <String fx:value="focusableProperty" />
+                              <String fx:value="controlBarLabel" />
+                           </styleClass></Label>
+                     </children>
+                  </HBox>
                   <StackPane fx:id="captionsButtonPane" minWidth="45.0" onMouseEntered="#enterCaptionsButton" onMouseExited="#exitCaptionsButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="7">
                      <children>
                         <Button fx:id="captionsButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">

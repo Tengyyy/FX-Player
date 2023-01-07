@@ -74,7 +74,7 @@ public class ControlBarController implements Initializable {
     StackPane volumeSliderPane, previousVideoPane, playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, miniplayerButtonPane, fullScreenButtonPane, durationPane;
 
     @FXML
-    Label durationLabel;
+    Label durationLabel, chapterLabel;
 
     @FXML
     public
@@ -84,10 +84,11 @@ public class ControlBarController implements Initializable {
     public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, captionsIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
 
     @FXML
-    HBox trackContainer;
+    HBox trackContainer, labelBox;
 
     ArrayList<DurationTrack> durationTracks = new ArrayList<>();
     DurationTrack defaultTrack = new DurationTrack(0 , 1);
+    DurationTrack hoverTrack = null;
     DurationTrack activeTrack = null;
 
     SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
@@ -212,9 +213,9 @@ public class ControlBarController implements Initializable {
         volumeSlider.setTranslateX(-60);
         volumeTrack.setTranslateX(-60);
 
-        durationLabel.setTranslateX(-60);
+        labelBox.setTranslateX(-60);
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
-        durationLabel.setMouseTransparent(true);
+        labelBox.setMouseTransparent(true);
 
         durationPane.setMouseTransparent(true);
 
@@ -773,11 +774,11 @@ public class ControlBarController implements Initializable {
     }
 
     public void volumeSliderEnter() {
-        AnimationsClass.volumeSliderHoverOn(volumeSlider, durationLabel, volumeTrack);
+        AnimationsClass.volumeSliderHoverOn(volumeSlider, labelBox, volumeTrack);
     }
 
     public void volumeSliderExit() {
-        AnimationsClass.volumeSliderHoverOff(volumeSlider, durationLabel, volumeTrack);
+        AnimationsClass.volumeSliderHoverOff(volumeSlider, labelBox, volumeTrack);
     }
 
     public void toggleFullScreen() {
@@ -942,7 +943,7 @@ public class ControlBarController implements Initializable {
         else {
             for(DurationTrack durationTrack : durationTracks){
                 if(durationTrack.startTime <= value && durationTrack.endTime >= value){
-                    activeTrack = durationTrack;
+                    hoverTrack = durationTrack;
                     if(durationTrack.startTime <= durationSlider.getValue()/durationSlider.getMax() && durationTrack.endTime >= durationSlider.getValue()/durationSlider.getMax()){
                         if(thumbScale != 1.25) {
                             sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.25, durationSlider.lookup(".thumb").getScaleY(), 1.25, false, 1, false);
@@ -989,21 +990,21 @@ public class ControlBarController implements Initializable {
 
         AnimationsClass.parallelAnimation(true, sliderHoverTransitions);
 
-        activeTrack = null;
+        hoverTrack = null;
         lastKnownSliderHoverPosition = value;
     }
 
     public void updateSliderHover(double value){
 
         if(!durationTracks.isEmpty()){
-            if(activeTrack != null && (activeTrack.startTime > value || activeTrack.endTime < value)){
+            if(hoverTrack != null && (hoverTrack.startTime > value || hoverTrack.endTime < value)){
                 ScaleTransition sliderThumbHover = null;
-                ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, activeTrack.progressBar, 1, 1, activeTrack.progressBar.getScaleY(), 1, false, 1 , false);
+                ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, hoverTrack.progressBar, 1, 1, hoverTrack.progressBar.getScaleY(), 1, false, 1 , false);
                 ScaleTransition sliderTrackHoverOn = null;
 
                 for(DurationTrack durationTrack : durationTracks){
                     if(durationTrack.startTime <= value && durationTrack.endTime >= value){
-                        activeTrack = durationTrack;
+                        hoverTrack = durationTrack;
                         if(durationTrack.startTime <= durationSlider.getValue()/durationSlider.getMax() && durationTrack.endTime >= durationSlider.getValue()/durationSlider.getMax() && !durationSlider.isValueChanging()){
                             if(thumbScale != 1.25){
                                 sliderThumbHover = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.25, durationSlider.lookup(".thumb").getScaleY(), 1.25, false, 1, false);
@@ -1285,41 +1286,51 @@ public class ControlBarController implements Initializable {
             defaultTrack.progressBar.setProgress(progress);
         }
         else {
-            for(DurationTrack durationTrack : durationTracks){
-                if(progress >= durationTrack.endTime){
-                    durationTrack.progressBar.setProgress(1);
-                    if(durationSliderHover && activeTrack == durationTrack){
-                        if(thumbScale != 0.9){
-                            durationSlider.lookup(".thumb").setScaleX(0.9);
-                            durationSlider.lookup(".thumb").setScaleY(0.9);
+            if (activeTrack != null && progress >= activeTrack.startTime && progress <= activeTrack.endTime){
+                double max = activeTrack.endTime - activeTrack.startTime;
+                double curr = progress - activeTrack.startTime;
+                activeTrack.progressBar.setProgress(curr/max);
+            }
+            else {
+                for(DurationTrack durationTrack : durationTracks){
+                    if(progress >= durationTrack.endTime){
+                        durationTrack.progressBar.setProgress(1);
+                        if(durationSliderHover && hoverTrack == durationTrack){
+                            if(thumbScale != 0.9){
+                                durationSlider.lookup(".thumb").setScaleX(0.9);
+                                durationSlider.lookup(".thumb").setScaleY(0.9);
 
-                            thumbScale = 0.9;
+                                thumbScale = 0.9;
+                            }
                         }
                     }
-                }
-                else if(progress > durationTrack.startTime){
-                    double max = durationTrack.endTime - durationTrack.startTime;
-                    double curr = progress - durationTrack.startTime;
-                    durationTrack.progressBar.setProgress(curr/max);
+                    else if(progress > durationTrack.startTime){
+                        double max = durationTrack.endTime - durationTrack.startTime;
+                        double curr = progress - durationTrack.startTime;
+                        durationTrack.progressBar.setProgress(curr/max);
 
-                    if(durationSliderHover && activeTrack == durationTrack){
-                        if(thumbScale != 1.25){
-                            durationSlider.lookup(".thumb").setScaleX(1.25);
-                            durationSlider.lookup(".thumb").setScaleY(1.25);
+                        if(durationSliderHover && hoverTrack == durationTrack){
+                            if(thumbScale != 1.25){
+                                durationSlider.lookup(".thumb").setScaleX(1.25);
+                                durationSlider.lookup(".thumb").setScaleY(1.25);
 
-                            thumbScale = 1.25;
+                                thumbScale = 1.25;
+                            }
                         }
+
+                        activeTrack = durationTrack;
+                        chapterController.setActiveChapter(durationTracks.indexOf(durationTrack));
                     }
-                }
-                else {
-                    durationTrack.progressBar.setProgress(0);
+                    else {
+                        durationTrack.progressBar.setProgress(0);
 
-                    if(durationSliderHover && activeTrack == durationTrack){
-                        if(thumbScale != 0.9){
-                            durationSlider.lookup(".thumb").setScaleX(0.9);
-                            durationSlider.lookup(".thumb").setScaleY(0.9);
+                        if(durationSliderHover && hoverTrack == durationTrack){
+                            if(thumbScale != 0.9){
+                                durationSlider.lookup(".thumb").setScaleX(0.9);
+                                durationSlider.lookup(".thumb").setScaleY(0.9);
 
-                            thumbScale = 0.9;
+                                thumbScale = 0.9;
+                            }
                         }
                     }
                 }

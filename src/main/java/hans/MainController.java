@@ -426,9 +426,9 @@ public class MainController implements Initializable {
             e.consume();
         });
 
-        videoTitleLabel.setOnMouseEntered(e -> AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(255, 255, 255), 200));
+        videoTitleLabel.setOnMouseEntered(e -> AnimationsClass.animateTextColor(videoTitleLabel, Color.rgb(255, 255, 255), 200));
 
-        videoTitleLabel.setOnMouseExited(e -> AnimationsClass.AnimateTextColor(videoTitleLabel, Color.rgb(200, 200,200), 200));
+        videoTitleLabel.setOnMouseExited(e -> AnimationsClass.animateTextColor(videoTitleLabel, Color.rgb(200, 200,200), 200));
 
         metadataButtonPane.setPrefSize(50, 50);
         metadataButtonPane.setMaxSize(50, 50);

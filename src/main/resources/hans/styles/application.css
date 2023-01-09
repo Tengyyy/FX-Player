@@ -46,6 +46,7 @@
 .controlBarLabel {
     -fx-font-family: "Roboto Medium";
 	-fx-font-size: 18;
+	-fx-text-fill: rgb(200,200,200);
 }
 
 

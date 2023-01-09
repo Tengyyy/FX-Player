@@ -216,12 +216,12 @@ public class MenuController implements Initializable {
 
         historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
             historyButtonHover = true;
-            AnimationsClass.AnimateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
+            AnimationsClass.animateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(130, 130, 130), 200);
         });
 
         historyButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
             historyButtonHover = false;
-            AnimationsClass.AnimateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
+            AnimationsClass.animateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(100, 100, 100), 200);
         });
 
 
@@ -678,9 +678,9 @@ public class MenuController implements Initializable {
             closeMenu();
         });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.AnimateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
+        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> AnimationsClass.AnimateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200));
+        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200));
 
         closeButtonPane.setPrefSize(50, 50);
         closeButtonPane.setMaxSize(50, 50);
@@ -925,12 +925,12 @@ public class MenuController implements Initializable {
 
         historyButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
             historyButtonHover = true;
-            AnimationsClass.AnimateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
+            AnimationsClass.animateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200);
         });
 
         historyButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
             historyButtonHover = false;
-            AnimationsClass.AnimateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
+            AnimationsClass.animateBackgroundColor(historyIcon, (Color) historyIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200);
         });
     }
 }

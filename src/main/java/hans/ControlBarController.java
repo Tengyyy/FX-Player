@@ -74,7 +74,7 @@ public class ControlBarController implements Initializable {
     StackPane volumeSliderPane, previousVideoPane, playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, miniplayerButtonPane, fullScreenButtonPane, durationPane;
 
     @FXML
-    Label durationLabel, chapterLabel;
+    Label durationLabel;
 
     @FXML
     public
@@ -216,6 +216,14 @@ public class ControlBarController implements Initializable {
         labelBox.setTranslateX(-60);
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
         labelBox.setMouseTransparent(true);
+
+        durationLabel.setOnMouseEntered(e -> {
+            AnimationsClass.animateTextColor(durationLabel, Color.rgb(255, 255, 255), 200);
+        });
+
+        durationLabel.setOnMouseExited(e -> {
+            AnimationsClass.animateTextColor(durationLabel, Color.rgb(200, 200, 200), 200);
+        });
 
         durationPane.setMouseTransparent(true);
 
@@ -370,7 +378,7 @@ public class ControlBarController implements Initializable {
 
             durationSlider.lookup(".track").setOnMouseMoved(e -> {
 
-                updateSliderHover(Math.min(1,Math.max(0, e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+                updateSliderHover(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getWidth());
 
                 String newTime = Utilities.getTime(Duration.seconds((e.getX()) / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverLabel.label.setText(newTime);
@@ -413,7 +421,7 @@ public class ControlBarController implements Initializable {
 
             durationSlider.lookup(".track").setOnMouseEntered((e) -> {
                 durationSliderHover = true;
-                durationSliderHoverOn(Math.min(1,Math.max(0, e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+                durationSliderHoverOn(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX());
 
                 String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverLabel.label.setText(newTime);
@@ -458,9 +466,9 @@ public class ControlBarController implements Initializable {
             durationSlider.lookup(".track").setOnMouseExited((e) -> {
                 durationSliderHover = false;
 
-
                 if (!e.isPrimaryButtonDown()) {
-                    durationSliderHoverOff(Math.min(1,Math.max(0, e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+
+                    durationSliderHoverOff(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX());
                     mainController.sliderHoverLabel.label.setVisible(false);
                     mainController.sliderHoverPreview.pane.setVisible(false);
                     mainController.sliderHoverPreview.setImage(null);
@@ -473,7 +481,7 @@ public class ControlBarController implements Initializable {
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
                 if (e.isPrimaryButtonDown()) return;
 
-                updateSliderHover(Math.min(1,Math.max(0, e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX())));
+                updateSliderHover(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX());
 
 
                 e.consume();
@@ -982,9 +990,7 @@ public class ControlBarController implements Initializable {
         }
         else {
             for(DurationTrack durationTrack : durationTracks){
-                if(durationTrack.progressBar.getScaleY() > 1){
-                    sliderHoverTransitions.add(AnimationsClass.scaleAnimation(100, durationTrack.progressBar, 1, 1, durationTrack.progressBar.getScaleY(), 1, false, 1 , false));
-                }
+                sliderHoverTransitions.add(AnimationsClass.scaleAnimation(100, durationTrack.progressBar, 1, 1, durationTrack.progressBar.getScaleY(), 1, false, 1 , false));
             }
         }
 
@@ -1051,23 +1057,23 @@ public class ControlBarController implements Initializable {
     public void controlButtonHoverOn(StackPane stackPane) {
         Region icon = (Region) stackPane.getChildren().get(1);
 
-        AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+        AnimationsClass.animateBackgroundColor(icon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
     }
 
 
     public void controlButtonHoverOff(StackPane stackPane) {
         Region icon = (Region) stackPane.getChildren().get(1);
 
-        AnimationsClass.AnimateBackgroundColor(icon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
+        AnimationsClass.animateBackgroundColor(icon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
     }
 
     public void previousVideoButtonHoverOn() {
         previousVideoButtonHover = true;
 
         if (previousVideoButtonEnabled) {
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+            AnimationsClass.animateBackgroundColor(previousVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         } else {
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
+            AnimationsClass.animateBackgroundColor(previousVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
         }
     }
 
@@ -1075,9 +1081,9 @@ public class ControlBarController implements Initializable {
         previousVideoButtonHover = false;
 
         if (previousVideoButtonEnabled) {
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
+            AnimationsClass.animateBackgroundColor(previousVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         } else {
-            AnimationsClass.AnimateBackgroundColor(previousVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
+            AnimationsClass.animateBackgroundColor(previousVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
     }
 
@@ -1085,9 +1091,9 @@ public class ControlBarController implements Initializable {
         playButtonHover = true;
 
         if (playButtonEnabled) {
-            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+            AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         } else {
-            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
+            AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
         }
     }
 
@@ -1095,9 +1101,9 @@ public class ControlBarController implements Initializable {
         playButtonHover = false;
 
         if (playButtonEnabled) {
-            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
+            AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         } else {
-            AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
+            AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
     }
 
@@ -1105,9 +1111,9 @@ public class ControlBarController implements Initializable {
         nextVideoButtonHover = true;
 
         if (nextVideoButtonEnabled) {
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+            AnimationsClass.animateBackgroundColor(nextVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
         } else {
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
+            AnimationsClass.animateBackgroundColor(nextVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
 
         }
     }
@@ -1116,9 +1122,9 @@ public class ControlBarController implements Initializable {
         nextVideoButtonHover = false;
 
         if (nextVideoButtonEnabled) {
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
+            AnimationsClass.animateBackgroundColor(nextVideoIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         } else {
-            AnimationsClass.AnimateBackgroundColor(nextVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
+            AnimationsClass.animateBackgroundColor(nextVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
     }
 
@@ -1154,7 +1160,6 @@ public class ControlBarController implements Initializable {
 
         if (previousVideoButtonHover){
             previousVideoTooltip.mouseHover.set(true);
-            //previousVideoTooltip.showTooltip();
         }
     }
 
@@ -1241,7 +1246,6 @@ public class ControlBarController implements Initializable {
 
         if (nextVideoButtonHover){
             nextVideoTooltip.mouseHover.set(true);
-            //nextVideoTooltip.showTooltip();
         }
     }
 
@@ -1295,7 +1299,7 @@ public class ControlBarController implements Initializable {
                 for(DurationTrack durationTrack : durationTracks){
                     if(progress >= durationTrack.endTime){
                         durationTrack.progressBar.setProgress(1);
-                        if(durationSliderHover && hoverTrack == durationTrack){
+                        if(durationSliderHover && !durationSlider.isValueChanging() && hoverTrack == durationTrack){
                             if(thumbScale != 0.9){
                                 durationSlider.lookup(".thumb").setScaleX(0.9);
                                 durationSlider.lookup(".thumb").setScaleY(0.9);
@@ -1309,7 +1313,8 @@ public class ControlBarController implements Initializable {
                         double curr = progress - durationTrack.startTime;
                         durationTrack.progressBar.setProgress(curr/max);
 
-                        if(durationSliderHover && hoverTrack == durationTrack){
+                        if(durationSliderHover && !durationSlider.isValueChanging() && hoverTrack == durationTrack){
+
                             if(thumbScale != 1.25){
                                 durationSlider.lookup(".thumb").setScaleX(1.25);
                                 durationSlider.lookup(".thumb").setScaleY(1.25);
@@ -1324,7 +1329,8 @@ public class ControlBarController implements Initializable {
                     else {
                         durationTrack.progressBar.setProgress(0);
 
-                        if(durationSliderHover && hoverTrack == durationTrack){
+                        if(durationSliderHover && !durationSlider.isValueChanging() && hoverTrack == durationTrack){
+
                             if(thumbScale != 0.9){
                                 durationSlider.lookup(".thumb").setScaleX(0.9);
                                 durationSlider.lookup(".thumb").setScaleY(0.9);

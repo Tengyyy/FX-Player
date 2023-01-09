@@ -469,9 +469,9 @@ public class ActiveItem extends GridPane implements MenuObject {
         });
 
 
-        playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200));
+        playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200));
 
-        playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.AnimateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200));
+        playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200));
 
         playButton.setOnAction((e) -> {
 

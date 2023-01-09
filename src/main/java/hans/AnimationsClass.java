@@ -58,6 +58,7 @@ public class AnimationsClass {
 
         volumeSliderTranslateTransition2.stop();
         volumeSliderTranslateTransition2 = new TranslateTransition(Duration.millis(100), labelBox);
+        volumeSliderTranslateTransition2 = new TranslateTransition(Duration.millis(100), labelBox);
         volumeSliderTranslateTransition2.setFromX(0);
         volumeSliderTranslateTransition2.setToX(-60);
         volumeSliderTranslateTransition2.setInterpolator(Interpolator.EASE_OUT);
@@ -384,7 +385,7 @@ public class AnimationsClass {
     }
 
 
-    public static void AnimateBackgroundColor(Region icon, Color fromColor, Color toColor, int duration) {
+    public static void animateBackgroundColor(Region icon, Color fromColor, Color toColor, int duration) {
 
         Rectangle rect = new Rectangle();
         rect.setFill(fromColor);
@@ -407,7 +408,7 @@ public class AnimationsClass {
     }
 
 
-    public static void AnimateTextColor(Label label, Color toColor, int duration) {
+    public static void animateTextColor(Label label, Color toColor, int duration) {
         Duration animationDuration = Duration.millis(duration);
         Timeline timeline = new Timeline(new KeyFrame(animationDuration,
                 new KeyValue(label.textFillProperty(), toColor, Interpolator.LINEAR)));

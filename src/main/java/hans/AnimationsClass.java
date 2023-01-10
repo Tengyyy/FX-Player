@@ -17,60 +17,10 @@ import java.util.List;
 public class AnimationsClass {
 
     public static final double ANIMATION_SPEED = 200;
-    static TranslateTransition volumeSliderTranslateTransition1;
-    static TranslateTransition volumeSliderTranslateTransition2;
-    static TranslateTransition volumeSliderTranslateTransition3;
-
 
     static ParallelTransition nextVideoNotificationOnTransition;
     static ParallelTransition nextVideoNotificationOffTransition;
 
-
-
-
-    public static void volumeSliderHoverOn(Slider volumeSlider, HBox labelBox, ProgressBar volumeTrack) {
-        volumeSliderTranslateTransition1 = new TranslateTransition(Duration.millis(100), volumeSlider);
-        volumeSliderTranslateTransition1.setFromX(-60);
-        volumeSliderTranslateTransition1.setToX(0);
-        volumeSliderTranslateTransition1.setInterpolator(Interpolator.EASE_OUT);
-        volumeSliderTranslateTransition1.play();
-
-        volumeSliderTranslateTransition2 = new TranslateTransition(Duration.millis(100), labelBox);
-        volumeSliderTranslateTransition2.setFromX(-60);
-        volumeSliderTranslateTransition2.setToX(0);
-        volumeSliderTranslateTransition2.setInterpolator(Interpolator.EASE_OUT);
-        volumeSliderTranslateTransition2.play();
-
-        volumeSliderTranslateTransition3 = new TranslateTransition(Duration.millis(100), volumeTrack);
-        volumeSliderTranslateTransition3.setFromX(-60);
-        volumeSliderTranslateTransition3.setToX(0);
-        volumeSliderTranslateTransition3.setInterpolator(Interpolator.EASE_OUT);
-        volumeSliderTranslateTransition3.play();
-    }
-
-    public static void volumeSliderHoverOff(Slider volumeSlider, HBox labelBox, ProgressBar volumeTrack) {
-        volumeSliderTranslateTransition1.stop();
-        volumeSliderTranslateTransition1 = new TranslateTransition(Duration.millis(100), volumeSlider);
-        volumeSliderTranslateTransition1.setFromX(0);
-        volumeSliderTranslateTransition1.setToX(-60);
-        volumeSliderTranslateTransition1.setInterpolator(Interpolator.EASE_OUT);
-        volumeSliderTranslateTransition1.play();
-
-        volumeSliderTranslateTransition2.stop();
-        volumeSliderTranslateTransition2 = new TranslateTransition(Duration.millis(100), labelBox);
-        volumeSliderTranslateTransition2 = new TranslateTransition(Duration.millis(100), labelBox);
-        volumeSliderTranslateTransition2.setFromX(0);
-        volumeSliderTranslateTransition2.setToX(-60);
-        volumeSliderTranslateTransition2.setInterpolator(Interpolator.EASE_OUT);
-        volumeSliderTranslateTransition2.play();
-
-        volumeSliderTranslateTransition3.stop();
-        volumeSliderTranslateTransition3 = new TranslateTransition(Duration.millis(100), volumeTrack);
-        volumeSliderTranslateTransition3.setFromX(0);
-        volumeSliderTranslateTransition3.setToX(-60);
-        volumeSliderTranslateTransition3.setInterpolator(Interpolator.EASE_OUT);
-        volumeSliderTranslateTransition3.play();
-    }
 
     public static void displayControls(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
 

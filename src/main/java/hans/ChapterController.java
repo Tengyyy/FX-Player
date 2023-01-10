@@ -45,8 +45,12 @@ public class ChapterController {
 
         chapterLabelWrapper.setPrefHeight(30);
         chapterLabelWrapper.setMinWidth(0);
-        HBox.setHgrow(chapterLabelWrapper, Priority.SOMETIMES);
         chapterLabelWrapper.getChildren().addAll(separatorLabel, chapterLabelBox);
+        HBox.setHgrow(separatorLabel, Priority.ALWAYS);
+        HBox.setHgrow(chapterLabelBox, Priority.NEVER);
+
+        chapterLabelWrapper.maxWidthProperty().bind(controlBarController.labelBox.widthProperty().subtract(controlBarController.volumeSliderPane.widthProperty()).subtract(controlBarController.durationLabel.widthProperty()).subtract(10));
+
 
         separatorLabel.getStyleClass().add("controlBarLabel");
         separatorLabel.setPadding(new Insets(0, 3, 0, 5));
@@ -54,9 +58,11 @@ public class ChapterController {
 
         chapterLabelBox.setPrefHeight(30);
         chapterLabelBox.setMinWidth(0);
-        HBox.setHgrow(chapterLabelBox, Priority.SOMETIMES);
         chapterLabelBox.getChildren().addAll(chapterLabel, chevronPane);
         chapterLabelBox.setCursor(Cursor.HAND);
+
+        HBox.setHgrow(chevronPane, Priority.ALWAYS);
+        HBox.setHgrow(chapterLabel, Priority.NEVER);
 
         chapterLabelBox.setOnMouseEntered(e -> {
                 AnimationsClass.animateTextColor(chapterLabel, Color.WHITE, 200);
@@ -73,8 +79,8 @@ public class ChapterController {
 
         chevronSVG.setContent(App.svgMap.get(SVG.CHEVRON_RIGHT));
 
-        chevronPane.setPrefSize(10, 30);
-        chevronPane.setMaxSize(10, 30);
+        chevronPane.setPrefSize(12, 30);
+        chevronPane.setMaxSize(12, 30);
         chevronPane.getChildren().add(chevronIcon);
         chevronPane.setMouseTransparent(true);
         chevronPane.setAlignment(Pos.CENTER_RIGHT);

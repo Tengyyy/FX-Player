@@ -7,10 +7,7 @@ import hans.Menu.QueueItem;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
 import hans.Captions.CaptionsController;
-import javafx.animation.Animation;
-import javafx.animation.PauseTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.Transition;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -153,6 +150,7 @@ public class ControlBarController implements Initializable {
 
     double thumbScale = 0;
 
+    Timeline volumeSliderAnimation = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -208,12 +206,20 @@ public class ControlBarController implements Initializable {
         miniplayerSVG = new SVGPath();
         miniplayerSVG.setContent(App.svgMap.get(SVG.MINIPLAYER));
 
-        volumeSliderPane.setClip(new Rectangle(68, 30));
+        volumeSliderPane.setClip(new Rectangle(0, 30));
 
-        volumeSlider.setTranslateX(-60);
-        volumeTrack.setTranslateX(-60);
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(volumeSliderPane.widthProperty());
+        clip.heightProperty().bind(volumeSliderPane.heightProperty());
 
-        labelBox.setTranslateX(-60);
+        volumeSliderPane.setClip(clip);
+
+        Rectangle labelClip = new Rectangle();
+        labelClip.widthProperty().bind(labelBox.widthProperty().subtract(10));
+        labelClip.heightProperty().bind(labelBox.heightProperty());
+        labelBox.setClip(labelClip);
+
+
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
         labelBox.setMouseTransparent(true);
 
@@ -782,11 +788,26 @@ public class ControlBarController implements Initializable {
     }
 
     public void volumeSliderEnter() {
-        AnimationsClass.volumeSliderHoverOn(volumeSlider, labelBox, volumeTrack);
+        if(volumeSliderAnimation != null && volumeSliderAnimation.getStatus() == Animation.Status.RUNNING) volumeSliderAnimation.stop();
+
+        volumeSliderAnimation = new Timeline(
+                new KeyFrame(Duration.millis(100),
+                        new KeyValue(volumeSliderPane.prefWidthProperty(), 68, Interpolator.EASE_BOTH))
+        );
+
+
+        volumeSliderAnimation.play();
     }
 
     public void volumeSliderExit() {
-        AnimationsClass.volumeSliderHoverOff(volumeSlider, labelBox, volumeTrack);
+        if(volumeSliderAnimation != null && volumeSliderAnimation.getStatus() == Animation.Status.RUNNING) volumeSliderAnimation.stop();
+
+        volumeSliderAnimation = new Timeline(
+                new KeyFrame(Duration.millis(100),
+                        new KeyValue(volumeSliderPane.prefWidthProperty(), 0, Interpolator.EASE_BOTH))
+        );
+
+        volumeSliderAnimation.play();
     }
 
     public void toggleFullScreen() {

@@ -55,18 +55,17 @@
               </GridPane>
               <GridPane minWidth="601.0" prefWidth="601.0">
                   <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="20.0" />
-                      <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
-                      <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
-                      <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="20.0" />
                       <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
-                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="68.0" />
+                      <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
+                      <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
+                      <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
                   <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="150.0" />
                   <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
-                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
-                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="45.0" prefWidth="52.0" />
                   <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="20.0" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="20.0" />
                   </columnConstraints>
                   <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -112,26 +111,26 @@
                         <Region fx:id="volumeIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon" StackPane.alignment="CENTER" />
                      </children>
                   </StackPane>
-                        <StackPane fx:id="volumeSliderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseEntered="#enterArea" prefHeight="30.0" prefWidth="68.0" stylesheets="@../styles/application.css" GridPane.columnIndex="5">
-                            <children>
-                                <ProgressBar fx:id="volumeTrack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="4.0" prefWidth="48.0" progress="0.5" styleClass="volumeTrack" />
-                                <Slider fx:id="volumeSlider" blockIncrement="5.0" maxHeight="-Infinity" maxWidth="60.0" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="8.0" prefWidth="60.0" value="50.0">
-                                    <cursor>
-                                        <Cursor fx:constant="HAND" />
-                                    </cursor>
-                                    <styleClass>
-                                        <String fx:value="focusableProperty" />
-                                        <String fx:value="volumeSlider" />
-                                    </styleClass>
-                                </Slider>
-                            </children>
-                     <padding>
-                        <Insets right="8.0" />
-                     </padding>
-                        </StackPane>
-                  <HBox fx:id="labelBox" minWidth="150.0" GridPane.columnIndex="6">
+                  <HBox fx:id="labelBox" alignment="CENTER_LEFT" minWidth="150.0" GridPane.columnIndex="5">
                      <children>
-                              <Label fx:id="durationLabel" maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="30.0" textFill="#c8c8c8" HBox.hgrow="ALWAYS">
+                              <StackPane fx:id="volumeSliderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseEntered="#enterArea" prefHeight="30.0" prefWidth="0.0" stylesheets="@../styles/application.css">
+                                  <children>
+                                      <ProgressBar fx:id="volumeTrack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="4.0" prefWidth="48.0" progress="0.5" styleClass="volumeTrack" />
+                                      <Slider fx:id="volumeSlider" blockIncrement="5.0" maxHeight="-Infinity" maxWidth="60.0" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="8.0" prefWidth="60.0" value="50.0">
+                                          <cursor>
+                                              <Cursor fx:constant="HAND" />
+                                          </cursor>
+                                          <styleClass>
+                                              <String fx:value="focusableProperty" />
+                                              <String fx:value="volumeSlider" />
+                                          </styleClass>
+                                      </Slider>
+                                  </children>
+                           <padding>
+                              <Insets right="8.0" />
+                           </padding>
+                              </StackPane>
+                              <Label fx:id="durationLabel" maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="30.0" textFill="#c8c8c8">
                                   <cursor>
                                       <Cursor fx:constant="HAND" />
                                   </cursor>
@@ -141,8 +140,11 @@
                            </styleClass>
                               </Label>
                      </children>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
                   </HBox>
-                  <StackPane fx:id="captionsButtonPane" minWidth="52.0" onMouseEntered="#enterCaptionsButton" onMouseExited="#exitCaptionsButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="7">
+                  <StackPane fx:id="captionsButtonPane" minWidth="52.0" onMouseEntered="#enterCaptionsButton" onMouseExited="#exitCaptionsButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="6">
                      <children>
                         <Button fx:id="captionsButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
@@ -157,7 +159,7 @@
                         </Line>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="settingsButtonPane" minWidth="52.0" onMouseEntered="#enterSettingsButton" onMouseExited="#exitSettingsButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="8">
+                  <StackPane fx:id="settingsButtonPane" minWidth="52.0" onMouseEntered="#enterSettingsButton" onMouseExited="#exitSettingsButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="7">
                      <children>
                         <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
@@ -167,7 +169,7 @@
                         <Region fx:id="settingsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon" />
                      </children>
                   </StackPane>
-                  <StackPane fx:id="miniplayerButtonPane" minWidth="52.0" onMouseEntered="#miniplayerButtonHoverOn" onMouseExited="#miniplayerButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="9">
+                  <StackPane fx:id="miniplayerButtonPane" minWidth="52.0" onMouseEntered="#miniplayerButtonHoverOn" onMouseExited="#miniplayerButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="8">
                      <children>
                         <Button fx:id="miniplayerButton" minWidth="45.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
@@ -177,7 +179,7 @@
                         <Region fx:id="miniplayerIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="19.0" prefWidth="23.0" styleClass="controlIcon" />
                      </children>
                   </StackPane>
-                  <StackPane fx:id="fullScreenButtonPane" minWidth="52.0" onMouseEntered="#fullScreenButtonHoverOn" onMouseExited="#fullScreenButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="10">
+                  <StackPane fx:id="fullScreenButtonPane" minWidth="52.0" onMouseEntered="#fullScreenButtonHoverOn" onMouseExited="#fullScreenButtonHoverOff" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="9">
                      <children>
                         <Button fx:id="fullScreenButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>

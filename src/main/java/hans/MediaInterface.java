@@ -144,9 +144,7 @@ public class MediaInterface {
 
                     Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
 
-                    if(mediaPlayer.chapters().count() > 0){
-                        chapterController.initializeChapters(mediaPlayer.chapters().descriptions());
-                    }
+                    chapterController.initializeChapters(mediaPlayer.chapters().descriptions());
 
                     play();
                 });

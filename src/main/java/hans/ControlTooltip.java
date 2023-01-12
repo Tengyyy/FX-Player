@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -121,7 +122,7 @@ public class ControlTooltip extends Tooltip {
         countdown = new PauseTransition(Duration.millis(delay));
         countdown.setOnFinished((e) -> mouseHover.set(true));
 
-        tooltipParent.setOnMouseEntered((e) -> {
+        tooltipParent.setOnMouseEntered(e -> {
             countdown.playFromStart();
         });
 

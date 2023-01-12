@@ -13,29 +13,48 @@ public class SliderHoverLabel {
     ControlBarController controlBarController;
 
 
-    public Label label = new Label();
+    public Label timeLabel = new Label();
+    public Label chapterlabel = new Label();
+
 
     SliderHoverLabel(StackPane parent, ControlBarController controlBarController, boolean miniplayer){
         this.controlBarController = controlBarController;
 
-        label.setTextFill(Color.WHITE);
+        timeLabel.setTextFill(Color.WHITE);
 
-        label.setEffect(new DropShadow());
+        timeLabel.setEffect(new DropShadow());
 
-        label.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 14");
-        label.setMouseTransparent(true);
-        label.setBackground(Background.EMPTY);
-        label.setText("00:00");
+        timeLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 15");
+        timeLabel.setMouseTransparent(true);
+        timeLabel.setBackground(Background.EMPTY);
+        timeLabel.setText("00:00");
 
-        if(miniplayer) label.setTranslateY(-35);
-        else label.setTranslateY(-75);
-        label.setPadding(Insets.EMPTY);
-        label.setAlignment(Pos.CENTER);
-        label.setVisible(false);
+        if(miniplayer) timeLabel.setTranslateY(-35);
+        else timeLabel.setTranslateY(-75);
+        timeLabel.setPadding(Insets.EMPTY);
+        timeLabel.setAlignment(Pos.CENTER);
+        timeLabel.setVisible(false);
 
-        StackPane.setAlignment(label, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(timeLabel, Pos.BOTTOM_CENTER);
 
-        parent.getChildren().add(label);
+
+        chapterlabel.setTextFill(Color.WHITE);
+
+        chapterlabel.setEffect(new DropShadow());
+
+        chapterlabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 14");
+        chapterlabel.setMouseTransparent(true);
+        chapterlabel.setBackground(Background.EMPTY);
+        chapterlabel.setTranslateY(-105);
+        chapterlabel.setPadding(Insets.EMPTY);
+        chapterlabel.setAlignment(Pos.CENTER);
+        chapterlabel.setVisible(false);
+        chapterlabel.setText("Chapter test");
+
+        StackPane.setAlignment(chapterlabel, Pos.BOTTOM_CENTER);
+
+        if(miniplayer) parent.getChildren().add(timeLabel);
+        else parent.getChildren().addAll(timeLabel, chapterlabel);
 
     }
 }

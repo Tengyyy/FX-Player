@@ -101,7 +101,6 @@ public class MediaUtilities {
 
         Image cover = null;
         ByteArrayInputStream inputStream = null;
-        System.out.println(outputStream.size());
         if(outputStream.size() > 0){
             inputStream = new ByteArrayInputStream(outputStream.toByteArray());
             cover = new Image(inputStream);

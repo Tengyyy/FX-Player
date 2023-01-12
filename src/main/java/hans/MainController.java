@@ -76,7 +76,7 @@ public class MainController implements Initializable {
 
     MediaInterface mediaInterface;
 
-    ChapterController chapterController;
+    public ChapterController chapterController;
 
     DoubleProperty videoImageViewWidth;
     public DoubleProperty videoImageViewHeight;

@@ -256,7 +256,8 @@ public class CaptionsController {
 
         captionsState = CaptionsState.HOME_OPEN;
 
-        mainController.sliderHoverLabel.label.setVisible(false);
+        mainController.sliderHoverLabel.timeLabel.setVisible(false);
+        mainController.sliderHoverLabel.chapterlabel.setVisible(false);
         mainController.sliderHoverPreview.pane.setVisible(false);
 
         if(controlBarController.captions.isShowing()) controlBarController.captions.hide();
@@ -380,7 +381,8 @@ public class CaptionsController {
         captionsState = CaptionsState.CLOSED;
 
         if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()){
-            mainController.sliderHoverLabel.label.setVisible(true);
+            mainController.sliderHoverLabel.timeLabel.setVisible(true);
+            if(mainController.chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
             if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
         }
 

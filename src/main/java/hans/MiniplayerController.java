@@ -244,18 +244,18 @@ public class MiniplayerController {
             slider.lookup(".track").setOnMouseMoved(e -> {
 
 
-                double minTranslation = (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() - sliderHoverLabel.label.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
-                double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + sliderHoverLabel.label.getTranslateX();
+                double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
+                double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
 
-                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() + sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.label.getTranslateX() - 4));
+                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() + sliderHoverLabel.timeLabel.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.timeLabel.getTranslateX() - 4));
 
 
-                sliderHoverLabel.label.setTranslateX(newTranslation);
+                sliderHoverLabel.timeLabel.setTranslateX(newTranslation);
 
                 String newTime = Utilities.getTime(Duration.seconds((e.getX())/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
-                sliderHoverLabel.label.setText(newTime);
+                sliderHoverLabel.timeLabel.setText(newTime);
 
-                sliderHoverLabel.label.setVisible(true);
+                sliderHoverLabel.timeLabel.setVisible(true);
             });
 
             slider.lookup(".track").setOnMouseEntered((e) -> {
@@ -263,17 +263,17 @@ public class MiniplayerController {
                 sliderHoverOn();
 
 
-                double minTranslation = (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() - sliderHoverLabel.label.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
-                double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + sliderHoverLabel.label.getTranslateX();
+                double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
+                double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
 
-                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() + sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.label.getTranslateX() - 4));
+                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() + sliderHoverLabel.timeLabel.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.timeLabel.getTranslateX() - 4));
 
 
-                sliderHoverLabel.label.setTranslateX(newTranslation);
+                sliderHoverLabel.timeLabel.setTranslateX(newTranslation);
                 String newTime = Utilities.getTime(Duration.seconds(e.getX()/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
-                sliderHoverLabel.label.setText(newTime);
+                sliderHoverLabel.timeLabel.setText(newTime);
 
-                sliderHoverLabel.label.setVisible(true);
+                sliderHoverLabel.timeLabel.setVisible(true);
             });
 
             slider.lookup(".track").setOnMouseExited((e) -> {
@@ -281,7 +281,7 @@ public class MiniplayerController {
                 if (!e.isPrimaryButtonDown()) {
                     sliderHoverOff();
 
-                    sliderHoverLabel.label.setVisible(false);
+                    sliderHoverLabel.timeLabel.setVisible(false);
                 }
 
             });
@@ -289,15 +289,15 @@ public class MiniplayerController {
             slider.lookup(".track").addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
                 if(!e.isPrimaryButtonDown()){
 
-                    double minTranslation = (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() - sliderHoverLabel.label.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
-                    double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + sliderHoverLabel.label.getTranslateX();
+                    double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
+                    double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
 
-                    double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() + sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.label.getTranslateX() - 4));
+                    double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, e.getSceneX() - (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() + sliderHoverLabel.timeLabel.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.timeLabel.getTranslateX() - 4));
 
 
-                    sliderHoverLabel.label.setTranslateX(newTranslation);
+                    sliderHoverLabel.timeLabel.setTranslateX(newTranslation);
                     String newTime = Utilities.getTime(Duration.seconds(e.getX()/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
-                    sliderHoverLabel.label.setText(newTime);
+                    sliderHoverLabel.timeLabel.setText(newTime);
 
                     e.consume();
                 }
@@ -309,16 +309,16 @@ public class MiniplayerController {
 
             if(slider.isValueChanging() && !mainController.seekingWithKeys){
 
-                double minTranslation = (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() - sliderHoverLabel.label.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
-                double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + sliderHoverLabel.label.getTranslateX();
+                double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
+                double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
 
 
-                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX() + slider.lookup(".track").getBoundsInLocal().getMaxX() * (newValue.doubleValue() / slider.getMax()) - (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() + sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.label.getTranslateX() - 4));
+                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX() + slider.lookup(".track").getBoundsInLocal().getMaxX() * (newValue.doubleValue() / slider.getMax()) - (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() + sliderHoverLabel.timeLabel.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.timeLabel.getTranslateX() - 4));
 
 
-                sliderHoverLabel.label.setTranslateX(newTranslation);
+                sliderHoverLabel.timeLabel.setTranslateX(newTranslation);
 
-                sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(slider.getValue())));
+                sliderHoverLabel.timeLabel.setText(Utilities.getTime(Duration.seconds(slider.getValue())));
             }
 
         });
@@ -333,16 +333,16 @@ public class MiniplayerController {
                 if(mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
                 mediaInterface.playing.set(false);
 
-                double minTranslation = (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() - sliderHoverLabel.label.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
-                double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMaxX() + sliderHoverLabel.label.getTranslateX();
+                double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
+                double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
 
 
-                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX() + slider.lookup(".track").getBoundsInLocal().getMaxX() * (slider.getValue() / slider.getMax()) - (sliderHoverLabel.label.localToScene(sliderHoverLabel.label.getBoundsInLocal()).getMinX() + sliderHoverLabel.label.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.label.getTranslateX() - 4));
+                double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX() + slider.lookup(".track").getBoundsInLocal().getMaxX() * (slider.getValue() / slider.getMax()) - (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() + sliderHoverLabel.timeLabel.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.timeLabel.getTranslateX() - 4));
 
 
-                sliderHoverLabel.label.setTranslateX(newTranslation);
+                sliderHoverLabel.timeLabel.setTranslateX(newTranslation);
 
-                sliderHoverLabel.label.setText(Utilities.getTime(Duration.seconds(slider.getValue())));
+                sliderHoverLabel.timeLabel.setText(Utilities.getTime(Duration.seconds(slider.getValue())));
 
             } else {
 
@@ -353,7 +353,7 @@ public class MiniplayerController {
 
                 if(!miniplayerHover) hideControls();
 
-                sliderHoverLabel.label.setVisible(false);
+                sliderHoverLabel.timeLabel.setVisible(false);
 
                 if(mediaInterface.mediaActive.get()) mediaInterface.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
 

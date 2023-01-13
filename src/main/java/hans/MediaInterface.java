@@ -2,6 +2,7 @@ package hans;
 
 
 import hans.Captions.CaptionsController;
+import hans.Chapters.ChapterController;
 import hans.MediaItems.MediaItem;
 import hans.Menu.*;
 import hans.Settings.SettingsController;
@@ -10,12 +11,10 @@ import javafx.application.Platform;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.Cursor;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.base.ChapterDescription;
 import uk.co.caprica.vlcj.player.base.Equalizer;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
@@ -23,7 +22,6 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -142,9 +140,10 @@ public class MediaInterface {
                     controlBarController.durationSlider.setMax((double)mediaPlayer.media().info().duration()/1000);
                     if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.slider.setMax((double)mediaPlayer.media().info().duration()/1000);
 
-                    Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
+                    if(controlBarController.showingTimeLeft) Utilities.setTimeLeftLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
+                    else Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
 
-                    chapterController.initializeChapters(mediaPlayer.chapters().descriptions());
+                    chapterController.initializeChapters(mediaPlayer.chapters().descriptions(), menuController.activeItem.file);
 
                     play();
                 });
@@ -281,8 +280,6 @@ public class MediaInterface {
             if(activeItem.getMediaItem() != null) activeItem.showMetadata();
         });
 
-        controlBarController.labelBox.setMouseTransparent(false);
-
 
         controlBarController.updateTooltips();
 
@@ -306,8 +303,6 @@ public class MediaInterface {
         chapterController.resetChapters();
 
         controlBarController.durationSlider.setValue(0);
-
-        controlBarController.labelBox.setMouseTransparent(true);
 
         embeddedMediaPlayer.controls().stop();
         SleepSuppressor.allowSleep();
@@ -436,7 +431,8 @@ public class MediaInterface {
     public void defaultEnd(){
         controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
 
-        controlBarController.durationLabel.setText(Utilities.getTime(Duration.seconds(controlBarController.durationSlider.getMax())) + "/" + Utilities.getTime(Duration.seconds(controlBarController.durationSlider.getMax())));
+        if(controlBarController.showingTimeLeft) Utilities.setTimeLeftLabel(controlBarController.durationLabel, Duration.seconds(controlBarController.durationSlider.getMax()), Duration.seconds(controlBarController.durationSlider.getMax()));
+        else Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.seconds(controlBarController.durationSlider.getMax()), Duration.seconds(controlBarController.durationSlider.getMax()));
 
         controlBarController.mouseEventTracker.move();
 

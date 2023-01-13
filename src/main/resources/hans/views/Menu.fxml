@@ -24,6 +24,7 @@
             <Insets right="5.0" />
          </StackPane.margin>
       </ScrollPane>
+      <ScrollPane fx:id="chapterScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll" />
       <HBox fx:id="notificationPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" style="-fx-background-color: #0F0F0F; -fx-background-radius: 8; -fx-border-color: #202020; -fx-border-radius: 8;" StackPane.alignment="BOTTOM_LEFT">
          <children>
             <Label fx:id="notificationText" text="Video willl play next" textFill="WHITE">

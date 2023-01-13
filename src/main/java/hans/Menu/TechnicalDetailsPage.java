@@ -1,6 +1,5 @@
 package hans.Menu;
 
-import com.jfoenix.controls.JFXButton;
 import hans.AnimationsClass;
 import hans.App;
 import hans.SVG;
@@ -22,7 +21,6 @@ import javafx.scene.text.TextFlow;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 

@@ -127,8 +127,9 @@ public class App extends Application {
 
 
             scene.addEventFilter(MouseEvent.ANY, event -> {
-                if (controlBarController.mouseEventTracker != null)
+                if (controlBarController.mouseEventTracker != null && event.getEventType() != MouseEvent.MOUSE_ENTERED_TARGET && event.getEventType() != MouseEvent.MOUSE_EXITED_TARGET){
                     controlBarController.mouseEventTracker.move();
+                }
             });
 
 

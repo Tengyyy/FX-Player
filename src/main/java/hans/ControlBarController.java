@@ -1,6 +1,7 @@
 package hans;
 
 import hans.Captions.CaptionsState;
+import hans.Chapters.ChapterController;
 import hans.Menu.HistoryItem;
 import hans.Menu.MenuController;
 import hans.Menu.QueueItem;
@@ -68,9 +69,29 @@ public class ControlBarController implements Initializable {
     public ProgressBar volumeTrack;
 
     @FXML
-    StackPane volumeSliderPane, previousVideoPane, playButtonPane, nextVideoPane, volumeButtonPane, captionsButtonPane, settingsButtonPane, miniplayerButtonPane, fullScreenButtonPane, durationPane;
+    public
+    StackPane volumeSliderPane;
+    @FXML
+    StackPane previousVideoPane;
+    @FXML
+    StackPane playButtonPane;
+    @FXML
+    StackPane nextVideoPane;
+    @FXML
+    StackPane volumeButtonPane;
+    @FXML
+    StackPane captionsButtonPane;
+    @FXML
+    StackPane settingsButtonPane;
+    @FXML
+    StackPane miniplayerButtonPane;
+    @FXML
+    StackPane fullScreenButtonPane;
+    @FXML
+    StackPane durationPane;
 
     @FXML
+    public
     Label durationLabel;
 
     @FXML
@@ -81,12 +102,15 @@ public class ControlBarController implements Initializable {
     public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, captionsIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
 
     @FXML
-    HBox trackContainer, labelBox;
+    public
+    HBox trackContainer;
+    @FXML
+    public HBox labelBox;
 
-    ArrayList<DurationTrack> durationTracks = new ArrayList<>();
-    DurationTrack defaultTrack = new DurationTrack(0 , 1);
-    DurationTrack hoverTrack = null;
-    DurationTrack activeTrack = null;
+    public ArrayList<DurationTrack> durationTracks = new ArrayList<>();
+    public DurationTrack defaultTrack = new DurationTrack(0 , 1);
+    public DurationTrack hoverTrack = null;
+    public DurationTrack activeTrack = null;
 
     SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
 
@@ -221,15 +245,8 @@ public class ControlBarController implements Initializable {
 
 
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
-        labelBox.setMouseTransparent(true);
-
-        durationLabel.setOnMouseEntered(e -> {
-            AnimationsClass.animateTextColor(durationLabel, Color.rgb(255, 255, 255), 200);
-        });
-
-        durationLabel.setOnMouseExited(e -> {
-            AnimationsClass.animateTextColor(durationLabel, Color.rgb(200, 200, 200), 200);
-        });
+        durationLabel.setOnMouseEntered(e -> AnimationsClass.animateTextColor(durationLabel, Color.rgb(255, 255, 255), 200));
+        durationLabel.setOnMouseExited(e -> AnimationsClass.animateTextColor(durationLabel, Color.rgb(200, 200, 200), 200));
 
         durationPane.setMouseTransparent(true);
 
@@ -779,13 +796,16 @@ public class ControlBarController implements Initializable {
         if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
         if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
 
-        if (showingTimeLeft && mediaInterface.mediaActive.get()) {
-            Utilities.setCurrentTimeLabel(durationLabel, Duration.seconds(durationSlider.getValue()), Duration.seconds(durationSlider.getMax()));
-            showingTimeLeft = false;
-        } else if (!showingTimeLeft && mediaInterface.mediaActive.get()) {
-            Utilities.setTimeLeftLabel(durationLabel, Duration.seconds(durationSlider.getValue()), Duration.seconds(durationSlider.getMax()));
-            showingTimeLeft = true;
+        if(mediaInterface.mediaActive.get()){
+            if (showingTimeLeft) Utilities.setCurrentTimeLabel(durationLabel, Duration.seconds(durationSlider.getValue()), Duration.seconds(durationSlider.getMax()));
+            else Utilities.setTimeLeftLabel(durationLabel, Duration.seconds(durationSlider.getValue()), Duration.seconds(durationSlider.getMax()));
         }
+        else {
+            if (showingTimeLeft) Utilities.setCurrentTimeLabel(durationLabel, Duration.ZERO, Duration.ZERO);
+            else Utilities.setTimeLeftLabel(durationLabel, Duration.ZERO, Duration.ZERO);
+        }
+
+        showingTimeLeft = !showingTimeLeft;
     }
 
 
@@ -1081,10 +1101,9 @@ public class ControlBarController implements Initializable {
         if(!durationTracks.isEmpty()){
             if(hoverTrack == null || (hoverTrack.startTime > value || hoverTrack.endTime < value)){
 
-                System.out.println("test");
-
                 ScaleTransition sliderThumbHover = null;
-                ScaleTransition sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, hoverTrack.progressBar, 1, 1, hoverTrack.progressBar.getScaleY(), 1, false, 1 , false);
+                ScaleTransition sliderTrackHoverOff = null;
+                if(hoverTrack != null) sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, hoverTrack.progressBar, 1, 1, hoverTrack.progressBar.getScaleY(), 1, false, 1 , false);
                 ScaleTransition sliderTrackHoverOn = null;
 
                 for(DurationTrack durationTrack : durationTracks){
@@ -1366,7 +1385,7 @@ public class ControlBarController implements Initializable {
             defaultTrack.progressBar.setProgress(progress);
         }
         else {
-            if (activeTrack != null && progress >= activeTrack.startTime && progress <= activeTrack.endTime){
+            if (activeTrack != null && progress >= activeTrack.startTime && (progress < activeTrack.endTime || progress == 1)){
                 double max = activeTrack.endTime - activeTrack.startTime;
                 double curr = progress - activeTrack.startTime;
                 activeTrack.progressBar.setProgress(curr/max);
@@ -1374,7 +1393,7 @@ public class ControlBarController implements Initializable {
             else {
 
                 for(DurationTrack durationTrack : durationTracks){
-                    if(progress >= durationTrack.endTime){
+                    if(progress > durationTrack.endTime || progress == 1){
                         durationTrack.progressBar.setProgress(1);
                         if(durationSliderHover && !durationSlider.isValueChanging() && hoverTrack == durationTrack){
                             if(thumbScale != 0.9){
@@ -1385,7 +1404,7 @@ public class ControlBarController implements Initializable {
                             }
                         }
                     }
-                    else if(progress > durationTrack.startTime){
+                    else if(progress >= durationTrack.startTime){
                         double max = durationTrack.endTime - durationTrack.startTime;
                         double curr = progress - durationTrack.startTime;
                         durationTrack.progressBar.setProgress(curr/max);

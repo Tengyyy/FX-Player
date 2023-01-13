@@ -130,7 +130,7 @@
                               <Insets right="8.0" />
                            </padding>
                               </StackPane>
-                              <Label fx:id="durationLabel" maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="30.0" textFill="#c8c8c8">
+                              <Label fx:id="durationLabel" maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="30.0" text="00:00/00:00" textFill="#c8c8c8">
                                   <cursor>
                                       <Cursor fx:constant="HAND" />
                                   </cursor>

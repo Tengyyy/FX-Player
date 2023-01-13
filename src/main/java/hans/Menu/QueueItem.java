@@ -170,7 +170,7 @@ public class QueueItem extends GridPane implements MenuObject {
 
 
         indexLabel.setText(String.valueOf(videoIndex));
-        indexLabel.setId("playText");
+        indexLabel.getStyleClass().add("indexLabel");
         indexLabel.setMouseTransparent(true);
         StackPane.setAlignment(indexLabel, Pos.CENTER);
 

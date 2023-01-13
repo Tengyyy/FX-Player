@@ -270,6 +270,7 @@ public class AnimationsClass {
             menuController.menuInTransition = false;
             menuController.metadataEditScroll.setVisible(false);
             menuController.technicalDetailsScroll.setVisible(false);
+            menuController.chapterScroll.setVisible(false);
             menuController.queueScroll.setVisible(true);
 
             menuController.metadataEditPage.imageRemoved = false;

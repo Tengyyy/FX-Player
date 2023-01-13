@@ -132,7 +132,7 @@ public class HistoryItem extends GridPane implements MenuObject {
         GridPane.setHalignment(textWrapper, HPos.LEFT);
         GridPane.setHalignment(optionsButtonWrapper, HPos.CENTER);
 
-        this.getStyleClass().add("queueItem");
+        this.getStyleClass().add("historyItem");
 
         this.setOpacity(0);
 
@@ -165,18 +165,18 @@ public class HistoryItem extends GridPane implements MenuObject {
 
         playIconWrapper.getChildren().add(playIcon);
 
-        imageWrapper.setStyle("-fx-background-color: rgb(64,64,64);");
+        imageWrapper.setStyle("-fx-background-color: red;");
 
 
-        imageWrapper.setPrefSize(129, 74); // has to be changed
+        imageWrapper.setPrefSize(129, 74);
         imageWrapper.setMaxSize(129, 74);
         imageWrapper.getChildren().addAll(coverImage, imageBorder);
-        imageWrapper.setId("historyImageWrapper");
+        imageWrapper.getStyleClass().add("imageWrapper");
 
         imageBorder.setPrefSize(129, 74);
         imageBorder.setMaxSize(129, 74);
         imageBorder.setBackground(Background.EMPTY);
-        imageBorder.setId("historyImageBorder");
+        imageBorder.getStyleClass().add("imageBorder");
         imageBorder.setMouseTransparent(true);
         imageBorder.setVisible(false);
 
@@ -253,10 +253,11 @@ public class HistoryItem extends GridPane implements MenuObject {
 
             if(menuItemContextMenu != null && !menuItemContextMenu.showing) {
 
-                if (!isActive.get()) playIcon.setVisible(false);
-
-                if (isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-                else this.setStyle("-fx-background-color: transparent;");
+                if (!isActive.get()){
+                    playIcon.setVisible(false);
+                    this.setStyle("-fx-background-color: transparent;");
+                }
+                else this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
             }
         });
 

@@ -6,12 +6,12 @@ import javafx.scene.layout.Priority;
 
 public class DurationTrack {
 
-    ProgressBar progressBar;
+    public ProgressBar progressBar;
 
     double startTime;
     double endTime;
 
-    DurationTrack(double startTime, double endTime){
+    public DurationTrack(double startTime, double endTime){
         this.startTime = startTime;
         this.endTime = endTime;
 

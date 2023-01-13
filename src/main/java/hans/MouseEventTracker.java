@@ -10,6 +10,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Cursor;
 import javafx.util.Duration;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class MouseEventTracker {
 
     int delay; // delay how long mouse has to stay still for controlbar to hide
@@ -35,6 +38,8 @@ public class MouseEventTracker {
                     AnimationsClass.hideControls(controlBarController, controlBarController.captionsController, mainController); // hides controlbar if no mouse or other relevant events have not occurred in the last 4 seconds and the video is not paused, settings page and captions page are not open and user is not seeking video or changing volume
                     mainController.videoTitleLabel.getScene().setCursor(Cursor.NONE);
                     mainController.videoTitleBox.setMouseTransparent(true);
+                    mainController.captionsController.captionsBox.captionsContainer.setMouseTransparent(true);
+                    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
                 }
             }
             else {
@@ -43,6 +48,8 @@ public class MouseEventTracker {
                     AnimationsClass.displayControls(controlBarController, controlBarController.captionsController, mainController); // displays controlbar if the mouse starts moving or any relevant key is pressed
                     mainController.videoTitleLabel.getScene().setCursor(Cursor.DEFAULT);
                     mainController.videoTitleBox.setMouseTransparent(false);
+                    if(mainController.captionsController.captionsSelected.get()) mainController.captionsController.captionsBox.captionsContainer.setMouseTransparent(false);
+
                 }
             }
         });

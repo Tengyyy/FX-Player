@@ -3,6 +3,8 @@ package hans.Menu;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
+import hans.Chapters.ChapterController;
+import hans.Chapters.ChapterPage;
 import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.Settings.SettingsController;
 import hans.Captions.CaptionsController;
@@ -12,8 +14,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -63,7 +63,7 @@ public class MenuController implements Initializable {
     Label notificationText;
 
     @FXML
-    public ScrollPane queueScroll, metadataEditScroll, technicalDetailsScroll;
+    public ScrollPane queueScroll, metadataEditScroll, technicalDetailsScroll, chapterScroll;
 
 
 
@@ -709,6 +709,9 @@ public class MenuController implements Initializable {
 
         technicalDetailsScroll.setVisible(false);
         technicalDetailsScroll.setBackground(Background.EMPTY);
+
+        chapterScroll.setVisible(false);
+        chapterScroll.setBackground(Background.EMPTY);
 
     }
 

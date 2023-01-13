@@ -240,6 +240,7 @@ public class CaptionsController {
                     captionsBox.captionsContainer.getChildren().add(captionsBox.createLabel(line));
                 }
 
+
                 menuController.captionsController.showedCurrentCaption = true;
             } else if ((adjustedTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && menuController.captionsController.captionsPosition >= menuController.captionsController.subtitles.size() - 1) || (adjustedTime >= menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeOut && adjustedTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition + 1).timeIn) || (adjustedTime < menuController.captionsController.subtitles.get(menuController.captionsController.captionsPosition).timeIn && menuController.captionsController.captionsPosition <= 0)) {
                     captionsBox.captionsContainer.getChildren().clear();

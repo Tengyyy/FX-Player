@@ -135,7 +135,7 @@
 
 
 
-.videoTitle {
+.videoTitle, .chapterName {
     -fx-font-size: 15;
     -fx-font-family: "Roboto Bold";
     -fx-background-color: transparent;
@@ -194,7 +194,7 @@
 }
 
 
-#playText {
+.indexLabel {
     -fx-font-size: 20;
     -fx-font-family: "Roboto";
     -fx-text-fill: rgb(200,200,200);
@@ -211,14 +211,14 @@
 }
 
 
-#historyImageBorder {
+.imageBorder {
     -fx-border-style: solid;
     -fx-border-insets: 0;
     -fx-border-color: red;
     -fx-border-width: 2;
 }
 
-#historyImageWrapper {
+.imageWrapper {
     -fx-background-insets: 2;
 }
 
@@ -264,6 +264,12 @@
     -fx-font-family: "Roboto Medium";
     -fx-font-size: 27;
     -fx-text-fill: white;
+}
+
+.chapterTitle {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 24;
+    -fx-text-fill: rgb(200, 200, 200);
 }
 
 .metadataEpisode {

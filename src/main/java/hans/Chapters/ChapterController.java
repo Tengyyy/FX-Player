@@ -1,6 +1,10 @@
-package hans;
+package hans.Chapters;
 
+import hans.*;
+import hans.Captions.CaptionsState;
+import hans.MediaItems.MediaItem;
 import hans.Menu.MenuController;
+import hans.Settings.SettingsState;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,8 +18,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 import uk.co.caprica.vlcj.player.base.ChapterDescription;
 
+import java.io.File;
 import java.util.List;
 
 public class ChapterController {
@@ -25,7 +31,7 @@ public class ChapterController {
     MenuController menuController;
     MediaInterface mediaInterface;
 
-    List<ChapterDescription> chapterDescriptions = null;
+    public List<ChapterDescription> chapterDescriptions = null;
 
     public int activeChapter = -1;
 
@@ -42,11 +48,16 @@ public class ChapterController {
 
     ControlTooltip chapterTooltip;
 
-    ChapterController(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface){
+    ChapterPage chapterPage;
+
+    public ChapterController(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface){
         this.mainController = mainController;
         this.controlBarController = controlBarController;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
+
+        chapterPage = new ChapterPage(menuController, this);
+
 
         chapterLabelWrapper.setPrefHeight(30);
         chapterLabelWrapper.setMinWidth(0);
@@ -83,6 +94,16 @@ public class ChapterController {
             AnimationsClass.animateBackgroundColor(chevronIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
         });
 
+        chapterLabelBox.setOnMouseClicked(e -> {
+            if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
+            if (mainController.getSettingsController().settingsState != SettingsState.CLOSED) mainController.getSettingsController().closeSettings();
+            if (mainController.getCaptionsController().captionsState != CaptionsState.CLOSED) mainController.getCaptionsController().closeCaptions();
+
+            if(menuController.menuInTransition) return;
+
+            chapterPage.enterChaptersPage();
+        });
+
         Platform.runLater(() -> {
             chapterTooltip = new ControlTooltip(mainController,"View chapter", chapterLabelBox, 0, TooltipType.CONTROLBAR_TOOLTIP);
         });
@@ -107,7 +128,7 @@ public class ChapterController {
 
     }
 
-    public void initializeChapters(List<ChapterDescription> chapterDescriptions){
+    public void initializeChapters(List<ChapterDescription> chapterDescriptions, File file){
 
         if(chapterDescriptions.isEmpty()) return;
 
@@ -120,6 +141,9 @@ public class ChapterController {
             DurationTrack durationTrack = new DurationTrack(0, 1);
             controlBarController.durationTracks.add(durationTrack);
             controlBarController.trackContainer.getChildren().add(durationTrack.progressBar);
+
+            ChapterDescription chapterDescription = chapterDescriptions.get(0);
+            chapterPage.chapterBox.getChildren().add(new ChapterItem(this, chapterDescription.name(), Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()), file));
         }
         else {
             double lastChapterEnd = 0;
@@ -128,13 +152,15 @@ public class ChapterController {
 
                 double endTime;
                 if(i == chapterDescriptions.size() -1) endTime = 1;
-                else endTime = Math.min((lastChapterEnd + chapterDescription.duration())/(1000 * controlBarController.durationSlider.getMax()), 1);
+                else endTime = Math.min(lastChapterEnd + (chapterDescription.duration())/(1000 * controlBarController.durationSlider.getMax()), 1);
 
                 DurationTrack durationTrack = new DurationTrack(lastChapterEnd, endTime);
                 durationTrack.bindWidth(controlBarController.trackContainer, Math.max(0, endTime - lastChapterEnd));
 
                 controlBarController.durationTracks.add(durationTrack);
                 controlBarController.trackContainer.getChildren().add(durationTrack.progressBar);
+
+                chapterPage.chapterBox.getChildren().add(new ChapterItem(this, chapterDescription.name(), Duration.seconds(lastChapterEnd * controlBarController.durationSlider.getMax()), Duration.seconds( endTime * controlBarController.durationSlider.getMax()), file));
 
                 lastChapterEnd = endTime;
 
@@ -163,13 +189,26 @@ public class ChapterController {
         mainController.sliderHoverLabel.timeLabel.setTranslateY(-75);
         mainController.sliderHoverPreview.pane.setTranslateY(-100);
         mainController.sliderHoverLabel.chapterlabel.setText("");
+
+        chapterPage.chapterBox.getChildren().clear();
     }
 
     public void setActiveChapter(int newChapter){
-        if(chapterDescriptions != null){
-            this.activeChapter = newChapter;
+        if(this.activeChapter == newChapter) return;
+        if(chapterDescriptions != null && chapterDescriptions.size() >= newChapter + 1){
             ChapterDescription chapterDescription = chapterDescriptions.get(newChapter);
             chapterLabel.setText(chapterDescription.name());
+
+            if(this.activeChapter != -1){
+                ChapterItem chapterItem = (ChapterItem) chapterPage.chapterBox.getChildren().get(this.activeChapter);
+                chapterItem.setInactive();
+            }
+
+            ChapterItem newChapterItem = (ChapterItem) chapterPage.chapterBox.getChildren().get(newChapter);
+            newChapterItem.setActive();
+
+            this.activeChapter = newChapter;
+
         }
     }
 }

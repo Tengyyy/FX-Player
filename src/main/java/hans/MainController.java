@@ -1,21 +1,13 @@
 package hans;
 
-import java.io.File;
-import java.net.URL;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-
-import hans.windowstoolbar.*;
+import hans.Captions.CaptionsController;
 import hans.Captions.CaptionsState;
+import hans.Chapters.ChapterController;
 import hans.Menu.ActiveItem;
 import hans.Menu.MenuController;
-import hans.Menu.MenuObject;
 import hans.Menu.MenuState;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
-import hans.Captions.CaptionsController;
 import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -28,23 +20,26 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-
-
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.*;
-
-
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
+
+import java.io.File;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.ResourceBundle;
 
 import static hans.SVG.*;
 
@@ -507,7 +502,7 @@ public class MainController implements Initializable {
         }
 
 
-        if(menuController.menuState == MenuState.QUEUE_OPEN || menuController.menuState == MenuState.TECHNICAL_DETAILS_OPEN || (menuController.menuState == MenuState.METADATA_EDIT_OPEN && !menuController.metadataEditPage.changesMade.get())){
+        if(menuController.menuState == MenuState.QUEUE_OPEN || menuController.menuState == MenuState.TECHNICAL_DETAILS_OPEN || menuController.menuState == MenuState.CHAPTERS_OPEN || (menuController.menuState == MenuState.METADATA_EDIT_OPEN && !menuController.metadataEditPage.changesMade.get())){
             menuController.closeMenu();
         }
         else if (settingsController.settingsState != SettingsState.CLOSED) {

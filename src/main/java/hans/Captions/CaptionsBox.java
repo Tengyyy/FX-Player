@@ -81,9 +81,7 @@ public class CaptionsBox {
         captionsContainer.spacingProperty().bind(mediaWidthMultiplier.multiply(currentSpacing));
         captionsContainer.setTranslateY(-90);
         captionsContainer.minWidthProperty().bind(mediaWidthMultiplier.multiply(400));
-        captionsContainer.minHeightProperty().bind(Bindings.createObjectBinding(() -> {
-            return mediaWidthMultiplier.get() * (currentFontSize.get() * 3 + currentSpacing.get()) + 10;
-        }, mediaWidthMultiplier, currentFontSize, currentSpacing));
+        captionsContainer.minHeightProperty().bind(Bindings.createObjectBinding(() -> mediaWidthMultiplier.get() * (currentFontSize.get() * 3 + currentSpacing.get()) + 10, mediaWidthMultiplier, currentFontSize, currentSpacing));
         captionsContainer.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         captionsContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         captionsContainer.alignmentProperty().bind(currentTextAlignment);

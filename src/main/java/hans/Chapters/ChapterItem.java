@@ -36,7 +36,7 @@ public class ChapterItem extends HBox {
 
     SVGPath playSVG = new SVGPath();
 
-    ImageView coverImage = new ImageView();
+    public ImageView coverImage = new ImageView();
     StackPane imageWrapper = new StackPane();
     Region imageBorder = new Region();
 
@@ -45,9 +45,15 @@ public class ChapterItem extends HBox {
 
     int index;
 
+    public Duration startTime;
+    Duration endTime;
+
     ChapterItem(ChapterController chapterController, String title, Duration startTime, Duration endTime, File file){
         this.file = file;
         this.chapterController = chapterController;
+
+        this.startTime = startTime;
+        this.endTime = endTime;
 
         this.setPrefHeight(90);
         this.setMaxHeight(90);

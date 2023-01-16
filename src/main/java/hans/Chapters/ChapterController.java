@@ -48,7 +48,7 @@ public class ChapterController {
 
     ControlTooltip chapterTooltip;
 
-    ChapterPage chapterPage;
+    public ChapterPage chapterPage;
 
     public ChapterController(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface){
         this.mainController = mainController;

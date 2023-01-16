@@ -75,7 +75,7 @@ public class MediaUtilities {
 
         }
         else if(defaultVideoIndex != -1){
-            Long duration = ffProbeResult.getStreams().get(defaultVideoIndex).getDuration(TimeUnit.SECONDS);
+            Long duration = ffProbeResult.getStreams().get(defaultVideoIndex).getDuration(TimeUnit.MILLISECONDS);
             if(duration == null){
                 Float durationFloat = ffProbeResult.getFormat().getDuration();
                 if(durationFloat != null) duration = durationFloat.longValue();
@@ -87,7 +87,7 @@ public class MediaUtilities {
 
         }
         else {
-            Long duration = ffProbeResult.getStreams().get(firstVideoIndex).getDuration(TimeUnit.SECONDS);
+            Long duration = ffProbeResult.getStreams().get(firstVideoIndex).getDuration(TimeUnit.MILLISECONDS);
             if(duration == null){
                 Float durationFloat = ffProbeResult.getFormat().getDuration();
                 if(durationFloat != null) duration = durationFloat.longValue();
@@ -121,9 +121,10 @@ public class MediaUtilities {
             return new Pair<>(false, null);
     }
 
-    public static Image getVideoFrame(File file, int stream, long positionInMillis){
+    public static Image getVideoFrame(File file, int stream, long positionInMillis, double width, double height){
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        grabFrame(file, stream, positionInMillis, outputStream);
+        if(width == 0 && height == 0) grabFrame(file, stream, positionInMillis, outputStream);
+        else grabScaledFrame(file, stream, positionInMillis, outputStream, width, height);
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
         Image cover = new Image(inputStream);
@@ -376,13 +377,32 @@ public class MediaUtilities {
 
         FFmpeg.atPath()
                 .addInput(UrlInput.fromUrl(file.getAbsolutePath())
-                        .setPosition(positionInMillis, TimeUnit.SECONDS)
+                        .setPosition(positionInMillis, TimeUnit.MILLISECONDS)
                 )
                 .addArguments("-map", "0:" + streamIndex + "?")
                 .addArguments("-map_metadata", "-1")
                 .addArguments("-frames:v", "1")
                 .addArguments("-update", "1")
                 .addArguments("-c", "copy")
+                .addOutput(
+                        PipeOutput.pumpTo(outputStream)
+                                .setFormat("image2")
+                                .setCodec("0", "png")
+                )
+                .execute();
+    }
+
+    public static void grabScaledFrame(File file, int streamIndex, long positionInMillis, OutputStream outputStream, double width, double height){
+        FFmpeg.atPath()
+                .addInput(UrlInput.fromUrl(file.getAbsolutePath())
+                        .setPosition(positionInMillis, TimeUnit.MILLISECONDS)
+                )
+                .addArguments("-map", "0:" + streamIndex + "?")
+                .addArguments("-map_metadata", "-1")
+                .addArguments("-frames:v", "1")
+                .addArguments("-update", "1")
+                .addArguments("-c", "copy")
+                .addArguments("-vf", "scale=w=%f:h=%f:force_original_aspect_ratio=decrease".formatted(width, height))
                 .addOutput(
                         PipeOutput.pumpTo(outputStream)
                                 .setFormat("image2")

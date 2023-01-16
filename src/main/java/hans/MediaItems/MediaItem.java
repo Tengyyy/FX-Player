@@ -59,8 +59,9 @@ public class MediaItem {
 
     File file;
 
-    Stream videoStream = null;
+    public Stream videoStream = null;
     Stream audioStream = null;
+
 
     public MediaItem(File file, MainController mainController) {
         this.file = file;
@@ -297,9 +298,9 @@ public class MediaItem {
                     if(hasVideo){
                         int videoStreamIndex = probeResult.getStreams().indexOf(this.videoStream);
                         if(videoStreamIndex != -1){
-                            Long durationLong = videoStream.getDuration(TimeUnit.SECONDS);
-                            if(durationLong == null && this.duration != null) durationLong = (long) this.duration.toSeconds() ;
-                            if(durationLong != null) cover = MediaUtilities.getVideoFrame(file, videoStreamIndex, durationLong/2);
+                            Long durationLong = videoStream.getDuration(TimeUnit.MILLISECONDS);
+                            if(durationLong == null && this.duration != null) durationLong = (long) this.duration.toMillis() ;
+                            if(durationLong != null) cover = MediaUtilities.getVideoFrame(file, videoStreamIndex, durationLong/2, 0, 0);
                         }
                         if(cover != null) backgroundColor = MediaUtilities.findDominantColor(cover);
                     }

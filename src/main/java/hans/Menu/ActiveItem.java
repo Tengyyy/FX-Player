@@ -2,6 +2,8 @@ package hans.Menu;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
+import hans.Chapters.ChapterFrameGrabberTask;
+import hans.Chapters.ChapterItem;
 import hans.MediaItems.MediaItem;
 import javafx.animation.Animation;
 import javafx.beans.property.BooleanProperty;
@@ -11,6 +13,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -112,6 +115,22 @@ public class ActiveItem extends GridPane implements MenuObject {
                 menuController.activeMediaItemGenerated.set(true);
 
                 if(mediaItem.hasVideo()){
+
+                    if(!menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
+                        ExecutorService executorService = Executors.newFixedThreadPool(1);
+                        for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
+                            ChapterItem chapterItem = (ChapterItem) node;
+
+                            ChapterFrameGrabberTask chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaItem, chapterItem.startTime);
+                            chapterFrameGrabberTask.setOnSucceeded((event) -> {
+                                chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
+                            });
+
+                            executorService.execute(chapterFrameGrabberTask);
+                        }
+                        executorService.shutdown();
+                    }
+
                     mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
                     mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
 
@@ -178,6 +197,22 @@ public class ActiveItem extends GridPane implements MenuObject {
                         menuController.activeMediaItemGenerated.set(true);
 
                         if(mediaItem.hasVideo()){
+
+                            if(!menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
+                                ExecutorService executorService = Executors.newFixedThreadPool(1);
+                                for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
+                                    ChapterItem chapterItem = (ChapterItem) node;
+
+                                    ChapterFrameGrabberTask chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaItem, chapterItem.startTime);
+                                    chapterFrameGrabberTask.setOnSucceeded((event) -> {
+                                        chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
+                                    });
+
+                                    executorService.execute(chapterFrameGrabberTask);
+                                }
+                                executorService.shutdown();
+                            }
+
                             mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
                             mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
 
@@ -243,6 +278,22 @@ public class ActiveItem extends GridPane implements MenuObject {
                         menuController.activeMediaItemGenerated.set(true);
 
                         if(mediaItem.hasVideo()){
+
+                            if(!menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
+                                ExecutorService executorService = Executors.newFixedThreadPool(1);
+                                for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
+                                    ChapterItem chapterItem = (ChapterItem) node;
+
+                                    ChapterFrameGrabberTask chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaItem, chapterItem.startTime);
+                                    chapterFrameGrabberTask.setOnSucceeded((event) -> {
+                                        chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
+                                    });
+
+                                    executorService.execute(chapterFrameGrabberTask);
+                                }
+                                executorService.shutdown();
+                            }
+
                             mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
                             mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
 

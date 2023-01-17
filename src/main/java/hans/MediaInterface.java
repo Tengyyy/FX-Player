@@ -3,24 +3,28 @@ package hans;
 
 import hans.Captions.CaptionsController;
 import hans.Chapters.ChapterController;
+import hans.Chapters.ChapterFrameGrabberTask;
+import hans.Chapters.ChapterItem;
 import hans.MediaItems.MediaItem;
-import hans.Menu.*;
+import hans.Menu.ActiveItem;
+import hans.Menu.HistoryItem;
+import hans.Menu.MenuController;
+import hans.Menu.QueueItem;
 import hans.Settings.SettingsController;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.Node;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 import uk.co.caprica.vlcj.player.base.Equalizer;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-
-import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -145,6 +149,27 @@ public class MediaInterface {
 
                     chapterController.initializeChapters(mediaPlayer.chapters().descriptions(), menuController.activeItem.file);
 
+
+                    if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
+                        ExecutorService executorService = Executors.newFixedThreadPool(1);
+                        for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
+                            ChapterItem chapterItem = (ChapterItem) node;
+                            Duration startTime = chapterItem.startTime;
+                            ChapterFrameGrabberTask chapterFrameGrabberTask;
+                            if(startTime.greaterThan(Duration.ZERO)) chapterFrameGrabberTask = new ChapterFrameGrabberTask(fFmpegFrameGrabber, startTime.toSeconds()/menuController.controlBarController.durationSlider.getMax());
+                            else {
+                                Duration endTime = chapterItem.endTime;
+                                chapterFrameGrabberTask = new ChapterFrameGrabberTask(fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
+                            }
+                            chapterFrameGrabberTask.setOnSucceeded((event) -> {
+                                chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
+                            });
+
+                            executorService.execute(chapterFrameGrabberTask);
+                        }
+                        executorService.shutdown();
+                    }
+
                     play();
                 });
 
@@ -242,8 +267,20 @@ public class MediaInterface {
 
         if (mediaItem != null) {
             if(mediaItem.hasVideo()){
+
                 fFmpegFrameGrabber = new FFmpegFrameGrabber(menuController.activeItem.getMediaItem().getFile());
                 fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+                fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
+
+                int width = mediaItem.width;
+                int height = mediaItem.height;
+                double ratio = (double) width/height;
+
+                int newWidth = (int) Math.min(160, 90 * ratio);
+                int newHeight = (int) Math.min(90, 160/ratio);
+
+                fFmpegFrameGrabber.setImageWidth(newWidth);
+                fFmpegFrameGrabber.setImageHeight(newHeight);
 
                 try {
                     fFmpegFrameGrabber.start();

@@ -2,35 +2,19 @@ package hans;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
-import hans.MediaItems.*;
+import hans.MediaItems.MediaItem;
 import hans.Menu.HistoryItem;
 import hans.Menu.MenuController;
 import hans.Menu.MenuObject;
 import hans.Menu.QueueItem;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
-import org.bytedeco.javacpp.Loader;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.JavaFXFrameConverter;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class Utilities {

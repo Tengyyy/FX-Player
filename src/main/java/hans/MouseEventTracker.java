@@ -39,7 +39,6 @@ public class MouseEventTracker {
                     mainController.videoTitleLabel.getScene().setCursor(Cursor.NONE);
                     mainController.videoTitleBox.setMouseTransparent(true);
                     mainController.captionsController.captionsBox.captionsContainer.setMouseTransparent(true);
-                    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
                 }
             }
             else {

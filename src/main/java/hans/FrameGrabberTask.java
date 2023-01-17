@@ -24,7 +24,6 @@ public class FrameGrabberTask extends Task<Image> {
         fFmpegFrameGrabber.setFrameNumber((int) (fFmpegFrameGrabber.getLengthInFrames() * controlBarController.lastKnownSliderHoverPosition));
         Frame frame = fFmpegFrameGrabber.grabImage();
         JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
-
         return javaFXFrameConverter.convert(frame);
 
     }

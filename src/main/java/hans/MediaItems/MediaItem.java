@@ -12,8 +12,11 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
+import org.bytedeco.javacpp.Loader;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.*;
@@ -45,8 +48,8 @@ public class MediaItem {
     boolean coverRemoved = false;
 
 
-    int width = 0;
-    int height = 0;
+    public int width = 0;
+    public int height = 0;
     int audioChannels = 0;
 
     FFprobeResult probeResult = null;
@@ -67,7 +70,7 @@ public class MediaItem {
         this.file = file;
         this.mainController = mainController;
 
-        probeResult = FFprobe.atPath()
+        probeResult = FFprobe.atPath(Paths.get(MediaUtilities.FFPROBE_PATH))
                 .setShowStreams(true)
                 .setShowFormat(true)
                 .setShowData(true)
@@ -300,7 +303,7 @@ public class MediaItem {
                         if(videoStreamIndex != -1){
                             Long durationLong = videoStream.getDuration(TimeUnit.MILLISECONDS);
                             if(durationLong == null && this.duration != null) durationLong = (long) this.duration.toMillis() ;
-                            if(durationLong != null) cover = MediaUtilities.getVideoFrame(file, videoStreamIndex, durationLong/2, 0, 0);
+                            if(durationLong != null) cover = MediaUtilities.getVideoFrame(file, videoStreamIndex, durationLong/2);
                         }
                         if(cover != null) backgroundColor = MediaUtilities.findDominantColor(cover);
                     }

@@ -1,6 +1,7 @@
 package hans.MediaItems;
 
 
+import com.github.kokorin.jaffree.LogLevel;
 import com.github.kokorin.jaffree.StreamType;
 import com.github.kokorin.jaffree.ffmpeg.*;
 import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
@@ -12,6 +13,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
+import org.bytedeco.javacpp.Loader;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -25,6 +27,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class MediaUtilities {
+
+    static String probePath = Loader.load(org.bytedeco.ffmpeg.ffprobe.class);
+    static final String FFPROBE_PATH = probePath.substring(0, probePath.length() - 12);
+
+    static String ffmpegPath = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
+    static final String FFMPEG_PATH = ffmpegPath.substring(0, ffmpegPath.length() - 11);
 
 
     public static Pair<Boolean, Image> getCover(FFprobeResult ffProbeResult, File file) {
@@ -59,7 +67,7 @@ public class MediaUtilities {
 
             hasCover = true;
 
-            FFmpeg.atPath()
+            FFmpeg.atPath(Paths.get(FFMPEG_PATH))
                     .addInput(UrlInput.fromUrl(file.getAbsolutePath())
                     )
                     .addArguments("-map", "0:" + coverIndex + "?")
@@ -78,7 +86,7 @@ public class MediaUtilities {
             Long duration = ffProbeResult.getStreams().get(defaultVideoIndex).getDuration(TimeUnit.MILLISECONDS);
             if(duration == null){
                 Float durationFloat = ffProbeResult.getFormat().getDuration();
-                if(durationFloat != null) duration = durationFloat.longValue();
+                if(durationFloat != null) duration = durationFloat.longValue() * 1000;
             }
             if(duration == null) return new Pair<>(false, null);
             else{
@@ -90,7 +98,7 @@ public class MediaUtilities {
             Long duration = ffProbeResult.getStreams().get(firstVideoIndex).getDuration(TimeUnit.MILLISECONDS);
             if(duration == null){
                 Float durationFloat = ffProbeResult.getFormat().getDuration();
-                if(durationFloat != null) duration = durationFloat.longValue();
+                if(durationFloat != null) duration = durationFloat.longValue() * 1000;
             }
             if(duration == null) return new Pair<>(false, null);
             else {
@@ -121,10 +129,9 @@ public class MediaUtilities {
             return new Pair<>(false, null);
     }
 
-    public static Image getVideoFrame(File file, int stream, long positionInMillis, double width, double height){
+    public static Image getVideoFrame(File file, int stream, long positionInMillis){
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        if(width == 0 && height == 0) grabFrame(file, stream, positionInMillis, outputStream);
-        else grabScaledFrame(file, stream, positionInMillis, outputStream, width, height);
+        grabFrame(file, stream, positionInMillis, outputStream);
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
         Image cover = new Image(inputStream);
@@ -146,7 +153,7 @@ public class MediaUtilities {
         String extension = Utilities.getFileExtension(file);
         File currentImageFile = null;
 
-        FFmpeg fFmpeg = FFmpeg.atPath()
+        FFmpeg fFmpeg = FFmpeg.atPath(Paths.get(FFMPEG_PATH))
                 .addInput(UrlInput.fromUrl(file.getAbsolutePath()));
 
         if(newCover != null || coverRemoved){
@@ -292,7 +299,7 @@ public class MediaUtilities {
         }
 
 
-        FFmpeg fFmpeg = FFmpeg.atPath()
+        FFmpeg fFmpeg = FFmpeg.atPath(Paths.get(FFMPEG_PATH))
                 .addInput(UrlInput.fromUrl(mediaItem.getFile().getAbsolutePath()));
 
         for(int i =0; i < mediaItem.numberOfSubtitleStreams; i++){
@@ -375,7 +382,7 @@ public class MediaUtilities {
 
     public static void grabFrame(File file, int streamIndex, long positionInMillis, OutputStream outputStream){
 
-        FFmpeg.atPath()
+        FFmpeg.atPath(Paths.get(FFMPEG_PATH))
                 .addInput(UrlInput.fromUrl(file.getAbsolutePath())
                         .setPosition(positionInMillis, TimeUnit.MILLISECONDS)
                 )
@@ -392,8 +399,8 @@ public class MediaUtilities {
                 .execute();
     }
 
-    public static void grabScaledFrame(File file, int streamIndex, long positionInMillis, OutputStream outputStream, double width, double height){
-        FFmpeg.atPath()
+    public static void grabScaledsFrame(File file, int streamIndex, long positionInMillis, OutputStream outputStream, double width, double height){
+        FFmpeg.atPath(Paths.get(FFMPEG_PATH))
                 .addInput(UrlInput.fromUrl(file.getAbsolutePath())
                         .setPosition(positionInMillis, TimeUnit.MILLISECONDS)
                 )

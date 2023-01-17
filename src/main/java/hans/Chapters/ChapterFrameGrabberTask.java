@@ -1,27 +1,28 @@
 package hans.Chapters;
 
-import hans.MediaItems.MediaItem;
-import hans.MediaItems.MediaUtilities;
-import hans.Menu.MenuController;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
-import javafx.util.Duration;
-
-import java.io.File;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.JavaFXFrameConverter;
 
 public class ChapterFrameGrabberTask extends Task<Image> {
 
-    MediaItem mediaItem;
-    Duration time;
+    FFmpegFrameGrabber fFmpegFrameGrabber;
+    double time;
 
-    public ChapterFrameGrabberTask(MediaItem mediaItem, Duration time){
-        this.mediaItem = mediaItem;
+    public ChapterFrameGrabberTask(FFmpegFrameGrabber fFmpegFrameGrabber, double time){
+        this.fFmpegFrameGrabber = fFmpegFrameGrabber;
         this.time = time;
     }
 
 
     @Override
-    protected Image call() {
-        return MediaUtilities.getVideoFrame(mediaItem.getFile(), mediaItem.videoStream.getIndex(), (long) time.toMillis(), 125, 70);
+    protected Image call() throws FFmpegFrameGrabber.Exception {
+
+        fFmpegFrameGrabber.setFrameNumber((int) (fFmpegFrameGrabber.getLengthInFrames() * time));
+        Frame frame = fFmpegFrameGrabber.grabImage();
+        JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
+        return javaFXFrameConverter.convert(frame);
     }
 }

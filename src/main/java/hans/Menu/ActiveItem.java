@@ -22,6 +22,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import java.io.File;
@@ -31,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_DEFAULT;
+
 
 public class ActiveItem extends GridPane implements MenuObject {
 
@@ -116,12 +118,37 @@ public class ActiveItem extends GridPane implements MenuObject {
 
                 if(mediaItem.hasVideo()){
 
+                    mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+                    mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+                    mediaInterface.fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
+
+                    int width = mediaItem.width;
+                    int height = mediaItem.height;
+                    double ratio = (double) width/height;
+
+                    int newWidth = (int) Math.min(160, 90 * ratio);
+                    int newHeight = (int) Math.min(90, 160/ratio);
+
+                    mediaInterface.fFmpegFrameGrabber.setImageWidth(newWidth);
+                    mediaInterface.fFmpegFrameGrabber.setImageHeight(newHeight);
+
+                    try {
+                        mediaInterface.fFmpegFrameGrabber.start();
+                    } catch (FFmpegFrameGrabber.Exception e) {
+                        e.printStackTrace();
+                    }
+
                     if(!menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
                         ExecutorService executorService = Executors.newFixedThreadPool(1);
                         for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
                             ChapterItem chapterItem = (ChapterItem) node;
-
-                            ChapterFrameGrabberTask chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaItem, chapterItem.startTime);
+                            Duration startTime = chapterItem.startTime;
+                            ChapterFrameGrabberTask chapterFrameGrabberTask;
+                            if(startTime.greaterThan(Duration.ZERO)) chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, startTime.toSeconds()/menuController.controlBarController.durationSlider.getMax());
+                            else {
+                                Duration endTime = chapterItem.endTime;
+                                chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
+                            }
                             chapterFrameGrabberTask.setOnSucceeded((event) -> {
                                 chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
                             });
@@ -129,15 +156,6 @@ public class ActiveItem extends GridPane implements MenuObject {
                             executorService.execute(chapterFrameGrabberTask);
                         }
                         executorService.shutdown();
-                    }
-
-                    mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
-                    mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
-
-                    try {
-                        mediaInterface.fFmpegFrameGrabber.start();
-                    } catch (FFmpegFrameGrabber.Exception e) {
-                        e.printStackTrace();
                     }
 
                     if(menuController.mainController.miniplayerActive){
@@ -198,12 +216,37 @@ public class ActiveItem extends GridPane implements MenuObject {
 
                         if(mediaItem.hasVideo()){
 
+                            mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+                            mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+                            mediaInterface.fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
+
+                            int width = mediaItem.width;
+                            int height = mediaItem.height;
+                            double ratio = (double) width/height;
+
+                            int newWidth = (int) Math.min(160, 90 * ratio);
+                            int newHeight = (int) Math.min(90, 160/ratio);
+
+                            mediaInterface.fFmpegFrameGrabber.setImageWidth(newWidth);
+                            mediaInterface.fFmpegFrameGrabber.setImageHeight(newHeight);
+
+                            try {
+                                mediaInterface.fFmpegFrameGrabber.start();
+                            } catch (FFmpegFrameGrabber.Exception e) {
+                                e.printStackTrace();
+                            }
+
                             if(!menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
                                 ExecutorService executorService = Executors.newFixedThreadPool(1);
                                 for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
                                     ChapterItem chapterItem = (ChapterItem) node;
-
-                                    ChapterFrameGrabberTask chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaItem, chapterItem.startTime);
+                                    Duration startTime = chapterItem.startTime;
+                                    ChapterFrameGrabberTask chapterFrameGrabberTask;
+                                    if(startTime.greaterThan(Duration.ZERO)) chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, startTime.toSeconds()/menuController.controlBarController.durationSlider.getMax());
+                                    else {
+                                        Duration endTime = chapterItem.endTime;
+                                        chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
+                                    }
                                     chapterFrameGrabberTask.setOnSucceeded((event) -> {
                                         chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
                                     });
@@ -211,15 +254,6 @@ public class ActiveItem extends GridPane implements MenuObject {
                                     executorService.execute(chapterFrameGrabberTask);
                                 }
                                 executorService.shutdown();
-                            }
-
-                            mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
-                            mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
-
-                            try {
-                                mediaInterface.fFmpegFrameGrabber.start();
-                            } catch (FFmpegFrameGrabber.Exception e) {
-                                e.printStackTrace();
                             }
 
                             if(menuController.mainController.miniplayerActive){
@@ -279,12 +313,37 @@ public class ActiveItem extends GridPane implements MenuObject {
 
                         if(mediaItem.hasVideo()){
 
+                            mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
+                            mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+                            mediaInterface.fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
+
+                            int width = mediaItem.width;
+                            int height = mediaItem.height;
+                            double ratio = (double) width/height;
+
+                            int newWidth = (int) Math.min(160, 90 * ratio);
+                            int newHeight = (int) Math.min(90, 160/ratio);
+
+                            mediaInterface.fFmpegFrameGrabber.setImageWidth(newWidth);
+                            mediaInterface.fFmpegFrameGrabber.setImageHeight(newHeight);
+
+                            try {
+                                mediaInterface.fFmpegFrameGrabber.start();
+                            } catch (FFmpegFrameGrabber.Exception e) {
+                                e.printStackTrace();
+                            }
+
                             if(!menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
                                 ExecutorService executorService = Executors.newFixedThreadPool(1);
                                 for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
                                     ChapterItem chapterItem = (ChapterItem) node;
-
-                                    ChapterFrameGrabberTask chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaItem, chapterItem.startTime);
+                                    Duration startTime = chapterItem.startTime;
+                                    ChapterFrameGrabberTask chapterFrameGrabberTask;
+                                    if(startTime.greaterThan(Duration.ZERO)) chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, startTime.toSeconds()/menuController.controlBarController.durationSlider.getMax());
+                                    else {
+                                        Duration endTime = chapterItem.endTime;
+                                        chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
+                                    }
                                     chapterFrameGrabberTask.setOnSucceeded((event) -> {
                                         chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
                                     });
@@ -292,15 +351,6 @@ public class ActiveItem extends GridPane implements MenuObject {
                                     executorService.execute(chapterFrameGrabberTask);
                                 }
                                 executorService.shutdown();
-                            }
-
-                            mediaInterface.fFmpegFrameGrabber = new FFmpegFrameGrabber(file);
-                            mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
-
-                            try {
-                                mediaInterface.fFmpegFrameGrabber.start();
-                            } catch (FFmpegFrameGrabber.Exception e) {
-                                e.printStackTrace();
                             }
 
                             if(menuController.mainController.miniplayerActive){

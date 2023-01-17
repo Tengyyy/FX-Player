@@ -74,12 +74,12 @@ public class MenuController implements Initializable {
     VBox menuContent = new VBox();
 
     public MainController mainController;
-    ControlBarController controlBarController;
+    public ControlBarController controlBarController;
     SettingsController settingsController;
     public CaptionsController captionsController;
     public MediaInterface mediaInterface;
 
-    ChapterController chapterController;
+    public ChapterController chapterController;
 
     public MetadataEditPage metadataEditPage;
     public TechnicalDetailsPage technicalDetailsPage;

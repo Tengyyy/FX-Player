@@ -46,7 +46,7 @@ public class ChapterItem extends HBox {
     int index;
 
     public Duration startTime;
-    Duration endTime;
+    public Duration endTime;
 
     ChapterItem(ChapterController chapterController, String title, Duration startTime, Duration endTime, File file){
         this.file = file;

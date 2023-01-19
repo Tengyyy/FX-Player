@@ -48,8 +48,8 @@ public class MediaItem {
     boolean coverRemoved = false;
 
 
-    public int width = 0;
-    public int height = 0;
+    public double width = 0;
+    public double height = 0;
     int audioChannels = 0;
 
     FFprobeResult probeResult = null;
@@ -138,7 +138,7 @@ public class MediaItem {
             if(rational != null) mediaDetails.put("frameRate", rational.intValue() + " fps");
             Long bitrate = videoStream.getBitRate();
             if(bitrate != null) mediaDetails.put("videoBitrate", Utilities.formatBitrate(bitrate));
-            if(videoStream.getWidth() != null && videoStream.getHeight() != null) mediaDetails.put("resolution", this.width + "x" + this.height);
+            if(videoStream.getWidth() != null && videoStream.getHeight() != null) mediaDetails.put("resolution", videoStream.getWidth() + "x" + videoStream.getHeight());
             String videoCodec = videoStream.getCodecName();
             if(videoCodec != null) mediaDetails.put("videoCodec", videoCodec);
             String formatName = probeResult.getFormat().getFormatName();

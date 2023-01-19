@@ -122,9 +122,19 @@ public class ActiveItem extends GridPane implements MenuObject {
                     mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
                     mediaInterface.fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
 
-                    int width = mediaItem.width;
-                    int height = mediaItem.height;
-                    double ratio = (double) width/height;
+                    double ratio;
+                    Image image = null;
+                    if(menuController.mainController.videoImageView.getImage() != null){
+                        image = menuController.mainController.videoImageView.getImage();
+                        ratio = image.getWidth() / image.getHeight();
+                    }
+                    else if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.videoImageView.getImage() != null){
+                        image = menuController.mainController.miniplayer.miniplayerController.videoImageView.getImage();
+                        ratio = image.getWidth() / image.getHeight();
+                    }
+                    else {
+                        ratio = mediaItem.width/mediaItem.height;
+                    }
 
                     int newWidth = (int) Math.min(160, 90 * ratio);
                     int newHeight = (int) Math.min(90, 160/ratio);
@@ -149,9 +159,7 @@ public class ActiveItem extends GridPane implements MenuObject {
                                 Duration endTime = chapterItem.endTime;
                                 chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
                             }
-                            chapterFrameGrabberTask.setOnSucceeded((event) -> {
-                                chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
-                            });
+                            chapterFrameGrabberTask.setOnSucceeded((event) -> chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue()));
 
                             executorService.execute(chapterFrameGrabberTask);
                         }
@@ -220,9 +228,19 @@ public class ActiveItem extends GridPane implements MenuObject {
                             mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
                             mediaInterface.fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
 
-                            int width = mediaItem.width;
-                            int height = mediaItem.height;
-                            double ratio = (double) width/height;
+                            double ratio;
+                            Image image = null;
+                            if(menuController.mainController.videoImageView.getImage() != null){
+                                image = menuController.mainController.videoImageView.getImage();
+                                ratio = image.getWidth() / image.getHeight();
+                            }
+                            else if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.videoImageView.getImage() != null){
+                                image = menuController.mainController.miniplayer.miniplayerController.videoImageView.getImage();
+                                ratio = image.getWidth() / image.getHeight();
+                            }
+                            else {
+                                ratio = mediaItem.width/mediaItem.height;
+                            }
 
                             int newWidth = (int) Math.min(160, 90 * ratio);
                             int newHeight = (int) Math.min(90, 160/ratio);
@@ -247,9 +265,7 @@ public class ActiveItem extends GridPane implements MenuObject {
                                         Duration endTime = chapterItem.endTime;
                                         chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
                                     }
-                                    chapterFrameGrabberTask.setOnSucceeded((event) -> {
-                                        chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
-                                    });
+                                    chapterFrameGrabberTask.setOnSucceeded((event) -> chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue()));
 
                                     executorService.execute(chapterFrameGrabberTask);
                                 }
@@ -317,9 +333,19 @@ public class ActiveItem extends GridPane implements MenuObject {
                             mediaInterface.fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
                             mediaInterface.fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
 
-                            int width = mediaItem.width;
-                            int height = mediaItem.height;
-                            double ratio = (double) width/height;
+                            double ratio;
+                            Image image = null;
+                            if(menuController.mainController.videoImageView.getImage() != null){
+                                image = menuController.mainController.videoImageView.getImage();
+                                ratio = image.getWidth() / image.getHeight();
+                            }
+                            else if(menuController.mainController.miniplayerActive && menuController.mainController.miniplayer.miniplayerController.videoImageView.getImage() != null){
+                                image = menuController.mainController.miniplayer.miniplayerController.videoImageView.getImage();
+                                ratio = image.getWidth() / image.getHeight();
+                            }
+                            else {
+                                ratio = mediaItem.width/mediaItem.height;
+                            }
 
                             int newWidth = (int) Math.min(160, 90 * ratio);
                             int newHeight = (int) Math.min(90, 160/ratio);
@@ -344,9 +370,7 @@ public class ActiveItem extends GridPane implements MenuObject {
                                         Duration endTime = chapterItem.endTime;
                                         chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
                                     }
-                                    chapterFrameGrabberTask.setOnSucceeded((event) -> {
-                                        chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
-                                    });
+                                    chapterFrameGrabberTask.setOnSucceeded((event) -> chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue()));
 
                                     executorService.execute(chapterFrameGrabberTask);
                                 }
@@ -719,18 +743,9 @@ public class ActiveItem extends GridPane implements MenuObject {
         columns.play();
     }
 
-    public void addSubtitles(File file) {
-        menuController.captionsController.loadCaptions(file);
-    }
-
     public void addSubtitlesIcon(){
         artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
         if (!subTextWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
-    }
-
-    public void removeSubtitlesIcon(){
-        subTextWrapper.getChildren().remove(captionsPane);
-        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
     }
 
     @Override

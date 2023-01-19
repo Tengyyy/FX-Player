@@ -79,7 +79,7 @@ public class CaptionsController {
 
 
         Platform.runLater(() -> {
-            captionsBuffer.maxHeightProperty().bind(Bindings.min(Bindings.subtract(mainController.videoImageViewHeight, 120), 400));
+            captionsBuffer.maxHeightProperty().bind(Bindings.min(Bindings.subtract(mainController.videoImageView.fitHeightProperty(), 120), 400));
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.translateYProperty().bind(Bindings.subtract(captionsBuffer.heightProperty(), clip.heightProperty()));
             captionsBackground.maxHeightProperty().bind(clip.heightProperty());

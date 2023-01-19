@@ -47,8 +47,7 @@ import static hans.SVG.*;
 public class MainController implements Initializable {
 
     @FXML
-    public ImageView videoImageView, coverBackground, coverImage;
-
+    public ImageView videoImageView, seekImageView, coverBackground, coverImage;
 
     @FXML
     StackPane outerPane;
@@ -58,7 +57,6 @@ public class MainController implements Initializable {
     public StackPane videoImageViewInnerWrapper;
     @FXML
     StackPane coverImageContainer, coverFilter, coverImageWrapper;
-
 
     @FXML
     private ControlBarController controlBarController;
@@ -72,11 +70,6 @@ public class MainController implements Initializable {
     MediaInterface mediaInterface;
 
     public ChapterController chapterController;
-
-    DoubleProperty videoImageViewWidth;
-    public DoubleProperty videoImageViewHeight;
-
-
 
     ControlTooltip openMenuTooltip, viewMetadataTooltip;
 
@@ -167,10 +160,12 @@ public class MainController implements Initializable {
 
         // Make mediaView adjust to frame size
 
-        videoImageViewWidth = videoImageView.fitWidthProperty();
-        videoImageViewHeight = videoImageView.fitHeightProperty();
-        videoImageViewWidth.bind(videoImageViewInnerWrapper.widthProperty());
-        Platform.runLater(() -> videoImageViewHeight.bind(videoImageViewInnerWrapper.getScene().heightProperty()));
+        videoImageView.fitWidthProperty().bind(videoImageViewInnerWrapper.widthProperty());
+        seekImageView.fitWidthProperty().bind(videoImageViewInnerWrapper.widthProperty());
+        Platform.runLater(() -> {
+            videoImageView.fitHeightProperty().bind(videoImageViewInnerWrapper.getScene().heightProperty());
+            seekImageView.fitHeightProperty().bind(videoImageViewInnerWrapper.getScene().heightProperty());
+        });
 
         videoImageView.setPreserveRatio(true);
 
@@ -671,6 +666,8 @@ public class MainController implements Initializable {
         }
 
         videoImageView.setImage(null);
+        seekImageView.setImage(null);
+        seekImageView.setVisible(false);
 
 
         miniplayer.miniplayerController.moveIndicators();
@@ -730,10 +727,8 @@ public class MainController implements Initializable {
             }
         }
 
-
         App.stage.setIconified(false);
         App.stage.toFront();
-
     }
 
     public void resizeIndicators(){

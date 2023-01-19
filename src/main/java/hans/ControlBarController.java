@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -628,7 +629,7 @@ public class ControlBarController implements Initializable {
             captionsController.updateCaptions(newValue.doubleValue() * 1000);
 
 
-            if (durationSlider.isValueChanging() && !mainController.seekingWithKeys) {
+            if (durationSlider.isValueChanging()) {
 
                 updateSliderHover(Math.min(1, Math.max(0, newValue.doubleValue() / durationSlider.getMax())));
 
@@ -682,6 +683,18 @@ public class ControlBarController implements Initializable {
 
             if (newValue) { // pause video when user starts seeking
 
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
+                    if(mainController.miniplayerActive){
+                        mainController.miniplayer.miniplayerController.seekImageView.setImage(mainController.videoImageView.getImage());
+                        mainController.miniplayer.miniplayerController.seekImageView.setVisible(true);
+                        mainController.miniplayer.miniplayerController.videoImageView.setVisible(false);
+                    }
+                    else {
+                        mainController.seekImageView.setImage(mainController.videoImageView.getImage());
+                        mainController.seekImageView.setVisible(true);
+                        mainController.videoImageView.setVisible(false);
+                    }
+                }
                 seekTimer.playFromStart();
                 if (mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
                 mediaInterface.playing.set(false);
@@ -767,9 +780,9 @@ public class ControlBarController implements Initializable {
 
                 if (mediaInterface.atEnd) {
                     mediaInterface.defaultEnd();
-                } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
-                    mediaInterface.play();
+                } else{
                     mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
+                    if (mediaInterface.wasPlaying) mediaInterface.play();
                 }
             }
         });

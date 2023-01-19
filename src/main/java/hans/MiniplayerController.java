@@ -35,6 +35,7 @@ public class MiniplayerController {
 
 
     public ImageView videoImageView = new ImageView();
+    public ImageView seekImageView = new ImageView();
 
     StackPane videoImageViewWrapper = new StackPane();
     public StackPane videoImageViewInnerWrapper = new StackPane();
@@ -77,11 +78,6 @@ public class MiniplayerController {
     boolean sliderHover = false;
 
     ControlTooltip previousVideoButtonTooltip, playButtonTooltip, nextVideoButtonTooltip;
-
-
-    DoubleProperty videoImageViewWidth;
-    DoubleProperty videoImageViewHeight;
-
 
     ChangeListener<? super Number> widthListener;
     ChangeListener<? super Number> heightListener;
@@ -162,7 +158,7 @@ public class MiniplayerController {
 
         videoImageViewInnerWrapper.setBackground(Background.EMPTY);
         videoImageViewInnerWrapper.setMouseTransparent(true);
-        videoImageViewInnerWrapper.getChildren().addAll(videoImageView, coverImageContainer);
+        videoImageViewInnerWrapper.getChildren().addAll(videoImageView, seekImageView, coverImageContainer);
         StackPane.setAlignment(videoImageViewInnerWrapper, Pos.CENTER);
 
         Rectangle mediaClip = new Rectangle();
@@ -175,13 +171,14 @@ public class MiniplayerController {
 
         videoImageView.setPreserveRatio(true);
 
-        videoImageViewWidth = videoImageView.fitWidthProperty();
-        videoImageViewHeight = videoImageView.fitHeightProperty();
-        Platform.runLater(() -> {
-            videoImageViewWidth.bind(videoImageViewWrapper.widthProperty().subtract(2));
-            videoImageViewHeight.bind(videoImageViewWrapper.heightProperty().subtract(2));
-        });
+        videoImageView.fitWidthProperty().bind(videoImageViewWrapper.widthProperty().subtract(2));
+        videoImageView.fitHeightProperty().bind(videoImageViewWrapper.heightProperty().subtract(2));
         videoImageView.setMouseTransparent(true);
+
+        seekImageView.setPreserveRatio(true);
+        seekImageView.setVisible(false);
+        seekImageView.fitWidthProperty().bind(videoImageViewWrapper.widthProperty().subtract(2));
+        seekImageView.fitHeightProperty().bind(videoImageViewWrapper.heightProperty().subtract(2));
 
 
         mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.4);
@@ -307,7 +304,7 @@ public class MiniplayerController {
         slider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
             if(controlBarController.durationSlider.getValue() != newValue.doubleValue()) controlBarController.durationSlider.setValue(newValue.doubleValue());
 
-            if(slider.isValueChanging() && !mainController.seekingWithKeys){
+            if(slider.isValueChanging()){
 
                 double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();

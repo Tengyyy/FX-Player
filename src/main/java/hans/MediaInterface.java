@@ -16,6 +16,7 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
@@ -65,6 +66,7 @@ public class MediaInterface {
     public SubtitleExtractionTask subtitleExtractionTask;
     public ExecutorService executorService;
 
+    ImageViewVideoSurface imageViewVideoSurface = null;
 
     MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController, CaptionsController captionsController) {
         this.mainController = mainController;
@@ -110,15 +112,15 @@ public class MediaInterface {
         this.mediaPlayerFactory = new MediaPlayerFactory(VLC_GLOBAL_OPTIONS);
         this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 
+        imageViewVideoSurface = new ImageViewVideoSurface(mainController.videoImageView);
 
-        embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(mainController.videoImageView));
+        embeddedMediaPlayer.videoSurface().set(imageViewVideoSurface);
         embeddedMediaPlayer.audio().setEqualizer(new Equalizer(10));
         embeddedMediaPlayer.audio().equalizer().setPreamp(0);
         embeddedMediaPlayer.audio().setVolume(50);
 
 
         embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-
 
             @Override
             public void finished(MediaPlayer mediaPlayer) {
@@ -130,16 +132,51 @@ public class MediaInterface {
                 currentTime = newTime;
 
                 Platform.runLater(() -> {
-                    if(!controlBarController.durationSlider.isValueChanging() && !mainController.seekingWithKeys && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.5) controlBarController.durationSlider.setValue((double)newTime/1000);
+
+                    mainController.videoImageView.setVisible(true);
+                    mainController.seekImageView.setVisible(false);
+                    mainController.seekImageView.setImage(null);
+
+                    if(mainController.miniplayerActive){
+                        mainController.miniplayer.miniplayerController.videoImageView.setVisible(true);
+                        mainController.miniplayer.miniplayerController.seekImageView.setVisible(false);
+                        mainController.miniplayer.miniplayerController.seekImageView.setImage(null);
+                    }
+
+                    if(!controlBarController.durationSlider.isValueChanging() && !mainController.seekingWithKeys && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.5 && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) controlBarController.durationSlider.setValue((double)newTime/1000);
                 });
             }
 
             @Override
             public void mediaPlayerReady(MediaPlayer mediaPlayer) {
 
+                Image image = null;
+                if(mainController.videoImageView.getImage() != null){
+                    image = mainController.videoImageView.getImage();
+                }
+                else if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.videoImageView.getImage() != null){
+                    image = mainController.miniplayer.miniplayerController.videoImageView.getImage();
+                }
+
+                if(image != null && menuController.activeItem != null && menuController.activeItem.getMediaItem() != null){
+                    MediaItem mediaItem = menuController.activeItem.getMediaItem();
+                    mediaItem.width = image.getWidth();
+                    mediaItem.height = image.getHeight();
+
+
+                    double ratio = image.getWidth()/image.getHeight();
+
+                    int newWidth = (int) Math.min(160, 90 * ratio);
+                    int newHeight = (int) Math.min(90, 160/ratio);
+
+                    fFmpegFrameGrabber.setImageWidth(newWidth);
+                    fFmpegFrameGrabber.setImageHeight(newHeight);
+                }
+
                 mediaActive.set(true);
 
                 Platform.runLater(() -> {
+
                     mediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
                     controlBarController.durationSlider.setMax((double)mediaPlayer.media().info().duration()/1000);
                     if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.slider.setMax((double)mediaPlayer.media().info().duration()/1000);
@@ -148,7 +185,6 @@ public class MediaInterface {
                     else Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
 
                     chapterController.initializeChapters(mediaPlayer.chapters().descriptions(), menuController.activeItem.file);
-
 
                     if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
                         ExecutorService executorService = Executors.newFixedThreadPool(1);
@@ -161,9 +197,7 @@ public class MediaInterface {
                                 Duration endTime = chapterItem.endTime;
                                 chapterFrameGrabberTask = new ChapterFrameGrabberTask(fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
                             }
-                            chapterFrameGrabberTask.setOnSucceeded((event) -> {
-                                chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
-                            });
+                            chapterFrameGrabberTask.setOnSucceeded((event) -> chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue()));
 
                             executorService.execute(chapterFrameGrabberTask);
                         }
@@ -205,17 +239,17 @@ public class MediaInterface {
             embeddedMediaPlayer.controls().setPause(true);
             SleepSuppressor.allowSleep();
 
-            seek(Duration.seconds(newValue));
+            if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) seek(Duration.seconds(newValue));
 
         }
         else {
             if(newValue == 0){
                 currentTime = 0;
-                seek(Duration.ZERO);
+                if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) seek(Duration.ZERO);
             }
             else if(Math.abs(currentTime/1000 - newValue) > 0.5 || (!playing.get() && Math.abs(currentTime/1000 - newValue) >= 0.1)) {
                 currentTime = newValue;
-                seek(Duration.seconds(newValue));
+                if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) seek(Duration.seconds(newValue));
             }
 
             if (atEnd) {
@@ -272,9 +306,9 @@ public class MediaInterface {
                 fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
                 fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
 
-                int width = mediaItem.width;
-                int height = mediaItem.height;
-                double ratio = (double) width/height;
+                double width = mediaItem.width;
+                double height = mediaItem.height;
+                double ratio = width /height;
 
                 int newWidth = (int) Math.min(160, 90 * ratio);
                 int newHeight = (int) Math.min(90, 160/ratio);
@@ -328,10 +362,19 @@ public class MediaInterface {
     public void resetMediaPlayer(){
 
         mainController.videoImageView.setImage(null);
+        mainController.videoImageView.setVisible(true);
         if(mainController.miniplayerActive){
             mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
             mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
+
+            mainController.miniplayer.miniplayerController.seekImageView.setImage(null);
+            mainController.miniplayer.miniplayerController.seekImageView.setVisible(false);
+
+
         }
+
+        mainController.seekImageView.setImage(null);
+        mainController.seekImageView.setVisible(false);
 
         mainController.coverImageContainer.setVisible(false);
         mainController.miniplayerActiveText.setVisible(false);
@@ -547,15 +590,24 @@ public class MediaInterface {
 
     public void updatePreviewFrame() {
 
-        if(frameGrabberTask != null && frameGrabberTask.isRunning()) return;
+        if(fFmpegFrameGrabber == null || frameGrabberTask != null && frameGrabberTask.isRunning()) return;
 
         frameGrabberTask = new FrameGrabberTask(fFmpegFrameGrabber, controlBarController);
 
-        frameGrabberTask.setOnSucceeded((succeededEvent) -> mainController.sliderHoverPreview.imageView.setImage(frameGrabberTask.getValue()));
+        frameGrabberTask.setOnSucceeded((succeededEvent) -> {
+            Image image = frameGrabberTask.getValue();
+            mainController.sliderHoverPreview.imageView.setImage(image);
+            if(controlBarController.durationSlider.isValueChanging()){
+                if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.seekImageView.setImage(image);
+                else mainController.seekImageView.setImage(image);
+            }
+
+        });
 
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(frameGrabberTask);
         executorService.shutdown();
+
     }
 }

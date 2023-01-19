@@ -23,6 +23,7 @@ public class ChapterFrameGrabberTask extends Task<Image> {
         fFmpegFrameGrabber.setFrameNumber((int) (fFmpegFrameGrabber.getLengthInFrames() * time));
         Frame frame = fFmpegFrameGrabber.grabImage();
         JavaFXFrameConverter javaFXFrameConverter = new JavaFXFrameConverter();
+
         return javaFXFrameConverter.convert(frame);
     }
 }

@@ -150,6 +150,8 @@ public class MediaInterface {
             @Override
             public void mediaPlayerReady(MediaPlayer mediaPlayer) {
 
+                if(mediaActive.get()) return;
+
                 Image image = null;
                 if(mainController.videoImageView.getImage() != null){
                     image = mainController.videoImageView.getImage();
@@ -588,26 +590,29 @@ public class MediaInterface {
 
 
 
-    public void updatePreviewFrame() {
+    public void updatePreviewFrame(double time, boolean forceUpdate) {
 
-        if(fFmpegFrameGrabber == null || frameGrabberTask != null && frameGrabberTask.isRunning()) return;
+        if(!forceUpdate && (fFmpegFrameGrabber == null || frameGrabberTask != null && frameGrabberTask.isRunning())) return;
 
-        frameGrabberTask = new FrameGrabberTask(fFmpegFrameGrabber, controlBarController);
+        frameGrabberTask = new FrameGrabberTask(fFmpegFrameGrabber, time);
 
         frameGrabberTask.setOnSucceeded((succeededEvent) -> {
             Image image = frameGrabberTask.getValue();
-            mainController.sliderHoverPreview.imageView.setImage(image);
-            if(controlBarController.durationSlider.isValueChanging()){
-                if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.seekImageView.setImage(image);
-                else mainController.seekImageView.setImage(image);
+            if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging()){
+                mainController.miniplayer.miniplayerController.seekImageView.setImage(image);
             }
-
+            else {
+                mainController.sliderHoverPreview.imageView.setImage(image);
+                if(controlBarController.durationSlider.isValueChanging()){
+                    if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.seekImageView.setImage(image);
+                    else mainController.seekImageView.setImage(image);
+                }
+            }
         });
 
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(frameGrabberTask);
         executorService.shutdown();
-
     }
 }

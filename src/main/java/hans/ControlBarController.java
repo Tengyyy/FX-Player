@@ -448,7 +448,7 @@ public class ControlBarController implements Initializable {
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
-                    pauseTransition.setOnFinished(j -> mediaInterface.updatePreviewFrame());
+                    pauseTransition.setOnFinished(j -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition));
 
                     pauseTransition.playFromStart();
                 }
@@ -501,7 +501,7 @@ public class ControlBarController implements Initializable {
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
-                    mediaInterface.updatePreviewFrame();
+                    mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition);
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
 
@@ -572,7 +572,7 @@ public class ControlBarController implements Initializable {
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
-                    pauseTransition.setOnFinished(j -> mediaInterface.updatePreviewFrame());
+                    pauseTransition.setOnFinished(j -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition));
 
                     pauseTransition.playFromStart();
                 }
@@ -664,12 +664,11 @@ public class ControlBarController implements Initializable {
 
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
-
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
-                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame());
+                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition));
 
                     pauseTransition.playFromStart();
                 }
@@ -685,7 +684,7 @@ public class ControlBarController implements Initializable {
 
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(mainController.miniplayerActive){
-                        mainController.miniplayer.miniplayerController.seekImageView.setImage(mainController.videoImageView.getImage());
+                        mainController.miniplayer.miniplayerController.seekImageView.setImage(mainController.miniplayer.miniplayerController.videoImageView.getImage());
                         mainController.miniplayer.miniplayerController.seekImageView.setVisible(true);
                         mainController.miniplayer.miniplayerController.videoImageView.setVisible(false);
                     }
@@ -743,12 +742,10 @@ public class ControlBarController implements Initializable {
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
-                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame());
+                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition));
 
                     pauseTransition.playFromStart();
                 }
-
-
 
             }
             else {
@@ -780,7 +777,8 @@ public class ControlBarController implements Initializable {
 
                 if (mediaInterface.atEnd) {
                     mediaInterface.defaultEnd();
-                } else{
+                }
+                else{
                     mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
                     if (mediaInterface.wasPlaying) mediaInterface.play();
                 }

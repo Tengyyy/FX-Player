@@ -316,6 +316,16 @@ public class MiniplayerController {
                 sliderHoverLabel.timeLabel.setTranslateX(newTranslation);
 
                 sliderHoverLabel.timeLabel.setText(Utilities.getTime(Duration.seconds(slider.getValue())));
+
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
+                    if(controlBarController.pauseTransition != null && controlBarController.pauseTransition.getStatus() == Animation.Status.RUNNING) return;
+
+                    controlBarController.pauseTransition = new PauseTransition(Duration.millis(50));
+                    controlBarController.pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame(newValue.doubleValue()/slider.getMax()));
+
+                    controlBarController.pauseTransition.playFromStart();
+                }
+
             }
 
         });
@@ -325,6 +335,12 @@ public class MiniplayerController {
             if (newValue) { // pause video when user starts seeking
 
                 showControls();
+
+                if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
+                    seekImageView.setImage(mainController.videoImageView.getImage());
+                    seekImageView.setVisible(true);
+                    videoImageView.setVisible(false);
+                }
 
                 seekTimer.playFromStart();
                 if(mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
@@ -341,7 +357,8 @@ public class MiniplayerController {
 
                 sliderHoverLabel.timeLabel.setText(Utilities.getTime(Duration.seconds(slider.getValue())));
 
-            } else {
+            }
+            else {
 
                 if(seekTimer.getStatus() == Animation.Status.RUNNING) seekTimer.stop();
                 if(controlBarController.seekTimer.getStatus() == Animation.Status.RUNNING) controlBarController.seekTimer.stop();
@@ -354,12 +371,12 @@ public class MiniplayerController {
 
                 if(mediaInterface.mediaActive.get()) mediaInterface.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
 
-
-                if (mediaInterface.atEnd) { // if user drags the duration slider to the end turn play button to replay button
-                    mediaInterface.endMedia();
-
-                } else if (mediaInterface.wasPlaying) { // starts playing the video in the new position when user finishes seeking with the slider
-                    mediaInterface.play();
+                if (mediaInterface.atEnd) {
+                    mediaInterface.defaultEnd();
+                }
+                else {
+                    mediaInterface.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
+                    if (mediaInterface.wasPlaying) mediaInterface.play();
                 }
             }
         });

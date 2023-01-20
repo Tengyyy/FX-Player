@@ -653,12 +653,15 @@ public class MainController implements Initializable {
             mediaInterface.embeddedMediaPlayer.controls().stop();
             mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.activeItem.getMediaItem().getFile().getAbsolutePath());
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
+
             if (playValue) {
                 mediaInterface.embeddedMediaPlayer.controls().play();
             }
             else {
                 mediaInterface.embeddedMediaPlayer.controls().nextFrame();
             }
+
+            controlBarController.updateProgress(controlBarController.durationSlider.getValue()/controlBarController.durationSlider.getMax());
 
             if(menuController.activeItem.getMediaItem() != null && !menuController.activeItem.getMediaItem().hasVideo()){
                 setCoverImageView(menuController.activeItem);
@@ -719,12 +722,16 @@ public class MainController implements Initializable {
             mediaInterface.embeddedMediaPlayer.controls().stop();
             mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.activeItem.getMediaItem().getFile().getAbsolutePath());
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
+
             if (playValue) {
                 mediaInterface.embeddedMediaPlayer.controls().play();
             }
             else {
                 mediaInterface.embeddedMediaPlayer.controls().nextFrame();
             }
+
+            controlBarController.updateProgress(controlBarController.durationSlider.getValue()/controlBarController.durationSlider.getMax());
+
         }
 
         App.stage.setIconified(false);

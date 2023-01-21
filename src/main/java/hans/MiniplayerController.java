@@ -240,6 +240,7 @@ public class MiniplayerController {
 
             slider.lookup(".track").setOnMouseMoved(e -> {
 
+                controlBarController.previewTimer.playFromStart();
 
                 double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
@@ -256,9 +257,11 @@ public class MiniplayerController {
             });
 
             slider.lookup(".track").setOnMouseEntered((e) -> {
+
+                controlBarController.previewTimer.playFromStart();
+
                 sliderHover = true;
                 sliderHoverOn();
-
 
                 double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
@@ -286,6 +289,8 @@ public class MiniplayerController {
             slider.lookup(".track").addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
                 if(!e.isPrimaryButtonDown()){
 
+                    controlBarController.previewTimer.playFromStart();
+
                     double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                     double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
 
@@ -306,6 +311,8 @@ public class MiniplayerController {
 
             if(slider.isValueChanging()){
 
+                controlBarController.previewTimer.playFromStart();
+
                 double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
 
@@ -321,7 +328,7 @@ public class MiniplayerController {
                     if(controlBarController.pauseTransition != null && controlBarController.pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     controlBarController.pauseTransition = new PauseTransition(Duration.millis(50));
-                    controlBarController.pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame(newValue.doubleValue()/slider.getMax()));
+                    controlBarController.pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame(newValue.doubleValue()/slider.getMax(), false));
 
                     controlBarController.pauseTransition.playFromStart();
                 }
@@ -337,7 +344,8 @@ public class MiniplayerController {
                 showControls();
 
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
-                    seekImageView.setImage(mainController.videoImageView.getImage());
+                    if(controlBarController.frameLoadTimer.getStatus() != Animation.Status.RUNNING) seekImageView.setImage(mainController.videoImageView.getImage());
+                    else controlBarController.frameLoadTimer.stop();
                     seekImageView.setVisible(true);
                     videoImageView.setVisible(false);
                 }
@@ -377,6 +385,7 @@ public class MiniplayerController {
                 else {
                     mediaInterface.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
                     if (mediaInterface.wasPlaying) mediaInterface.play();
+                    else controlBarController.frameLoadTimer.playFromStart();
                 }
             }
         });

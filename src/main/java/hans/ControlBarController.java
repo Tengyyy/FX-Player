@@ -10,6 +10,8 @@ import hans.Settings.SettingsState;
 import hans.Captions.CaptionsController;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -164,7 +166,8 @@ public class ControlBarController implements Initializable {
     ScaleTransition fullScreenButtonScaleTransition;
 
     PauseTransition seekTimer = new PauseTransition(Duration.millis(50));
-
+    PauseTransition previewTimer = new PauseTransition(Duration.millis(200));
+    PauseTransition frameLoadTimer = new PauseTransition(Duration.millis(500));
 
     StackPane controlBarBackground = new StackPane();
 
@@ -250,7 +253,6 @@ public class ControlBarController implements Initializable {
         durationLabel.setOnMouseExited(e -> AnimationsClass.animateTextColor(durationLabel, Color.rgb(200, 200, 200), 200));
 
         durationPane.setMouseTransparent(true);
-
 
         controlBarBackground.setStyle("-fx-background-color: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));");
         controlBarBackground.setMouseTransparent(true);
@@ -362,6 +364,29 @@ public class ControlBarController implements Initializable {
             }
         });
 
+        previewTimer.setOnFinished(e -> {
+
+            if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) pauseTransition.stop();
+
+            if(mainController.sliderHoverPreview.pane.isVisible() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.seekImageView.isVisible())){
+                if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging()) mediaInterface.updatePreviewFrame(mainController.miniplayer.miniplayerController.slider.getValue()/mainController.miniplayer.miniplayerController.slider.getMax(), true);
+                else mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, true);
+            }
+        });
+
+        frameLoadTimer.setOnFinished(e -> {
+            mainController.seekImageView.setVisible(false);
+            mainController.seekImageView.setImage(null);
+            if(mainController.miniplayerActive){
+                mainController.miniplayer.miniplayerController.seekImageView.setVisible(false);
+                mainController.miniplayer.miniplayerController.seekImageView.setImage(null);
+                mainController.miniplayer.miniplayerController.videoImageView.setVisible(true);
+            }
+            else {
+                mainController.videoImageView.setVisible(true);
+            }
+        });
+
         durationSlider.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (settingsController.settingsState != SettingsState.CLOSED) {
                 settingsController.closeSettings();
@@ -401,6 +426,7 @@ public class ControlBarController implements Initializable {
             });
 
             durationSlider.lookup(".track").setOnMouseMoved(e -> {
+                previewTimer.playFromStart();
 
                 updateSliderHover(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getWidth());
 
@@ -448,7 +474,7 @@ public class ControlBarController implements Initializable {
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
-                    pauseTransition.setOnFinished(j -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition));
+                    pauseTransition.setOnFinished(j -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, false));
 
                     pauseTransition.playFromStart();
                 }
@@ -456,6 +482,9 @@ public class ControlBarController implements Initializable {
             });
 
             durationSlider.lookup(".track").setOnMouseEntered((e) -> {
+
+                previewTimer.playFromStart();
+
                 durationSliderHover = true;
                 durationSliderHoverOn(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX());
 
@@ -501,7 +530,7 @@ public class ControlBarController implements Initializable {
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
-                    mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition);
+                    mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, false);
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
 
@@ -529,7 +558,10 @@ public class ControlBarController implements Initializable {
 
 
             durationSlider.lookup(".track").addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
+
                 if (e.isPrimaryButtonDown()) return;
+
+                previewTimer.playFromStart();
 
                 updateSliderHover(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX());
 
@@ -572,7 +604,7 @@ public class ControlBarController implements Initializable {
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
-                    pauseTransition.setOnFinished(j -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition));
+                    pauseTransition.setOnFinished(j -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, false));
 
                     pauseTransition.playFromStart();
                 }
@@ -631,6 +663,8 @@ public class ControlBarController implements Initializable {
 
             if (durationSlider.isValueChanging()) {
 
+                previewTimer.playFromStart();
+
                 updateSliderHover(Math.min(1, Math.max(0, newValue.doubleValue() / durationSlider.getMax())));
 
                 mainController.sliderHoverLabel.timeLabel.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
@@ -668,7 +702,7 @@ public class ControlBarController implements Initializable {
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
-                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition));
+                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, false));
 
                     pauseTransition.playFromStart();
                 }
@@ -684,12 +718,14 @@ public class ControlBarController implements Initializable {
 
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(mainController.miniplayerActive){
-                        mainController.miniplayer.miniplayerController.seekImageView.setImage(mainController.miniplayer.miniplayerController.videoImageView.getImage());
+                        if(frameLoadTimer.getStatus() != Animation.Status.RUNNING)mainController.miniplayer.miniplayerController.seekImageView.setImage(mainController.miniplayer.miniplayerController.videoImageView.getImage());
+                        else frameLoadTimer.stop();
                         mainController.miniplayer.miniplayerController.seekImageView.setVisible(true);
                         mainController.miniplayer.miniplayerController.videoImageView.setVisible(false);
                     }
                     else {
-                        mainController.seekImageView.setImage(mainController.videoImageView.getImage());
+                        if(frameLoadTimer.getStatus() != Animation.Status.RUNNING) mainController.seekImageView.setImage(mainController.videoImageView.getImage());
+                        else frameLoadTimer.stop();
                         mainController.seekImageView.setVisible(true);
                         mainController.videoImageView.setVisible(false);
                     }
@@ -742,7 +778,7 @@ public class ControlBarController implements Initializable {
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
-                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition));
+                    pauseTransition.setOnFinished(e -> mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, false));
 
                     pauseTransition.playFromStart();
                 }
@@ -778,9 +814,10 @@ public class ControlBarController implements Initializable {
                 if (mediaInterface.atEnd) {
                     mediaInterface.defaultEnd();
                 }
-                else{
+                else {
                     mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
                     if (mediaInterface.wasPlaying) mediaInterface.play();
+                    else frameLoadTimer.playFromStart();
                 }
             }
         });

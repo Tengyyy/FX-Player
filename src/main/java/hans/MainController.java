@@ -685,7 +685,7 @@ public class MainController implements Initializable {
 
     public void closeMiniplayer(){
 
-        if(controlBarController.durationSlider.isValueChanging()) return;
+        if(controlBarController.durationSlider.isValueChanging() || miniplayer.miniplayerController.slider.isValueChanging()) return;
 
         miniplayer.miniplayerController.videoImageViewInnerWrapper.widthProperty().removeListener(miniplayer.miniplayerController.widthListener);
         miniplayer.miniplayerController.videoImageViewInnerWrapper.heightProperty().removeListener(miniplayer.miniplayerController.heightListener);

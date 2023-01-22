@@ -143,7 +143,7 @@ public class MediaInterface {
                         mainController.miniplayer.miniplayerController.seekImageView.setImage(null);
                     }
 
-                    if(!controlBarController.durationSlider.isValueChanging() && !mainController.seekingWithKeys && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.5 && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) controlBarController.durationSlider.setValue((double)newTime/1000);
+                    if(!controlBarController.durationSlider.isValueChanging() && !mainController.seekingWithKeys && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.2 && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) < 1.0 && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) controlBarController.durationSlider.setValue((double)newTime/1000);
                 });
             }
 
@@ -371,8 +371,6 @@ public class MediaInterface {
 
             mainController.miniplayer.miniplayerController.seekImageView.setImage(null);
             mainController.miniplayer.miniplayerController.seekImageView.setVisible(false);
-
-
         }
 
         mainController.seekImageView.setImage(null);
@@ -589,7 +587,6 @@ public class MediaInterface {
     }
 
 
-
     public void updatePreviewFrame(double time, boolean forceUpdate) {
 
         if(!forceUpdate && (fFmpegFrameGrabber == null || frameGrabberTask != null && frameGrabberTask.isRunning())) return;
@@ -598,6 +595,7 @@ public class MediaInterface {
 
         frameGrabberTask.setOnSucceeded((succeededEvent) -> {
             Image image = frameGrabberTask.getValue();
+            if(image == null) return;
             if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging()){
                 mainController.miniplayer.miniplayerController.seekImageView.setImage(image);
             }

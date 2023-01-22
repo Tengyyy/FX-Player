@@ -167,7 +167,6 @@ public class ControlBarController implements Initializable {
 
     PauseTransition seekTimer = new PauseTransition(Duration.millis(50));
     PauseTransition previewTimer = new PauseTransition(Duration.millis(200));
-    PauseTransition frameLoadTimer = new PauseTransition(Duration.millis(500));
 
     StackPane controlBarBackground = new StackPane();
 
@@ -371,19 +370,6 @@ public class ControlBarController implements Initializable {
             if(mainController.sliderHoverPreview.pane.isVisible() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.seekImageView.isVisible())){
                 if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging()) mediaInterface.updatePreviewFrame(mainController.miniplayer.miniplayerController.slider.getValue()/mainController.miniplayer.miniplayerController.slider.getMax(), true);
                 else mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, true);
-            }
-        });
-
-        frameLoadTimer.setOnFinished(e -> {
-            mainController.seekImageView.setVisible(false);
-            mainController.seekImageView.setImage(null);
-            if(mainController.miniplayerActive){
-                mainController.miniplayer.miniplayerController.seekImageView.setVisible(false);
-                mainController.miniplayer.miniplayerController.seekImageView.setImage(null);
-                mainController.miniplayer.miniplayerController.videoImageView.setVisible(true);
-            }
-            else {
-                mainController.videoImageView.setVisible(true);
             }
         });
 
@@ -619,13 +605,6 @@ public class ControlBarController implements Initializable {
 
             if (!mediaInterface.mediaActive.get()) return;
 
-            if (mainController.miniplayerActive) {
-                mainController.miniplayer.miniplayerController.progressBar.setProgress(durationSlider.getValue() / durationSlider.getMax());
-                if (mainController.miniplayer.miniplayerController.slider.getValue() != newValue.doubleValue() || newValue.doubleValue() == 0) {
-                    mainController.miniplayer.miniplayerController.slider.setValue(newValue.doubleValue());
-                }
-            }
-
             mediaInterface.updateMedia(newValue.doubleValue());
 
             if (oldValue.doubleValue() <= 5 && newValue.doubleValue() > 5 && mediaInterface.mediaActive.get()) {
@@ -718,14 +697,12 @@ public class ControlBarController implements Initializable {
 
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
                     if(mainController.miniplayerActive){
-                        if(frameLoadTimer.getStatus() != Animation.Status.RUNNING)mainController.miniplayer.miniplayerController.seekImageView.setImage(mainController.miniplayer.miniplayerController.videoImageView.getImage());
-                        else frameLoadTimer.stop();
+                        if(mediaInterface.playing.get()) mainController.miniplayer.miniplayerController.seekImageView.setImage(mainController.miniplayer.miniplayerController.videoImageView.getImage());
                         mainController.miniplayer.miniplayerController.seekImageView.setVisible(true);
                         mainController.miniplayer.miniplayerController.videoImageView.setVisible(false);
                     }
                     else {
-                        if(frameLoadTimer.getStatus() != Animation.Status.RUNNING) mainController.seekImageView.setImage(mainController.videoImageView.getImage());
-                        else frameLoadTimer.stop();
+                        if(mediaInterface.playing.get()) mainController.seekImageView.setImage(mainController.videoImageView.getImage());
                         mainController.seekImageView.setVisible(true);
                         mainController.videoImageView.setVisible(false);
                     }
@@ -817,7 +794,6 @@ public class ControlBarController implements Initializable {
                 else {
                     mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
                     if (mediaInterface.wasPlaying) mediaInterface.play();
-                    else frameLoadTimer.playFromStart();
                 }
             }
         });

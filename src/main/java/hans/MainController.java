@@ -650,15 +650,16 @@ public class MainController implements Initializable {
 
         if(mediaInterface.mediaActive.get()) {
             boolean playValue = mediaInterface.playing.get();
+            if(!playValue){
+                miniplayer.miniplayerController.seekImageView.setImage(videoImageView.getImage());
+                miniplayer.miniplayerController.seekImageView.setVisible(true);
+            }
             mediaInterface.embeddedMediaPlayer.controls().stop();
             mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.activeItem.getMediaItem().getFile().getAbsolutePath());
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
             if (playValue) {
                 mediaInterface.embeddedMediaPlayer.controls().play();
-            }
-            else {
-                mediaInterface.embeddedMediaPlayer.controls().nextFrame();
             }
 
             controlBarController.updateProgress(controlBarController.durationSlider.getValue()/controlBarController.durationSlider.getMax());
@@ -690,6 +691,8 @@ public class MainController implements Initializable {
         miniplayer.miniplayerController.videoImageViewInnerWrapper.widthProperty().removeListener(miniplayer.miniplayerController.widthListener);
         miniplayer.miniplayerController.videoImageViewInnerWrapper.heightProperty().removeListener(miniplayer.miniplayerController.heightListener);
 
+        Image image = null;
+        if(mediaInterface.mediaActive.get() && !mediaInterface.playing.get()) image = miniplayer.miniplayerController.videoImageView.getImage();
 
         if(miniplayerActive && miniplayer != null && miniplayer.stage != null){
             miniplayer.stage.close();
@@ -723,11 +726,10 @@ public class MainController implements Initializable {
             mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.activeItem.getMediaItem().getFile().getAbsolutePath());
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
-            if (playValue) {
-                mediaInterface.embeddedMediaPlayer.controls().play();
-            }
-            else {
-                mediaInterface.embeddedMediaPlayer.controls().nextFrame();
+            if (playValue) mediaInterface.embeddedMediaPlayer.controls().play();
+            else if (image != null) {
+                seekImageView.setImage(image);
+                seekImageView.setVisible(true);
             }
 
             controlBarController.updateProgress(controlBarController.durationSlider.getValue()/controlBarController.durationSlider.getMax());
@@ -906,6 +908,18 @@ public class MainController implements Initializable {
 
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
 
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             e.consume();
 
         }
@@ -945,6 +959,20 @@ public class MainController implements Initializable {
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+
             e.consume();
 
         }
@@ -1020,6 +1048,18 @@ public class MainController implements Initializable {
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
         }
     }
 
@@ -1053,6 +1093,19 @@ public class MainController implements Initializable {
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             e.consume();
 
         }
@@ -1081,6 +1134,18 @@ public class MainController implements Initializable {
         if(!mediaInterface.playing.get() && mediaInterface.mediaActive.get()) {
             mediaInterface.seekedToEnd = false;
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 0.1);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
         }
         e.consume();
     }
@@ -1116,6 +1181,17 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 0.1);
 
 
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
         }
         e.consume();
     }
@@ -1273,6 +1349,19 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 1 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1290,6 +1379,19 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 2 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1307,6 +1409,19 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 3 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1324,6 +1439,19 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 4 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1341,6 +1469,19 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 5 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1358,6 +1499,19 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 6 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1375,6 +1529,19 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 7 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1392,6 +1559,19 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 8 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1409,6 +1589,19 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         if(mediaInterface.mediaActive.get()){
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 9 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             seekingWithKeys = true;
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
@@ -1437,6 +1630,19 @@ public class MainController implements Initializable {
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(0);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             actionIndicator.setIcon(REPLAY);
             actionIndicator.setVisible(true);
             actionIndicator.animate();
@@ -1481,6 +1687,19 @@ public class MainController implements Initializable {
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
             actionIndicator.setIcon(NEXT_VIDEO);
             actionIndicator.setVisible(true);
             actionIndicator.animate();

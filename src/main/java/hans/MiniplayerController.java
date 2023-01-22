@@ -203,7 +203,6 @@ public class MiniplayerController {
         progressBar.setMouseTransparent(true);
         progressBar.setMaxWidth(Double.MAX_VALUE);
         progressBar.setPrefHeight(4);
-        progressBar.setProgress(0);
         StackPane.setMargin(progressBar, new Insets(0, 11, 0, 12));
 
         progressBarTimer.setOnFinished(e -> {
@@ -307,7 +306,6 @@ public class MiniplayerController {
         });
 
         slider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(controlBarController.durationSlider.getValue() != newValue.doubleValue()) controlBarController.durationSlider.setValue(newValue.doubleValue());
 
             if(slider.isValueChanging()){
 
@@ -315,10 +313,7 @@ public class MiniplayerController {
 
                 double minTranslation = (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - sliderHoverLabel.timeLabel.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + sliderHoverLabel.timeLabel.getTranslateX();
-
-
                 double newTranslation = Math.max(minTranslation, Math.min(maxTranslation, slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX() + slider.lookup(".track").getBoundsInLocal().getMaxX() * (newValue.doubleValue() / slider.getMax()) - (sliderHoverLabel.timeLabel.localToScene(sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() + sliderHoverLabel.timeLabel.getBoundsInLocal().getMaxX()/2) + sliderHoverLabel.timeLabel.getTranslateX() - 4));
-
 
                 sliderHoverLabel.timeLabel.setTranslateX(newTranslation);
 
@@ -337,6 +332,8 @@ public class MiniplayerController {
 
         });
 
+        slider.valueProperty().bindBidirectional(controlBarController.durationSlider.valueProperty());
+
         slider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
             if (newValue) { // pause video when user starts seeking
@@ -344,8 +341,7 @@ public class MiniplayerController {
                 showControls();
 
                 if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()){
-                    if(controlBarController.frameLoadTimer.getStatus() != Animation.Status.RUNNING) seekImageView.setImage(mainController.videoImageView.getImage());
-                    else controlBarController.frameLoadTimer.stop();
+                    if(mediaInterface.playing.get()) seekImageView.setImage(videoImageView.getImage());
                     seekImageView.setVisible(true);
                     videoImageView.setVisible(false);
                 }
@@ -385,7 +381,6 @@ public class MiniplayerController {
                 else {
                     mediaInterface.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
                     if (mediaInterface.wasPlaying) mediaInterface.play();
-                    else controlBarController.frameLoadTimer.playFromStart();
                 }
             }
         });
@@ -394,7 +389,7 @@ public class MiniplayerController {
         sliderPane.setMouseTransparent(!mediaInterface.mediaActive.get());
         slider.setValue(controlBarController.durationSlider.getValue());
 
-        progressBar.setProgress(controlBarController.durationSlider.getValue() / controlBarController.durationSlider.getMax());
+        progressBar.progressProperty().bind(slider.valueProperty().divide(slider.maxProperty()));
 
         seekTimer.setOnFinished(e -> mediaInterface.pause());
 
@@ -1039,6 +1034,16 @@ public class MiniplayerController {
             }
             progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
+
+            if(!controlBarController.durationSlider.isValueChanging() && !slider.isValueChanging()){
+                mainController.seekImageView.setImage(null);
+                mainController.seekImageView.setVisible(false);
+
+                videoImageView.setVisible(true);
+                seekImageView.setVisible(false);
+                seekImageView.setImage(null);
+            }
+
             e.consume();
 
         }
@@ -1068,6 +1073,15 @@ public class MiniplayerController {
             }
             progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
+
+            if(!controlBarController.durationSlider.isValueChanging() && !slider.isValueChanging()){
+                mainController.seekImageView.setImage(null);
+                mainController.seekImageView.setVisible(false);
+
+                videoImageView.setVisible(true);
+                seekImageView.setVisible(false);
+                seekImageView.setImage(null);
+            }
 
             e.consume();
 

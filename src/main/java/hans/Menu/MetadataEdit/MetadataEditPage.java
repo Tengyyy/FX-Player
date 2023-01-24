@@ -5,14 +5,18 @@ import hans.*;
 import hans.MediaItems.MediaItem;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.*;
+import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -25,6 +29,8 @@ import javafx.util.Duration;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MetadataEditPage {
 
@@ -41,7 +47,7 @@ public class MetadataEditPage {
     StackPane closeButtonBar = new StackPane();
     StackPane closeButtonPane = new StackPane();
 
-    StackPane footerPane = new StackPane();
+    GridPane footerPane = new GridPane();
 
     JFXButton applyButton = new JFXButton();
     Region saveIcon = new Region();
@@ -84,6 +90,19 @@ public class MetadataEditPage {
     MetadataExitConfirmation metadataExitConfirmation;
 
     boolean imageEditEnabled = false;
+
+    boolean saveProcessActive = false;
+
+    StackPane progressPane = new StackPane();
+    MFXProgressBar progressBar = new MFXProgressBar();
+    Label savedLabel = new Label();
+
+
+    ColumnConstraints column1 = new ColumnConstraints(80, 80, 80);
+    ColumnConstraints column2 = new ColumnConstraints(0,100,Double.MAX_VALUE);
+    ColumnConstraints column3 = new ColumnConstraints(140,140,140);
+
+    RowConstraints row1 = new RowConstraints(90, 90, 90);
 
 
     public MetadataEditPage(MenuController menuController){
@@ -211,16 +230,33 @@ public class MetadataEditPage {
         content.setAlignment(Pos.TOP_CENTER);
         content.getChildren().addAll(closeButtonBar, imageViewWrapper, textBox, footerPane);
         content.setBackground(Background.EMPTY);
-        content.setPadding(new Insets(0, 0, 20, 0));
         menuController.metadataEditScroll.setContent(content);
 
         textBox.setAlignment(Pos.TOP_LEFT);
         textBox.setPadding(new Insets(0, 15, 0, 15));
 
-        footerPane.getChildren().addAll(cancelButton, applyButton);
+        footerPane.add(cancelButton, 0, 0);
+        footerPane.add(progressPane, 1, 0);
+        footerPane.add(applyButton, 2, 0);
+
+
+        footerPane.setPadding(new Insets(20, 12, 10, 10));
+        column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
+        footerPane.getColumnConstraints().addAll(column1, column2, column3);
+        footerPane.getRowConstraints().addAll(row1);
+
+
+        GridPane.setValignment(cancelButton, VPos.CENTER);
+        GridPane.setValignment(progressPane, VPos.CENTER);
+        GridPane.setValignment(applyButton, VPos.CENTER);
+
+
+        GridPane.setHalignment(cancelButton, HPos.CENTER);
+        GridPane.setHalignment(progressPane, HPos.CENTER);
+        GridPane.setHalignment(applyButton, HPos.CENTER);
 
         applyButton.setRipplerFill(Color.WHITE);
-        applyButton.setText("Apply changes");
+        applyButton.setText("Save changes");
         applyButton.getStyleClass().add("mainButton");
         applyButton.setGraphicTextGap(7);
         applyButton.setPadding(new Insets(8, 10, 8, 8));
@@ -234,21 +270,33 @@ public class MetadataEditPage {
         saveIcon.getStyleClass().add("menuIcon");
         saveIcon.setPrefSize(18, 18);
         saveIcon.setMaxSize(18, 18);
-
         applyButton.setGraphic(saveIcon);
-        StackPane.setMargin(applyButton, new Insets(20, 20, 10, 0));
-        StackPane.setAlignment(applyButton, Pos.CENTER_RIGHT);
 
         cancelButton.setRipplerFill(Color.WHITE);
         cancelButton.setCursor(Cursor.HAND);
         cancelButton.setText("Cancel");
-        StackPane.setAlignment(cancelButton, Pos.CENTER_LEFT);
         cancelButton.getStyleClass().add("secondaryButton");
 
-        StackPane.setMargin(cancelButton, new Insets(20, 0, 10, 20));
         cancelButton.setPadding(new Insets(8, 10, 8, 10));
 
         cancelButton.setOnAction(e -> requestExitMetadataEditPage(false));
+
+
+        progressPane.getChildren().addAll(progressBar, savedLabel);
+        progressPane.setPadding(new Insets(0, 20, 0, 20));
+        savedLabel.setText("SAVED");
+        savedLabel.getStyleClass().add("savedLabel");
+        //savedLabel.setVisible(false);
+        StackPane.setAlignment(savedLabel, Pos.CENTER);
+
+        progressBar.setMaxWidth(250);
+        progressBar.setProgress(0.5);
+        progressBar.setPrefHeight(11);
+        progressBar.setVisible(false);
+        StackPane.setAlignment(progressBar, Pos.CENTER);
+
+
+
 
         metadataExitConfirmation = new MetadataExitConfirmation(menuController, this);
 
@@ -417,47 +465,47 @@ public class MetadataEditPage {
             menuController.mediaInterface.resetMediaPlayer();
         }
 
-        boolean imageEditSuccess = true;
-        if(imageRemoved){
-            imageEditSuccess = mediaItem.setCover(null, null, null, true);
-        }
-        else if(newImage != null){
-            imageEditSuccess = mediaItem.setCover(newFile, newImage, newColor, true);
-        }
+        if(imageRemoved) mediaItem.setCover(null, null, null, true);
+        else if(newImage != null) mediaItem.setCover(newFile, newImage, newColor, true);
 
-        boolean metadataEditSuccess = mediaItem.setMediaInformation(mediaInformation, true);
+        MetadataEditTask metadataEditTask = new MetadataEditTask(mediaItem, mediaInformation);
+        metadataEditTask.setOnSucceeded(e -> {
+            if(metadataEditTask.getValue()){
+                menuObject.update();
+                ArrayList<MenuObject> duplicates = Utilities.findDuplicates(menuObject, menuController);
 
-        if(metadataEditSuccess && imageEditSuccess){
-            menuObject.update();
-            ArrayList<MenuObject> duplicates = Utilities.findDuplicates(menuObject, menuController);
+                for(MenuObject duplicate : duplicates){
+                    duplicate.getMediaItem().setMediaInformation(mediaInformation, false);
+                    duplicate.getMediaItem().setMediaDetails(menuObject.getMediaItem().getMediaDetails());
+                    if(Utilities.getFileExtension(mediaItem.getFile()).equals("mp4") || Utilities.getFileExtension(mediaItem.getFile()).equals("mov")){
+                        duplicate.getMediaItem().setPlaceHolderCover(menuObject.getMediaItem().getPlaceholderCover());
+                    }
 
-            for(MenuObject duplicate : duplicates){
-                duplicate.getMediaItem().setMediaInformation(mediaInformation, false);
-                duplicate.getMediaItem().setMediaDetails(menuObject.getMediaItem().getMediaDetails());
-                if(Utilities.getFileExtension(mediaItem.getFile()).equals("mp4") || Utilities.getFileExtension(mediaItem.getFile()).equals("mov")){
-                    duplicate.getMediaItem().setPlaceHolderCover(menuObject.getMediaItem().getPlaceholderCover());
+                    if(imageRemoved){
+                        duplicate.getMediaItem().setCover(null, mediaItem.getCover(), mediaItem.getCoverBackgroundColor(), false);
+                    }
+                    else if(newImage != null){
+                        duplicate.getMediaItem().setCover(newFile, newImage, newColor, false);
+                    }
+                    duplicate.update();
+
+                    if(duplicate instanceof ActiveItem){
+                        menuController.mediaInterface.createMedia((ActiveItem) duplicate);
+                    }
                 }
 
-                if(imageRemoved){
-                    duplicate.getMediaItem().setCover(null, mediaItem.getCover(), mediaItem.getCoverBackgroundColor(), false);
-                }
-                else if(newImage != null){
-                    duplicate.getMediaItem().setCover(newFile, newImage, newColor, false);
-                }
-                duplicate.update();
-
-                if(duplicate instanceof ActiveItem){
-                    menuController.mediaInterface.createMedia((ActiveItem) duplicate);
+                menuController.mainController.getControlBarController().updateTooltips();
+                if(menuController.activeItem != null && menuController.activeItem == menuObject){
+                    menuController.mediaInterface.createMedia(menuController.activeItem);
                 }
             }
+        });
 
-            menuController.mainController.getControlBarController().updateTooltips();
-            if(menuController.activeItem != null && menuController.activeItem == menuObject){
-                menuController.mediaInterface.createMedia(menuController.activeItem);
-            }
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        executorService.execute(metadataEditTask);
+        executorService.shutdown();
 
-            changesMade.set(false);
-        }
+        changesMade.set(false);
 
     }
 

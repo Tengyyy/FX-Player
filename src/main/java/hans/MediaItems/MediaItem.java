@@ -12,10 +12,8 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
-import org.bytedeco.javacpp.Loader;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -357,7 +355,7 @@ public class MediaItem {
         return this.cover;
     }
 
-    public boolean setCover(File imagePath, Image image, Color color, boolean updateFile) {
+    public void setCover(File imagePath, Image image, Color color, boolean updateFile) {
 
         if(updateFile){
             newCover = imagePath;
@@ -370,7 +368,6 @@ public class MediaItem {
             backgroundColor = color;
         }
 
-        return true;
     }
 }
 

@@ -349,5 +349,21 @@
     -fx-font-size: 18;
 }
 
+.savedLabel {
+    -fx-background-color: transparent;
+    -fx-text-fill: red;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 16;
+}
+
+.mfx-progress-bar .bar1,
+.mfx-progress-bar .bar2{
+    -fx-fill: red;
+}
+
+.mfx-progress-bar .track {
+    -fx-fill: rgb(30,30,30);
+}
+
 
 

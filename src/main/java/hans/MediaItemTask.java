@@ -19,6 +19,6 @@ public class MediaItemTask extends Task<MediaItem> {
 
     @Override
     protected MediaItem call() {
-        return Utilities.searchDuplicateOrCreate(file, menuController);
+        return Utilities.createMediaItem(file, menuController.mainController);
     }
 }

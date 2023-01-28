@@ -6,11 +6,8 @@ import hans.Settings.SettingsState;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -20,7 +17,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -207,7 +203,7 @@ public class CaptionsBox {
         if(newValue){
             captionsContainer.setVisible(true);
 
-            if(captionsController.menuController.activeItem != null && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
+            if(captionsController.menuController.queueBox.activeItem.get() != null && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
                 showCaptionsTimer.stop();
             }
         }
@@ -220,7 +216,7 @@ public class CaptionsBox {
     public void showCaptions(){
         // if necessary, show captions with text "Captions look like this"
 
-        if(captionsController.menuController.activeItem != null && captionsController.captionsSelected.get()) return;
+        if(captionsController.menuController.queueBox.activeItem.get() != null && captionsController.captionsSelected.get()) return;
 
         if(showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
             showCaptionsTimer.playFromStart();

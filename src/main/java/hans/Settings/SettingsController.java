@@ -3,8 +3,8 @@ package hans.Settings;
 import hans.*;
 import hans.Captions.CaptionsState;
 import hans.Menu.MenuController;
-import hans.Menu.MenuState;
 import hans.Captions.CaptionsController;
+import hans.Menu.MenuState;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
@@ -230,7 +230,7 @@ public class SettingsController {
         if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()){
             mainController.sliderHoverLabel.timeLabel.setVisible(true);
             if(mainController.chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
-            if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+            if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
         }
 
     }

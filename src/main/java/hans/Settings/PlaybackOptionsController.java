@@ -122,9 +122,8 @@ public class PlaybackOptionsController {
 
                 settingsController.menuController.shuffleTooltip.updateText("Shuffle is on");
 
-                if(!settingsController.menuController.animationsInProgress.isEmpty()) return;
 
-                if(!settingsController.menuController.queue.isEmpty()) settingsController.menuController.queueBox.shuffle();
+                if(!settingsController.menuController.queueBox.queue.isEmpty()) settingsController.menuController.queueBox.shuffle();
 
                 settingsController.menuController.shuffleDot.setOpacity(1);
             }

@@ -10,9 +10,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Cursor;
 import javafx.util.Duration;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 public class MouseEventTracker {
 
     int delay; // delay how long mouse has to stay still for controlbar to hide

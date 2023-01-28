@@ -3,9 +3,7 @@ package hans;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
 import hans.MediaItems.MediaItem;
-import hans.Menu.HistoryItem;
 import hans.Menu.MenuController;
-import hans.Menu.MenuObject;
 import hans.Menu.QueueItem;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -65,44 +63,10 @@ public class Utilities {
 
     }
 
-    public static MediaItem searchDuplicateOrCreate(File file, MenuController menuController){
-        MediaItem temp = null;
-        for(QueueItem queueItem : menuController.queue){
-            if(queueItem.getMediaItem() != null && queueItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                temp = Utilities.copyMediaItem(queueItem.getMediaItem(), menuController.mainController);
-                break;
-            }
-        }
-        if(temp == null){
-            for (HistoryItem historyItem : menuController.history){
-                if(historyItem.getMediaItem() != null && historyItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                    temp = Utilities.copyMediaItem(historyItem.getMediaItem(), menuController.mainController);
-                    break;
-                }
-            }
-        }
-        if(temp == null){
-            if(menuController.activeItem != null && menuController.activeItem.getMediaItem() != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                temp = Utilities.copyMediaItem(menuController.activeItem.getMediaItem(), menuController.mainController);
-            }
-        }
-        if(temp == null){
-            temp = Utilities.createMediaItem(file, menuController.mainController);
-        }
-
-        return temp;
-    }
 
     public static MediaItem createMediaItem(File file, MainController mainController){
         return switch (Utilities.getFileExtension(file)) {
             case "mp4", "mov", "mkv", "avi", "flv", "mp3", "flac", "wav", "ogg", "opus", "aiff", "m4a", "wma", "aac" -> new MediaItem(file, mainController);
-            default -> null;
-        };
-    }
-
-    public static MediaItem copyMediaItem(MediaItem mediaItem, MainController mainController){
-        return switch (Utilities.getFileExtension(mediaItem.getFile())) {
-            case "mp4", "mov", "mkv", "avi", "flv", "mp3", "flac", "wav", "ogg", "opus", "aiff", "m4a", "wma", "aac"  -> new MediaItem(mediaItem, mainController);
             default -> null;
         };
     }
@@ -177,25 +141,15 @@ public class Utilities {
         return map.containsKey(key) && !map.get(key).trim().isEmpty();
     }
 
-    public static ArrayList<MenuObject> findDuplicates(MenuObject menuObject, MenuController menuController){
-        ArrayList<MenuObject> duplicates = new ArrayList<>();
+    public static ArrayList<QueueItem> findDuplicates(QueueItem queueItem, MenuController menuController){
+        ArrayList<QueueItem> duplicates = new ArrayList<>();
 
-        String path = menuObject.getMediaItem().getFile().getAbsolutePath();
+        String path = queueItem.getMediaItem().getFile().getAbsolutePath();
 
-        for(QueueItem queueItem : menuController.queue){
-            if(queueItem != menuObject && queueItem.getMediaItem().getFile().getAbsolutePath().equals(path)){
-                duplicates.add(queueItem);
+        for(QueueItem item : menuController.queueBox.queue) {
+            if (item != queueItem && item.getMediaItem().getFile().getAbsolutePath().equals(path)) {
+                duplicates.add(item);
             }
-        }
-
-        for (HistoryItem historyItem : menuController.history){
-            if(historyItem != menuObject && historyItem.getMediaItem().getFile().getAbsolutePath().equals(path)){
-                duplicates.add(historyItem);
-            }
-        }
-
-        if(menuController.activeItem != menuObject && menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(path)){
-            duplicates.add(menuController.activeItem);
         }
 
         return duplicates;

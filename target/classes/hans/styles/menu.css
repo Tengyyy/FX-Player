@@ -129,7 +129,7 @@
 }
 
 
-.queueItem, .activeItem, .historyItem {
+.menuItem{
     -fx-background-color: transparent;
 }
 
@@ -201,7 +201,7 @@
 }
 
 .column {
-    -fx-background-color: white;
+    -fx-background-color: red;
 }
 
 #dragPane {

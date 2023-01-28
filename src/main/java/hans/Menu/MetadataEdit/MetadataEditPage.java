@@ -74,7 +74,7 @@ public class MetadataEditPage {
 
     public VBox textBox = new VBox();
 
-    MenuObject menuObject = null;
+    QueueItem queueItem = null;
     EditImagePopUp editImagePopUp;
 
     public BooleanProperty changesMade = new SimpleBooleanProperty(false);
@@ -302,64 +302,64 @@ public class MetadataEditPage {
 
     }
 
-    public void enterMetadataEditPage(MenuObject menuObject){
-        this.menuObject = menuObject;
+    public void enterMetadataEditPage(QueueItem queueItem){
+        this.queueItem = queueItem;
 
 
-        if(menuObject.getMediaItem().getCover() != null){
-            imageView.setImage(menuObject.getMediaItem().getCover());
-            Color color = menuObject.getMediaItem().getCoverBackgroundColor();
+        if(queueItem.getMediaItem().getCover() != null){
+            imageView.setImage(queueItem.getMediaItem().getCover());
+            Color color = queueItem.getMediaItem().getCoverBackgroundColor();
             imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
         }
         else {
-            imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+            imageView.setImage(queueItem.getMediaItem().getPlaceholderCover());
             imageViewContainer.setStyle("-fx-background-color: red;");
         }
 
-        hasCover = menuObject.getMediaItem().hasCover();
+        hasCover = queueItem.getMediaItem().hasCover();
 
 
-        String extension = Utilities.getFileExtension(menuObject.getMediaItem().getFile());
+        String extension = Utilities.getFileExtension(queueItem.getMediaItem().getFile());
 
         switch (extension) {
             case "mp4", "mov" -> {
-                metadataEditItem = new Mp4EditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new Mp4EditItem(this, queueItem.getMediaItem());
                 enableImageEdit();
             }
             case "m4a" -> {
-                metadataEditItem = new M4aEditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new M4aEditItem(this, queueItem.getMediaItem());
                 enableImageEdit();
             }
             case "mp3", "aiff" -> {
-                metadataEditItem = new Mp3EditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new Mp3EditItem(this, queueItem.getMediaItem());
                 enableImageEdit();
             }
             case "aac" -> {
-                metadataEditItem = new Mp3EditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new Mp3EditItem(this, queueItem.getMediaItem());
                 disableImageEdit();
             }
             case "flac" -> {
-                metadataEditItem = new FlacEditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new FlacEditItem(this, queueItem.getMediaItem());
                 enableImageEdit();
             }
             case "ogg", "opus" -> {
-                metadataEditItem = new OggEditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new OggEditItem(this, queueItem.getMediaItem());
                 disableImageEdit();
             }
             case "avi" -> {
-                metadataEditItem = new AviEditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new AviEditItem(this, queueItem.getMediaItem());
                 disableImageEdit();
             }
             case "flv", "wma" -> {
-                metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new OtherEditItem(this, queueItem.getMediaItem());
                 disableImageEdit();
             }
             case "wav" -> {
-                metadataEditItem = new WavEditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new WavEditItem(this, queueItem.getMediaItem());
                 disableImageEdit();
             }
             default -> {
-                metadataEditItem = new OtherEditItem(this, menuObject.getMediaItem());
+                metadataEditItem = new OtherEditItem(this, queueItem.getMediaItem());
                 enableImageEdit();
             }
         }
@@ -384,7 +384,7 @@ public class MetadataEditPage {
     }
 
     public void exitMetadataEditPage(){
-        this.menuObject = null;
+        this.queueItem = null;
 
         imageRemoved = false;
         metadataEditItem = null;
@@ -420,12 +420,8 @@ public class MetadataEditPage {
     }
 
     private void editImageButtonClick(){
-        if(hasCover){
-            editImagePopUp.showOptions(menuObject);
-        }
-        else {
-            editImage();
-        }
+        if(hasCover) editImagePopUp.showOptions(queueItem);
+        else editImage();
     }
 
     public void editImage(){
@@ -444,7 +440,7 @@ public class MetadataEditPage {
         }
     }
 
-    public void removeImage(MenuObject menuObject){
+    public void removeImage(QueueItem menuObject){
         imageRemoved = true;
         newImage = null;
         newColor = null;
@@ -459,9 +455,9 @@ public class MetadataEditPage {
     public void saveMetadata(){
         Map<String,String> mediaInformation = metadataEditItem.saveMetadata();
 
-        MediaItem mediaItem = menuObject.getMediaItem();
+        MediaItem mediaItem = queueItem.getMediaItem();
 
-        if(menuController.activeItem != null && menuController.activeItem.getMediaItem().getFile().getAbsolutePath().equals(mediaItem.getFile().getAbsolutePath())){
+        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath().equals(mediaItem.getFile().getAbsolutePath())){
             menuController.mediaInterface.resetMediaPlayer();
         }
 
@@ -471,14 +467,14 @@ public class MetadataEditPage {
         MetadataEditTask metadataEditTask = new MetadataEditTask(mediaItem, mediaInformation);
         metadataEditTask.setOnSucceeded(e -> {
             if(metadataEditTask.getValue()){
-                menuObject.update();
-                ArrayList<MenuObject> duplicates = Utilities.findDuplicates(menuObject, menuController);
+                queueItem.update();
+                ArrayList<QueueItem> duplicates = Utilities.findDuplicates(queueItem, menuController);
 
-                for(MenuObject duplicate : duplicates){
+                for(QueueItem duplicate : duplicates){
                     duplicate.getMediaItem().setMediaInformation(mediaInformation, false);
-                    duplicate.getMediaItem().setMediaDetails(menuObject.getMediaItem().getMediaDetails());
+                    duplicate.getMediaItem().setMediaDetails(queueItem.getMediaItem().getMediaDetails());
                     if(Utilities.getFileExtension(mediaItem.getFile()).equals("mp4") || Utilities.getFileExtension(mediaItem.getFile()).equals("mov")){
-                        duplicate.getMediaItem().setPlaceHolderCover(menuObject.getMediaItem().getPlaceholderCover());
+                        duplicate.getMediaItem().setPlaceHolderCover(queueItem.getMediaItem().getPlaceholderCover());
                     }
 
                     if(imageRemoved){
@@ -489,14 +485,12 @@ public class MetadataEditPage {
                     }
                     duplicate.update();
 
-                    if(duplicate instanceof ActiveItem){
-                        menuController.mediaInterface.createMedia((ActiveItem) duplicate);
-                    }
+                    if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().file.getAbsolutePath().equals(queueItem.file.getAbsolutePath())) menuController.mediaInterface.createMedia(duplicate);
                 }
 
-                menuController.mainController.getControlBarController().updateTooltips();
-                if(menuController.activeItem != null && menuController.activeItem == menuObject){
-                    menuController.mediaInterface.createMedia(menuController.activeItem);
+                menuController.mainController.getControlBarController().updateNextAndPreviousVideoButtons();
+                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get() == queueItem){
+                    menuController.mediaInterface.createMedia(menuController.queueBox.activeItem.get());
                 }
             }
         });

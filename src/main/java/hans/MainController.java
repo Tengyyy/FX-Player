@@ -3,15 +3,14 @@ package hans;
 import hans.Captions.CaptionsController;
 import hans.Captions.CaptionsState;
 import hans.Chapters.ChapterController;
-import hans.Menu.ActiveItem;
 import hans.Menu.MenuController;
 import hans.Menu.MenuState;
+import hans.Menu.QueueItem;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
 import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
@@ -613,17 +612,20 @@ public class MainController implements Initializable {
 
         actionIndicator.animate();
 
-        ActiveItem activeItem = new ActiveItem(file, menuController, mediaInterface, menuController.activeBox);
-        activeItem.play(true);
+        //siit edasi vaadata
+        QueueItem queueItem = new QueueItem(file, menuController, mediaInterface);
+        if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.add(menuController.queueBox.activeItem.get().videoIndex + 1, queueItem);
+        else menuController.queueBox.add(0, queueItem);
+        queueItem.play();
 
     }
 
     public void takeScreenshot(){
-        if(menuController.activeItem == null || miniplayerActive) return;
+        if(menuController.queueBox.activeItem.get() == null || !menuController.queueBox.activeItem.get().getMediaItemGenerated().get() || miniplayerActive) return;
 
         // snapshot file name formatting
         String out = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date());
-        String videoName = menuController.activeItem.videoTitle.getText();
+        String videoName = menuController.queueBox.activeItem.get().videoTitle.getText();
 
         mediaInterface.embeddedMediaPlayer.snapshots().save(new File(snapshotDirectory.concat(videoName).concat(" ").concat(out).concat(".png")));
     }
@@ -635,8 +637,6 @@ public class MainController implements Initializable {
         miniplayerActive = true;
 
         if(App.fullScreen) controlBarController.toggleFullScreen();
-
-
 
         videoImageViewInnerWrapper.widthProperty().removeListener(widthListener);
         videoImageViewInnerWrapper.heightProperty().removeListener(heightListener);
@@ -655,7 +655,7 @@ public class MainController implements Initializable {
                 miniplayer.miniplayerController.seekImageView.setVisible(true);
             }
             mediaInterface.embeddedMediaPlayer.controls().stop();
-            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.activeItem.getMediaItem().getFile().getAbsolutePath());
+            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath());
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
             if (playValue) {
@@ -664,8 +664,8 @@ public class MainController implements Initializable {
 
             controlBarController.updateProgress(controlBarController.durationSlider.getValue()/controlBarController.durationSlider.getMax());
 
-            if(menuController.activeItem.getMediaItem() != null && !menuController.activeItem.getMediaItem().hasVideo()){
-                setCoverImageView(menuController.activeItem);
+            if(menuController.queueBox.activeItem.get().getMediaItem() != null && !menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                setCoverImageView(menuController.queueBox.activeItem.get());
             }
         }
 
@@ -677,7 +677,7 @@ public class MainController implements Initializable {
         miniplayer.miniplayerController.moveIndicators();
         captionsController.captionsBox.moveToMiniplayer();
 
-        if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()){
+        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
             miniplayerActiveText.setVisible(true);
         }
 
@@ -723,7 +723,7 @@ public class MainController implements Initializable {
         if(mediaInterface.mediaActive.get()) {
             boolean playValue = mediaInterface.playing.get();
             mediaInterface.embeddedMediaPlayer.controls().stop();
-            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.activeItem.getMediaItem().getFile().getAbsolutePath());
+            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath());
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
             if (playValue) mediaInterface.embeddedMediaPlayer.controls().play();
@@ -821,20 +821,20 @@ public class MainController implements Initializable {
     }
 
 
-    public void setCoverImageView(ActiveItem activeItem){
+    public void setCoverImageView(QueueItem queueItem){
 
 
         Image image;
-        if(activeItem.getMediaItem().hasCover()){
-            image = activeItem.getMediaItem().getCover();
+        if(queueItem.getMediaItem().hasCover()){
+            image = queueItem.getMediaItem().getCover();
         }
-        else image = activeItem.getMediaItem().getPlaceholderCover();
+        else image = queueItem.getMediaItem().getPlaceholderCover();
 
         double width = image.getWidth();
         double height = image.getHeight();
         double ratio = width/height;
 
-        if(activeItem.getMediaItem().hasCover()){
+        if(queueItem.getMediaItem().hasCover()){
             coverBackground.setImage(image);
         }
         else {
@@ -849,7 +849,7 @@ public class MainController implements Initializable {
 
         if(miniplayerActive){
 
-            if(activeItem.getMediaItem().hasCover()){
+            if(queueItem.getMediaItem().hasCover()){
                 miniplayer.miniplayerController.coverBackground.setImage(image);
             }
             else {
@@ -1298,9 +1298,9 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(0);
 
         }
-        else if((!menuController.history.isEmpty() && menuController.historyBox.index == -1) || menuController.historyBox.index > 0){ // play previous video
+        else if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().videoIndex > 0){ // play previous video
 
-            if(!menuController.animationsInProgress.isEmpty() || menuController.queueBox.dragActive) return;
+            if(menuController.queueBox.dragActive) return;
 
             actionIndicator.setIcon(PREVIOUS_VIDEO);
             actionIndicator.setVisible(true);
@@ -1313,9 +1313,9 @@ public class MainController implements Initializable {
     public void pressNextTrack(){
         controlBarController.mouseEventTracker.move();
 
-        if((menuController.historyBox.index != -1 && menuController.historyBox.index < menuController.history.size() -1) || ((menuController.historyBox.index == menuController.history.size() -1 || menuController.historyBox.index == -1) && !menuController.queue.isEmpty())){
+        if(!menuController.queueBox.queue.isEmpty() && (menuController.queueBox.activeItem.get() == null || menuController.queueBox.queue.size() > menuController.queueBox.activeItem.get().videoIndex + 1)){
 
-            if(!menuController.animationsInProgress.isEmpty() || menuController.queueBox.dragActive) return;
+            if(menuController.queueBox.dragActive) return;
 
             actionIndicator.setIcon(NEXT_VIDEO);
             actionIndicator.setVisible(true);

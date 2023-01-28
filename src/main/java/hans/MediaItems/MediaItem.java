@@ -214,32 +214,6 @@ public class MediaItem {
         }
     }
 
-    public MediaItem(MediaItem mediaItem, MainController mainController){
-        this.mainController = mainController;
-
-        file = mediaItem.file;
-        duration = mediaItem.duration;
-        cover = mediaItem.cover;
-        placeholderCover = mediaItem.placeholderCover;
-        backgroundColor = mediaItem.backgroundColor;
-        hasCover = mediaItem.hasCover;
-        mediaInformation = mediaItem.mediaInformation;
-        mediaDetails = mediaItem.mediaDetails;
-        hasVideo = mediaItem.hasVideo;
-        hasAudio = mediaItem.hasAudio;
-        probeResult = mediaItem.probeResult;
-        width = mediaItem.width;
-        height = mediaItem.height;
-        audioChannels = mediaItem.audioChannels;
-        numberOfNonPictureVideoStreams = mediaItem.numberOfNonPictureVideoStreams;
-        numberOfAttachmentStreams = mediaItem.numberOfAttachmentStreams;
-        numberOfSubtitleStreams = mediaItem.numberOfSubtitleStreams;
-        videoStream = mediaItem.videoStream;
-        audioStream = mediaItem.audioStream;
-        subtitleStreamLanguages = mediaItem.subtitleStreamLanguages;
-        defaultSubtitleStream = mediaItem.defaultSubtitleStream;
-    }
-
 
     public Color getCoverBackgroundColor() {
         return backgroundColor;

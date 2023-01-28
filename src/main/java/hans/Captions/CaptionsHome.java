@@ -179,8 +179,8 @@ public class CaptionsHome {
 
 
     public void openCaptionsChooser(){
-        if(captionsController.menuController.activeItem != null){
-            fileChooser.setInitialDirectory(captionsController.menuController.activeItem.getMediaItem().getFile().getParentFile()); // search for subtitles inside the same directory as the current media item
+        if(captionsController.menuController.queueBox.activeItem.get() != null){
+            fileChooser.setInitialDirectory(captionsController.menuController.queueBox.activeItem.get().file.getParentFile()); // search for subtitles inside the same directory as the current media item
         }
         else {
             fileChooser.setInitialDirectory(null);

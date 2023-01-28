@@ -142,17 +142,11 @@ public class WindowsTaskBarController {
 
     public void previousVideoButtonClick() {
 
-        if(menuController.mainController.getControlBarController().durationSlider.getValue() > 5){
-            mediaInterface.replay();
-        }
-        else {
-            if (!menuController.animationsInProgress.isEmpty()) return;
-            mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition et
-        }
+        if(menuController.mainController.getControlBarController().durationSlider.getValue() > 5) mediaInterface.replay();
+        else mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition et
     }
 
     public void nextVideoButtonClick() {
-        if (!menuController.animationsInProgress.isEmpty()) return;
         mediaInterface.playNext();
     }
 }

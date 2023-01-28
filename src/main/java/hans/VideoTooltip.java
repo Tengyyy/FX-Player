@@ -1,12 +1,8 @@
 package hans;
 
-import hans.Menu.MenuObject;
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
+import hans.Menu.QueueItem;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -46,7 +42,7 @@ public class VideoTooltip extends Tooltip {
     Label titleLabel = new Label();
 
     MainController mainController;
-    MenuObject menuObject;
+    QueueItem queueItem;
 
     boolean isPrevious;
 
@@ -123,19 +119,19 @@ public class VideoTooltip extends Tooltip {
     }
 
 
-    public void updateTooltip(MenuObject menuObject){
-        this.menuObject = menuObject;
+    public void updateTooltip(QueueItem queueItem){
+        this.queueItem = queueItem;
 
         boolean isShowing = this.isShowing();
 
         if(isShowing) this.hide();
 
-        if(menuObject == null){
+        if(queueItem == null){
             graphicLabel.setText("Replay");
             this.setGraphic(graphicLabel);
         }
         else {
-            if(menuObject.getMediaItem() != null){
+            if(queueItem.getMediaItem() != null){
                 loadTooltip();
             }
             else {
@@ -145,8 +141,8 @@ public class VideoTooltip extends Tooltip {
 
                 this.setGraphic(graphicLabel);
 
-                menuObject.getMediaItemGenerated().addListener((observableValue, oldValue, newValue) -> {
-                    if((!isPrevious || mainController.getControlBarController().durationSlider.getValue() <= 5) && newValue && this.menuObject == menuObject){
+                queueItem.getMediaItemGenerated().addListener((observableValue, oldValue, newValue) -> {
+                    if((!isPrevious || mainController.getControlBarController().durationSlider.getValue() <= 5) && newValue && this.queueItem == queueItem){
                         if(this.isShowing()){
                             this.hide();
 
@@ -184,15 +180,15 @@ public class VideoTooltip extends Tooltip {
     }
 
     private void loadTooltip(){
-        titleLabel.setText(menuObject.getTitle());
-        durationLabel.setText(Utilities.getTime(menuObject.getMediaItem().getDuration()));
-        if(menuObject.getMediaItem().getCover() != null){
-            imageView.setImage(menuObject.getMediaItem().getCover());
-            Color color = menuObject.getMediaItem().getCoverBackgroundColor();
+        titleLabel.setText(queueItem.getTitle());
+        durationLabel.setText(Utilities.getTime(queueItem.getMediaItem().getDuration()));
+        if(queueItem.getMediaItem().getCover() != null){
+            imageView.setImage(queueItem.getMediaItem().getCover());
+            Color color = queueItem.getMediaItem().getCoverBackgroundColor();
             imageViewBackground.setStyle("-fx-background-color: rgba(" +  color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ",0.7);");
         }
         else {
-            imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+            imageView.setImage(queueItem.getMediaItem().getPlaceholderCover());
             imageViewBackground.setStyle("-fx-background-color: rgba(255, 0, 0, 0.7);");
         }
 

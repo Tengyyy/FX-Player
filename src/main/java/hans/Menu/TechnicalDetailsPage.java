@@ -130,7 +130,7 @@ public class TechnicalDetailsPage {
         textBox.setSpacing(10);
     }
 
-    public void enterTechnicalDetailsPage(MenuObject menuObject){
+    public void enterTechnicalDetailsPage(QueueItem menuObject){
 
 
         if(menuObject.getMediaItem().getCover() != null){

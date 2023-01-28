@@ -8,6 +8,8 @@ import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -30,7 +32,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class QueueItem extends GridPane implements MenuObject {
+public class QueueItem extends GridPane {
 
     // layout constraints for the video item
     ColumnConstraints column1 = new ColumnConstraints(45, 45, 45);
@@ -65,71 +67,112 @@ public class QueueItem extends GridPane implements MenuObject {
     StackPane removeButtonWrapper = new StackPane();
     StackPane optionsButtonWrapper = new StackPane();
     StackPane imageWrapper = new StackPane();
+    Region imageBorder = new Region();
 
 
     StackPane indexPane = new StackPane();
-    public Label indexLabel = new Label();
-    int videoIndex;
     public Region playIcon = new Region();
+    public Label indexLabel = new Label();
+
+    Button playButton = new Button();
+    Region playButtonIcon = new Region();
+
+    StackPane playButtonBackground = new StackPane();
+    Columns columns = new Columns();
+
+    public StackPane captionsPane = new StackPane();
+    public Region captionsIcon = new Region();
 
 
     public int newPosition; // keeps track of the position where the queueitem should move to when being dragged
     public double runningTranslate; // mirrors draggable nodes translateY value and if it goes over QueueItem.height or below -QueueItem.height will update the visual order of queueitems
 
-    ControlTooltip removeButtonTooltip, optionsButtonTooltip;
+    ControlTooltip playButtonTooltip, removeButtonTooltip, optionsButtonTooltip;
 
     boolean mouseHover = false;
 
+    SVGPath playSVG = new SVGPath(), removeSVG = new SVGPath(), optionsSVG = new SVGPath(), pauseSVG = new SVGPath(), captionsSVG = new SVGPath();
 
-
-    SVGPath playSVG, removeSVG, optionsSVG;
-
-    MenuItemContextMenu menuItemContextMenu;
+    //TODO: incorporate activeitemcontextmenu to this
+    public MenuItemContextMenu menuItemContextMenu;
 
     MediaInterface mediaInterface;
 
     static double height = 90;
-
-    QueueBox queueBox;
 
     public double dragPosition = 0;
     public double minimumY = 0;
     public double maximumY = 0;
 
 
-    File file;
+    public File file;
     MediaItem mediaItem;
     BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
 
-    QueueItem(File file, MenuController menuController, MediaInterface mediaInterface, QueueBox queueBox) {
+    public String captionGenerationTime = "";
+
+    BooleanProperty isActive = new SimpleBooleanProperty(false);
+
+    public int videoIndex = -1;
+
+    QueueBox queueBox;
+
+    public QueueItem(File file, MenuController menuController, MediaInterface mediaInterface) {
 
         this.file = file;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
-        this.queueBox = queueBox;
+        this.queueBox = menuController.queueBox;
 
         initialize();
 
-        MediaItemTask mediaItemTask = new MediaItemTask(this.file, menuController);
+        QueueItem queueItem = null;
+        for(QueueItem item : queueBox.queue){
+            if(item.file.getAbsolutePath().equals(this.file.getAbsolutePath())){
+                queueItem = item;
+                break;
+            }
+        }
 
-        mediaItemTask.setOnSucceeded((succeededEvent) -> {
-            this.mediaItem = mediaItemTask.getValue();
-            applyMediaItem();
-            mediaItemGenerated.set(true);
-        });
+        if(queueItem != null){
+            if(queueItem.mediaItemGenerated.get()){
+                this.mediaItem = queueItem.mediaItem;
+                applyMediaItem();
+                mediaItemGenerated.set(true);
+            }
+            else {
+                QueueItem finalQueueItem = queueItem;
+                queueItem.mediaItemGenerated.addListener((observableValue, oldValue, newValue) -> {
+                    if(newValue){
+                        this.mediaItem = finalQueueItem.mediaItem;
+                        applyMediaItem();
+                        mediaItemGenerated.set(true);
+                    }
+                });
+            }
+        }
+        else {
+            MediaItemTask mediaItemTask = new MediaItemTask(this.file, menuController);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
-        executorService.execute(mediaItemTask);
-        executorService.shutdown();
+            mediaItemTask.setOnSucceeded((succeededEvent) -> {
+                this.mediaItem = mediaItemTask.getValue();
+                applyMediaItem();
+                mediaItemGenerated.set(true);
+            });
+
+            ExecutorService executorService = Executors.newFixedThreadPool(1);
+            executorService.execute(mediaItemTask);
+            executorService.shutdown();
+        }
     }
 
-    QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, QueueBox queueBox) {
+    QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface) {
 
         this.file = mediaItem.getFile();
         this.mediaItem = mediaItem;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
-        this.queueBox = queueBox;
+        this.queueBox = menuController.queueBox;
 
         mediaItemGenerated.set(true);
 
@@ -155,10 +198,16 @@ public class QueueItem extends GridPane implements MenuObject {
         GridPane.setHalignment(optionsButtonWrapper, HPos.CENTER);
         GridPane.setHalignment(removeButtonWrapper, HPos.CENTER);
 
-        this.getStyleClass().add("queueItem");
+        this.getStyleClass().add("menuItem");
         this.setOpacity(0);
 
         this.setCursor(Cursor.HAND);
+
+        playSVG.setContent(App.svgMap.get(SVG.PLAY));
+        removeSVG.setContent(App.svgMap.get(SVG.REMOVE));
+        optionsSVG.setContent(App.svgMap.get(SVG.OPTIONS));
+        pauseSVG.setContent(App.svgMap.get(SVG.PAUSE));
+        captionsSVG.setContent(App.svgMap.get(SVG.CAPTIONS));
 
         coverImage.setFitHeight(70);
         coverImage.setFitWidth(125);
@@ -169,13 +218,10 @@ public class QueueItem extends GridPane implements MenuObject {
         else if(fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) coverImage.setImage(new Image(Objects.requireNonNull(menuController.mainController.getClass().getResource("images/music.png")).toExternalForm()));
 
 
-        indexLabel.setText(String.valueOf(videoIndex));
         indexLabel.getStyleClass().add("indexLabel");
         indexLabel.setMouseTransparent(true);
         StackPane.setAlignment(indexLabel, Pos.CENTER);
 
-        playSVG = new SVGPath();
-        playSVG.setContent(App.svgMap.get(SVG.PLAY));
         playIcon.setShape(playSVG);
         playIcon.setPrefSize(13, 15);
         playIcon.setMaxSize(13, 15);
@@ -183,26 +229,64 @@ public class QueueItem extends GridPane implements MenuObject {
         playIcon.setVisible(false);
         playIcon.setTranslateX(3);
 
-        indexPane.getChildren().addAll(indexLabel, playIcon);
+        this.columns.setVisible(false);
 
-        removeSVG = new SVGPath();
-        removeSVG.setContent(App.svgMap.get(SVG.REMOVE));
+        indexPane.getChildren().addAll(indexLabel, playIcon, columns);
 
-        optionsSVG = new SVGPath();
-        optionsSVG.setContent(App.svgMap.get(SVG.OPTIONS));
+        playButton.setPrefWidth(125);
+        playButton.setPrefHeight(70);
+        playButton.getStyleClass().add("playButton");
+        playButton.setCursor(Cursor.HAND);
+        playButton.setMouseTransparent(true);
 
+
+        playButtonIcon = new Region();
+        playButtonIcon.setShape(playSVG);
+        playButtonIcon.setPrefSize(30, 32);
+        playButtonIcon.setMaxSize(30, 32);
+        playButtonIcon.setMouseTransparent(true);
+        playButtonIcon.setId("playIcon");
+        playButtonIcon.setVisible(false);
+
+        playButtonBackground = new StackPane();
+        playButtonBackground.setPrefSize(125, 70);
+        playButtonBackground.setMaxSize(125, 70);
+
+
+        playButtonBackground.getStyleClass().add("iconBackground");
+        playButtonBackground.setMouseTransparent(true);
+        playButtonBackground.setVisible(false);
 
         imageWrapper.setStyle("-fx-background-color: red;");
+        imageWrapper.setPrefSize(129, 74);
+        imageWrapper.setMaxSize(129, 74);
+        imageWrapper.getChildren().addAll(coverImage, imageBorder, playButtonBackground, playButton, playButtonIcon);
+        imageWrapper.getStyleClass().add("imageWrapper");
 
-
-        imageWrapper.setMaxSize(125,70);
-        imageWrapper.getChildren().addAll(coverImage);
+        imageBorder.setPrefSize(129, 74);
+        imageBorder.setMaxSize(129, 74);
+        imageBorder.setBackground(Background.EMPTY);
+        imageBorder.getStyleClass().add("imageBorder");
+        imageBorder.setMouseTransparent(true);
+        imageBorder.setVisible(false);
 
         videoTitle.getStyleClass().add("videoTitle");
-
-
         videoTitle.setWrapText(true);
         videoTitle.setMaxHeight(40);
+
+        captionsPane.setMinSize(21, 14);
+        captionsPane.setPrefSize(21, 14);
+        captionsPane.setMaxSize(21, 14);
+        captionsPane.setPadding(new Insets(1, 6, 1, 0));
+        captionsPane.setMouseTransparent(true);
+
+
+        captionsIcon.setId("captionsSelectedIcon");
+        captionsIcon.setMinSize(15, 12);
+        captionsIcon.setPrefSize(15,12);
+        captionsIcon.setMaxSize(15, 12);
+        captionsIcon.setShape(captionsSVG);
+        captionsPane.getChildren().add(captionsIcon);
 
         artist.getStyleClass().add("subText");
 
@@ -253,7 +337,7 @@ public class QueueItem extends GridPane implements MenuObject {
 
         this.setOnMouseClicked(e -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-            else if (e.getButton() == MouseButton.PRIMARY && menuController.animationsInProgress.isEmpty()) play(true);
+            else if (e.getButton() == MouseButton.PRIMARY && !isActive.get()) play();
         });
 
         optionsIcon = new Region();
@@ -276,48 +360,54 @@ public class QueueItem extends GridPane implements MenuObject {
 
         this.setViewOrder(1);
 
-        Platform.runLater(() -> {
-            this.setOnMouseEntered((e) -> {
-                mouseHover = true;
+        this.setOnMouseEntered((e) -> {
+            mouseHover = true;
 
-                this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
-                indexLabel.setVisible(false);
+            this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
+
+            if(isActive.get()){
+                playButtonIcon.setVisible(true);
+                playButtonBackground.setVisible(true);
+            }
+            else {
                 playIcon.setVisible(true);
+                indexLabel.setVisible(false);
+            }
+        });
 
-            });
+        this.setOnMouseExited((e) -> {
+            mouseHover = false;
 
-            this.setOnMouseExited((e) -> {
-                mouseHover = false;
+            if(queueBox.dragActive || menuItemContextMenu != null && menuItemContextMenu.showing) return;
 
-                if(!queueBox.dragActive && menuItemContextMenu != null && !menuItemContextMenu.showing){
-                    this.setStyle("-fx-background-color: transparent;");
+            if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+            else this.setStyle("-fx-background-color: transparent;");
 
-                    indexLabel.setVisible(true);
-                    playIcon.setVisible(false);
-                }
-            });
+            playIcon.setVisible(false);
+            playButtonIcon.setVisible(false);
+            playButtonBackground.setVisible(false);
+            if(!isActive.get()) indexLabel.setVisible(true);
         });
 
         this.addEventHandler(DragEvent.DRAG_OVER, e -> {
 
-            if(queueBox.dragAndDropActive) {
-                //code to handle adding items to queue
-                if (e.getY() > height / 2) {
-                    // position queueline below this item
-                    if (queueBox.getChildren().indexOf(queueBox.queueLine) != menuController.queue.indexOf(this) + 1) {
-                        queueBox.queueLine.setPosition(menuController.queue.indexOf(this) + 1);
-                    }
-                } else {
-                    if (queueBox.getChildren().indexOf(queueBox.queueLine) != menuController.queue.indexOf(this)) {
-                        queueBox.queueLine.setPosition(menuController.queue.indexOf(this));
-                    }
+            if(!queueBox.dragAndDropActive) return;
+
+            //code to handle adding items to queue
+            if (e.getY() > height / 2) {
+                // position queueline below this item
+                if (queueBox.getChildren().indexOf(queueBox.queueLine) != this.videoIndex + 1) {
+                    queueBox.queueLine.setPosition(this.videoIndex + 1);
+                }
+            } else {
+                if (queueBox.getChildren().indexOf(queueBox.queueLine) != this.videoIndex) {
+                    queueBox.queueLine.setPosition(this.videoIndex);
                 }
             }
         });
 
 
         this.setOnDragDetected((e) -> {
-            if(!queueBox.dragAnimationsInProgress.isEmpty()) return;
 
             this.setMouseTransparent(true);
             queueBox.dragActive = true;
@@ -326,8 +416,13 @@ public class QueueItem extends GridPane implements MenuObject {
             this.setViewOrder(0);
             this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
-            playIcon.setVisible(true);
             indexLabel.setVisible(false);
+            columns.setVisible(false);
+            playButtonIcon.setVisible(false);
+            playButtonBackground.setVisible(false);
+
+            playIcon.setVisible(true);
+
 
             if (menuItemContextMenu != null && menuItemContextMenu.isShowing()) menuItemContextMenu.hide();
 
@@ -335,9 +430,26 @@ public class QueueItem extends GridPane implements MenuObject {
             minimumY = this.getBoundsInParent().getMinY(); // this is the maximum negative translation that can be applied
             maximumY = queueBox.getChildren().get(queueBox.getChildren().size() - 1).getBoundsInParent().getMinY(); // the top border of the last element inside the vbox, dragged node cant move below that
 
-            newPosition = videoIndex - 1;
 
             this.startFullDrag();
+        });
+
+        playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200));
+
+        playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200));
+
+        playButton.setOnAction((e) -> {
+
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+
+            if(!this.isActive.get()) return;
+
+            if(mediaInterface.atEnd) mediaInterface.replay();
+            else if (mediaInterface.playing.get()){
+                mediaInterface.wasPlaying = false;
+                mediaInterface.pause();
+            }
+            else mediaInterface.play();
         });
 
         optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, optionsButton, 0, 1, false, 1, true));
@@ -350,9 +462,25 @@ public class QueueItem extends GridPane implements MenuObject {
 
         removeButton.setOnAction((e) -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-            if(menuController.animationsInProgress.isEmpty()) queueBox.remove(this, true);
-
+            remove();
         });
+    }
+
+    private void remove() {
+        if (this.isActive.get()) {
+
+            this.setInactive();
+            queueBox.activeItem.set(null);
+
+            if(menuController.settingsController.playbackOptionsController.autoplayOn){
+                if(queueBox.queue.size() > this.videoIndex + 1) queueBox.queue.get(this.videoIndex + 1).play();
+                else if(this.videoIndex > 0) queueBox.queue.get(this.videoIndex - 1).play();
+                else mediaInterface.resetMediaPlayer();
+            }
+            else mediaInterface.resetMediaPlayer();
+        }
+        queueBox.remove(this);
+
     }
 
 
@@ -403,30 +531,13 @@ public class QueueItem extends GridPane implements MenuObject {
 
 
     public void updateIndex(int i){
-        videoIndex = i + 1;
-        indexLabel.setText(String.valueOf(videoIndex));
+        videoIndex = i;
+        indexLabel.setText(String.valueOf(videoIndex + 1));
     }
 
-    public void play(boolean addToHistory){
+    public void play(){
 
-        if(mediaInterface.transitionTimer != null && mediaInterface.transitionTimer.getStatus() == Animation.Status.RUNNING){
-            mediaInterface.transitionTimer.stop();
-            mediaInterface.transitionTimer = null;
-        }
-
-        if(menuController.historyBox.index == -1 && menuController.activeItem != null && addToHistory){
-            // add active item to history
-
-            HistoryItem historyItem = new HistoryItem(menuController.activeItem, menuController, mediaInterface, menuController.historyBox);
-
-            menuController.historyBox.add(historyItem);
-        }
-        else if(addToHistory && menuController.historyBox.index != -1){
-            HistoryItem historyItem = menuController.history.get(menuController.historyBox.index);
-            historyItem.setInactive();
-        }
-
-        new ActiveItem(this, menuController, mediaInterface, menuController.activeBox);
+        if(queueBox.activeItem.get() == this) return;
 
         if(mediaInterface.mediaActive.get()) mediaInterface.resetMediaPlayer();
         else {
@@ -434,16 +545,13 @@ public class QueueItem extends GridPane implements MenuObject {
             menuController.controlBarController.disableNextVideoButton();
         }
 
-        if(menuController.settingsController.playbackOptionsController.shuffleOn || menuController.queue.indexOf(this) == menuController.queue.size() -1){
-            queueBox.remove(this, false);
-        }
-        else {
-            queueBox.removeAndMove(queueBox.getChildren().indexOf(this), false);
-        }
+        if(queueBox.activeItem.get() != null) queueBox.activeItem.get().setInactive();
+        this.setActive();
+
+        menuController.mediaInterface.createMedia(this);
 
     }
 
-    @Override
     public void showMetadata(){
         // must be disabled until ffprobe has returned
         if(menuController.menuInTransition) return;
@@ -451,7 +559,6 @@ public class QueueItem extends GridPane implements MenuObject {
         menuController.metadataEditPage.enterMetadataEditPage(this);
     }
 
-    @Override
     public void showTechnicalDetails() {
         // must be disabled until ffprobe has returned
         if(menuController.menuInTransition) return;
@@ -460,42 +567,36 @@ public class QueueItem extends GridPane implements MenuObject {
     }
 
 
-    @Override
     public MenuController getMenuController() {
         return menuController;
     }
 
-    @Override
     public String getTitle() {
         return videoTitle.getText();
     }
 
-    @Override
     public boolean getHover() {
         return mouseHover;
     }
 
 
-    @Override
     public void playNext(){
-        if(videoIndex > 1) queueBox.move(videoIndex -1, 0);
+        QueueItem newItem;
+        if(this.mediaItemGenerated.get()) newItem = new QueueItem(this.mediaItem, menuController, mediaInterface);
+        else newItem = new QueueItem(this.file, menuController, mediaInterface);
 
-        menuController.notificationText.setText("Video will play next");
-        if(menuController.menuNotificationOpen) menuController.closeTimer.playFromStart();
-        else AnimationsClass.openMenuNotification(menuController);
+        if(queueBox.activeItem.get() != null) queueBox.add(queueBox.activeItem.get().videoIndex + 1, newItem);
+        else queueBox.add(0, newItem);
     }
 
-    @Override
     public Button getOptionsButton() {
         return this.optionsButton;
     }
 
-    @Override
     public MediaItem getMediaItem() {
         return this.mediaItem;
     }
 
-    @Override
     public void update(){
 
         if(mediaItem == null) return;
@@ -537,9 +638,72 @@ public class QueueItem extends GridPane implements MenuObject {
         }
     }
 
-    @Override
     public BooleanProperty getMediaItemGenerated() {
         return mediaItemGenerated;
     }
 
+    public void setActive(){
+        queueBox.activeItem.set(this);
+        isActive.set(true);
+
+        playIcon.setVisible(false);
+        indexLabel.setVisible(false);
+        columns.setVisible(true);
+        imageBorder.setVisible(true);
+        playButton.setMouseTransparent(false);
+        this.setCursor(Cursor.DEFAULT);
+
+        if(mouseHover){
+            playButtonIcon.setVisible(true);
+            playButtonBackground.setVisible(true);
+        }
+    }
+
+    public void setInactive(){
+        isActive.set(false);
+
+        playButtonIcon.setVisible(false);
+        playButtonBackground.setVisible(false);
+
+        columns.setVisible(false);
+        columns.pause();
+        imageBorder.setVisible(false);
+        playButton.setMouseTransparent(true);
+        this.setCursor(Cursor.HAND);
+
+        if(mouseHover) playIcon.setVisible(true);
+        else indexLabel.setVisible(true);
+    }
+
+    public void updateIconToPlay(){
+
+        playButtonIcon.setTranslateX(4);
+
+        playButtonIcon.setPrefSize(30, 32);
+        playButtonIcon.setMaxSize(30, 32);
+        playButtonIcon.setShape(playSVG);
+        if(playButtonTooltip != null) playButtonTooltip.updateText("Play video");
+        columns.pause();
+    }
+
+    public void updateIconToPause(){
+
+        playButtonIcon.setTranslateX(0);
+
+        playButtonIcon.setPrefSize(30, 30);
+        playButtonIcon.setMaxSize(30, 30);
+        playButtonIcon.setShape(pauseSVG);
+        if(playButtonTooltip != null) playButtonTooltip.updateText("Pause video");
+        columns.play();
+    }
+
+    public void addSubtitlesIcon(){
+        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
+        if (!subTextWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
+    }
+
+    public void removeSubtitlesIcon(){
+        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
+        subTextWrapper.getChildren().remove(captionsPane);
+    }
 }

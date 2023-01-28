@@ -2,7 +2,7 @@ package hans.Captions;
 
 import hans.AnimationsClass;
 import hans.App;
-import hans.Menu.ActiveItem;
+import hans.Menu.QueueItem;
 import hans.SVG;
 
 import javafx.geometry.Insets;
@@ -134,9 +134,9 @@ public class CaptionsTab extends HBox {
             captionsController.clip.setHeight(height + 38);
         }
 
-        ActiveItem activeItem = captionsController.menuController.activeItem;
+        QueueItem activeItem = captionsController.menuController.queueBox.activeItem.get();
         if(activeItem != null){
-            this.menuItem = activeItem.activeItemContextMenu.createSubtitleItem(this);
+            this.menuItem = activeItem.menuItemContextMenu.createSubtitleItem(this);
         }
 
 
@@ -174,13 +174,13 @@ public class CaptionsTab extends HBox {
         }
 
         captionsHome.captionsTabs.remove(this);
-        ActiveItem activeItem = captionsController.menuController.activeItem;
+        QueueItem activeItem = captionsController.menuController.queueBox.activeItem.get();
         if(activeItem != null){
-            boolean removed = activeItem.activeItemContextMenu.subtitleContainer.getChildren().remove(menuItem);
+            boolean removed = activeItem.menuItemContextMenu.subtitleContainer.getChildren().remove(menuItem);
             if (removed) {
-                double newHeight = activeItem.activeItemContextMenu.subtitleContainer.getPrefHeight() - 39;
-                activeItem.activeItemContextMenu.subtitleContainer.setPrefHeight(newHeight);
-                activeItem.activeItemContextMenu.subtitleScroll.setPrefHeight(Math.min(200, newHeight));
+                double newHeight = activeItem.menuItemContextMenu.subtitleContainer.getPrefHeight() - 39;
+                activeItem.menuItemContextMenu.subtitleContainer.setPrefHeight(newHeight);
+                activeItem.menuItemContextMenu.subtitleScroll.setPrefHeight(Math.min(200, newHeight));
             }
         }
         boolean removed = captionsHome.captionsWrapper.getChildren().remove(this);

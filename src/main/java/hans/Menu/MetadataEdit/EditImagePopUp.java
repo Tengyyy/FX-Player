@@ -1,8 +1,7 @@
 package hans.Menu.MetadataEdit;
 
 import hans.App;
-import hans.Menu.MenuObject;
-import hans.Menu.MetadataEdit.MetadataEditPage;
+import hans.Menu.QueueItem;
 import hans.SVG;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -18,7 +17,7 @@ import java.util.Objects;
 public class EditImagePopUp extends ContextMenu {
 
     MetadataEditPage metadataEditPage;
-    MenuObject menuObject;
+    QueueItem queueItem;
 
     MenuItem removeItem = new MenuItem("Remove image");
     MenuItem chooseItem = new MenuItem("Choose image");
@@ -48,9 +47,7 @@ public class EditImagePopUp extends ContextMenu {
 
         removeItem.setGraphic(removeIcon);
         removeItem.getStyleClass().add("popUpItem");
-        removeItem.setOnAction((e) -> {
-            metadataEditPage.removeImage(menuObject);
-        });
+        removeItem.setOnAction((e) -> metadataEditPage.removeImage(queueItem));
 
         imagePath.setContent(App.svgMap.get(SVG.IMAGE));
         imageIcon.setShape(imagePath);
@@ -74,8 +71,8 @@ public class EditImagePopUp extends ContextMenu {
 
     }
 
-    public void showOptions(MenuObject menuObject){
-        this.menuObject = menuObject;
+    public void showOptions(QueueItem queueItem){
+        this.queueItem = queueItem;
         this.show(metadataEditPage.editImageButton, // might not work
                 metadataEditPage.editImageButton.localToScreen(metadataEditPage.editImageButton.getBoundsInLocal()).getMinX() + buttonWidth/2 - popUpWidth/2,
                 metadataEditPage.editImageButton.localToScreen(metadataEditPage.editImageButton.getBoundsInLocal()).getMaxY() + 5);

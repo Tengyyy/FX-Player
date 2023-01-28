@@ -18,7 +18,7 @@ public class DragResizer {
     public DragResizer(MenuController menuController) {
         this.menuController = menuController;
         this.parentNode = menuController.menu;
-        this.dragTarget = menuController.dragPane;
+        dragTarget = menuController.dragPane;
 
         dragTarget.setOnMousePressed(this::mousePressed);
         dragTarget.setOnMouseDragged(this::mouseDragged);

@@ -111,30 +111,30 @@ public class CaptionsController {
         this.mediaInterface = mediaInterface;
     }
 
-    public void extractCaptions(ActiveItem activeItem){
-        MediaItem mediaItem = activeItem.getMediaItem();
+    public void extractCaptions(QueueItem queueItem){
+        MediaItem mediaItem = queueItem.getMediaItem();
         if(mediaItem != null && mediaItem.numberOfSubtitleStreams > 0){
-            activeItem.captionGenerationTime = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss-SSS").format(new Date()) + "-";
-            MediaUtilities.extractSubtitles(mediaItem, activeItem.captionGenerationTime);
+            queueItem.captionGenerationTime = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss-SSS").format(new Date()) + "-";
+            MediaUtilities.extractSubtitles(mediaItem, queueItem.captionGenerationTime);
         }
     }
 
-    public void createSubtitleTabs(ActiveItem activeItem){
+    public void createSubtitleTabs(QueueItem queueItem){
 
-        MediaItem mediaItem = activeItem.getMediaItem();
+        MediaItem mediaItem = queueItem.getMediaItem();
         if(mediaItem != null && mediaItem.numberOfSubtitleStreams > 0 && mediaItem.subtitleStreamLanguages.size() == mediaItem.numberOfSubtitleStreams){
-            activeItem.addSubtitlesIcon();
+            queueItem.addSubtitlesIcon();
 
             for(int i =0; i < mediaItem.numberOfSubtitleStreams; i++){
                 // add subtitle tab to captions home
 
                 CaptionsTab captionsTab;
                 if(i == mediaItem.defaultSubtitleStream){
-                    captionsTab = new CaptionsTab(this, captionsHome, mediaItem.subtitleStreamLanguages.get(i) + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(activeItem.captionGenerationTime + i + ".srt")), false);
+                    captionsTab = new CaptionsTab(this, captionsHome, mediaItem.subtitleStreamLanguages.get(i) + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(queueItem.captionGenerationTime + i + ".srt")), false);
                     captionsTab.selectSubtitles(true);
                 }
                 else {
-                    captionsTab = new CaptionsTab(this, captionsHome, mediaItem.subtitleStreamLanguages.get(i), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(activeItem.captionGenerationTime + i + ".srt")), false);
+                    captionsTab = new CaptionsTab(this, captionsHome, mediaItem.subtitleStreamLanguages.get(i), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(queueItem.captionGenerationTime + i + ".srt")), false);
                 }
 
                 captionsHome.captionsWrapper.getChildren().add(i + 1, captionsTab);
@@ -160,13 +160,6 @@ public class CaptionsController {
 
 
     public void clearCaptions(){
-
-        if(menuController.activeItem != null && menuController.activeItem.activeItemContextMenu != null){
-            menuController.activeItem.activeItemContextMenu.subtitleContainer.getChildren().clear();
-            menuController.activeItem.activeItemContextMenu.subtitleContainer.getChildren().add(menuController.activeItem.activeItemContextMenu.externalSubtitlesWrapper);
-            menuController.activeItem.activeItemContextMenu.subtitleScroll.setPrefHeight(39);
-            menuController.activeItem.activeItemContextMenu.subtitleContainer.setPrefHeight(39);
-        }
 
         for(CaptionsTab captionsTab : captionsHome.captionsTabs) {
             captionsHome.captionsWrapper.getChildren().remove(captionsTab);
@@ -384,7 +377,7 @@ public class CaptionsController {
         if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()){
             mainController.sliderHoverLabel.timeLabel.setVisible(true);
             if(mainController.chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
-            if(menuController.activeItem != null && menuController.activeItem.getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+            if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
         }
 
     }

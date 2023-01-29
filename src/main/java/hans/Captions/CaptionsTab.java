@@ -43,8 +43,6 @@ public class CaptionsTab extends HBox {
 
     public boolean removable;
 
-    HBox menuItem;
-
     CaptionsTab(CaptionsController captionsController, CaptionsHome captionsHome, String value, File file, boolean removable){
 
         this.captionsController = captionsController;
@@ -134,12 +132,6 @@ public class CaptionsTab extends HBox {
             captionsController.clip.setHeight(height + 38);
         }
 
-        QueueItem activeItem = captionsController.menuController.queueBox.activeItem.get();
-        if(activeItem != null){
-            this.menuItem = activeItem.menuItemContextMenu.createSubtitleItem(this);
-        }
-
-
         Tooltip tooltip = new Tooltip(value);
         tooltip.setShowDelay(Duration.millis(1000));
         tooltip.setHideDelay(Duration.ZERO);
@@ -174,18 +166,9 @@ public class CaptionsTab extends HBox {
         }
 
         captionsHome.captionsTabs.remove(this);
-        QueueItem activeItem = captionsController.menuController.queueBox.activeItem.get();
-        if(activeItem != null){
-            boolean removed = activeItem.menuItemContextMenu.subtitleContainer.getChildren().remove(menuItem);
-            if (removed) {
-                double newHeight = activeItem.menuItemContextMenu.subtitleContainer.getPrefHeight() - 39;
-                activeItem.menuItemContextMenu.subtitleContainer.setPrefHeight(newHeight);
-                activeItem.menuItemContextMenu.subtitleScroll.setPrefHeight(Math.min(200, newHeight));
-            }
-        }
+
         boolean removed = captionsHome.captionsWrapper.getChildren().remove(this);
         if(removed){
-
             double height = captionsHome.captionsWrapper.getPrefHeight();
 
             captionsHome.captionsWrapper.setPrefHeight(height - 35);

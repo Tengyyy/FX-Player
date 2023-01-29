@@ -1,23 +1,23 @@
 package hans;
 
 import hans.Captions.CaptionsController;
+import hans.MediaItems.MediaItem;
 import hans.Menu.QueueItem;
 import javafx.concurrent.Task;
 
 public class SubtitleExtractionTask extends Task<Boolean> {
 
-    QueueItem queueItem;
+    MediaItem mediaItem;
     CaptionsController captionsController;
 
 
-    public SubtitleExtractionTask(CaptionsController captionsController, QueueItem queueItem){
-        this.queueItem = queueItem;
+    public SubtitleExtractionTask(CaptionsController captionsController, MediaItem mediaItem){
+        this.mediaItem = mediaItem;
         this.captionsController = captionsController;
     }
 
     @Override
     protected Boolean call() {
-        captionsController.extractCaptions(queueItem);
-        return true;
+        return captionsController.extractCaptions(mediaItem);
     }
 }

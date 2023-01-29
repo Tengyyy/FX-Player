@@ -8,6 +8,8 @@ import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import com.github.kokorin.jaffree.ffprobe.Stream;
 import hans.MainController;
 import hans.Utilities;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -63,6 +65,8 @@ public class MediaItem {
     public Stream videoStream = null;
     Stream audioStream = null;
 
+    public String captionGenerationTime = "";
+    public BooleanProperty captionExtractionInProgress = new SimpleBooleanProperty(false);
 
     public MediaItem(File file, MainController mainController) {
         this.file = file;

@@ -1,5 +1,8 @@
 package hans.Captions;
 
+import com.github.kokorin.jaffree.ffmpeg.FFmpeg;
+import com.github.kokorin.jaffree.ffmpeg.UrlInput;
+import com.github.kokorin.jaffree.ffmpeg.UrlOutput;
 import hans.*;
 import hans.MediaItems.MediaItem;
 import hans.MediaItems.MediaUtilities;
@@ -20,12 +23,17 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import static hans.AnimationsClass.ANIMATION_SPEED;
+import static hans.MediaItems.MediaUtilities.FFMPEG_PATH;
 
 public class CaptionsController {
 
@@ -111,30 +119,46 @@ public class CaptionsController {
         this.mediaInterface = mediaInterface;
     }
 
-    public void extractCaptions(QueueItem queueItem){
-        MediaItem mediaItem = queueItem.getMediaItem();
-        if(mediaItem != null && mediaItem.numberOfSubtitleStreams > 0){
-            queueItem.captionGenerationTime = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss-SSS").format(new Date()) + "-";
-            MediaUtilities.extractSubtitles(mediaItem, queueItem.captionGenerationTime);
+    public Boolean extractCaptions(MediaItem mediaItem){
+        if(mediaItem == null || mediaItem.numberOfSubtitleStreams == 0 || !mediaItem.captionGenerationTime.isEmpty() && !mediaItem.captionExtractionInProgress.get()) return false;
+
+        String subtitlesDirectory = System.getProperty("user.home").concat("/FXPlayer/subtitles/");
+        mediaItem.captionGenerationTime = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss-SSS").format(new Date()) + "-";
+        mediaItem.captionExtractionInProgress.set(true);
+        try {
+            Files.createDirectory(Paths.get(subtitlesDirectory));
+        } catch (IOException ignored){
         }
+
+        FFmpeg fFmpeg = FFmpeg.atPath(Paths.get(FFMPEG_PATH))
+                .addInput(UrlInput.fromUrl(mediaItem.getFile().getAbsolutePath()));
+
+        for(int i =0; i < mediaItem.numberOfSubtitleStreams; i++){
+            fFmpeg.addArguments("-map", "0:s:" + i);
+            fFmpeg.addOutput(UrlOutput.toUrl(subtitlesDirectory.concat(mediaItem.captionGenerationTime + i + ".srt")));
+        }
+
+        fFmpeg.execute();
+
+        System.out.println("test");
+        mediaItem.captionExtractionInProgress.set(false);
+        return true;
     }
 
-    public void createSubtitleTabs(QueueItem queueItem){
+    public void createSubtitleTabs(MediaItem mediaItem){
 
-        MediaItem mediaItem = queueItem.getMediaItem();
         if(mediaItem != null && mediaItem.numberOfSubtitleStreams > 0 && mediaItem.subtitleStreamLanguages.size() == mediaItem.numberOfSubtitleStreams){
-            queueItem.addSubtitlesIcon();
 
-            for(int i =0; i < mediaItem.numberOfSubtitleStreams; i++){
+            for(int i = 0 ; i < mediaItem.numberOfSubtitleStreams; i++){
                 // add subtitle tab to captions home
 
                 CaptionsTab captionsTab;
                 if(i == mediaItem.defaultSubtitleStream){
-                    captionsTab = new CaptionsTab(this, captionsHome, mediaItem.subtitleStreamLanguages.get(i) + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(queueItem.captionGenerationTime + i + ".srt")), false);
+                    captionsTab = new CaptionsTab(this, captionsHome, mediaItem.subtitleStreamLanguages.get(i) + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(mediaItem.captionGenerationTime + i + ".srt")), false);
                     captionsTab.selectSubtitles(true);
                 }
                 else {
-                    captionsTab = new CaptionsTab(this, captionsHome, mediaItem.subtitleStreamLanguages.get(i), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(queueItem.captionGenerationTime + i + ".srt")), false);
+                    captionsTab = new CaptionsTab(this, captionsHome, mediaItem.subtitleStreamLanguages.get(i), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(mediaItem.captionGenerationTime + i + ".srt")), false);
                 }
 
                 captionsHome.captionsWrapper.getChildren().add(i + 1, captionsTab);
@@ -143,7 +167,7 @@ public class CaptionsController {
         }
     }
 
-    public void resetCaptions(){
+    public void resetCaptions() {
         Utilities.cleanDirectory(System.getProperty("user.home").concat("/FXPlayer/subtitles/"));
     }
 
@@ -161,21 +185,16 @@ public class CaptionsController {
 
     public void clearCaptions(){
 
-        for(CaptionsTab captionsTab : captionsHome.captionsTabs) {
-            captionsHome.captionsWrapper.getChildren().remove(captionsTab);
-        }
-        captionsHome.captionsTabs.clear();
+        for(CaptionsTab captionsTab : captionsHome.captionsTabs) captionsHome.captionsWrapper.getChildren().remove(captionsTab);
 
+        captionsHome.captionsTabs.clear();
         captionsHome.captionsWrapper.setPrefHeight(103);
         captionsHome.captionsWrapper.setMaxHeight(103);
 
         captionsHome.scrollPane.setPrefHeight(106);
         captionsHome.scrollPane.setMaxHeight(106);
 
-
-        if(captionsState == CaptionsState.HOME_OPEN || captionsState == CaptionsState.CLOSED){
-            clip.setHeight(106);
-        }
+        if(captionsState == CaptionsState.HOME_OPEN || captionsState == CaptionsState.CLOSED) clip.setHeight(106);
 
         removeCaptions();
     }

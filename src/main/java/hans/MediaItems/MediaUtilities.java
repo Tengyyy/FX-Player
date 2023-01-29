@@ -1,7 +1,6 @@
 package hans.MediaItems;
 
 
-import com.github.kokorin.jaffree.LogLevel;
 import com.github.kokorin.jaffree.StreamType;
 import com.github.kokorin.jaffree.ffmpeg.*;
 import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
@@ -29,10 +28,10 @@ import java.util.concurrent.TimeUnit;
 public class MediaUtilities {
 
     static String probePath = Loader.load(org.bytedeco.ffmpeg.ffprobe.class);
-    static final String FFPROBE_PATH = probePath.substring(0, probePath.length() - 12);
+    public static final String FFPROBE_PATH = probePath.substring(0, probePath.length() - 12);
 
     static String ffmpegPath = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
-    static final String FFMPEG_PATH = ffmpegPath.substring(0, ffmpegPath.length() - 11);
+    public static final String FFMPEG_PATH = ffmpegPath.substring(0, ffmpegPath.length() - 11);
 
 
     public static Pair<Boolean, Image> getCover(FFprobeResult ffProbeResult, File file) {
@@ -290,25 +289,6 @@ public class MediaUtilities {
         return success;
     }
 
-    public static void extractSubtitles(MediaItem mediaItem, String filePrefix){
-
-        String subtitlesDirectory = System.getProperty("user.home").concat("/FXPlayer/subtitles/");
-        try {
-            Files.createDirectory(Paths.get(subtitlesDirectory));
-        } catch (IOException ignored){
-        }
-
-
-        FFmpeg fFmpeg = FFmpeg.atPath(Paths.get(FFMPEG_PATH))
-                .addInput(UrlInput.fromUrl(mediaItem.getFile().getAbsolutePath()));
-
-        for(int i =0; i < mediaItem.numberOfSubtitleStreams; i++){
-            fFmpeg.addArguments("-map", "0:s:" + i);
-            fFmpeg.addOutput(UrlOutput.toUrl(subtitlesDirectory.concat(filePrefix + i + ".srt")));
-        }
-
-        fFmpeg.execute();
-    }
 
 
 

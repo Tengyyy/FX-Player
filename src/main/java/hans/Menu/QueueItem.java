@@ -4,12 +4,8 @@ package hans.Menu;
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
-import javafx.animation.Animation;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -37,7 +33,7 @@ public class QueueItem extends GridPane {
     // layout constraints for the video item
     ColumnConstraints column1 = new ColumnConstraints(45, 45, 45);
     ColumnConstraints column2 = new ColumnConstraints(129,129,129);
-    ColumnConstraints column3 = new ColumnConstraints(0,100,Double.MAX_VALUE);
+    ColumnConstraints column3 = new ColumnConstraints(0,100, Double.MAX_VALUE);
     ColumnConstraints column4 = new ColumnConstraints(35,35,35);
     ColumnConstraints column5 = new ColumnConstraints(35,35,35);
 
@@ -108,8 +104,6 @@ public class QueueItem extends GridPane {
     public File file;
     MediaItem mediaItem;
     BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
-
-    public String captionGenerationTime = "";
 
     BooleanProperty isActive = new SimpleBooleanProperty(false);
 
@@ -186,22 +180,21 @@ public class QueueItem extends GridPane {
         this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
         this.getRowConstraints().addAll(row1);
 
-        GridPane.setValignment(imageWrapper, VPos.CENTER);
-
+        GridPane.setValignment(indexPane, VPos.CENTER);
         GridPane.setValignment(imageWrapper, VPos.CENTER);
         GridPane.setValignment(textWrapper, VPos.CENTER);
         GridPane.setValignment(removeButtonWrapper, VPos.CENTER);
         GridPane.setValignment(optionsButtonWrapper, VPos.CENTER);
 
+        GridPane.setHalignment(indexPane, HPos.CENTER);
         GridPane.setHalignment(imageWrapper, HPos.CENTER);
         GridPane.setHalignment(textWrapper, HPos.LEFT);
         GridPane.setHalignment(optionsButtonWrapper, HPos.CENTER);
         GridPane.setHalignment(removeButtonWrapper, HPos.CENTER);
 
-        this.getStyleClass().add("menuItem");
+        this.getStyleClass().add("queueItem");
         this.setOpacity(0);
 
-        this.setCursor(Cursor.HAND);
 
         playSVG.setContent(App.svgMap.get(SVG.PLAY));
         removeSVG.setContent(App.svgMap.get(SVG.REMOVE));
@@ -231,6 +224,9 @@ public class QueueItem extends GridPane {
 
         this.columns.setVisible(false);
 
+        indexPane.setPrefWidth(45);
+        indexPane.setMaxWidth(45);
+        indexPane.setAlignment(Pos.CENTER);
         indexPane.getChildren().addAll(indexLabel, playIcon, columns);
 
         playButton.setPrefWidth(125);
@@ -350,13 +346,14 @@ public class QueueItem extends GridPane {
 
         optionsButtonWrapper.getChildren().addAll(optionsButton, optionsIcon);
 
-        this.setPadding(new Insets(0, 10, 0, 0));
 
         this.add(indexPane, 0, 0);
         this.add(imageWrapper, 1, 0);
         this.add(textWrapper, 2, 0);
         this.add(removeButtonWrapper, 3, 0);
         this.add(optionsButtonWrapper, 4, 0);
+
+        this.setPadding(new Insets(0, 10, 0, 0));
 
         this.setViewOrder(1);
 
@@ -417,11 +414,10 @@ public class QueueItem extends GridPane {
             this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
             indexLabel.setVisible(false);
-            columns.setVisible(false);
             playButtonIcon.setVisible(false);
             playButtonBackground.setVisible(false);
 
-            playIcon.setVisible(true);
+            if(!isActive.get()) playIcon.setVisible(true);
 
 
             if (menuItemContextMenu != null && menuItemContextMenu.isShowing()) menuItemContextMenu.hide();
@@ -524,6 +520,11 @@ public class QueueItem extends GridPane {
         }
 
         if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
+
+        if(mediaItem.numberOfSubtitleStreams > 0){
+            artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
+            if (!subTextWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
+        }
     }
 
 
@@ -651,12 +652,12 @@ public class QueueItem extends GridPane {
         columns.setVisible(true);
         imageBorder.setVisible(true);
         playButton.setMouseTransparent(false);
-        this.setCursor(Cursor.DEFAULT);
 
         if(mouseHover){
             playButtonIcon.setVisible(true);
             playButtonBackground.setVisible(true);
         }
+        else this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
     }
 
     public void setInactive(){
@@ -669,10 +670,12 @@ public class QueueItem extends GridPane {
         columns.pause();
         imageBorder.setVisible(false);
         playButton.setMouseTransparent(true);
-        this.setCursor(Cursor.HAND);
 
         if(mouseHover) playIcon.setVisible(true);
-        else indexLabel.setVisible(true);
+        else {
+            indexLabel.setVisible(true);
+            this.setStyle("-fx-background-color: transparent;");
+        }
     }
 
     public void updateIconToPlay(){
@@ -695,15 +698,5 @@ public class QueueItem extends GridPane {
         playButtonIcon.setShape(pauseSVG);
         if(playButtonTooltip != null) playButtonTooltip.updateText("Pause video");
         columns.play();
-    }
-
-    public void addSubtitlesIcon(){
-        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
-        if (!subTextWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
-    }
-
-    public void removeSubtitlesIcon(){
-        artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
-        subTextWrapper.getChildren().remove(captionsPane);
     }
 }

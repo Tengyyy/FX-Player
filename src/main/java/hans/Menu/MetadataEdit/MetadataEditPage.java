@@ -87,8 +87,6 @@ public class MetadataEditPage {
 
     public MetadataEditItem metadataEditItem = null;
 
-    MetadataExitConfirmation metadataExitConfirmation;
-
     boolean imageEditEnabled = false;
 
     boolean saveProcessActive = false;
@@ -129,8 +127,7 @@ public class MetadataEditPage {
         backButton.setCursor(Cursor.HAND);
         backButton.setBackground(Background.EMPTY);
 
-        backButton.setOnAction(e -> requestExitMetadataEditPage(false));
-
+        backButton.setOnAction(e -> exitMetadataEditPage());
         backButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(backIcon, (Color) backIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
         backButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> AnimationsClass.animateBackgroundColor(backIcon, (Color) backIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200));
@@ -154,7 +151,7 @@ public class MetadataEditPage {
         closeButton.setCursor(Cursor.HAND);
         closeButton.setBackground(Background.EMPTY);
 
-        closeButton.setOnAction(e -> requestExitMetadataEditPage(true));
+        closeButton.setOnAction(e -> menuController.closeMenu());
 
         closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
@@ -279,7 +276,7 @@ public class MetadataEditPage {
 
         cancelButton.setPadding(new Insets(8, 10, 8, 10));
 
-        cancelButton.setOnAction(e -> requestExitMetadataEditPage(false));
+        cancelButton.setOnAction(e -> exitMetadataEditPage());
 
 
         progressPane.getChildren().addAll(progressBar, savedLabel);
@@ -294,11 +291,6 @@ public class MetadataEditPage {
         progressBar.setPrefHeight(11);
         progressBar.setVisible(false);
         StackPane.setAlignment(progressBar, Pos.CENTER);
-
-
-
-
-        metadataExitConfirmation = new MetadataExitConfirmation(menuController, this);
 
     }
 
@@ -371,16 +363,6 @@ public class MetadataEditPage {
         if(menuController.menuState == MenuState.CLOSED) menuController.mainController.openMenu();
 
         menuController.menuState = MenuState.METADATA_EDIT_OPEN;
-    }
-
-    public void requestExitMetadataEditPage(boolean closeMenu){
-        if(changesMade.get()){
-            metadataExitConfirmation.show(closeMenu);
-        }
-        else {
-            if(closeMenu) menuController.closeMenu();
-            else exitMetadataEditPage();
-        }
     }
 
     public void exitMetadataEditPage(){

@@ -13,6 +13,8 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
@@ -315,15 +317,25 @@ public class MediaInterface {
 
             mainController.videoTitleLabel.setText(queueItem.getTitle());
 
-            executorService = Executors.newFixedThreadPool(1);
-            subtitleExtractionTask = new SubtitleExtractionTask(captionsController, queueItem);
-            subtitleExtractionTask.setOnSucceeded(e -> {
-                if(menuController.queueBox.activeItem.get() == queueItem){
-                    captionsController.createSubtitleTabs(queueItem);
+            if(!mediaItem.captionGenerationTime.isEmpty()){ // caption extraction has started for this mediaitem
+                if(!mediaItem.captionExtractionInProgress.get()){ // caption extraction has already been completed, can simply add caption tabs
+                    captionsController.createSubtitleTabs(mediaItem);
                 }
-            });
-            executorService.execute(subtitleExtractionTask);
-            executorService.shutdown();
+                else { // caption extraction is ongoing, have to wait for it to finish before adding caption tabs
+                    mediaItem.captionExtractionInProgress.addListener((observableValue, oldValue, newValue) -> {
+                        if(!newValue && menuController.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
+                    });
+                }
+            }
+            else { // caption extraction has not started, will create subtitle extraction task and on completion add subtitles
+                executorService = Executors.newFixedThreadPool(1);
+                subtitleExtractionTask = new SubtitleExtractionTask(captionsController, mediaItem);
+                subtitleExtractionTask.setOnSucceeded(e -> {
+                    if(subtitleExtractionTask.getValue() && menuController.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
+                });
+                executorService.execute(subtitleExtractionTask);
+                executorService.shutdown();
+            }
         }
 
 
@@ -373,6 +385,8 @@ public class MediaInterface {
 
         mainController.sliderHoverPreview.setImage(null);
 
+        captionsController.clearCaptions();
+
         //todo: remove
         controlBarController.disablePreviousVideoButton();
         controlBarController.disableNextVideoButton();
@@ -396,7 +410,7 @@ public class MediaInterface {
 
 
 
-        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.queue.size() > menuController.queueBox.activeItem.get().videoIndex) menuController.queueBox.queue.get(menuController.queueBox.activeItem.get().videoIndex + 1).play();
+        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.queue.size() > menuController.queueBox.activeItem.get().videoIndex + 1) menuController.queueBox.queue.get(menuController.queueBox.activeItem.get().videoIndex + 1).play();
         else if(menuController.queueBox.activeItem.get() == null && !menuController.queueBox.queue.isEmpty()) menuController.queueBox.queue.get(0).play();
     }
 

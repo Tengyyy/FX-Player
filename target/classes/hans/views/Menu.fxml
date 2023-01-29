@@ -40,7 +40,6 @@
             <Insets bottom="10.0" left="10.0" />
          </StackPane.margin>
       </HBox>
-      <StackPane fx:id="metadataExitConfirmationWindowContainer" prefHeight="150.0" prefWidth="200.0" />
       <StackPane id="dragPane" fx:id="dragPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="3.0" StackPane.alignment="CENTER_RIGHT">
          <cursor>
             <Cursor fx:constant="H_RESIZE" />

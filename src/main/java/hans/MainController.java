@@ -496,7 +496,7 @@ public class MainController implements Initializable {
         }
 
 
-        if(menuController.menuState == MenuState.QUEUE_OPEN || menuController.menuState == MenuState.TECHNICAL_DETAILS_OPEN || menuController.menuState == MenuState.CHAPTERS_OPEN || (menuController.menuState == MenuState.METADATA_EDIT_OPEN && !menuController.metadataEditPage.changesMade.get())){
+        if(menuController.menuState != MenuState.CLOSED && !menuController.menuInTransition){
             menuController.closeMenu();
         }
         else if (settingsController.settingsState != SettingsState.CLOSED) {
@@ -1248,13 +1248,8 @@ public class MainController implements Initializable {
         if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
         if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
 
-        if(menuController.menuState != MenuState.CLOSED){
-            if(menuController.menuState == MenuState.METADATA_EDIT_OPEN && menuController.metadataEditPage.changesMade.get()){
-                menuController.metadataEditPage.requestExitMetadataEditPage(true);
-            }
-            else {
-                menuController.closeMenu();
-            }
+        if(menuController.menuState != MenuState.CLOSED && !menuController.menuInTransition){
+            menuController.closeMenu();
             controlBarController.mouseEventTracker.move();
         }
         else openMenu();

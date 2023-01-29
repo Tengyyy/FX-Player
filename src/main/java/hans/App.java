@@ -217,6 +217,8 @@ public class App extends Application {
 
             primaryStage.setOnCloseRequest(event -> {
 
+                captionsController.resetCaptions();
+
                 mediaInterface.embeddedMediaPlayer.release();
                 SleepSuppressor.allowSleep();
 

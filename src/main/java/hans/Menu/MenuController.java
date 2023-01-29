@@ -50,7 +50,7 @@ public class MenuController implements Initializable {
 
     @FXML
     public
-    StackPane menu, metadataExitConfirmationWindowContainer;
+    StackPane menu;
 
     @FXML
     public HBox notificationPane;
@@ -65,7 +65,7 @@ public class MenuController implements Initializable {
     public ScrollPane queueScroll, metadataEditScroll, technicalDetailsScroll, chapterScroll;
 
 
-    SVGPath addVideoIconSVG, closeIconSVG;
+    SVGPath addVideoIconSVG;
 
 
     VBox menuContent = new VBox();
@@ -119,12 +119,6 @@ public class MenuController implements Initializable {
 
     SVGPath shufflePath = new SVGPath();
 
-    StackPane closeButtonBar = new StackPane();
-    StackPane closeButtonPane = new StackPane();
-
-    Button closeButton = new Button();
-    Region closeIcon = new Region();
-
     public MenuItemContextMenu activeMenuItemContextMenu;
 
     // the lower bound of the bottom drag detection area
@@ -148,7 +142,7 @@ public class MenuController implements Initializable {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac"));
 
         queueText = new Label();
-        queueText.setText("Next in Queue");
+        queueText.setText("Play queue");
         queueText.getStyleClass().add("menuBoxTitle");
         queueText.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(queueText, Priority.ALWAYS);
@@ -246,7 +240,7 @@ public class MenuController implements Initializable {
         queueBox.setAlignment(Pos.TOP_CENTER);
 
 
-        menuContent.getChildren().addAll(closeButtonBar, queueHeader, queueBox);
+        menuContent.getChildren().addAll(queueHeader, queueBox);
         queueScroll.setContent(menuContent);
         queueScroll.addEventFilter(KeyEvent.ANY, e -> {
             if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.DOWN){
@@ -464,38 +458,6 @@ public class MenuController implements Initializable {
         });
 
         lowerBottomBound.bind(menu.heightProperty().subtract(60));
-
-        closeIconSVG = new SVGPath();
-        closeIconSVG.setContent(App.svgMap.get(SVG.CLOSE));
-        closeIcon.setShape(closeIconSVG);
-        closeIcon.setPrefSize(20, 20);
-        closeIcon.setMaxSize(20, 20);
-        closeIcon.setId("closeIcon");
-        closeIcon.setMouseTransparent(true);
-
-        closeButton.setPrefSize(40, 40);
-        closeButton.setMaxSize(40, 40);
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setBackground(Background.EMPTY);
-
-        closeButton.setOnAction(e -> {
-            if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
-            closeMenu();
-        });
-
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
-
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200));
-
-        closeButtonPane.setPrefSize(50, 50);
-        closeButtonPane.setMaxSize(50, 50);
-        closeButtonPane.getChildren().addAll(closeButton, closeIcon);
-        StackPane.setAlignment(closeButtonPane, Pos.CENTER_RIGHT);
-
-        closeButtonBar.setPrefHeight(60);
-        closeButtonBar.setMinHeight(60);
-        closeButtonBar.getChildren().add(closeButtonPane);
-
 
         dragResizer = new DragResizer(this);
 

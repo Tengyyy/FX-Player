@@ -251,9 +251,8 @@ public class QueueBox extends VBox {
         queue.remove(index);
 
         FadeTransition fadeTransition = AnimationsClass.fadeOut(queueItem);
-        fadeTransition.setOnFinished(e -> {
-            this.getChildren().remove(queueItem);
-        });
+        fadeTransition.setOnFinished(e -> this.getChildren().remove(queueItem));
+        fadeTransition.playFromStart();
     }
 
     public void clear(){
@@ -268,9 +267,7 @@ public class QueueBox extends VBox {
             parallelFadeOut.getChildren().add(fadeTransition);
         }
 
-        parallelFadeOut.setOnFinished(e -> {
-            this.getChildren().clear();
-        });
+        parallelFadeOut.setOnFinished(e -> this.getChildren().clear());
 
         parallelFadeOut.playFromStart();
     }

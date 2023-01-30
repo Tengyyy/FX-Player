@@ -50,25 +50,18 @@ public class MenuController implements Initializable {
 
     @FXML
     public
-    StackPane menu;
-
-    @FXML
-    public HBox notificationPane;
+    StackPane menu, menuInnerWrapper;
 
     @FXML
     StackPane dragPane;
 
     @FXML
-    Label notificationText;
-
-    @FXML
     public ScrollPane queueScroll, metadataEditScroll, technicalDetailsScroll, chapterScroll;
 
+    @FXML
+    public VBox queueWrapper, queueBar;
 
-    SVGPath addVideoIconSVG;
-
-
-    VBox menuContent = new VBox();
+    VBox queueContent = new VBox();
 
     public MainController mainController;
     public ControlBarController controlBarController;
@@ -85,39 +78,36 @@ public class MenuController implements Initializable {
 
 
     public MenuState menuState = MenuState.CLOSED;
-    public boolean menuNotificationOpen = false;
-    public PauseTransition closeTimer;
 
     public boolean menuInTransition = false;
 
     final double MIN_WIDTH = 450;
 
-    ControlTooltip addMediaTooltip;
     ControlTooltip clearQueueTooltip;
     public ControlTooltip shuffleTooltip;
 
     DragResizer dragResizer;
 
-    HBox queueHeader;
-
-    Label queueText;
-
     public QueueBox queueBox;
 
     public BooleanProperty activeMediaItemGenerated = new SimpleBooleanProperty(false);
 
+    HBox queueBarButtonContainer = new HBox();
+    Label queueBarTitle = new Label("Play queue");
+
     JFXButton clearQueueButton = new JFXButton();
+    SVGPath clearSVG = new SVGPath();
 
     StackPane shuffleTogglePane = new StackPane();
     JFXButton shuffleToggle = new JFXButton();
     Region shuffleIcon = new Region();
     public Circle shuffleDot = new Circle();
 
-    StackPane addButtonPane = new StackPane();
     JFXButton addButton = new JFXButton();
-    Region addIcon = new Region();
+    SVGPath folderSVG = new SVGPath();
+    Region folderIcon = new Region();
 
-    SVGPath shufflePath = new SVGPath();
+    SVGPath shuffleSVG = new SVGPath();
 
     public MenuItemContextMenu activeMenuItemContextMenu;
 
@@ -141,17 +131,13 @@ public class MenuController implements Initializable {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac"));
 
-        queueText = new Label();
-        queueText.setText("Play queue");
-        queueText.getStyleClass().add("menuBoxTitle");
-        queueText.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(queueText, Priority.ALWAYS);
+        queueBarTitle.setId("queueTitle");
 
-        shufflePath.setContent(App.svgMap.get(SVG.SHUFFLE));
+        shuffleSVG.setContent(App.svgMap.get(SVG.SHUFFLE));
         shuffleIcon.setPrefSize(20, 20);
         shuffleIcon.setMaxSize(20, 20);
         shuffleIcon.setId("shuffleIcon");
-        shuffleIcon.setShape(shufflePath);
+        shuffleIcon.setShape(shuffleSVG);
         shuffleIcon.setTranslateY(-2);
         shuffleIcon.setMouseTransparent(true);
 
@@ -186,36 +172,25 @@ public class MenuController implements Initializable {
         shuffleTogglePane.getChildren().addAll(shuffleToggle, shuffleIcon, shuffleDot);
 
 
-        addVideoIconSVG = new SVGPath();
-        addVideoIconSVG.setContent(App.svgMap.get(SVG.PLUS));
+        folderSVG.setContent(App.svgMap.get(SVG.FOLDER));
 
-        addIcon.setShape(addVideoIconSVG);
-        addIcon.setPrefSize(20, 20);
-        addIcon.setMaxSize(20,20);
-        addIcon.getStyleClass().add("menuIcon");
-        addIcon.setMouseTransparent(true);
+        folderIcon.setShape(folderSVG);
+        folderIcon.setPrefSize(14, 14);
+        folderIcon.setMaxSize(14,14);
+        folderIcon.getStyleClass().add("menuIcon");
+        folderIcon.setMouseTransparent(true);
 
 
         addButton.setCursor(Cursor.HAND);
-        addButton.setId("addButton");
-        addButton.setPrefSize(42, 42);
-        addButton.setMaxSize(42, 42);
-        addButton.setRipplerFill(Color.rgb(255,255,255,0.6));
-        addButton.setOpacity(0);
+        addButton.getStyleClass().add("menuButton");
+        addButton.setText("Add file(s)");
+        addButton.setRipplerFill(Color.WHITE);
+        addButton.setGraphic(folderIcon);
 
         addButton.setOnAction(e -> {
             if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
             openVideoChooser();
         });
-
-        addButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, addButton, 0, 0.5, false, 1, true));
-
-        addButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, addButton, 0.5, 0, false, 1, true));
-
-        HBox.setMargin(addButtonPane, new Insets(0, 10, 0, 0));
-        addButtonPane.setPrefSize(42, 42);
-        addButtonPane.setMaxSize(42, 42);
-        addButtonPane.getChildren().addAll(addButton, addIcon);
 
 
         clearQueueButton.setId("clearQueueButton");
@@ -229,19 +204,18 @@ public class MenuController implements Initializable {
             clearQueue();
         });
 
-        queueHeader = new HBox();
-        queueHeader.setAlignment(Pos.CENTER_LEFT);
-        queueHeader.getChildren().addAll(queueText, shuffleTogglePane, addButtonPane, clearQueueButton);
-        queueHeader.setMinHeight(60);
-        queueHeader.setPrefHeight(60);
-        queueHeader.setMaxHeight(60);
-        queueHeader.getStyleClass().add("menuBoxHeader");
+        queueBarButtonContainer.setSpacing(15);
+        queueBarButtonContainer.getChildren().addAll(addButton, shuffleTogglePane, clearQueueButton);
+
+        queueBar.setPadding(new Insets(10, 30, 10, 30));
+        queueBar.setSpacing(10);
+        queueBar.setAlignment(Pos.CENTER_LEFT);
+        queueBar.getChildren().addAll(queueBarTitle, queueBarButtonContainer);
 
         queueBox.setAlignment(Pos.TOP_CENTER);
 
-
-        menuContent.getChildren().addAll(queueHeader, queueBox);
-        queueScroll.setContent(menuContent);
+        queueContent.getChildren().add(queueBox);
+        queueScroll.setContent(queueContent);
         queueScroll.addEventFilter(KeyEvent.ANY, e -> {
             if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.DOWN){
                 e.consume();
@@ -251,7 +225,7 @@ public class MenuController implements Initializable {
 
         menu.setBackground(Background.EMPTY);
 
-        menuContent.setBackground(Background.EMPTY);
+        queueContent.setBackground(Background.EMPTY);
 
         queueScroll.setBackground(Background.EMPTY);
 
@@ -259,11 +233,6 @@ public class MenuController implements Initializable {
 
         Platform.runLater(() -> menu.setTranslateX(-menu.getWidth()));
 
-        closeTimer = new PauseTransition(Duration.millis(3000));
-        closeTimer.setOnFinished((e) -> AnimationsClass.closeMenuNotification(this));
-
-        notificationPane.setOpacity(0);
-        notificationPane.setMouseTransparent(true);
         menu.setMouseTransparent(true);
         Rectangle menuClip = new Rectangle();
         menuClip.widthProperty().bind(menu.widthProperty());
@@ -281,14 +250,14 @@ public class MenuController implements Initializable {
             // maybe make scrolling speed static and not depend on the amount of media items
 
             if(e.getY() <= 60){
-                scrollVelocity = - scrollSpeed * (1/(menuContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
+                scrollVelocity = - scrollSpeed * (1/(queueContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
 
-                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < menuContent.getHeight() && queueScroll.getVvalue() != 0.0) scrollTimeline.play();
+                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < queueContent.getHeight() && queueScroll.getVvalue() != 0.0) scrollTimeline.play();
             }
             else if(e.getY() >= lowerBottomBound.get()){
-                scrollVelocity = scrollSpeed * (1/(menuContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
+                scrollVelocity = scrollSpeed * (1/(queueContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
 
-                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < menuContent.getHeight() && queueScroll.getVvalue() != 1.0) scrollTimeline.play();
+                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < queueContent.getHeight() && queueScroll.getVvalue() != 1.0) scrollTimeline.play();
             }
             else scrollVelocity = 0;
 
@@ -309,14 +278,14 @@ public class MenuController implements Initializable {
 
 
             if(e.getY() <= 60){
-                scrollVelocity = - scrollSpeed * (1/(menuContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
+                scrollVelocity = - scrollSpeed * (1/(queueContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
 
-                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < menuContent.getHeight() && queueScroll.getVvalue() != 0.0) scrollTimeline.play();
+                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < queueContent.getHeight() && queueScroll.getVvalue() != 0.0) scrollTimeline.play();
             }
             else if(e.getY() >= lowerBottomBound.get()){
-                scrollVelocity = scrollSpeed * (1/(menuContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
+                scrollVelocity = scrollSpeed * (1/(queueContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
 
-                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < menuContent.getHeight() && queueScroll.getVvalue() != 1.0) scrollTimeline.play();
+                if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < queueContent.getHeight() && queueScroll.getVvalue() != 1.0) scrollTimeline.play();
             }
 
             else scrollVelocity = 0;
@@ -324,7 +293,7 @@ public class MenuController implements Initializable {
         });
 
 
-        menuContent.addEventHandler(MouseDragEvent.MOUSE_DRAG_OVER, e -> {
+        queueContent.addEventHandler(MouseDragEvent.MOUSE_DRAG_OVER, e -> {
             if(queueBox.dragActive && e.getY() <= queueBox.getBoundsInParent().getMinY()){
                 queueBox.draggedNode.setTranslateY(-queueBox.draggedNode.minimumY);
 
@@ -462,7 +431,6 @@ public class MenuController implements Initializable {
         dragResizer = new DragResizer(this);
 
         Platform.runLater(() -> {
-            addMediaTooltip = new ControlTooltip(mainController,"Add media", addButton, 1000);
             clearQueueTooltip = new ControlTooltip(mainController,"Clear queue", clearQueueButton, 1000);
             shuffleTooltip = new ControlTooltip(mainController,"Shuffle is off", shuffleToggle, 1000);
         });
@@ -506,7 +474,6 @@ public class MenuController implements Initializable {
 
         menuInTransition = true;
         menuState = MenuState.CLOSED;
-        notificationPane.setOpacity(0);
         menu.setMouseTransparent(true);
         AnimationsClass.closeMenu(this, mainController);
         controlBarController.mouseEventTracker.move();

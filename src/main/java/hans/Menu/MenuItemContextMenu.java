@@ -53,6 +53,8 @@ public class MenuItemContextMenu extends ContextMenu {
 
         this.queueItem = queueItem;
 
+        this.getStyleClass().add("queue-item-context-menu");
+
         queueItem.getScene().getStylesheets().add(Objects.requireNonNull(queueItem.getMenuController().mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 
         playNextPath.setContent(App.svgMap.get(SVG.PLAY_CIRCLE));

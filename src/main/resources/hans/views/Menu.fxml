@@ -2,44 +2,39 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane id="menuContent" fx:id="menu" minWidth="350.0" prefWidth="350.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Menu.MenuController">
+<StackPane fx:id="menu" minWidth="350.0" prefWidth="350.0" style="-fx-background-color: transparent;" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Menu.MenuController">
    <children>
-      <ScrollPane fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
-         <StackPane.margin>
-            <Insets right="5.0" />
-         </StackPane.margin></ScrollPane>
-      <ScrollPane fx:id="metadataEditScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
-         <StackPane.margin>
-            <Insets right="5.0" />
-         </StackPane.margin>
-      </ScrollPane>
-      <ScrollPane fx:id="technicalDetailsScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
-         <StackPane.margin>
-            <Insets right="5.0" />
-         </StackPane.margin>
-      </ScrollPane>
-      <ScrollPane fx:id="chapterScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll" />
-      <HBox fx:id="notificationPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" style="-fx-background-color: #0F0F0F; -fx-background-radius: 8; -fx-border-color: #202020; -fx-border-radius: 8;" StackPane.alignment="BOTTOM_LEFT">
+      <StackPane id="menuInnerWrapper" fx:id="menuInnerWrapper" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0">
          <children>
-            <Label fx:id="notificationText" text="Video willl play next" textFill="WHITE">
-               <font>
-                  <Font name="Roboto Medium" size="17.0" />
-               </font>
-            </Label>
+            <VBox fx:id="queueWrapper" maxHeight="1.7976931348623157E308">
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+               <children>
+                  <VBox fx:id="queueBar" />
+                  <ScrollPane fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <ScrollPane fx:id="metadataEditScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+            </ScrollPane>
+            <ScrollPane fx:id="technicalDetailsScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+            </ScrollPane>
+            <ScrollPane fx:id="chapterScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll" />
          </children>
-         <padding>
-            <Insets left="15.0" right="15.0" />
-         </padding>
          <StackPane.margin>
-            <Insets bottom="10.0" left="10.0" />
+            <Insets right="3.0" />
          </StackPane.margin>
-      </HBox>
+      </StackPane>
       <StackPane id="dragPane" fx:id="dragPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="3.0" StackPane.alignment="CENTER_RIGHT">
          <cursor>
             <Cursor fx:constant="H_RESIZE" />

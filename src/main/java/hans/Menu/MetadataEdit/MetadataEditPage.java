@@ -358,7 +358,7 @@ public class MetadataEditPage {
 
 
         menuController.metadataEditScroll.setVisible(true);
-        menuController.queueScroll.setVisible(false);
+        menuController.queueWrapper.setVisible(false);
 
         if(menuController.menuState == MenuState.CLOSED) menuController.mainController.openMenu();
 
@@ -375,7 +375,7 @@ public class MetadataEditPage {
         newFile = null;
 
         menuController.metadataEditScroll.setVisible(false);
-        menuController.queueScroll.setVisible(true);
+        menuController.queueWrapper.setVisible(true);
 
         changesMade.set(false);
         textBox.getChildren().clear();

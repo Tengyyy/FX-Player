@@ -327,8 +327,9 @@ public class QueueItem extends GridPane {
         optionsButton.disableProperty().bind(mediaItemGenerated.not());
 
         optionsButton.setOnAction((e) -> {
-            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-            menuItemContextMenu.showOptions(true);
+            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing && !menuController.activeMenuItemContextMenu.equals(menuItemContextMenu)) menuController.activeMenuItemContextMenu.hide();
+            if(menuItemContextMenu.showing) menuItemContextMenu.hide();
+            else menuItemContextMenu.showOptions(true);
         });
 
         this.setOnMouseClicked(e -> {

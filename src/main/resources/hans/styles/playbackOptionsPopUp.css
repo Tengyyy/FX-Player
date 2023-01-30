@@ -3,6 +3,13 @@
     src: url('../fonts/Roboto-Medium.ttf');
 }
 
+.context-menu {
+    -fx-insets: 0;
+    -fx-background-color: rgba(15,15,15,0.95);
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+}
+
 .playbackOptionsPopUpLabel {
     -fx-text-fill: white;
     -fx-font-family: "Roboto Medium";

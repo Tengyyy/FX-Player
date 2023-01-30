@@ -140,7 +140,6 @@ public class CaptionsController {
 
         fFmpeg.execute();
 
-        System.out.println("test");
         mediaItem.captionExtractionInProgress.set(false);
         return true;
     }

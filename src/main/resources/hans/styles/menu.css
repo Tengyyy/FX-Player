@@ -87,7 +87,7 @@
     -fx-background-color: red;
 }
 
-#menuContent {
+#menuInnerWrapper {
     -fx-background-color: rgba(0,0,0,0.8);
 }
 
@@ -104,7 +104,11 @@
     -fx-font-size: 16;
 }
 
-
+#queueTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 30;
+}
 
 .menuActionButton{
     -fx-background-color: #ff5447;
@@ -158,10 +162,28 @@
     -fx-background-color: #cfcfcf;
 }
 
-.optionsButton, .removeButton, #shuffleToggle, #addButton, .copyButton, .editButton, #editImageButton, #confirmationWindowCloseButton {
+.optionsButton, .removeButton, #shuffleToggle, .copyButton, .editButton, #editImageButton, #confirmationWindowCloseButton {
     -fx-background-radius: 100;
     -fx-padding: 0;
     -fx-background-color: #656565;
+}
+
+.menuButton {
+    -fx-background-radius: 5;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
+    -fx-background-color: rgba(15,15,15, 0.6);
+    -fx-padding: 6 11 6 9;
+    -fx-graphic-text-gap: 7;
+    -fx-border-width: 1;
+    -fx-border-color: rgb(30,30,30);
+    -fx-border-radius: 5;
+}
+
+.menuButton:hover {
+    -fx-background-color: rgba(25, 25, 25, 0.6);
+    -fx-border-color: rgb(40,40,40);
 }
 
 
@@ -205,9 +227,9 @@
 }
 
 #dragPane {
-    -fx-border-width: 0 1 0 0;
+    -fx-border-width: 0 0 0 1;
     -fx-border-color: #909090;
-    -fx-border-style: none solid none none;
+    -fx-border-style: none none none solid;
 }
 
 

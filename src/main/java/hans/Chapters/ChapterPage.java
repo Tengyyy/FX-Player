@@ -86,7 +86,7 @@ public class ChapterPage {
     public void enterChaptersPage(){
 
         menuController.chapterScroll.setVisible(true);
-        menuController.queueScroll.setVisible(false);
+        menuController.queueWrapper.setVisible(false);
 
         if(menuController.menuState == MenuState.CLOSED) menuController.mainController.openMenu();
 

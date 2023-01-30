@@ -67,7 +67,7 @@
 .customTextField .context-menu, .expandable-text-area .context-menu, .spinner .text-field .context-menu, .date-picker .text-field .context-menu, .key-text-field .context-menu{
     -fx-background-color: rgba(15,15,15,0.95);
     -fx-background-radius: 10;
-    -fx-padding: 10 3 10 3;
+    -fx-padding: 10 0 10 0;
 }
 
 .customTextField .menu-item, .expandable-text-area .menu-item, .spinner .text-field .menu-item, .date-picker .text-field .menu-item, .key-text-field .menu-item{
@@ -142,7 +142,7 @@
 .combo-box .combo-box-popup .list-view {
     -fx-background-color: rgba(15,15,15,0.95);
     -fx-background-radius: 10;
-    -fx-padding: 10 3 10 3;
+    -fx-padding: 10 0 10 0;
 }
 
 

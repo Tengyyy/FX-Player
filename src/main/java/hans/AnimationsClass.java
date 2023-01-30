@@ -194,55 +194,6 @@ public class AnimationsClass {
         return sequentialTransition;
     }
 
-
-    public static void openMenuNotification(MenuController menuController){
-
-        menuController.menuNotificationOpen = true;
-
-        if(nextVideoNotificationOffTransition != null && nextVideoNotificationOffTransition.getStatus() == Animation.Status.RUNNING){
-            nextVideoNotificationOffTransition.stop();
-        }
-
-        menuController.notificationPane.setOpacity(1);
-
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(300), menuController.notificationPane);
-        translateTransition.setFromY(menuController.notificationPane.getTranslateY());
-        translateTransition.setToY(0);
-        translateTransition.setCycleCount(1);
-        translateTransition.setInterpolator(Interpolator.EASE_OUT);
-
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), menuController.notificationPane);
-        fadeTransition.setFromValue(menuController.notificationPane.getOpacity());
-        fadeTransition.setToValue(1);
-        fadeTransition.setCycleCount(1);
-        fadeTransition.setInterpolator(Interpolator.EASE_OUT);
-
-        nextVideoNotificationOnTransition = new ParallelTransition(translateTransition, fadeTransition);
-        nextVideoNotificationOnTransition.setOnFinished((e) -> menuController.closeTimer.playFromStart());
-        nextVideoNotificationOnTransition.playFromStart();
-
-    }
-
-    public static void closeMenuNotification(MenuController menuController){
-        menuController.menuNotificationOpen = false;
-
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(300), menuController.notificationPane);
-        translateTransition.setFromY(menuController.notificationPane.getTranslateY());
-        translateTransition.setToY(60);
-        translateTransition.setCycleCount(1);
-        translateTransition.setInterpolator(Interpolator.EASE_OUT);
-
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), menuController.notificationPane);
-        fadeTransition.setFromValue(menuController.notificationPane.getOpacity());
-        fadeTransition.setToValue(0);
-        fadeTransition.setCycleCount(1);
-        fadeTransition.setInterpolator(Interpolator.EASE_OUT);
-
-        nextVideoNotificationOnTransition = new ParallelTransition(translateTransition, fadeTransition);
-        nextVideoNotificationOnTransition.playFromStart();
-    }
-
-
     public static void openMenu(MenuController menuController, MainController mainController){
 
         TranslateTransition openMenu = new TranslateTransition(Duration.millis(300), menuController.menu);
@@ -271,7 +222,7 @@ public class AnimationsClass {
             menuController.metadataEditScroll.setVisible(false);
             menuController.technicalDetailsScroll.setVisible(false);
             menuController.chapterScroll.setVisible(false);
-            menuController.queueScroll.setVisible(true);
+            menuController.queueWrapper.setVisible(true);
 
             menuController.metadataEditPage.imageRemoved = false;
             menuController.metadataEditPage.newColor = null;

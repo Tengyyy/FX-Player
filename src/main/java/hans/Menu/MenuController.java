@@ -4,6 +4,7 @@ package hans.Menu;
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.Chapters.ChapterController;
+import hans.MediaItems.MediaUtilities;
 import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.Settings.SettingsController;
 import hans.Captions.CaptionsController;
@@ -33,6 +34,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
@@ -75,6 +77,7 @@ public class MenuController implements Initializable {
     public TechnicalDetailsPage technicalDetailsPage;
 
     FileChooser fileChooser = new FileChooser();
+    DirectoryChooser folderChooser = new DirectoryChooser();
 
 
     public MenuState menuState = MenuState.CLOSED;
@@ -83,8 +86,7 @@ public class MenuController implements Initializable {
 
     final double MIN_WIDTH = 450;
 
-    ControlTooltip clearQueueTooltip;
-    public ControlTooltip shuffleTooltip;
+    public ControlTooltip shuffleTooltip, addTooltip, addOptionsTooltip;
 
     DragResizer dragResizer;
 
@@ -92,22 +94,29 @@ public class MenuController implements Initializable {
 
     public BooleanProperty activeMediaItemGenerated = new SimpleBooleanProperty(false);
 
+    StackPane queueBarButtonWrapper = new StackPane();
     HBox queueBarButtonContainer = new HBox();
     Label queueBarTitle = new Label("Play queue");
 
     JFXButton clearQueueButton = new JFXButton();
     SVGPath clearSVG = new SVGPath();
+    Region clearIcon = new Region();
 
-    StackPane shuffleTogglePane = new StackPane();
-    JFXButton shuffleToggle = new JFXButton();
-    Region shuffleIcon = new Region();
-    public Circle shuffleDot = new Circle();
+    public JFXButton shuffleToggle = new JFXButton();
+    SVGPath shuffleSVG = new SVGPath();
+    public Region shuffleIcon = new Region();
+
+    HBox addButtonContainer = new HBox();
 
     JFXButton addButton = new JFXButton();
     SVGPath folderSVG = new SVGPath();
     Region folderIcon = new Region();
 
-    SVGPath shuffleSVG = new SVGPath();
+    JFXButton addOptionsButton = new JFXButton();
+    SVGPath chevronDownSVG = new SVGPath();
+    Region chevronDownIcon = new Region();
+    AddOptionsContextMenu addOptionsContextMenu;
+
 
     public MenuItemContextMenu activeMenuItemContextMenu;
 
@@ -126,77 +135,98 @@ public class MenuController implements Initializable {
         metadataEditPage = new MetadataEditPage(this);
         technicalDetailsPage = new TechnicalDetailsPage(this);
 
-        fileChooser.setTitle("Add media to queue");
+
+        fileChooser.setTitle("Add file(s) to play queue");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All supported formats", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac"));
 
+        folderChooser.setTitle("Add folder to play queue");
+
         queueBarTitle.setId("queueTitle");
 
         shuffleSVG.setContent(App.svgMap.get(SVG.SHUFFLE));
-        shuffleIcon.setPrefSize(20, 20);
-        shuffleIcon.setMaxSize(20, 20);
-        shuffleIcon.setId("shuffleIcon");
+
         shuffleIcon.setShape(shuffleSVG);
-        shuffleIcon.setTranslateY(-2);
+        shuffleIcon.setPrefSize(14, 14);
+        shuffleIcon.setMaxSize(14, 14);
         shuffleIcon.setMouseTransparent(true);
-
-
+        shuffleIcon.getStyleClass().addAll("menuIcon", "graphic");
         shuffleToggle.setCursor(Cursor.HAND);
-        shuffleToggle.setId("shuffleToggle");
-        shuffleToggle.setPrefSize(42, 42);
-        shuffleToggle.setMaxSize(42, 42);
-        shuffleToggle.setRipplerFill(Color.rgb(255,255,255,0.6));
-        shuffleToggle.setOpacity(0);
+        shuffleToggle.getStyleClass().add("menuButton");
+        shuffleToggle.setText("Shuffle");
+        shuffleToggle.setRipplerFill(Color.WHITE);
+        shuffleToggle.setGraphic(shuffleIcon);
+        shuffleToggle.setRipplerFill(Color.TRANSPARENT);
 
         shuffleToggle.setOnAction(e -> {
             if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
             settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!settingsController.playbackOptionsController.shuffleTab.toggle.isSelected());
         });
 
-        shuffleToggle.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, shuffleToggle, 0, 0.5, false, 1, true));
-
-        shuffleToggle.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, shuffleToggle, 0.5, 0, false, 1, true));
-
-        shuffleDot.setFill(Color.RED);
-        shuffleDot.setRadius(4);
-        shuffleDot.setTranslateY(-1);
-        shuffleDot.setMouseTransparent(true);
-        shuffleDot.setOpacity(0.1);
-        StackPane.setAlignment(shuffleDot, Pos.BOTTOM_CENTER);
-
-
-        HBox.setMargin(shuffleTogglePane, new Insets(0, 10, 0, 0));
-        shuffleTogglePane.setPrefSize(42, 42);
-        shuffleTogglePane.setMaxSize(42, 42);
-        shuffleTogglePane.getChildren().addAll(shuffleToggle, shuffleIcon, shuffleDot);
-
-
         folderSVG.setContent(App.svgMap.get(SVG.FOLDER));
 
         folderIcon.setShape(folderSVG);
-        folderIcon.setPrefSize(14, 14);
-        folderIcon.setMaxSize(14,14);
-        folderIcon.getStyleClass().add("menuIcon");
+        folderIcon.setPrefSize(14, 12);
+        folderIcon.setMaxSize(14,12);
+        folderIcon.getStyleClass().addAll("menuIcon", "graphic");
         folderIcon.setMouseTransparent(true);
-
 
         addButton.setCursor(Cursor.HAND);
         addButton.getStyleClass().add("menuButton");
+        addButton.setId("addButton");
         addButton.setText("Add file(s)");
-        addButton.setRipplerFill(Color.WHITE);
+        addButton.setRipplerFill(Color.TRANSPARENT);
         addButton.setGraphic(folderIcon);
+
+        chevronDownSVG.setContent(App.svgMap.get(SVG.CHEVRON_DOWN));
+
+        chevronDownIcon.setShape(chevronDownSVG);
+        chevronDownIcon.setPrefSize(14, 8);
+        chevronDownIcon.setMaxSize(14,8);
+        chevronDownIcon.setId("chevronDownIcon");
+        chevronDownIcon.setMouseTransparent(true);
+
+        addOptionsButton.setCursor(Cursor.HAND);
+        addOptionsButton.getStyleClass().add("menuButton");
+        addOptionsButton.setId("addOptionsButton");
+        addOptionsButton.setRipplerFill(Color.TRANSPARENT);
+        addOptionsButton.setGraphic(chevronDownIcon);
+        addOptionsButton.setOnMousePressed(e -> {
+            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(200), chevronDownIcon);
+            translateTransition.setFromY(0);
+            translateTransition.setToY(4);
+            translateTransition.setAutoReverse(true);
+            translateTransition.setCycleCount(2);
+            translateTransition.playFromStart();
+        });
+        addOptionsButton.setOnAction(e -> {
+            if(addOptionsContextMenu.showing) addOptionsContextMenu.hide();
+            else addOptionsContextMenu.showOptions(true);
+        });
+
+        addButtonContainer.getChildren().addAll(addButton, addOptionsButton);
+        addButtonContainer.setMaxWidth(Region.USE_PREF_SIZE);
+        StackPane.setAlignment(addButtonContainer, Pos.CENTER_RIGHT);
 
         addButton.setOnAction(e -> {
             if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
             openVideoChooser();
         });
 
+        clearSVG.setContent(App.svgMap.get(SVG.REMOVE));
 
-        clearQueueButton.setId("clearQueueButton");
-        clearQueueButton.setRipplerFill(Color.WHITE);
+        clearIcon.setShape(clearSVG);
+        clearIcon.setPrefSize(14, 14);
+        clearIcon.setMaxSize(14,14);
+        clearIcon.getStyleClass().addAll("menuIcon", "graphic");
+        clearIcon.setMouseTransparent(true);
+
+        clearQueueButton.getStyleClass().add("menuButton");
+        clearQueueButton.setRipplerFill(Color.TRANSPARENT);
         clearQueueButton.setCursor(Cursor.HAND);
-        clearQueueButton.setText("CLEAR");
+        clearQueueButton.setText("Clear");
+        clearQueueButton.setGraphic(clearIcon);
         clearQueueButton.setDisable(true);
 
         clearQueueButton.setOnAction((e) -> {
@@ -205,12 +235,15 @@ public class MenuController implements Initializable {
         });
 
         queueBarButtonContainer.setSpacing(15);
-        queueBarButtonContainer.getChildren().addAll(addButton, shuffleTogglePane, clearQueueButton);
+        queueBarButtonContainer.getChildren().addAll(clearQueueButton, shuffleToggle);
+        StackPane.setAlignment(queueBarButtonContainer, Pos.CENTER_LEFT);
 
-        queueBar.setPadding(new Insets(10, 30, 10, 30));
-        queueBar.setSpacing(10);
+        queueBarButtonWrapper.getChildren().addAll(queueBarButtonContainer, addButtonContainer);
+
+        queueBar.setPadding(new Insets(20, 30, 20, 30));
+        queueBar.setSpacing(20);
         queueBar.setAlignment(Pos.CENTER_LEFT);
-        queueBar.getChildren().addAll(queueBarTitle, queueBarButtonContainer);
+        queueBar.getChildren().addAll(queueBarTitle, queueBarButtonWrapper);
 
         queueBox.setAlignment(Pos.TOP_CENTER);
 
@@ -431,8 +464,11 @@ public class MenuController implements Initializable {
         dragResizer = new DragResizer(this);
 
         Platform.runLater(() -> {
-            clearQueueTooltip = new ControlTooltip(mainController,"Clear queue", clearQueueButton, 1000);
+            addOptionsContextMenu = new AddOptionsContextMenu(this);
             shuffleTooltip = new ControlTooltip(mainController,"Shuffle is off", shuffleToggle, 1000);
+            addTooltip = new ControlTooltip(mainController,"Browse for files to add to the play queue", addButton, 1000);
+            addOptionsTooltip = new ControlTooltip(mainController,"More options for adding media to the play queue", addOptionsButton, 1000);
+
         });
 
         metadataEditScroll.setVisible(false);
@@ -455,6 +491,23 @@ public class MenuController implements Initializable {
             for(File file : selectedFiles){
                 QueueItem queueItem = new QueueItem(file, this, mediaInterface);
                 queueBox.add(queueItem);
+            }
+        }
+    }
+
+    public void openFolderChooser(){
+        File folder = folderChooser.showDialog(menu.getScene().getWindow());
+
+        if(folder != null){
+
+            File[] files = folder.listFiles();
+            if(files == null || files.length == 0) return;
+
+            for(File file : files){
+                if(MediaUtilities.mediaFormats.contains(Utilities.getFileExtension(file))){
+                    QueueItem queueItem = new QueueItem(file, this, mediaInterface);
+                    queueBox.add(queueItem);
+                }
             }
         }
     }

@@ -10,6 +10,7 @@ import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import org.bytedeco.javacpp.Loader;
@@ -23,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class MediaUtilities {
@@ -32,6 +34,9 @@ public class MediaUtilities {
 
     static String ffmpegPath = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
     public static final String FFMPEG_PATH = ffmpegPath.substring(0, ffmpegPath.length() - 11);
+
+    public static final Set<String> mediaFormats = Set.of("mp4", "avi", "mkv", "flv", "mov", "mp3", "flac", "wav", "ogg", "opus", "aiff", "m4a", "wma", "aac");
+
 
 
     public static Pair<Boolean, Image> getCover(FFprobeResult ffProbeResult, File file) {

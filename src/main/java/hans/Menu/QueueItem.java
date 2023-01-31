@@ -37,9 +37,6 @@ public class QueueItem extends GridPane {
     ColumnConstraints column4 = new ColumnConstraints(35,35,35);
     ColumnConstraints column5 = new ColumnConstraints(35,35,35);
 
-    RowConstraints row1 = new RowConstraints(90, 90, 90);
-
-
     public Label videoTitle = new Label();
 
     HBox subTextWrapper = new HBox();
@@ -178,7 +175,6 @@ public class QueueItem extends GridPane {
     private void initialize(){
         column3.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
-        this.getRowConstraints().addAll(row1);
 
         GridPane.setValignment(indexPane, VPos.CENTER);
         GridPane.setValignment(imageWrapper, VPos.CENTER);
@@ -194,6 +190,9 @@ public class QueueItem extends GridPane {
 
         this.getStyleClass().add("queueItem");
         this.setOpacity(0);
+        this.setMinHeight(0);
+        this.setPrefHeight(0);
+        this.setMaxHeight(0);
 
 
         playSVG.setContent(App.svgMap.get(SVG.PLAY));
@@ -355,7 +354,6 @@ public class QueueItem extends GridPane {
         this.add(optionsButtonWrapper, 4, 0);
 
         this.setPadding(new Insets(0, 10, 0, 0));
-
         this.setViewOrder(1);
 
         this.setOnMouseEntered((e) -> {

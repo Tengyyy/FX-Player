@@ -1,10 +1,10 @@
 
 
-.context-menu {
-    -fx-background-color: rgba(15,15,15,0.9);
-    -fx-background-radius: 0;
-    -fx-padding: 0;
+.queue-context-menu {
     -fx-insets: 0;
+    -fx-background-color: rgba(15,15,15,0.95);
+    -fx-background-radius: 10;
+    -fx-padding: 10 3 10 3;
 }
 
 .popUpItem .label {
@@ -19,6 +19,7 @@
 .popUpItem {
     -fx-background-color: transparent;
     -fx-padding: 5 5 5 15;
+    -fx-background-radius: 5;
 }
 
 .popUpItem:hover {

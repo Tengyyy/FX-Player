@@ -186,6 +186,26 @@
     -fx-border-color: rgb(40,40,40);
 }
 
+.menuButton:pressed {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.menuButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+#addButton {
+    -fx-border-radius: 5 0 0 5;
+    -fx-background-radius: 5 0 0 5;
+}
+
+#addOptionsButton {
+    -fx-border-radius: 0 5 5 0;
+    -fx-background-radius: 0 5 5 0;
+    -fx-border-width: 1 1 1 0;
+    -fx-padding: 8 9 8 9;
+}
 
 .iconBackground {
     -fx-background-color: black;
@@ -206,8 +226,11 @@
     -fx-background-color: rgb(200, 200, 200);
 }
 
+#chevronDownIcon {
+    -fx-background-color: rgb(150, 150, 150);
+}
 
-.menuIcon, #shuffleIcon {
+.menuIcon {
     -fx-background-color: white;
 }
 

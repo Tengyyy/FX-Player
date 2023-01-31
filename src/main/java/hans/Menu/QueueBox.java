@@ -213,8 +213,12 @@ public class QueueBox extends VBox {
         this.getChildren().add(index, child);
         initialize(child);
 
+        Timeline minHeightTransition = AnimationsClass.animateMinHeight(90, child);
+        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(90, child);
+        ParallelTransition parallelTransition = new ParallelTransition(minHeightTransition, maxHeightTransition);
         FadeTransition fadeTransition = AnimationsClass.fadeIn(child);
-        fadeTransition.playFromStart();
+        SequentialTransition sequentialTransition = new SequentialTransition(parallelTransition, fadeTransition);
+        sequentialTransition.playFromStart();
 
 
         if(activeItem == null || activeItem.get().videoIndex < queue.size() - 1) menuController.controlBarController.enableNextVideoButton();
@@ -228,8 +232,12 @@ public class QueueBox extends VBox {
         this.getChildren().add(child);
         initialize(child);
 
+        Timeline minHeightTransition = AnimationsClass.animateMinHeight(90, child);
+        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(90, child);
+        ParallelTransition parallelTransition = new ParallelTransition(minHeightTransition, maxHeightTransition);
         FadeTransition fadeTransition = AnimationsClass.fadeIn(child);
-        fadeTransition.playFromStart();
+        SequentialTransition sequentialTransition = new SequentialTransition(parallelTransition, fadeTransition);
+        sequentialTransition.playFromStart();
 
         menuController.controlBarController.enableNextVideoButton();
 
@@ -250,9 +258,18 @@ public class QueueBox extends VBox {
 
         queue.remove(index);
 
+        queueItem.setMouseTransparent(true);
+
         FadeTransition fadeTransition = AnimationsClass.fadeOut(queueItem);
-        fadeTransition.setOnFinished(e -> this.getChildren().remove(queueItem));
-        fadeTransition.playFromStart();
+
+
+        Timeline minHeightTransition = AnimationsClass.animateMinHeight(0, queueItem);
+        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(0, queueItem);
+        ParallelTransition parallelTransition = new ParallelTransition(minHeightTransition, maxHeightTransition);
+        SequentialTransition sequentialTransition = new SequentialTransition(fadeTransition, parallelTransition);
+        sequentialTransition.setOnFinished(e -> this.getChildren().remove(queueItem));
+        sequentialTransition.playFromStart();
+
     }
 
     public void clear(){
@@ -263,6 +280,7 @@ public class QueueBox extends VBox {
 
         ParallelTransition parallelFadeOut = new ParallelTransition();
         for(Node queueItem : this.getChildren()){
+            queueItem.setMouseTransparent(true);
             FadeTransition fadeTransition = AnimationsClass.fadeOut(queueItem);
             parallelFadeOut.getChildren().add(fadeTransition);
         }

@@ -1,27 +1,15 @@
 package hans.Menu;
 
-import hans.AnimationsClass;
 import hans.App;
-import hans.Captions.CaptionsController;
-import hans.Captions.CaptionsTab;
 import hans.SVG;
 import hans.Shell32Util;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
-import javafx.geometry.Insets;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.awt.*;
@@ -53,7 +41,7 @@ public class MenuItemContextMenu extends ContextMenu {
 
         this.queueItem = queueItem;
 
-        this.getStyleClass().add("queue-item-context-menu");
+        this.getStyleClass().add("queue-context-menu");
 
         queueItem.getScene().getStylesheets().add(Objects.requireNonNull(queueItem.getMenuController().mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 

@@ -108,7 +108,8 @@ public class PlaybackOptionsController {
 
                 settingsController.menuController.shuffleTooltip.updateText("Shuffle is off");
 
-                settingsController.menuController.shuffleDot.setOpacity(0.1);
+                settingsController.menuController.shuffleToggle.setStyle("-fx-border-color: rgb(30,30,30); -fx-text-fill: white;");
+                settingsController.menuController.shuffleToggle.getGraphic().setStyle("-fx-background-color: white;");
 
             } else { // ON
                 shuffleOn = true;
@@ -125,7 +126,8 @@ public class PlaybackOptionsController {
 
                 if(!settingsController.menuController.queueBox.queue.isEmpty()) settingsController.menuController.queueBox.shuffle();
 
-                settingsController.menuController.shuffleDot.setOpacity(1);
+                settingsController.menuController.shuffleToggle.setStyle("-fx-border-color: red; -fx-text-fill: red;");
+                settingsController.menuController.shuffleToggle.getGraphic().setStyle("-fx-background-color: red;");
             }
 
         });

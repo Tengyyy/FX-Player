@@ -14,6 +14,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -192,14 +194,28 @@ public class MenuController implements Initializable {
         addOptionsButton.setId("addOptionsButton");
         addOptionsButton.setRipplerFill(Color.TRANSPARENT);
         addOptionsButton.setGraphic(chevronDownIcon);
+
+        TranslateTransition chevronDownAnimation = new TranslateTransition(Duration.millis(100), chevronDownIcon);
+        chevronDownAnimation.setFromY(chevronDownIcon.getTranslateY());
+        chevronDownAnimation.setToY(3);
+
+        TranslateTransition chevronUpAnimation = new TranslateTransition(Duration.millis(100), chevronDownIcon);
+        chevronUpAnimation.setFromY(3);
+        chevronUpAnimation.setToY(0);
+
         addOptionsButton.setOnMousePressed(e -> {
-            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(200), chevronDownIcon);
-            translateTransition.setFromY(0);
-            translateTransition.setToY(4);
-            translateTransition.setAutoReverse(true);
-            translateTransition.setCycleCount(2);
-            translateTransition.playFromStart();
+            chevronDownAnimation.play();
         });
+        addOptionsButton.setOnMouseReleased(e -> {
+            if(chevronDownAnimation.statusProperty().get() == Animation.Status.RUNNING){
+               chevronDownAnimation.setOnFinished(ev -> {
+                   chevronUpAnimation.playFromStart();
+                   chevronDownAnimation.setOnFinished(null);
+               });
+            }
+            else chevronUpAnimation.playFromStart();
+        });
+
         addOptionsButton.setOnAction(e -> {
             if(addOptionsContextMenu.showing) addOptionsContextMenu.hide();
             else addOptionsContextMenu.showOptions(true);

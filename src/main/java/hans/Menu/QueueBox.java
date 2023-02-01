@@ -381,6 +381,8 @@ public class QueueBox extends VBox {
             this.add(this.getChildren().indexOf(queueLine), new QueueItem(file, menuController, menuController.mediaInterface));
         }
 
+        getChildren().remove(queueLine);
+
         dragBoardMedia.clear();
     }
 

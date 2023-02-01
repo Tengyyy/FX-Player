@@ -27,7 +27,7 @@ public class AddOptionsContextMenu extends ContextMenu {
 
     double buttonWidth;
 
-    final double popUpWidth = 292; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
+    final double popUpWidth = 270; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
 
     FadeTransition showTransition, hideTransition;
 
@@ -47,8 +47,8 @@ public class AddOptionsContextMenu extends ContextMenu {
         filePath.setContent(App.svgMap.get(SVG.FOLDER));
         fileIcon.setShape(filePath);
         fileIcon.getStyleClass().add("icon");
-        fileIcon.setPrefSize(20, 20);
-        fileIcon.setMaxSize(20, 20);
+        fileIcon.setPrefSize(14, 14);
+        fileIcon.setMaxSize(14, 14);
 
         fileItem.setGraphic(fileIcon);
         fileItem.getStyleClass().add("popUpItem");
@@ -57,8 +57,8 @@ public class AddOptionsContextMenu extends ContextMenu {
         folderPath.setContent(App.svgMap.get(SVG.FOLDER_PLUS));
         folderIcon.setShape(folderPath);
         folderIcon.getStyleClass().add("icon");
-        folderIcon.setPrefSize(20, 20);
-        folderIcon.setMaxSize(20, 20);
+        folderIcon.setPrefSize(14, 14);
+        folderIcon.setMaxSize(14, 14);
 
         folderItem.setGraphic(folderIcon);
         folderItem.getStyleClass().add("popUpItem");
@@ -67,8 +67,8 @@ public class AddOptionsContextMenu extends ContextMenu {
         youtubePath.setContent(App.svgMap.get(SVG.YOUTUBE));
         youtubeIcon.setShape(youtubePath);
         youtubeIcon.getStyleClass().add("icon");
-        youtubeIcon.setPrefSize(20, 20);
-        youtubeIcon.setMaxSize(20, 20);
+        youtubeIcon.setPrefSize(14, 12);
+        youtubeIcon.setMaxSize(14, 12);
 
         youtubeItem.setGraphic(youtubeIcon);
         youtubeItem.getStyleClass().add("popUpItem");

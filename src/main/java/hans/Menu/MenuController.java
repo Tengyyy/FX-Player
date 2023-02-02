@@ -117,7 +117,7 @@ public class MenuController implements Initializable {
     JFXButton addOptionsButton = new JFXButton();
     SVGPath chevronDownSVG = new SVGPath();
     Region chevronDownIcon = new Region();
-    AddOptionsContextMenu addOptionsContextMenu;
+    public AddOptionsContextMenu addOptionsContextMenu;
 
 
     public MenuItemContextMenu activeMenuItemContextMenu;
@@ -203,9 +203,7 @@ public class MenuController implements Initializable {
         chevronUpAnimation.setFromY(3);
         chevronUpAnimation.setToY(0);
 
-        addOptionsButton.setOnMousePressed(e -> {
-            chevronDownAnimation.play();
-        });
+        addOptionsButton.setOnMousePressed(e -> chevronDownAnimation.play());
         addOptionsButton.setOnMouseReleased(e -> {
             if(chevronDownAnimation.statusProperty().get() == Animation.Status.RUNNING){
                chevronDownAnimation.setOnFinished(ev -> {

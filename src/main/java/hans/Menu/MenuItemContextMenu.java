@@ -34,7 +34,7 @@ public class MenuItemContextMenu extends ContextMenu {
     SVGPath playNextPath = new SVGPath(), metadataPath = new SVGPath(), technicalDetailsPath = new SVGPath(), folderPath = new SVGPath();
     Region playNextIcon = new Region(), metadataIcon = new Region(), technicalDetailsIcon = new Region(), folderIcon = new Region();
 
-    boolean showing = false;
+    public boolean showing = false;
 
 
     MenuItemContextMenu(QueueItem queueItem){
@@ -48,8 +48,8 @@ public class MenuItemContextMenu extends ContextMenu {
         playNextPath.setContent(App.svgMap.get(SVG.PLAY_CIRCLE));
         playNextIcon.setShape(playNextPath);
         playNextIcon.getStyleClass().add("icon");
-        playNextIcon.setPrefSize(20, 20);
-        playNextIcon.setMaxSize(20, 20);
+        playNextIcon.setPrefSize(14, 14);
+        playNextIcon.setMaxSize(14, 14);
 
         playNext.setGraphic(playNextIcon);
         playNext.getStyleClass().add("popUpItem");
@@ -58,8 +58,8 @@ public class MenuItemContextMenu extends ContextMenu {
         metadataPath.setContent(App.svgMap.get(SVG.INFORMATION_OUTLINE));
         metadataIcon.setShape(metadataPath);
         metadataIcon.getStyleClass().add("icon");
-        metadataIcon.setPrefSize(20, 20);
-        metadataIcon.setMaxSize(20, 20);
+        metadataIcon.setPrefSize(14, 14);
+        metadataIcon.setMaxSize(14, 14);
 
         metadata.setGraphic(metadataIcon);
         metadata.getStyleClass().add("popUpItem");
@@ -68,8 +68,8 @@ public class MenuItemContextMenu extends ContextMenu {
         technicalDetailsPath.setContent(App.svgMap.get(SVG.COGS));
         technicalDetailsIcon.setShape(technicalDetailsPath);
         technicalDetailsIcon.getStyleClass().add("icon");
-        technicalDetailsIcon.setPrefSize(20, 20);
-        technicalDetailsIcon.setMaxSize(20, 20);
+        technicalDetailsIcon.setPrefSize(14, 14);
+        technicalDetailsIcon.setMaxSize(14, 14);
 
         technicalDetails.setGraphic(technicalDetailsIcon);
         technicalDetails.getStyleClass().add("popUpItem");
@@ -78,8 +78,8 @@ public class MenuItemContextMenu extends ContextMenu {
         folderPath.setContent(App.svgMap.get(SVG.FOLDER));
         folderIcon.setShape(folderPath);
         folderIcon.getStyleClass().add("icon");
-        folderIcon.setPrefSize(20, 20);
-        folderIcon.setMaxSize(20, 20);
+        folderIcon.setPrefSize(14, 14);
+        folderIcon.setMaxSize(14, 14);
 
         openFileLocation.setGraphic(folderIcon);
         openFileLocation.getStyleClass().add("popUpItem");

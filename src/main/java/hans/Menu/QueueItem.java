@@ -400,6 +400,7 @@ public class QueueItem extends GridPane {
                     queueBox.queueLine.setPosition(this.videoIndex);
                 }
             }
+
         });
 
 

@@ -374,14 +374,14 @@ public class QueueBox extends VBox {
     public void handleDragDropped(DragEvent e){
 
         dragAndDropActive = false;
+        int index = Math.max(this.getChildren().indexOf(queueLine), 0);
+        this.getChildren().remove(queueLine);
+
         if (dragBoardMedia.isEmpty()) return;
 
-
-        for (File file : dragBoardMedia) {
-            this.add(this.getChildren().indexOf(queueLine), new QueueItem(file, menuController, menuController.mediaInterface));
+        for (int i=0; i < dragBoardMedia.size(); i++) {
+            this.add(index + i, new QueueItem(dragBoardMedia.get(i), menuController, menuController.mediaInterface));
         }
-
-        getChildren().remove(queueLine);
 
         dragBoardMedia.clear();
     }
@@ -396,7 +396,7 @@ public class QueueBox extends VBox {
         dragBoardMedia.clear();
         dragBoardFiles.clear();
 
-        getChildren().remove(queueLine);
+        this.getChildren().remove(queueLine);
     }
 
 

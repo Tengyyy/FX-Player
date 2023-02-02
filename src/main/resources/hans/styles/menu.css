@@ -162,7 +162,7 @@
     -fx-background-color: #cfcfcf;
 }
 
-.optionsButton, .removeButton, #shuffleToggle, .copyButton, .editButton, #editImageButton, #confirmationWindowCloseButton {
+.optionsButton, .removeButton, #shuffleToggle, .copyButton, .editButton, #editImageButton, #youtubeWindowCloseButton {
     -fx-background-radius: 100;
     -fx-padding: 0;
     -fx-background-color: #656565;
@@ -173,17 +173,17 @@
     -fx-text-fill: white;
     -fx-font-size: 15;
     -fx-font-family: "Roboto";
-    -fx-background-color: rgba(15,15,15, 0.6);
+    -fx-background-color: rgba(30,30,30, 0.6);
     -fx-padding: 6 11 6 9;
     -fx-graphic-text-gap: 7;
     -fx-border-width: 1;
-    -fx-border-color: rgb(30,30,30);
+    -fx-border-color: rgb(40,40,40);
     -fx-border-radius: 5;
 }
 
 .menuButton:hover {
-    -fx-background-color: rgba(25, 25, 25, 0.6);
-    -fx-border-color: rgb(40,40,40);
+    -fx-background-color: rgba(38, 38, 38, 0.6);
+    -fx-border-color: rgb(45,45,45);
 }
 
 .menuButton:pressed {
@@ -192,6 +192,30 @@
 }
 
 .menuButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+
+.mainButton {
+    -fx-background-color: rgb(237, 64, 64);
+    -fx-background-radius: 5;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
+    -fx-padding: 6 11 6 9;
+    -fx-graphic-text-gap: 7;
+}
+
+.mainButton:hover {
+    -fx-background-color: rgb(200, 55, 55);
+}
+
+.mainButton:pressed {
+    -fx-background-color: rgb(180, 40, 40);
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.mainButton:pressed > .graphic {
     -fx-background-color: rgb(180,180,180);
 }
 
@@ -331,31 +355,8 @@
     -fx-text-fill: rgb(200,200,200);
 }
 
-
-.mainButton {
-    -fx-background-color: rgb(237, 64, 64);
-    -fx-background-radius: 3;
-    -fx-text-fill: white;
-    -fx-font-size: 15;
-    -fx-font-family: "Roboto Regular";
-}
-
 .confirmButton:hover {
     -fx-background-color: rgb(255, 90, 90);
-}
-
-.secondaryButton {
-    -fx-background-radius: 3;
-    -fx-text-fill: white;
-    -fx-font-size: 15;
-    -fx-font-family: "Roboto Medium";
-    -fx-border-width: 1;
-    -fx-border-color: white;
-    -fx-border-radius: 3;
-}
-
-.secondaryButton:hover {
-    -fx-background-color: rgba(50, 50, 50, 0.7);
 }
 
 #folderIcon {
@@ -373,22 +374,22 @@
     -fx-font-size: 14;
 }
 
-#confirmationWindowContainer {
+#youtubeWindowContainer {
     -fx-background-color: rgba(0,0,0,0.8);
 }
 
-#confirmationWindow {
+#youtubeWindow {
     -fx-background-color: rgb(30,30,30);
-    -fx-background-radius: 5;
+    -fx-background-radius: 10;
 }
 
-#confirmationWindowTitle {
+#youtubeWindowTitle {
     -fx-text-fill: white;
     -fx-font-family: "Roboto Bold";
     -fx-font-size: 20;
 }
 
-#confirmationWindowText {
+#youtubeWindowText {
     -fx-text-fill: rgb(220,220,220);
     -fx-font-family: "Roboto Medium";
     -fx-font-size: 18;

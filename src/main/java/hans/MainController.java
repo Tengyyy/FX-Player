@@ -53,7 +53,7 @@ public class MainController implements Initializable {
     @FXML
     StackPane videoImageViewWrapper;
     @FXML
-    public StackPane videoImageViewInnerWrapper;
+    public StackPane videoImageViewInnerWrapper, addYoutubeVideoWindowContainer;
     @FXML
     StackPane coverImageContainer, coverFilter, coverImageWrapper;
 
@@ -118,6 +118,8 @@ public class MainController implements Initializable {
 
     WindowsTaskBarController windowsTaskBarController;
 
+    public AddYoutubeVideoWindow addYoutubeVideoWindow;
+
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -132,6 +134,8 @@ public class MainController implements Initializable {
         settingsController.init(mediaInterface, captionsController);
         captionsController.init(mediaInterface);
         mediaInterface.init(chapterController);
+
+        addYoutubeVideoWindow = new AddYoutubeVideoWindow(this);
 
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
         sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
@@ -1245,8 +1249,11 @@ public class MainController implements Initializable {
 
     public void pressQ(){
 
+        if(addYoutubeVideoWindow.showing) return;
+
         if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
-        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
+        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
 
         if(menuController.menuState != MenuState.CLOSED && !menuController.menuInTransition){
             menuController.closeMenu();
@@ -1325,7 +1332,8 @@ public class MainController implements Initializable {
         controlBarController.toggleFullScreen();
 
         if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
-        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
+        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
     }
 
     public void pressF12(){
@@ -1658,7 +1666,8 @@ public class MainController implements Initializable {
         App.fullScreen = false;
 
         if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
-        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
+        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
 
         controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
         App.stage.setFullScreen(false);

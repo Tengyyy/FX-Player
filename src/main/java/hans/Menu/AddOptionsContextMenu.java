@@ -23,18 +23,18 @@ public class AddOptionsContextMenu extends ContextMenu {
 
     MenuItem fileItem = new MenuItem("Add file(s) to play queue");
     MenuItem folderItem = new MenuItem("Add folder to play queue");
-    MenuItem youtubeItem = new MenuItem("Add youtube video to play queue");
+    MenuItem youtubeItem = new MenuItem("Add YouTube video(s) to play queue");
 
     double buttonWidth;
 
-    final double popUpWidth = 270; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
+    final double popUpWidth = 294; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
 
     FadeTransition showTransition, hideTransition;
 
     SVGPath filePath = new SVGPath(), folderPath = new SVGPath(), youtubePath = new SVGPath();
     Region fileIcon = new Region(), folderIcon = new Region(), youtubeIcon = new Region();
 
-    boolean showing = false;
+    public boolean showing = false;
 
     AddOptionsContextMenu(MenuController menuController){
 
@@ -72,7 +72,7 @@ public class AddOptionsContextMenu extends ContextMenu {
 
         youtubeItem.setGraphic(youtubeIcon);
         youtubeItem.getStyleClass().add("popUpItem");
-        youtubeItem.setOnAction((e) -> System.out.println("Youtube test"));
+        youtubeItem.setOnAction((e) -> menuController.mainController.addYoutubeVideoWindow.show());
 
 
         this.getItems().addAll(fileItem, folderItem, youtubeItem);

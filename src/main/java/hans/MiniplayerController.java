@@ -548,7 +548,7 @@ public class MiniplayerController {
         previousVideoIcon.setShape(previousVideoSVG);
         previousVideoIcon.setEffect(new DropShadow());
 
-        if(menuController.queueBox.queue.isEmpty() || menuController.queueBox.activeItem.get() == null || menuController.queueBox.activeItem.get().videoIndex == 0) disablePreviousVideoButton();
+        if(menuController.queueBox.queue.isEmpty() || menuController.queueBox.activeItem.get() == null || menuController.queueBox.activeIndex.get() == 0) disablePreviousVideoButton();
         else enablePreviousVideoButton();
 
 
@@ -632,7 +632,7 @@ public class MiniplayerController {
         nextVideoIcon.setShape(nextVideoSVG);
         nextVideoIcon.setEffect(new DropShadow());
 
-        if(menuController.queueBox.queue.isEmpty() || (menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().videoIndex >= menuController.queueBox.queue.size() - 1)) disableNextVideoButton();
+        if(menuController.queueBox.queue.isEmpty() || (menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeIndex.get() >= menuController.queueBox.queue.size() - 1)) disableNextVideoButton();
         else enableNextVideoButton();
 
     }

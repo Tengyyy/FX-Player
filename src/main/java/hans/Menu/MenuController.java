@@ -94,8 +94,6 @@ public class MenuController implements Initializable {
 
     public QueueBox queueBox;
 
-    public BooleanProperty activeMediaItemGenerated = new SimpleBooleanProperty(false);
-
     StackPane queueBarButtonWrapper = new StackPane();
     HBox queueBarButtonContainer = new HBox();
     Label queueBarTitle = new Label("Play queue");
@@ -504,7 +502,8 @@ public class MenuController implements Initializable {
 
             for(File file : selectedFiles){
                 QueueItem queueItem = new QueueItem(file, this, mediaInterface);
-                queueBox.add(queueItem);
+                if(settingsController.playbackOptionsController.shuffleOn) queueBox.addRand(queueItem);
+                else queueBox.add(queueItem);
             }
         }
     }
@@ -520,7 +519,8 @@ public class MenuController implements Initializable {
             for(File file : files){
                 if(MediaUtilities.mediaFormats.contains(Utilities.getFileExtension(file))){
                     QueueItem queueItem = new QueueItem(file, this, mediaInterface);
-                    queueBox.add(queueItem);
+                    if(settingsController.playbackOptionsController.shuffleOn) queueBox.addRand(queueItem);
+                    else queueBox.add(queueItem);
                 }
             }
         }

@@ -3,7 +3,9 @@ package hans.Menu;
 import hans.*;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -41,37 +43,26 @@ public class QueueBox extends VBox {
     public QueueItem draggedNode;
     QueueLine queueLine;
 
-    public ObjectProperty<QueueItem> activeItem = new SimpleObjectProperty<>(null);
-    public ObservableList<QueueItem> queue = FXCollections.observableArrayList();
+    public IntegerProperty activeIndex = new SimpleIntegerProperty(-1); // what index we are at in the queueorder arraylist
+    public ObjectProperty<QueueItem> activeItem = new SimpleObjectProperty<>();
 
+    public ArrayList<QueueItem> queue = new ArrayList<>();
+    public ObservableList<Integer> queueOrder = FXCollections.observableArrayList();
 
     QueueBox(MenuController menuController){
         this.menuController = menuController;
         this.setAlignment(Pos.TOP_CENTER);
         this.setFillWidth(true);
 
-
         VBox.setVgrow(this, Priority.ALWAYS);
         this.setPadding(new Insets(0, 0, 100, 0));
-
 
         this.setOnDragEntered(this::handleDragEntered);
         this.setOnDragOver(this::handleDragOver);
         this.setOnDragDropped(this::handleDragDropped);
         this.setOnDragExited(this::handleDragExited);
 
-        queue.addListener((ListChangeListener<QueueItem>) change -> {
-
-            menuController.clearQueueButton.setDisable(queue.isEmpty());
-
-            for(QueueItem queueItem : queue){
-                queueItem.updateIndex(queue.indexOf(queueItem));
-            }
-
-            menuController.controlBarController.updateNextAndPreviousVideoButtons();
-        });
-
-        activeItem.addListener((observableValue, queueItem, t1) -> menuController.controlBarController.updateNextAndPreviousVideoButtons());
+        activeIndex.addListener((observableValue, oldValue, newValue) -> menuController.controlBarController.updateNextAndPreviousVideoButtons());
 
 
 
@@ -208,7 +199,18 @@ public class QueueBox extends VBox {
             return;
         }
 
-        queue.add(index, child);
+        if(menuController.settingsController.playbackOptionsController.shuffleOn) {
+            queue.add(child);
+            queueOrder.add(index, queueOrder.size());
+        }
+        else {
+            queue.add(index, child);
+            queueOrder.add(queueOrder.size());
+        }
+
+        if(activeIndex.get() != -1 && index < activeIndex.get()) activeIndex.set(activeIndex.get() + 1);
+
+        updateQueue();
 
         this.getChildren().add(index, child);
         initialize(child);
@@ -220,13 +222,24 @@ public class QueueBox extends VBox {
         SequentialTransition sequentialTransition = new SequentialTransition(parallelTransition, fadeTransition);
         sequentialTransition.playFromStart();
 
+    }
 
-        if(activeItem == null || activeItem.get().videoIndex < queue.size() - 1) menuController.controlBarController.enableNextVideoButton();
+    public void addRand(QueueItem child) {
+        Random random = new Random();
+        int index;
+        if(activeIndex.get() == -1) index = random.nextInt(queueOrder.size() + 1);
+        else if(activeIndex.get() == queueOrder.size() -1) index = queueOrder.size(); // add to the end of the queue
+        else index = activeIndex.get() + 1 + random.nextInt(queueOrder.size() + 1 - activeIndex.get());
+
+        this.add(index, child);
     }
 
     public void add(QueueItem child){
 
         queue.add(child);
+        queueOrder.add(queueOrder.size());
+
+        updateQueue();
 
         // add item with opacity 0, then fade it in
         this.getChildren().add(child);
@@ -239,8 +252,6 @@ public class QueueBox extends VBox {
         SequentialTransition sequentialTransition = new SequentialTransition(parallelTransition, fadeTransition);
         sequentialTransition.playFromStart();
 
-        menuController.controlBarController.enableNextVideoButton();
-
     }
 
     public void remove(QueueItem child){
@@ -252,16 +263,27 @@ public class QueueBox extends VBox {
     public void remove(int index){
 
 
+
         if(index < 0 || queue.isEmpty() || index >= queue.size()) return;
 
         QueueItem queueItem = queue.get(index);
 
         queue.remove(index);
+        queueOrder.remove((Integer) index);
+
+        if(queueOrder.size() != index){
+            for(int i=0; i<queueOrder.size(); i++){
+                if(queueOrder.get(i) > index) queueOrder.set(i, queueOrder.get(i) -1);
+            }
+        }
+
+        if(activeIndex.get() != -1 && index < activeIndex.get()) activeIndex.set(activeIndex.get() - 1);
+
+        updateQueue();
 
         queueItem.setMouseTransparent(true);
 
         FadeTransition fadeTransition = AnimationsClass.fadeOut(queueItem);
-
 
         Timeline minHeightTransition = AnimationsClass.animateMinHeight(0, queueItem);
         Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(0, queueItem);
@@ -277,6 +299,16 @@ public class QueueBox extends VBox {
         if(queue.isEmpty()) return;
 
         queue.clear();
+        queueOrder.clear();
+
+        if(activeItem.get() != null) activeItem.get().setInactive();
+
+        activeItem.set(null);
+        activeIndex.set(-1);
+
+        if(menuController.mediaInterface.mediaActive.get()) menuController.mediaInterface.resetMediaPlayer();
+
+        updateQueue();
 
         ParallelTransition parallelFadeOut = new ParallelTransition();
         for(Node queueItem : this.getChildren()){
@@ -291,18 +323,19 @@ public class QueueBox extends VBox {
     }
 
 
-    public void shuffle(){
+    public void shuffleOn(){
 
         // fade out, shuffle, fade in
 
-        ObservableList<QueueItem> workingCollection = FXCollections.observableArrayList(queue);
-        Collections.shuffle(workingCollection);
-        if(activeItem.get() != null && workingCollection.indexOf(activeItem.get()) != 0){
-            workingCollection.remove(activeItem.get());
-            workingCollection.add(0, activeItem.get());
+        Collections.shuffle(queueOrder);
+        if(activeIndex.get() != -1 && queueOrder.indexOf(activeIndex.getValue()) != 0){
+            queueOrder.remove(activeIndex.getValue());
+            queueOrder.add(0, activeIndex.getValue());
         }
-        queue.setAll(workingCollection);
 
+        if(activeIndex.get() != -1) activeIndex.set(0);
+
+        updateQueue();
 
         ParallelTransition parallelFadeOut = new ParallelTransition();
 
@@ -313,7 +346,50 @@ public class QueueBox extends VBox {
 
         parallelFadeOut.setOnFinished(e -> {
 
-            this.getChildren().setAll(workingCollection);
+            this.getChildren().clear();
+
+            for (Integer integer : queueOrder) {
+                this.getChildren().add(queue.get(integer));
+            }
+
+            ParallelTransition parallelFadeIn = new ParallelTransition();
+            for(Node queueItem : this.getChildren()) {
+                FadeTransition fadeTransition = AnimationsClass.fadeIn(queueItem);
+                parallelFadeIn.getChildren().add(fadeTransition);
+            }
+
+            parallelFadeIn.playFromStart();
+        });
+
+        parallelFadeOut.playFromStart();
+    }
+
+    public void shuffleOff(){
+        int size = queueOrder.size();
+        queueOrder.clear();
+
+        for(int i=0; i<size; i++){
+            queueOrder.add(i);
+        }
+
+        if(activeItem.get() != null) activeIndex.set(queue.indexOf(activeItem.get()));
+
+        updateQueue();
+
+        ParallelTransition parallelFadeOut = new ParallelTransition();
+
+        for(Node queueItem : this.getChildren()){
+            FadeTransition fadeTransition = AnimationsClass.fadeOut(queueItem);
+            parallelFadeOut.getChildren().add(fadeTransition);
+        }
+
+        parallelFadeOut.setOnFinished(e -> {
+
+            this.getChildren().clear();
+
+            for (QueueItem queueItem : queue) {
+                this.getChildren().add(queueItem);
+            }
 
             ParallelTransition parallelFadeIn = new ParallelTransition();
             for(Node queueItem : this.getChildren()) {
@@ -411,6 +487,17 @@ public class QueueBox extends VBox {
             QueueItem.height = queueItem.getBoundsInParent().getHeight();
 
         });
+    }
+
+    private void updateQueue(){
+
+        menuController.clearQueueButton.setDisable(queueOrder.isEmpty());
+
+        for(int i=0; i < queueOrder.size(); i++){
+            queue.get(queueOrder.get(i)).updateIndex(i);
+        }
+
+        menuController.controlBarController.updateNextAndPreviousVideoButtons();
     }
 
 }

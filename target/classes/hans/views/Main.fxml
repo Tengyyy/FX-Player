@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="outerPane" stylesheets="@../styles/text-fields.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MainController">
+<StackPane fx:id="outerPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.MainController">
    <children>
       <StackPane fx:id="videoImageViewWrapper" minWidth="0.0" onDragDropped="#handleDragDropped" onDragEntered="#handleDragEntered" onDragExited="#handleDragExited" onDragOver="#handleDragOver" prefWidth="601.0">
          <children>
@@ -30,5 +31,10 @@
          </children>
       </StackPane>
         <fx:include fx:id="menu" minWidth="0.0" prefWidth="0.0" source="Menu.fxml" StackPane.alignment="CENTER_LEFT" />
+      <StackPane fx:id="addYoutubeVideoWindowContainer" prefHeight="150.0" prefWidth="200.0" />
    </children>
+   <stylesheets>
+      <URL value="@../styles/text-fields.css" />
+      <URL value="@../styles/menu.css" />
+   </stylesheets>
 </StackPane>

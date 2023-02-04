@@ -132,6 +132,7 @@ public class CaptionsTab extends HBox {
             captionsController.clip.setHeight(height + 38);
         }
 
+
         Tooltip tooltip = new Tooltip(value);
         tooltip.setShowDelay(Duration.millis(1000));
         tooltip.setHideDelay(Duration.ZERO);

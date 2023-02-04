@@ -140,7 +140,7 @@ public class MediaInterface {
                         mainController.miniplayer.miniplayerController.seekImageView.setImage(null);
                     }
 
-                    if(!controlBarController.durationSlider.isValueChanging() && !mainController.seekingWithKeys && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.2 && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) < 1.0 && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) controlBarController.durationSlider.setValue((double)newTime/1000);
+                    if(!controlBarController.durationSlider.isValueChanging() && !mainController.seekingWithKeys && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.2 && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) < 2.0 && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) controlBarController.durationSlider.setValue((double)newTime/1000);
                 });
             }
 
@@ -221,8 +221,10 @@ public class MediaInterface {
         if (newValue >= controlBarController.durationSlider.getMax()) {
             if (controlBarController.durationSlider.isValueChanging() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging())) seekedToEnd = true;
             else if(seekedToEnd) defaultEnd();
-            else if(settingsController.playbackOptionsController.loopOn) return;
-            else endMedia();
+            else if(settingsController.playbackOptionsController.loopOn){
+                controlBarController.durationSlider.setValue(0);
+                return;
+            }
 
             atEnd = true;
 
@@ -232,7 +234,11 @@ public class MediaInterface {
             embeddedMediaPlayer.controls().setPause(true);
             SleepSuppressor.allowSleep();
 
-            if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) seek(Duration.seconds(newValue));
+            if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())){
+                seek(Duration.seconds(newValue));
+
+                if(!seekedToEnd && !settingsController.playbackOptionsController.loopOn) endMedia();
+            }
 
         }
         else {
@@ -268,7 +274,7 @@ public class MediaInterface {
             // restart current video
         }
         else {
-            if((menuController.queueBox.activeItem == null && menuController.queueBox.queue.isEmpty()) || menuController.queueBox.activeItem.get().videoIndex >= menuController.queueBox.queue.size()) defaultEnd();
+            if(menuController.queueBox.queue.isEmpty() || menuController.queueBox.activeIndex.get() >= menuController.queueBox.queue.size() - 1) defaultEnd();
             else playNext();
 
         }
@@ -285,66 +291,11 @@ public class MediaInterface {
             mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
         }
 
-
         MediaItem mediaItem = queueItem.getMediaItem();
 
-        if (mediaItem != null) {
-            if(mediaItem.hasVideo()){
-
-                fFmpegFrameGrabber = new FFmpegFrameGrabber(mediaItem.getFile());
-                fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
-                fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
-
-                double width = mediaItem.width;
-                double height = mediaItem.height;
-                double ratio = width /height;
-
-                int newWidth = (int) Math.min(160, 90 * ratio);
-                int newHeight = (int) Math.min(90, 160/ratio);
-
-                fFmpegFrameGrabber.setImageWidth(newWidth);
-                fFmpegFrameGrabber.setImageHeight(newHeight);
-
-                try {
-                    fFmpegFrameGrabber.start();
-                } catch (FFmpegFrameGrabber.Exception e) {
-                    e.printStackTrace();
-                }
-
-                if(mainController.miniplayerActive) mainController.miniplayerActiveText.setVisible(true);
-            }
-            else mainController.setCoverImageView(queueItem);
-
-            mainController.videoTitleLabel.setText(queueItem.getTitle());
-
-            if(!mediaItem.captionGenerationTime.isEmpty()){ // caption extraction has started for this mediaitem
-                if(!mediaItem.captionExtractionInProgress.get()){ // caption extraction has already been completed, can simply add caption tabs
-                    captionsController.createSubtitleTabs(mediaItem);
-                }
-                else { // caption extraction is ongoing, have to wait for it to finish before adding caption tabs
-                    mediaItem.captionExtractionInProgress.addListener((observableValue, oldValue, newValue) -> {
-                        if(!newValue && menuController.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
-                    });
-                }
-            }
-            else { // caption extraction has not started, will create subtitle extraction task and on completion add subtitles
-                executorService = Executors.newFixedThreadPool(1);
-                subtitleExtractionTask = new SubtitleExtractionTask(captionsController, mediaItem);
-                subtitleExtractionTask.setOnSucceeded(e -> {
-                    if(subtitleExtractionTask.getValue() && menuController.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
-                });
-                executorService.execute(subtitleExtractionTask);
-                executorService.shutdown();
-            }
-        }
-
+        if (mediaItem != null) loadMediaItem(queueItem);
 
         controlBarController.durationSlider.setValue(0);
-
-        mainController.metadataButton.setOnAction(e -> {
-            if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
-            if(queueItem.getMediaItem() != null) queueItem.showMetadata();
-        });
 
         embeddedMediaPlayer.media().start(queueItem.file.getAbsolutePath());
     }
@@ -380,6 +331,8 @@ public class MediaInterface {
         else controlBarController.durationLabel.setText("00:00/00:00");
 
         mainController.videoTitleLabel.setText(null);
+        mainController.metadataButtonPane.setVisible(false);
+        mainController.metadataButtonPane.setMouseTransparent(true);
 
         if(settingsController.playbackOptionsController.loopOn) settingsController.playbackOptionsController.loopTab.toggle.fire();
 
@@ -387,7 +340,6 @@ public class MediaInterface {
 
         captionsController.clearCaptions();
 
-        //todo: remove
         controlBarController.disablePreviousVideoButton();
         controlBarController.disableNextVideoButton();
 
@@ -408,16 +360,16 @@ public class MediaInterface {
 
         controlBarController.mouseEventTracker.move();
 
-
-
-        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.queue.size() > menuController.queueBox.activeItem.get().videoIndex + 1) menuController.queueBox.queue.get(menuController.queueBox.activeItem.get().videoIndex + 1).play();
-        else if(menuController.queueBox.activeItem.get() == null && !menuController.queueBox.queue.isEmpty()) menuController.queueBox.queue.get(0).play();
+        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.queue.size() > menuController.queueBox.activeIndex.get() + 1){
+            menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(menuController.queueBox.activeIndex.get() + 1)).play();
+        }
+        else if(menuController.queueBox.activeItem.get() == null && !menuController.queueBox.queue.isEmpty()) menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(0)).play();
     }
 
     public void playPrevious(){
         controlBarController.mouseEventTracker.move();
 
-        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().videoIndex > 0) menuController.queueBox.queue.get(menuController.queueBox.activeItem.get().videoIndex - 1).play();
+        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeIndex.get() > 0) menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(menuController.queueBox.activeIndex.get() -1)).play();
     }
 
     public void defaultEnd(){
@@ -428,7 +380,6 @@ public class MediaInterface {
 
         controlBarController.mouseEventTracker.move();
 
-        // add logic to update all the play icons
         controlBarController.end();
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.end();
         if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.activeItem.get().updateIconToPlay();
@@ -524,5 +475,80 @@ public class MediaInterface {
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(frameGrabberTask);
         executorService.shutdown();
+    }
+
+    public void loadMediaItem(QueueItem queueItem){
+        MediaItem mediaItem = queueItem.getMediaItem();
+        if(mediaItem == null) return;
+
+        if(mediaItem.hasVideo()){
+
+            fFmpegFrameGrabber = new FFmpegFrameGrabber(mediaItem.getFile());
+            fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+            fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
+
+            double width = mediaItem.width;
+            double height = mediaItem.height;
+            double ratio = width /height;
+
+            int newWidth = (int) Math.min(160, 90 * ratio);
+            int newHeight = (int) Math.min(90, 160/ratio);
+
+            fFmpegFrameGrabber.setImageWidth(newWidth);
+            fFmpegFrameGrabber.setImageHeight(newHeight);
+
+            try {
+                fFmpegFrameGrabber.start();
+            } catch (FFmpegFrameGrabber.Exception e) {
+                e.printStackTrace();
+            }
+
+            if(mainController.miniplayerActive) mainController.miniplayerActiveText.setVisible(true);
+        }
+        else mainController.setCoverImageView(queueItem);
+
+        mainController.videoTitleLabel.setText(queueItem.getTitle());
+
+        mainController.metadataButton.setOnAction(e -> queueItem.showMetadata());
+        mainController.metadataButtonPane.setVisible(true);
+        mainController.metadataButtonPane.setMouseTransparent(false);
+
+        if(!mediaItem.captionGenerationTime.isEmpty()){ // caption extraction has started for this mediaitem
+            if(!mediaItem.captionExtractionInProgress.get()){ // caption extraction has already been completed, can simply add caption tabs
+                captionsController.createSubtitleTabs(mediaItem);
+            }
+            else { // caption extraction is ongoing, have to wait for it to finish before adding caption tabs
+                mediaItem.captionExtractionInProgress.addListener((observableValue, oldValue, newValue) -> {
+                    if(!newValue && menuController.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
+                });
+            }
+        }
+        else { // caption extraction has not started, will create subtitle extraction task and on completion add subtitles
+            executorService = Executors.newFixedThreadPool(1);
+            subtitleExtractionTask = new SubtitleExtractionTask(captionsController, mediaItem);
+            subtitleExtractionTask.setOnSucceeded(e -> {
+                if(subtitleExtractionTask.getValue() != null && subtitleExtractionTask.getValue() && menuController.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
+            });
+            executorService.execute(subtitleExtractionTask);
+            executorService.shutdown();
+        }
+
+        if(mediaItem.hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
+            ExecutorService executorService = Executors.newFixedThreadPool(1);
+            for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
+                ChapterItem chapterItem = (ChapterItem) node;
+                Duration startTime = chapterItem.startTime;
+                ChapterFrameGrabberTask chapterFrameGrabberTask;
+                if(startTime.greaterThan(Duration.ZERO)) chapterFrameGrabberTask = new ChapterFrameGrabberTask(fFmpegFrameGrabber, startTime.toSeconds()/menuController.controlBarController.durationSlider.getMax());
+                else {
+                    Duration endTime = chapterItem.endTime;
+                    chapterFrameGrabberTask = new ChapterFrameGrabberTask(fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
+                }
+                chapterFrameGrabberTask.setOnSucceeded((event) -> chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue()));
+
+                executorService.execute(chapterFrameGrabberTask);
+            }
+            executorService.shutdown();
+        }
     }
 }

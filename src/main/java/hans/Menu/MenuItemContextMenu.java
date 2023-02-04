@@ -64,6 +64,7 @@ public class MenuItemContextMenu extends ContextMenu {
         metadata.setGraphic(metadataIcon);
         metadata.getStyleClass().add("popUpItem");
         metadata.setOnAction((e) -> queueItem.showMetadata());
+        metadata.disableProperty().bind(queueItem.mediaItemGenerated.not());
 
         technicalDetailsPath.setContent(App.svgMap.get(SVG.COGS));
         technicalDetailsIcon.setShape(technicalDetailsPath);
@@ -74,6 +75,8 @@ public class MenuItemContextMenu extends ContextMenu {
         technicalDetails.setGraphic(technicalDetailsIcon);
         technicalDetails.getStyleClass().add("popUpItem");
         technicalDetails.setOnAction((e) -> queueItem.showTechnicalDetails());
+        technicalDetails.disableProperty().bind(queueItem.mediaItemGenerated.not());
+
 
         folderPath.setContent(App.svgMap.get(SVG.FOLDER));
         folderIcon.setShape(folderPath);

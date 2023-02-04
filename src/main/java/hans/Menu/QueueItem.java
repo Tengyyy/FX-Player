@@ -252,7 +252,7 @@ public class QueueItem extends GridPane {
         playButtonBackground.setMouseTransparent(true);
         playButtonBackground.setVisible(false);
 
-        imageWrapper.setStyle("-fx-background-color: red;");
+        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30);");
         imageWrapper.setPrefSize(129, 74);
         imageWrapper.setMaxSize(129, 74);
         imageWrapper.getChildren().addAll(coverImage, imageBorder, playButtonBackground, playButton, playButtonIcon);
@@ -323,7 +323,6 @@ public class QueueItem extends GridPane {
         optionsButton.setCursor(Cursor.HAND);
         optionsButton.setOpacity(0);
         optionsButton.setText(null);
-        optionsButton.disableProperty().bind(mediaItemGenerated.not());
 
         optionsButton.setOnAction((e) -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing && !menuController.activeMenuItemContextMenu.equals(menuItemContextMenu)) menuController.activeMenuItemContextMenu.hide();
@@ -467,15 +466,24 @@ public class QueueItem extends GridPane {
 
             this.setInactive();
             queueBox.activeItem.set(null);
+            queueBox.activeIndex.set(-1);
 
             if(menuController.settingsController.playbackOptionsController.autoplayOn){
-                if(queueBox.queue.size() > this.videoIndex + 1) queueBox.queue.get(this.videoIndex + 1).play();
-                else if(this.videoIndex > 0) queueBox.queue.get(this.videoIndex - 1).play();
+                QueueItem queueItem = null;
+                if(queueBox.queue.size() > this.videoIndex + 1) queueItem = queueBox.queue.get(queueBox.queueOrder.get(this.videoIndex + 1));
+                else if(this.videoIndex > 0) queueItem = queueBox.queue.get(queueBox.queueOrder.get(this.videoIndex - 1));
                 else mediaInterface.resetMediaPlayer();
+
+                queueBox.remove(this);
+
+                if(queueItem != null) queueItem.play();
             }
-            else mediaInterface.resetMediaPlayer();
+            else {
+                mediaInterface.resetMediaPlayer();
+                queueBox.remove(this);
+            }
         }
-        queueBox.remove(this);
+        else queueBox.remove(this);
 
     }
 
@@ -488,6 +496,7 @@ public class QueueItem extends GridPane {
         }
         else {
             coverImage.setImage(mediaItem.getPlaceholderCover());
+            imageWrapper.setStyle("-fx-background-color: red;");
         }
 
         Map<String, String> mediaInformation = mediaItem.getMediaInformation();
@@ -497,7 +506,10 @@ public class QueueItem extends GridPane {
                 videoTitle.setText(mediaInformation.get("title"));
             }
             else {
-                videoTitle.setText(mediaItem.getFile().getName());
+                String extension = Utilities.getFileExtension(this.file);
+                String fileName = this.file.getName();
+                videoTitle.setText(fileName.substring(0, fileName.lastIndexOf(extension) - 1));
+
             }
 
             if(mediaInformation.containsKey("media_type") && mediaInformation.containsKey("artist")){
@@ -525,6 +537,8 @@ public class QueueItem extends GridPane {
             artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
             if (!subTextWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
         }
+
+        if(this.isActive.get()) mediaInterface.loadMediaItem(this);
     }
 
 
@@ -586,7 +600,7 @@ public class QueueItem extends GridPane {
         if(this.mediaItemGenerated.get()) newItem = new QueueItem(this.mediaItem, menuController, mediaInterface);
         else newItem = new QueueItem(this.file, menuController, mediaInterface);
 
-        if(queueBox.activeItem.get() != null) queueBox.add(queueBox.activeItem.get().videoIndex + 1, newItem);
+        if(queueBox.activeItem.get() != null) queueBox.add(queueBox.activeIndex.get() + 1, newItem);
         else queueBox.add(0, newItem);
     }
 
@@ -645,6 +659,7 @@ public class QueueItem extends GridPane {
 
     public void setActive(){
         queueBox.activeItem.set(this);
+        queueBox.activeIndex.set(queueBox.queueOrder.indexOf(queueBox.queue.indexOf(this)));
         isActive.set(true);
 
         playIcon.setVisible(false);

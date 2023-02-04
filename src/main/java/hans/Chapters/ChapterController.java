@@ -95,7 +95,6 @@ public class ChapterController {
         });
 
         chapterLabelBox.setOnMouseClicked(e -> {
-            if(mainController.playbackOptionsPopUp.isShowing()) mainController.playbackOptionsPopUp.hide();
             if (mainController.getSettingsController().settingsState != SettingsState.CLOSED) mainController.getSettingsController().closeSettings();
             if (mainController.getCaptionsController().captionsState != CaptionsState.CLOSED) mainController.getCaptionsController().closeCaptions();
 

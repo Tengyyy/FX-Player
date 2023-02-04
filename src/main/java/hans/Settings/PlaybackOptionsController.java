@@ -99,8 +99,6 @@ public class PlaybackOptionsController {
             if (!newValue) { // OFF
                 shuffleOn = false;
 
-                settingsController.mainController.playbackOptionsPopUp.shuffleCheckIcon.setVisible(false);
-
                 if(!autoplayTab.toggle.isSelected() && !loopTab.toggle.isSelected()) {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.tuneSVG);
                 }
@@ -108,13 +106,13 @@ public class PlaybackOptionsController {
 
                 settingsController.menuController.shuffleTooltip.updateText("Shuffle is off");
 
+                if(!settingsController.menuController.queueBox.queue.isEmpty()) settingsController.menuController.queueBox.shuffleOff();
+
                 settingsController.menuController.shuffleToggle.setStyle("-fx-border-color: rgb(30,30,30); -fx-text-fill: white;");
                 settingsController.menuController.shuffleToggle.getGraphic().setStyle("-fx-background-color: white;");
 
             } else { // ON
                 shuffleOn = true;
-
-                settingsController.mainController.playbackOptionsPopUp.shuffleCheckIcon.setVisible(true);
 
 
                 if(!loopTab.toggle.isSelected()) {
@@ -124,7 +122,7 @@ public class PlaybackOptionsController {
                 settingsController.menuController.shuffleTooltip.updateText("Shuffle is on");
 
 
-                if(!settingsController.menuController.queueBox.queue.isEmpty()) settingsController.menuController.queueBox.shuffle();
+                if(!settingsController.menuController.queueBox.queue.isEmpty()) settingsController.menuController.queueBox.shuffleOn();
 
                 settingsController.menuController.shuffleToggle.setStyle("-fx-border-color: red; -fx-text-fill: red;");
                 settingsController.menuController.shuffleToggle.getGraphic().setStyle("-fx-background-color: red;");
@@ -137,7 +135,6 @@ public class PlaybackOptionsController {
                 loopOn = false;
                 settingsController.mediaInterface.embeddedMediaPlayer.controls().setRepeat(false);
 
-                settingsController.mainController.playbackOptionsPopUp.loopCheckIcon.setVisible(false);
 
                 if(shuffleTab.toggle.isSelected()) settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.shuffleSVG);
                 else if(autoplayTab.toggle.isSelected()) settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatSVG);
@@ -147,7 +144,6 @@ public class PlaybackOptionsController {
                 loopOn = true;
                 settingsController.mediaInterface.embeddedMediaPlayer.controls().setRepeat(true);
 
-                settingsController.mainController.playbackOptionsPopUp.loopCheckIcon.setVisible(true);
 
                 settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatOnceSVG);
             }
@@ -158,7 +154,6 @@ public class PlaybackOptionsController {
 
                 autoplayOn = false;
 
-                settingsController.mainController.playbackOptionsPopUp.autoplayCheckIcon.setVisible(false);
 
 
                 if(!shuffleTab.toggle.isSelected() && !loopTab.toggle.isSelected()) {
@@ -168,7 +163,6 @@ public class PlaybackOptionsController {
 
                 autoplayOn = true;
 
-                if(settingsController.mainController.playbackOptionsPopUp != null) settingsController.mainController.playbackOptionsPopUp.autoplayCheckIcon.setVisible(true);
 
 
                 if(!shuffleTab.toggle.isSelected() && !loopTab.toggle.isSelected()) {

@@ -94,8 +94,6 @@ public class MainController implements Initializable {
     ChangeListener<? super Number> widthListenerForTitle;
 
 
-    public PlaybackOptionsPopUp playbackOptionsPopUp;
-
     String snapshotDirectory;
 
     StackPane videoTitleBox = new StackPane();
@@ -144,7 +142,6 @@ public class MainController implements Initializable {
         videoImageViewWrapper.getChildren().add(2, captionsController.captionsBuffer);
         videoImageViewWrapper.getChildren().add(3, settingsController.settingsBuffer);
 
-        playbackOptionsPopUp = new PlaybackOptionsPopUp(settingsController);
 
         snapshotDirectory = System.getProperty("user.home").concat("/FXPlayer/screenshots/");
 
@@ -174,11 +171,7 @@ public class MainController implements Initializable {
 
 
         //hide controlbar when mouse exits window
-        Platform.runLater(() -> videoImageViewWrapper.getScene().setOnMouseExited(e -> {
-            if(!playbackOptionsPopUp.isShowing()) controlBarController.mouseEventTracker.hide();
-        }));
-
-
+        Platform.runLater(() -> videoImageViewWrapper.getScene().setOnMouseExited(e -> controlBarController.mouseEventTracker.hide()));
 
         videoImageViewWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
         videoImageViewInnerWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
@@ -391,10 +384,7 @@ public class MainController implements Initializable {
         menuButton.setMaxSize(50, 50);
         menuButton.setBackground(Background.EMPTY);
         menuButton.setCursor(Cursor.HAND);
-        menuButton.setOnAction(e -> {
-            if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
-            openMenu();
-        });
+        menuButton.setOnAction(e -> openMenu());
 
 
         menuIcon.setShape(menuSVG);
@@ -413,7 +403,6 @@ public class MainController implements Initializable {
         videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 20");
         videoTitleLabel.setEffect(new DropShadow());
         videoTitleLabel.setOnMouseClicked(e -> {
-            if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
             if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
             if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
             e.consume();
@@ -436,8 +425,6 @@ public class MainController implements Initializable {
 
         metadataButtonPane.setVisible(false);
         metadataButtonPane.setMouseTransparent(true);
-        metadataButtonPane.visibleProperty().bind(menuController.activeMediaItemGenerated);
-        metadataButtonPane.mouseTransparentProperty().bind(menuController.activeMediaItemGenerated.not());
 
 
         metadataButton.setPrefSize(50, 50);
@@ -482,16 +469,9 @@ public class MainController implements Initializable {
         // otherwise play/pause/replay the video
 
         if(e.getButton() == MouseButton.SECONDARY){
-            // open/close loop toggle pop-up
-            playbackOptionsPopUp.show(videoImageViewInnerWrapper, e.getScreenX(), e.getScreenY());
             if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
             if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
-            return;
-        }
-
-        if(playbackOptionsPopUp.isShowing()){
-            playbackOptionsPopUp.hide();
             return;
         }
 
@@ -541,8 +521,6 @@ public class MainController implements Initializable {
         if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
         if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
 
-        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
-
         controlBarController.controlBarWrapper.setMouseTransparent(true);
 
         if(controlBarController.controlBarOpen) AnimationsClass.hideControls(controlBarController, captionsController, this);
@@ -580,8 +558,6 @@ public class MainController implements Initializable {
         if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
         if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
 
-        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
-
         AnimationsClass.hideControls(controlBarController, captionsController, this);
 
     }
@@ -616,9 +592,8 @@ public class MainController implements Initializable {
 
         actionIndicator.animate();
 
-        //siit edasi vaadata
         QueueItem queueItem = new QueueItem(file, menuController, mediaInterface);
-        if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.add(menuController.queueBox.activeItem.get().videoIndex + 1, queueItem);
+        if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.add(menuController.queueBox.activeIndex.get() + 1, queueItem);
         else menuController.queueBox.add(0, queueItem);
         queueItem.play();
 
@@ -1251,7 +1226,6 @@ public class MainController implements Initializable {
 
         if(addYoutubeVideoWindow.showing) return;
 
-        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
         if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
         if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
 
@@ -1300,7 +1274,7 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(0);
 
         }
-        else if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().videoIndex > 0){ // play previous video
+        else if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeIndex.get() > 0){ // play previous video
 
             if(menuController.queueBox.dragActive) return;
 
@@ -1315,7 +1289,7 @@ public class MainController implements Initializable {
     public void pressNextTrack(){
         controlBarController.mouseEventTracker.move();
 
-        if(!menuController.queueBox.queue.isEmpty() && (menuController.queueBox.activeItem.get() == null || menuController.queueBox.queue.size() > menuController.queueBox.activeItem.get().videoIndex + 1)){
+        if(!menuController.queueBox.queue.isEmpty() && (menuController.queueBox.activeItem.get() == null || menuController.queueBox.queue.size() > menuController.queueBox.activeIndex.get() + 1)){
 
             if(menuController.queueBox.dragActive) return;
 
@@ -1331,7 +1305,6 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         controlBarController.toggleFullScreen();
 
-        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
         if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
         if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
     }
@@ -1665,7 +1638,6 @@ public class MainController implements Initializable {
 
         App.fullScreen = false;
 
-        if(playbackOptionsPopUp.isShowing()) playbackOptionsPopUp.hide();
         if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
         if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
 

@@ -3,11 +3,11 @@ package hans.Menu;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
+import hans.Captions.CaptionsController;
 import hans.Chapters.ChapterController;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.Settings.SettingsController;
-import hans.Captions.CaptionsController;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -26,14 +26,15 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.*;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.DirectoryChooser;
@@ -42,7 +43,6 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -98,6 +98,18 @@ public class MenuController implements Initializable {
     HBox queueBarButtonContainer = new HBox();
     Label queueBarTitle = new Label("Play queue");
 
+    StackPane multiselectPane = new StackPane();
+    HBox selectionContainer = new HBox();
+    Label multiselectLabel = new Label();
+    Label bulletinLabel = new Label("•");
+    Label clearSelectionLabel = new Label("Clear");
+    JFXButton removeButton = new JFXButton("Remove");
+    Region removeIcon = new Region();
+    SVGPath removeSVG = new SVGPath();
+
+    public ObservableList<QueueItem> selectedItems = FXCollections.observableArrayList();
+    public BooleanProperty selectionActive = new SimpleBooleanProperty();
+
     JFXButton clearQueueButton = new JFXButton();
     SVGPath clearSVG = new SVGPath();
     Region clearIcon = new Region();
@@ -144,6 +156,7 @@ public class MenuController implements Initializable {
         folderChooser.setTitle("Add folder to play queue");
 
         queueBarTitle.setId("queueTitle");
+        VBox.setMargin(queueBarTitle, new Insets(0, 30, 0, 30));
 
         shuffleSVG.setContent(App.svgMap.get(SVG.SHUFFLE));
 
@@ -219,7 +232,10 @@ public class MenuController implements Initializable {
 
         addButtonContainer.getChildren().addAll(addButton, addOptionsButton);
         addButtonContainer.setMaxWidth(Region.USE_PREF_SIZE);
+        addButtonContainer.setMaxHeight(Region.USE_PREF_SIZE);
+        addButtonContainer.setAlignment(Pos.CENTER);
         StackPane.setAlignment(addButtonContainer, Pos.CENTER_RIGHT);
+        StackPane.setMargin(addButtonContainer, new Insets(0, 30, 0, 0));
 
         addButton.setOnAction(e -> {
             if(activeMenuItemContextMenu != null && activeMenuItemContextMenu.showing) activeMenuItemContextMenu.hide();
@@ -248,12 +264,116 @@ public class MenuController implements Initializable {
 
         queueBarButtonContainer.setSpacing(15);
         queueBarButtonContainer.getChildren().addAll(clearQueueButton, shuffleToggle);
+        queueBarButtonContainer.setAlignment(Pos.CENTER_LEFT);
         StackPane.setAlignment(queueBarButtonContainer, Pos.CENTER_LEFT);
+        StackPane.setMargin(queueBarButtonContainer, new Insets(0, 0, 0, 30));
 
-        queueBarButtonWrapper.getChildren().addAll(queueBarButtonContainer, addButtonContainer);
+        queueBarButtonWrapper.getChildren().addAll(queueBarButtonContainer, addButtonContainer, multiselectPane);
+        queueBarButtonWrapper.setPrefHeight(80);
+        queueBarButtonWrapper.setMinHeight(80);
 
-        queueBar.setPadding(new Insets(20, 30, 20, 30));
-        queueBar.setSpacing(20);
+
+        multiselectPane.setPrefWidth(Double.MAX_VALUE);
+        multiselectPane.setId("multiselectPane");
+        multiselectPane.setPrefHeight(50);
+        multiselectPane.setMinHeight(50);
+        multiselectPane.setMaxHeight(50);
+        multiselectPane.getChildren().addAll(selectionContainer, removeButton);
+        multiselectPane.setPadding(new Insets(0, 20, 0, 20));
+        multiselectPane.setOpacity(0);
+        multiselectPane.setMouseTransparent(true);
+        StackPane.setMargin(multiselectPane, new Insets(20, 10, 20, 10));
+
+        StackPane.setAlignment(selectionContainer, Pos.CENTER_LEFT);
+        selectionContainer.getChildren().addAll(multiselectLabel, bulletinLabel, clearSelectionLabel);
+        selectionContainer.setAlignment(Pos.CENTER_LEFT);
+        selectionContainer.setSpacing(10);
+
+        multiselectLabel.setText("0 items selected");
+        multiselectLabel.getStyleClass().add("multiselectText");
+
+        bulletinLabel.getStyleClass().addAll("multiselectText", "bulletin");
+
+        clearSelectionLabel.getStyleClass().addAll("multiselectText", "clearSelection");
+        clearSelectionLabel.setOnMouseEntered(e -> clearSelectionLabel.setUnderline(true));
+        clearSelectionLabel.setOnMouseExited(e -> clearSelectionLabel.setUnderline(false));
+        clearSelectionLabel.setOnMouseClicked(e -> {
+            while(!selectedItems.isEmpty()){
+              selectedItems.get(0).checkbox.setSelected(false);
+            }
+        });
+
+        selectedItems.addListener((ListChangeListener<QueueItem>) change -> {
+            if(!selectedItems.isEmpty() && !selectionActive.get()) selectionActive.set(true);
+            else if(selectedItems.isEmpty() && selectionActive.get()) selectionActive.set(false);
+
+            if(selectedItems.size() == 1) multiselectLabel.setText("1 item selected");
+            else multiselectLabel.setText(selectedItems.size() + " items selected");
+        });
+
+        multiselectPane.mouseTransparentProperty().bind(selectionActive.not());
+        queueBarButtonContainer.mouseTransparentProperty().bind(selectionActive);
+        addButtonContainer.mouseTransparentProperty().bind(selectionActive);
+
+
+        selectionActive.addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(100), multiselectPane);
+                fadeIn.setFromValue(multiselectPane.getOpacity());
+                fadeIn.setToValue(1);
+                FadeTransition fadeOut1 = new FadeTransition(Duration.millis(100), queueBarButtonContainer);
+                fadeOut1.setFromValue(queueBarButtonContainer.getOpacity());
+                fadeOut1.setToValue(0);
+                FadeTransition fadeOut2 = new FadeTransition(Duration.millis(100), addButtonContainer);
+                fadeOut2.setFromValue(addButtonContainer.getOpacity());
+                fadeOut2.setToValue(0);
+                ParallelTransition parallelTransition = new ParallelTransition(fadeIn, fadeOut1, fadeOut2);
+                parallelTransition.playFromStart();
+
+                for(QueueItem queueItem : queueBox.queue){
+                    queueItem.checkbox.setVisible(true);
+                    queueItem.indexLabel.setVisible(false);
+                    queueItem.columns.setVisible(false);
+                }
+            }
+            else {
+                addButtonContainer.setOpacity(1);
+                queueBarButtonContainer.setOpacity(1);
+                multiselectPane.setOpacity(0);
+
+                for(QueueItem queueItem : queueBox.queue){
+                    if(!queueItem.mouseHover){
+                        queueItem.checkbox.setVisible(false);
+                        if(queueItem.isActive.get()) queueItem.columns.setVisible(true);
+                        else queueItem.indexLabel.setVisible(true);
+                    }
+                }
+            }
+        });
+
+        StackPane.setAlignment(removeButton, Pos.CENTER_RIGHT);
+
+        removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
+
+        removeIcon.setShape(removeSVG);
+        removeIcon.setPrefSize(14, 14);
+        removeIcon.setMaxSize(14,14);
+        removeIcon.getStyleClass().addAll("menuIcon", "graphic");
+        removeIcon.setMouseTransparent(true);
+
+        removeButton.getStyleClass().add("menuButton");
+        removeButton.setRipplerFill(Color.TRANSPARENT);
+        removeButton.setCursor(Cursor.HAND);
+        removeButton.setGraphic(removeIcon);
+        removeButton.setOnAction(e -> {
+            while(!selectedItems.isEmpty()){
+                selectedItems.get(0).remove();
+            }
+        });
+
+
+
+        queueBar.setPadding(new Insets(20, 0, 0, 0));
         queueBar.setAlignment(Pos.CENTER_LEFT);
         queueBar.getChildren().addAll(queueBarTitle, queueBarButtonWrapper);
 
@@ -396,7 +516,7 @@ public class MenuController implements Initializable {
                     queueBox.draggedNode.setMouseTransparent(false);
                     queueBox.draggedNode.setViewOrder(1);
                     queueBox.draggedNode.setStyle("-fx-background-color: transparent;");
-                    queueBox.draggedNode.playIcon.setVisible(false);
+                    queueBox.draggedNode.checkbox.setVisible(false);
                     queueBox.draggedNode.indexLabel.setVisible(true);
 
                     if(queueBox.queue.indexOf(queueBox.draggedNode) != queueBox.draggedNode.newPosition){
@@ -444,7 +564,7 @@ public class MenuController implements Initializable {
                     queueBox.draggedNode.setStyle("-fx-background-color: transparent;");
 
                     queueBox.draggedNode.indexLabel.setVisible(true);
-                    queueBox.draggedNode.playIcon.setVisible(false);
+                    queueBox.draggedNode.checkbox.setVisible(false);
 
                     if(queueBox.queue.indexOf(queueBox.draggedNode) != queueBox.draggedNode.newPosition){
                         queueBox.queue.remove(queueBox.draggedNode);

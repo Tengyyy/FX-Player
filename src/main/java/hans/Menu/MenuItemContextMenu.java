@@ -27,7 +27,7 @@ public class MenuItemContextMenu extends ContextMenu {
     MenuItem openFileLocation = new MenuItem("Open file in location");
 
     double buttonWidth;
-    final double popUpWidth = 214; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
+    final double popUpWidth = 186; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
 
     FadeTransition showTransition, hideTransition;
 
@@ -132,9 +132,12 @@ public class MenuItemContextMenu extends ContextMenu {
         if(!queueItem.getHover()){
             queueItem.playButtonIcon.setVisible(false);
             queueItem.playButtonBackground.setVisible(false);
-            queueItem.playIcon.setVisible(false);
+            queueItem.checkbox.setVisible(false);
 
-            if(queueItem.isActive.get()) queueItem.setStyle("-fx-background-color: rgba(50, 50, 50, 0.6);");
+            if(queueItem.isActive.get()) {
+                queueItem.setStyle("-fx-background-color: rgba(50, 50, 50, 0.6);");
+                queueItem.columns.setVisible(true);
+            }
             else {
                 queueItem.setStyle("-fx-background-color: transparent;");
                 queueItem.indexLabel.setVisible(true);

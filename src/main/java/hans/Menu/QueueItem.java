@@ -4,14 +4,18 @@ package hans.Menu;
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
+import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -64,8 +68,8 @@ public class QueueItem extends GridPane {
 
 
     StackPane indexPane = new StackPane();
-    public Region playIcon = new Region();
     public Label indexLabel = new Label();
+    MFXCheckbox checkbox = new MFXCheckbox();
 
     Button playButton = new Button();
     Region playButtonIcon = new Region();
@@ -103,6 +107,7 @@ public class QueueItem extends GridPane {
     BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
 
     BooleanProperty isActive = new SimpleBooleanProperty(false);
+    BooleanProperty isSelected = new SimpleBooleanProperty();
 
     public int videoIndex = -1;
 
@@ -214,19 +219,24 @@ public class QueueItem extends GridPane {
         indexLabel.setMouseTransparent(true);
         StackPane.setAlignment(indexLabel, Pos.CENTER);
 
-        playIcon.setShape(playSVG);
-        playIcon.setPrefSize(13, 15);
-        playIcon.setMaxSize(13, 15);
-        playIcon.setId("playIcon");
-        playIcon.setVisible(false);
-        playIcon.setTranslateX(3);
+        checkbox.setPrefSize(23, 23);
+        checkbox.setVisible(false);
+        checkbox.setText(null);
+        checkbox.setContentDisposition(ContentDisplay.CENTER);
+        checkbox.setTextExpand(false);
+
+        isSelected.bind(checkbox.selectedProperty());
+        isSelected.addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) this.select();
+            else this.unselect();
+        });
 
         this.columns.setVisible(false);
 
         indexPane.setPrefWidth(45);
         indexPane.setMaxWidth(45);
         indexPane.setAlignment(Pos.CENTER);
-        indexPane.getChildren().addAll(indexLabel, playIcon, columns);
+        indexPane.getChildren().addAll(indexLabel, checkbox, columns);
 
         playButton.setPrefWidth(125);
         playButton.setPrefHeight(70);
@@ -332,7 +342,10 @@ public class QueueItem extends GridPane {
 
         this.setOnMouseClicked(e -> {
             if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-            else if (e.getButton() == MouseButton.PRIMARY && !isActive.get()) play();
+            else if (e.getButton() == MouseButton.PRIMARY){
+                if(!menuController.selectionActive.get() && !isActive.get()) play();
+                else if(menuController.selectionActive.get()) checkbox.fire();
+            }
         });
 
         optionsIcon = new Region();
@@ -364,10 +377,10 @@ public class QueueItem extends GridPane {
                 playButtonIcon.setVisible(true);
                 playButtonBackground.setVisible(true);
             }
-            else {
-                playIcon.setVisible(true);
-                indexLabel.setVisible(false);
-            }
+
+            checkbox.setVisible(true);
+            indexLabel.setVisible(false);
+            columns.setVisible(false);
         });
 
         this.setOnMouseExited((e) -> {
@@ -378,10 +391,15 @@ public class QueueItem extends GridPane {
             if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
             else this.setStyle("-fx-background-color: transparent;");
 
-            playIcon.setVisible(false);
             playButtonIcon.setVisible(false);
             playButtonBackground.setVisible(false);
-            if(!isActive.get()) indexLabel.setVisible(true);
+
+            if(!menuController.selectionActive.get()){
+                checkbox.setVisible(false);
+                if(isActive.get()) columns.setVisible(true);
+                else indexLabel.setVisible(true);
+            }
+
         });
 
         this.addEventHandler(DragEvent.DRAG_OVER, e -> {
@@ -415,8 +433,9 @@ public class QueueItem extends GridPane {
             indexLabel.setVisible(false);
             playButtonIcon.setVisible(false);
             playButtonBackground.setVisible(false);
+            columns.setVisible(false);
 
-            if(!isActive.get()) playIcon.setVisible(true);
+            checkbox.setVisible(true);
 
 
             if (menuItemContextMenu != null && menuItemContextMenu.isShowing()) menuItemContextMenu.hide();
@@ -429,9 +448,9 @@ public class QueueItem extends GridPane {
             this.startFullDrag();
         });
 
-        playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200));
+        playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.animateBackgroundColor(playButtonIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200));
 
-        playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200));
+        playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.animateBackgroundColor(playButtonIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200));
 
         playButton.setOnAction((e) -> {
 
@@ -461,7 +480,7 @@ public class QueueItem extends GridPane {
         });
     }
 
-    private void remove() {
+    void remove() {
         if (this.isActive.get()) {
 
             this.setInactive();
@@ -662,9 +681,7 @@ public class QueueItem extends GridPane {
         queueBox.activeIndex.set(queueBox.queueOrder.indexOf(queueBox.queue.indexOf(this)));
         isActive.set(true);
 
-        playIcon.setVisible(false);
         indexLabel.setVisible(false);
-        columns.setVisible(true);
         imageBorder.setVisible(true);
         playButton.setMouseTransparent(false);
 
@@ -672,7 +689,10 @@ public class QueueItem extends GridPane {
             playButtonIcon.setVisible(true);
             playButtonBackground.setVisible(true);
         }
-        else this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+        else {
+            this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+            if(!menuController.selectionActive.get()) columns.setVisible(true);
+        }
     }
 
     public void setInactive(){
@@ -686,9 +706,8 @@ public class QueueItem extends GridPane {
         imageBorder.setVisible(false);
         playButton.setMouseTransparent(true);
 
-        if(mouseHover) playIcon.setVisible(true);
-        else {
-            indexLabel.setVisible(true);
+        if(!mouseHover) {
+            if(!menuController.selectionActive.get()) indexLabel.setVisible(true);
             this.setStyle("-fx-background-color: transparent;");
         }
     }
@@ -713,5 +732,13 @@ public class QueueItem extends GridPane {
         playButtonIcon.setShape(pauseSVG);
         if(playButtonTooltip != null) playButtonTooltip.updateText("Pause video");
         columns.play();
+    }
+
+    public void select(){
+        menuController.selectedItems.add(this);
+    }
+
+    public void unselect(){
+        menuController.selectedItems.remove(this);
     }
 }

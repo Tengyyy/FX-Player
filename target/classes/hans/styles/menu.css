@@ -106,8 +106,8 @@
 
 #queueTitle {
     -fx-text-fill: white;
-    -fx-font-family: "Roboto";
-    -fx-font-size: 30;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 36;
 }
 
 .menuActionButton{
@@ -174,7 +174,7 @@
     -fx-font-size: 15;
     -fx-font-family: "Roboto";
     -fx-background-color: rgba(30,30,30, 0.6);
-    -fx-padding: 6 11 6 9;
+    -fx-padding: 7 11 7 9;
     -fx-graphic-text-gap: 7;
     -fx-border-width: 1;
     -fx-border-color: rgb(40,40,40);
@@ -202,7 +202,7 @@
     -fx-text-fill: white;
     -fx-font-size: 15;
     -fx-font-family: "Roboto";
-    -fx-padding: 6 11 6 9;
+    -fx-padding: 7 11 7 9;
     -fx-graphic-text-gap: 7;
 }
 
@@ -228,7 +228,7 @@
     -fx-border-radius: 0 5 5 0;
     -fx-background-radius: 0 5 5 0;
     -fx-border-width: 1 1 1 0;
-    -fx-padding: 7 9 7 9;
+    -fx-padding: 8 9 8 9;
 }
 
 .iconBackground {
@@ -410,6 +410,49 @@
 .mfx-progress-bar .track {
     -fx-fill: rgb(30,30,30);
 }
+
+.mfx-checkbox .ripple-container .box {
+    -fx-border-radius: 5;
+    -fx-border-color: rgb(150,150,150);
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.mfx-checkbox:hover .ripple-container .box {
+    -fx-background-color: rgba(80,80,80, 0.7);
+}
+
+.mfx-checkbox:pressed .ripple-container .box {
+    -fx-border-color: transparent;
+}
+
+.mfx-checkbox:selected .ripple-container .box {
+    -fx-background-color: red;
+    -fx-border-color: transparent;
+}
+
+#multiselectPane {
+    -fx-background-color: rgb(20, 20, 20, 0.6);
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0.5, 0.0, 0.0);
+}
+
+.multiselectText {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 15;
+    -fx-text-fill: white;
+}
+
+.bulletin {
+    -fx-font-size: 18;
+}
+
+.clearSelection {
+    -fx-text-fill: red;
+    -fx-cursor: hand;
+}
+
+
 
 
 

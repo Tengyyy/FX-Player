@@ -55,7 +55,7 @@ public class QueueBox extends VBox {
         this.setFillWidth(true);
 
         VBox.setVgrow(this, Priority.ALWAYS);
-        this.setPadding(new Insets(0, 0, 100, 0));
+        this.setPadding(new Insets(10, 0, 50, 0));
 
         this.setOnDragEntered(this::handleDragEntered);
         this.setOnDragOver(this::handleDragOver);
@@ -270,6 +270,7 @@ public class QueueBox extends VBox {
 
         queue.remove(index);
         queueOrder.remove((Integer) index);
+        menuController.selectedItems.remove(queueItem);
 
         if(queueOrder.size() != index){
             for(int i=0; i<queueOrder.size(); i++){
@@ -300,6 +301,7 @@ public class QueueBox extends VBox {
 
         queue.clear();
         queueOrder.clear();
+        menuController.selectedItems.clear();
 
         if(activeItem.get() != null) activeItem.get().setInactive();
 

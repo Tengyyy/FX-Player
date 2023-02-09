@@ -7,8 +7,6 @@ import hans.MediaItems.MediaItem;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -113,14 +111,14 @@ public class QueueItem extends GridPane {
 
     QueueBox queueBox;
 
-    public QueueItem(File file, MenuController menuController, MediaInterface mediaInterface) {
+    public QueueItem(File file, MenuController menuController, MediaInterface mediaInterface, double initialHeight) {
 
         this.file = file;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
         this.queueBox = menuController.queueBox;
 
-        initialize();
+        initialize(initialHeight);
 
         QueueItem queueItem = null;
         for(QueueItem item : queueBox.queue){
@@ -162,7 +160,7 @@ public class QueueItem extends GridPane {
         }
     }
 
-    QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface) {
+    QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, double initialHeight) {
 
         this.file = mediaItem.getFile();
         this.mediaItem = mediaItem;
@@ -172,12 +170,12 @@ public class QueueItem extends GridPane {
 
         mediaItemGenerated.set(true);
 
-        initialize();
+        initialize(initialHeight);
         applyMediaItem();
 
     }
 
-    private void initialize(){
+    private void initialize(double initialHeight){
         column3.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
 
@@ -195,9 +193,8 @@ public class QueueItem extends GridPane {
 
         this.getStyleClass().add("queueItem");
         this.setOpacity(0);
-        this.setMinHeight(0);
-        this.setPrefHeight(0);
-        this.setMaxHeight(0);
+        this.setMinHeight(initialHeight);
+        this.setMaxHeight(initialHeight);
 
 
         playSVG.setContent(App.svgMap.get(SVG.PLAY));
@@ -388,7 +385,8 @@ public class QueueItem extends GridPane {
 
             if(queueBox.dragActive || menuItemContextMenu != null && menuItemContextMenu.showing) return;
 
-            if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+            if(isSelected.get()) this.setStyle("-fx-background-color: rgba(90,90,90,0.6);");
+            else if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
             else this.setStyle("-fx-background-color: transparent;");
 
             playButtonIcon.setVisible(false);
@@ -404,19 +402,11 @@ public class QueueItem extends GridPane {
 
         this.addEventHandler(DragEvent.DRAG_OVER, e -> {
 
-            if(!queueBox.dragAndDropActive) return;
+            if(!queueBox.dragAndDropActive.get()) return;
 
             //code to handle adding items to queue
-            if (e.getY() > height / 2) {
-                // position queueline below this item
-                if (queueBox.getChildren().indexOf(queueBox.queueLine) != this.videoIndex + 1) {
-                    queueBox.queueLine.setPosition(this.videoIndex + 1);
-                }
-            } else {
-                if (queueBox.getChildren().indexOf(queueBox.queueLine) != this.videoIndex) {
-                    queueBox.queueLine.setPosition(this.videoIndex);
-                }
-            }
+            if (e.getY() > height / 2) queueBox.dropPositionController.updatePosition(this.videoIndex + 1);
+            else queueBox.dropPositionController.updatePosition(this.videoIndex);
 
         });
 
@@ -616,8 +606,8 @@ public class QueueItem extends GridPane {
 
     public void playNext(){
         QueueItem newItem;
-        if(this.mediaItemGenerated.get()) newItem = new QueueItem(this.mediaItem, menuController, mediaInterface);
-        else newItem = new QueueItem(this.file, menuController, mediaInterface);
+        if(this.mediaItemGenerated.get()) newItem = new QueueItem(this.mediaItem, menuController, mediaInterface, 0);
+        else newItem = new QueueItem(this.file, menuController, mediaInterface, 0);
 
         if(queueBox.activeItem.get() != null) queueBox.add(queueBox.activeIndex.get() + 1, newItem);
         else queueBox.add(0, newItem);
@@ -736,9 +726,14 @@ public class QueueItem extends GridPane {
 
     public void select(){
         menuController.selectedItems.add(this);
+
+        if(!mouseHover) this.setStyle("-fx-background-color: rgba(90,90,90,0.6);");
     }
 
     public void unselect(){
         menuController.selectedItems.remove(this);
+
+        if(mouseHover) this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
+        else if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
     }
 }

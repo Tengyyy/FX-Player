@@ -367,4 +367,13 @@
     -fx-font-size: 11;
 }
 
+#dragLabel {
+    -fx-background-color: rgb(80,80,80,0.6);
+    -fx-background-radius: 10;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 15;
+    -fx-text-fill: white;
+    -fx-padding: 10 15 10 15;
+}
+
 

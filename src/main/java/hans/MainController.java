@@ -51,6 +51,7 @@ public class MainController implements Initializable {
     @FXML
     StackPane outerPane;
     @FXML
+    public
     StackPane videoImageViewWrapper;
     @FXML
     public StackPane videoImageViewInnerWrapper, addYoutubeVideoWindowContainer;
@@ -118,6 +119,8 @@ public class MainController implements Initializable {
 
     public AddYoutubeVideoWindow addYoutubeVideoWindow;
 
+    public DragViewPopup dragViewPopup;
+
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -137,6 +140,8 @@ public class MainController implements Initializable {
 
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
         sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
+
+        dragViewPopup = new DragViewPopup(this);
 
 
         videoImageViewWrapper.getChildren().add(2, captionsController.captionsBuffer);
@@ -592,7 +597,7 @@ public class MainController implements Initializable {
 
         actionIndicator.animate();
 
-        QueueItem queueItem = new QueueItem(file, menuController, mediaInterface);
+        QueueItem queueItem = new QueueItem(file, menuController, mediaInterface, 0);
         if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.add(menuController.queueBox.activeIndex.get() + 1, queueItem);
         else menuController.queueBox.add(0, queueItem);
         queueItem.play();

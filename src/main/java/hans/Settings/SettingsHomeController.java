@@ -185,7 +185,7 @@ public class SettingsHomeController {
         File selectedFile = fileChooser.showOpenDialog(App.stage);
 
         if (selectedFile != null) {
-            QueueItem queueItem = new QueueItem(selectedFile, settingsController.menuController, settingsController.mediaInterface);
+            QueueItem queueItem = new QueueItem(selectedFile, settingsController.menuController, settingsController.mediaInterface, 0);
             if(settingsController.menuController.queueBox.activeItem.get() != null) settingsController.menuController.queueBox.add(settingsController.menuController.queueBox.activeItem.get().videoIndex + 1, queueItem);
             else settingsController.menuController.queueBox.add(0, queueItem);
             queueItem.play();

@@ -621,7 +621,7 @@ public class MenuController implements Initializable {
         if(selectedFiles != null && !selectedFiles.isEmpty()){
 
             for(File file : selectedFiles){
-                QueueItem queueItem = new QueueItem(file, this, mediaInterface);
+                QueueItem queueItem = new QueueItem(file, this, mediaInterface, 0);
                 if(settingsController.playbackOptionsController.shuffleOn) queueBox.addRand(queueItem);
                 else queueBox.add(queueItem);
             }
@@ -638,7 +638,7 @@ public class MenuController implements Initializable {
 
             for(File file : files){
                 if(MediaUtilities.mediaFormats.contains(Utilities.getFileExtension(file))){
-                    QueueItem queueItem = new QueueItem(file, this, mediaInterface);
+                    QueueItem queueItem = new QueueItem(file, this, mediaInterface, 0);
                     if(settingsController.playbackOptionsController.shuffleOn) queueBox.addRand(queueItem);
                     else queueBox.add(queueItem);
                 }

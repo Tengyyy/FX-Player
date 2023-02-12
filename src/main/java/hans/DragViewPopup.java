@@ -21,6 +21,8 @@ public class DragViewPopup extends Popup {
         dragLabel.setId("dragLabel");
 
         this.getContent().add(dragLabel);
+
+        this.getScene().getRoot().setMouseTransparent(true);
     }
 
     @Override

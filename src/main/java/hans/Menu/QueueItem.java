@@ -5,6 +5,8 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
+import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
@@ -17,16 +19,17 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.util.Duration;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -95,21 +98,17 @@ public class QueueItem extends GridPane {
 
     static double height = 90;
 
-    public double dragPosition = 0;
-    public double minimumY = 0;
-    public double maximumY = 0;
-
-
     public File file;
     MediaItem mediaItem;
     BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
 
     BooleanProperty isActive = new SimpleBooleanProperty(false);
-    BooleanProperty isSelected = new SimpleBooleanProperty();
+    BooleanProperty isSelected = new SimpleBooleanProperty(false);
 
     public int videoIndex = -1;
 
     QueueBox queueBox;
+
 
     public QueueItem(File file, MenuController menuController, MediaInterface mediaInterface, double initialHeight) {
 
@@ -301,6 +300,7 @@ public class QueueItem extends GridPane {
         textWrapper.setAlignment(Pos.CENTER_LEFT);
         textWrapper.setPrefHeight(90);
         textWrapper.getChildren().addAll(videoTitle,subTextWrapper);
+        textWrapper.setMouseTransparent(true);
         GridPane.setMargin(textWrapper, new Insets(0, 0, 0, 10));
 
         artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
@@ -383,7 +383,7 @@ public class QueueItem extends GridPane {
         this.setOnMouseExited((e) -> {
             mouseHover = false;
 
-            if(queueBox.dragActive || menuItemContextMenu != null && menuItemContextMenu.showing) return;
+            if(menuItemContextMenu != null && menuItemContextMenu.showing) return;
 
             if(isSelected.get()) this.setStyle("-fx-background-color: rgba(90,90,90,0.6);");
             else if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
@@ -402,7 +402,7 @@ public class QueueItem extends GridPane {
 
         this.addEventHandler(DragEvent.DRAG_OVER, e -> {
 
-            if(!queueBox.dragAndDropActive.get()) return;
+            if(!queueBox.dragAndDropActive.get() && (!queueBox.itemDragActive.get() || queueBox.draggedNode == this)) return;
 
             //code to handle adding items to queue
             if (e.getY() > height / 2) queueBox.dropPositionController.updatePosition(this.videoIndex + 1);
@@ -410,33 +410,66 @@ public class QueueItem extends GridPane {
 
         });
 
+        this.setOnDragDetected(e -> {
 
-        this.setOnDragDetected((e) -> {
+            queueBox.dropPositionController.updatePosition(this.videoIndex);
 
-            this.setMouseTransparent(true);
-            queueBox.dragActive = true;
             queueBox.draggedNode = this;
+            queueBox.itemDragActive.set(true);
 
-            this.setViewOrder(0);
-            this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
+            Dragboard dragboard = this.startDragAndDrop(TransferMode.ANY);
 
-            indexLabel.setVisible(false);
-            playButtonIcon.setVisible(false);
-            playButtonBackground.setVisible(false);
-            columns.setVisible(false);
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString("Items");
+            dragboard.setContent(clipboardContent);
 
-            checkbox.setVisible(true);
-
-
-            if (menuItemContextMenu != null && menuItemContextMenu.isShowing()) menuItemContextMenu.hide();
-
-            dragPosition = e.getY();
-            minimumY = this.getBoundsInParent().getMinY(); // this is the maximum negative translation that can be applied
-            maximumY = queueBox.getChildren().get(queueBox.getChildren().size() - 1).getBoundsInParent().getMinY(); // the top border of the last element inside the vbox, dragged node cant move below that
-
-
-            this.startFullDrag();
+            e.consume();
         });
+
+        this.setOnDragDone(e -> {
+
+            QueueItem hoverItem = null;
+            if(queueBox.dropPositionController.position < queueBox.queue.size()){
+                hoverItem = queueBox.queue.get(queueBox.queueOrder.get(queueBox.dropPositionController.position));
+            }
+
+
+            if(menuController.selectionActive.get()){
+                for(QueueItem queueItem : menuController.selectedItems){
+                    queueBox.remove(queueItem, true);
+                }
+            }
+            else queueBox.remove(this, true);
+
+            int index = Integer.MAX_VALUE;
+            if(hoverItem != null) index = queueBox.queueOrder.indexOf(queueBox.queue.indexOf(hoverItem));
+
+            if(menuController.selectionActive.get()){
+                for(int i=0; i<menuController.selectedItems.size(); i++){
+                    QueueItem queueItem = menuController.selectedItems.get(i);
+                    queueItem.setMinHeight(0);
+                    queueItem.setMaxHeight(0);
+                    queueItem.setOpacity(0);
+                    queueItem.setMouseTransparent(false);
+
+                    queueBox.add(index + i, queueItem);
+                }
+            }
+            else {
+                queueBox.draggedNode.setMinHeight(0);
+                queueBox.draggedNode.setMaxHeight(0);
+                queueBox.draggedNode.setOpacity(0);
+                queueBox.draggedNode.setMouseTransparent(false);
+
+                queueBox.add(index, queueBox.draggedNode);
+            }
+
+            queueBox.draggedNode = null;
+            queueBox.itemDragActive.set(false);
+
+            if(menuController.mainController.dragViewPopup.isShowing()) menuController.mainController.dragViewPopup.hide();
+        });
+
 
         playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.animateBackgroundColor(playButtonIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200));
 
@@ -483,16 +516,16 @@ public class QueueItem extends GridPane {
                 else if(this.videoIndex > 0) queueItem = queueBox.queue.get(queueBox.queueOrder.get(this.videoIndex - 1));
                 else mediaInterface.resetMediaPlayer();
 
-                queueBox.remove(this);
+                queueBox.remove(this, false);
 
                 if(queueItem != null) queueItem.play();
             }
             else {
                 mediaInterface.resetMediaPlayer();
-                queueBox.remove(this);
+                queueBox.remove(this, false);
             }
         }
-        else queueBox.remove(this);
+        else queueBox.remove(this, false);
 
     }
 
@@ -735,5 +768,6 @@ public class QueueItem extends GridPane {
 
         if(mouseHover) this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
         else if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+        else this.setStyle("-fx-background-color: transparent;");
     }
 }

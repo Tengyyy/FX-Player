@@ -3,6 +3,7 @@ package hans;
 import hans.Captions.CaptionsController;
 import hans.Captions.CaptionsState;
 import hans.Chapters.ChapterController;
+import hans.MediaItems.MediaUtilities;
 import hans.Menu.MenuController;
 import hans.Menu.MenuState;
 import hans.Menu.QueueItem;
@@ -540,22 +541,9 @@ public class MainController implements Initializable {
     }
 
     public void handleDragEntered(DragEvent e){
+        if(e.getDragboard().getFiles().isEmpty()) return;
         File file = e.getDragboard().getFiles().get(0);
-        if(!Utilities.getFileExtension(file).equals("mp4") &&
-                !Utilities.getFileExtension(file).equals("mp3") &&
-                !Utilities.getFileExtension(file).equals("wav") &&
-                !Utilities.getFileExtension(file).equals("mov") &&
-                !Utilities.getFileExtension(file).equals("mkv") &&
-                !Utilities.getFileExtension(file).equals("flv") &&
-                !Utilities.getFileExtension(file).equals("flac") &&
-                !Utilities.getFileExtension(file).equals("avi") &&
-                !Utilities.getFileExtension(file).equals("opus") &&
-                !Utilities.getFileExtension(file).equals("aiff") &&
-                !Utilities.getFileExtension(file).equals("m4a") &&
-                !Utilities.getFileExtension(file).equals("wma") &&
-                !Utilities.getFileExtension(file).equals("aac") &&
-                !Utilities.getFileExtension(file).equals("ogg")) return;
-
+        if(!MediaUtilities.mediaFormats.contains(Utilities.getFileExtension(file))) return;
 
         actionIndicator.setIcon(PLUS);
         actionIndicator.setVisible(true);
@@ -1229,7 +1217,7 @@ public class MainController implements Initializable {
 
     public void pressQ(){
 
-        if(addYoutubeVideoWindow.showing) return;
+        if(addYoutubeVideoWindow.showing || menuController.queueBox.itemDragActive.get()) return;
 
         if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
         if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
@@ -1281,7 +1269,7 @@ public class MainController implements Initializable {
         }
         else if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeIndex.get() > 0){ // play previous video
 
-            if(menuController.queueBox.dragActive) return;
+            if(menuController.queueBox.itemDragActive.get()) return;
 
             actionIndicator.setIcon(PREVIOUS_VIDEO);
             actionIndicator.setVisible(true);
@@ -1296,7 +1284,7 @@ public class MainController implements Initializable {
 
         if(!menuController.queueBox.queue.isEmpty() && (menuController.queueBox.activeItem.get() == null || menuController.queueBox.queue.size() > menuController.queueBox.activeIndex.get() + 1)){
 
-            if(menuController.queueBox.dragActive) return;
+            if(menuController.queueBox.itemDragActive.get()) return;
 
             actionIndicator.setIcon(NEXT_VIDEO);
             actionIndicator.setVisible(true);

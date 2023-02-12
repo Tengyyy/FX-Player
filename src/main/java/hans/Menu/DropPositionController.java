@@ -25,7 +25,7 @@ public class DropPositionController {
 
 
         dragTimer.setOnFinished(e -> {
-            if(!queueBox.dragAndDropActive.get() || queueBox.dragBoardMedia.isEmpty()) return;
+            if(!queueBox.dragAndDropActive.get() && !queueBox.itemDragActive.get()) return;
 
             animatePosition();
         });

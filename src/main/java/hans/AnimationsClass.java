@@ -244,7 +244,7 @@ public class AnimationsClass {
     public static FadeTransition fadeIn(Node child){
         Duration animationDuration = Duration.millis(ANIMATION_SPEED);
         FadeTransition fadeTransition = new FadeTransition(animationDuration, child);
-        fadeTransition.setFromValue(0);
+        fadeTransition.setFromValue(child.getOpacity());
         fadeTransition.setToValue(1);
         return fadeTransition;
     }
@@ -252,7 +252,7 @@ public class AnimationsClass {
     public static FadeTransition fadeOut(Node child){
         Duration animationDuration = Duration.millis(ANIMATION_SPEED);
         FadeTransition fadeTransition = new FadeTransition(animationDuration, child);
-        fadeTransition.setFromValue(1);
+        fadeTransition.setFromValue(child.getOpacity());
         fadeTransition.setToValue(0);
         return fadeTransition;
     }

@@ -41,7 +41,7 @@ public class QueueBox extends VBox {
     public BooleanProperty dragAndDropActive = new SimpleBooleanProperty(false);
     public BooleanProperty itemDragActive = new SimpleBooleanProperty(false);
 
-    QueueItem draggedNode = null;
+    public QueueItem draggedNode = null;
 
     public IntegerProperty activeIndex = new SimpleIntegerProperty(-1); // what index we are at in the queueorder arraylist
     public ObjectProperty<QueueItem> activeItem = new SimpleObjectProperty<>();
@@ -60,7 +60,7 @@ public class QueueBox extends VBox {
         dropPositionController = new DropPositionController(this);
 
         VBox.setVgrow(this, Priority.ALWAYS);
-        this.setPadding(new Insets(10, 0, 50, 0));
+        this.setPadding(new Insets(0, 0, 20, 0));
 
         this.setOnDragEntered(this::handleDragEntered);
         this.setOnDragOver(this::handleDragOver);
@@ -309,7 +309,13 @@ public class QueueBox extends VBox {
     public void handleDragEntered(DragEvent e) {
 
         if(itemDragActive.get()){
-            if(!menuController.selectionActive.get() || menuController.selectedItems.size() == 1) menuController.mainController.dragViewPopup.setText("1 item");
+            if(!menuController.selectionActive.get() || menuController.selectedItems.size() == 1 || !menuController.selectedItems.contains(draggedNode)) menuController.mainController.dragViewPopup.setText("1 item");
+            else menuController.mainController.dragViewPopup.setText(menuController.selectedItems.size() + " items");
+        }
+        else if(draggedNode != null){
+            itemDragActive.set(true);
+
+            if(!menuController.selectionActive.get() || menuController.selectedItems.size() == 1 || !menuController.selectedItems.contains(draggedNode)) menuController.mainController.dragViewPopup.setText("1 item");
             else menuController.mainController.dragViewPopup.setText(menuController.selectedItems.size() + " items");
         }
         else {
@@ -325,9 +331,11 @@ public class QueueBox extends VBox {
 
             if(dragBoardMedia.isEmpty()) return;
 
+
             dragAndDropActive.set(true);
 
-
+            if(dragBoardMedia.size() == 1) menuController.mainController.dragViewPopup.setText("1 item");
+            else menuController.mainController.dragViewPopup.setText(dragBoardMedia.size() + " items");
         }
 
         if(!menuController.mainController.dragViewPopup.isShowing()) menuController.mainController.dragViewPopup.show(menuController.mainController.videoImageViewWrapper, e.getScreenX(), e.getScreenY());
@@ -344,28 +352,12 @@ public class QueueBox extends VBox {
 
     public void handleDragDropped(DragEvent e){
 
-        int index = Math.min(dropPositionController.position, queue.size());
-
-        if (dragBoardMedia.isEmpty()){
-            dragAndDropActive.set(false);
-            return;
+        if(dragAndDropActive.get()){
+            handleFileDragDrop();
         }
-
-        double translation = 0;
-        if(queue.size() > index) translation = queue.get(index).getTranslateY();
-
-        dragAndDropActive.set(false);
-
-        for (int i=0; i < dragBoardMedia.size(); i++) {
-            QueueItem queueItem;
-            if(i == 0) queueItem = new QueueItem(dragBoardMedia.get(i), menuController, menuController.mediaInterface, translation);
-            else queueItem = new QueueItem(dragBoardMedia.get(i), menuController, menuController.mediaInterface, 0);
-
-            this.add(index + i, queueItem);
+        else if(itemDragActive.get()){
+            handleItemDragDrop();
         }
-
-        dragBoardMedia.clear();
-        dragBoardFiles.clear();
 
         if(menuController.mainController.dragViewPopup.isShowing()) menuController.mainController.dragViewPopup.hide();
     }
@@ -377,6 +369,7 @@ public class QueueBox extends VBox {
 
     public void cancelDragAndDrop(){
         dragAndDropActive.set(false);
+        itemDragActive.set(false);
         menuController.mainController.dragViewPopup.hide();
         dragBoardFiles.clear();
         dragBoardMedia.clear();
@@ -408,9 +401,26 @@ public class QueueBox extends VBox {
     }
 
     private void startDragAction(){
+
+        if(!dropPositionController.translateTransitions.isEmpty()){
+            for(Transition transition : dropPositionController.translateTransitions){
+                transition.stop();
+            }
+
+            dropPositionController.translateTransitions.clear();
+        }
+
+        for(Node node : this.getChildren()){
+            node.setTranslateY(0);
+        }
+
+        this.setPadding(new Insets(0, 0, 110, 0));
+
+
+
         ParallelTransition parallelTransition = new ParallelTransition();
         for(Node node : this.getChildren()){
-            if(menuController.selectedItems.contains((QueueItem) node) || draggedNode == node) continue;
+            if((menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode) && menuController.selectedItems.contains((QueueItem) node)) || draggedNode == node) continue;
             FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), node);
             fadeTransition.setFromValue(node.getOpacity());
             fadeTransition.setToValue(0.5);
@@ -420,10 +430,12 @@ public class QueueBox extends VBox {
         if(!parallelTransition.getChildren().isEmpty()) parallelTransition.playFromStart();
 
         if(itemDragActive.get() && draggedNode != null){
-            if(menuController.selectionActive.get()){ // drag multiple items
+            if(menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode)){ // drag multiple items
                 ParallelTransition parallelRemove = new ParallelTransition();
                 for(QueueItem queueItem : menuController.selectedItems){
                     if(queueItem != draggedNode) queueItem.setMouseTransparent(true);
+
+                    if(queueItem.getOpacity() == 0) continue;
 
                     FadeTransition fadeTransition = AnimationsClass.fadeOut(queueItem);
 
@@ -436,36 +448,68 @@ public class QueueBox extends VBox {
 
                 }
 
-                if(!parallelRemove.getChildren().isEmpty()) parallelRemove.playFromStart();
+                if(!parallelRemove.getChildren().isEmpty()){
+                    dropPositionController.removeTransitions.add(parallelRemove);
+                    parallelRemove.setOnFinished(e -> dropPositionController.removeTransitions.remove(parallelRemove));
+                    parallelRemove.playFromStart();
+                }
             }
             else { // drag just the single queueitem
-                FadeTransition fadeTransition = AnimationsClass.fadeOut(draggedNode);
 
-                Timeline minHeightTransition = AnimationsClass.animateMinHeight(0, draggedNode);
-                Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(0, draggedNode);
-                ParallelTransition heightTransition = new ParallelTransition(minHeightTransition, maxHeightTransition);
-                SequentialTransition sequentialTransition = new SequentialTransition(fadeTransition, heightTransition);
-                sequentialTransition.playFromStart();
+                if(draggedNode.getOpacity() == 0) return;
+
+                FadeTransition fadeTransition = AnimationsClass.fadeOut(draggedNode);
+                fadeTransition.setOnFinished(e -> {
+                    dropPositionController.removeTransitions.remove(fadeTransition);
+                    if(!itemDragActive.get()) return;
+
+                    if(dropPositionController.position == draggedNode.videoIndex){
+                        dropPositionController.dragTimer.stop();
+
+                        draggedNode.setMinHeight(0);
+                        draggedNode.setMaxHeight(0);
+
+                        dropPositionController.setPosition();
+                    }
+                    else {
+                        Timeline minHeightTransition = AnimationsClass.animateMinHeight(0, draggedNode);
+                        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(0, draggedNode);
+                        ParallelTransition heightTransition = new ParallelTransition(minHeightTransition, maxHeightTransition);
+
+                        dropPositionController.removeTransitions.add(heightTransition);
+                        heightTransition.setOnFinished(event -> dropPositionController.removeTransitions.remove(heightTransition));
+                        heightTransition.playFromStart();
+                    }
+                });
+
+                fadeTransition.playFromStart();
             }
         }
     }
 
     private void stopDragAction(){
-        for(Transition transition : dropPositionController.transitions){
-            transition.stop();
-        }
 
-        dropPositionController.transitions.clear();
+        if(!dropPositionController.translateTransitions.isEmpty()){
+            for(Transition transition : dropPositionController.translateTransitions){
+                transition.stop();
+            }
+
+            dropPositionController.translateTransitions.clear();
+        }
 
         for(Node node : this.getChildren()){
             node.setTranslateY(0);
         }
 
+        this.setPadding(new Insets(0, 0, 20, 0));
+
         dropPositionController.position = Integer.MAX_VALUE;
 
         ParallelTransition parallelTransition = new ParallelTransition();
         for(Node node : this.getChildren()){
-            if(menuController.selectedItems.contains((QueueItem) node) || draggedNode == node) continue;
+            if((menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode) && menuController.selectedItems.contains((QueueItem) node)) || draggedNode == node){
+                continue;
+            }
             FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), node);
             fadeTransition.setFromValue(node.getOpacity());
             fadeTransition.setToValue(1);
@@ -473,6 +517,138 @@ public class QueueBox extends VBox {
         }
 
         if(!parallelTransition.getChildren().isEmpty()) parallelTransition.playFromStart();
+    }
+
+    public void handleItemDragDrop(){
+
+        if(!dropPositionController.removeTransitions.isEmpty()){
+            for(Transition transition : dropPositionController.removeTransitions){
+                transition.stop();
+            }
+
+            dropPositionController.removeTransitions.clear();
+        }
+
+        QueueItem hoverItem = null;
+        int correction = 0;
+
+        dropPositionController.position = Math.min(queue.size(), dropPositionController.position);
+
+        for(int i = dropPositionController.position; i >= 0; i--){
+
+            if(i >= queue.size()) continue;
+            if(queue.get(queueOrder.get(i)) == draggedNode || menuController.selectedItems.contains(queue.get(queueOrder.get(i)))) continue;
+
+            hoverItem = queue.get(queueOrder.get(i));
+            if(i != dropPositionController.position) correction = 1;
+
+            break;
+        }
+        if(hoverItem == null){
+            for(int i = dropPositionController.position; i<queue.size(); i++){
+                if(queue.get(queueOrder.get(i)) == draggedNode || menuController.selectedItems.contains(queue.get(queueOrder.get(i)))) continue;
+
+                hoverItem = queue.get(queueOrder.get(i));
+                correction = 0;
+
+                break;
+            }
+        }
+
+
+        if(menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode)){
+            for(QueueItem queueItem : menuController.selectedItems){
+                remove(queueItem, true);
+            }
+        }
+        else remove(draggedNode, true);
+
+        int index = Integer.MAX_VALUE;
+        if(hoverItem != null) index = queueOrder.indexOf(queue.indexOf(hoverItem)) + correction;
+
+        if(menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode)){
+            if(index >= queue.size() - 1){
+                for(int i=0; i<menuController.selectedItems.size(); i++){
+                    QueueItem queueItem = menuController.selectedItems.get(i);
+
+                    queueItem.setMinHeight(90);
+                    queueItem.setMaxHeight(90);
+                    queueItem.setOpacity(0);
+                    queueItem.setMouseTransparent(false);
+
+                    add(queueItem);
+                }
+            }
+            else {
+                for(int i=0; i<menuController.selectedItems.size(); i++){
+                    QueueItem queueItem = menuController.selectedItems.get(i);
+                    if(i == 0 && queue.size() > index + 1){
+                        QueueItem secondItem = queue.get(queueOrder.get(index + 1));
+                        queueItem.setMinHeight(secondItem.getTranslateY());
+                        queueItem.setMaxHeight(secondItem.getTranslateY());
+                    }
+                    else {
+                        queueItem.setMinHeight(0);
+                        queueItem.setMaxHeight(0);
+                    }
+
+                    queueItem.setOpacity(0);
+                    queueItem.setMouseTransparent(false);
+
+                    add(index + i, queueItem);
+                }
+            }
+
+        }
+        else {
+            if(index >= queue.size() -1){
+                draggedNode.setMinHeight(90);
+                draggedNode.setMaxHeight(90);
+                draggedNode.setOpacity(0);
+                draggedNode.setMouseTransparent(false);
+
+                add(draggedNode);
+            }
+            else {
+                QueueItem secondItem = queue.get(queueOrder.get(index + 1));
+                draggedNode.setMinHeight(secondItem.getTranslateY());
+                draggedNode.setMaxHeight(secondItem.getTranslateY());
+                draggedNode.setOpacity(0);
+                draggedNode.setMouseTransparent(false);
+
+                add(index, draggedNode);
+            }
+        }
+
+        draggedNode = null;
+        itemDragActive.set(false);
+
+        if(menuController.mainController.dragViewPopup.isShowing()) menuController.mainController.dragViewPopup.hide();
+    }
+
+    public void handleFileDragDrop(){
+        int index = Math.min(dropPositionController.position, queue.size());
+
+        if (dragBoardMedia.isEmpty()){
+            dragAndDropActive.set(false);
+            return;
+        }
+
+        double translation = 0;
+        if(queue.size() > index) translation = queue.get(index).getTranslateY();
+
+        dragAndDropActive.set(false);
+
+        for (int i=0; i < dragBoardMedia.size(); i++) {
+            QueueItem queueItem;
+            if(i == 0) queueItem = new QueueItem(dragBoardMedia.get(i), menuController, menuController.mediaInterface, translation);
+            else queueItem = new QueueItem(dragBoardMedia.get(i), menuController, menuController.mediaInterface, 0);
+
+            this.add(index + i, queueItem);
+        }
+
+        dragBoardMedia.clear();
+        dragBoardFiles.clear();
     }
 
 }

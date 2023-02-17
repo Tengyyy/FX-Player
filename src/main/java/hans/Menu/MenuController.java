@@ -14,8 +14,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -32,7 +30,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -137,7 +134,7 @@ public class MenuController implements Initializable {
 
     public final Timeline scrollTimeline = new Timeline();
     private double scrollVelocity = 0;
-    private final int scrollSpeed = 4;
+    private final int scrollSpeed = 6;
 
 
     @Override
@@ -405,16 +402,16 @@ public class MenuController implements Initializable {
         menu.setClip(menuClip);
 
         scrollTimeline.setCycleCount(Timeline.INDEFINITE);
-        scrollTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(20), (ActionEvent) -> dragScroll()));
+        scrollTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(10), (ActionEvent) -> dragScroll()));
 
 
-        menu.addEventHandler(DragEvent.DRAG_OVER, e -> {
+        queueScroll.addEventHandler(DragEvent.DRAG_OVER, e -> {
             // play scroll-up animation if Y coordinate is in range of 0 to 60
             // play scroll-down animation if Y coordinate is in range of max-60 to max
 
             // maybe make scrolling speed static and not depend on the amount of media items
 
-            if(e.getY() <= 60){
+            if(e.getY() <= 80){
                 scrollVelocity = - scrollSpeed * (1/(queueContent.getHeight()-queueScroll.getViewportBounds().getHeight()));
 
                 if(scrollTimeline.getStatus() != Animation.Status.RUNNING && queueScroll.getViewportBounds().getHeight() < queueContent.getHeight() && queueScroll.getVvalue() != 0.0) scrollTimeline.play();
@@ -429,11 +426,11 @@ public class MenuController implements Initializable {
 
         });
 
-        menu.addEventHandler(DragEvent.DRAG_EXITED, e -> scrollTimeline.stop());
+        queueScroll.addEventHandler(DragEvent.DRAG_EXITED, e -> scrollTimeline.stop());
 
-        menu.addEventHandler(DragEvent.DRAG_DROPPED, e -> scrollTimeline.stop());
+        queueScroll.addEventHandler(DragEvent.DRAG_DROPPED, e -> scrollTimeline.stop());
 
-        lowerBottomBound.bind(menu.heightProperty().subtract(60));
+        lowerBottomBound.bind(queueScroll.heightProperty().subtract(80));
 
         dragResizer = new DragResizer(this);
 

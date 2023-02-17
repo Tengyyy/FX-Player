@@ -5,8 +5,7 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
-import javafx.animation.Animation;
-import javafx.animation.PauseTransition;
+import javafx.animation.Transition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
@@ -22,14 +21,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import javafx.util.Duration;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -64,6 +61,7 @@ public class QueueItem extends GridPane {
 
     StackPane removeButtonWrapper = new StackPane();
     StackPane optionsButtonWrapper = new StackPane();
+    StackPane imageContainer = new StackPane();
     StackPane imageWrapper = new StackPane();
     Region imageBorder = new Region();
 
@@ -195,6 +193,11 @@ public class QueueItem extends GridPane {
         this.setMinHeight(initialHeight);
         this.setMaxHeight(initialHeight);
 
+        Rectangle rectangle = new Rectangle();
+        this.setClip(rectangle);
+        rectangle.widthProperty().bind(this.widthProperty());
+        rectangle.heightProperty().bind(this.heightProperty());
+
 
         playSVG.setContent(App.svgMap.get(SVG.PLAY));
         removeSVG.setContent(App.svgMap.get(SVG.REMOVE));
@@ -206,10 +209,6 @@ public class QueueItem extends GridPane {
         coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
         coverImage.setPreserveRatio(true);
-        String fileExtension = Utilities.getFileExtension(file);
-        if(fileExtension.equals("mp4") || fileExtension.equals("mov") || fileExtension.equals("mkv") || fileExtension.equals("flv") || fileExtension.equals("avi")) coverImage.setImage(new Image(Objects.requireNonNull(menuController.mainController.getClass().getResource("images/video.png")).toExternalForm()));
-        else if(fileExtension.equals("mp3") || fileExtension.equals("flac") || fileExtension.equals("wav")) coverImage.setImage(new Image(Objects.requireNonNull(menuController.mainController.getClass().getResource("images/music.png")).toExternalForm()));
-
 
         indexLabel.getStyleClass().add("indexLabel");
         indexLabel.setMouseTransparent(true);
@@ -259,13 +258,26 @@ public class QueueItem extends GridPane {
         playButtonBackground.setVisible(false);
 
         imageWrapper.setStyle("-fx-background-color: rgb(30,30,30);");
-        imageWrapper.setPrefSize(129, 74);
-        imageWrapper.setMaxSize(129, 74);
-        imageWrapper.getChildren().addAll(coverImage, imageBorder, playButtonBackground, playButton, playButtonIcon);
+        imageWrapper.setPrefSize(125, 70);
+        imageWrapper.setMaxSize(125, 70);
+        imageWrapper.getChildren().addAll(coverImage, playButtonBackground, playButton, playButtonIcon);
         imageWrapper.getStyleClass().add("imageWrapper");
 
-        imageBorder.setPrefSize(129, 74);
-        imageBorder.setMaxSize(129, 74);
+        Rectangle imageWrapperClip = new Rectangle();
+        imageWrapperClip.setWidth(125);
+        imageWrapperClip.setHeight(70);
+        imageWrapperClip.setArcWidth(20);
+        imageWrapperClip.setArcHeight(20);
+        imageWrapper.setClip(imageWrapperClip);
+
+
+        imageContainer.setPrefSize(127, 72);
+        imageContainer.setMaxSize(127, 72);
+        imageContainer.getChildren().addAll(imageWrapper, imageBorder);
+        imageContainer.setBackground(Background.EMPTY);
+
+        imageBorder.setPrefSize(127, 72);
+        imageBorder.setMaxSize(127, 72);
         imageBorder.setBackground(Background.EMPTY);
         imageBorder.getStyleClass().add("imageBorder");
         imageBorder.setMouseTransparent(true);
@@ -357,7 +369,7 @@ public class QueueItem extends GridPane {
 
 
         this.add(indexPane, 0, 0);
-        this.add(imageWrapper, 1, 0);
+        this.add(imageContainer, 1, 0);
         this.add(textWrapper, 2, 0);
         this.add(removeButtonWrapper, 3, 0);
         this.add(optionsButtonWrapper, 4, 0);
@@ -404,8 +416,7 @@ public class QueueItem extends GridPane {
 
             if(!queueBox.dragAndDropActive.get() && (!queueBox.itemDragActive.get() || queueBox.draggedNode == this)) return;
 
-            //code to handle adding items to queue
-            if (e.getY() > height / 2) queueBox.dropPositionController.updatePosition(this.videoIndex + 1);
+            if (e.getY() > 45) queueBox.dropPositionController.updatePosition(this.videoIndex + 1);
             else queueBox.dropPositionController.updatePosition(this.videoIndex);
 
         });
@@ -427,45 +438,36 @@ public class QueueItem extends GridPane {
         });
 
         this.setOnDragDone(e -> {
+            
+            if(!queueBox.itemDragActive.get() && queueBox.draggedNode == null) return;
 
-            QueueItem hoverItem = null;
-            if(queueBox.dropPositionController.position < queueBox.queue.size()){
-                hoverItem = queueBox.queue.get(queueBox.queueOrder.get(queueBox.dropPositionController.position));
-            }
-
-
-            if(menuController.selectionActive.get()){
-                for(QueueItem queueItem : menuController.selectedItems){
-                    queueBox.remove(queueItem, true);
+            if(!queueBox.dropPositionController.removeTransitions.isEmpty()){
+                for(Transition transition : queueBox.dropPositionController.removeTransitions){
+                    transition.stop();
                 }
+
+                queueBox.dropPositionController.removeTransitions.clear();
             }
-            else queueBox.remove(this, true);
 
-            int index = Integer.MAX_VALUE;
-            if(hoverItem != null) index = queueBox.queueOrder.indexOf(queueBox.queue.indexOf(hoverItem));
-
-            if(menuController.selectionActive.get()){
+            if(menuController.selectionActive.get() && menuController.selectedItems.contains(queueBox.draggedNode)){
                 for(int i=0; i<menuController.selectedItems.size(); i++){
                     QueueItem queueItem = menuController.selectedItems.get(i);
-                    queueItem.setMinHeight(0);
-                    queueItem.setMaxHeight(0);
-                    queueItem.setOpacity(0);
+                    queueItem.setMinHeight(90);
+                    queueItem.setMaxHeight(90);
+                    queueItem.setOpacity(1);
                     queueItem.setMouseTransparent(false);
-
-                    queueBox.add(index + i, queueItem);
                 }
             }
             else {
-                queueBox.draggedNode.setMinHeight(0);
-                queueBox.draggedNode.setMaxHeight(0);
-                queueBox.draggedNode.setOpacity(0);
+                queueBox.draggedNode.setMinHeight(90);
+                queueBox.draggedNode.setMaxHeight(90);
+                queueBox.draggedNode.setOpacity(1);
                 queueBox.draggedNode.setMouseTransparent(false);
-
-                queueBox.add(index, queueBox.draggedNode);
             }
 
             queueBox.draggedNode = null;
             queueBox.itemDragActive.set(false);
+            queueBox.dropPositionController.updatePosition(Integer.MAX_VALUE);
 
             if(menuController.mainController.dragViewPopup.isShowing()) menuController.mainController.dragViewPopup.hide();
         });

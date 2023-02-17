@@ -541,7 +541,7 @@ public class MainController implements Initializable {
     }
 
     public void handleDragEntered(DragEvent e){
-        if(e.getDragboard().getFiles().isEmpty()) return;
+        if(e.getDragboard().getFiles().isEmpty() || menuController.queueBox.itemDragActive.get() || menuController.queueBox.draggedNode != null) return;
         File file = e.getDragboard().getFiles().get(0);
         if(!MediaUtilities.mediaFormats.contains(Utilities.getFileExtension(file))) return;
 
@@ -560,6 +560,8 @@ public class MainController implements Initializable {
     }
 
     public void handleDragOver(DragEvent e){
+        if(e.getDragboard().getFiles().isEmpty()) return;
+
         File file = e.getDragboard().getFiles().get(0);
         if(!Utilities.getFileExtension(file).equals("mp4") &&
                 !Utilities.getFileExtension(file).equals("mp3") &&
@@ -580,6 +582,8 @@ public class MainController implements Initializable {
     }
 
     public void handleDragDropped(DragEvent e){
+
+        if(e.getDragboard().getFiles().isEmpty()) return;
 
         File file = e.getDragboard().getFiles().get(0);
 

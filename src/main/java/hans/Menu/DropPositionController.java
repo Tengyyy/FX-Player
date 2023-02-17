@@ -1,9 +1,7 @@
 package hans.Menu;
 
-import javafx.animation.ParallelTransition;
-import javafx.animation.PauseTransition;
-import javafx.animation.Transition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.util.Duration;
 
@@ -18,7 +16,8 @@ public class DropPositionController {
 
     PauseTransition dragTimer = new PauseTransition(Duration.millis(350));
 
-    ArrayList<Transition> transitions = new ArrayList<>();
+    ArrayList<Transition> translateTransitions = new ArrayList<>();
+    ArrayList<Transition> removeTransitions = new ArrayList<>();
 
     DropPositionController(QueueBox queueBox){
         this.queueBox = queueBox;
@@ -44,8 +43,11 @@ public class DropPositionController {
 
     public void animatePosition(){
 
-        for(Transition transition : transitions) transition.stop();
-        transitions.clear();
+        if(!translateTransitions.isEmpty()){
+            for(Transition transition : translateTransitions) transition.stop();
+            translateTransitions.clear();
+        }
+
 
         ParallelTransition parallelTransition = new ParallelTransition();
 
@@ -53,6 +55,7 @@ public class DropPositionController {
             for(Node node : queueBox.getChildren()){
                 if(node.getTranslateY() > 0){
                     TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), node);
+                    translateTransition.setInterpolator(Interpolator.EASE_BOTH);
                     translateTransition.setFromY(node.getTranslateY());
                     translateTransition.setToY(0);
                     parallelTransition.getChildren().add(translateTransition);
@@ -65,22 +68,43 @@ public class DropPositionController {
 
                 if(i < position && node.getTranslateY() > 0){
                     TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), node);
+                    translateTransition.setInterpolator(Interpolator.EASE_BOTH);
                     translateTransition.setFromY(node.getTranslateY());
                     translateTransition.setToY(0);
                     parallelTransition.getChildren().add(translateTransition);
                 }
-                else if(i >= position && node.getTranslateY() < 30){
+                else if(i >= position && node.getTranslateY() < 90){
                     TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), node);
+                    translateTransition.setInterpolator(Interpolator.EASE_BOTH);
+
                     translateTransition.setFromY(node.getTranslateY());
-                    translateTransition.setToY(30);
+                    translateTransition.setToY(90);
                     parallelTransition.getChildren().add(translateTransition);
                 }
             }
         }
 
         if(!parallelTransition.getChildren().isEmpty()){
-            transitions.add(parallelTransition);
+            translateTransitions.add(parallelTransition);
+            parallelTransition.setOnFinished(e -> translateTransitions.remove(parallelTransition));
             parallelTransition.playFromStart();
         }
+    }
+
+    public void setPosition(){
+        if(position >= queueBox.queue.size()){
+            for(Node node : queueBox.getChildren()){
+                node.setTranslateY(0);
+            }
+        }
+        else {
+            for(int i=0; i < queueBox.getChildren().size(); i++){
+                Node node = queueBox.getChildren().get(i);
+
+                if(i < position)node.setTranslateY(0);
+                else node.setTranslateY(90);
+            }
+        }
+
     }
 }

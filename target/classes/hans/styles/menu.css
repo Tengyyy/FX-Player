@@ -285,11 +285,9 @@
     -fx-border-insets: 0;
     -fx-border-color: red;
     -fx-border-width: 2;
+    -fx-border-radius: 10;
 }
 
-.imageWrapper {
-    -fx-background-insets: 2;
-}
 
 .playButton {
     -fx-padding: 0;

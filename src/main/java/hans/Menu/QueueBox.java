@@ -567,7 +567,7 @@ public class QueueBox extends VBox {
         if(hoverItem != null) index = queueOrder.indexOf(queue.indexOf(hoverItem)) + correction;
 
         if(menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode)){
-            if(index >= queue.size() - 1){
+            if(index >= queue.size()){
                 for(int i=0; i<menuController.selectedItems.size(); i++){
                     QueueItem queueItem = menuController.selectedItems.get(i);
 
@@ -582,8 +582,8 @@ public class QueueBox extends VBox {
             else {
                 for(int i=0; i<menuController.selectedItems.size(); i++){
                     QueueItem queueItem = menuController.selectedItems.get(i);
-                    if(i == 0 && queue.size() > index + 1){
-                        QueueItem secondItem = queue.get(queueOrder.get(index + 1));
+                    if(i == 0){
+                        QueueItem secondItem = queue.get(queueOrder.get(index));
                         queueItem.setMinHeight(secondItem.getTranslateY());
                         queueItem.setMaxHeight(secondItem.getTranslateY());
                     }
@@ -601,7 +601,7 @@ public class QueueBox extends VBox {
 
         }
         else {
-            if(index >= queue.size() -1){
+            if(index >= queue.size()){
                 draggedNode.setMinHeight(90);
                 draggedNode.setMaxHeight(90);
                 draggedNode.setOpacity(0);
@@ -610,7 +610,7 @@ public class QueueBox extends VBox {
                 add(draggedNode);
             }
             else {
-                QueueItem secondItem = queue.get(queueOrder.get(index + 1));
+                QueueItem secondItem = queue.get(queueOrder.get(index));
                 draggedNode.setMinHeight(secondItem.getTranslateY());
                 draggedNode.setMaxHeight(secondItem.getTranslateY());
                 draggedNode.setOpacity(0);
@@ -627,7 +627,6 @@ public class QueueBox extends VBox {
     }
 
     public void handleFileDragDrop(){
-        int index = Math.min(dropPositionController.position, queue.size());
 
         if (dragBoardMedia.isEmpty()){
             dragAndDropActive.set(false);
@@ -635,7 +634,9 @@ public class QueueBox extends VBox {
         }
 
         double translation = 0;
-        if(queue.size() > index) translation = queue.get(index).getTranslateY();
+        if(queue.size() > dropPositionController.position) translation = queue.get(queueOrder.get(dropPositionController.position)).getTranslateY();
+
+        int index = dropPositionController.position;
 
         dragAndDropActive.set(false);
 

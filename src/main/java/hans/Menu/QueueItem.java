@@ -270,7 +270,6 @@ public class QueueItem extends GridPane {
         imageWrapperClip.setArcHeight(20);
         imageWrapper.setClip(imageWrapperClip);
 
-
         imageContainer.setPrefSize(127, 72);
         imageContainer.setMaxSize(127, 72);
         imageContainer.getChildren().addAll(imageWrapper, imageBorder);
@@ -286,6 +285,10 @@ public class QueueItem extends GridPane {
         videoTitle.getStyleClass().add("videoTitle");
         videoTitle.setWrapText(true);
         videoTitle.setMaxHeight(40);
+        videoTitle.setStyle("-fx-background-color: rgb(30,30,30);");
+        videoTitle.setMinHeight(20);
+        videoTitle.setMinWidth(160);
+
 
         captionsPane.setMinSize(21, 14);
         captionsPane.setPrefSize(21, 14);
@@ -304,6 +307,10 @@ public class QueueItem extends GridPane {
         artist.getStyleClass().add("subText");
 
         duration.getStyleClass().add("subText");
+        duration.setStyle("-fx-background-color: rgb(30,30,30);");
+        duration.setMinHeight(18);
+        duration.setMinWidth(90);
+
 
         subTextWrapper.setAlignment(Pos.CENTER_LEFT);
         subTextWrapper.getChildren().addAll(duration, artist);
@@ -313,6 +320,7 @@ public class QueueItem extends GridPane {
         textWrapper.setPrefHeight(90);
         textWrapper.getChildren().addAll(videoTitle,subTextWrapper);
         textWrapper.setMouseTransparent(true);
+        textWrapper.setSpacing(5);
         GridPane.setMargin(textWrapper, new Insets(0, 0, 0, 10));
 
         artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()));
@@ -534,6 +542,17 @@ public class QueueItem extends GridPane {
 
     private void applyMediaItem(){
         if(mediaItem == null) return;
+
+        duration.setStyle("-fx-background-color: transparent;");
+        duration.setMinHeight(0);
+        duration.setMinWidth(0);
+
+        videoTitle.setStyle("-fx-background-color: transparent;");
+        videoTitle.setMinHeight(0);
+        videoTitle.setMinWidth(0);
+
+        textWrapper.setSpacing(0);
+
         if(mediaItem.getCover() != null) {
             coverImage.setImage(mediaItem.getCover());
             imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");

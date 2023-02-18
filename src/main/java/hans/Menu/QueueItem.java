@@ -13,11 +13,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.SnapshotResult;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -442,6 +446,26 @@ public class QueueItem extends GridPane {
             clipboardContent.putString("Items");
             dragboard.setContent(clipboardContent);
 
+            Label dragLabel;
+
+            if(!menuController.selectionActive.get() || menuController.selectedItems.size() == 1 || !menuController.selectedItems.contains(this)) dragLabel = new Label("1 item");
+            else dragLabel = new Label(menuController.selectedItems.size() + " items");
+
+            dragLabel.setId("dragLabel");
+
+            SnapshotParameters snapshotParameters = new SnapshotParameters();
+            snapshotParameters.setFill(Color.TRANSPARENT);
+
+            Scene dragLabelScene = new Scene(dragLabel);
+            dragLabelScene.setFill(Color.TRANSPARENT);
+            dragLabelScene.getStylesheets().add(String.valueOf(MainController.class.getResource("styles/menu.css")));
+
+            WritableImage writableImage = dragLabel.snapshot(snapshotParameters, null);
+
+            dragboard.setDragView(writableImage);
+            dragboard.setDragViewOffsetX(writableImage.getWidth() + 5);
+            dragboard.setDragViewOffsetY(writableImage.getHeight()/2);
+
             e.consume();
         });
 
@@ -476,8 +500,6 @@ public class QueueItem extends GridPane {
             queueBox.draggedNode = null;
             queueBox.itemDragActive.set(false);
             queueBox.dropPositionController.updatePosition(Integer.MAX_VALUE);
-
-            if(menuController.mainController.dragViewPopup.isShowing()) menuController.mainController.dragViewPopup.hide();
         });
 
 

@@ -120,9 +120,6 @@ public class MainController implements Initializable {
 
     public AddYoutubeVideoWindow addYoutubeVideoWindow;
 
-    public DragViewPopup dragViewPopup;
-
-
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
@@ -141,9 +138,6 @@ public class MainController implements Initializable {
 
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
         sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
-
-        dragViewPopup = new DragViewPopup(this);
-
 
         videoImageViewWrapper.getChildren().add(2, captionsController.captionsBuffer);
         videoImageViewWrapper.getChildren().add(3, settingsController.settingsBuffer);

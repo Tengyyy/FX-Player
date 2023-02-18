@@ -12,6 +12,7 @@
 }
 
 .root {
+    -fx-background-color: transparent;
 	-fx-font-family: "Roboto Medium";
 	-fx-font-size: 15;
 }
@@ -277,6 +278,15 @@
     -fx-border-width: 0 0 0 1;
     -fx-border-color: #909090;
     -fx-border-style: none none none solid;
+}
+
+#dragLabel {
+    -fx-background-color: rgb(50,50,50);
+    -fx-background-radius: 10;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 18;
+    -fx-text-fill: white;
+    -fx-padding: 15 20 15 20;
 }
 
 

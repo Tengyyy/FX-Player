@@ -2,6 +2,7 @@ package hans.Menu;
 
 import hans.AnimationsClass;
 import hans.ControlTooltip;
+import hans.MainController;
 import hans.MediaItems.MediaUtilities;
 import hans.Utilities;
 import javafx.animation.*;
@@ -14,12 +15,15 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -52,15 +56,17 @@ public class QueueBox extends VBox {
 
     DropPositionController dropPositionController;
 
+
     QueueBox(MenuController menuController){
         this.menuController = menuController;
         this.setAlignment(Pos.TOP_CENTER);
         this.setFillWidth(true);
 
         dropPositionController = new DropPositionController(this);
-
         VBox.setVgrow(this, Priority.ALWAYS);
         this.setPadding(new Insets(0, 0, 20, 0));
+
+
 
         this.setOnDragEntered(this::handleDragEntered);
         this.setOnDragOver(this::handleDragOver);
@@ -80,7 +86,6 @@ public class QueueBox extends VBox {
             else stopDragAction();
         });
     }
-
 
     public void add(int index, QueueItem child){
 
@@ -308,17 +313,11 @@ public class QueueBox extends VBox {
 
     public void handleDragEntered(DragEvent e) {
 
-        if(itemDragActive.get()){
-            if(!menuController.selectionActive.get() || menuController.selectedItems.size() == 1 || !menuController.selectedItems.contains(draggedNode)) menuController.mainController.dragViewPopup.setText("1 item");
-            else menuController.mainController.dragViewPopup.setText(menuController.selectedItems.size() + " items");
-        }
-        else if(draggedNode != null){
-            itemDragActive.set(true);
 
-            if(!menuController.selectionActive.get() || menuController.selectedItems.size() == 1 || !menuController.selectedItems.contains(draggedNode)) menuController.mainController.dragViewPopup.setText("1 item");
-            else menuController.mainController.dragViewPopup.setText(menuController.selectedItems.size() + " items");
+        if(draggedNode != null){
+            itemDragActive.set(true);
         }
-        else {
+        else if(!itemDragActive.get()){
             Dragboard dragboard = e.getDragboard();
 
             dragBoardFiles = dragboard.getFiles();
@@ -334,18 +333,14 @@ public class QueueBox extends VBox {
 
             dragAndDropActive.set(true);
 
-            if(dragBoardMedia.size() == 1) menuController.mainController.dragViewPopup.setText("1 item");
-            else menuController.mainController.dragViewPopup.setText(dragBoardMedia.size() + " items");
         }
 
-        if(!menuController.mainController.dragViewPopup.isShowing()) menuController.mainController.dragViewPopup.show(menuController.mainController.videoImageViewWrapper, e.getScreenX(), e.getScreenY());
     }
 
     public void handleDragOver(DragEvent e){
         if((dragAndDropActive.get() && !dragBoardMedia.isEmpty()) || itemDragActive.get()) {
             e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 
-            menuController.mainController.dragViewPopup.setPosition(e.getScreenX(), e.getScreenY());
             dropPositionController.updateY(e.getY());
         }
     }
@@ -358,8 +353,6 @@ public class QueueBox extends VBox {
         else if(itemDragActive.get()){
             handleItemDragDrop();
         }
-
-        if(menuController.mainController.dragViewPopup.isShowing()) menuController.mainController.dragViewPopup.hide();
     }
 
     public void handleDragExited(DragEvent e){
@@ -370,7 +363,6 @@ public class QueueBox extends VBox {
     public void cancelDragAndDrop(){
         dragAndDropActive.set(false);
         itemDragActive.set(false);
-        menuController.mainController.dragViewPopup.hide();
         dragBoardFiles.clear();
         dragBoardMedia.clear();
     }
@@ -413,9 +405,6 @@ public class QueueBox extends VBox {
         for(Node node : this.getChildren()){
             node.setTranslateY(0);
         }
-
-        this.setPadding(new Insets(0, 0, 110, 0));
-
 
 
         ParallelTransition parallelTransition = new ParallelTransition();
@@ -622,8 +611,6 @@ public class QueueBox extends VBox {
 
         draggedNode = null;
         itemDragActive.set(false);
-
-        if(menuController.mainController.dragViewPopup.isShowing()) menuController.mainController.dragViewPopup.hide();
     }
 
     public void handleFileDragDrop(){

@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -513,10 +514,30 @@ public class MainController implements Initializable {
 
     public void openMenu() {
 
-        if(menuController.menuInTransition || controlBarController.durationSlider.isValueChanging() || controlBarController.volumeSlider.isValueChanging() || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || captionsController.captionsBox.captionsDragActive || settingsController.equalizerController.sliderActive) return;
+        if(menuController.menuInTransition
+                || controlBarController.durationSlider.isValueChanging()
+                || controlBarController.volumeSlider.isValueChanging()
+                || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging()
+                || captionsController.captionsBox.captionsDragActive
+                || settingsController.equalizerController.sliderActive) return;
 
         menuController.menuInTransition = true;
         menuController.menuState = MenuState.QUEUE_OPEN;
+
+        if(menuController.queueBox.activeItem.get() != null){
+            double heightViewPort = menuController.queueScroll.getViewportBounds().getHeight();
+            double heightScrollPane = menuController.queueScroll.getContent().getBoundsInLocal().getHeight();
+            double y = menuController.queueBox.activeItem.get().getBoundsInParent().getMaxY();
+            if (y<(heightViewPort/2)){
+                menuController.queueScroll.setVvalue(0);
+            }
+            else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
+                menuController.queueScroll.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
+            }
+            else if(y>= (heightScrollPane-(heightViewPort/2))){
+                menuController.queueScroll.setVvalue(1);
+            }
+        }
 
         if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
         if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();

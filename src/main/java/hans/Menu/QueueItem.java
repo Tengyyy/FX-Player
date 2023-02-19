@@ -441,9 +441,8 @@ public class QueueItem extends GridPane {
             queueBox.itemDragActive.set(true);
 
             Dragboard dragboard = this.startDragAndDrop(TransferMode.ANY);
-
             ClipboardContent clipboardContent = new ClipboardContent();
-            clipboardContent.putString("Items");
+            clipboardContent.putString("");
             dragboard.setContent(clipboardContent);
 
             Label dragLabel;
@@ -685,8 +684,8 @@ public class QueueItem extends GridPane {
         if(this.mediaItemGenerated.get()) newItem = new QueueItem(this.mediaItem, menuController, mediaInterface, 0);
         else newItem = new QueueItem(this.file, menuController, mediaInterface, 0);
 
-        if(queueBox.activeItem.get() != null) queueBox.add(queueBox.activeIndex.get() + 1, newItem);
-        else queueBox.add(0, newItem);
+        if(queueBox.activeItem.get() != null) queueBox.add(queueBox.activeIndex.get() + 1, newItem, false);
+        else queueBox.add(0, newItem, false);
     }
 
     public Button getOptionsButton() {

@@ -584,8 +584,8 @@ public class MainController implements Initializable {
         actionIndicator.animate();
 
         QueueItem queueItem = new QueueItem(file, menuController, mediaInterface, 0);
-        if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.add(menuController.queueBox.activeIndex.get() + 1, queueItem);
-        else menuController.queueBox.add(0, queueItem);
+        if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.add(menuController.queueBox.activeIndex.get() + 1, queueItem, false);
+        else menuController.queueBox.add(0, queueItem, false);
         queueItem.play();
 
     }

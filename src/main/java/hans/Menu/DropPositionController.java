@@ -1,8 +1,10 @@
 package hans.Menu;
 
+import hans.AnimationsClass;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.layout.Background;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -51,60 +53,91 @@ public class DropPositionController {
 
         ParallelTransition parallelTransition = new ParallelTransition();
 
-        if(position >= queueBox.queue.size()){
-            for(Node node : queueBox.getChildren()){
-                if(node.getTranslateY() > 0){
-                    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), node);
-                    translateTransition.setInterpolator(Interpolator.EASE_BOTH);
-                    translateTransition.setFromY(node.getTranslateY());
+        if(queueBox.itemDragActive.get()){
+            for (int i = 0; i < queueBox.draggedNode.videoIndex; i++) {
+                QueueItem queueItem = queueBox.queue.get(queueBox.queueOrder.get(i));
+                if(i < position && queueItem.getTranslateY() != 0){
+                    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), queueItem);
+                    translateTransition.setFromY(queueItem.getTranslateY());
+                    translateTransition.setToY(0);
+                    parallelTransition.getChildren().add(translateTransition);
+                }
+                else if(i >= position && queueItem.getTranslateY() != 90) {
+                    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), queueItem);
+                    translateTransition.setFromY(queueItem.getTranslateY());
+                    translateTransition.setToY(90);
+                    parallelTransition.getChildren().add(translateTransition);
+                }
+            }
+
+            for (int i = queueBox.draggedNode.videoIndex + 1; i < queueBox.queue.size(); i++) {
+                QueueItem queueItem = queueBox.queue.get(queueBox.queueOrder.get(i));
+                if(i < position && queueItem.getTranslateY() != -90){
+                    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), queueItem);
+                    translateTransition.setFromY(queueItem.getTranslateY());
+                    translateTransition.setToY(-90);
+                    parallelTransition.getChildren().add(translateTransition);
+                }
+                else if(i >= position && queueItem.getTranslateY() != 0){
+                    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), queueItem);
+                    translateTransition.setFromY(queueItem.getTranslateY());
                     translateTransition.setToY(0);
                     parallelTransition.getChildren().add(translateTransition);
                 }
             }
         }
-        else {
-            for(int i=0; i < queueBox.getChildren().size(); i++){
-                Node node = queueBox.getChildren().get(i);
-
-                if(i < position && node.getTranslateY() > 0){
-                    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), node);
-                    translateTransition.setInterpolator(Interpolator.EASE_BOTH);
-                    translateTransition.setFromY(node.getTranslateY());
-                    translateTransition.setToY(0);
-                    parallelTransition.getChildren().add(translateTransition);
+        else if(queueBox.dragAndDropActive.get()){
+            if(position >= queueBox.queue.size()){
+                for(QueueItem queueItem : queueBox.queue){
+                    if(queueItem.getTranslateY() != 0){
+                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), queueItem);
+                        translateTransition.setFromY(queueItem.getTranslateY());
+                        translateTransition.setToY(0);
+                        parallelTransition.getChildren().add(translateTransition);
+                    }
                 }
-                else if(i >= position && node.getTranslateY() < 90){
-                    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), node);
-                    translateTransition.setInterpolator(Interpolator.EASE_BOTH);
+            }
+            else {
+                for(int i=0; i < queueBox.queue.size(); i++){
+                    Node node = queueBox.queue.get(queueBox.queueOrder.get(i));
 
-                    translateTransition.setFromY(node.getTranslateY());
-                    translateTransition.setToY(90);
-                    parallelTransition.getChildren().add(translateTransition);
+                    if(i < position && node.getTranslateY() > 0){
+                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), node);
+                        translateTransition.setFromY(node.getTranslateY());
+                        translateTransition.setToY(0);
+                        parallelTransition.getChildren().add(translateTransition);
+                    }
+                    else if(i >= position && node.getTranslateY() < 90){
+                        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), node);
+
+                        translateTransition.setFromY(node.getTranslateY());
+                        translateTransition.setToY(90);
+                        parallelTransition.getChildren().add(translateTransition);
+                    }
                 }
             }
         }
 
         if(!parallelTransition.getChildren().isEmpty()){
+
+            if(queueBox.dragAndDropActive.get() && queueBox.getPadding().getBottom() == 20){
+                Animation animation = new Transition() {
+                    {
+                        setCycleDuration(Duration.millis(100));
+                    }
+
+                    @Override
+                    protected void interpolate(double progress) {
+                        queueBox.setPadding(new Insets(0, 0, 20 + queueBox.queue.get(queueBox.queueOrder.get(queueBox.queueOrder.size() - 1)).getTranslateY(), 0));
+                    }
+                };
+
+                parallelTransition.getChildren().add(animation);
+            }
+
             translateTransitions.add(parallelTransition);
             parallelTransition.setOnFinished(e -> translateTransitions.remove(parallelTransition));
             parallelTransition.playFromStart();
         }
-    }
-
-    public void setPosition(){
-        if(position >= queueBox.queue.size()){
-            for(Node node : queueBox.getChildren()){
-                node.setTranslateY(0);
-            }
-        }
-        else {
-            for(int i=0; i < queueBox.getChildren().size(); i++){
-                Node node = queueBox.getChildren().get(i);
-
-                if(i < position)node.setTranslateY(0);
-                else node.setTranslateY(90);
-            }
-        }
-
     }
 }

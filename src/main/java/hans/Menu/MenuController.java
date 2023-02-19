@@ -462,7 +462,7 @@ public class MenuController implements Initializable {
             for(File file : selectedFiles){
                 QueueItem queueItem = new QueueItem(file, this, mediaInterface, 0);
                 if(settingsController.playbackOptionsController.shuffleOn) queueBox.addRand(queueItem);
-                else queueBox.add(queueItem);
+                else queueBox.add(queueItem, false);
             }
         }
     }
@@ -479,7 +479,7 @@ public class MenuController implements Initializable {
                 if(MediaUtilities.mediaFormats.contains(Utilities.getFileExtension(file))){
                     QueueItem queueItem = new QueueItem(file, this, mediaInterface, 0);
                     if(settingsController.playbackOptionsController.shuffleOn) queueBox.addRand(queueItem);
-                    else queueBox.add(queueItem);
+                    else queueBox.add(queueItem, false);
                 }
             }
         }

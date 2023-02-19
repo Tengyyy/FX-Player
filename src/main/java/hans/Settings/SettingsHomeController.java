@@ -186,8 +186,8 @@ public class SettingsHomeController {
 
         if (selectedFile != null) {
             QueueItem queueItem = new QueueItem(selectedFile, settingsController.menuController, settingsController.mediaInterface, 0);
-            if(settingsController.menuController.queueBox.activeItem.get() != null) settingsController.menuController.queueBox.add(settingsController.menuController.queueBox.activeItem.get().videoIndex + 1, queueItem);
-            else settingsController.menuController.queueBox.add(0, queueItem);
+            if(settingsController.menuController.queueBox.activeItem.get() != null) settingsController.menuController.queueBox.add(settingsController.menuController.queueBox.activeItem.get().videoIndex + 1, queueItem, false);
+            else settingsController.menuController.queueBox.add(0, queueItem, false);
             queueItem.play();
         }
     }

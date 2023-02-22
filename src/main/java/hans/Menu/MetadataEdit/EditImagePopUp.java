@@ -24,7 +24,7 @@ public class EditImagePopUp extends ContextMenu {
     MenuItem chooseItem = new MenuItem("Choose image");
 
     double buttonWidth;
-    final double popUpWidth = 162; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
+    final double popUpWidth = 154; // calling getWidth on this pop-up window is inaccurate as it sometimes incorrectly shows 151, hard-coded value is used to always get the same result
 
 
     FadeTransition showTransition, hideTransition;
@@ -36,6 +36,8 @@ public class EditImagePopUp extends ContextMenu {
     EditImagePopUp(MetadataEditPage metadataEditPage){
 
         this.metadataEditPage = metadataEditPage;
+        this.getStyleClass().add("menu-context-menu");
+
 
         metadataEditPage.textBox.getScene().getStylesheets().add(Objects.requireNonNull(metadataEditPage.menuController.mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 

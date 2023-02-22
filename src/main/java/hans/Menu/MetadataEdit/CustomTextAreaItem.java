@@ -165,6 +165,9 @@ public class CustomTextAreaItem extends VBox{
             keyField.requestFocus();
         });
 
+        editButton.disableProperty().bind(otherEditItem.metadataEditPage.fieldsDisabledProperty);
+
+
         editButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, editButton, 0, 1, false, 1, true));
         editButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, editButton, 1, 0, false, 1, true));
 

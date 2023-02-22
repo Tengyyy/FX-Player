@@ -44,11 +44,10 @@ public class OtherEditItem implements MetadataEditItem{
 
 
         addButton.setText("Add key");
-        addButton.getStyleClass().add("secondaryButton");
+        addButton.getStyleClass().add("menuButton");
         addButton.setCursor(Cursor.HAND);
         VBox.setMargin(addButton, new Insets(5, 0, 15, 5));
-        addButton.setPadding(new Insets(8, 10, 8, 10));
-        addButton.setRipplerFill(Color.WHITE);
+        addButton.setRipplerFill(Color.TRANSPARENT);
 
         addIcon.setShape(addSVG);
         addIcon.getStyleClass().add("menuIcon");
@@ -63,6 +62,8 @@ public class OtherEditItem implements MetadataEditItem{
             metadataEditPage.menuController.metadataEditScroll.setVvalue(1.0);
             metadataEditPage.mediaItem.changesMade.set(true);
         });
+        addButton.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+
 
         content.getChildren().add(addButton);
 

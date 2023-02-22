@@ -265,6 +265,9 @@ public class MediaItem {
 
     public boolean updateMetadata() {
 
+        this.metadataEditActive.set(true);
+        this.changesMade.set(false);
+
         boolean metadataEditSuccess = false;
 
         boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration);

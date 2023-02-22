@@ -15,11 +15,9 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.SnapshotResult;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
@@ -30,7 +28,6 @@ import javafx.scene.shape.SVGPath;
 
 import java.io.File;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -82,10 +79,6 @@ public class QueueItem extends GridPane {
 
     public StackPane captionsPane = new StackPane();
     public Region captionsIcon = new Region();
-
-
-    public int newPosition; // keeps track of the position where the queueitem should move to when being dragged
-    public double runningTranslate; // mirrors draggable nodes translateY value and if it goes over QueueItem.height or below -QueueItem.height will update the visual order of queueitems
 
     ControlTooltip playButtonTooltip, removeButtonTooltip, optionsButtonTooltip;
 

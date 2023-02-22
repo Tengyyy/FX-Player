@@ -41,7 +41,7 @@ public class MenuItemContextMenu extends ContextMenu {
 
         this.queueItem = queueItem;
 
-        this.getStyleClass().add("queue-context-menu");
+        this.getStyleClass().add("menu-context-menu");
 
         queueItem.getScene().getStylesheets().add(Objects.requireNonNull(queueItem.getMenuController().mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 

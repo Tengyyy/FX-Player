@@ -52,7 +52,7 @@ public class MetadataEditPage {
     JFXButton applyButton = new JFXButton();
     Region saveIcon = new Region();
 
-    JFXButton cancelButton = new JFXButton();
+    JFXButton discardButton = new JFXButton();
 
     Button closeButton = new Button();
     Region closeIcon = new Region();
@@ -85,7 +85,7 @@ public class MetadataEditPage {
     Label savedLabel = new Label();
 
 
-    ColumnConstraints column1 = new ColumnConstraints(80, 80, 80);
+    ColumnConstraints column1 = new ColumnConstraints(140, 140, 140);
     ColumnConstraints column2 = new ColumnConstraints(0,100,Double.MAX_VALUE);
     ColumnConstraints column3 = new ColumnConstraints(140,140,140);
 
@@ -208,6 +208,7 @@ public class MetadataEditPage {
         editImageButton.setId("editImageButton");
         editImageButton.setOpacity(0);
         editImageButton.setCursor(Cursor.HAND);
+        editImageButton.disableProperty().bind(fieldsDisabledProperty);
 
         Platform.runLater(() -> {
             editImageTooltip = new ControlTooltip(menuController.mainController, "Edit cover", editImageButton, 1000);
@@ -224,31 +225,29 @@ public class MetadataEditPage {
         textBox.setAlignment(Pos.TOP_LEFT);
         textBox.setPadding(new Insets(0, 15, 0, 15));
 
-        footerPane.add(cancelButton, 0, 0);
+        footerPane.add(discardButton, 0, 0);
         footerPane.add(progressPane, 1, 0);
         footerPane.add(applyButton, 2, 0);
 
 
         footerPane.setPadding(new Insets(20, 12, 10, 10));
-        column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
+        column2.setHgrow(Priority.ALWAYS);
         footerPane.getColumnConstraints().addAll(column1, column2, column3);
         footerPane.getRowConstraints().addAll(row1);
 
 
-        GridPane.setValignment(cancelButton, VPos.CENTER);
+        GridPane.setValignment(discardButton, VPos.CENTER);
         GridPane.setValignment(progressPane, VPos.CENTER);
         GridPane.setValignment(applyButton, VPos.CENTER);
 
 
-        GridPane.setHalignment(cancelButton, HPos.CENTER);
+        GridPane.setHalignment(discardButton, HPos.CENTER);
         GridPane.setHalignment(progressPane, HPos.CENTER);
         GridPane.setHalignment(applyButton, HPos.CENTER);
 
         applyButton.setRipplerFill(Color.WHITE);
         applyButton.setText("Save changes");
         applyButton.getStyleClass().add("mainButton");
-        applyButton.setGraphicTextGap(7);
-        applyButton.setPadding(new Insets(8, 10, 8, 8));
         applyButton.setCursor(Cursor.HAND);
         applyButton.setDisable(true);
         applyButton.setOnAction(e -> saveMetadata());
@@ -260,14 +259,16 @@ public class MetadataEditPage {
         saveIcon.setMaxSize(18, 18);
         applyButton.setGraphic(saveIcon);
 
-        cancelButton.setRipplerFill(Color.WHITE);
-        cancelButton.setCursor(Cursor.HAND);
-        cancelButton.setText("Cancel");
-        cancelButton.getStyleClass().add("secondaryButton");
+        discardButton.setRipplerFill(Color.TRANSPARENT);
+        discardButton.setCursor(Cursor.HAND);
+        discardButton.setText("Discard changes");
+        discardButton.getStyleClass().add("menuButton");
+        discardButton.setDisable(true);
 
-        cancelButton.setPadding(new Insets(8, 10, 8, 10));
-
-        cancelButton.setOnAction(e -> exitMetadataEditPage());
+        discardButton.setOnAction(e -> {
+            if(mediaItem.metadataEditActive.get()) return;
+            reloadMetadata();
+        });
 
 
         progressPane.getChildren().addAll(progressBar, savedLabel);
@@ -278,7 +279,6 @@ public class MetadataEditPage {
         StackPane.setAlignment(savedLabel, Pos.CENTER);
 
         progressBar.setMaxWidth(250);
-        progressBar.setProgress(0.5);
         progressBar.setPrefHeight(11);
         progressBar.setVisible(false);
         StackPane.setAlignment(progressBar, Pos.CENTER);
@@ -294,6 +294,7 @@ public class MetadataEditPage {
         progressBar.progressProperty().bind(mediaItem.metadataEditProgress);
         progressBar.visibleProperty().bind(mediaItem.metadataEditActive);
         applyButton.disableProperty().bind(mediaItem.changesMade.not());
+        discardButton.disableProperty().bind(mediaItem.changesMade.not());
         fieldsDisabledProperty.bind(mediaItem.metadataEditActive);
 
 
@@ -370,11 +371,14 @@ public class MetadataEditPage {
         progressBar.visibleProperty().unbind();
         progressBar.progressProperty().unbind();
         applyButton.disableProperty().unbind();
+        editImageButton.disableProperty().unbind();
+        discardButton.disableProperty().unbind();
         fieldsDisabledProperty.unbind();
 
-        //TODO: fix this while metadata edit/ ffmpeg process is ongoing
-        if(mediaItem.changesMade.get()) mediaItem.newMetadata = metadataEditItem.createMetadataMap();
-        mediaItem = null;
+        if(!mediaItem.metadataEditActive.get() && mediaItem.changesMade.get()){
+            mediaItem.newMetadata = metadataEditItem.createMetadataMap();
+        }
+
         metadataEditItem = null;
 
         menuController.metadataEditScroll.setVisible(false);
@@ -404,13 +408,17 @@ public class MetadataEditPage {
     }
 
     private void editImageButtonClick(){
-        if(mediaItem.newCoverImage != null || (mediaItem.getCover() != null && !mediaItem.coverRemoved)) editImagePopUp.showOptions(mediaItem);
+        if(mediaItem.metadataEditActive.get()) return;
+        if(mediaItem.newCoverImage != null || (mediaItem.getCover() != null && !mediaItem.coverRemoved)){
+            if(editImagePopUp.isShowing()) editImagePopUp.hide();
+            else editImagePopUp.showOptions(mediaItem);
+        }
         else editImage();
     }
 
     public void editImage(){
         File selectedFile = fileChooser.showOpenDialog(imageView.getScene().getWindow());
-        if(selectedFile != null){
+        if(selectedFile != null && !mediaItem.metadataEditActive.get()){
             mediaItem.coverRemoved = false;
             mediaItem.newCoverImage = new Image(String.valueOf(selectedFile));
             mediaItem.newCoverFile = selectedFile;
@@ -424,6 +432,8 @@ public class MetadataEditPage {
     }
 
     public void removeImage(){
+        if(mediaItem.metadataEditActive.get()) return;
+
         mediaItem.coverRemoved = true;
         mediaItem.newCoverImage = null;
         mediaItem.newColor = null;
@@ -435,6 +445,9 @@ public class MetadataEditPage {
     }
 
     public void saveMetadata(){
+
+        if(mediaItem.metadataEditActive.get() || !mediaItem.changesMade.get()) return;
+
         mediaItem.newMetadata = metadataEditItem.createMetadataMap();
 
         if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() == mediaItem){
@@ -444,8 +457,6 @@ public class MetadataEditPage {
         MetadataEditTask metadataEditTask = new MetadataEditTask(mediaItem);
         metadataEditTask.setOnSucceeded(e -> {
             if(metadataEditTask.getValue()){
-
-
                 for(QueueItem queueItem : menuController.queueBox.queue){
                     if(queueItem.getMediaItem() == mediaItem){
                         for(Map.Entry<String, String> entry : mediaItem.getMediaInformation().entrySet()){
@@ -466,6 +477,26 @@ public class MetadataEditPage {
         executorService.execute(metadataEditTask);
         executorService.shutdown();
 
+    }
+
+    private void reloadMetadata(){
+
+        if(mediaItem.metadataEditActive.get()) return;
+
+        mediaItem.changesMade.set(false);
+        mediaItem.metadataEditActive.set(false);
+        mediaItem.metadataEditProgress.set(0);
+        mediaItem.newMetadata = null;
+        mediaItem.coverRemoved = false;
+        mediaItem.newCoverImage = null;
+        mediaItem.newColor = null;
+        mediaItem.newCoverFile = null;
+
+        textBox.getChildren().clear();
+        imageView.setImage(null);
+        imageViewContainer.setStyle("-fx-background-color: transparent;");
+
+        enterMetadataEditPage(mediaItem);
     }
 
 }

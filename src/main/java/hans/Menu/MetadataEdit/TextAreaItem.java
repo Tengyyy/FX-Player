@@ -25,8 +25,10 @@ public class TextAreaItem extends VBox{
         textArea = new ExpandableTextArea();
         textArea.initializeText(value);
         textArea.textProperty().addListener((observableValue, s, t1) -> {
-            metadataEditPage.changesMade.set(true);
+            metadataEditPage.mediaItem.changesMade.set(true);
         });
+        textArea.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+
 
         this.getChildren().addAll(label, textArea);
         if(add) parent.getChildren().add(this);

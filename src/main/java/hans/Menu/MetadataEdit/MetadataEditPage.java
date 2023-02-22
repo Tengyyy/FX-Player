@@ -74,22 +74,11 @@ public class MetadataEditPage {
 
     public VBox textBox = new VBox();
 
-    QueueItem queueItem = null;
     EditImagePopUp editImagePopUp;
-
-    public BooleanProperty changesMade = new SimpleBooleanProperty(false);
-
-    boolean hasCover;
-    public boolean imageRemoved = false;
-    public Color newColor = null;
-    public Image newImage = null;
-    public File newFile = null;
 
     public MetadataEditItem metadataEditItem = null;
 
     boolean imageEditEnabled = false;
-
-    boolean saveProcessActive = false;
 
     StackPane progressPane = new StackPane();
     MFXProgressBar progressBar = new MFXProgressBar();
@@ -102,6 +91,9 @@ public class MetadataEditPage {
 
     RowConstraints row1 = new RowConstraints(90, 90, 90);
 
+    BooleanProperty fieldsDisabledProperty = new SimpleBooleanProperty(false);
+
+    MediaItem mediaItem = null;
 
     public MetadataEditPage(MenuController menuController){
         this.menuController = menuController;
@@ -260,8 +252,7 @@ public class MetadataEditPage {
         applyButton.setCursor(Cursor.HAND);
         applyButton.setDisable(true);
         applyButton.setOnAction(e -> saveMetadata());
-
-        changesMade.addListener((observableValue, oldValue, newValue) -> applyButton.setDisable(!newValue));
+        applyButton.setDisable(true);
 
         saveIcon.setShape(saveIconSVG);
         saveIcon.getStyleClass().add("menuIcon");
@@ -283,7 +274,7 @@ public class MetadataEditPage {
         progressPane.setPadding(new Insets(0, 20, 0, 20));
         savedLabel.setText("SAVED");
         savedLabel.getStyleClass().add("savedLabel");
-        //savedLabel.setVisible(false);
+        savedLabel.setVisible(false);
         StackPane.setAlignment(savedLabel, Pos.CENTER);
 
         progressBar.setMaxWidth(250);
@@ -294,64 +285,73 @@ public class MetadataEditPage {
 
     }
 
-    public void enterMetadataEditPage(QueueItem queueItem){
-        this.queueItem = queueItem;
+    public void enterMetadataEditPage(MediaItem mediaItem){
+
+        if(mediaItem == null) return;
+
+        this.mediaItem = mediaItem;
+
+        progressBar.progressProperty().bind(mediaItem.metadataEditProgress);
+        progressBar.visibleProperty().bind(mediaItem.metadataEditActive);
+        applyButton.disableProperty().bind(mediaItem.changesMade.not());
+        fieldsDisabledProperty.bind(mediaItem.metadataEditActive);
 
 
-        if(queueItem.getMediaItem().getCover() != null){
-            imageView.setImage(queueItem.getMediaItem().getCover());
-            Color color = queueItem.getMediaItem().getCoverBackgroundColor();
-            imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
+        if(mediaItem.newCoverImage != null){
+            imageView.setImage(mediaItem.newCoverImage);
+            imageViewContainer.setStyle("-fx-background-color: rgba(" + mediaItem.newColor.getRed() * 256 +  "," + mediaItem.newColor.getGreen() * 256 + "," + mediaItem.newColor.getBlue() * 256 + ",0.7);");
         }
-        else {
-            imageView.setImage(queueItem.getMediaItem().getPlaceholderCover());
+        else if(mediaItem.coverRemoved || mediaItem.getCover() == null){
+            imageView.setImage(mediaItem.getPlaceholderCover());
             imageViewContainer.setStyle("-fx-background-color: red;");
         }
+        else {
+            imageView.setImage(mediaItem.getCover());
+            Color color = mediaItem.getCoverBackgroundColor();
+            imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
+        }
 
-        hasCover = queueItem.getMediaItem().hasCover();
-
-
-        String extension = Utilities.getFileExtension(queueItem.getMediaItem().getFile());
+        String extension = Utilities.getFileExtension(mediaItem.getFile());
 
         switch (extension) {
             case "mp4", "mov" -> {
-                metadataEditItem = new Mp4EditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new Mp4EditItem(this, mediaItem.newMetadata) : new Mp4EditItem(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
             case "m4a" -> {
-                metadataEditItem = new M4aEditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new M4aEditItem(this, mediaItem.newMetadata) : new M4aEditItem(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
             case "mp3", "aiff" -> {
-                metadataEditItem = new Mp3EditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new Mp3EditItem(this, mediaItem.newMetadata) : new Mp3EditItem(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
             case "aac" -> {
-                metadataEditItem = new Mp3EditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new Mp3EditItem(this, mediaItem.newMetadata) : new Mp3EditItem(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             case "flac" -> {
-                metadataEditItem = new FlacEditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new FlacEditItem(this, mediaItem.newMetadata) : new FlacEditItem(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
             case "ogg", "opus" -> {
-                metadataEditItem = new OggEditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new OggEditItem(this, mediaItem.newMetadata) : new OggEditItem(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             case "avi" -> {
-                metadataEditItem = new AviEditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new AviEditItem(this, mediaItem.newMetadata) : new AviEditItem(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             case "flv", "wma" -> {
-                metadataEditItem = new OtherEditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new OtherEditItem(this, mediaItem.newMetadata) : new OtherEditItem(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             case "wav" -> {
-                metadataEditItem = new WavEditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new WavEditItem(this, mediaItem.newMetadata) : new WavEditItem(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             default -> {
-                metadataEditItem = new OtherEditItem(this, queueItem.getMediaItem());
+                metadataEditItem = mediaItem.changesMade.get() ? new OtherEditItem(this, mediaItem.newMetadata) : new OtherEditItem(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
         }
@@ -366,18 +366,20 @@ public class MetadataEditPage {
     }
 
     public void exitMetadataEditPage(){
-        this.queueItem = null;
 
-        imageRemoved = false;
+        progressBar.visibleProperty().unbind();
+        progressBar.progressProperty().unbind();
+        applyButton.disableProperty().unbind();
+        fieldsDisabledProperty.unbind();
+
+        //TODO: fix this while metadata edit/ ffmpeg process is ongoing
+        if(mediaItem.changesMade.get()) mediaItem.newMetadata = metadataEditItem.createMetadataMap();
+        mediaItem = null;
         metadataEditItem = null;
-        newImage = null;
-        newColor = null;
-        newFile = null;
 
         menuController.metadataEditScroll.setVisible(false);
         menuController.queueWrapper.setVisible(true);
 
-        changesMade.set(false);
         textBox.getChildren().clear();
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");
@@ -402,86 +404,67 @@ public class MetadataEditPage {
     }
 
     private void editImageButtonClick(){
-        if(hasCover) editImagePopUp.showOptions(queueItem);
+        if(mediaItem.newCoverImage != null || (mediaItem.getCover() != null && !mediaItem.coverRemoved)) editImagePopUp.showOptions(mediaItem);
         else editImage();
     }
 
     public void editImage(){
         File selectedFile = fileChooser.showOpenDialog(imageView.getScene().getWindow());
         if(selectedFile != null){
-            imageRemoved = false;
-            hasCover = true;
-            newImage = new Image(String.valueOf(selectedFile));
-            newFile = selectedFile;
-            imageView.setImage(newImage);
+            mediaItem.coverRemoved = false;
+            mediaItem.newCoverImage = new Image(String.valueOf(selectedFile));
+            mediaItem.newCoverFile = selectedFile;
+            imageView.setImage(mediaItem.newCoverImage);
 
-            newColor = MediaUtilities.findDominantColor(newImage);
-            if(newColor != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + newColor.getRed() * 256 +  "," + newColor.getGreen() * 256 + "," + newColor.getBlue() * 256 + ",0.7);");
+            mediaItem.newColor = MediaUtilities.findDominantColor(mediaItem.newCoverImage);
+            if(mediaItem.newColor != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + mediaItem.newColor.getRed() * 256 +  "," + mediaItem.newColor.getGreen() * 256 + "," + mediaItem.newColor.getBlue() * 256 + ",0.7);");
 
-            changesMade.set(true);
+            mediaItem.changesMade.set(true);
         }
     }
 
-    public void removeImage(QueueItem menuObject){
-        imageRemoved = true;
-        newImage = null;
-        newColor = null;
-        newFile = null;
-        hasCover = false;
-        imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+    public void removeImage(){
+        mediaItem.coverRemoved = true;
+        mediaItem.newCoverImage = null;
+        mediaItem.newColor = null;
+        mediaItem.newCoverFile = null;
+        imageView.setImage(mediaItem.getPlaceholderCover());
         imageViewContainer.setStyle("-fx-background-color: red;");
 
-        changesMade.set(true);
+        mediaItem.changesMade.set(true);
     }
 
     public void saveMetadata(){
-        Map<String,String> mediaInformation = metadataEditItem.saveMetadata();
+        mediaItem.newMetadata = metadataEditItem.createMetadataMap();
 
-        MediaItem mediaItem = queueItem.getMediaItem();
-
-        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath().equals(mediaItem.getFile().getAbsolutePath())){
+        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() == mediaItem){
             menuController.mediaInterface.resetMediaPlayer();
         }
 
-        if(imageRemoved) mediaItem.setCover(null, null, null, true);
-        else if(newImage != null) mediaItem.setCover(newFile, newImage, newColor, true);
-
-        MetadataEditTask metadataEditTask = new MetadataEditTask(mediaItem, mediaInformation);
+        MetadataEditTask metadataEditTask = new MetadataEditTask(mediaItem);
         metadataEditTask.setOnSucceeded(e -> {
             if(metadataEditTask.getValue()){
-                queueItem.update();
-                ArrayList<QueueItem> duplicates = Utilities.findDuplicates(queueItem, menuController);
 
-                for(QueueItem duplicate : duplicates){
-                    duplicate.getMediaItem().setMediaInformation(mediaInformation, false);
-                    duplicate.getMediaItem().setMediaDetails(queueItem.getMediaItem().getMediaDetails());
-                    if(Utilities.getFileExtension(mediaItem.getFile()).equals("mp4") || Utilities.getFileExtension(mediaItem.getFile()).equals("mov")){
-                        duplicate.getMediaItem().setPlaceHolderCover(queueItem.getMediaItem().getPlaceholderCover());
-                    }
 
-                    if(imageRemoved){
-                        duplicate.getMediaItem().setCover(null, mediaItem.getCover(), mediaItem.getCoverBackgroundColor(), false);
+                for(QueueItem queueItem : menuController.queueBox.queue){
+                    if(queueItem.getMediaItem() == mediaItem){
+                        for(Map.Entry<String, String> entry : mediaItem.getMediaInformation().entrySet()){
+                            System.out.println(entry.getKey());
+                            System.out.println(entry.getValue());
+                        }
+                        queueItem.update();
                     }
-                    else if(newImage != null){
-                        duplicate.getMediaItem().setCover(newFile, newImage, newColor, false);
-                    }
-                    duplicate.update();
-
-                    if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().file.getAbsolutePath().equals(queueItem.file.getAbsolutePath())) menuController.mediaInterface.createMedia(duplicate);
                 }
 
                 menuController.mainController.getControlBarController().updateNextAndPreviousVideoButtons();
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get() == queueItem){
-                    menuController.mediaInterface.createMedia(menuController.queueBox.activeItem.get());
-                }
+
+                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() == mediaItem) menuController.mediaInterface.createMedia(menuController.queueBox.activeItem.get());
             }
         });
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(metadataEditTask);
         executorService.shutdown();
-
-        changesMade.set(false);
 
     }
 

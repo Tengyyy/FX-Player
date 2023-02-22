@@ -4,5 +4,5 @@ import java.util.Map;
 
 public interface MetadataEditItem {
 
-    Map<String, String> saveMetadata();
+    Map<String, String> createMetadataMap();
 }

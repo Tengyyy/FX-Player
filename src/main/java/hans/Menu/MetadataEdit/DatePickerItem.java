@@ -16,7 +16,6 @@ public class DatePickerItem extends VBox{
     MetadataEditPage metadataEditPage;
     DateTimeFormatter dateTimeFormatter;
 
-    // all accepted date formats
 
     DatePickerItem(MetadataEditPage metadataEditPage, String value, VBox parent, boolean add){
 
@@ -29,6 +28,8 @@ public class DatePickerItem extends VBox{
         datePicker.setMinHeight(36);
         datePicker.setPrefHeight(36);
         datePicker.setMaxHeight(36);
+        datePicker.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+
 
         dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
         try {
@@ -39,7 +40,7 @@ public class DatePickerItem extends VBox{
         }
 
         datePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            metadataEditPage.changesMade.set(true);
+            metadataEditPage.mediaItem.changesMade.set(true);
         });
 
 

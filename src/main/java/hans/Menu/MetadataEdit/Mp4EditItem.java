@@ -13,7 +13,6 @@ import java.util.Objects;
 public class Mp4EditItem implements MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
-    MediaItem mediaItem;
 
     TextAreaItem titleItem = null;
     ComboBoxItem comboboxItem = null;
@@ -43,9 +42,10 @@ public class Mp4EditItem implements MetadataEditItem{
     Image videoImage;
 
 
-    Mp4EditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+
+    Mp4EditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
         this.metadataEditPage = metadataEditPage;
-        this.mediaItem = mediaItem;
+        this.metadata = metadata;
 
         podcastImage = new Image(Objects.requireNonNull(metadataEditPage.menuController.mainController.getClass().getResource("images/podcast.png")).toExternalForm());
         musicImage = new Image(Objects.requireNonNull(metadataEditPage.menuController.mainController.getClass().getResource("images/music.png")).toExternalForm());
@@ -53,7 +53,6 @@ public class Mp4EditItem implements MetadataEditItem{
 
         content.setSpacing(15);
 
-        metadata = mediaItem.getMediaInformation();
         if(metadata != null && metadata.containsKey("media_type")){
             String type = metadata.get("media_type");
 
@@ -146,7 +145,7 @@ public class Mp4EditItem implements MetadataEditItem{
         switch (value) {
             case "TV Show" -> {
 
-                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                if(metadataEditPage.mediaItem.coverRemoved || (!metadataEditPage.mediaItem.hasVideo() && !metadataEditPage.mediaItem.hasCover())){
                     metadataEditPage.imageView.setImage(videoImage);
                 }
 
@@ -160,7 +159,7 @@ public class Mp4EditItem implements MetadataEditItem{
             }
             case "Movie" -> {
 
-                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                if(metadataEditPage.mediaItem.coverRemoved || (!metadataEditPage.mediaItem.hasVideo() && !metadataEditPage.mediaItem.hasCover())){
                     metadataEditPage.imageView.setImage(videoImage);
                 }
 
@@ -173,7 +172,7 @@ public class Mp4EditItem implements MetadataEditItem{
             }
             case "Music video" -> {
 
-                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                if(metadataEditPage.mediaItem.coverRemoved || (!metadataEditPage.mediaItem.hasVideo() && !metadataEditPage.mediaItem.hasCover())){
                     metadataEditPage.imageView.setImage(musicImage);
                 }
 
@@ -189,7 +188,7 @@ public class Mp4EditItem implements MetadataEditItem{
             }
             case "Home video" -> {
 
-                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                if(metadataEditPage.mediaItem.coverRemoved || (!metadataEditPage.mediaItem.hasVideo() && !metadataEditPage.mediaItem.hasCover())){
                     metadataEditPage.imageView.setImage(videoImage);
                 }
 
@@ -198,7 +197,7 @@ public class Mp4EditItem implements MetadataEditItem{
             }
             case "Podcast" -> {
 
-                if(metadataEditPage.imageRemoved || (!mediaItem.hasVideo() && !metadataEditPage.hasCover)){
+                if(metadataEditPage.mediaItem.coverRemoved || (!metadataEditPage.mediaItem.hasVideo() && !metadataEditPage.mediaItem.hasCover())){
                     metadataEditPage.imageView.setImage(podcastImage);
                 }
 
@@ -209,7 +208,7 @@ public class Mp4EditItem implements MetadataEditItem{
     }
 
     @Override
-    public Map<String, String> saveMetadata(){
+    public Map<String, String> createMetadataMap(){
         Map<String, String> mediaInformation = new HashMap<>();
 
         if(!titleItem.textArea.getText().isBlank()) mediaInformation.put("title", titleItem.textArea.getText());

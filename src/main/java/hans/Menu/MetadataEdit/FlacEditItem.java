@@ -8,7 +8,6 @@ import java.util.*;
 public class FlacEditItem implements MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
-    MediaItem mediaItem;
 
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;
@@ -31,13 +30,12 @@ public class FlacEditItem implements MetadataEditItem{
     Map<String, String> metadata;
 
 
-    FlacEditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    FlacEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
         this.metadataEditPage = metadataEditPage;
-        this.mediaItem = mediaItem;
+        this.metadata = metadata;
 
         content.setSpacing(15);
 
-        metadata = mediaItem.getMediaInformation();
 
         if(metadata != null) {
             titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("TITLE") && !metadata.get("TITLE").isBlank() ? metadata.get("TITLE") : "", content, true);
@@ -73,7 +71,7 @@ public class FlacEditItem implements MetadataEditItem{
     }
 
     @Override
-    public Map<String, String> saveMetadata(){
+    public Map<String, String> createMetadataMap(){
         Map<String, String> mediaInformation = new HashMap<>();
 
         mediaInformation.put("TITLE", titleItem.textArea.getText());

@@ -150,7 +150,7 @@ public class MediaUtilities {
         return cover;
     }
 
-    public static boolean updateMetadata(File file, Map<String, String> metadata, boolean hasCover, Image oldCover, File newCover, boolean coverRemoved, int videoStreams, int attachmentStreams, Duration duration){
+    public static boolean updateMetadata(MediaItem mediaItem, File file, Map<String, String> metadata, boolean hasCover, Image oldCover, File newCover, boolean coverRemoved, int videoStreams, int attachmentStreams, Duration duration){
 
         boolean success = false;
 
@@ -253,14 +253,12 @@ public class MediaUtilities {
                     fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "filename=cover.jpg");
                 }
             }
-
         }
 
         if(duration != null){
             fFmpeg.setProgressListener(progress -> {
-                double percentage = 100. * progress.getTimeMillis() / duration.toMillis();
-                int roundPercentage = (int) Math.min(Math.max(percentage, 0), 100);
-                System.out.println("Progress: " + roundPercentage + "%");
+                double percentage = progress.getTimeMillis() / duration.toMillis();
+                mediaItem.metadataEditProgress.set(percentage);
             });
         }
 

@@ -9,7 +9,9 @@ import com.github.kokorin.jaffree.ffprobe.Stream;
 import hans.MainController;
 import hans.Utilities;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -30,9 +32,9 @@ public class MediaItem {
 
     Duration duration = null;
 
-    boolean hasVideo = false;
-    boolean hasAudio = false;
-    boolean hasCover = false;
+    boolean hasVideo;
+    boolean hasAudio;
+    boolean hasCover;
 
     MainController mainController;
 
@@ -40,19 +42,14 @@ public class MediaItem {
     Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     Map<String, String> mediaDetails = new HashMap<>();
 
-    Image cover = null;
-    Image placeholderCover = null;
-
-    File newCover = null;
-    Color newColor = null;
-    boolean coverRemoved = false;
-
+    Image cover;
+    Image placeholderCover;
 
     public double width = 0;
     public double height = 0;
     int audioChannels = 0;
 
-    FFprobeResult probeResult = null;
+    FFprobeResult probeResult;
 
     int numberOfNonPictureVideoStreams = 0;
     int numberOfAttachmentStreams = 0;
@@ -67,6 +64,20 @@ public class MediaItem {
 
     public String captionGenerationTime = "";
     public BooleanProperty captionExtractionInProgress = new SimpleBooleanProperty(false);
+
+
+    //Metadata edit variables
+
+    public BooleanProperty changesMade = new SimpleBooleanProperty(false);
+    public BooleanProperty metadataEditActive = new SimpleBooleanProperty(false);
+    public DoubleProperty metadataEditProgress = new SimpleDoubleProperty(0); // 0 - 0%, 1 - 100%
+    public Map<String, String> newMetadata = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    public boolean coverRemoved = false;
+    public Image newCoverImage = null;
+    public File newCoverFile = null;
+    public Color newColor = null;
+
+    ////////////////////////////
 
     public MediaItem(File file, MainController mainController) {
         this.file = file;
@@ -252,71 +263,67 @@ public class MediaItem {
         return mediaInformation;
     }
 
-    public boolean setMediaInformation(Map<String, String> map, boolean updateFile) {
+    public boolean updateMetadata() {
 
         boolean metadataEditSuccess = false;
 
-        if(updateFile){
+        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration);
 
-            boolean success = MediaUtilities.updateMetadata(file, map, hasCover, cover, newCover, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration);
+        if(success){
+            //overwrite curr file with new file
 
-            if(success){
-                //overwrite curr file with new file
+            mediaDetails.put("size", Utilities.formatFileSize(file.length()));
+            mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
 
-                mediaDetails.put("size", Utilities.formatFileSize(file.length()));
-                mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
-
-                if(newCover != null){
-                    cover = new Image(newCover.getAbsolutePath());
-                    hasCover = true;
-                    backgroundColor = newColor;
-                }
-                else if(coverRemoved){
-                    hasCover = false;
-                    cover = null;
-                    if(hasVideo){
-                        int videoStreamIndex = probeResult.getStreams().indexOf(this.videoStream);
-                        if(videoStreamIndex != -1){
-                            Long durationLong = videoStream.getDuration(TimeUnit.MILLISECONDS);
-                            if(durationLong == null && this.duration != null) durationLong = (long) this.duration.toMillis() ;
-                            if(durationLong != null) cover = MediaUtilities.getVideoFrame(file, videoStreamIndex, durationLong/2);
-                        }
-                        if(cover != null) backgroundColor = MediaUtilities.findDominantColor(cover);
+            if(newCoverImage != null){
+                cover = newCoverImage;
+                hasCover = true;
+                backgroundColor = newColor;
+            }
+            else if(coverRemoved){
+                hasCover = false;
+                cover = null;
+                if(hasVideo){
+                    int videoStreamIndex = probeResult.getStreams().indexOf(this.videoStream);
+                    if(videoStreamIndex != -1){
+                        Long durationLong = videoStream.getDuration(TimeUnit.MILLISECONDS);
+                        if(durationLong == null && this.duration != null) durationLong = (long) this.duration.toMillis() ;
+                        if(durationLong != null) cover = MediaUtilities.getVideoFrame(file, videoStreamIndex, durationLong/2);
                     }
+                    if(cover != null) backgroundColor = MediaUtilities.findDominantColor(cover);
                     else backgroundColor = null;
                 }
-
-                String extension = Utilities.getFileExtension(file);
-                if(extension.equals("mp4") || extension.equals("mov")){
-                    switch (map.getOrDefault("media_type", null)) {
-                        case "6" -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm());
-                        case "21" -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm());
-                        default -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm());
-                    }
-                }
-
-                mediaInformation = map;
-                metadataEditSuccess = true;
+                else backgroundColor = null;
             }
-        }
-        else {
-            mediaInformation = map;
+
+            String extension = Utilities.getFileExtension(file);
+            if(extension.equals("mp4") || extension.equals("mov")){
+                switch (newMetadata.getOrDefault("media_type", null)) {
+                    case "6" -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm());
+                    case "21" -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm());
+                    default -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm());
+                }
+            }
+
+            mediaInformation = newMetadata;
             metadataEditSuccess = true;
         }
 
-        newCover = null;
-        newColor = null;
+
+        changesMade.set(false);
+        metadataEditActive.set(false);
+        metadataEditProgress.set(0);
+        newMetadata = null;
         coverRemoved = false;
+        newCoverImage = null;
+        newColor = null;
+        newCoverFile = null;
 
         return metadataEditSuccess;
     }
 
     public Map<String, String> getMediaDetails() {
         return mediaDetails;
-    }
-
-    public void setMediaDetails(Map<String, String> map) {
-        mediaDetails = map;
     }
 
 
@@ -331,21 +338,6 @@ public class MediaItem {
 
     public Image getCover(){
         return this.cover;
-    }
-
-    public void setCover(File imagePath, Image image, Color color, boolean updateFile) {
-
-        if(updateFile){
-            newCover = imagePath;
-            newColor = color;
-            coverRemoved = imagePath == null;
-        }
-        else {
-            hasCover = image != null;
-            cover = image;
-            backgroundColor = color;
-        }
-
     }
 }
 

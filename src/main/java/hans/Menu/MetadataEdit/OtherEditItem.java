@@ -19,7 +19,6 @@ import java.util.Map;
 public class OtherEditItem implements MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
-    MediaItem mediaItem;
 
     TextAreaItem titleItem = null;
     ArrayList<CustomTextAreaItem> items = new ArrayList<>();
@@ -35,15 +34,14 @@ public class OtherEditItem implements MetadataEditItem{
     Map<String, String> metadata;
 
 
-    OtherEditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    OtherEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
         this.metadataEditPage = metadataEditPage;
-        this.mediaItem = mediaItem;
+        this.metadata = metadata;
 
         addSVG.setContent(App.svgMap.get(SVG.PLUS));
 
         content.setSpacing(20);
 
-        metadata = mediaItem.getMediaInformation();
 
         addButton.setText("Add key");
         addButton.getStyleClass().add("secondaryButton");
@@ -63,13 +61,13 @@ public class OtherEditItem implements MetadataEditItem{
             items.add(item);
             item.keyField.requestFocus();
             metadataEditPage.menuController.metadataEditScroll.setVvalue(1.0);
-            metadataEditPage.changesMade.set(true);
+            metadataEditPage.mediaItem.changesMade.set(true);
         });
 
         content.getChildren().add(addButton);
 
         if(metadata != null) {
-            titleItem = new TextAreaItem(metadataEditPage, Utilities.getFileExtension(mediaItem.getFile()).equals("mkv") ? "TITLE" : "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
+            titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
 
             content.getChildren().add(0, titleItem);
 
@@ -87,7 +85,7 @@ public class OtherEditItem implements MetadataEditItem{
 
 
     @Override
-    public Map<String, String> saveMetadata(){
+    public Map<String, String> createMetadataMap(){
         Map<String, String> mediaInformation = new HashMap<>();
 
         if(!titleItem.textArea.getText().isBlank()){

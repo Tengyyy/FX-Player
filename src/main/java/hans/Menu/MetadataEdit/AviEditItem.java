@@ -7,10 +7,9 @@ import javafx.scene.layout.VBox;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AviEditItem implements  MetadataEditItem{
+public class AviEditItem implements MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
-    MediaItem mediaItem;
 
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;
@@ -27,13 +26,11 @@ public class AviEditItem implements  MetadataEditItem{
     Map<String, String> metadata;
 
 
-    AviEditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    AviEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
         this.metadataEditPage = metadataEditPage;
-        this.mediaItem = mediaItem;
+        this.metadata = metadata;
 
         content.setSpacing(15);
-
-        metadata = mediaItem.getMediaInformation();
 
         if(metadata != null) {
             titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
@@ -54,7 +51,7 @@ public class AviEditItem implements  MetadataEditItem{
     }
 
     @Override
-    public Map<String, String> saveMetadata(){
+    public Map<String, String> createMetadataMap(){
         Map<String, String> mediaInformation = new HashMap<>();
 
         if(!titleItem.textArea.getText().isBlank()) mediaInformation.put("title", titleItem.textArea.getText());

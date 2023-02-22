@@ -655,7 +655,7 @@ public class QueueItem extends GridPane {
         // must be disabled until ffprobe has returned
         if(menuController.menuInTransition) return;
 
-        menuController.metadataEditPage.enterMetadataEditPage(this);
+        menuController.metadataEditPage.enterMetadataEditPage(this.getMediaItem());
     }
 
     public void showTechnicalDetails() {

@@ -534,7 +534,7 @@ public class MainController implements Initializable {
             else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
                 menuController.queueScroll.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
             }
-            else if(y>= (heightScrollPane-(heightViewPort/2))){
+            else if( y>= (heightScrollPane-(heightViewPort/2))){
                 menuController.queueScroll.setVvalue(1);
             }
         }

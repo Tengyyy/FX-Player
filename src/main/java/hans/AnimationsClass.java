@@ -224,15 +224,10 @@ public class AnimationsClass {
             menuController.chapterScroll.setVisible(false);
             menuController.queueWrapper.setVisible(true);
 
-            menuController.metadataEditPage.imageRemoved = false;
-            menuController.metadataEditPage.newColor = null;
-            menuController.metadataEditPage.newImage = null;
-            menuController.metadataEditPage.newFile = null;
             menuController.metadataEditPage.metadataEditItem = null;
             menuController.metadataEditPage.textBox.getChildren().clear();
             menuController.metadataEditPage.imageView.setImage(null);
             menuController.metadataEditPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
-            menuController.metadataEditPage.changesMade.set(false);
 
             menuController.technicalDetailsPage.textBox.getChildren().clear();
             menuController.technicalDetailsPage.imageView.setImage(null);

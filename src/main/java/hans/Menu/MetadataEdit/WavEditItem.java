@@ -24,13 +24,12 @@ public class WavEditItem implements MetadataEditItem{
     Map<String, String> metadata;
 
 
-    WavEditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    WavEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
         this.metadataEditPage = metadataEditPage;
-        this.mediaItem = mediaItem;
+        this.metadata = metadata;
 
         content.setSpacing(15);
 
-        metadata = mediaItem.getMediaInformation();
 
         if(metadata != null) {
             titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
@@ -56,7 +55,7 @@ public class WavEditItem implements MetadataEditItem{
     }
 
     @Override
-    public Map<String, String> saveMetadata(){
+    public Map<String, String> createMetadataMap(){
         Map<String, String> mediaInformation = new HashMap<>();
 
         mediaInformation.put("title", titleItem.textArea.getText());

@@ -68,10 +68,11 @@ public class CustomTextAreaItem extends VBox{
         keyField.setTranslateY(2);
         keyField.getStyleClass().add("key-text-field");
         keyField.maxWidthProperty().bind(labelBox.widthProperty().subtract(35));
+        keyField.disableProperty().bind(otherEditItem.metadataEditPage.fieldsDisabledProperty);
 
         keyField.textProperty().addListener((ov, prevText, currText) -> {
             // Do this in a Platform.runLater because of Textfield has no padding at first time and so on
-            otherEditItem.metadataEditPage.changesMade.set(true);
+            otherEditItem.metadataEditPage.mediaItem.changesMade.set(true);
             Platform.runLater(() -> {
                 Text text = new Text(currText);
                 text.setFont(new Font("Roboto Medium", 18)); // Set the same font, so the size is the same
@@ -82,7 +83,6 @@ public class CustomTextAreaItem extends VBox{
                 keyField.positionCaret(keyField.getCaretPosition()); // If you remove this line, it flashes a little bit
             });
         });
-
 
         keyField.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ENTER){
@@ -112,6 +112,7 @@ public class CustomTextAreaItem extends VBox{
                 addEditButton();
             }
         });
+
         keyField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 removeEditButton();
@@ -149,6 +150,8 @@ public class CustomTextAreaItem extends VBox{
         editButton.setCursor(Cursor.HAND);
         editButton.setOpacity(0);
         editButton.setText(null);
+        editButton.disableProperty().bind(otherEditItem.metadataEditPage.fieldsDisabledProperty);
+
 
         editIcon.setShape(editSVG);
         editIcon.setMinSize(15, 15);
@@ -160,11 +163,9 @@ public class CustomTextAreaItem extends VBox{
         editButton.setOnAction(e -> {
             removeEditButton();
             keyField.requestFocus();
-            //keyField.positionCaret(keyField.getText().length());
         });
 
         editButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, editButton, 0, 1, false, 1, true));
-
         editButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, editButton, 1, 0, false, 1, true));
 
 
@@ -178,6 +179,7 @@ public class CustomTextAreaItem extends VBox{
         removeButton.setCursor(Cursor.HAND);
         removeButton.setOpacity(0);
         removeButton.setText(null);
+        removeButton.disableProperty().bind(otherEditItem.metadataEditPage.fieldsDisabledProperty);
 
         removeIcon.setShape(removeSVG);
         removeIcon.setMinSize(18, 18);
@@ -207,8 +209,9 @@ public class CustomTextAreaItem extends VBox{
         textArea = new ExpandableTextArea();
         textArea.initializeText(value);
         textArea.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            otherEditItem.metadataEditPage.changesMade.set(true);
+            otherEditItem.metadataEditPage.mediaItem.changesMade.set(true);
         });
+        textArea.disableProperty().bind(otherEditItem.metadataEditPage.fieldsDisabledProperty);
 
         this.getChildren().addAll(labelContainer, textArea);
         otherEditItem.content.getChildren().add(otherEditItem.content.getChildren().indexOf(otherEditItem.addButton), this);
@@ -218,9 +221,9 @@ public class CustomTextAreaItem extends VBox{
             removeButtonTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Remove key", removeButton, 1000);
             warningLabelTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Key can not be empty", warningLabel, 0, TooltipType.MENU_TOOLTIP);
             warningLabelTooltip.getStyleClass().add("warningLabelTooltip");
-            boolean changesMade = otherEditItem.metadataEditPage.changesMade.get();
+            boolean changesMade = otherEditItem.metadataEditPage.mediaItem.changesMade.get();
             keyField.setText(key);
-            if(!changesMade) otherEditItem.metadataEditPage.changesMade.set(false);
+            if(!changesMade) otherEditItem.metadataEditPage.mediaItem.changesMade.set(false);
         });
 
 
@@ -270,7 +273,7 @@ public class CustomTextAreaItem extends VBox{
         otherEditItem.content.getChildren().remove(this);
         otherEditItem.items.remove(this);
 
-        otherEditItem.metadataEditPage.changesMade.set(true);
+        otherEditItem.metadataEditPage.mediaItem.changesMade.set(true);
 
     }
 

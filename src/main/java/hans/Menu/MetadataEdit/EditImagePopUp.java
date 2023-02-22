@@ -1,6 +1,7 @@
 package hans.Menu.MetadataEdit;
 
 import hans.App;
+import hans.MediaItems.MediaItem;
 import hans.Menu.QueueItem;
 import hans.SVG;
 import javafx.animation.Animation;
@@ -17,7 +18,7 @@ import java.util.Objects;
 public class EditImagePopUp extends ContextMenu {
 
     MetadataEditPage metadataEditPage;
-    QueueItem queueItem;
+    MediaItem mediaItem;
 
     MenuItem removeItem = new MenuItem("Remove image");
     MenuItem chooseItem = new MenuItem("Choose image");
@@ -47,7 +48,7 @@ public class EditImagePopUp extends ContextMenu {
 
         removeItem.setGraphic(removeIcon);
         removeItem.getStyleClass().add("popUpItem");
-        removeItem.setOnAction((e) -> metadataEditPage.removeImage(queueItem));
+        removeItem.setOnAction((e) -> metadataEditPage.removeImage());
 
         imagePath.setContent(App.svgMap.get(SVG.IMAGE));
         imageIcon.setShape(imagePath);
@@ -71,8 +72,8 @@ public class EditImagePopUp extends ContextMenu {
 
     }
 
-    public void showOptions(QueueItem queueItem){
-        this.queueItem = queueItem;
+    public void showOptions(MediaItem mediaItem){
+        this.mediaItem = mediaItem;
         this.show(metadataEditPage.editImageButton, // might not work
                 metadataEditPage.editImageButton.localToScreen(metadataEditPage.editImageButton.getBoundsInLocal()).getMinX() + buttonWidth/2 - popUpWidth/2,
                 metadataEditPage.editImageButton.localToScreen(metadataEditPage.editImageButton.getBoundsInLocal()).getMaxY() + 5);

@@ -29,9 +29,11 @@ public class ComboBoxItem extends VBox{
             comboBox.getItems().add(value);
         }
 
+        comboBox.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+
         comboBox.setValue(initialValue);
         comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            metadataEditPage.changesMade.set(true);
+            metadataEditPage.mediaItem.changesMade.set(true);
         });
 
         this.getChildren().addAll(label, comboBox);

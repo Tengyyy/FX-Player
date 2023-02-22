@@ -1,14 +1,13 @@
 package hans.Menu.MetadataEdit;
 
-import hans.MediaItems.MediaItem;
 import javafx.scene.layout.VBox;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OggEditItem implements MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
-    MediaItem mediaItem;
 
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;
@@ -30,13 +29,12 @@ public class OggEditItem implements MetadataEditItem{
     Map<String, String> metadata;
 
 
-    OggEditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    OggEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
         this.metadataEditPage = metadataEditPage;
-        this.mediaItem = mediaItem;
+        this.metadata = metadata;
 
         content.setSpacing(15);
 
-        metadata = mediaItem.getMediaInformation();
 
         if(metadata != null) {
             titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("TITLE") && !metadata.get("TITLE").isBlank() ? metadata.get("TITLE") : "", content, true);
@@ -60,7 +58,7 @@ public class OggEditItem implements MetadataEditItem{
     }
 
     @Override
-    public Map<String, String> saveMetadata(){
+    public Map<String, String> createMetadataMap(){
         Map<String, String> mediaInformation = new HashMap<>();
 
         mediaInformation.put("TITLE", titleItem.textArea.getText());

@@ -26,8 +26,9 @@ public class TextFieldItem extends VBox{
         textField = new TextField(value);
         textField.getStyleClass().add("customTextField");
         textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            metadataEditPage.changesMade.set(true);
+            metadataEditPage.mediaItem.changesMade.set(true);
         });
+        textField.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
         textField.setPrefHeight(36);
         textField.setMinHeight(36);
         textField.setMaxHeight(36);

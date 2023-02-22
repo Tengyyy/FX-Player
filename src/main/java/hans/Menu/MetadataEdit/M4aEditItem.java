@@ -13,7 +13,6 @@ import java.util.Objects;
 public class M4aEditItem implements MetadataEditItem{
 
     MetadataEditPage metadataEditPage;
-    MediaItem mediaItem;
 
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;
@@ -33,15 +32,11 @@ public class M4aEditItem implements MetadataEditItem{
 
 
 
-    M4aEditItem(MetadataEditPage metadataEditPage, MediaItem mediaItem){
+    M4aEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
         this.metadataEditPage = metadataEditPage;
-        this.mediaItem = mediaItem;
-
+        this.metadata = metadata;
 
         content.setSpacing(15);
-
-        metadata = mediaItem.getMediaInformation();
-
 
         if(metadata != null) {
             titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
@@ -72,7 +67,7 @@ public class M4aEditItem implements MetadataEditItem{
     }
 
     @Override
-    public Map<String, String> saveMetadata(){
+    public Map<String, String> createMetadataMap(){
         Map<String, String> mediaInformation = new HashMap<>();
 
         if(!titleItem.textArea.getText().isBlank()) mediaInformation.put("title", titleItem.textArea.getText());

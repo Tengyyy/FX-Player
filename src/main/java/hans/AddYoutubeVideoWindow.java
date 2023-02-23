@@ -109,7 +109,7 @@ public class AddYoutubeVideoWindow {
 
         buttonContainer.getChildren().addAll(mainButton, secondaryButton);
         VBox.setMargin(buttonContainer, new Insets(20, 0, 0, 0));
-        buttonContainer.setStyle("-fx-background-color: rgb(15,15,15);");
+        buttonContainer.setId("buttonContainer");
         buttonContainer.setPadding(new Insets(20, 15, 20, 15));
 
         secondaryButton.setText("Cancel");

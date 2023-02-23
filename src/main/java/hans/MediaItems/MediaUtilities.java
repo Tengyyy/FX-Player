@@ -257,7 +257,7 @@ public class MediaUtilities {
 
         if(duration != null){
             fFmpeg.setProgressListener(progress -> {
-                double percentage = progress.getTimeMillis() / duration.toMillis();
+                double percentage = Math.min(1, Math.max(0, progress.getTimeMillis() / duration.toMillis()));
                 mediaItem.metadataEditProgress.set(percentage);
             });
         }

@@ -6,10 +6,13 @@ import hans.MediaItems.MediaItem;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.*;
 import io.github.palexdev.materialfx.controls.MFXProgressBar;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -95,7 +98,43 @@ public class MetadataEditPage {
 
     MediaItem mediaItem = null;
 
+    PauseTransition saveLabelTimer = new PauseTransition(Duration.millis(1000));
+    Timeline progressAnimation = null;
+
+    ChangeListener<Boolean> metadataEditActiveListener = (observableValue, oldValue, newValue) -> {
+        if(newValue){
+            if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
+            if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
+            savedLabel.setVisible(false);
+            progressBar.setVisible(true);
+        }
+        else {
+            if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
+            if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
+            progressAnimation = new Timeline(new KeyFrame(Duration.millis(300),
+                    new KeyValue(progressBar.progressProperty(), 1, Interpolator.LINEAR)));
+            progressAnimation.setOnFinished(e -> {
+                progressBar.setVisible(false);
+                progressBar.setProgress(0);
+                savedLabel.setVisible(true);
+                saveLabelTimer.playFromStart();
+            });
+            progressAnimation.playFromStart();
+        }
+    };
+
+    ChangeListener<Number> progressListener = (observableValue, oldValue, newValue) -> {
+        if(newValue.doubleValue() <= 0  || !mediaItem.metadataEditActive.get()) return;
+        if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
+        progressAnimation = new Timeline(new KeyFrame(Duration.millis(300),
+                new KeyValue(progressBar.progressProperty(), newValue, Interpolator.LINEAR)));
+        progressAnimation.playFromStart();
+    };
+
+
     public MetadataEditPage(MenuController menuController){
+
+
         this.menuController = menuController;
 
         fileChooser = new FileChooser();
@@ -278,6 +317,8 @@ public class MetadataEditPage {
         savedLabel.setVisible(false);
         StackPane.setAlignment(savedLabel, Pos.CENTER);
 
+        saveLabelTimer.setOnFinished(e -> savedLabel.setVisible(false));
+
         progressBar.setMaxWidth(250);
         progressBar.setPrefHeight(11);
         progressBar.setVisible(false);
@@ -291,8 +332,10 @@ public class MetadataEditPage {
 
         this.mediaItem = mediaItem;
 
-        progressBar.progressProperty().bind(mediaItem.metadataEditProgress);
-        progressBar.visibleProperty().bind(mediaItem.metadataEditActive);
+        progressBar.setProgress(mediaItem.metadataEditProgress.get());
+        if(mediaItem.metadataEditActive.get()) progressBar.setVisible(true);
+        mediaItem.metadataEditProgress.addListener(progressListener);
+        mediaItem.metadataEditActive.addListener(metadataEditActiveListener);
         applyButton.disableProperty().bind(mediaItem.changesMade.not());
         discardButton.disableProperty().bind(mediaItem.changesMade.not());
         fieldsDisabledProperty.bind(mediaItem.metadataEditActive);
@@ -368,12 +411,18 @@ public class MetadataEditPage {
 
     public void exitMetadataEditPage(){
 
-        progressBar.visibleProperty().unbind();
-        progressBar.progressProperty().unbind();
+        mediaItem.metadataEditProgress.removeListener(progressListener);
+        mediaItem.metadataEditActive.removeListener(metadataEditActiveListener);
+        if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
+        if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
+        progressBar.setProgress(0);
         applyButton.disableProperty().unbind();
         editImageButton.disableProperty().unbind();
         discardButton.disableProperty().unbind();
         fieldsDisabledProperty.unbind();
+
+        savedLabel.setVisible(false);
+        progressBar.setVisible(false);
 
         if(!mediaItem.metadataEditActive.get() && mediaItem.changesMade.get()){
             mediaItem.newMetadata = metadataEditItem.createMetadataMap();

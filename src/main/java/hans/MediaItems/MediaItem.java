@@ -268,6 +268,8 @@ public class MediaItem {
         this.metadataEditActive.set(true);
         this.changesMade.set(false);
 
+        mainController.getMenuController().ongoingMetadataEditProcesses.add(this);
+
         boolean metadataEditSuccess = false;
 
         boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration);
@@ -321,6 +323,8 @@ public class MediaItem {
         newCoverImage = null;
         newColor = null;
         newCoverFile = null;
+
+        mainController.getMenuController().ongoingMetadataEditProcesses.remove(this);
 
         return metadataEditSuccess;
     }

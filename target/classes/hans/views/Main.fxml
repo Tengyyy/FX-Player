@@ -31,7 +31,7 @@
          </children>
       </StackPane>
         <fx:include fx:id="menu" minWidth="0.0" prefWidth="0.0" source="Menu.fxml" StackPane.alignment="CENTER_LEFT" />
-      <StackPane fx:id="addYoutubeVideoWindowContainer" prefHeight="150.0" prefWidth="200.0" />
+      <StackPane fx:id="popupWindowContainer" prefHeight="150.0" prefWidth="200.0" />
    </children>
    <stylesheets>
       <URL value="@../styles/text-fields.css" />

@@ -103,6 +103,7 @@ public class App extends Application {
             svgMap.put(CLOSE_CIRCLE, "M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z");
             svgMap.put(YOUTUBE, "M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z");
             svgMap.put(FOLDER_PLUS, "M13 19C13 19.34 13.04 19.67 13.09 20H4C2.9 20 2 19.11 2 18V6C2 4.89 2.89 4 4 4H10L12 6H20C21.1 6 22 6.89 22 8V13.81C21.39 13.46 20.72 13.22 20 13.09V8H4V18H13.09C13.04 18.33 13 18.66 13 19M20 18V15H18V18H15V20H18V23H20V20H23V18H20Z");
+            svgMap.put(WARNING, "M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z");
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("views/Main.fxml"));
 
@@ -217,15 +218,11 @@ public class App extends Application {
             }
 
             primaryStage.setOnCloseRequest(event -> {
-
-                captionsController.resetCaptions();
-
-                mediaInterface.embeddedMediaPlayer.release();
-                SleepSuppressor.allowSleep();
-
-                Platform.exit();
-                System.exit(0);
-
+                if(!menuController.ongoingMetadataEditProcesses.isEmpty()){
+                    if(!mainController.closeConfirmationWindow.showing) mainController.closeConfirmationWindow.show();
+                    event.consume();
+                }
+                else mainController.closeApp();
             });
 
 

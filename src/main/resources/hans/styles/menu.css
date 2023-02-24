@@ -163,7 +163,7 @@
     -fx-background-color: #cfcfcf;
 }
 
-.optionsButton, .removeButton, #shuffleToggle, .copyButton, .editButton, #editImageButton, #youtubeWindowCloseButton {
+.optionsButton, .removeButton, #shuffleToggle, .copyButton, .editButton, #editImageButton {
     -fx-background-radius: 100;
     -fx-padding: 0;
     -fx-background-color: #656565;
@@ -380,35 +380,6 @@
     -fx-text-fill: rgb(255,0,0);
     -fx-font-family: "Roboto Bold";
     -fx-font-size: 14;
-}
-
-#youtubeWindowContainer {
-    -fx-background-color: rgba(0,0,0,0.8);
-}
-
-#youtubeWindow {
-    -fx-background-color: rgb(30,30,30);
-    -fx-background-radius: 10;
-    -fx-border-color: rgb(50,50,50);
-    -fx-border-radius: 10;
-    -fx-border-width: 1;
-}
-
-#youtubeWindowTitle {
-    -fx-text-fill: white;
-    -fx-font-family: "Roboto Bold";
-    -fx-font-size: 20;
-}
-
-#youtubeWindowText {
-    -fx-text-fill: rgb(220,220,220);
-    -fx-font-family: "Roboto Medium";
-    -fx-font-size: 18;
-}
-
-#buttonContainer {
-    -fx-background-color: rgb(15,15,15);
-    -fx-background-radius: 0 0 10 10;
 }
 
 .savedLabel {

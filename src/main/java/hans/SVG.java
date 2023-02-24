@@ -54,5 +54,6 @@ public enum SVG {
     COGS,
     CLOSE_CIRCLE,
     YOUTUBE,
-    FOLDER_PLUS
+    FOLDER_PLUS,
+    WARNING
 }

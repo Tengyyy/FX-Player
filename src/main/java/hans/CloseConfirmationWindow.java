@@ -7,6 +7,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -17,13 +18,16 @@ import javafx.scene.text.TextAlignment;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AddYoutubeVideoWindow {
+public class CloseConfirmationWindow {
 
     MainController mainController;
 
     VBox window = new VBox();
+    HBox titleContainer = new HBox();
+    Region warningIcon = new Region();
+    SVGPath warningSVG = new SVGPath();
     Label title = new Label();
-    TextField textField = new TextField();
+    Label text = new Label();
     StackPane buttonContainer = new StackPane();
     JFXButton mainButton = new JFXButton(), secondaryButton = new JFXButton();
 
@@ -36,10 +40,8 @@ public class AddYoutubeVideoWindow {
     boolean showing = false;
 
 
-    String pattern = "^(?:https?:)?(?:\\/\\/)?(?:youtu\\.be\\/|(?:www\\.|m\\.)?youtube\\.com\\/(?:watch|v|embed)(?:\\.php)?(?:\\?.*v=|\\/))([a-zA-Z0-9\\_-]{7,15})(?:[\\?&][a-zA-Z0-9\\_-]+=[a-zA-Z0-9\\_-]+)*(?:[&\\/\\#].*)?$";
-    Pattern regexPatern = Pattern.compile(pattern);
 
-    public AddYoutubeVideoWindow(MainController mainController){
+    public CloseConfirmationWindow(MainController mainController){
         this.mainController = mainController;
 
         mainController.popupWindowContainer.getChildren().add(window);
@@ -50,7 +52,6 @@ public class AddYoutubeVideoWindow {
         window.getStyleClass().add("popupWindow");
         window.setPrefHeight(Region.USE_COMPUTED_SIZE);
         window.setMaxHeight(Region.USE_PREF_SIZE);
-        window.setVisible(false);
 
         closeButtonContainer.setPrefHeight(30);
         closeButtonContainer.getChildren().add(closeButtonPane);
@@ -84,26 +85,26 @@ public class AddYoutubeVideoWindow {
         closeButtonIcon.setMouseTransparent(true);
         closeButtonIcon.getStyleClass().add("menuIcon");
 
-        title.setText("Add YouTube video(s)");
+        titleContainer.getChildren().addAll(warningIcon, title);
+        titleContainer.setSpacing(5);
+        titleContainer.setAlignment(Pos.CENTER_LEFT);
+        VBox.setMargin(titleContainer, new Insets(0, 15, 25, 15));
+
+        warningSVG.setContent(App.svgMap.get(SVG.WARNING));
+        warningIcon.setMouseTransparent(true);
+        warningIcon.getStyleClass().add("menuIcon");
+        warningIcon.setShape(warningSVG);
+        warningIcon.setMinSize(30, 30);
+        warningIcon.setPrefSize(30, 30);
+        warningIcon.setMaxSize(30, 30);
+
+        title.setText("Metadata edit active");
         title.getStyleClass().add("popupWindowTitle");
-        VBox.setMargin(title, new Insets(0, 15, 25, 15));
 
-        textField.getStyleClass().add("customTextField");
-        textField.setPromptText("Enter the URL for a YouTube video or playlist");
-        textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            Matcher matcher = regexPatern.matcher(newValue);
-            if(matcher.find()){
-                mainButton.setDisable(false);
-                System.out.println(matcher.group(1)); // see peaks olema youtube video id
-            }
-            else mainButton.setDisable(true);
-        });
-        textField.setPrefHeight(36);
-        textField.setMinHeight(36);
-        textField.setMaxHeight(36);
-        textField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
-        VBox.setMargin(textField, new Insets(0, 15, 0, 15));
-
+        text.setText("Please wait for ongoing metadata edit processes to finish before closing FXPlayer.");
+        text.setWrapText(true);
+        text.getStyleClass().add("popupWindowText");
+        VBox.setMargin(text, new Insets(0, 15, 10, 15));
 
         buttonContainer.getChildren().addAll(mainButton, secondaryButton);
         VBox.setMargin(buttonContainer, new Insets(20, 0, 0, 0));
@@ -119,27 +120,26 @@ public class AddYoutubeVideoWindow {
         secondaryButton.setRipplerFill(Color.TRANSPARENT);
         StackPane.setAlignment(secondaryButton, Pos.CENTER_RIGHT);
 
-        mainButton.setText("Add");
+        mainButton.setText("Close app");
         mainButton.getStyleClass().add("mainButton");
         mainButton.setCursor(Cursor.HAND);
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(155);
         mainButton.setRipplerFill(Color.TRANSPARENT);
-        mainButton.setDisable(true);
+        mainButton.setOnAction(e -> mainController.closeApp());
         StackPane.setAlignment(mainButton, Pos.CENTER_LEFT);
 
-        window.getChildren().addAll(closeButtonContainer, title, textField, buttonContainer);
+        window.getChildren().addAll(closeButtonContainer, titleContainer, text, buttonContainer);
     }
 
     public void show(){
 
-        if(mainController.closeConfirmationWindow.showing){
-            mainController.closeConfirmationWindow.window.setVisible(false);
-            mainController.closeConfirmationWindow.showing = false;
+        if(mainController.addYoutubeVideoWindow.showing){
+            mainController.addYoutubeVideoWindow.window.setVisible(false);
+            mainController.addYoutubeVideoWindow.showing = false;
         }
 
         this.showing = true;
-        window.setVisible(true);
 
         mainController.popupWindowContainer.setMouseTransparent(false);
         AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 0 , 1, false, 1, true);

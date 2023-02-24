@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.Captions.CaptionsController;
 import hans.Chapters.ChapterController;
+import hans.MediaItems.MediaItem;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.Settings.SettingsController;
@@ -40,6 +41,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -136,6 +138,7 @@ public class MenuController implements Initializable {
     private double scrollVelocity = 0;
     private final int scrollSpeed = 6;
 
+    public ArrayList<MediaItem> ongoingMetadataEditProcesses = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

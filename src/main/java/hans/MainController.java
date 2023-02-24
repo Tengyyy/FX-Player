@@ -56,7 +56,7 @@ public class MainController implements Initializable {
     public
     StackPane videoImageViewWrapper;
     @FXML
-    public StackPane videoImageViewInnerWrapper, addYoutubeVideoWindowContainer;
+    public StackPane videoImageViewInnerWrapper, popupWindowContainer;
     @FXML
     StackPane coverImageContainer, coverFilter, coverImageWrapper;
 
@@ -120,6 +120,7 @@ public class MainController implements Initializable {
     WindowsTaskBarController windowsTaskBarController;
 
     public AddYoutubeVideoWindow addYoutubeVideoWindow;
+    public CloseConfirmationWindow closeConfirmationWindow;
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -135,7 +136,12 @@ public class MainController implements Initializable {
         captionsController.init(mediaInterface);
         mediaInterface.init(chapterController);
 
+        popupWindowContainer.setId("popupWindowContainer");
+        popupWindowContainer.setOpacity(0);
+        popupWindowContainer.setMouseTransparent(true);
+
         addYoutubeVideoWindow = new AddYoutubeVideoWindow(this);
+        closeConfirmationWindow = new CloseConfirmationWindow(this);
 
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
         sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
@@ -1712,5 +1718,15 @@ public class MainController implements Initializable {
 
     public CaptionsController getCaptionsController(){
         return captionsController;
+    }
+
+    public void closeApp(){
+        captionsController.resetCaptions();
+
+        mediaInterface.embeddedMediaPlayer.release();
+        SleepSuppressor.allowSleep();
+
+        Platform.exit();
+        System.exit(0);
     }
 }

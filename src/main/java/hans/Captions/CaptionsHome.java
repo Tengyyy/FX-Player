@@ -42,10 +42,22 @@ public class CaptionsHome {
     Label captionsOptionsLabel = new Label();
 
     Label chooseCaptionsLabel = new Label();
-    
+
+    HBox openSubtitlesTab = new HBox();
+    Label openSubtitlesLabel = new Label();
+    SVGPath globeSVG = new SVGPath();
+    Region globeIcon = new Region();
+    StackPane globeIconPane = new StackPane();
+
+    HBox adjustDelayTab = new HBox();
+    Label adjustDelayLabel = new Label();
+    SVGPath timerSVG = new SVGPath();
+    Region timerIcon = new Region();
+    StackPane timerIconPane = new StackPane();
+
     StackPane chooseCaptionsIconPane = new StackPane();
     Region chooseCaptionsIcon = new Region();
-    SVGPath searchSVG = new SVGPath();
+    SVGPath folderSVG = new SVGPath();
 
     FileChooser fileChooser;
 
@@ -54,17 +66,19 @@ public class CaptionsHome {
     public CaptionsHome(CaptionsController captionsController){
         this.captionsController = captionsController;
 
-        searchSVG.setContent(App.svgMap.get(SVG.MAGNIFY));
+        folderSVG.setContent(App.svgMap.get(SVG.FOLDER));
+        globeSVG.setContent(App.svgMap.get(SVG.GLOBE));
+        timerSVG.setContent(App.svgMap.get(SVG.TIMER));
 
         fileChooser = new FileChooser();
-        fileChooser.setTitle("Select subtitles");
+        fileChooser.setTitle("Choose subtitle file");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Subtitles", "*.srt"));
 
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(245, 106);
-        scrollPane.setMaxSize(245, 106);
+        scrollPane.setPrefSize(245, 181);
+        scrollPane.setMaxSize(245, 181);
         scrollPane.setContent(captionsWrapper);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
@@ -72,13 +86,13 @@ public class CaptionsHome {
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
 
-        captionsWrapper.setMinSize(225, 103);
-        captionsWrapper.setPrefSize(245, 103);
-        captionsWrapper.setMaxSize(245, 103);
+        captionsWrapper.setMinSize(225, 178);
+        captionsWrapper.setPrefSize(245, 178);
+        captionsWrapper.setMaxSize(245, 178);
         captionsWrapper.setPadding(new Insets(8, 0, 8, 0));
         captionsWrapper.setAlignment(Pos.BOTTOM_LEFT);
 
-        captionsWrapper.getChildren().addAll(captionsTitle, captionsChooserTab);
+        captionsWrapper.getChildren().addAll(captionsTitle, captionsChooserTab, openSubtitlesTab, adjustDelayTab);
 
         captionsTitle.getChildren().addAll(captionsTitleLabel, captionsOptionsLabel);
         captionsTitle.setMinSize(225, 40);
@@ -111,6 +125,7 @@ public class CaptionsHome {
         captionsChooserTab.setMaxSize(245, 35);
         captionsChooserTab.setPadding(new Insets(0, 10, 0, 10));
         captionsChooserTab.getStyleClass().add("settingsPaneTab");
+        captionsChooserTab.setId("captionsChooserTab");
         captionsChooserTab.getChildren().addAll(chooseCaptionsIconPane, chooseCaptionsLabel);
         captionsChooserTab.setOnMouseClicked(e -> openCaptionsChooser());
 
@@ -120,16 +135,70 @@ public class CaptionsHome {
         chooseCaptionsIconPane.setPadding(new Insets(0, 5, 0, 0));
         chooseCaptionsIconPane.getChildren().add(chooseCaptionsIcon);
 
-        chooseCaptionsIcon.setPrefSize(15, 15);
-        chooseCaptionsIcon.setMaxSize(15, 15);
-        chooseCaptionsIcon.setId("captionsSearchIcon");
-        chooseCaptionsIcon.setShape(searchSVG);
+        chooseCaptionsIcon.setPrefSize(15, 13);
+        chooseCaptionsIcon.setMaxSize(15, 13);
+        chooseCaptionsIcon.getStyleClass().add("captionsPaneIcon");
+        chooseCaptionsIcon.setShape(folderSVG);
 
-        chooseCaptionsLabel.setText("Add subtitles");
+        chooseCaptionsLabel.setText("Choose subtitle file");
         chooseCaptionsLabel.getStyleClass().add("settingsPaneText");
         chooseCaptionsLabel.setMinSize(175, 35);
         chooseCaptionsLabel.setPrefSize(195, 35);
         chooseCaptionsLabel.setMaxSize(195, 35);
+
+
+        openSubtitlesTab.setMinSize(225, 35);
+        openSubtitlesTab.setPrefSize(245, 35);
+        openSubtitlesTab.setMaxSize(245, 35);
+        openSubtitlesTab.setPadding(new Insets(0, 10, 0, 10));
+        openSubtitlesTab.getStyleClass().add("settingsPaneTab");
+        openSubtitlesTab.setId("openSubtitlesTab");
+        openSubtitlesTab.getChildren().addAll(globeIconPane, openSubtitlesLabel);
+        openSubtitlesTab.setOnMouseClicked(e -> openSubtitleSearch());
+
+        globeIconPane.setMinSize(30, 35);
+        globeIconPane.setPrefSize(30, 35);
+        globeIconPane.setMaxSize(30, 35);
+        globeIconPane.setPadding(new Insets(0, 5, 0, 0));
+        globeIconPane.getChildren().add(globeIcon);
+
+        globeIcon.setPrefSize(15, 15);
+        globeIcon.setMaxSize(15, 15);
+        globeIcon.getStyleClass().add("captionsPaneIcon");
+        globeIcon.setShape(globeSVG);
+
+        openSubtitlesLabel.setText("Search OpenSubtitles");
+        openSubtitlesLabel.getStyleClass().add("settingsPaneText");
+        openSubtitlesLabel.setMinSize(175, 35);
+        openSubtitlesLabel.setPrefSize(195, 35);
+        openSubtitlesLabel.setMaxSize(195, 35);
+
+        adjustDelayTab.setMinSize(225, 35);
+        adjustDelayTab.setPrefSize(245, 35);
+        adjustDelayTab.setMaxSize(245, 35);
+        adjustDelayTab.setPadding(new Insets(0, 10, 0, 10));
+        adjustDelayTab.getStyleClass().add("settingsPaneTab");
+        adjustDelayTab.getChildren().addAll(timerIconPane, adjustDelayLabel);
+        adjustDelayTab.setOnMouseClicked(e -> openAdjustDelay());
+        VBox.setMargin(adjustDelayTab, new Insets(5, 0, 0, 0));
+
+        timerIconPane.setMinSize(30, 35);
+        timerIconPane.setPrefSize(30, 35);
+        timerIconPane.setMaxSize(30, 35);
+        timerIconPane.setPadding(new Insets(0, 5, 0, 0));
+        timerIconPane.getChildren().add(timerIcon);
+
+        timerIcon.setPrefSize(14, 15);
+        timerIcon.setMaxSize(14, 15);
+        timerIcon.getStyleClass().add("captionsPaneIcon");
+        timerIcon.setShape(timerSVG);
+
+        adjustDelayLabel.setText("Adjust subtitle timing");
+        adjustDelayLabel.getStyleClass().add("settingsPaneText");
+        adjustDelayLabel.setMinSize(175, 35);
+        adjustDelayLabel.setPrefSize(195, 35);
+        adjustDelayLabel.setMaxSize(195, 35);
+
 
         captionsController.captionsPane.getChildren().add(scrollPane);
     }
@@ -192,6 +261,14 @@ public class CaptionsHome {
         }
     }
 
+    public void openSubtitleSearch(){
+        System.out.println("test1");
+    }
+
+    public void openAdjustDelay(){
+        System.out.println("test2");
+    }
+
     public void createTab(File selectedFile){
 
         for(CaptionsTab captionsTab : captionsTabs){
@@ -202,7 +279,9 @@ public class CaptionsHome {
         }
 
         CaptionsTab captionsTab = new CaptionsTab(captionsController, this, selectedFile.getName(), selectedFile, true);
-        captionsWrapper.getChildren().add(2, captionsTab);
+        captionsWrapper.getChildren().add(1, captionsTab);
+
+        if(captionsTabs.isEmpty()) captionsChooserTab.setStyle("-fx-border-width: 1 0 0 0;");
         captionsTabs.add(captionsTab);
         scrollPane.setVvalue(0);
         captionsTab.selectSubtitles(true);

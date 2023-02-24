@@ -221,7 +221,7 @@
 }
 
 
-.settingsHomeIcon, #captionsSearchIcon {
+.settingsHomeIcon, .captionsPaneIcon {
     -fx-background-color: white;
 }
 
@@ -285,10 +285,16 @@
 	-fx-opacity: 1;
 }
 
-.settingsPaneTitle {
+.settingsPaneTitle, #openSubtitlesTab {
     -fx-border-color: rgb(70,70,70);
     -fx-border-width: 0 0 1 0;
     -fx-border-insets: 0 0 -1 0;
+}
+
+#captionsChooserTab {
+    -fx-border-color: rgb(70,70,70);
+    -fx-border-width: 0;
+    -fx-border-insets: -1 0 0 0;
 }
 
 .settingsBackground {

@@ -1,4 +1,4 @@
-package hans.Settings;
+package hans.Captions;
 
 import hans.*;
 import javafx.animation.*;
@@ -15,77 +15,75 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
-public class CustomSpeedPane {
+public class TimingPane {
 
+    VBox container = new VBox();
 
-    double formattedSliderValue = 1;
-    double lastCustomValue = 1;
-
-    PlaybackSpeedController playbackSpeedController;
-
-    VBox customSpeedBox = new VBox();
-
-    HBox customSpeedTitle = new HBox();
-    StackPane customSpeedBackPane = new StackPane();
-    Region customSpeedBackIcon = new Region();
-    Label customSpeedTitleLabel = new Label();
+    HBox titlePane = new HBox();
+    StackPane backIconPane = new StackPane();
+    Region backIcon = new Region();
+    Label titleLabel = new Label();
     SVGPath backSVG = new SVGPath();
 
     StackPane sliderPane = new StackPane();
-    public Slider customSpeedSlider = new Slider();
+    public Slider slider = new Slider();
     ProgressBar sliderTrack = new ProgressBar();
 
-    Label customSpeedLabel = new Label();
+    Label label = new Label();
+
+    CaptionsHome captionsHome;
+    CaptionsController captionsController;
 
 
-    CustomSpeedPane(PlaybackSpeedController playbackSpeedController){
-        this.playbackSpeedController = playbackSpeedController;
+    TimingPane(CaptionsHome captionsHome, CaptionsController captionsController){
+        this.captionsHome = captionsHome;
+        this.captionsController = captionsController;
 
         backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
 
-        customSpeedBox.setPrefSize(235, 150);
-        customSpeedBox.setMaxSize(235, 150);
-        customSpeedBox.getChildren().addAll(customSpeedTitle, sliderPane, customSpeedLabel);
-        customSpeedBox.setAlignment(Pos.BOTTOM_CENTER);
-        StackPane.setAlignment(customSpeedBox, Pos.BOTTOM_RIGHT);
+        container.setPrefSize(235, 150);
+        container.setMaxSize(235, 150);
+        container.getChildren().addAll(titlePane, sliderPane, label);
+        container.setAlignment(Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(container, Pos.BOTTOM_RIGHT);
 
-        customSpeedBox.setVisible(false);
-        customSpeedBox.setMouseTransparent(true);
+        container.setVisible(false);
+        container.setMouseTransparent(true);
 
-        customSpeedTitle.setMinSize(235, 40);
-        customSpeedTitle.setPrefSize(235, 40);
-        customSpeedTitle.setMaxSize(235, 40);
-        customSpeedTitle.setPadding(new Insets(0, 10, 0, 10));
-        VBox.setMargin(customSpeedTitle, new Insets(0, 0, 20, 0));
+        titlePane.setMinSize(235, 40);
+        titlePane.setPrefSize(235, 40);
+        titlePane.setMaxSize(235, 40);
+        titlePane.setPadding(new Insets(0, 10, 0, 10));
+        VBox.setMargin(titlePane, new Insets(0, 0, 20, 0));
 
-        customSpeedTitle.getStyleClass().add("settingsPaneTitle");
-        customSpeedTitle.getChildren().addAll(customSpeedBackPane, customSpeedTitleLabel);
+        titlePane.getStyleClass().add("settingsPaneTitle");
+        titlePane.getChildren().addAll(backIconPane, titleLabel);
 
-        customSpeedBackPane.setMinSize(24, 40);
-        customSpeedBackPane.setPrefSize(24, 40);
-        customSpeedBackPane.setMaxSize(24, 40);
-        customSpeedBackPane.setCursor(Cursor.HAND);
-        customSpeedBackPane.getChildren().add(customSpeedBackIcon);
-        customSpeedBackPane.setOnMouseClicked((e) -> closeCustomSpeed());
+        backIconPane.setMinSize(24, 40);
+        backIconPane.setPrefSize(24, 40);
+        backIconPane.setMaxSize(24, 40);
+        backIconPane.setCursor(Cursor.HAND);
+        backIconPane.getChildren().add(backIcon);
+        backIconPane.setOnMouseClicked((e) -> closeSubtitleTiming());
 
-        customSpeedBackIcon.setMinSize(8, 13);
-        customSpeedBackIcon.setPrefSize(8, 13);
-        customSpeedBackIcon.setMaxSize(8, 13);
-        customSpeedBackIcon.getStyleClass().add("settingsPaneIcon");
-        customSpeedBackIcon.setShape(backSVG);
+        backIcon.setMinSize(8, 13);
+        backIcon.setPrefSize(8, 13);
+        backIcon.setMaxSize(8, 13);
+        backIcon.getStyleClass().add("settingsPaneIcon");
+        backIcon.setShape(backSVG);
 
-        customSpeedTitleLabel.setMinHeight(40);
-        customSpeedTitleLabel.setPrefHeight(40);
-        customSpeedTitleLabel.setMaxHeight(40);
-        customSpeedTitleLabel.setText("Custom");
-        customSpeedTitleLabel.setCursor(Cursor.HAND);
-        customSpeedTitleLabel.getStyleClass().add("settingsPaneText");
-        customSpeedTitleLabel.setOnMouseClicked((e) -> closeCustomSpeed());
+        titleLabel.setMinHeight(40);
+        titleLabel.setPrefHeight(40);
+        titleLabel.setMaxHeight(40);
+        titleLabel.setText("Subtitle timing");
+        titleLabel.setCursor(Cursor.HAND);
+        titleLabel.getStyleClass().add("settingsPaneText");
+        titleLabel.setOnMouseClicked((e) -> closeSubtitleTiming());
 
         sliderPane.setMinSize(235, 30);
         sliderPane.setPrefSize(235, 30);
         sliderPane.setMaxSize(235, 30);
-        sliderPane.getChildren().addAll(sliderTrack, customSpeedSlider);
+        sliderPane.getChildren().addAll(sliderTrack, slider);
 
         sliderTrack.setMinSize(138, 7);
         sliderTrack.setPrefSize(138,7);

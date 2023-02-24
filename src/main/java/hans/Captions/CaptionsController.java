@@ -73,7 +73,7 @@ public class CaptionsController {
 
         animating.set(false);
 
-        captionsBuffer.setPrefSize(245, 106);
+        captionsBuffer.setPrefSize(245, 181);
         captionsBuffer.setMaxWidth(270);
         captionsBuffer.setClip(clip);
         captionsBuffer.getChildren().add(captionsBackground);
@@ -101,7 +101,7 @@ public class CaptionsController {
         captionsBuffer.getChildren().add(captionsPane);
         StackPane.setAlignment(captionsBuffer, Pos.BOTTOM_RIGHT);
 
-        captionsPane.setPrefSize(245, 106);
+        captionsPane.setPrefSize(245, 181);
 
         captionsBox = new CaptionsBox(this, mainController);
         captionsHome = new CaptionsHome(this);
@@ -148,6 +148,8 @@ public class CaptionsController {
 
         if(mediaItem != null && mediaItem.numberOfSubtitleStreams > 0 && mediaItem.subtitleStreamLanguages.size() == mediaItem.numberOfSubtitleStreams){
 
+            captionsHome.captionsChooserTab.setStyle("-fx-border-width: 1 0 0 0;");
+
             for(int i = 0 ; i < mediaItem.numberOfSubtitleStreams; i++){
                 // add subtitle tab to captions home
 
@@ -187,13 +189,15 @@ public class CaptionsController {
         for(CaptionsTab captionsTab : captionsHome.captionsTabs) captionsHome.captionsWrapper.getChildren().remove(captionsTab);
 
         captionsHome.captionsTabs.clear();
-        captionsHome.captionsWrapper.setPrefHeight(103);
-        captionsHome.captionsWrapper.setMaxHeight(103);
+        captionsHome.captionsWrapper.setPrefHeight(178);
+        captionsHome.captionsWrapper.setMaxHeight(178);
 
-        captionsHome.scrollPane.setPrefHeight(106);
-        captionsHome.scrollPane.setMaxHeight(106);
+        captionsHome.scrollPane.setPrefHeight(181);
+        captionsHome.scrollPane.setMaxHeight(181);
 
-        if(captionsState == CaptionsState.HOME_OPEN || captionsState == CaptionsState.CLOSED) clip.setHeight(106);
+        captionsHome.captionsChooserTab.setStyle("-fx-border-width: 0;");
+
+        if(captionsState == CaptionsState.HOME_OPEN || captionsState == CaptionsState.CLOSED) clip.setHeight(181);
 
         removeCaptions();
     }
@@ -213,6 +217,7 @@ public class CaptionsController {
 
     public void updateCaptions(double time){
 
+        // 140 is default delay
         int delay = 140;
         double adjustedTime = time + delay;
         if(!subtitles.isEmpty() &&

@@ -52,6 +52,7 @@ public class CloseConfirmationWindow {
         window.getStyleClass().add("popupWindow");
         window.setPrefHeight(Region.USE_COMPUTED_SIZE);
         window.setMaxHeight(Region.USE_PREF_SIZE);
+        window.setVisible(false);
 
         closeButtonContainer.setPrefHeight(30);
         closeButtonContainer.getChildren().add(closeButtonPane);

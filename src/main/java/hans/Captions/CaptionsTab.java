@@ -167,6 +167,9 @@ public class CaptionsTab extends HBox {
         }
 
         captionsHome.captionsTabs.remove(this);
+        if(captionsHome.captionsTabs.isEmpty()){
+            captionsHome.captionsChooserTab.setStyle("-fx-border-width: 0;");
+        }
 
         boolean removed = captionsHome.captionsWrapper.getChildren().remove(this);
         if(removed){

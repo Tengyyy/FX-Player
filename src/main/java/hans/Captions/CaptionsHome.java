@@ -266,7 +266,44 @@ public class CaptionsHome {
     }
 
     public void openAdjustDelay(){
-        System.out.println("test2");
+        if(captionsController.animating.get()) return;
+
+        captionsController.captionsState = CaptionsState.TIMING_OPEN;
+
+        captionsController.timingPane.container.setVisible(true);
+        captionsController.timingPane.container.setMouseTransparent(false);
+
+        Timeline clipHeightTimeline = new Timeline();
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.timingPane.container.getHeight())));
+
+
+        Timeline clipWidthTimeline = new Timeline();
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.timingPane.container.getWidth())));
+
+
+
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), scrollPane);
+        captionsTransition.setFromX(0);
+        captionsTransition.setToX(-captionsController.timingPane.container.getWidth());
+
+        TranslateTransition timingTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsController.timingPane.container);
+        timingTransition.setFromX(captionsController.timingPane.container.getWidth());
+        timingTransition.setToX(0);
+
+
+        ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, captionsTransition, timingTransition);
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.setOnFinished((e) -> {
+            captionsController.animating.set(false);
+            scrollPane.setVisible(false);
+            scrollPane.setMouseTransparent(true);
+            scrollPane.setTranslateX(0);
+            scrollPane.setVvalue(0);
+            captionsController.clip.setHeight(captionsController.timingPane.container.getPrefHeight());
+        });
+
+        parallelTransition.play();
+        captionsController.animating.set(true);
     }
 
     public void createTab(File selectedFile){

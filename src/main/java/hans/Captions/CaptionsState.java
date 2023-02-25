@@ -12,4 +12,5 @@ public enum CaptionsState {
     BACKGROUND_OPACITY_OPEN,
     LINE_SPACING_OPEN,
     OPACITY_OPEN,
+    TIMING_OPEN
 }

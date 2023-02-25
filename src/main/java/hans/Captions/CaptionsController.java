@@ -46,6 +46,7 @@ public class CaptionsController {
     public CaptionsHome captionsHome;
     public CaptionsOptionsPane captionsOptionsPane;
     public CaptionsBox captionsBox;
+    public TimingPane timingPane;
 
     public File captionsFile;
     ArrayList<Subtitle> subtitles  = new ArrayList<>();
@@ -64,6 +65,8 @@ public class CaptionsController {
     public BooleanProperty animating = new SimpleBooleanProperty(); // animating state of the captions pane
 
     public CaptionsState captionsState = CaptionsState.CLOSED;
+
+    public int subtitleDelay = 0;
 
     public CaptionsController(SettingsController settingsController, MainController mainController, ControlBarController controlBarController, MenuController menuController){
         this.settingsController = settingsController;
@@ -106,6 +109,7 @@ public class CaptionsController {
         captionsBox = new CaptionsBox(this, mainController);
         captionsHome = new CaptionsHome(this);
         captionsOptionsPane = new CaptionsOptionsPane(this);
+        timingPane = new TimingPane(captionsHome, this);
 
         captionsSelected.addListener((observableValue, oldValue, newValue) -> {
             captionsBox.toggleVisibility(newValue);
@@ -217,9 +221,9 @@ public class CaptionsController {
 
     public void updateCaptions(double time){
 
-        // 140 is default delay
-        int delay = 140;
-        double adjustedTime = time + delay;
+        // 140 ms is about the delay of vlc time changed events
+        int adjustment = 140;
+        double adjustedTime = time + adjustment + subtitleDelay;
         if(!subtitles.isEmpty() &&
                 captionsPosition >= 0 &&
                 captionsPosition < subtitles.size() &&
@@ -391,6 +395,7 @@ public class CaptionsController {
             case BACKGROUND_OPACITY_OPEN -> closeCaptionsFromBackgroundOpacity();
             case LINE_SPACING_OPEN -> closeCaptionsFromLineSpacing();
             case OPACITY_OPEN -> closeCaptionsFromOpacity();
+            case TIMING_OPEN -> closeCaptionsFromTimingPane();
             default -> {
             }
         }
@@ -675,6 +680,34 @@ public class CaptionsController {
             captionsOptionsPane.fontOpacityPane.scrollPane.setVisible(false);
             captionsOptionsPane.fontOpacityPane.scrollPane.setMouseTransparent(true);
             captionsOptionsPane.fontOpacityPane.scrollPane.setOpacity(1);
+            clip.setHeight(captionsHome.scrollPane.getHeight());
+            clip.setWidth(captionsHome.scrollPane.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeCaptionsFromTimingPane(){
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
+
+        FadeTransition timingTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), timingPane.container);
+        timingTransition.setFromValue(1);
+        timingTransition.setToValue(0);
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, timingTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            captionsBuffer.setMouseTransparent(true);
+            captionsBackground.setVisible(false);
+            captionsBackground.setMouseTransparent(true);
+            timingPane.container.setVisible(false);
+            timingPane.container.setMouseTransparent(true);
+            timingPane.container.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
         });

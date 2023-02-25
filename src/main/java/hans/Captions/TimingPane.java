@@ -1,6 +1,7 @@
 package hans.Captions;
 
 import hans.*;
+import hans.Settings.SettingsController;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -91,90 +92,85 @@ public class TimingPane {
         sliderTrack.setProgress(0.75/1.75);
         sliderTrack.getStyleClass().add("customSliderTrack");
 
-        customSpeedSlider.getStyleClass().add("customSlider");
-        customSpeedSlider.setMin(0.25);
-        customSpeedSlider.setMax(2);
-        customSpeedSlider.setValue(1);
-        customSpeedSlider.setBlockIncrement(0.05);
-        customSpeedSlider.setMinWidth(150);
-        customSpeedSlider.setPrefWidth(150);
-        customSpeedSlider.setMaxWidth(150);
+        slider.getStyleClass().add("customSlider");
+        slider.setMin(-10);
+        slider.setMax(10);
+        slider.setValue(0);
+        slider.setBlockIncrement(0.05);
+        slider.setMinWidth(150);
+        slider.setPrefWidth(150);
+        slider.setMaxWidth(150);
 
-        customSpeedSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+        slider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
 
-            formattedSliderValue = Math.floor(newValue.doubleValue() * 20) / 20; // floored to .05 precision
 
-            double progress = (newValue.doubleValue() - 0.25) / 1.75; // adjust the slider scale ( 0.25 - 2 ) to match with the progress bar scale ( 0 - 1 )
+            double progress = (newValue.doubleValue() + 10) / 20; // adjust the slider scale ( 0.25 - 2 ) to match with the progress bar scale ( 0 - 1 )
 
             sliderTrack.setProgress(progress);
 
-            customSpeedLabel.setText(playbackSpeedController.df.format(formattedSliderValue) + "x");
+            label.setText(newValue + " s");
 
-            if (formattedSliderValue * 4 != Math.round(formattedSliderValue * 4)) { // current slider value is not one of the default playback speed selections, which means a new custom speed tab has to be created or the value of the existing custom speed tab has to be updated
-
-                lastCustomValue = formattedSliderValue;
-
-                if(playbackSpeedController.playbackSpeedPane.customSpeedTab == null) new PlaybackSpeedTab(playbackSpeedController, playbackSpeedController.playbackSpeedPane, true);
-                else playbackSpeedController.playbackSpeedPane.customSpeedTab.updateValue(formattedSliderValue);
-
-            }
         });
 
 
-        customSpeedSlider.valueChangingProperty().addListener((observableValue, oldValue, newValue) -> {
+        slider.valueChangingProperty().addListener((observableValue, oldValue, newValue) -> {
             // this is where we update the scrollvalue, mediaplayer speedrate etc
             if(newValue) return;
 
-            playbackSpeedController.setSpeed(formattedSliderValue); // updates mediaplayer playback speed
-            playbackSpeedController.updateTabs(formattedSliderValue);
+            captionsController.subtitleDelay = (int) (slider.getValue() * 1000);
 
         });
 
-        customSpeedSlider.setOnMousePressed((e) -> customSpeedSlider.setValueChanging(true));
-        customSpeedSlider.setOnMouseReleased((e) -> customSpeedSlider.setValueChanging(false));
+        slider.setOnMousePressed((e) -> slider.setValueChanging(true));
+        slider.setOnMouseReleased((e) -> slider.setValueChanging(false));
 
-        customSpeedLabel.setText("1x");
-        customSpeedLabel.getStyleClass().add("settingsPaneText");
-        customSpeedLabel.setId("customSpeedValue");
-        VBox.setMargin(customSpeedLabel, new Insets(10, 0, 20, 0));
+        label.setText("0 s");
+        label.getStyleClass().add("settingsPaneText");
+        label.setId("subtitleDelayLabel");
+        VBox.setMargin(label, new Insets(10, 0, 20, 0));
 
-        playbackSpeedController.settingsController.settingsPane.getChildren().add(customSpeedBox);
+        captionsController.captionsPane.getChildren().add(container);
 
 
     }
 
-    public void closeCustomSpeed(){
-        if(playbackSpeedController.settingsController.animating.get()) return;
+    public void closeSubtitleTiming(){
+        if(captionsController.animating.get()) return;
 
-        playbackSpeedController.settingsController.settingsState = SettingsState.PLAYBACK_SPEED_OPEN;
+        captionsController.captionsState = CaptionsState.HOME_OPEN;
 
-        playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(true);
-        playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(false);
-
-        Timeline clipTimeline = new Timeline();
-        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.settingsController.clip.heightProperty(), playbackSpeedController.playbackSpeedPane.scrollPane.getHeight())));
-
-        TranslateTransition customTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), customSpeedBox);
-        customTransition.setFromX(0);
-        customTransition.setToX(playbackSpeedController.playbackSpeedPane.scrollPane.getWidth());
-
-        TranslateTransition speedTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), playbackSpeedController.playbackSpeedPane.scrollPane);
-        speedTransition.setFromX(-playbackSpeedController.playbackSpeedPane.scrollPane.getWidth());
-        speedTransition.setToX(0);
+        captionsController.captionsHome.scrollPane.setVisible(true);
+        captionsController.captionsHome.scrollPane.setMouseTransparent(false);
 
 
-        ParallelTransition parallelTransition = new ParallelTransition(clipTimeline, customTransition, speedTransition);
+        Timeline clipHeightTimeline = new Timeline();
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.captionsHome.scrollPane.getHeight())));
+
+
+        Timeline clipWidthTimeline = new Timeline();
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsHome.scrollPane.getWidth())));
+
+
+
+        TranslateTransition captionsPaneTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsController.captionsHome.scrollPane);
+        captionsPaneTransition.setFromX(-container.getWidth());
+        captionsPaneTransition.setToX(0);
+
+        TranslateTransition timingTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), container);
+        timingTransition.setFromX(0);
+        timingTransition.setToX(container.getWidth());
+
+
+        ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, captionsPaneTransition, timingTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
-            playbackSpeedController.settingsController.animating.set(false);
-            customSpeedBox.setVisible(false);
-            customSpeedBox.setMouseTransparent(true);
-            customSpeedBox.setTranslateX(0);
-            playbackSpeedController.settingsController.clip.setHeight(playbackSpeedController.playbackSpeedPane.scrollPane.getPrefHeight());
+            captionsController.animating.set(false);
+            container.setVisible(false);
+            container.setMouseTransparent(true);
+            container.setTranslateX(0);
         });
 
         parallelTransition.play();
-        playbackSpeedController.settingsController.animating.set(true);
-
+        captionsController.animating.set(true);
     }
 }

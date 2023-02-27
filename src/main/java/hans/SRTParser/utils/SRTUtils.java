@@ -171,7 +171,7 @@ public final class SRTUtils {
 
 		try (
 				FileOutputStream fos = new FileOutputStream(fileOut);
-				OutputStreamWriter osw = new OutputStreamWriter(fos, DEFAULT_CHARSET);
+				OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
 				BufferedWriter bos = new BufferedWriter(osw);
 				) {
 

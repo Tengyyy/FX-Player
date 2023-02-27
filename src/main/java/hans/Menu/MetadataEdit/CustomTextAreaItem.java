@@ -80,7 +80,7 @@ public class CustomTextAreaItem extends VBox{
                         + keyField.getPadding().getLeft() + keyField.getPadding().getRight() // Add the padding of the TextField
                         + 2d; // Add some spacing
                 keyField.setPrefWidth(width); // Set the width
-                keyField.positionCaret(keyField.getCaretPosition()); // If you remove this line, it flashes a little bit
+                keyField.positionCaret(keyField.getCaretPosition()); // If you remove this line the caret flashes in the wrong spot for a moment
             });
         });
 

@@ -3,17 +3,25 @@ package hans.Captions;
 import hans.*;
 import hans.Settings.SettingsController;
 import javafx.animation.*;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class TimingPane {
@@ -30,10 +38,14 @@ public class TimingPane {
     public Slider slider = new Slider();
     ProgressBar sliderTrack = new ProgressBar();
 
-    Label label = new Label();
+    HBox textFieldContainer = new HBox();
+    TextField textField = new TextField();
+    Label label = new Label("s");
 
     CaptionsHome captionsHome;
     CaptionsController captionsController;
+
+    int MAX_WIDTH = 150;
 
 
     TimingPane(CaptionsHome captionsHome, CaptionsController captionsController){
@@ -44,7 +56,7 @@ public class TimingPane {
 
         container.setPrefSize(235, 150);
         container.setMaxSize(235, 150);
-        container.getChildren().addAll(titlePane, sliderPane, label);
+        container.getChildren().addAll(titlePane, sliderPane, textFieldContainer);
         container.setAlignment(Pos.BOTTOM_CENTER);
         StackPane.setAlignment(container, Pos.BOTTOM_RIGHT);
 
@@ -103,31 +115,89 @@ public class TimingPane {
 
         slider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
 
-
-            double progress = (newValue.doubleValue() + 10) / 20; // adjust the slider scale ( 0.25 - 2 ) to match with the progress bar scale ( 0 - 1 )
+            double progress = (newValue.doubleValue() + 10) / 20;
 
             sliderTrack.setProgress(progress);
 
-            label.setText(newValue + " s");
-
+            if(slider.isValueChanging()){
+                textField.setText(String.format("%.2f", newValue.doubleValue()));
+            }
         });
 
 
         slider.valueChangingProperty().addListener((observableValue, oldValue, newValue) -> {
-            // this is where we update the scrollvalue, mediaplayer speedrate etc
             if(newValue) return;
 
-            captionsController.subtitleDelay = (int) (slider.getValue() * 1000);
+            captionsController.subtitleDelay = (int) (-slider.getValue() * 1000);
 
         });
 
         slider.setOnMousePressed((e) -> slider.setValueChanging(true));
         slider.setOnMouseReleased((e) -> slider.setValueChanging(false));
 
-        label.setText("0 s");
+        textFieldContainer.getChildren().addAll(textField, label);
+        textFieldContainer.setAlignment(Pos.CENTER);
+        textFieldContainer.setSpacing(10);
+        VBox.setMargin(textFieldContainer, new Insets(10, 0, 20, 0));
+
+        textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(!newValue.matches("\\-?\\d*\\.?\\d*")){
+                textField.setText(oldValue);
+            }
+        });
+
+        textField.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER){
+                try{
+                    double number = Double.parseDouble(textField.getText());
+                    slider.setValue(number);
+                    textField.setText(String.valueOf(number));
+                    captionsController.subtitleDelay = (int) (-number * 1000);
+                }
+                catch(NumberFormatException ex){
+                    slider.setValue(0);
+                    textField.setText("0.0");
+                }
+            }
+        });
+
+        textField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+
+            if(!newValue){
+                try{
+                    double number = Double.parseDouble(textField.getText());
+                    slider.setValue(number);
+                    textField.setText(String.valueOf(number));
+                    captionsController.subtitleDelay = (int) (-number * 1000);
+
+                }
+                catch(NumberFormatException ex){
+                    slider.setValue(0);
+                    textField.setText("0.0");
+                }
+            }
+
+        });
+
+        textField.textProperty().addListener((ov, prevText, currText) -> {
+            // Do this in a Platform.runLater because of Textfield has no padding at first time and so on
+            Platform.runLater(() -> {
+                Text text = new Text(currText);
+                text.setFont(new Font("Roboto Medium", 18)); // Set the same font, so the size is the same
+                double width = text.getLayoutBounds().getWidth()
+                        + textField.getPadding().getLeft() + textField.getPadding().getRight() // Add the padding of the TextField
+                        + 2d; // Add some spacing
+                textField.setPrefWidth(width); // Set the width
+                textField.positionCaret(textField.getCaretPosition()); // If you remove this line the caret flashes in the wrong spot for a moment
+            });
+        });
+
+        textField.setText("0.0");
+
+        textField.setMaxWidth(MAX_WIDTH);
+        textField.getStyleClass().add("key-text-field");
         label.getStyleClass().add("settingsPaneText");
         label.setId("subtitleDelayLabel");
-        VBox.setMargin(label, new Insets(10, 0, 20, 0));
 
         captionsController.captionsPane.getChildren().add(container);
 
@@ -149,7 +219,6 @@ public class TimingPane {
 
         Timeline clipWidthTimeline = new Timeline();
         clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.captionsHome.scrollPane.getWidth())));
-
 
 
         TranslateTransition captionsPaneTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsController.captionsHome.scrollPane);

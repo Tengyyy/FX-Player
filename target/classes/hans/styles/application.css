@@ -33,7 +33,7 @@
 }
 
 
-#customSpeedValue {
+#customSpeedValue, #subtitleDelayLabel {
     -fx-font-family: "Roboto Medium";
 	-fx-font-size: 20;
 }
@@ -113,17 +113,17 @@
 
 
 
-.customSpeedSlider .track {
+.customSlider .track {
 	
 	-fx-background-color: null;
 }
 
 
-.customSpeedTrack {
+.customSliderTrack {
 	-fx-accent: white;
 }
 
-.customSpeedTrack > .track {
+.customSliderTrack > .track {
 	-fx-border-radius: 0;
     -fx-background-radius: 0;
     -fx-text-box-border: transparent;
@@ -131,13 +131,13 @@
     -fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
-.customSpeedTrack > .bar {
+.customSliderTrack > .bar {
 	-fx-padding: 1px;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
 }
 
-.customSpeedSlider > .thumb {
+.customSlider > .thumb {
 	-fx-background-color: white;
 	-fx-padding: 10;
 }

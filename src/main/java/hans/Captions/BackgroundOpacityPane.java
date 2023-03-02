@@ -46,8 +46,8 @@ public class BackgroundOpacityPane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(190, 244);
-        scrollPane.setMaxSize(190, 244);
+        scrollPane.setPrefSize(200, 244);
+        scrollPane.setMaxSize(200, 244);
         scrollPane.setContent(backgroundOpacityBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);

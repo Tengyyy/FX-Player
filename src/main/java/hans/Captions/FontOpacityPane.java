@@ -47,8 +47,8 @@ public class FontOpacityPane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(190, 209);
-        scrollPane.setMaxSize(190, 209);
+        scrollPane.setPrefSize(200, 209);
+        scrollPane.setMaxSize(200, 209);
         scrollPane.setContent(opacityBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);

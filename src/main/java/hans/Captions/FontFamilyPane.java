@@ -47,8 +47,8 @@ public class FontFamilyPane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(190, 314);
-        scrollPane.setMaxSize(190, 314);
+        scrollPane.setPrefSize(200, 314);
+        scrollPane.setMaxSize(200, 314);
         scrollPane.setContent(fontFamilyBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
@@ -57,13 +57,13 @@ public class FontFamilyPane {
         fontFamilyBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        fontFamilyBox.setPrefSize(190, 311);
-        fontFamilyBox.setMaxSize(190, 311);
+        fontFamilyBox.setPrefSize(185, 311);
+        fontFamilyBox.setMaxSize(185, 311);
         fontFamilyBox.setPadding(new Insets(8, 0, 8, 0));
         fontFamilyBox.getChildren().add(fontFamilyTitle);
 
-        fontFamilyTitle.setPrefSize(190, 40);
-        fontFamilyTitle.setMaxSize(190, 40);
+        fontFamilyTitle.setPrefSize(185, 40);
+        fontFamilyTitle.setMaxSize(185, 40);
         fontFamilyTitle.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(fontFamilyTitle, new Insets(0, 0, 10, 0));
 

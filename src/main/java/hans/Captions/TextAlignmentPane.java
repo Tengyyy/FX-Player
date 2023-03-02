@@ -48,8 +48,8 @@ public class TextAlignmentPane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(190, 174);
-        scrollPane.setMaxSize(190, 174);
+        scrollPane.setPrefSize(200, 174);
+        scrollPane.setMaxSize(200, 174);
         scrollPane.setContent(textAlignmentBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);

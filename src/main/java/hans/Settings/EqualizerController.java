@@ -29,7 +29,7 @@ public class EqualizerController {
     ScrollPane scrollPane = new ScrollPane();
     VBox equalizerBox = new VBox();
 
-    HBox titleBox = new HBox();
+    StackPane titleBox = new StackPane();
     StackPane backIconPane = new StackPane();
     Region backIcon = new Region();
     SVGPath backSVG = new SVGPath();
@@ -85,21 +85,19 @@ public class EqualizerController {
         equalizerBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        equalizerBox.setMinSize(550, 320);
-        equalizerBox.setPrefSize(550, 320);
-        equalizerBox.setMaxSize(550, 320);
+        equalizerBox.setPrefSize(535, 320);
+        equalizerBox.setMaxSize(535, 320);
         equalizerBox.setPadding(new Insets(8, 0, 8, 0));
         equalizerBox.getChildren().addAll(titleBox, sliderBox, checkBoxContainer);
         equalizerBox.setAlignment(Pos.TOP_CENTER);
 
-        titleBox.setMinSize(550, 40);
-        titleBox.setPrefSize(550, 40);
-        titleBox.setMaxSize(550, 40);
+        titleBox.setPrefSize(535, 40);
+        titleBox.setMaxSize(535, 40);
         titleBox.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(titleBox, new Insets(0, 0, 10, 0));
 
         titleBox.getStyleClass().add("settingsPaneTitle");
-        titleBox.getChildren().addAll(backIconPane, titleLabelWrapper, comboBox);
+        titleBox.getChildren().addAll(titleLabelWrapper, comboBox);
 
         backIconPane.setMinSize(25, 40);
         backIconPane.setPrefSize(25, 40);
@@ -114,19 +112,17 @@ public class EqualizerController {
         backIcon.getStyleClass().add("settingsPaneIcon");
         backIcon.setShape(backSVG);
 
+        StackPane.setAlignment(titleLabelWrapper, Pos.CENTER_LEFT);
+        titleLabelWrapper.getChildren().addAll(backIconPane, titleLabel);
         titleLabelWrapper.setAlignment(Pos.CENTER_LEFT);
-        titleLabelWrapper.setMinSize(340, 40);
-        titleLabelWrapper.setPrefSize(340, 40);
-        titleLabelWrapper.setMaxSize(340, 40);
-        titleLabelWrapper.getChildren().add(titleLabel);
 
         titleLabel.setText("Equalizer");
         titleLabel.setCursor(Cursor.HAND);
         titleLabel.getStyleClass().add("settingsPaneText");
         titleLabel.setOnMouseClicked((e) -> closeEqualizer());
 
+        StackPane.setAlignment(comboBox, Pos.CENTER_RIGHT);
         comboBox.getItems().addAll("Flat", "Classical", "Club", "Dance", "Full bass", "Full treble", "Headphones", "Large hall", "Live", "Party", "Pop", "Rock", "Soft", "Techno", "Custom");
-        comboBox.setMinSize(150, 35);
         comboBox.setPrefSize(150, 35);
         comboBox.setMaxSize(150, 35);
         comboBox.setVisibleRowCount(5);
@@ -153,9 +149,8 @@ public class EqualizerController {
         });
 
 
-        sliderBox.setMinSize(550, 200);
-        sliderBox.setPrefSize(550, 200);
-        sliderBox.setMaxSize(550, 200);
+        sliderBox.setPrefSize(535, 200);
+        sliderBox.setMaxSize(535, 200);
         sliderBox.setPadding(new Insets(0, 5, 5, 5));
         sliderBox.setAlignment(Pos.CENTER);
 
@@ -188,7 +183,8 @@ public class EqualizerController {
         labelBox.getChildren().addAll(label1, label2, label3, label4,label5);
 
         for(int i = 0; i < 10; i++){
-            switch(i){                case 0 -> sliders.add(new EqualizerSlider(this, "50 Hz"));
+            switch(i){
+                case 0 -> sliders.add(new EqualizerSlider(this, "50 Hz"));
                 case 1 -> sliders.add(new EqualizerSlider(this, "170 Hz"));
                 case 2 -> sliders.add(new EqualizerSlider(this, "310 Hz"));
                 case 3 -> sliders.add(new EqualizerSlider(this, "500 Hz"));

@@ -49,8 +49,8 @@ public class FontSizePane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(190, 314);
-        scrollPane.setMaxSize(190, 314);
+        scrollPane.setPrefSize(200, 314);
+        scrollPane.setMaxSize(200, 314);
         scrollPane.setContent(fontSizeBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);

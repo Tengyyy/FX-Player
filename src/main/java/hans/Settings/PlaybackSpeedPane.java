@@ -26,7 +26,7 @@ public class PlaybackSpeedPane{
     ScrollPane scrollPane = new ScrollPane();
 
     VBox playbackSpeedBox = new VBox();
-    HBox playbackSpeedTitle = new HBox();
+    StackPane playbackSpeedTitle = new StackPane();
 
     StackPane playbackSpeedBackPane = new StackPane();
     Region playbackSpeedBackIcon = new Region();
@@ -53,20 +53,18 @@ public class PlaybackSpeedPane{
         playbackSpeedBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        playbackSpeedBox.setMinSize(215, 346);
-        playbackSpeedBox.setPrefSize(235, 346);
-        playbackSpeedBox.setMaxSize(235, 346);
+        playbackSpeedBox.setPrefSize(220, 346);
+        playbackSpeedBox.setMaxSize(220, 346);
         playbackSpeedBox.setPadding(new Insets(8, 0, 8, 0));
         playbackSpeedBox.getChildren().add(playbackSpeedTitle);
 
-        playbackSpeedTitle.setMinSize(215, 40);
-        playbackSpeedTitle.setPrefSize(235, 40);
-        playbackSpeedTitle.setMaxSize(235, 40);
-        playbackSpeedTitle.setPadding(new Insets(0, 10, 0, 10));
+        playbackSpeedTitle.setPrefSize(220, 40);
+        playbackSpeedTitle.setMaxSize(220, 40);
+        playbackSpeedTitle.setPadding(new Insets(0, 5, 0, 10));
         VBox.setMargin(playbackSpeedTitle, new Insets(0, 0, 10, 0));
 
         playbackSpeedTitle.getStyleClass().add("settingsPaneTitle");
-        playbackSpeedTitle.getChildren().addAll(playbackSpeedBackPane, titleLabelWrapper, playbackSpeedCustomLabel);
+        playbackSpeedTitle.getChildren().addAll(titleLabelWrapper, playbackSpeedCustomLabel);
 
         playbackSpeedBackPane.setMinSize(25, 40);
         playbackSpeedBackPane.setPrefSize(25, 40);
@@ -81,23 +79,20 @@ public class PlaybackSpeedPane{
         playbackSpeedBackIcon.getStyleClass().add("settingsPaneIcon");
         playbackSpeedBackIcon.setShape(backSVG);
 
-        titleLabelWrapper.setMinSize(140, 40);
-        titleLabelWrapper.setPrefSize(160, 40);
-        titleLabelWrapper.setMaxSize(160, 40);
-        titleLabelWrapper.getChildren().add(playbackSpeedTitleLabel);
-        playbackSpeedTitleLabel.setMinHeight(40);
-        playbackSpeedTitleLabel.setPrefHeight(40);
-        playbackSpeedTitleLabel.setMaxHeight(40);
+        StackPane.setAlignment(titleLabelWrapper, Pos.CENTER_LEFT);
+        titleLabelWrapper.getChildren().addAll(playbackSpeedBackPane, playbackSpeedTitleLabel);
+        titleLabelWrapper.setAlignment(Pos.CENTER_LEFT);
+
         playbackSpeedTitleLabel.setText("Playback speed");
         playbackSpeedTitleLabel.setCursor(Cursor.HAND);
         playbackSpeedTitleLabel.getStyleClass().add("settingsPaneText");
         playbackSpeedTitleLabel.setOnMouseClicked((e) -> closePlaybackSpeedPane());
 
 
+        StackPane.setAlignment(playbackSpeedCustomLabel, Pos.CENTER_RIGHT);
         playbackSpeedCustomLabel.getStyleClass().addAll("settingsPaneText", "settingsPaneSubText");
         playbackSpeedCustomLabel.setText("Custom");
         playbackSpeedCustomLabel.setUnderline(true);
-        playbackSpeedCustomLabel.setMinSize(50, 40);
         playbackSpeedCustomLabel.setPrefSize(50,40);
         playbackSpeedCustomLabel.setMaxSize(50, 40);
         playbackSpeedCustomLabel.setCursor(Cursor.HAND);

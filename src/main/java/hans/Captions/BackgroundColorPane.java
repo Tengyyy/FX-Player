@@ -45,8 +45,8 @@ public class BackgroundColorPane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(190, 349);
-        scrollPane.setMaxSize(190, 349);
+        scrollPane.setPrefSize(200, 349);
+        scrollPane.setMaxSize(200, 349);
         scrollPane.setContent(backgroundColorBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);

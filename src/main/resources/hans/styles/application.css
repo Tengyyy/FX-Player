@@ -32,10 +32,13 @@
 	-fx-font-size: 15;
 }
 
-
 #customSpeedValue, #subtitleDelayLabel {
     -fx-font-family: "Roboto Medium";
 	-fx-font-size: 20;
+}
+
+#subtitleDelayLabel {
+    -fx-text-fill: white;
 }
 
 #playbackSpeedCustom {
@@ -50,62 +53,67 @@
 }
 
 
-
-.settingsScroll > .viewport {
+.scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
 
-.settingsScroll {
+
+.scroll-pane {
     -fx-background-color: transparent;
     -fx-padding: 0;
-    -fx-insets: 0;
+    -fx-background-insets: 0;
 }
 
-.settingsScroll .scroll-bar:vertical {
+
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+}
+
+.scroll-pane .corner {
+    -fx-background-insets: 0;
+}
+
+
+.scroll-bar:vertical {
     -fx-background-color: transparent;
 }
 
-.settingsScroll .scroll-bar:horizontal .track,
-.settingsScroll .scroll-bar:vertical .track{
-    -fx-opacity: 0;
+
+
+.scroll-bar:horizontal.track,
+.scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
     -fx-background-radius : 0.0em;
     -fx-border-radius :0.0em;
 }
 
-.settingsScroll .scroll-bar:vertical .track-background {
-    -fx-opacity: 0;
-}
 
-.settingsScroll .scroll-bar:horizontal .increment-button ,
-.settingsScroll .scroll-bar:horizontal .decrement-button {
+.scroll-bar:horizontal .increment-button,
+.scroll-bar:horizontal .decrement-button,
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
     -fx-background-color :transparent;
     -fx-background-radius : 0.0em;
     -fx-padding :0.0 0.0 0.0 0.0;
-
 }
 
-.settingsScroll .scroll-bar:vertical .increment-button ,
-.settingsScroll .scroll-bar:vertical .decrement-button {
-    -fx-background-color : transparent;
-    -fx-background-radius : 0.0em;
-    -fx-padding :0.0 0.0 0.0 0.0;
 
+
+.scroll-pane .scroll-bar .increment-arrow,
+.scroll-pane .scroll-bar .decrement-arrow {
+    -fx-shape : " ";
+    -fx-padding: 0 0.4em;
 }
 
- .settingsScroll .scroll-bar .increment-arrow,
- .settingsScroll .scroll-bar .decrement-arrow{
-    -fx-shape : " ";    
-    -fx-padding :0.0em 0.0;
+.combo-box .combo-box-popup .scroll-bar .increment-arrow,
+.combo-box .combo-box-popup .scroll-bar .decrement-arrow {
+    -fx-shape : " ";
+    -fx-padding: 0 0.3em;
 }
 
- .settingsScroll .scroll-bar:vertical .increment-arrow,
- .settingsScroll .scroll-bar:vertical .decrement-arrow{
-    -fx-shape : " ";    
-    -fx-padding :0.0 0.0em;
-}
-
-.settingsScroll .scroll-bar:horizontal .thumb,
-.settingsScroll .scroll-bar:vertical .thumb {
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
     -fx-background-color :derive(black,90.0%);
     -fx-background-insets : 2.0, 0.0, 0.0;
     -fx-background-radius : 2.0em;
@@ -113,8 +121,8 @@
 
 
 
+
 .customSlider .track {
-	
 	-fx-background-color: null;
 }
 
@@ -244,7 +252,7 @@
     -fx-font-size: 14;
 }
 
-#tooltipTitle {
+#tooltipTitle, #subtitleTimingLabel {
     -fx-text-fill: white;
     -fx-font-family: "Roboto Medium";
     -fx-font-size: 14;
@@ -283,6 +291,11 @@
 
 .mfx-toggle-button .line {
 	-fx-opacity: 1;
+}
+
+/* doesnt work, gets set back to default height when selecting any item. Might have to create my own custom implementation */
+#checkComboBox .combo-box .combo-box-popup .list-view {
+    -fx-max-height: 200;
 }
 
 .settingsPaneTitle, #openSubtitlesTab {

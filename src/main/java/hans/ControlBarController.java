@@ -901,6 +901,8 @@ public class ControlBarController implements Initializable {
         captionsController.captionsBox.cancelDrag();
         App.stage.setFullScreen(!App.stage.isFullScreen());
 
+        mainController.videoImageView.requestFocus();
+
         if (App.stage.isFullScreen()) {
             fullScreenIcon.setShape(minimizeSVG);
             App.fullScreen = true;

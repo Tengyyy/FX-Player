@@ -56,13 +56,11 @@ public class BackgroundOpacityPane {
         backgroundOpacityBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        backgroundOpacityBox.setMinSize(185, 241);
         backgroundOpacityBox.setPrefSize(185, 241);
         backgroundOpacityBox.setMaxSize(185, 241);
         backgroundOpacityBox.setPadding(new Insets(8, 0, 8, 0));
         backgroundOpacityBox.getChildren().add(backgroundOpacityTitle);
 
-        backgroundOpacityTitle.setMinSize(185, 40);
         backgroundOpacityTitle.setPrefSize(185, 40);
         backgroundOpacityTitle.setMaxSize(185, 40);
         backgroundOpacityTitle.setPadding(new Insets(0, 10, 0, 10));

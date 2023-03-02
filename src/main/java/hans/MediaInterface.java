@@ -286,6 +286,8 @@ public class MediaInterface {
         mainController.coverImageContainer.setVisible(false);
         mainController.miniplayerActiveText.setVisible(false);
 
+        captionsController.timingPane.resetTiming();
+
         if(mainController.miniplayerActive){
             mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
             mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
@@ -348,6 +350,8 @@ public class MediaInterface {
         playing.set(false);
         wasPlaying = false;
         currentTime = 0;
+
+        captionsController.timingPane.resetTiming();
 
         try {
             if(fFmpegFrameGrabber != null) fFmpegFrameGrabber.close();

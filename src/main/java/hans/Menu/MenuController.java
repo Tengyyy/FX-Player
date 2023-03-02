@@ -496,6 +496,9 @@ public class MenuController implements Initializable {
 
         if(menuInTransition) return;
 
+        mainController.videoImageView.requestFocus();
+
+
         if(dragResizer.dragging) {
             dragResizer.dragging = false;
             dragPane.setCursor(Cursor.DEFAULT);

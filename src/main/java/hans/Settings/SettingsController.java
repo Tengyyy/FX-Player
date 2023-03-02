@@ -100,6 +100,7 @@ public class SettingsController {
 
         if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuState != MenuState.CLOSED || captionsController.captionsBox.captionsDragActive || captionsController.animating.get()) return;
 
+        mainController.videoImageView.requestFocus();
         if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
 
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 0, 45, false, 1, true);
@@ -146,6 +147,7 @@ public class SettingsController {
 
         if(animating.get() || playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || equalizerController.sliderActive) return;
 
+        mainController.videoImageView.requestFocus();
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 45, 0, false, 1, true);
 
 

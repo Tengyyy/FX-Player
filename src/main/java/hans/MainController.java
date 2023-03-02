@@ -527,6 +527,8 @@ public class MainController implements Initializable {
                 || captionsController.captionsBox.captionsDragActive
                 || settingsController.equalizerController.sliderActive) return;
 
+        menuController.queueBox.requestFocus();
+
         menuController.menuInTransition = true;
         menuController.menuState = MenuState.QUEUE_OPEN;
 
@@ -640,6 +642,7 @@ public class MainController implements Initializable {
 
 
         miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface, settingsController);
+        miniplayer.miniplayerController.videoImageView.requestFocus();
 
 
         mediaInterface.embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(miniplayer.miniplayerController.videoImageView));
@@ -710,6 +713,7 @@ public class MainController implements Initializable {
 
         resizeIndicators();
         repositionValueIndicator();
+        videoImageView.requestFocus();
 
         videoImageViewInnerWrapper.widthProperty().addListener(widthListener);
         videoImageViewInnerWrapper.heightProperty().addListener(heightListener);
@@ -1320,6 +1324,7 @@ public class MainController implements Initializable {
     }
 
     public void pressF(){
+
         controlBarController.mouseEventTracker.move();
         controlBarController.toggleFullScreen();
 

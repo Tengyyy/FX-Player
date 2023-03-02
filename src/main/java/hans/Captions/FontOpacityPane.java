@@ -57,13 +57,11 @@ public class FontOpacityPane {
         opacityBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        opacityBox.setMinSize(185, 206);
         opacityBox.setPrefSize(185, 206);
         opacityBox.setMaxSize(185, 206);
         opacityBox.setPadding(new Insets(8, 0, 8, 0));
         opacityBox.getChildren().add(opacityTitle);
 
-        opacityTitle.setMinSize(185, 40);
         opacityTitle.setPrefSize(185, 40);
         opacityTitle.setMaxSize(185, 40);
         opacityTitle.setPadding(new Insets(0, 10, 0, 10));

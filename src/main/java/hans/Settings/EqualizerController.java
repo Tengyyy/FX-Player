@@ -36,7 +36,7 @@ public class EqualizerController {
 
     HBox titleLabelWrapper = new HBox();
     Label titleLabel = new Label();
-    ComboBox<String> comboBox = new ComboBox<>();
+    public ComboBox<String> comboBox = new ComboBox<>();
 
 
     HBox sliderBox = new HBox();
@@ -131,6 +131,7 @@ public class EqualizerController {
         comboBox.setMaxSize(150, 35);
         comboBox.setVisibleRowCount(5);
         comboBox.setValue("Flat");
+        comboBox.setId("equalizerCombo");
 
         comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
             switch(newValue){

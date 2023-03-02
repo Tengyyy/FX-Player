@@ -53,7 +53,6 @@ public class CaptionsTab extends HBox {
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
         removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
 
-        this.setMinSize(225, 35);
         this.setPrefSize(245, 35);
         this.setMaxSize(245, 35);
 
@@ -85,7 +84,6 @@ public class CaptionsTab extends HBox {
         valueLabel.getStyleClass().add("settingsPaneText");
         valueLabel.setOnMouseClicked(e -> selectSubtitles(true));
         if(removable){
-            valueLabel.setMinWidth(140);
             valueLabel.setPrefWidth(160);
             valueLabel.setMaxWidth(160);
 
@@ -114,7 +112,6 @@ public class CaptionsTab extends HBox {
             this.getChildren().addAll(checkIconPane, valueLabel, removePane);
         }
         else {
-            valueLabel.setMinWidth(175);
             valueLabel.setPrefWidth(195);
             valueLabel.setMaxWidth(195);
 

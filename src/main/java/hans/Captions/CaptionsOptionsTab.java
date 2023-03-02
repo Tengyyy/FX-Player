@@ -13,10 +13,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 
-public class CaptionsOptionsTab extends HBox {
+public class CaptionsOptionsTab extends StackPane {
 
     CaptionsController captionsController;
     CaptionsOptionsPane captionsOptionsPane;
+
+    HBox textContainer = new HBox();
 
     StackPane arrowPane = new StackPane();
     Label mainText = new Label();
@@ -32,16 +34,19 @@ public class CaptionsOptionsTab extends HBox {
 
         arrowSVG.setContent(App.svgMap.get(SVG.CHEVRON_RIGHT));
 
-        this.setMinSize(260, 35);
         this.setPrefSize(270, 35);
         this.setMaxSize(270, 35);
-        this.setPadding(new Insets(0, 10, 0, 10));
+        this.setPadding(new Insets(0, 5, 0, 10));
         this.getStyleClass().add("settingsPaneTab");
         this.setCursor(Cursor.HAND);
-        this.getChildren().add(mainText);
+        this.getChildren().add(textContainer);
 
-        if(requiresSubText) this.getChildren().add(subText);
+        StackPane.setAlignment(textContainer, Pos.CENTER_LEFT);
+        textContainer.getChildren().add(mainText);
+
+        if(requiresSubText) textContainer.getChildren().add(subText);
         if(requiresArrow) this.getChildren().add(arrowPane);
+
 
 
         mainText.setText(mainTextValue);
@@ -52,21 +57,17 @@ public class CaptionsOptionsTab extends HBox {
         if(requiresSubText){
             subText.setText(subTextValue);
             subText.setPrefHeight(35);
-            Platform.runLater(() -> {
-                subText.setPrefWidth(225 - mainText.getWidth());
-                subText.setMinWidth(215 - mainText.getWidth());
-            });
-            subText.setPadding(new Insets(0, 5, 0, 0));
+            Platform.runLater(() -> subText.setPrefWidth(225 - mainText.getWidth()));
             subText.setAlignment(Pos.CENTER_RIGHT);
             subText.setTextAlignment(TextAlignment.RIGHT);
             subText.getStyleClass().addAll("settingsPaneText", "settingsPaneSubText");
         }
 
         if(requiresArrow) {
-            arrowPane.setMinSize(15, 35);
-            arrowPane.setPrefSize(15, 35);
-            arrowPane.setMaxSize(15, 35);
-            arrowPane.setPadding(new Insets(0, 0, 0, 10));
+            StackPane.setAlignment(arrowPane, Pos.CENTER_RIGHT);
+            arrowPane.setMinSize(12, 35);
+            arrowPane.setPrefSize(12, 35);
+            arrowPane.setMaxSize(12, 35);
             arrowPane.getChildren().add(arrowIcon);
 
             arrowIcon.setMinSize(8, 13);

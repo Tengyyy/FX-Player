@@ -1,11 +1,12 @@
 package hans.Captions;
 
-import hans.*;
+import com.jfoenix.controls.JFXButton;
+import hans.App;
+import hans.ControlTooltip;
+import hans.SVG;
 import hans.Settings.SettingsController;
 import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -14,15 +15,18 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class TimingPane {
 
@@ -39,8 +43,12 @@ public class TimingPane {
     ProgressBar sliderTrack = new ProgressBar();
 
     HBox textFieldContainer = new HBox();
-    TextField textField = new TextField();
+    public TextField textField = new TextField();
     Label label = new Label("s");
+
+    HBox saveButtonContainer = new HBox();
+    public JFXButton saveButton = new JFXButton("Save");
+    ControlTooltip saveButtonTooltip = null;
 
     CaptionsHome captionsHome;
     CaptionsController captionsController;
@@ -54,9 +62,9 @@ public class TimingPane {
 
         backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
 
-        container.setPrefSize(235, 150);
-        container.setMaxSize(235, 150);
-        container.getChildren().addAll(titlePane, sliderPane, textFieldContainer);
+        container.setPrefSize(235, 175);
+        container.setMaxSize(235, 175);
+        container.getChildren().addAll(titlePane, sliderPane, textFieldContainer, saveButtonContainer);
         container.setAlignment(Pos.BOTTOM_CENTER);
         StackPane.setAlignment(container, Pos.BOTTOM_RIGHT);
 
@@ -126,9 +134,13 @@ public class TimingPane {
 
 
         slider.valueChangingProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(newValue) return;
+            if(newValue){
+                textField.setText(String.format("%.2f", slider.getValue()));
+                return;
+            }
 
             captionsController.subtitleDelay = (int) (-slider.getValue() * 1000);
+            saveButton.setDisable(slider.getValue() == 0 || !captionsController.captionsSelected.get());
 
         });
 
@@ -137,13 +149,11 @@ public class TimingPane {
 
         textFieldContainer.getChildren().addAll(textField, label);
         textFieldContainer.setAlignment(Pos.CENTER);
-        textFieldContainer.setSpacing(10);
-        VBox.setMargin(textFieldContainer, new Insets(10, 0, 20, 0));
+        textFieldContainer.setSpacing(5);
+        VBox.setMargin(textFieldContainer, new Insets(10, 0, 0, 0));
 
         textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(!newValue.matches("\\-?\\d*\\.?\\d*")){
-                textField.setText(oldValue);
-            }
+            if(!newValue.matches("-?\\d*\\.?\\d*")) textField.setText(oldValue);
         });
 
         textField.setOnKeyPressed(e -> {
@@ -153,6 +163,7 @@ public class TimingPane {
                     slider.setValue(number);
                     textField.setText(String.valueOf(number));
                     captionsController.subtitleDelay = (int) (-number * 1000);
+                    saveButton.setDisable(number == 0 || !captionsController.captionsSelected.get());
                 }
                 catch(NumberFormatException ex){
                     slider.setValue(0);
@@ -169,7 +180,7 @@ public class TimingPane {
                     slider.setValue(number);
                     textField.setText(String.valueOf(number));
                     captionsController.subtitleDelay = (int) (-number * 1000);
-
+                    saveButton.setDisable(number == 0 || !captionsController.captionsSelected.get());
                 }
                 catch(NumberFormatException ex){
                     slider.setValue(0);
@@ -199,8 +210,20 @@ public class TimingPane {
         label.getStyleClass().add("settingsPaneText");
         label.setId("subtitleDelayLabel");
 
+        saveButtonContainer.getChildren().add(saveButton);
+        saveButtonContainer.setAlignment(Pos.CENTER_RIGHT);
+        saveButtonContainer.setPadding(new Insets(5, 20, 10, 0));
+
+        saveButton.setRipplerFill(Color.TRANSPARENT);
+        saveButton.getStyleClass().add("menuButton");
+        saveButton.setId("timingSaveButton");
+        saveButton.setCursor(Cursor.HAND);
+        saveButton.setOnAction(e -> saveToFile());
+        saveButton.setDisable(true);
+
         captionsController.captionsPane.getChildren().add(container);
 
+        Platform.runLater(() -> saveButtonTooltip = new ControlTooltip(captionsController.mainController, "Save changes to active subtitle file", saveButton, 1000));
 
     }
 
@@ -241,5 +264,21 @@ public class TimingPane {
 
         parallelTransition.play();
         captionsController.animating.set(true);
+    }
+
+    public void saveToFile(){
+        if(slider.getValue() == 0 || !captionsController.captionsSelected.get()) return;
+        SubtitleTimingTask subtitleTimingTask = new SubtitleTimingTask(captionsController);
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        executorService.execute(subtitleTimingTask);
+        executorService.shutdown();
+    }
+
+    public void resetTiming(){
+        System.out.println("test2");
+        captionsController.subtitleDelay = 0;
+        slider.setValue(0);
+        textField.setText("0.0");
+        saveButton.setDisable(true);
     }
 }

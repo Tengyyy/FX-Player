@@ -325,7 +325,7 @@ public class QueueItem extends GridPane {
         removeButton.setPrefWidth(30);
         removeButton.setPrefHeight(30);
         removeButton.setRipplerFill(Color.WHITE);
-        removeButton.getStyleClass().add("removeButton");
+        removeButton.getStyleClass().add("roundButton");
         removeButton.setCursor(Cursor.HAND);
         removeButton.setOpacity(0);
         removeButton.setText(null);
@@ -343,7 +343,7 @@ public class QueueItem extends GridPane {
         optionsButton.setPrefWidth(30);
         optionsButton.setPrefHeight(30);
         optionsButton.setRipplerFill(Color.WHITE);
-        optionsButton.getStyleClass().add("optionsButton");
+        optionsButton.getStyleClass().add("roundButton");
         optionsButton.setCursor(Cursor.HAND);
         optionsButton.setOpacity(0);
         optionsButton.setText(null);

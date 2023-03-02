@@ -59,13 +59,11 @@ public class FontSizePane {
         fontSizeBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        fontSizeBox.setMinSize(185, 311);
         fontSizeBox.setPrefSize(185, 311);
         fontSizeBox.setMaxSize(185, 311);
         fontSizeBox.setPadding(new Insets(8, 0, 8, 0));
         fontSizeBox.getChildren().add(fontSizeTitle);
 
-        fontSizeTitle.setMinSize(185, 40);
         fontSizeTitle.setPrefSize(185, 40);
         fontSizeTitle.setMaxSize(185, 40);
         fontSizeTitle.setPadding(new Insets(0, 10, 0, 10));

@@ -58,13 +58,11 @@ public class TextAlignmentPane {
         textAlignmentBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        textAlignmentBox.setMinSize(185, 171);
         textAlignmentBox.setPrefSize(185, 171);
         textAlignmentBox.setMaxSize(185, 171);
         textAlignmentBox.setPadding(new Insets(8, 0, 8, 0));
         textAlignmentBox.getChildren().add(textAlignmentTitle);
 
-        textAlignmentTitle.setMinSize(185, 40);
         textAlignmentTitle.setPrefSize(185, 40);
         textAlignmentTitle.setMaxSize(185, 40);
         textAlignmentTitle.setPadding(new Insets(0, 10, 0, 10));

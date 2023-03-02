@@ -60,13 +60,11 @@ public class CaptionsOptionsPane {
 
 
         captionsOptionsBox.setAlignment(Pos.BOTTOM_CENTER);
-        captionsOptionsBox.setMinSize(270, 381);
         captionsOptionsBox.setPrefSize(270, 381);
         captionsOptionsBox.setMaxSize(270, 381);
         captionsOptionsBox.setPadding(new Insets(8, 0, 8, 0));
         captionsOptionsBox.getChildren().add(captionsOptionsTitle);
 
-        captionsOptionsTitle.setMinSize(260, 40);
         captionsOptionsTitle.setPrefSize(270, 40);
         captionsOptionsTitle.setMaxSize(270, 40);
         captionsOptionsTitle.setPadding(new Insets(0, 10, 0, 10));

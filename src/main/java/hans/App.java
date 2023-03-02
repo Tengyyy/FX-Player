@@ -10,17 +10,20 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.controlsfx.control.CheckComboBox;
 
 import java.util.EnumMap;
 import java.util.Objects;
 
 import static hans.SVG.*;
+import static javafx.scene.input.KeyCode.F11;
 
 
 public class App extends Application {
@@ -41,8 +44,6 @@ public class App extends Application {
     MediaInterface mediaInterface;
 
     public static EnumMap<SVG, String> svgMap = new EnumMap<>(SVG.class);
-
-
 
 
     @Override
@@ -145,13 +146,11 @@ public class App extends Application {
             primaryStage.setFullScreenExitHint("Press Esc to exit fullscreen mode");
 
 
-            //press F11 to set full screen
             primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 
+                System.out.println(event.getTarget());
 
                 switch (event.getCode()){
-                    case ESCAPE -> mainController.pressESCAPE();
-                    case F11 -> mainController.pressF();
                     case TAB -> mainController.pressTAB(event);
                     case FAST_FWD -> mainController.pressL(event);
                     case REWIND -> mainController.pressJ();
@@ -159,9 +158,11 @@ public class App extends Application {
                     case PLAY, PAUSE -> mainController.pressSPACE(event);
                     case TRACK_PREV ->  mainController.pressPreviousTrack();
                     case TRACK_NEXT -> mainController.pressNextTrack();
+                    case F11 -> mainController.pressF();
+                    case ESCAPE -> mainController.pressESCAPE();
                 }
 
-                if(!(event.getTarget() instanceof ExpandableTextArea || event.getTarget() instanceof TextField)){
+                if(!(event.getTarget() instanceof ExpandableTextArea) && !(event.getTarget() instanceof TextField)){
                     switch (event.getCode()) {
                         case RIGHT -> mainController.pressRIGHT(event);
                         case LEFT -> mainController.pressLEFT(event);
@@ -181,17 +182,17 @@ public class App extends Application {
                         case DIGIT0, HOME -> mainController.press0();
                         case END -> mainController.pressEND();
                         case M -> mainController.pressM();
-                        case F -> mainController.pressF();
                         case F12 -> mainController.pressF12();
                         case SPACE, K -> mainController.pressSPACE(event);
-                        case C -> mainController.pressC();
-                        case S -> mainController.pressS();
-                        case Q -> mainController.pressQ();
                         case P -> mainController.pressP(event);
-                        case I -> mainController.pressI();
                         case N -> mainController.pressN(event);
                         case COMMA -> mainController.pressCOMMA(event);
                         case PERIOD -> mainController.pressPERIOD(event);
+                        case F -> mainController.pressF();
+                        case C -> mainController.pressC();
+                        case S -> mainController.pressS();
+                        case Q -> mainController.pressQ();
+                        case I -> mainController.pressI();
                         default -> {
                         }
                     }

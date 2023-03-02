@@ -55,13 +55,11 @@ public class BackgroundColorPane {
         backgroundColorBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        backgroundColorBox.setMinSize(185, 346);
         backgroundColorBox.setPrefSize(185, 346);
         backgroundColorBox.setMaxSize(185, 346);
         backgroundColorBox.setPadding(new Insets(8, 0, 8, 0));
         backgroundColorBox.getChildren().add(backgroundColorTitle);
 
-        backgroundColorTitle.setMinSize(185, 40);
         backgroundColorTitle.setPrefSize(185, 40);
         backgroundColorTitle.setMaxSize(185, 40);
         backgroundColorTitle.setPadding(new Insets(0, 10, 0, 10));

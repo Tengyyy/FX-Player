@@ -164,7 +164,7 @@ public final class SRTUtils {
 	 * @param timeInMillis
 	 * @return
 	 */
-	public static boolean speedSynchronization (final ArrayList<Subtitle> listSubtitles, long timeInMillis, File fileOut) {
+	public static boolean adjustDelay (final ArrayList<Subtitle> listSubtitles, long timeInMillis, File fileOut) {
 
 		if (listSubtitles == null || listSubtitles.isEmpty() || timeInMillis == 0 || fileOut == null)
 			return false;
@@ -182,12 +182,17 @@ public final class SRTUtils {
 				bos.newLine();
 				bos.write(subtitle.text);
 				bos.newLine();
+				bos.newLine();
 			}
 			bos.flush();
 			return true;
 		} catch (Exception e) {
 			logger.error("error writing a new srt file", e);
 		}
+		return false;
+	}
+
+	public static boolean adjustSpeed (final ArrayList<Subtitle> listSubtitles, long timeInMillis, File fileOut){
 		return false;
 	}
 }

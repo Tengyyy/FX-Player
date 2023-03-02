@@ -57,13 +57,11 @@ public class LineSpacingPane {
         lineSpacingBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        lineSpacingBox.setMinSize(185, 311);
         lineSpacingBox.setPrefSize(185, 311);
         lineSpacingBox.setMaxSize(185, 311);
         lineSpacingBox.setPadding(new Insets(8, 0, 8, 0));
         lineSpacingBox.getChildren().add(lineSpacingTitle);
 
-        lineSpacingTitle.setMinSize(185, 40);
         lineSpacingTitle.setPrefSize(185, 40);
         lineSpacingTitle.setMaxSize(185, 40);
         lineSpacingTitle.setPadding(new Insets(0, 10, 0, 10));

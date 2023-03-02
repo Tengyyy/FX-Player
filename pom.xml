@@ -91,6 +91,16 @@
             <artifactId>logback-classic</artifactId>
             <version>1.4.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.wtekiela</groupId>
+            <artifactId>opensub4j</artifactId>
+            <version>0.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>11.1.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

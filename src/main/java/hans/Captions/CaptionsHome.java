@@ -86,7 +86,6 @@ public class CaptionsHome {
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
 
-        captionsWrapper.setMinSize(225, 178);
         captionsWrapper.setPrefSize(245, 178);
         captionsWrapper.setMaxSize(245, 178);
         captionsWrapper.setPadding(new Insets(8, 0, 8, 0));
@@ -95,14 +94,12 @@ public class CaptionsHome {
         captionsWrapper.getChildren().addAll(captionsTitle, captionsChooserTab, openSubtitlesTab, adjustDelayTab);
 
         captionsTitle.getChildren().addAll(captionsTitleLabel, captionsOptionsLabel);
-        captionsTitle.setMinSize(225, 40);
         captionsTitle.setPrefSize(245, 40);
         captionsTitle.setMaxSize(245, 40);
         captionsTitle.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(captionsTitle, new Insets(0, 0, 10, 0));
         captionsTitle.getStyleClass().add("settingsPaneTitle");
 
-        captionsTitleLabel.setMinSize(145, 40);
         captionsTitleLabel.setPrefSize(165, 40);
         captionsTitleLabel.setMaxSize(165, 40);
         captionsTitleLabel.setText("Subtitles/CC");
@@ -120,7 +117,6 @@ public class CaptionsHome {
         captionsOptionsLabel.setAlignment(Pos.CENTER_RIGHT);
 
 
-        captionsChooserTab.setMinSize(225, 35);
         captionsChooserTab.setPrefSize(245, 35);
         captionsChooserTab.setMaxSize(245, 35);
         captionsChooserTab.setPadding(new Insets(0, 10, 0, 10));
@@ -142,19 +138,17 @@ public class CaptionsHome {
 
         chooseCaptionsLabel.setText("Choose subtitle file");
         chooseCaptionsLabel.getStyleClass().add("settingsPaneText");
-        chooseCaptionsLabel.setMinSize(175, 35);
         chooseCaptionsLabel.setPrefSize(195, 35);
         chooseCaptionsLabel.setMaxSize(195, 35);
 
 
-        openSubtitlesTab.setMinSize(225, 35);
         openSubtitlesTab.setPrefSize(245, 35);
         openSubtitlesTab.setMaxSize(245, 35);
         openSubtitlesTab.setPadding(new Insets(0, 10, 0, 10));
         openSubtitlesTab.getStyleClass().add("settingsPaneTab");
         openSubtitlesTab.setId("openSubtitlesTab");
         openSubtitlesTab.getChildren().addAll(globeIconPane, openSubtitlesLabel);
-        openSubtitlesTab.setOnMouseClicked(e -> openSubtitleSearch());
+        openSubtitlesTab.setOnMouseClicked(e -> openOpenSubtitlesPane());
 
         globeIconPane.setMinSize(30, 35);
         globeIconPane.setPrefSize(30, 35);
@@ -169,17 +163,15 @@ public class CaptionsHome {
 
         openSubtitlesLabel.setText("Search OpenSubtitles");
         openSubtitlesLabel.getStyleClass().add("settingsPaneText");
-        openSubtitlesLabel.setMinSize(175, 35);
         openSubtitlesLabel.setPrefSize(195, 35);
         openSubtitlesLabel.setMaxSize(195, 35);
 
-        adjustDelayTab.setMinSize(225, 35);
         adjustDelayTab.setPrefSize(245, 35);
         adjustDelayTab.setMaxSize(245, 35);
         adjustDelayTab.setPadding(new Insets(0, 10, 0, 10));
         adjustDelayTab.getStyleClass().add("settingsPaneTab");
         adjustDelayTab.getChildren().addAll(timerIconPane, adjustDelayLabel);
-        adjustDelayTab.setOnMouseClicked(e -> openAdjustDelay());
+        adjustDelayTab.setOnMouseClicked(e -> openTimingPane());
         VBox.setMargin(adjustDelayTab, new Insets(5, 0, 0, 0));
 
         timerIconPane.setMinSize(30, 35);
@@ -195,15 +187,12 @@ public class CaptionsHome {
 
         adjustDelayLabel.setText("Adjust subtitle timing");
         adjustDelayLabel.getStyleClass().add("settingsPaneText");
-        adjustDelayLabel.setMinSize(175, 35);
         adjustDelayLabel.setPrefSize(195, 35);
         adjustDelayLabel.setMaxSize(195, 35);
 
 
         captionsController.captionsPane.getChildren().add(scrollPane);
     }
-
-
 
     public void openCaptionsOptions(){
         if(captionsController.animating.get()) return;
@@ -261,11 +250,48 @@ public class CaptionsHome {
         }
     }
 
-    public void openSubtitleSearch(){
-        System.out.println("test1");
+    public void openOpenSubtitlesPane(){
+        if(captionsController.animating.get()) return;
+
+        captionsController.captionsState = CaptionsState.OPENSUBTITLES_OPEN;
+
+        captionsController.openSubtitlesPane.scrollPane.setVisible(true);
+        captionsController.openSubtitlesPane.scrollPane.setMouseTransparent(false);
+
+        Timeline clipHeightTimeline = new Timeline();
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.openSubtitlesPane.scrollPane.getHeight())));
+
+
+        Timeline clipWidthTimeline = new Timeline();
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.openSubtitlesPane.scrollPane.getWidth())));
+
+
+
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), scrollPane);
+        captionsTransition.setFromX(0);
+        captionsTransition.setToX(-captionsController.openSubtitlesPane.scrollPane.getWidth());
+
+        TranslateTransition openSubtitlesTransition = new TranslateTransition(Duration.millis(SettingsController.ANIMATION_SPEED), captionsController.openSubtitlesPane.scrollPane);
+        openSubtitlesTransition.setFromX(captionsController.openSubtitlesPane.scrollPane.getWidth());
+        openSubtitlesTransition.setToX(0);
+
+
+        ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, captionsTransition, openSubtitlesTransition);
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.setOnFinished((e) -> {
+            captionsController.animating.set(false);
+            scrollPane.setVisible(false);
+            scrollPane.setMouseTransparent(true);
+            scrollPane.setTranslateX(0);
+            scrollPane.setVvalue(0);
+            captionsController.clip.setHeight(captionsController.openSubtitlesPane.scrollPane.getPrefHeight());
+        });
+
+        parallelTransition.play();
+        captionsController.animating.set(true);
     }
 
-    public void openAdjustDelay(){
+    public void openTimingPane(){
         if(captionsController.animating.get()) return;
 
         captionsController.captionsState = CaptionsState.TIMING_OPEN;

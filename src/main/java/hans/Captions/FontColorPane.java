@@ -59,13 +59,11 @@ public class FontColorPane {
         fontColorBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        fontColorBox.setMinSize(185, 346);
         fontColorBox.setPrefSize(185, 346);
         fontColorBox.setMaxSize(185, 346);
         fontColorBox.setPadding(new Insets(8, 0, 8, 0));
         fontColorBox.getChildren().add(fontColorTitle);
 
-        fontColorTitle.setMinSize(185, 40);
         fontColorTitle.setPrefSize(185, 40);
         fontColorTitle.setMaxSize(185, 40);
         fontColorTitle.setPadding(new Insets(0, 10, 0, 10));

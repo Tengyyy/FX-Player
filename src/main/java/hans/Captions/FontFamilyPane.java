@@ -57,15 +57,13 @@ public class FontFamilyPane {
         fontFamilyBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        fontFamilyBox.setMinSize(185, 311);
-        fontFamilyBox.setPrefSize(185, 311);
-        fontFamilyBox.setMaxSize(185, 311);
+        fontFamilyBox.setPrefSize(190, 311);
+        fontFamilyBox.setMaxSize(190, 311);
         fontFamilyBox.setPadding(new Insets(8, 0, 8, 0));
         fontFamilyBox.getChildren().add(fontFamilyTitle);
 
-        fontFamilyTitle.setMinSize(185, 40);
-        fontFamilyTitle.setPrefSize(185, 40);
-        fontFamilyTitle.setMaxSize(185, 40);
+        fontFamilyTitle.setPrefSize(190, 40);
+        fontFamilyTitle.setMaxSize(190, 40);
         fontFamilyTitle.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(fontFamilyTitle, new Insets(0, 0, 10, 0));
 

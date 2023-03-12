@@ -11,7 +11,6 @@ public class NumberSpinner{
 
     NumberSpinner(MetadataEditPage metadataEditPage, String value) {
 
-
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999);
         spinner = new Spinner<>(valueFactory);
         spinner.setEditable(true);

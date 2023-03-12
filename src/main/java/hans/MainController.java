@@ -1242,6 +1242,10 @@ public class MainController implements Initializable {
 
         if(miniplayerActive) closeMiniplayer();
         else openMiniplayer();
+
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
     }
 
     public void pressQ(){
@@ -1250,6 +1254,7 @@ public class MainController implements Initializable {
 
         if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
         if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         if(menuController.menuState != MenuState.CLOSED && !menuController.menuInTransition){
             menuController.closeMenu();
@@ -1266,6 +1271,8 @@ public class MainController implements Initializable {
         } else {
             settingsController.openSettings();
         }
+
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
     }
 
     public void pressN(KeyEvent e){
@@ -1330,6 +1337,8 @@ public class MainController implements Initializable {
 
         if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
         if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
     }
 
     public void pressF12(){
@@ -1339,6 +1348,11 @@ public class MainController implements Initializable {
 
     public void pressC(){
         controlBarController.mouseEventTracker.move();
+
+        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
 
         if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
         else captionsController.openCaptions();
@@ -1663,6 +1677,7 @@ public class MainController implements Initializable {
 
         if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
         if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
         App.stage.setFullScreen(false);

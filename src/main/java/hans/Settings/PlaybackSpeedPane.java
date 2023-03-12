@@ -132,6 +132,8 @@ public class PlaybackSpeedPane{
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
+            playbackSpeedController.settingsController.clip.setHeight(playbackSpeedController.settingsController.settingsHomeController.settingsHome.getPrefHeight());
+
         });
 
         parallelTransition.play();

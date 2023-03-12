@@ -1,4 +1,5 @@
 
+
 @font-face {
     src: url('../fonts/Roboto-Regular.ttf');
 }
@@ -165,6 +166,12 @@
     -fx-background-color: rgba(60,60,60,1);
 }
 
+
+/* doesnt work, gets set back to default height when selecting any item. Might have to create my own custom implementation */
+#languageBox > .combo-box .combo-box-popup .list-view {
+    -fx-max-height: 200;
+}
+
 .spinner, .date-picker {
     -fx-background-color : rgba(30,30,30,0.4);
     -fx-background-radius: 5;
@@ -308,6 +315,13 @@
     -mfx-main: rgb(255, 0, 0);
 }
 
+.field-border {
+    -fx-border-color: red;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-border-style: solid;
+    -fx-border-insets: -1;
+}
 
 
 

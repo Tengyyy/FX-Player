@@ -57,5 +57,8 @@ public enum SVG {
     FOLDER_PLUS,
     WARNING,
     GLOBE,
-    TIMER
+    TIMER,
+    DOWNLOAD,
+    IMDB,
+    VIDEO_FILE
 }

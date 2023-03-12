@@ -168,6 +168,7 @@ public class CaptionsOptionsPane {
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
+            captionsController.clip.setHeight(captionsController.captionsHome.scrollPane.getPrefHeight());
         });
 
         parallelTransition.play();

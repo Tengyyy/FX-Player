@@ -48,6 +48,7 @@ public class CaptionsController {
     public CaptionsHome captionsHome;
     public CaptionsOptionsPane captionsOptionsPane;
     public OpenSubtitlesPane openSubtitlesPane;
+    public OpenSubtitlesResultsPane openSubtitlesResultsPane;
     public CaptionsBox captionsBox;
     public TimingPane timingPane;
 
@@ -80,7 +81,7 @@ public class CaptionsController {
         animating.set(false);
 
         captionsBuffer.setPrefSize(245, 181);
-        captionsBuffer.setMaxWidth(400);
+        captionsBuffer.setMaxWidth(550);
         captionsBuffer.setClip(clip);
         captionsBuffer.getChildren().add(captionsBackground);
         captionsBuffer.setMouseTransparent(true);
@@ -113,6 +114,7 @@ public class CaptionsController {
         captionsHome = new CaptionsHome(this);
         captionsOptionsPane = new CaptionsOptionsPane(this);
         openSubtitlesPane = new OpenSubtitlesPane(captionsHome, this);
+        openSubtitlesResultsPane = new OpenSubtitlesResultsPane(captionsHome, this);
         timingPane = new TimingPane(captionsHome, this);
 
         captionsSelected.addListener((observableValue, oldValue, newValue) -> {
@@ -411,6 +413,7 @@ public class CaptionsController {
             case LINE_SPACING_OPEN -> closeCaptionsFromLineSpacing();
             case OPACITY_OPEN -> closeCaptionsFromOpacity();
             case OPENSUBTITLES_OPEN -> closeCaptionsFromOpenSubtitles();
+            case OPENSUBTITLES_RESULTS_OPEN -> closeCaptionsFromOpenSubtitlesResults();
             case TIMING_OPEN -> closeCaptionsFromTimingPane();
             default -> {
             }
@@ -446,6 +449,8 @@ public class CaptionsController {
             captionsHome.scrollPane.setMouseTransparent(true);
             captionsHome.scrollPane.setOpacity(1);
             captionsHome.scrollPane.setVvalue(0);
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -474,6 +479,8 @@ public class CaptionsController {
             captionsOptionsPane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -502,6 +509,8 @@ public class CaptionsController {
             captionsOptionsPane.fontFamilyPane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -530,6 +539,8 @@ public class CaptionsController {
             captionsOptionsPane.fontColorPane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -558,6 +569,8 @@ public class CaptionsController {
             captionsOptionsPane.fontSizePane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -586,6 +599,8 @@ public class CaptionsController {
             captionsOptionsPane.textAlignmentPane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -614,6 +629,8 @@ public class CaptionsController {
             captionsOptionsPane.backgroundColorPane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -642,6 +659,8 @@ public class CaptionsController {
             captionsOptionsPane.backgroundOpacityPane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -670,6 +689,8 @@ public class CaptionsController {
             captionsOptionsPane.lineSpacingPane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -698,6 +719,8 @@ public class CaptionsController {
             captionsOptionsPane.fontOpacityPane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -726,6 +749,38 @@ public class CaptionsController {
             openSubtitlesPane.scrollPane.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    public void closeCaptionsFromOpenSubtitlesResults(){
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), captionsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
+
+        FadeTransition openSubtitlesResultsTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), openSubtitlesResultsPane.scrollPane);
+        openSubtitlesResultsTransition.setFromValue(1);
+        openSubtitlesResultsTransition.setToValue(0);
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, openSubtitlesResultsTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            captionsBuffer.setMouseTransparent(true);
+            captionsBackground.setVisible(false);
+            captionsBackground.setMouseTransparent(true);
+            openSubtitlesResultsPane.scrollPane.setVisible(false);
+            openSubtitlesResultsPane.scrollPane.setMouseTransparent(true);
+            openSubtitlesResultsPane.scrollPane.setOpacity(1);
+            clip.setHeight(captionsHome.scrollPane.getHeight());
+            clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -754,6 +809,8 @@ public class CaptionsController {
             timingPane.container.setOpacity(1);
             clip.setHeight(captionsHome.scrollPane.getHeight());
             clip.setWidth(captionsHome.scrollPane.getWidth());
+
+            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);

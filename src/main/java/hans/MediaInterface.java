@@ -15,8 +15,10 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
@@ -293,6 +295,11 @@ public class MediaInterface {
             mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
         }
 
+        captionsController.openSubtitlesPane.fileSearchLabel.setText("Current media file:\n" + queueItem.file.getName());
+        captionsController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER_LEFT);
+        if(!captionsController.openSubtitlesPane.fileSearchLabelContainer.getChildren().contains(captionsController.openSubtitlesPane.fileSearchExplanationLabel)) captionsController.openSubtitlesPane.fileSearchLabelContainer.getChildren().add(captionsController.openSubtitlesPane.fileSearchExplanationLabel);
+
+
         MediaItem mediaItem = queueItem.getMediaItem();
 
         if (mediaItem != null) loadMediaItem(queueItem);
@@ -341,6 +348,10 @@ public class MediaInterface {
         mainController.sliderHoverPreview.setImage(null);
 
         captionsController.clearCaptions();
+        captionsController.openSubtitlesPane.fileSearchLabel.setText("Select a media file to use this feature");
+        captionsController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER);
+        captionsController.openSubtitlesPane.fileSearchLabelContainer.getChildren().remove(captionsController.openSubtitlesPane.fileSearchExplanationLabel);
+
 
         controlBarController.disablePreviousVideoButton();
         controlBarController.disableNextVideoButton();

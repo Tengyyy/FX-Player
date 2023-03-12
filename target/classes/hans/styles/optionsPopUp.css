@@ -13,6 +13,11 @@
     -fx-padding: 0 0 0 7;
 }
 
+.customPopUpLabel {
+    -fx-text-fill: white;
+    -fx-padding: 0;
+}
+
 .icon {
     -fx-background-color: white;
 }

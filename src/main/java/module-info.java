@@ -18,6 +18,7 @@ module hans {
     requires org.bytedeco.ffmpeg;
     requires opensub4j;
     requires org.controlsfx.controls;
+    requires xmlrpc.common;
 
 
     opens hans to javafx.graphics, javafx.fxml;

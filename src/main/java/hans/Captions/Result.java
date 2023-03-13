@@ -131,6 +131,9 @@ public class Result extends HBox {
                     File file = findFileName(fileName);
                     Files.write(file.toPath(), Collections.singleton(subtitleFile.getContent().getContent()));
 
+                    if(Utilities.getFileExtension(file).equals("srt") && captionsController.menuController.queueBox.activeItem.get() != null){
+                        captionsController.captionsHome.createTab(file);
+                    }
                 }
             } catch (XmlRpcException | IOException e) {
                 e.printStackTrace();

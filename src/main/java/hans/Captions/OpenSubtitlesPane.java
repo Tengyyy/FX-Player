@@ -8,6 +8,8 @@ import com.github.wtekiela.opensub4j.response.SubtitleFile;
 import com.github.wtekiela.opensub4j.response.SubtitleInfo;
 import com.jfoenix.controls.JFXButton;
 import hans.App;
+import hans.Captions.Tasks.LoginTask;
+import hans.Captions.Tasks.SearchTask;
 import hans.SVG;
 import hans.Settings.SettingsController;
 import javafx.animation.*;
@@ -39,6 +41,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class OpenSubtitlesPane {
 
@@ -53,21 +57,26 @@ public class OpenSubtitlesPane {
 
     SVGPath backSVG = new SVGPath();
 
-    HashMap<String, String> languageMap = new Languages();
+    public HashMap<String, String> languageMap = new Languages();
     private final String[] supportedLanguages = {"Abkhazian", "Afrikaans", "Albanian", "Arabic", "Aragonese", "Armenian", "Assamese", "Asturian", "Azerbaijani","Basque", "Belarusian", "Bengali", "Bosnian", "Breton", "Bulgarian", "Burmese", "Catalan", "Chinese (simplified)", "Chinese (traditional)", "Chinese bilingual", "Croatian", "Czech", "Danish", "Dari", "Dutch", "English", "Esperanto", "Estonian", "Extremaduran", "Finnish", "French", "Gaelic", "Galician", "Georgian", "German", "Greek", "Hebrew", "Hindi", "Hungarian", "Icelandic", "Igbo", "Indonesian", "Interlingua", "Irish", "Italian", "Japanese", "Kannada", "Kazakh", "Khmer", "Korean", "Kurdish", "Latvian", "Lithuanian", "Luxembourgish", "Macedonian", "Malay", "Malayalam", "Manipuri", "Marathi", "Mongolian", "Montenegrin", "Navajo", "Nepali", "Northern Sami", "Norwegian", "Occitan", "Odia", "Persian", "Polish", "Portuguese", "Portuguese (BR)", "Portuguese (MZ)", "Pushto", "Romanian", "Russian", "Santali", "Serbian", "Sindhi", "Sinhalese", "Slovak", "Slovenian", "Somali", "Spanish", "Spanish (EU)", "Spanish (LA)", "Swahili", "Swedish", "Syriac", "Tagalog", "Tamil", "Tatar", "Telugu", "Thai", "Toki Pona", "Turkish", "Turkmen", "Ukrainian", "Urdu", "Vietnamese", "Welsh"};
     public CheckComboBox<String> languageBox = new CheckComboBox<>();
 
     VBox fieldContainer = new VBox();
+
+    Label connectLabel = new Label();
+    JFXButton connectButton = new JFXButton();
+
     HBox titleFieldContainer = new HBox();
-    TextField titleField = new TextField();
+    public TextField titleField = new TextField();
     StackPane titleFieldWrapper = new StackPane();
     StackPane titleFieldBorder = new StackPane();
 
     HBox seasonEpisodeContainer = new HBox();
-    TextField seasonField = new TextField(), episodeField = new TextField();
+    public TextField seasonField = new TextField();
+    public TextField episodeField = new TextField();
 
     StackPane imdbFieldContainer = new StackPane();
-    TextField imdbField = new TextField();
+    public TextField imdbField = new TextField();
     StackPane imdbFieldBorder = new StackPane();
 
     public VBox fileSearchLabelContainer = new VBox();
@@ -88,10 +97,13 @@ public class OpenSubtitlesPane {
     CaptionsHome captionsHome;
     CaptionsController captionsController;
 
-    String username = null, password = null;
-    OpenSubtitlesClient osClient = null;
+    public String username = null;
+    public String password = null;
+    public OpenSubtitlesClient osClient = null;
 
-    int searchState = 0; // 0 - query search (default), 1 - imdb search, 2 - file search
+    public int searchState = 0; // 0 - query search (default), 1 - imdb search, 2 - file search
+
+    boolean searchInProgress = false;
 
     OpenSubtitlesPane(CaptionsHome captionsHome, CaptionsController captionsController){
         this.captionsHome = captionsHome;
@@ -102,8 +114,8 @@ public class OpenSubtitlesPane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(400, 233);
-        scrollPane.setMaxSize(400, 233);
+        scrollPane.setPrefSize(400, 173);
+        scrollPane.setMaxSize(400, 173);
         scrollPane.setContent(container);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
@@ -111,13 +123,13 @@ public class OpenSubtitlesPane {
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
 
-        container.setPrefSize(400, 230);
-        container.setMaxSize(400, 230);
-        container.getChildren().addAll(titleContainer, fieldContainer, searchButtonContainer);
+        container.setPrefSize(400, 170);
+        container.setMaxSize(400, 170);
+        container.getChildren().addAll(titleContainer, connectLabel, connectButton);
         container.setAlignment(Pos.TOP_CENTER);
 
         titleContainer.setPadding(new Insets(0, 10, 0, 10));
-        titleContainer.getChildren().addAll(titlePane, languageBox);
+        titleContainer.getChildren().add(titlePane);
         titleContainer.getStyleClass().add("settingsPaneTitle");
 
         titlePane.setMinHeight(50);
@@ -186,6 +198,18 @@ public class OpenSubtitlesPane {
         });
 
         initializeLanguageBox();
+
+        VBox.setMargin(connectLabel, new Insets(30, 20, 20, 20));
+        connectLabel.setText("Connect to OpenSubtitles to search for subtitles");
+        connectLabel.setTextAlignment(TextAlignment.CENTER);
+        connectLabel.getStyleClass().add("settingsPaneText");
+        connectLabel.setWrapText(true);
+
+        connectButton.getStyleClass().add("mainButton");
+        connectButton.setCursor(Cursor.HAND);
+        connectButton.setText("Connect");
+        connectButton.setPrefWidth(120);
+        connectButton.setOnAction(e -> initializeDefaultView());
 
         fieldContainer.setPrefHeight(132);
         fieldContainer.setMaxHeight(132);
@@ -343,6 +367,7 @@ public class OpenSubtitlesPane {
 
         captionsController.captionsPane.getChildren().add(scrollPane);
 
+        readCredentials();
 
         Platform.runLater(() -> searchOptionsContextMenu = new SearchOptionsContextMenu(this));
     }
@@ -394,6 +419,9 @@ public class OpenSubtitlesPane {
     }
 
     private void attemptSearch(){
+
+        if(searchInProgress) return;
+
         if(searchState == 0){
             if(!titleField.getText().isEmpty()) search();
             else titleFieldBorder.setVisible(true);
@@ -408,91 +436,104 @@ public class OpenSubtitlesPane {
     }
 
     private void search() {
+
+        searchInProgress = true;
+
         captionsController.openSubtitlesResultsPane.clearResults();
 
-        if(username == null){
-            File file = new File("C:/Users/hansu/FXPlayer/OpenSubtitles.txt");
-            if(file.exists() && file.canRead()){
-                try {
-                    List<String> lines = Files.readAllLines(Path.of(file.toURI()), StandardCharsets.UTF_8);
-                    if(lines.size() >= 2){
-                        this.username = lines.get(0);
-                        this.password = lines.get(1);
+        try {
+            URL serverUrl = new URL("https", "api.opensubtitles.org", 443, "/xml-rpc");
+            osClient = new OpenSubtitlesClientImpl(serverUrl);
+        } catch (MalformedURLException e) {
+            captionsController.openSubtitlesResultsPane.errorLabel.setText("OpenSubtitles server URL malformed.");
+            captionsController.openSubtitlesResultsPane.clearResults();
+            captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
+
+            openResultsPane();
+            searchInProgress = false;
+            return;
+        }
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+
+        LoginTask loginTask = new LoginTask(captionsController, this);
+        loginTask.setOnSucceeded(e -> {
+            Integer result = loginTask.getValue();
+            if(result == -1){
+                captionsController.openSubtitlesResultsPane.errorLabel.setText("Unable to connect to OpenSubtitles service.");
+                captionsController.openSubtitlesResultsPane.clearResults();
+                captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
+
+                if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
+                searchInProgress = false;
+                executorService.shutdown();
+            }
+            else if(result == 0){
+                captionsController.openSubtitlesResultsPane.errorLabel.setText("Failed to login to OpenSubtitles. Make sure your login credentials are correct.");
+                captionsController.openSubtitlesResultsPane.clearResults();
+                captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
+
+                if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
+                searchInProgress = false;
+                executorService.shutdown();
+            }
+            else {
+                SearchTask searchTask = new SearchTask(captionsController, this);
+                searchTask.setOnSucceeded(successEvent -> {
+
+                    List<SubtitleInfo> subtitleInfoList = searchTask.getValue();
+                    if(subtitleInfoList.isEmpty()){
+                        captionsController.openSubtitlesResultsPane.errorLabel.setText("No subtitles found.");
+                        captionsController.openSubtitlesResultsPane.clearResults();
+                        captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
+
                     }
-                } catch (IOException e) {
-                    System.out.println("Failed to subtract OpenSubtitles credentials from file");
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if(osClient == null){
-            try {
-                URL serverUrl = new URL("https", "api.opensubtitles.org", 443, "/xml-rpc");
-                osClient = new OpenSubtitlesClientImpl(serverUrl);
-            } catch (MalformedURLException e) {
-                System.out.println("Incorrect URL");
-                e.printStackTrace();
-            }
-        }
-
-        if(osClient != null && !osClient.isLoggedIn()){
-            try {
-                LoginResponse response = (LoginResponse) osClient.login(username, password, "en", "TemporaryUserAgent");
-            } catch (XmlRpcException e) {
-                System.out.println("Failed to login");
-                e.printStackTrace();
-            }
-        }
-
-        if(osClient != null && osClient.isLoggedIn()){
-            try {
-
-                ObservableList<Integer> observableList = languageBox.getCheckModel().getCheckedIndices();
-                StringBuilder languageString = new StringBuilder();
-                if(observableList.isEmpty()) languageString.append("all");
-                else {
-                    for (int i = 0; i < observableList.size(); i++) {
-                        Integer index = observableList.get(i);
-                        String languageName = languageBox.getItems().get(index);
-                        String languageCode = languageMap.get(languageName);
-                        if (i < observableList.size() - 1) {
-                            languageString.append(languageCode).append(", ");
-                        } else {
-                            languageString.append(languageCode);
+                    else {
+                        for(SubtitleInfo subtitleInfo : subtitleInfoList){
+                            captionsController.openSubtitlesResultsPane.addResult(
+                                    new Result(captionsController,
+                                            captionsController.openSubtitlesResultsPane,
+                                            subtitleInfo.getFileName(),
+                                            languageMap.get(subtitleInfo.getLanguage()),
+                                            String.valueOf(subtitleInfo.getDownloadsNo()),
+                                            osClient,
+                                            subtitleInfo.getSubtitleFileId()
+                                    )
+                            );
                         }
+
                     }
-                }
+                    if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
+                    searchInProgress = false;
+                    executorService.shutdown();
+                });
 
+                searchTask.setOnFailed(failEvent -> {
 
-                ListResponse<SubtitleInfo> response;
-                if(searchState == 0) response = osClient.searchSubtitles(languageString.toString(), titleField.getText(), seasonField.getText(), episodeField.getText());
-                else if(searchState == 1) response = osClient.searchSubtitles(languageString.toString(), imdbField.getText());
-                else response = osClient.searchSubtitles(languageString.toString(), captionsController.menuController.queueBox.activeItem.get().file);
+                    captionsController.openSubtitlesResultsPane.errorLabel.setText("Subtitle search failed. Make sure your search parameters are correct.");
+                    captionsController.openSubtitlesResultsPane.clearResults();
+                    captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
 
-                if(response.getData().isPresent()){
-                    List<SubtitleInfo> subtitles = response.getData().get();
+                    if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
+                    searchInProgress = false;
+                    executorService.shutdown();
+                });
 
-                    for(SubtitleInfo subtitleInfo : subtitles){
-                        captionsController.openSubtitlesResultsPane.addResult(
-                                new Result(captionsController,
-                                        captionsController.openSubtitlesResultsPane,
-                                        subtitleInfo.getFileName(),
-                                        languageMap.get(subtitleInfo.getLanguage()),
-                                        String.valueOf(subtitleInfo.getDownloadsNo()),
-                                        osClient,
-                                        subtitleInfo.getSubtitleFileId()
-                                )
-                        );
-                    }
-                }
-
-            } catch (XmlRpcException | IOException e) {
-                e.printStackTrace();
+                executorService.execute(searchTask);
             }
-        }
+        });
 
-        openResultsPane();
+        loginTask.setOnFailed(e -> {
+            captionsController.openSubtitlesResultsPane.errorLabel.setText("OpenSubtitles login failed.");
+            captionsController.openSubtitlesResultsPane.clearResults();
+            captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
+
+            if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
+            searchInProgress = false;
+            executorService.shutdown();
+        });
+
+        executorService.execute(loginTask);
     }
 
     private void openResultsPane(){
@@ -567,5 +608,36 @@ public class OpenSubtitlesPane {
 
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().addAll(titleFieldContainer, seasonEpisodeContainer);
+    }
+
+    public void initializeDefaultView(){
+        container.getChildren().clear();
+        if(!titleContainer.getChildren().contains(languageBox)) titleContainer.getChildren().add(languageBox);
+
+        container.setPrefHeight(230);
+        container.setMaxHeight(230);
+
+        scrollPane.setPrefHeight(233);
+        scrollPane.setMaxHeight(233);
+
+        if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) captionsController.clip.setHeight(233);
+
+        container.getChildren().addAll(titleContainer, fieldContainer, searchButtonContainer);
+    }
+
+    public void readCredentials(){
+        File file = new File(new File(System.getProperty("user.home"), "FXPlayer"), "OpenSubtitles.txt");
+        if(file.exists() && file.canRead()){
+            try {
+                List<String> lines = Files.readAllLines(Path.of(file.toURI()), StandardCharsets.UTF_8);
+                if(lines.size() >= 2){
+                    this.username = lines.get(0);
+                    this.password = lines.get(1);
+
+                    initializeDefaultView();
+                }
+
+            } catch (IOException ignored){}
+        }
     }
 }

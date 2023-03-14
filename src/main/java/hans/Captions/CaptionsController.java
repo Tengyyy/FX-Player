@@ -53,7 +53,7 @@ public class CaptionsController {
     public TimingPane timingPane;
 
     public File captionsFile;
-    ArrayList<Subtitle> subtitles  = new ArrayList<>();
+    public ArrayList<Subtitle> subtitles  = new ArrayList<>();
     int captionsPosition = 0;
 
     public BooleanProperty captionsSelected = new SimpleBooleanProperty(false);

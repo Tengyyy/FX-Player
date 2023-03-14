@@ -2,6 +2,7 @@ package hans.Captions;
 
 import com.jfoenix.controls.JFXButton;
 import hans.App;
+import hans.Captions.Tasks.SubtitleTimingTask;
 import hans.ControlTooltip;
 import hans.SVG;
 import hans.Settings.SettingsController;

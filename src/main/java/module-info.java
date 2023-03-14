@@ -36,4 +36,6 @@ module hans {
     exports hans.windowstoolbar;
     exports hans.Chapters;
     opens hans.Chapters to javafx.fxml, javafx.graphics;
+    exports hans.Captions.Tasks;
+    opens hans.Captions.Tasks to javafx.fxml, javafx.graphics;
 }

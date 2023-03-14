@@ -1,5 +1,6 @@
-package hans.Captions;
+package hans.Captions.Tasks;
 
+import hans.Captions.CaptionsController;
 import hans.SRTParser.utils.SRTUtils;
 import hans.Utilities;
 import javafx.application.Platform;
@@ -11,7 +12,7 @@ public class SubtitleTimingTask extends Task<Boolean> {
 
     CaptionsController captionsController;
 
-    SubtitleTimingTask(CaptionsController captionsController){
+    public SubtitleTimingTask(CaptionsController captionsController){
         this.captionsController = captionsController;
 
     }

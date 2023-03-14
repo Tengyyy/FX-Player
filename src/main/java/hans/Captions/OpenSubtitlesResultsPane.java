@@ -14,6 +14,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ public class OpenSubtitlesResultsPane {
     Region backIcon = new Region();
     Label titleLabel = new Label();
     SVGPath backSVG = new SVGPath();
+
+    Label errorLabel = new Label();
 
     HBox tableHeader = new HBox();
     Label fileNameHeader = new Label();
@@ -54,7 +57,6 @@ public class OpenSubtitlesResultsPane {
         scrollPane.getStyleClass().add("settingsScroll");
         scrollPane.setPrefSize(550, DEFAULT_HEIGHT + 3);
         scrollPane.setMaxSize(550, DEFAULT_HEIGHT + 3);
-        // 95 real min width
         scrollPane.setContent(container);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
@@ -62,8 +64,8 @@ public class OpenSubtitlesResultsPane {
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
 
-        container.setPrefSize(535, DEFAULT_HEIGHT);
-        container.setMaxSize(535, DEFAULT_HEIGHT);
+        container.setPrefSize(550, DEFAULT_HEIGHT);
+        container.setMaxSize(550, DEFAULT_HEIGHT);
         container.getChildren().addAll(titleContainer, resultBox);
         container.setAlignment(Pos.TOP_CENTER);
 
@@ -99,6 +101,17 @@ public class OpenSubtitlesResultsPane {
         titleLabel.setCursor(Cursor.HAND);
         titleLabel.getStyleClass().add("settingsPaneText");
         titleLabel.setOnMouseClicked((e) -> closeOpenSubtitlesResultsPane());
+
+        resultBox.setPrefWidth(535);
+        resultBox.setMinWidth(535);
+        resultBox.setMaxWidth(535);
+        resultBox.setMinHeight(100);
+        resultBox.setAlignment(Pos.CENTER);
+
+        errorLabel.getStyleClass().add("settingsPaneText");
+        errorLabel.setWrapText(true);
+        errorLabel.setTextAlignment(TextAlignment.CENTER);
+        VBox.setMargin(errorLabel, new Insets(0, 20, 0, 20));
 
         tableHeader.setPadding(new Insets(0, 50, 0, 35));
         tableHeader.setAlignment(Pos.CENTER_LEFT);
@@ -174,6 +187,7 @@ public class OpenSubtitlesResultsPane {
     public void clearResults(){
         results.clear();
         resultBox.getChildren().clear();
+        resultBox.setMinHeight(100);
         scrollPane.setPrefHeight(DEFAULT_HEIGHT + 3);
         scrollPane.setMaxHeight(DEFAULT_HEIGHT + 3);
 
@@ -182,7 +196,12 @@ public class OpenSubtitlesResultsPane {
     }
 
     public void addResult(Result result){
-        if(results.isEmpty() && !resultBox.getChildren().contains(tableHeader)) resultBox.getChildren().add(tableHeader);
+
+        resultBox.setMinHeight(Region.USE_COMPUTED_SIZE);
+
+        if(results.isEmpty() && !resultBox.getChildren().contains(tableHeader)){
+            resultBox.getChildren().add(tableHeader);
+        }
         results.add(result);
         resultBox.getChildren().add(result);
 

@@ -178,7 +178,7 @@ public class CaptionsTab extends HBox {
             captionsHome.scrollPane.setPrefHeight(height - 32);
             captionsHome.scrollPane.setMaxHeight(height - 32);
 
-            captionsController.clip.setHeight(height - 32);
+            if(captionsController.captionsState == CaptionsState.CLOSED || captionsController.captionsState == CaptionsState.HOME_OPEN) captionsController.clip.setHeight(height - 32);
         }
     }
 }

@@ -14,6 +14,10 @@ import hans.SVG;
 import hans.Settings.SettingsController;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -85,7 +89,7 @@ public class OpenSubtitlesPane {
 
     StackPane searchButtonContainer = new StackPane();
     HBox searchButtonWrapper = new HBox();
-    JFXButton searchButton = new JFXButton();
+    public JFXButton searchButton = new JFXButton();
     Region searchIcon = new Region();
     SVGPath searchSVG = new SVGPath();
 
@@ -103,7 +107,8 @@ public class OpenSubtitlesPane {
 
     public int searchState = 0; // 0 - query search (default), 1 - imdb search, 2 - file search
 
-    boolean searchInProgress = false;
+    public BooleanProperty searchInProgress = new SimpleBooleanProperty(false);
+    ExecutorService executorService = null;
 
     OpenSubtitlesPane(CaptionsHome captionsHome, CaptionsController captionsController){
         this.captionsHome = captionsHome;
@@ -367,6 +372,14 @@ public class OpenSubtitlesPane {
 
         captionsController.captionsPane.getChildren().add(scrollPane);
 
+        searchInProgress.addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) searchButton.setDisable(true);
+            else if(searchState != 2 || captionsController.menuController.queueBox.activeItem.get() != null){
+                searchButton.setDisable(false);
+            }
+        });
+
+
         readCredentials();
 
         Platform.runLater(() -> searchOptionsContextMenu = new SearchOptionsContextMenu(this));
@@ -420,7 +433,7 @@ public class OpenSubtitlesPane {
 
     private void attemptSearch(){
 
-        if(searchInProgress) return;
+        if(searchInProgress.get()) return;
 
         if(searchState == 0){
             if(!titleField.getText().isEmpty()) search();
@@ -437,21 +450,18 @@ public class OpenSubtitlesPane {
 
     private void search() {
 
-        searchInProgress = true;
+        searchInProgress.set(true);
 
         captionsController.openSubtitlesResultsPane.clearResults();
 
-        try {
-            URL serverUrl = new URL("https", "api.opensubtitles.org", 443, "/xml-rpc");
-            osClient = new OpenSubtitlesClientImpl(serverUrl);
-        } catch (MalformedURLException e) {
-            captionsController.openSubtitlesResultsPane.errorLabel.setText("OpenSubtitles server URL malformed.");
-            captionsController.openSubtitlesResultsPane.clearResults();
-            captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
-
-            openResultsPane();
-            searchInProgress = false;
-            return;
+        if(osClient == null){
+            try {
+                URL serverUrl = new URL("https", "api.opensubtitles.org", 443, "/xml-rpc");
+                osClient = new OpenSubtitlesClientImpl(serverUrl);
+            } catch (MalformedURLException e) {
+                searchFail("OpenSubtitles server URL malformed.");
+                return;
+            }
         }
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
@@ -459,35 +469,14 @@ public class OpenSubtitlesPane {
         LoginTask loginTask = new LoginTask(captionsController, this);
         loginTask.setOnSucceeded(e -> {
             Integer result = loginTask.getValue();
-            if(result == -1){
-                captionsController.openSubtitlesResultsPane.errorLabel.setText("Unable to connect to OpenSubtitles service.");
-                captionsController.openSubtitlesResultsPane.clearResults();
-                captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
-
-                if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
-                searchInProgress = false;
-                executorService.shutdown();
-            }
-            else if(result == 0){
-                captionsController.openSubtitlesResultsPane.errorLabel.setText("Failed to login to OpenSubtitles. Make sure your login credentials are correct.");
-                captionsController.openSubtitlesResultsPane.clearResults();
-                captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
-
-                if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
-                searchInProgress = false;
-                executorService.shutdown();
-            }
+            if(result == -1) searchFail("Unable to connect to OpenSubtitles service.");
+            else if(result == 0) searchFail("Failed to login to OpenSubtitles. Make sure your login credentials are correct.");
             else {
                 SearchTask searchTask = new SearchTask(captionsController, this);
                 searchTask.setOnSucceeded(successEvent -> {
 
                     List<SubtitleInfo> subtitleInfoList = searchTask.getValue();
-                    if(subtitleInfoList.isEmpty()){
-                        captionsController.openSubtitlesResultsPane.errorLabel.setText("No subtitles found.");
-                        captionsController.openSubtitlesResultsPane.clearResults();
-                        captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
-
-                    }
+                    if(subtitleInfoList.isEmpty()) searchFail("No subtitles found.");
                     else {
                         for(SubtitleInfo subtitleInfo : subtitleInfoList){
                             captionsController.openSubtitlesResultsPane.addResult(
@@ -502,36 +491,18 @@ public class OpenSubtitlesPane {
                             );
                         }
 
+                        if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
+                        searchInProgress.set(false);
+                        executorService.shutdown();
                     }
-                    if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
-                    searchInProgress = false;
-                    executorService.shutdown();
                 });
 
-                searchTask.setOnFailed(failEvent -> {
-
-                    captionsController.openSubtitlesResultsPane.errorLabel.setText("Subtitle search failed. Make sure your search parameters are correct.");
-                    captionsController.openSubtitlesResultsPane.clearResults();
-                    captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
-
-                    if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
-                    searchInProgress = false;
-                    executorService.shutdown();
-                });
-
+                searchTask.setOnFailed(failEvent -> searchFail("Subtitle search failed. Make sure your search parameters are correct."));
                 executorService.execute(searchTask);
             }
         });
 
-        loginTask.setOnFailed(e -> {
-            captionsController.openSubtitlesResultsPane.errorLabel.setText("OpenSubtitles login failed.");
-            captionsController.openSubtitlesResultsPane.clearResults();
-            captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
-
-            if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
-            searchInProgress = false;
-            executorService.shutdown();
-        });
+        loginTask.setOnFailed(e -> searchFail("OpenSubtitles login failed."));
 
         executorService.execute(loginTask);
     }
@@ -546,8 +517,7 @@ public class OpenSubtitlesPane {
         captionsController.openSubtitlesResultsPane.scrollPane.setMouseTransparent(false);
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.openSubtitlesResultsPane.scrollPane.getHeight())));
-
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.heightProperty(), captionsController.openSubtitlesResultsPane.scrollPane.getPrefHeight())));
 
         Timeline clipWidthTimeline = new Timeline();
         clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(SettingsController.ANIMATION_SPEED), new KeyValue(captionsController.clip.widthProperty(), captionsController.openSubtitlesResultsPane.scrollPane.getWidth())));
@@ -586,6 +556,8 @@ public class OpenSubtitlesPane {
 
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().add(fileSearchLabelContainer);
+
+        if(captionsController.menuController.queueBox.activeItem.get() == null) searchButton.setDisable(true);
     }
 
     public void setImdbSearch(){
@@ -597,6 +569,8 @@ public class OpenSubtitlesPane {
 
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().add(imdbFieldContainer);
+
+        if(!searchInProgress.get()) searchButton.setDisable(false);
     }
 
     public void setQuerySearch(){
@@ -608,6 +582,8 @@ public class OpenSubtitlesPane {
 
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().addAll(titleFieldContainer, seasonEpisodeContainer);
+
+        if(!searchInProgress.get()) searchButton.setDisable(false);
     }
 
     public void initializeDefaultView(){
@@ -639,5 +615,16 @@ public class OpenSubtitlesPane {
 
             } catch (IOException ignored){}
         }
+    }
+
+    private void searchFail(String text){
+        captionsController.openSubtitlesResultsPane.errorLabel.setText(text);
+        captionsController.openSubtitlesResultsPane.clearResults();
+        captionsController.openSubtitlesResultsPane.resultBox.getChildren().add(captionsController.openSubtitlesResultsPane.errorLabel);
+
+        if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
+        searchInProgress.set(false);
+
+        executorService.shutdown();
     }
 }

@@ -52,19 +52,22 @@ public class FontOpacityPane {
         scrollPane.setContent(opacityBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         opacityBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        opacityBox.setPrefSize(185, 206);
-        opacityBox.setMaxSize(185, 206);
-        opacityBox.setPadding(new Insets(8, 0, 8, 0));
+        opacityBox.setPrefSize(200, 206);
+        opacityBox.setMaxSize(200, 206);
+        opacityBox.setPadding(new Insets(0, 0, 8, 0));
         opacityBox.getChildren().add(opacityTitle);
+        opacityBox.setFillWidth(true);
 
-        opacityTitle.setPrefSize(185, 40);
-        opacityTitle.setMaxSize(185, 40);
+        opacityTitle.setPrefSize(200, 48);
+        opacityTitle.setMaxSize(200, 48);
         opacityTitle.setPadding(new Insets(0, 10, 0, 10));
+        opacityTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(opacityTitle, new Insets(0, 0, 10, 0));
 
         opacityTitle.getStyleClass().add("settingsPaneTitle");

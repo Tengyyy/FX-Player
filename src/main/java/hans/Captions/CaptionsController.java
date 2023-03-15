@@ -83,7 +83,7 @@ public class CaptionsController {
         captionsBuffer.setPrefSize(245, 181);
         captionsBuffer.setMaxWidth(550);
         captionsBuffer.setClip(clip);
-        captionsBuffer.getChildren().add(captionsBackground);
+        captionsBuffer.getChildren().addAll(captionsBackground, captionsPane);
         captionsBuffer.setMouseTransparent(true);
         captionsBackground.getStyleClass().add("settingsBackground");
         captionsBackground.setVisible(false);
@@ -105,7 +105,6 @@ public class CaptionsController {
         });
 
         captionsBuffer.setPickOnBounds(false);
-        captionsBuffer.getChildren().add(captionsPane);
         StackPane.setAlignment(captionsBuffer, Pos.BOTTOM_RIGHT);
 
         captionsPane.setPrefSize(245, 181);

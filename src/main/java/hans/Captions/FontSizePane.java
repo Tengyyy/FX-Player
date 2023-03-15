@@ -54,19 +54,22 @@ public class FontSizePane {
         scrollPane.setContent(fontSizeBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         fontSizeBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        fontSizeBox.setPrefSize(185, 311);
-        fontSizeBox.setMaxSize(185, 311);
-        fontSizeBox.setPadding(new Insets(8, 0, 8, 0));
+        fontSizeBox.setPrefSize(200, 311);
+        fontSizeBox.setMaxSize(200, 311);
+        fontSizeBox.setPadding(new Insets(0, 0, 8, 0));
         fontSizeBox.getChildren().add(fontSizeTitle);
+        fontSizeBox.setFillWidth(true);
 
-        fontSizeTitle.setPrefSize(185, 40);
-        fontSizeTitle.setMaxSize(185, 40);
+        fontSizeTitle.setPrefSize(200, 48);
+        fontSizeTitle.setMaxSize(200, 48);
         fontSizeTitle.setPadding(new Insets(0, 10, 0, 10));
+        fontSizeTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(fontSizeTitle, new Insets(0, 0, 10, 0));
 
         fontSizeTitle.getStyleClass().add("settingsPaneTitle");

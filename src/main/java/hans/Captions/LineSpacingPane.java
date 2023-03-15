@@ -52,20 +52,23 @@ public class LineSpacingPane {
         scrollPane.setContent(lineSpacingBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         lineSpacingBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        lineSpacingBox.setPrefSize(185, 311);
-        lineSpacingBox.setMaxSize(185, 311);
-        lineSpacingBox.setPadding(new Insets(8, 0, 8, 0));
+        lineSpacingBox.setPrefSize(200, 311);
+        lineSpacingBox.setMaxSize(200, 311);
+        lineSpacingBox.setPadding(new Insets(0, 0, 8, 0));
+        lineSpacingBox.setFillWidth(true);
         lineSpacingBox.getChildren().add(lineSpacingTitle);
 
-        lineSpacingTitle.setPrefSize(185, 40);
-        lineSpacingTitle.setMaxSize(185, 40);
+        lineSpacingTitle.setPrefSize(200, 48);
+        lineSpacingTitle.setMaxSize(200, 48);
         lineSpacingTitle.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(lineSpacingTitle, new Insets(0, 0, 10, 0));
+        lineSpacingTitle.setAlignment(Pos.CENTER_LEFT);
 
         lineSpacingTitle.getStyleClass().add("settingsPaneTitle");
         lineSpacingTitle.getChildren().addAll(lineSpacingBackPane, lineSpacingTitleLabel);
@@ -75,6 +78,7 @@ public class LineSpacingPane {
         lineSpacingBackPane.setMaxSize(24, 40);
         lineSpacingBackPane.getChildren().add(lineSpacingBackIcon);
         lineSpacingBackPane.setCursor(Cursor.HAND);
+
         lineSpacingBackPane.setOnMouseClicked((e) -> closeLineSpacingPane());
 
         lineSpacingBackIcon.setMinSize(8, 13);

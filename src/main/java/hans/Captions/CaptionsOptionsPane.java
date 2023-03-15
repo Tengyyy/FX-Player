@@ -62,12 +62,13 @@ public class CaptionsOptionsPane {
         captionsOptionsBox.setAlignment(Pos.BOTTOM_CENTER);
         captionsOptionsBox.setPrefSize(270, 381);
         captionsOptionsBox.setMaxSize(270, 381);
-        captionsOptionsBox.setPadding(new Insets(8, 0, 8, 0));
+        captionsOptionsBox.setPadding(new Insets(0, 0, 8, 0));
         captionsOptionsBox.getChildren().add(captionsOptionsTitle);
 
-        captionsOptionsTitle.setPrefSize(270, 40);
-        captionsOptionsTitle.setMaxSize(270, 40);
+        captionsOptionsTitle.setPrefSize(270, 48);
+        captionsOptionsTitle.setMaxSize(270, 48);
         captionsOptionsTitle.setPadding(new Insets(0, 10, 0, 10));
+        captionsOptionsTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(captionsOptionsTitle, new Insets(0, 0, 10, 0));
 
         captionsOptionsTitle.getStyleClass().add("settingsPaneTitle");

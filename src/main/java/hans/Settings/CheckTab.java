@@ -24,8 +24,8 @@ public class CheckTab extends HBox {
 
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
 
-        this.setPrefSize(190, 35);
-        this.setMaxSize(190, 35);
+        this.setPrefSize(200, 35);
+        this.setMaxSize(200, 35);
 
         this.setPadding(new Insets(0, 10, 0, 10));
 

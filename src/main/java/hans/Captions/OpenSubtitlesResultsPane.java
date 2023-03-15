@@ -102,9 +102,9 @@ public class OpenSubtitlesResultsPane {
         titleLabel.getStyleClass().add("settingsPaneText");
         titleLabel.setOnMouseClicked((e) -> closeOpenSubtitlesResultsPane());
 
-        resultBox.setPrefWidth(535);
+        resultBox.setPrefWidth(550);
         resultBox.setMinWidth(535);
-        resultBox.setMaxWidth(535);
+        resultBox.setMaxWidth(550);
         resultBox.setMinHeight(100);
         resultBox.setAlignment(Pos.CENTER);
 
@@ -113,17 +113,17 @@ public class OpenSubtitlesResultsPane {
         errorLabel.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(errorLabel, new Insets(0, 20, 0, 20));
 
-        tableHeader.setPadding(new Insets(0, 50, 0, 35));
+        tableHeader.setPadding(new Insets(0, 0, 0, 35));
         tableHeader.setAlignment(Pos.CENTER_LEFT);
-        tableHeader.setPrefSize(535, 40);
-        tableHeader.setMaxSize(535, 40);
+        tableHeader.setPrefSize(550, 40);
+        tableHeader.setMaxSize(550, 40);
         tableHeader.getChildren().addAll(fileNameHeader, languageHeader, downloadsHeader);
 
         fileNameHeader.setText("File name");
         fileNameHeader.getStyleClass().add("settingsPaneText");
-        fileNameHeader.setMinSize(270, 40);
-        fileNameHeader.setPrefSize(270, 40);
-        fileNameHeader.setMaxSize(270, 40);
+        fileNameHeader.setMinSize(275, 40);
+        fileNameHeader.setPrefSize(275, 40);
+        fileNameHeader.setMaxSize(275, 40);
 
         languageHeader.setText("Language");
         languageHeader.getStyleClass().add("settingsPaneText");
@@ -205,15 +205,15 @@ public class OpenSubtitlesResultsPane {
         results.add(result);
         resultBox.getChildren().add(result);
 
-        scrollPane.setPrefHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 40));
-        scrollPane.setMaxHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 40));
+        scrollPane.setPrefHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 50));
+        scrollPane.setMaxHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 50));
 
-        container.setPrefHeight(Math.max(DEFAULT_HEIGHT, 95 + results.size() * 40));
-        container.setMaxHeight(Math.max(DEFAULT_HEIGHT, 95 + results.size() * 40));
+        container.setPrefHeight(Math.max(DEFAULT_HEIGHT, 95 + results.size() * 50));
+        container.setMaxHeight(Math.max(DEFAULT_HEIGHT, 95 + results.size() * 50));
 
 
         if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_RESULTS_OPEN){
-            captionsController.clip.setHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 40));
+            captionsController.clip.setHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 50));
         }
     }
 

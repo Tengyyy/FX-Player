@@ -53,19 +53,22 @@ public class TextAlignmentPane {
         scrollPane.setContent(textAlignmentBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         textAlignmentBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        textAlignmentBox.setPrefSize(185, 171);
-        textAlignmentBox.setMaxSize(185, 171);
-        textAlignmentBox.setPadding(new Insets(8, 0, 8, 0));
+        textAlignmentBox.setPrefSize(200, 171);
+        textAlignmentBox.setMaxSize(200, 171);
+        textAlignmentBox.setPadding(new Insets(0, 0, 8, 0));
         textAlignmentBox.getChildren().add(textAlignmentTitle);
+        textAlignmentBox.setFillWidth(true);
 
-        textAlignmentTitle.setPrefSize(185, 40);
-        textAlignmentTitle.setMaxSize(185, 40);
+        textAlignmentTitle.setPrefSize(200, 48);
+        textAlignmentTitle.setMaxSize(200, 48);
         textAlignmentTitle.setPadding(new Insets(0, 10, 0, 10));
+        textAlignmentTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(textAlignmentTitle, new Insets(0, 0, 10, 0));
 
         textAlignmentTitle.getStyleClass().add("settingsPaneTitle");

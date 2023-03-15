@@ -50,19 +50,22 @@ public class BackgroundColorPane {
         scrollPane.setContent(backgroundColorBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         backgroundColorBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        backgroundColorBox.setPrefSize(185, 346);
-        backgroundColorBox.setMaxSize(185, 346);
-        backgroundColorBox.setPadding(new Insets(8, 0, 8, 0));
+        backgroundColorBox.setPrefSize(200, 346);
+        backgroundColorBox.setMaxSize(200, 346);
+        backgroundColorBox.setPadding(new Insets(0, 0, 8, 0));
         backgroundColorBox.getChildren().add(backgroundColorTitle);
+        backgroundColorBox.setFillWidth(true);
 
-        backgroundColorTitle.setPrefSize(185, 40);
-        backgroundColorTitle.setMaxSize(185, 40);
+        backgroundColorTitle.setPrefSize(200, 48);
+        backgroundColorTitle.setMaxSize(200, 48);
         backgroundColorTitle.setPadding(new Insets(0, 10, 0, 10));
+        backgroundColorTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(backgroundColorTitle, new Insets(0, 0, 10, 0));
 
         backgroundColorTitle.getStyleClass().add("settingsPaneTitle");

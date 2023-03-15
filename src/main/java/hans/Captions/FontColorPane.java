@@ -54,19 +54,22 @@ public class FontColorPane {
         scrollPane.setContent(fontColorBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         fontColorBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        fontColorBox.setPrefSize(185, 346);
-        fontColorBox.setMaxSize(185, 346);
-        fontColorBox.setPadding(new Insets(8, 0, 8, 0));
+        fontColorBox.setPrefSize(200, 346);
+        fontColorBox.setMaxSize(200, 346);
+        fontColorBox.setPadding(new Insets(0, 0, 8, 0));
         fontColorBox.getChildren().add(fontColorTitle);
+        fontColorBox.setFillWidth(true);
 
-        fontColorTitle.setPrefSize(185, 40);
-        fontColorTitle.setMaxSize(185, 40);
+        fontColorTitle.setPrefSize(200, 48);
+        fontColorTitle.setMaxSize(200, 48);
         fontColorTitle.setPadding(new Insets(0, 10, 0, 10));
+        fontColorTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(fontColorTitle, new Insets(0, 0, 10, 0));
 
         fontColorTitle.getStyleClass().add("settingsPaneTitle");

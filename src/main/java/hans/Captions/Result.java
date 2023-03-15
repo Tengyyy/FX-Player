@@ -10,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -17,6 +18,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 import org.apache.xmlrpc.XmlRpcException;
 
 import java.io.File;
@@ -55,8 +57,8 @@ public class Result extends HBox {
         this.setPadding(new Insets(5, 10, 5, 10));
         this.setAlignment(Pos.CENTER_LEFT);
         this.getChildren().addAll(indexLabel, nameLabel, languageLabel, downloadsLabel, downloadButtonPane);
-        this.setPrefSize( 535, 50);
-        this.setMaxSize(535, 50);
+        this.setPrefSize( 550, 50);
+        this.setMaxSize(550, 50);
         if(openSubtitlesResultsPane.results.size() % 2 == 1)
             this.setStyle("-fx-background-color: rgba(40,40,40,0.8);");
 
@@ -73,6 +75,15 @@ public class Result extends HBox {
         nameLabel.setPrefSize(270, 40);
         nameLabel.setMaxSize(270, 40);
         nameLabel.setText(fileName);
+
+        nameLabel.setOnMouseEntered(e -> nameLabel.setUnderline(true));
+        nameLabel.setOnMouseExited(e -> nameLabel.setUnderline(false));
+
+        Tooltip tooltip = new Tooltip(fileName);
+        tooltip.setShowDelay(Duration.millis(1000));
+        tooltip.setHideDelay(Duration.ZERO);
+        tooltip.setShowDuration(Duration.seconds(4));
+        Tooltip.install(nameLabel, tooltip);
 
         languageLabel.getStyleClass().add("resultTitle");
         languageLabel.setMinSize(75, 40);
@@ -116,7 +127,7 @@ public class Result extends HBox {
 
         downloadButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, downloadButton, 1, 0, false, 1, true));
 
-        Platform.runLater(() -> downloadTooltip = new ControlTooltip(captionsController.mainController, "Download and apply subtitle file", downloadButton, 1000));
+        Platform.runLater(() -> downloadTooltip = new ControlTooltip(captionsController.mainController, "Download subtitle file", downloadButton, 1000));
 
     }
 

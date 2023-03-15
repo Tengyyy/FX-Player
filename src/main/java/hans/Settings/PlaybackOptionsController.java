@@ -41,20 +41,21 @@ public class PlaybackOptionsController {
 
         playbackOptionsBox.setPrefSize(235, 171);
         playbackOptionsBox.setMaxSize(235, 171);
-        playbackOptionsBox.setPadding(new Insets(8, 0, 8, 0));
+        playbackOptionsBox.setPadding(new Insets(0, 0, 8, 0));
         playbackOptionsBox.getChildren().add(titleBox);
         StackPane.setAlignment(playbackOptionsBox, Pos.BOTTOM_RIGHT);
 
         playbackOptionsBox.setVisible(false);
         playbackOptionsBox.setMouseTransparent(true);
 
-        titleBox.setMinSize(235, 40);
-        titleBox.setPrefSize(235, 40);
-        titleBox.setMaxSize(235, 40);
+        titleBox.setMinSize(235, 48);
+        titleBox.setPrefSize(235, 48);
+        titleBox.setMaxSize(235, 48);
         titleBox.getStyleClass().add("settingsPaneTitle");
         titleBox.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(titleBox, new Insets(0, 0, 10, 0));
         titleBox.getChildren().addAll(backPane, titleLabel);
+        titleBox.setAlignment(Pos.CENTER_LEFT);
 
         backPane.setMinSize(24, 35);
         backPane.setPrefSize(24, 35);

@@ -88,15 +88,16 @@ public class CaptionsHome {
 
         captionsWrapper.setPrefSize(245, 178);
         captionsWrapper.setMaxSize(245, 178);
-        captionsWrapper.setPadding(new Insets(8, 0, 8, 0));
+        captionsWrapper.setPadding(new Insets(0, 0, 8, 0));
         captionsWrapper.setAlignment(Pos.BOTTOM_LEFT);
 
         captionsWrapper.getChildren().addAll(captionsTitle, captionsChooserTab, openSubtitlesTab, adjustDelayTab);
 
         captionsTitle.getChildren().addAll(captionsTitleLabel, captionsOptionsLabel);
-        captionsTitle.setPrefSize(245, 40);
-        captionsTitle.setMaxSize(245, 40);
+        captionsTitle.setPrefSize(245, 48);
+        captionsTitle.setMaxSize(245, 48);
         captionsTitle.setPadding(new Insets(0, 10, 0, 10));
+        captionsTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(captionsTitle, new Insets(0, 0, 10, 0));
         captionsTitle.getStyleClass().add("settingsPaneTitle");
 

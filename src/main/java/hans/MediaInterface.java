@@ -299,6 +299,7 @@ public class MediaInterface {
         captionsController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER_LEFT);
         if(!captionsController.openSubtitlesPane.fileSearchLabelContainer.getChildren().contains(captionsController.openSubtitlesPane.fileSearchExplanationLabel)) captionsController.openSubtitlesPane.fileSearchLabelContainer.getChildren().add(captionsController.openSubtitlesPane.fileSearchExplanationLabel);
 
+        if(!captionsController.openSubtitlesPane.searchInProgress.get()) captionsController.openSubtitlesPane.searchButton.setDisable(false);
 
         MediaItem mediaItem = queueItem.getMediaItem();
 
@@ -351,6 +352,8 @@ public class MediaInterface {
         captionsController.openSubtitlesPane.fileSearchLabel.setText("Select a media file to use this feature");
         captionsController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER);
         captionsController.openSubtitlesPane.fileSearchLabelContainer.getChildren().remove(captionsController.openSubtitlesPane.fileSearchExplanationLabel);
+
+        if(captionsController.openSubtitlesPane.searchState == 2) captionsController.openSubtitlesPane.searchButton.setDisable(true);
 
 
         controlBarController.disablePreviousVideoButton();

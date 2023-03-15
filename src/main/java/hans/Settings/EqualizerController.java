@@ -29,7 +29,7 @@ public class EqualizerController {
     ScrollPane scrollPane = new ScrollPane();
     VBox equalizerBox = new VBox();
 
-    StackPane titleBox = new StackPane();
+    HBox titleBox = new HBox();
     StackPane backIconPane = new StackPane();
     Region backIcon = new Region();
     SVGPath backSVG = new SVGPath();
@@ -80,24 +80,25 @@ public class EqualizerController {
         scrollPane.setContent(equalizerBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
-        equalizerBox.setAlignment(Pos.BOTTOM_CENTER);
 
-
-        equalizerBox.setPrefSize(535, 320);
-        equalizerBox.setMaxSize(535, 320);
-        equalizerBox.setPadding(new Insets(8, 0, 8, 0));
+        equalizerBox.setPrefSize(550, 320);
+        equalizerBox.setMaxSize(550, 320);
+        equalizerBox.setPadding(new Insets(0, 0, 8, 0));
         equalizerBox.getChildren().addAll(titleBox, sliderBox, checkBoxContainer);
-        equalizerBox.setAlignment(Pos.TOP_CENTER);
+        equalizerBox.setAlignment(Pos.TOP_LEFT);
+        equalizerBox.setFillWidth(true);
 
-        titleBox.setPrefSize(535, 40);
-        titleBox.setMaxSize(535, 40);
+        titleBox.setPrefSize(550, 48);
+        titleBox.setMaxSize(550, 48);
         titleBox.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(titleBox, new Insets(0, 0, 10, 0));
 
         titleBox.getStyleClass().add("settingsPaneTitle");
         titleBox.getChildren().addAll(titleLabelWrapper, comboBox);
+        titleBox.setAlignment(Pos.CENTER_LEFT);
 
         backIconPane.setMinSize(25, 40);
         backIconPane.setPrefSize(25, 40);
@@ -115,6 +116,7 @@ public class EqualizerController {
         StackPane.setAlignment(titleLabelWrapper, Pos.CENTER_LEFT);
         titleLabelWrapper.getChildren().addAll(backIconPane, titleLabel);
         titleLabelWrapper.setAlignment(Pos.CENTER_LEFT);
+        titleLabelWrapper.setPrefWidth(365);
 
         titleLabel.setText("Equalizer");
         titleLabel.setCursor(Cursor.HAND);

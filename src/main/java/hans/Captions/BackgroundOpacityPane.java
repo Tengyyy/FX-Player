@@ -51,19 +51,22 @@ public class BackgroundOpacityPane {
         scrollPane.setContent(backgroundOpacityBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
+        scrollPane.setFitToWidth(true);
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         backgroundOpacityBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
-        backgroundOpacityBox.setPrefSize(185, 241);
-        backgroundOpacityBox.setMaxSize(185, 241);
-        backgroundOpacityBox.setPadding(new Insets(8, 0, 8, 0));
+        backgroundOpacityBox.setPrefSize(200, 241);
+        backgroundOpacityBox.setMaxSize(200, 241);
+        backgroundOpacityBox.setPadding(new Insets(0, 0, 8, 0));
         backgroundOpacityBox.getChildren().add(backgroundOpacityTitle);
+        backgroundOpacityBox.setFillWidth(true);
 
-        backgroundOpacityTitle.setPrefSize(185, 40);
-        backgroundOpacityTitle.setMaxSize(185, 40);
+        backgroundOpacityTitle.setPrefSize(200, 48);
+        backgroundOpacityTitle.setMaxSize(200, 48);
         backgroundOpacityTitle.setPadding(new Insets(0, 10, 0, 10));
+        backgroundOpacityTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(backgroundOpacityTitle, new Insets(0, 0, 10, 0));
 
         backgroundOpacityTitle.getStyleClass().add("settingsPaneTitle");

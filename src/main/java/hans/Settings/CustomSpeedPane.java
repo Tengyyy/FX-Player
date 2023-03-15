@@ -52,10 +52,11 @@ public class CustomSpeedPane {
         customSpeedBox.setVisible(false);
         customSpeedBox.setMouseTransparent(true);
 
-        customSpeedTitle.setMinSize(235, 40);
-        customSpeedTitle.setPrefSize(235, 40);
-        customSpeedTitle.setMaxSize(235, 40);
+        customSpeedTitle.setMinSize(235, 48);
+        customSpeedTitle.setPrefSize(235, 48);
+        customSpeedTitle.setMaxSize(235, 48);
         customSpeedTitle.setPadding(new Insets(0, 10, 0, 10));
+        customSpeedTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(customSpeedTitle, new Insets(0, 0, 20, 0));
 
         customSpeedTitle.getStyleClass().add("settingsPaneTitle");

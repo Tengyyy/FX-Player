@@ -72,14 +72,15 @@ public class TimingPane {
         container.setVisible(false);
         container.setMouseTransparent(true);
 
-        titlePane.setMinSize(235, 40);
-        titlePane.setPrefSize(235, 40);
-        titlePane.setMaxSize(235, 40);
+        titlePane.setMinSize(235, 48);
+        titlePane.setPrefSize(235, 48);
+        titlePane.setMaxSize(235, 48);
         titlePane.setPadding(new Insets(0, 10, 0, 10));
-        VBox.setMargin(titlePane, new Insets(0, 0, 20, 0));
+        VBox.setMargin(titlePane, new Insets(0, 0, 15, 0));
 
         titlePane.getStyleClass().add("settingsPaneTitle");
         titlePane.getChildren().addAll(backIconPane, titleLabel);
+        titlePane.setAlignment(Pos.CENTER_LEFT);
 
         backIconPane.setMinSize(24, 40);
         backIconPane.setPrefSize(24, 40);

@@ -5,6 +5,7 @@ import com.github.wtekiela.opensub4j.response.ListResponse;
 import com.github.wtekiela.opensub4j.response.SubtitleFile;
 import com.jfoenix.controls.JFXButton;
 import hans.*;
+import hans.Captions.Tasks.DownloadTask;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,8 +25,10 @@ import org.apache.xmlrpc.XmlRpcException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.*;
 
 public class Result extends HBox {
 
@@ -132,51 +135,31 @@ public class Result extends HBox {
     }
 
     private void downloadFile(){
+        downloadButton.setDisable(true);
+        //TODO: show loading animation
         if(osClient != null && osClient.isLoggedIn()){
-            try {
-                ListResponse<SubtitleFile> downloadResponse = osClient.downloadSubtitles(subtitleId);
-                if(downloadResponse.getData().isPresent()){
-                    List<SubtitleFile> subtitleFiles = downloadResponse.getData().get();
-                    System.out.println("Subtitle files size: " + subtitleFiles.size());
-                    SubtitleFile subtitleFile = subtitleFiles.get(0);
-                    File file = findFileName(fileName);
-                    Files.write(file.toPath(), Collections.singleton(subtitleFile.getContent().getContent()));
 
+            DownloadTask downloadTask  = new DownloadTask(captionsController, openSubtitlesResultsPane, this.fileName, this.subtitleId);
+            downloadTask.setOnSucceeded(e -> {
+                File file = downloadTask.getValue();
+                if(file != null){
                     if(Utilities.getFileExtension(file).equals("srt") && captionsController.menuController.queueBox.activeItem.get() != null){
                         captionsController.captionsHome.createTab(file);
                     }
+
+                    //TODO: show checkmark to show that download is complete, maybe make it a timer and after a few seconds add a button to open subtitle file in folder
                 }
-            } catch (XmlRpcException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+                else {
+                    //TODO: show cross icon indicating that download failed
+                }
+            });
+            downloadTask.setOnFailed(e -> {
+                //TODO: show cross icon indicating that download failed
+            });
 
-    private File findFileName(String name){
-        File parent;
-        if(captionsController.menuController.queueBox.activeItem.get() != null){
-            // save subtitle file to parent folder of active media item
-            parent = new File(captionsController.menuController.queueBox.activeItem.get().file.getParent());
+            ExecutorService executorService = Executors.newFixedThreadPool(1);
+            executorService.execute(downloadTask);
+            executorService.shutdown();
         }
-        else {
-            // save to Downloads folder
-            parent = new File(System.getProperty("user.home"), "Downloads");
-        }
-
-        File file = new File(parent, name);
-        int index = 1;
-        while(file.exists()){
-            String extension = Utilities.getFileExtension(file);
-            String newName;
-            if(index == 1)
-                newName = file.getName().substring(0, file.getName().lastIndexOf("." + extension)) + " (1)." + extension;
-            else
-                newName = file.getName().substring(0, file.getName().lastIndexOf(" (")) + " (" + index + ")." + extension;
-
-            file = new File(file.getParentFile(), newName);
-            index++;
-        }
-
-        return file;
     }
 }

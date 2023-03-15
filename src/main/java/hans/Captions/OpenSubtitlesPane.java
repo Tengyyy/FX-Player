@@ -625,6 +625,6 @@ public class OpenSubtitlesPane {
         if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN) openResultsPane();
         searchInProgress.set(false);
 
-        executorService.shutdown();
+        if(executorService != null) executorService.shutdown();
     }
 }

@@ -3,6 +3,7 @@ package hans.Captions;
 import hans.App;
 import hans.SVG;
 import hans.Settings.SettingsController;
+import hans.Utilities;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,6 +18,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class OpenSubtitlesResultsPane {
@@ -217,4 +219,32 @@ public class OpenSubtitlesResultsPane {
         }
     }
 
+
+    public File findFileName(String name){
+        File parent;
+        if(captionsController.menuController.queueBox.activeItem.get() != null){
+            // save subtitle file to parent folder of active media item
+            parent = new File(captionsController.menuController.queueBox.activeItem.get().file.getParent());
+        }
+        else {
+            // save to Downloads folder
+            parent = new File(System.getProperty("user.home"), "Downloads");
+        }
+
+        File file = new File(parent, name);
+        int index = 1;
+        while(file.exists()){
+            String extension = Utilities.getFileExtension(file);
+            String newName;
+            if(index == 1)
+                newName = file.getName().substring(0, file.getName().lastIndexOf("." + extension)) + " (1)." + extension;
+            else
+                newName = file.getName().substring(0, file.getName().lastIndexOf(" (")) + " (" + index + ")." + extension;
+
+            file = new File(file.getParentFile(), newName);
+            index++;
+        }
+
+        return file;
+    }
 }

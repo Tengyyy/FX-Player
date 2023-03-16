@@ -1,8 +1,7 @@
 package hans.Captions;
 
 import com.github.wtekiela.opensub4j.api.OpenSubtitlesClient;
-import com.github.wtekiela.opensub4j.response.ListResponse;
-import com.github.wtekiela.opensub4j.response.SubtitleFile;
+import com.github.wtekiela.opensub4j.response.SubtitleInfo;
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.Captions.Tasks.DownloadTask;
@@ -20,15 +19,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
-import org.apache.xmlrpc.XmlRpcException;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Result extends HBox {
 
@@ -44,18 +38,23 @@ public class Result extends HBox {
     Region downloadIcon = new Region();
     SVGPath downloadSVG = new SVGPath();
 
+    SVGPath checkSVG = new SVGPath();
+    Region checkIcon = new Region();
+
     ControlTooltip downloadTooltip;
 
     OpenSubtitlesClient osClient;
     int subtitleId;
     String fileName;
+    String encoding;
 
-    Result(CaptionsController captionsController, OpenSubtitlesResultsPane openSubtitlesResultsPane, String fileName, String language, String downloads, OpenSubtitlesClient osClient, int subtitleId){
+    Result(CaptionsController captionsController, OpenSubtitlesResultsPane openSubtitlesResultsPane, SubtitleInfo subtitleInfo, OpenSubtitlesClient osClient){
         this.captionsController = captionsController;
         this.openSubtitlesResultsPane = openSubtitlesResultsPane;
         this.osClient = osClient;
-        this.subtitleId = subtitleId;
-        this.fileName = fileName;
+        this.subtitleId = subtitleInfo.getSubtitleFileId();
+        this.fileName = subtitleInfo.getFileName();
+        this.encoding = subtitleInfo.getEncoding();
 
         this.setPadding(new Insets(5, 10, 5, 10));
         this.setAlignment(Pos.CENTER_LEFT);
@@ -92,7 +91,7 @@ public class Result extends HBox {
         languageLabel.setMinSize(75, 40);
         languageLabel.setPrefSize(75, 40);
         languageLabel.setMaxSize(75, 40);
-        languageLabel.setText(language);
+        languageLabel.setText(OpenSubtitlesPane.languageMap.get(subtitleInfo.getLanguage()));
         languageLabel.setAlignment(Pos.CENTER);
         languageLabel.setTextAlignment(TextAlignment.CENTER);
         HBox.setMargin(languageLabel, new Insets(0, 0, 0, 10));
@@ -101,12 +100,12 @@ public class Result extends HBox {
         downloadsLabel.setMinSize(75, 40);
         downloadsLabel.setPrefSize(75, 40);
         downloadsLabel.setMaxSize(75, 40);
-        downloadsLabel.setText(downloads);
+        downloadsLabel.setText(String.valueOf(subtitleInfo.getDownloadsNo()));
         downloadsLabel.setAlignment(Pos.CENTER);
         downloadsLabel.setTextAlignment(TextAlignment.CENTER);
         HBox.setMargin(downloadsLabel, new Insets(0, 10, 0, 10));
 
-        downloadButtonPane.getChildren().addAll(downloadButton, downloadIcon);
+        downloadButtonPane.getChildren().addAll(downloadButton, downloadIcon, checkIcon);
         downloadButtonPane.setPrefSize(40, 40);
         downloadButtonPane.setMaxSize(40, 40);
         downloadButton.setPrefWidth(30);
@@ -118,6 +117,7 @@ public class Result extends HBox {
         downloadButton.setText(null);
         downloadButton.setOnAction(e -> downloadFile());
 
+        checkSVG.setContent(App.svgMap.get(SVG.CHECK));
         downloadSVG.setContent(App.svgMap.get(SVG.DOWNLOAD));
         downloadIcon.setShape(downloadSVG);
         downloadIcon.setMinSize(16, 16);
@@ -125,6 +125,14 @@ public class Result extends HBox {
         downloadIcon.setMaxSize(16, 16);
         downloadIcon.setMouseTransparent(true);
         downloadIcon.getStyleClass().add("menuIcon");
+
+        checkIcon.setShape(checkSVG);
+        checkIcon.setMinSize(16, 10);
+        checkIcon.setPrefSize(16, 10);
+        checkIcon.setMaxSize(16, 10);
+        checkIcon.setMouseTransparent(true);
+        checkIcon.setVisible(false);
+        checkIcon.getStyleClass().add("menuIcon");
 
         downloadButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, downloadButton, 0, 1, false, 1, true));
 
@@ -139,7 +147,7 @@ public class Result extends HBox {
         //TODO: show loading animation
         if(osClient != null && osClient.isLoggedIn()){
 
-            DownloadTask downloadTask  = new DownloadTask(captionsController, openSubtitlesResultsPane, this.fileName, this.subtitleId);
+            DownloadTask downloadTask  = new DownloadTask(captionsController, openSubtitlesResultsPane, this.fileName, this.subtitleId, this.encoding);
             downloadTask.setOnSucceeded(e -> {
                 File file = downloadTask.getValue();
                 if(file != null){
@@ -147,6 +155,8 @@ public class Result extends HBox {
                         captionsController.captionsHome.createTab(file);
                     }
 
+                    downloadIcon.setVisible(false);
+                    checkIcon.setVisible(true);
                     //TODO: show checkmark to show that download is complete, maybe make it a timer and after a few seconds add a button to open subtitle file in folder
                 }
                 else {

@@ -256,6 +256,8 @@ public class CaptionsHome {
 
         captionsController.captionsState = CaptionsState.OPENSUBTITLES_OPEN;
 
+        captionsController.openSubtitlesPane.languageBox.requestFocus();
+
         captionsController.openSubtitlesPane.scrollPane.setVisible(true);
         captionsController.openSubtitlesPane.scrollPane.setMouseTransparent(false);
 

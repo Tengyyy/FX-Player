@@ -149,6 +149,8 @@ public class OpenSubtitlesResultsPane {
     public void closeOpenSubtitlesResultsPane() {
         if (captionsController.animating.get()) return;
 
+        captionsController.openSubtitlesPane.languageBox.requestFocus();
+
         captionsController.captionsState = CaptionsState.OPENSUBTITLES_OPEN;
 
         captionsController.openSubtitlesPane.scrollPane.setVisible(true);

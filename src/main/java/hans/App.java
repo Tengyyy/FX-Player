@@ -163,6 +163,7 @@ public class App extends Application {
                     case TRACK_NEXT -> mainController.pressNextTrack();
                     case F11 -> mainController.pressF();
                     case ESCAPE -> mainController.pressESCAPE();
+                    case ENTER -> mainController.pressEnter();
                 }
 
                 if(!(event.getTarget() instanceof ExpandableTextArea)

@@ -981,6 +981,12 @@ public class MainController implements Initializable {
 
     public void pressTAB(KeyEvent event){
         controlBarController.mouseEventTracker.move();
+
+        if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN){
+            if(event.isShiftDown()) captionsController.openSubtitlesPane.focusBackward();
+            else captionsController.openSubtitlesPane.focusForward();
+        }
+
         event.consume(); // TODO: replace builtin focus traversal with custom engine
     }
 
@@ -1718,6 +1724,12 @@ public class MainController implements Initializable {
             actionIndicator.setVisible(true);
             actionIndicator.animate();
         }
+    }
+
+    public void pressEnter(){
+        if(captionsController.captionsState != CaptionsState.OPENSUBTITLES_OPEN) return;
+
+        captionsController.openSubtitlesPane.searchButton.fire();
     }
 
 

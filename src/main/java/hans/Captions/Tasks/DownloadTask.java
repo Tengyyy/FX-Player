@@ -9,6 +9,8 @@ import org.apache.xmlrpc.XmlRpcException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
@@ -19,12 +21,14 @@ public class DownloadTask extends Task<File> {
     OpenSubtitlesResultsPane openSubtitlesResultsPane;
     int subtitleId;
     String fileName;
+    String encoding;
 
-    public DownloadTask(CaptionsController captionsController, OpenSubtitlesResultsPane openSubtitlesResultsPane, String fileName, int subtitleId){
+    public DownloadTask(CaptionsController captionsController, OpenSubtitlesResultsPane openSubtitlesResultsPane, String fileName, int subtitleId, String encoding){
         this.captionsController = captionsController;
         this.openSubtitlesResultsPane = openSubtitlesResultsPane;
         this.fileName = fileName;
         this.subtitleId = subtitleId;
+        this.encoding = encoding;
     }
 
 
@@ -36,7 +40,7 @@ public class DownloadTask extends Task<File> {
                 List<SubtitleFile> subtitleFiles = downloadResponse.getData().get();
                 SubtitleFile subtitleFile = subtitleFiles.get(0);
                 File file = openSubtitlesResultsPane.findFileName(fileName);
-                Files.write(file.toPath(), Collections.singleton(subtitleFile.getContent().getContent()));
+                Files.write(file.toPath(), Collections.singleton(subtitleFile.getContent(encoding).getContent()), StandardCharsets.UTF_8);
                 return file;
             }
         }

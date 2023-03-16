@@ -61,7 +61,7 @@ public class OpenSubtitlesPane {
 
     SVGPath backSVG = new SVGPath();
 
-    public HashMap<String, String> languageMap = new Languages();
+    public static HashMap<String, String> languageMap = new Languages();
     private final String[] supportedLanguages = {"Abkhazian", "Afrikaans", "Albanian", "Arabic", "Aragonese", "Armenian", "Assamese", "Asturian", "Azerbaijani","Basque", "Belarusian", "Bengali", "Bosnian", "Breton", "Bulgarian", "Burmese", "Catalan", "Chinese (simplified)", "Chinese (traditional)", "Chinese bilingual", "Croatian", "Czech", "Danish", "Dari", "Dutch", "English", "Esperanto", "Estonian", "Extremaduran", "Finnish", "French", "Gaelic", "Galician", "Georgian", "German", "Greek", "Hebrew", "Hindi", "Hungarian", "Icelandic", "Igbo", "Indonesian", "Interlingua", "Irish", "Italian", "Japanese", "Kannada", "Kazakh", "Khmer", "Korean", "Kurdish", "Latvian", "Lithuanian", "Luxembourgish", "Macedonian", "Malay", "Malayalam", "Manipuri", "Marathi", "Mongolian", "Montenegrin", "Navajo", "Nepali", "Northern Sami", "Norwegian", "Occitan", "Odia", "Persian", "Polish", "Portuguese", "Portuguese (BR)", "Portuguese (MZ)", "Pushto", "Romanian", "Russian", "Santali", "Serbian", "Sindhi", "Sinhalese", "Slovak", "Slovenian", "Somali", "Spanish", "Spanish (EU)", "Spanish (LA)", "Swahili", "Swedish", "Syriac", "Tagalog", "Tamil", "Tatar", "Telugu", "Thai", "Toki Pona", "Turkish", "Turkmen", "Ukrainian", "Urdu", "Vietnamese", "Welsh"};
     public CheckComboBox<String> languageBox = new CheckComboBox<>();
 
@@ -482,11 +482,8 @@ public class OpenSubtitlesPane {
                             captionsController.openSubtitlesResultsPane.addResult(
                                     new Result(captionsController,
                                             captionsController.openSubtitlesResultsPane,
-                                            subtitleInfo.getFileName(),
-                                            languageMap.get(subtitleInfo.getLanguage()),
-                                            String.valueOf(subtitleInfo.getDownloadsNo()),
-                                            osClient,
-                                            subtitleInfo.getSubtitleFileId()
+                                            subtitleInfo,
+                                            osClient
                                     )
                             );
                         }
@@ -557,6 +554,9 @@ public class OpenSubtitlesPane {
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().add(fileSearchLabelContainer);
 
+        imdbFieldBorder.setVisible(false);
+        titleFieldBorder.setVisible(false);
+
         if(captionsController.menuController.queueBox.activeItem.get() == null) searchButton.setDisable(true);
     }
 
@@ -570,6 +570,8 @@ public class OpenSubtitlesPane {
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().add(imdbFieldContainer);
 
+        titleFieldBorder.setVisible(false);
+
         if(!searchInProgress.get()) searchButton.setDisable(false);
     }
 
@@ -582,6 +584,8 @@ public class OpenSubtitlesPane {
 
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().addAll(titleFieldContainer, seasonEpisodeContainer);
+
+        imdbFieldBorder.setVisible(false);
 
         if(!searchInProgress.get()) searchButton.setDisable(false);
     }
@@ -626,5 +630,33 @@ public class OpenSubtitlesPane {
         searchInProgress.set(false);
 
         if(executorService != null) executorService.shutdown();
+    }
+
+    public void focusForward(){
+        if(searchState == 2) languageBox.requestFocus();
+        else if(searchState == 1){
+            if(languageBox.focusedProperty().get()) imdbField.requestFocus();
+            else languageBox.requestFocus();
+        }
+        else {
+            if(languageBox.focusedProperty().get()) titleField.requestFocus();
+            else if(titleField.focusedProperty().get()) seasonField.requestFocus();
+            else if(seasonField.focusedProperty().get()) episodeField.requestFocus();
+            else languageBox.requestFocus();
+        }
+    }
+
+    public void focusBackward(){
+        if(searchState == 2) languageBox.requestFocus();
+        else if(searchState == 1){
+            if(languageBox.focusedProperty().get()) imdbField.requestFocus();
+            else languageBox.requestFocus();
+        }
+        else {
+            if(languageBox.focusedProperty().get()) episodeField.requestFocus();
+            else if(titleField.focusedProperty().get()) languageBox.requestFocus();
+            else if(seasonField.focusedProperty().get()) titleField.requestFocus();
+            else seasonField.requestFocus();
+        }
     }
 }

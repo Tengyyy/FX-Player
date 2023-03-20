@@ -190,7 +190,8 @@ public class App extends Application {
                         case END -> mainController.pressEND();
                         case M -> mainController.pressM();
                         case F12 -> mainController.pressF12();
-                        case SPACE, K -> mainController.pressSPACE(event);
+                        case SPACE -> mainController.pressSPACE(event);
+                        case K -> mainController.pressK(event);
                         case P -> mainController.pressP(event);
                         case N -> mainController.pressN(event);
                         case COMMA -> mainController.pressCOMMA(event);

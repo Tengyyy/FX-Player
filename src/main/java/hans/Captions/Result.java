@@ -20,7 +20,9 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -157,7 +159,27 @@ public class Result extends HBox {
 
                     downloadIcon.setVisible(false);
                     checkIcon.setVisible(true);
-                    //TODO: show checkmark to show that download is complete, maybe make it a timer and after a few seconds add a button to open subtitle file in folder
+                    nameLabel.setCursor(Cursor.HAND);
+                    nameLabel.setOnMouseClicked(event -> {
+                        if(!file.exists()) return;
+                        if(App.isWindows){
+                            Shell32Util.SHOpenFolderAndSelectItems(file);
+                        }
+                        else if(Desktop.isDesktopSupported()){
+                            Desktop desktop = Desktop.getDesktop();
+
+                            if(desktop.isSupported(Desktop.Action.BROWSE_FILE_DIR)){
+                                desktop.browseFileDirectory(file);
+                            }
+                            else if(desktop.isSupported(Desktop.Action.OPEN)){
+                                try {
+                                    desktop.open(file.getParentFile());
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        }
+                    });
                 }
                 else {
                     //TODO: show cross icon indicating that download failed

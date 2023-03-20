@@ -12,6 +12,7 @@ import hans.Captions.Tasks.LoginTask;
 import hans.Captions.Tasks.SearchTask;
 import hans.SVG;
 import hans.Settings.SettingsController;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -88,6 +89,7 @@ public class OpenSubtitlesPane {
     public Label fileSearchExplanationLabel = new Label();
 
     StackPane searchButtonContainer = new StackPane();
+    MFXProgressSpinner searchSpinner = new MFXProgressSpinner();
     HBox searchButtonWrapper = new HBox();
     public JFXButton searchButton = new JFXButton();
     Region searchIcon = new Region();
@@ -310,8 +312,17 @@ public class OpenSubtitlesPane {
         fileSearchExplanationLabel.getStyleClass().add("settingsPaneText");
         fileSearchExplanationLabel.setText("OpenSubtitles will search for matching subtitles based on file name and size");
 
-        searchButtonContainer.getChildren().add(searchButtonWrapper);
-        searchButtonContainer.setPadding(new Insets(0, 10, 10, 0));
+        searchButtonContainer.getChildren().addAll(searchSpinner, searchButtonWrapper);
+        searchButtonContainer.setPadding(new Insets(0, 10, 10, 10));
+
+        StackPane.setAlignment(searchSpinner, Pos.CENTER);
+        searchSpinner.setRadius(10);
+        searchSpinner.setColor1(Color.RED);
+        searchSpinner.setColor2(Color.RED);
+        searchSpinner.setColor3(Color.RED);
+        searchSpinner.setColor4(Color.RED);
+        searchSpinner.visibleProperty().bind(searchInProgress);
+
 
         StackPane.setAlignment(searchButtonWrapper, Pos.CENTER_RIGHT);
         searchButtonWrapper.getChildren().addAll(searchButton, searchOptionsButton);
@@ -373,7 +384,9 @@ public class OpenSubtitlesPane {
         captionsController.captionsPane.getChildren().add(scrollPane);
 
         searchInProgress.addListener((observableValue, oldValue, newValue) -> {
-            if(newValue) searchButton.setDisable(true);
+            if(newValue) {
+                searchButton.setDisable(true);
+            }
             else if(searchState != 2 || captionsController.menuController.queueBox.activeItem.get() != null){
                 searchButton.setDisable(false);
             }
@@ -476,9 +489,13 @@ public class OpenSubtitlesPane {
                 searchTask.setOnSucceeded(successEvent -> {
 
                     List<SubtitleInfo> subtitleInfoList = searchTask.getValue();
-                    if(subtitleInfoList.isEmpty()) searchFail("No subtitles found.");
+                    List<SubtitleInfo> filteredList = new ArrayList<>();
+                    for(SubtitleInfo subtitleInfo : subtitleInfoList){
+                        if(subtitleInfo.getFormat().equals("srt")) filteredList.add(subtitleInfo);
+                    }
+                    if(filteredList.isEmpty()) searchFail("No subtitles found.");
                     else {
-                        for(SubtitleInfo subtitleInfo : subtitleInfoList){
+                        for(SubtitleInfo subtitleInfo : filteredList){
                             captionsController.openSubtitlesResultsPane.addResult(
                                     new Result(captionsController,
                                             captionsController.openSubtitlesResultsPane,

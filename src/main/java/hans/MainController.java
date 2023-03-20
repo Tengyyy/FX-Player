@@ -34,6 +34,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import org.controlsfx.control.CheckComboBox;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
 import java.io.File;
@@ -1007,7 +1008,7 @@ public class MainController implements Initializable {
         actionIndicator.animate();
     }
 
-    public void pressSPACE(KeyEvent e){
+    public void pressK(KeyEvent e){
         controlBarController.mouseEventTracker.move();
         if (!controlBarController.durationSlider.isValueChanging() && mediaInterface.mediaActive.get() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())) { // wont let user play/pause video while media slider is seeking
             if (mediaInterface.atEnd) {
@@ -1027,6 +1028,15 @@ public class MainController implements Initializable {
             actionIndicator.animate();
 
             e.consume(); // might have to add a check to consume the space event only if any controlbar buttons are focused (might use space bar to navigate settings or menu)
+        }
+    }
+
+    public void pressSPACE(KeyEvent e){
+        if(e.getTarget() instanceof CheckComboBox<?> && captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN){
+            captionsController.openSubtitlesPane.languageBox.show();
+        }
+        else {
+            pressK(e);
         }
     }
 

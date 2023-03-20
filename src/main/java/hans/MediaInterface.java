@@ -2,6 +2,7 @@ package hans;
 
 
 import hans.Captions.CaptionsController;
+import hans.Captions.CaptionsState;
 import hans.Chapters.ChapterController;
 import hans.Chapters.ChapterFrameGrabberTask;
 import hans.Chapters.ChapterItem;
@@ -24,11 +25,13 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
+import uk.co.caprica.vlcj.media.Meta;
 import uk.co.caprica.vlcj.player.base.Equalizer;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -207,7 +210,6 @@ public class MediaInterface {
 
                     play();
                 });
-
             }
         });
 
@@ -567,6 +569,13 @@ public class MediaInterface {
                 executorService.execute(chapterFrameGrabberTask);
             }
             executorService.shutdown();
+        }
+
+        if(captionsController.captionsState == CaptionsState.CLOSED){
+            Map<String, String> metadata = mediaItem.getMediaInformation();
+            if(metadata.containsKey("title") && !metadata.get("title").isBlank()) captionsController.openSubtitlesPane.titleField.setText(metadata.get("title"));
+            if(metadata.containsKey("season") && !metadata.get("season").isBlank()) captionsController.openSubtitlesPane.seasonField.setText(metadata.get("season"));
+            if(metadata.containsKey("episode") && !metadata.get("episode").isBlank()) captionsController.openSubtitlesPane.episodeField.setText(metadata.get("episode"));
         }
     }
 }

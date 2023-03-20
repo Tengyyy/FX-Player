@@ -5,6 +5,7 @@ import com.github.wtekiela.opensub4j.response.SubtitleInfo;
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.Captions.Tasks.DownloadTask;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -42,6 +43,10 @@ public class Result extends HBox {
 
     SVGPath checkSVG = new SVGPath();
     Region checkIcon = new Region();
+
+    SVGPath crossSVG = new SVGPath();
+    Region crossIcon = new Region();
+    MFXProgressSpinner spinner = new MFXProgressSpinner();
 
     ControlTooltip downloadTooltip;
 
@@ -107,7 +112,7 @@ public class Result extends HBox {
         downloadsLabel.setTextAlignment(TextAlignment.CENTER);
         HBox.setMargin(downloadsLabel, new Insets(0, 10, 0, 10));
 
-        downloadButtonPane.getChildren().addAll(downloadButton, downloadIcon, checkIcon);
+        downloadButtonPane.getChildren().addAll(downloadButton, downloadIcon, spinner, checkIcon, crossIcon);
         downloadButtonPane.setPrefSize(40, 40);
         downloadButtonPane.setMaxSize(40, 40);
         downloadButton.setPrefWidth(30);
@@ -120,6 +125,7 @@ public class Result extends HBox {
         downloadButton.setOnAction(e -> downloadFile());
 
         checkSVG.setContent(App.svgMap.get(SVG.CHECK));
+        crossSVG.setContent(App.svgMap.get(SVG.CLOSE));
         downloadSVG.setContent(App.svgMap.get(SVG.DOWNLOAD));
         downloadIcon.setShape(downloadSVG);
         downloadIcon.setMinSize(16, 16);
@@ -128,13 +134,31 @@ public class Result extends HBox {
         downloadIcon.setMouseTransparent(true);
         downloadIcon.getStyleClass().add("menuIcon");
 
+        spinner.setRadius(8);
+        spinner.setColor1(Color.WHITE);
+        spinner.setColor2(Color.WHITE);
+        spinner.setColor3(Color.WHITE);
+        spinner.setColor4(Color.WHITE);
+        spinner.setVisible(false);
+        spinner.setMouseTransparent(true);
+
+
         checkIcon.setShape(checkSVG);
-        checkIcon.setMinSize(16, 10);
-        checkIcon.setPrefSize(16, 10);
-        checkIcon.setMaxSize(16, 10);
+        checkIcon.setMinSize(16, 11);
+        checkIcon.setPrefSize(16, 11);
+        checkIcon.setMaxSize(16, 11);
         checkIcon.setMouseTransparent(true);
         checkIcon.setVisible(false);
         checkIcon.getStyleClass().add("menuIcon");
+
+
+        crossIcon.setShape(crossSVG);
+        crossIcon.setMinSize(16, 16);
+        crossIcon.setPrefSize(16, 16);
+        crossIcon.setMaxSize(16, 16);
+        crossIcon.setMouseTransparent(true);
+        crossIcon.setVisible(false);
+        crossIcon.getStyleClass().add("menuIcon");
 
         downloadButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, downloadButton, 0, 1, false, 1, true));
 
@@ -146,7 +170,8 @@ public class Result extends HBox {
 
     private void downloadFile(){
         downloadButton.setDisable(true);
-        //TODO: show loading animation
+        downloadIcon.setVisible(false);
+        spinner.setVisible(true);
         if(osClient != null && osClient.isLoggedIn()){
 
             DownloadTask downloadTask  = new DownloadTask(captionsController, openSubtitlesResultsPane, this.fileName, this.subtitleId, this.encoding);
@@ -157,7 +182,7 @@ public class Result extends HBox {
                         captionsController.captionsHome.createTab(file);
                     }
 
-                    downloadIcon.setVisible(false);
+                    spinner.setVisible(false);
                     checkIcon.setVisible(true);
                     nameLabel.setCursor(Cursor.HAND);
                     nameLabel.setOnMouseClicked(event -> {
@@ -182,11 +207,20 @@ public class Result extends HBox {
                     });
                 }
                 else {
-                    //TODO: show cross icon indicating that download failed
+                    spinner.setVisible(false);
+                    crossIcon.setVisible(true);
+                    downloadsLabel.setVisible(false);
+                    languageLabel.setVisible(false);
+                    nameLabel.setText("Download failed");
                 }
             });
             downloadTask.setOnFailed(e -> {
-                //TODO: show cross icon indicating that download failed
+                spinner.setVisible(false);
+                crossIcon.setVisible(true);
+                checkIcon.setVisible(false);
+                downloadsLabel.setVisible(false);
+                languageLabel.setVisible(false);
+                nameLabel.setText("Download failed");
             });
 
             ExecutorService executorService = Executors.newFixedThreadPool(1);

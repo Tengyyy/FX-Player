@@ -142,7 +142,8 @@ public class TimingPane {
             }
 
             captionsController.subtitleDelay = (int) (-slider.getValue() * 1000);
-            saveButton.setDisable(slider.getValue() == 0 || !captionsController.captionsSelected.get());
+            if(textField.getText().equals("-0.00")) textField.setText("0.00");
+            saveButton.setDisable(textField.getText().equals("0.00") || !captionsController.captionsSelected.get());
 
         });
 
@@ -163,13 +164,15 @@ public class TimingPane {
                 try{
                     double number = Double.parseDouble(textField.getText());
                     slider.setValue(number);
-                    textField.setText(String.valueOf(number));
+                    textField.setText(String.format("%.2f", number));
+                    if(textField.getText().equals("-0.00")) textField.setText("0.00");
                     captionsController.subtitleDelay = (int) (-number * 1000);
-                    saveButton.setDisable(number == 0 || !captionsController.captionsSelected.get());
+                    saveButton.setDisable(textField.getText().equals("0.00")|| !captionsController.captionsSelected.get());
                 }
                 catch(NumberFormatException ex){
                     slider.setValue(0);
-                    textField.setText("0.0");
+                    textField.setText("0.00");
+                    saveButton.setDisable(true);
                 }
             }
         });
@@ -186,7 +189,8 @@ public class TimingPane {
                 }
                 catch(NumberFormatException ex){
                     slider.setValue(0);
-                    textField.setText("0.0");
+                    textField.setText("0.00");
+                    saveButton.setDisable(true);
                 }
             }
 
@@ -205,7 +209,7 @@ public class TimingPane {
             });
         });
 
-        textField.setText("0.0");
+        textField.setText("0.00");
 
         textField.setMaxWidth(MAX_WIDTH);
         textField.getStyleClass().add("key-text-field");
@@ -277,10 +281,9 @@ public class TimingPane {
     }
 
     public void resetTiming(){
-        System.out.println("test2");
         captionsController.subtitleDelay = 0;
         slider.setValue(0);
-        textField.setText("0.0");
+        textField.setText("0.00");
         saveButton.setDisable(true);
     }
 }

@@ -53,7 +53,7 @@ public class MenuController implements Initializable {
 
     @FXML
     public
-    StackPane menu, menuInnerWrapper;
+    StackPane menu, menuContent, sideBar;
 
     @FXML
     StackPane dragPane;
@@ -85,7 +85,7 @@ public class MenuController implements Initializable {
 
     public boolean menuInTransition = false;
 
-    final double MIN_WIDTH = 450;
+    final double MIN_WIDTH = 500;
 
     public ControlTooltip shuffleTooltip, addTooltip, addOptionsTooltip;
 
@@ -140,13 +140,15 @@ public class MenuController implements Initializable {
 
     public ArrayList<MediaItem> ongoingMetadataEditProcesses = new ArrayList<>();
 
+    MenuBar menuBar;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         queueBox = new QueueBox(this);
         metadataEditPage = new MetadataEditPage(this);
         technicalDetailsPage = new TechnicalDetailsPage(this);
-
+        menuBar = new MenuBar(this, sideBar);
 
         fileChooser.setTitle("Add file(s) to play queue");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All supported formats", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac"));

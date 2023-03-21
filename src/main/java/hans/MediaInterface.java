@@ -31,7 +31,7 @@ import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -577,5 +577,6 @@ public class MediaInterface {
             if(metadata.containsKey("season") && !metadata.get("season").isBlank()) captionsController.openSubtitlesPane.seasonField.setText(metadata.get("season"));
             if(metadata.containsKey("episode") && !metadata.get("episode").isBlank()) captionsController.openSubtitlesPane.episodeField.setText(metadata.get("episode"));
         }
+
     }
 }

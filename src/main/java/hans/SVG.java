@@ -60,5 +60,8 @@ public enum SVG {
     TIMER,
     DOWNLOAD,
     IMDB,
-    VIDEO_FILE
+    VIDEO_FILE,
+    HISTORY,
+    QUEUE,
+    PLAYLIST
 }

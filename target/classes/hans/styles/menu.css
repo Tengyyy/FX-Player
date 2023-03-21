@@ -21,7 +21,13 @@
     -fx-background-color: red;
 }
 
-#menuInnerWrapper {
+#sideBar {
+    -fx-background-color: rgba(5, 5, 5, 0.9);
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: rgb(50, 50,50);
+}
+
+#menuContent {
     -fx-background-color: rgba(0,0,0,0.8);
 }
 
@@ -130,6 +136,44 @@
 }
 
 .menuButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+.menuBarButton {
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.menuBarButton:hover {
+    -fx-background-color: rgba(60,60,60,0.85);
+}
+
+.menuBarButton:pressed {
+    -fx-background-color: rgba(45,45,45,0.8);
+    -fx-background-insets: 1;
+}
+
+.menuBarButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+.activeMenuBarButton {
+    -fx-background-color: rgba(60,60,60,0.85);
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.activeMenuBarButton:hover {
+    -fx-background-color: rgba(45,45,45,0.8);
+}
+
+.activeMenuBarButton:pressed {
+    -fx-background-color: rgba(60,60,60,0.85);
+    -fx-background-insets: 1;
+}
+
+.activeMenuBarButton:pressed > .graphic {
     -fx-background-color: rgb(180,180,180);
 }
 

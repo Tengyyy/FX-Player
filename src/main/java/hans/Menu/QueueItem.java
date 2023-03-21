@@ -561,6 +561,8 @@ public class QueueItem extends GridPane {
         duration.setMinHeight(0);
         duration.setMinWidth(0);
 
+        System.out.println(duration.getText().equals(null));
+
         videoTitle.setStyle("-fx-background-color: transparent;");
         videoTitle.setMinHeight(0);
         videoTitle.setMinWidth(0);

@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="menu" minWidth="350.0" prefWidth="350.0" style="-fx-background-color: transparent;" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Menu.MenuController">
+<StackPane fx:id="menu" minWidth="350.0" prefWidth="400.0" style="-fx-background-color: transparent;" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Menu.MenuController">
    <children>
-      <StackPane id="menuInnerWrapper" fx:id="menuInnerWrapper" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0">
+      <StackPane id="menuContent" fx:id="menuContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" StackPane.alignment="CENTER">
          <children>
             <VBox fx:id="queueWrapper" maxHeight="1.7976931348623157E308">
                <StackPane.margin>
@@ -32,7 +32,7 @@
             <ScrollPane fx:id="chapterScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll" />
          </children>
          <StackPane.margin>
-            <Insets right="3.0" />
+            <Insets left="50.0" right="3.0" />
          </StackPane.margin>
       </StackPane>
       <StackPane id="dragPane" fx:id="dragPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="3.0" StackPane.alignment="CENTER_RIGHT">
@@ -40,5 +40,6 @@
             <Cursor fx:constant="H_RESIZE" />
          </cursor>
       </StackPane>
+      <StackPane id="sideBar" fx:id="sideBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="50.0" prefHeight="150.0" prefWidth="50.0" StackPane.alignment="CENTER_LEFT" />
    </children>
 </StackPane>

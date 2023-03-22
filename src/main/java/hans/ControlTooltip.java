@@ -34,7 +34,7 @@ public class ControlTooltip extends Tooltip {
     int delay;
 
     BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
-    PauseTransition countdown;
+    public PauseTransition countdown;
 
     TooltipType tooltipType = null;
 
@@ -77,6 +77,9 @@ public class ControlTooltip extends Tooltip {
         if(tooltipType == TooltipType.CONTROLBAR_TOOLTIP){
             this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMinX() + nodeMiddleX - tooltipMiddle)), bounds.getMinY() - tooltipHeight - 10);
         }
+        else if(tooltipType == TooltipType.MENUBAR_TOOLTIP){
+            this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMaxX() + 5)), bounds.getMinY() + (nodeMiddleY - (tooltipHeight-18)/2));
+        }
         else if(tooltipType == TooltipType.MENU_TOOLTIP){
             this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMinX() + nodeMiddleX - tooltipMiddle)), bounds.getMaxY() + 10);
         }
@@ -96,11 +99,11 @@ public class ControlTooltip extends Tooltip {
         }
     }
 
+
     public void updateDelay(Duration duration){
         delay = (int) duration.toSeconds();
         countdown.setDuration(duration);
     }
-
 
     private void createTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay){
         this.tooltipText = tooltipText;

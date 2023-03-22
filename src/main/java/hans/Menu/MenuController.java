@@ -15,6 +15,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -141,6 +143,8 @@ public class MenuController implements Initializable {
     public ArrayList<MediaItem> ongoingMetadataEditProcesses = new ArrayList<>();
 
     MenuBar menuBar;
+
+    public boolean extended = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -396,7 +400,21 @@ public class MenuController implements Initializable {
 
         queueScroll.setBackground(Background.EMPTY);
 
+        menu.setPrefWidth(500);
         menu.setMaxWidth(500);
+
+        menu.widthProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(!extended) return;
+
+            if(oldValue.doubleValue() < 1200 && newValue.doubleValue() >= 1200){
+                StackPane.setMargin(menuContent, new Insets(0, 0, 0, 300));
+                menuBar.extend();
+            }
+            else if(oldValue.doubleValue() >= 1200 && newValue.doubleValue() < 1200){
+                StackPane.setMargin(menuContent, new Insets(0, 0, 0, 50));
+                menuBar.shrink();
+            }
+        });
 
         Platform.runLater(() -> menu.setTranslateX(-menu.getWidth()));
 
@@ -509,7 +527,7 @@ public class MenuController implements Initializable {
         menuInTransition = true;
         menuState = MenuState.CLOSED;
         menu.setMouseTransparent(true);
-        AnimationsClass.closeMenu(this, mainController);
+        AnimationsClass.closeMenu(this);
         controlBarController.mouseEventTracker.move();
 
         captionsController.captionsBox.captionsContainer.setMouseTransparent(false);
@@ -551,6 +569,77 @@ public class MenuController implements Initializable {
         this.mediaInterface = mediaInterface;
         this.captionsController = captionsController;
         this.chapterController = chapterController;
+    }
+
+    public void extendMenu(){
+        if(extended || menuInTransition) return;
+
+        extended = true;
+        menu.setMouseTransparent(true);
+
+        dragPane.setMouseTransparent(true);
+        dragPane.setVisible(false);
+
+        if(menuState != MenuState.CLOSED){
+            menuInTransition = true;
+
+            Duration animationDuration = Duration.millis(300);
+            Timeline maxTimeline = new Timeline(new KeyFrame(animationDuration,
+                    new KeyValue(menu.maxWidthProperty(), mainController.videoImageViewWrapper.getWidth(), Interpolator.EASE_BOTH)));
+
+            Timeline prefTimeline = new Timeline(new KeyFrame(animationDuration,
+                    new KeyValue(menu.prefWidthProperty(), mainController.videoImageViewWrapper.getWidth(), Interpolator.EASE_BOTH)));
+
+            ParallelTransition parallelTransition = new ParallelTransition(maxTimeline, prefTimeline);
+
+            parallelTransition.setOnFinished(e -> {
+                setMenuExtended();
+                menu.setMouseTransparent(false);
+            });
+
+            parallelTransition.playFromStart();
+        }
+    }
+
+    public void shrinkMenu(){
+
+    }
+
+    private void setMenuExtended(){
+        menuInTransition = false;
+
+        menu.maxWidthProperty().bind(mainController.videoImageViewWrapper.widthProperty());
+        menu.prefWidthProperty().bind(mainController.videoImageViewWrapper.widthProperty());
+
+        if(mainController.videoImageViewWrapper.getWidth() < 1200) StackPane.setMargin(menuContent, new Insets(0, 0, 0, 50));
+        else {
+            StackPane.setMargin(menuContent, new Insets(0, 0, 0, 300));
+            menuBar.extend();
+        }
+
+        VBox.setMargin(queueBarTitle, new Insets(20, 40, 5, 50));
+        queueBar.setPadding(new Insets(35, 0, 0, 0));
+        queueBarButtonWrapper.setPadding(new Insets(10, 20, 10, 20));
+        queueBarButtonWrapper.setMinHeight(100);
+        queueBarButtonWrapper.setPrefHeight(100);
+
+        queueBox.setPadding(new Insets(0, 50,20, 50));
+    }
+
+    private void setMenuShrinked(){
+
+        StackPane.setMargin(menuContent, new Insets(0, 3, 0, 50));
+
+        VBox.setMargin(queueBarTitle, new Insets(0, 30, 0, 30));
+        queueBar.setPadding(new Insets(20, 0, 0, 0));
+        queueBarButtonWrapper.setPadding(new Insets(0, 0, 0, 0));
+        queueBarButtonWrapper.setMinHeight(80);
+        queueBarButtonWrapper.setPrefHeight(80);
+
+        queueBox.setPadding(new Insets(0, 0,20, 0));
+
+
+        menuBar.shrink();
     }
 }
 

@@ -16,7 +16,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -194,17 +193,17 @@ public class MainController implements Initializable {
 
         videoImageViewInnerWrapper.getChildren().addAll(controlBarController.controlBarBackground, videoTitleBackground, miniplayerActiveText, videoTitleBox);
 
-        Platform.runLater(() -> {            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
+        Platform.runLater(() -> {
+            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
             openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 0, TooltipType.MENU_TOOLTIP);
             viewMetadataTooltip = new ControlTooltip(this,"Media metadata", metadataButton, 0, TooltipType.MENU_TOOLTIP);
 
             videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
-                if(newValue.doubleValue() < menuController.menu.getMaxWidth()){
+                if(!menuController.extended && newValue.doubleValue() < menuController.menu.getMaxWidth()){
                     menuController.menu.setMaxWidth(newValue.doubleValue());
+                    menuController.menu.setPrefWidth(newValue.doubleValue());
                 }
             });
-
-
         });
 
         widthListener = (observableValue, oldValue, newValue) -> {
@@ -557,7 +556,7 @@ public class MainController implements Initializable {
 
         videoImageViewWrapper.getScene().setCursor(Cursor.DEFAULT);
 
-        AnimationsClass.openMenu(menuController, this);
+        AnimationsClass.openMenu(menuController);
 
         captionsController.captionsBox.captionsContainer.setMouseTransparent(true);
 

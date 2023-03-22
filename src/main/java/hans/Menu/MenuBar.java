@@ -4,12 +4,8 @@ import hans.App;
 import hans.SVG;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
 
 public class MenuBar {
 
@@ -30,11 +26,11 @@ public class MenuBar {
         this.menuController = menuController;
         this.sideBar = sideBar;
 
-        queueButton = new MenuBarButton(App.svgMap.get(SVG.QUEUE), 19, 14, "Play queue");
-        historyButton = new MenuBarButton(App.svgMap.get(SVG.HISTORY), 19, 16, "Recently played");
-        musicLibraryButton = new MenuBarButton(App.svgMap.get(SVG.MUSIC), 19, 18, "Music library");
-        playlistsButton = new MenuBarButton(App.svgMap.get(SVG.PLAYLIST), 19, 21, "Playlists");
-        settingsButton = new MenuBarButton(App.svgMap.get(SVG.SETTINGS), 19, 19, "Settings");
+        queueButton = new MenuBarButton(menuController, App.svgMap.get(SVG.QUEUE), 19, 14, "Play queue", "Play queue");
+        historyButton = new MenuBarButton(menuController, App.svgMap.get(SVG.HISTORY), 19, 16, "Recent media", "Recent media");
+        musicLibraryButton = new MenuBarButton(menuController, App.svgMap.get(SVG.MUSIC), 19, 18, "Music library", "Music library");
+        playlistsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.PLAYLIST), 19, 21, "Playlists", "Playlists");
+        settingsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.SETTINGS), 19, 19, "Settings", "Settings");
 
         queueButton.button.setOnAction(e -> {
             historyButton.setInactive();
@@ -43,6 +39,8 @@ public class MenuBar {
             settingsButton.setInactive();
             queueButton.setActive();
         });
+
+        queueButton.setActive();
 
         historyButton.button.setOnAction(e -> {
             historyButton.setActive();
@@ -74,16 +72,38 @@ public class MenuBar {
             playlistsButton.setInactive();
             settingsButton.setActive();
             queueButton.setInactive();
+
+            menuController.extendMenu();
         });
 
 
         sideBar.getChildren().addAll(topBar, settingsButton);
-        sideBar.setPadding(new Insets(20, 0, 20, 0));
+        sideBar.setPadding(new Insets(40, 0, 20, 0));
 
         StackPane.setAlignment(topBar, Pos.TOP_LEFT);
         topBar.getChildren().addAll(queueButton, historyButton, musicLibraryButton, playlistsButton);
         topBar.setSpacing(10);
 
         StackPane.setAlignment(settingsButton, Pos.BOTTOM_LEFT);
+    }
+
+    public void extend(){
+        sideBar.setPrefWidth(300);
+
+        queueButton.extend();
+        historyButton.extend();
+        musicLibraryButton.extend();
+        playlistsButton.extend();
+        settingsButton.extend();
+    }
+
+    public void shrink(){
+        sideBar.setPrefWidth(50);
+
+        queueButton.shrink();
+        historyButton.shrink();
+        musicLibraryButton.shrink();
+        playlistsButton.shrink();
+        settingsButton.shrink();
     }
 }

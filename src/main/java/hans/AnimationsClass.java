@@ -194,7 +194,7 @@ public class AnimationsClass {
         return sequentialTransition;
     }
 
-    public static void openMenu(MenuController menuController, MainController mainController){
+    public static void openMenu(MenuController menuController){
 
         TranslateTransition openMenu = new TranslateTransition(Duration.millis(300), menuController.menu);
         openMenu.setFromX(menuController.menu.getTranslateX());
@@ -210,7 +210,7 @@ public class AnimationsClass {
 
     }
 
-    public static void closeMenu(MenuController menuController, MainController mainController) {
+    public static void closeMenu(MenuController menuController) {
 
         TranslateTransition closeMenu = new TranslateTransition(Duration.millis(300), menuController.menu);
         closeMenu.setFromX(menuController.menu.getTranslateX());
@@ -251,23 +251,6 @@ public class AnimationsClass {
         fadeTransition.setToValue(0);
         return fadeTransition;
     }
-
-    public static TranslateTransition animateUp(Node child, double translate){
-        Duration animationDuration = Duration.millis(ANIMATION_SPEED);
-        TranslateTransition translateTransition = new TranslateTransition(animationDuration, child);
-        translateTransition.setFromY(0);
-        translateTransition.setToY(-translate);
-        return translateTransition;
-    }
-
-    public static TranslateTransition animateDown(Node child, double translate){
-        Duration animationDuration = Duration.millis(ANIMATION_SPEED);
-        TranslateTransition translateTransition = new TranslateTransition(animationDuration, child);
-        translateTransition.setFromY(0);
-        translateTransition.setToY(translate);
-        return translateTransition;
-    }
-
 
     public static Timeline animateMinHeight(double newHeight, Region region){
         Duration animationDuration = Duration.millis(ANIMATION_SPEED);

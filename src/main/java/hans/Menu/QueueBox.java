@@ -485,7 +485,8 @@ public class QueueBox extends VBox {
             queueItem.setViewOrder(0);
         }
 
-        this.setPadding(new Insets(0, 0, 20, 0));
+        if(menuController.extended) this.setPadding(new Insets(0, 50, 20, 50));
+        else this.setPadding(new Insets(0, 0, 20, 0));
 
         dropPositionController.position = Integer.MAX_VALUE;
 

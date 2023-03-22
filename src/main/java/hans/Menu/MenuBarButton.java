@@ -1,9 +1,10 @@
 package hans.Menu;
 
-import hans.App;
-import hans.SVG;
+import hans.ControlTooltip;
+import hans.TooltipType;
 import javafx.animation.Animation;
 import javafx.animation.ScaleTransition;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -19,6 +20,8 @@ import javafx.util.Duration;
 
 public class MenuBarButton extends StackPane {
 
+    MenuController menuController;
+
     Button button = new Button();
     Line line = new Line();
 
@@ -26,13 +29,20 @@ public class MenuBarButton extends StackPane {
     Region region = new Region();
 
     String text;
+    String tooltipText;
 
     boolean isActive = false;
 
     ScaleTransition scaleTransition = null;
 
-    MenuBarButton(String svg, int iconWidth, int iconHeight, String text){
+    ControlTooltip controlTooltip;
+
+    MenuBarButton(MenuController menuController, String svg, int iconWidth, int iconHeight, String text, String tooltipText){
+
+        this.menuController = menuController;
+
         this.text = text;
+        this.tooltipText = tooltipText;
 
         this.setPrefSize(50, 40);
         this.setMaxSize(50, 40);
@@ -43,6 +53,8 @@ public class MenuBarButton extends StackPane {
         button.setMaxSize(40, 40);
         button.setCursor(Cursor.HAND);
         button.getStyleClass().add("menuBarButton");
+        button.setAlignment(Pos.CENTER_LEFT);
+        button.setGraphicTextGap(20);
 
         svgPath.setContent(svg);
         region.setShape(svgPath);
@@ -60,6 +72,10 @@ public class MenuBarButton extends StackPane {
         line.setStartY(20);
         line.setEndY(30);
         line.setScaleY(0);
+
+        Platform.runLater(() -> {
+            controlTooltip = new ControlTooltip(menuController.mainController, tooltipText, this.button, 1000, TooltipType.MENUBAR_TOOLTIP);
+        });
     }
 
 
@@ -92,5 +108,25 @@ public class MenuBarButton extends StackPane {
         scaleTransition.setFromY(line.getScaleY());
         scaleTransition.setToY(0);
         scaleTransition.playFromStart();
+    }
+
+    public void extend(){
+        this.setPrefWidth(300);
+        this.setMaxWidth(300);
+
+        button.setPrefWidth(290);
+        button.setMaxWidth(290);
+        button.setText(text);
+        button.setOnMouseEntered(null);
+    }
+
+    public void shrink(){
+        this.setPrefWidth(50);
+        this.setMaxWidth(50);
+
+        button.setPrefWidth(40);
+        button.setMaxWidth(40);
+        button.setText("");
+        button.setOnMouseEntered(e -> controlTooltip.countdown.playFromStart());
     }
 }

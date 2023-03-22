@@ -143,6 +143,9 @@
     -fx-background-color: transparent;
     -fx-background-radius: 5;
     -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
 }
 
 .menuBarButton:hover {
@@ -152,6 +155,7 @@
 .menuBarButton:pressed {
     -fx-background-color: rgba(45,45,45,0.8);
     -fx-background-insets: 1;
+    -fx-text-fill: rgb(180,180,180);
 }
 
 .menuBarButton:pressed > .graphic {
@@ -162,6 +166,9 @@
     -fx-background-color: rgba(60,60,60,0.85);
     -fx-background-radius: 5;
     -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
 }
 
 .activeMenuBarButton:hover {
@@ -171,6 +178,7 @@
 .activeMenuBarButton:pressed {
     -fx-background-color: rgba(60,60,60,0.85);
     -fx-background-insets: 1;
+    -fx-text-fill: rgb(180,180,180);
 }
 
 .activeMenuBarButton:pressed > .graphic {

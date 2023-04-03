@@ -48,7 +48,7 @@ public class SearchTask extends Task<List<SubtitleInfo>> {
             ListResponse<SubtitleInfo> response;
             if(openSubtitlesPane.searchState == 0) response = openSubtitlesPane.osClient.searchSubtitles(languageString.toString(), openSubtitlesPane.titleField.getText(), openSubtitlesPane.seasonField.getText(), openSubtitlesPane.episodeField.getText());
             else if(openSubtitlesPane.searchState == 1) response = openSubtitlesPane.osClient.searchSubtitles(languageString.toString(), openSubtitlesPane.imdbField.getText());
-            else response = openSubtitlesPane.osClient.searchSubtitles(languageString.toString(), captionsController.menuController.queueBox.activeItem.get().file);
+            else response = openSubtitlesPane.osClient.searchSubtitles(languageString.toString(), captionsController.menuController.queuePage.queueBox.activeItem.get().file);
 
             if(response.getData().isPresent()){
                 return response.getData().get();

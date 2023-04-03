@@ -4,7 +4,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
 import hans.MediaItems.MediaItem;
 import hans.Menu.MenuController;
-import hans.Menu.QueueItem;
+import hans.Menu.Queue.QueueItem;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -146,7 +146,7 @@ public class Utilities {
 
         String path = queueItem.getMediaItem().getFile().getAbsolutePath();
 
-        for(QueueItem item : menuController.queueBox.queue) {
+        for(QueueItem item : menuController.queuePage.queueBox.queue) {
             if (item != queueItem && item.getMediaItem().getFile().getAbsolutePath().equals(path)) {
                 duplicates.add(item);
             }

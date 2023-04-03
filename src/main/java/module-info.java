@@ -38,4 +38,6 @@ module hans {
     opens hans.Chapters to javafx.fxml, javafx.graphics;
     exports hans.Captions.Tasks;
     opens hans.Captions.Tasks to javafx.fxml, javafx.graphics;
+    exports hans.Menu.Queue;
+    opens hans.Menu.Queue to javafx.fxml, javafx.graphics;
 }

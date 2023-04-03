@@ -2,7 +2,6 @@ package hans;
 
 import hans.Captions.CaptionsController;
 import hans.MediaItems.MediaItem;
-import hans.Menu.QueueItem;
 import javafx.concurrent.Task;
 
 public class SubtitleExtractionTask extends Task<Boolean> {

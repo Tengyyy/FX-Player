@@ -423,7 +423,7 @@ public class CaptionsController {
         if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()){
             mainController.sliderHoverLabel.timeLabel.setVisible(true);
             if(mainController.chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
-            if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+            if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
         }
 
     }

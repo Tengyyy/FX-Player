@@ -21,7 +21,7 @@ public class Columns extends StackPane {
 
     static final double ANIMATION_SPEED = 200;
 
-    Columns(){
+    public Columns(){
         this.setMinSize(18, 20);
         this.setPrefSize(18, 20);
         this.setMaxSize(18, 20);

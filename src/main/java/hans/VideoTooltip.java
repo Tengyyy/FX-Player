@@ -1,6 +1,6 @@
 package hans;
 
-import hans.Menu.QueueItem;
+import hans.Menu.Queue.QueueItem;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Bounds;

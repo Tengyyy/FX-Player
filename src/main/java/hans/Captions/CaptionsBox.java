@@ -201,7 +201,7 @@ public class CaptionsBox {
         if(newValue){
             captionsContainer.setVisible(true);
 
-            if(captionsController.menuController.queueBox.activeItem.get() != null && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
+            if(captionsController.menuController.queuePage.queueBox.activeItem.get() != null && showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
                 showCaptionsTimer.stop();
             }
         }
@@ -214,7 +214,7 @@ public class CaptionsBox {
     public void showCaptions(){
         // if necessary, show captions with text "Captions look like this"
 
-        if(captionsController.menuController.queueBox.activeItem.get() != null && captionsController.captionsSelected.get()) return;
+        if(captionsController.menuController.queuePage.queueBox.activeItem.get() != null && captionsController.captionsSelected.get()) return;
 
         if(showCaptionsTimer != null && showCaptionsTimer.getStatus() == Animation.Status.RUNNING){
             showCaptionsTimer.playFromStart();

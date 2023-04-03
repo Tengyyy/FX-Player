@@ -1,6 +1,7 @@
 package hans.Menu;
 
 import hans.App;
+import hans.Menu.Queue.QueueItem;
 import hans.SVG;
 import hans.Shell32Util;
 import javafx.animation.Animation;
@@ -17,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class MenuItemContextMenu extends ContextMenu {
+public class QueueItemContextMenu extends ContextMenu {
 
     QueueItem queueItem;
 
@@ -37,7 +38,7 @@ public class MenuItemContextMenu extends ContextMenu {
     public boolean showing = false;
 
 
-    MenuItemContextMenu(QueueItem queueItem){
+    public QueueItemContextMenu(QueueItem queueItem){
 
         this.queueItem = queueItem;
 
@@ -121,7 +122,7 @@ public class MenuItemContextMenu extends ContextMenu {
             showTransition.playFromStart();
         }
 
-        queueItem.getMenuController().activeMenuItemContextMenu = this;
+        queueItem.queuePage.activeQueueItemContextMenu = this;
     }
 
     @Override

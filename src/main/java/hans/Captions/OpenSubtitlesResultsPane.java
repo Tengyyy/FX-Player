@@ -224,9 +224,9 @@ public class OpenSubtitlesResultsPane {
 
     public File findFileName(String name){
         File parent;
-        if(captionsController.menuController.queueBox.activeItem.get() != null){
+        if(captionsController.menuController.queuePage.queueBox.activeItem.get() != null){
             // save subtitle file to parent folder of active media item
-            parent = new File(captionsController.menuController.queueBox.activeItem.get().file.getParent());
+            parent = new File(captionsController.menuController.queuePage.queueBox.activeItem.get().file.getParent());
         }
         else {
             // save to Downloads folder

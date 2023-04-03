@@ -2,7 +2,6 @@ package hans.Captions;
 
 import hans.AnimationsClass;
 import hans.App;
-import hans.Menu.QueueItem;
 import hans.SVG;
 
 import javafx.geometry.Insets;

@@ -232,7 +232,7 @@ public class SettingsController {
         if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()){
             mainController.sliderHoverLabel.timeLabel.setVisible(true);
             if(mainController.chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
-            if(menuController.queueBox.activeIndex.get() != -1 && menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(menuController.queueBox.activeIndex.get())).getMediaItem() != null && menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(menuController.queueBox.activeIndex.get())).getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+            if(menuController.queuePage.queueBox.activeIndex.get() != -1 && menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get())).getMediaItem() != null && menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get())).getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
         }
 
     }

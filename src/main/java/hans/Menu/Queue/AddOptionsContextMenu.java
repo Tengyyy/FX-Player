@@ -1,6 +1,7 @@
-package hans.Menu;
+package hans.Menu.Queue;
 
 import hans.App;
+import hans.Menu.MenuController;
 import hans.SVG;
 import hans.Shell32Util;
 import javafx.animation.Animation;
@@ -19,7 +20,7 @@ import java.util.Objects;
 
 public class AddOptionsContextMenu extends ContextMenu {
 
-    MenuController menuController;
+    QueuePage queuePage;
 
     MenuItem fileItem = new MenuItem("Add file(s) to play queue");
     MenuItem folderItem = new MenuItem("Add folder to play queue");
@@ -36,13 +37,13 @@ public class AddOptionsContextMenu extends ContextMenu {
 
     public boolean showing = false;
 
-    AddOptionsContextMenu(MenuController menuController){
+    public AddOptionsContextMenu(QueuePage queuePage){
 
-        this.menuController = menuController;
+        this.queuePage = queuePage;
 
         this.getStyleClass().add("menu-context-menu");
 
-        menuController.addButtonContainer.getScene().getStylesheets().add(Objects.requireNonNull(menuController.mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
+        queuePage.addButtonContainer.getScene().getStylesheets().add(Objects.requireNonNull(queuePage.menuController.mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 
         filePath.setContent(App.svgMap.get(SVG.FOLDER));
         fileIcon.setShape(filePath);
@@ -52,7 +53,7 @@ public class AddOptionsContextMenu extends ContextMenu {
 
         fileItem.setGraphic(fileIcon);
         fileItem.getStyleClass().add("popUpItem");
-        fileItem.setOnAction((e) -> menuController.openVideoChooser());
+        fileItem.setOnAction((e) -> queuePage.openVideoChooser());
 
         folderPath.setContent(App.svgMap.get(SVG.FOLDER_PLUS));
         folderIcon.setShape(folderPath);
@@ -62,7 +63,7 @@ public class AddOptionsContextMenu extends ContextMenu {
 
         folderItem.setGraphic(folderIcon);
         folderItem.getStyleClass().add("popUpItem");
-        folderItem.setOnAction((e) -> menuController.openFolderChooser());
+        folderItem.setOnAction((e) -> queuePage.openFolderChooser());
 
         youtubePath.setContent(App.svgMap.get(SVG.YOUTUBE));
         youtubeIcon.setShape(youtubePath);
@@ -72,21 +73,21 @@ public class AddOptionsContextMenu extends ContextMenu {
 
         youtubeItem.setGraphic(youtubeIcon);
         youtubeItem.getStyleClass().add("popUpItem");
-        youtubeItem.setOnAction((e) -> menuController.mainController.addYoutubeVideoWindow.show());
+        youtubeItem.setOnAction((e) -> queuePage.menuController.mainController.addYoutubeVideoWindow.show());
 
 
         this.getItems().addAll(fileItem, folderItem, youtubeItem);
 
-        buttonWidth = menuController.addButtonContainer.getWidth();
+        buttonWidth = queuePage.addButtonContainer.getWidth();
 
         this.getStyleableNode().setOpacity(0);
     }
 
 
     public void showOptions(boolean animate){
-        this.show(menuController.addButtonContainer, // might not work
-                menuController.addButtonContainer.localToScreen(menuController.addButtonContainer.getBoundsInLocal()).getMinX() + buttonWidth/2 - popUpWidth/2,
-                menuController.addButtonContainer.localToScreen(menuController.addButtonContainer.getBoundsInLocal()).getMaxY() + 5, animate);
+        this.show(queuePage.addButtonContainer, // might not work
+                queuePage.addButtonContainer.localToScreen(queuePage.addButtonContainer.getBoundsInLocal()).getMinX() + buttonWidth/2 - popUpWidth/2,
+                queuePage.addButtonContainer.localToScreen(queuePage.addButtonContainer.getBoundsInLocal()).getMaxY() + 5, animate);
     }
 
 

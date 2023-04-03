@@ -6,7 +6,7 @@ import hans.Chapters.ChapterController;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.MenuController;
 import hans.Menu.MenuState;
-import hans.Menu.QueueItem;
+import hans.Menu.Queue.QueueItem;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
 import javafx.animation.Animation;
@@ -478,11 +478,11 @@ public class MainController implements Initializable {
         if(e.getButton() == MouseButton.SECONDARY){
             if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
             if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
-            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()) menuController.activeMenuItemContextMenu.hide();
+            if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.isShowing()) menuController.queuePage.activeQueueItemContextMenu.hide();
             return;
         }
 
-        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.isShowing()){
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.isShowing()){
             return;
         }
 
@@ -527,23 +527,23 @@ public class MainController implements Initializable {
                 || captionsController.captionsBox.captionsDragActive
                 || settingsController.equalizerController.sliderActive) return;
 
-        menuController.queueBox.requestFocus();
+        menuController.queuePage.queueBox.requestFocus();
 
         menuController.menuInTransition = true;
         menuController.menuState = MenuState.QUEUE_OPEN;
 
-        if(menuController.queueBox.activeItem.get() != null){
-            double heightViewPort = menuController.queueScroll.getViewportBounds().getHeight();
-            double heightScrollPane = menuController.queueScroll.getContent().getBoundsInLocal().getHeight();
-            double y = menuController.queueBox.activeItem.get().getBoundsInParent().getMaxY();
+        if(menuController.queuePage.queueBox.activeItem.get() != null){
+            double heightViewPort = menuController.queuePage.queueScroll.getViewportBounds().getHeight();
+            double heightScrollPane = menuController.queuePage.queueScroll.getContent().getBoundsInLocal().getHeight();
+            double y = menuController.queuePage.queueBox.activeItem.get().getBoundsInParent().getMaxY();
             if (y<(heightViewPort/2)){
-                menuController.queueScroll.setVvalue(0);
+                menuController.queuePage.queueScroll.setVvalue(0);
             }
             else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
-                menuController.queueScroll.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
+                menuController.queuePage.queueScroll.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
             }
             else if( y>= (heightScrollPane-(heightViewPort/2))){
-                menuController.queueScroll.setVvalue(1);
+                menuController.queuePage.queueScroll.setVvalue(1);
             }
         }
 
@@ -564,7 +564,7 @@ public class MainController implements Initializable {
     }
 
     public void handleDragEntered(DragEvent e){
-        if(e.getDragboard().getFiles().isEmpty() || menuController.queueBox.itemDragActive.get() || menuController.queueBox.draggedNode != null) return;
+        if(e.getDragboard().getFiles().isEmpty() || menuController.queuePage.queueBox.itemDragActive.get() || menuController.queuePage.queueBox.draggedNode != null) return;
         File file = e.getDragboard().getFiles().get(0);
         if(!MediaUtilities.mediaFormats.contains(Utilities.getFileExtension(file))) return;
 
@@ -612,19 +612,19 @@ public class MainController implements Initializable {
 
         actionIndicator.animate();
 
-        QueueItem queueItem = new QueueItem(file, menuController, mediaInterface, 0);
-        if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.add(menuController.queueBox.activeIndex.get() + 1, queueItem, false);
-        else menuController.queueBox.add(0, queueItem, false);
+        QueueItem queueItem = new QueueItem(file, menuController.queuePage, menuController, mediaInterface, 0);
+        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.add(menuController.queuePage.queueBox.activeIndex.get() + 1, queueItem, false);
+        else menuController.queuePage.queueBox.add(0, queueItem, false);
         queueItem.play();
 
     }
 
     public void takeScreenshot(){
-        if(menuController.queueBox.activeItem.get() == null || !menuController.queueBox.activeItem.get().getMediaItemGenerated().get() || miniplayerActive) return;
+        if(menuController.queuePage.queueBox.activeItem.get() == null || !menuController.queuePage.queueBox.activeItem.get().getMediaItemGenerated().get() || miniplayerActive) return;
 
         // snapshot file name formatting
         String out = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date());
-        String videoName = menuController.queueBox.activeItem.get().videoTitle.getText();
+        String videoName = menuController.queuePage.queueBox.activeItem.get().videoTitle.getText();
 
         mediaInterface.embeddedMediaPlayer.snapshots().save(new File(snapshotDirectory.concat(videoName).concat(" ").concat(out).concat(".png")));
     }
@@ -655,7 +655,7 @@ public class MainController implements Initializable {
                 miniplayer.miniplayerController.seekImageView.setVisible(true);
             }
             mediaInterface.embeddedMediaPlayer.controls().stop();
-            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath());
+            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.queuePage.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath());
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
             if (playValue) {
@@ -664,8 +664,8 @@ public class MainController implements Initializable {
 
             controlBarController.updateProgress(controlBarController.durationSlider.getValue()/controlBarController.durationSlider.getMax());
 
-            if(menuController.queueBox.activeItem.get().getMediaItem() != null && !menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
-                setCoverImageView(menuController.queueBox.activeItem.get());
+            if(menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && !menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                setCoverImageView(menuController.queuePage.queueBox.activeItem.get());
             }
         }
 
@@ -677,7 +677,7 @@ public class MainController implements Initializable {
         miniplayer.miniplayerController.moveIndicators();
         captionsController.captionsBox.moveToMiniplayer();
 
-        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+        if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
             miniplayerActiveText.setVisible(true);
         }
 
@@ -724,7 +724,7 @@ public class MainController implements Initializable {
         if(mediaInterface.mediaActive.get()) {
             boolean playValue = mediaInterface.playing.get();
             mediaInterface.embeddedMediaPlayer.controls().stop();
-            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath());
+            mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.queuePage.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath());
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
             if (playValue) mediaInterface.embeddedMediaPlayer.controls().play();
@@ -1259,16 +1259,16 @@ public class MainController implements Initializable {
         else openMiniplayer();
 
         if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
-        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
     }
 
     public void pressQ(){
 
-        if(addYoutubeVideoWindow.showing || menuController.queueBox.itemDragActive.get()) return;
+        if(addYoutubeVideoWindow.showing || menuController.queuePage.queueBox.itemDragActive.get()) return;
 
-        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         if(menuController.menuState != MenuState.CLOSED && !menuController.menuInTransition){
@@ -1318,9 +1318,9 @@ public class MainController implements Initializable {
             controlBarController.durationSlider.setValue(0);
 
         }
-        else if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeIndex.get() > 0){ // play previous video
+        else if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeIndex.get() > 0){ // play previous video
 
-            if(menuController.queueBox.itemDragActive.get()) return;
+            if(menuController.queuePage.queueBox.itemDragActive.get()) return;
 
             actionIndicator.setIcon(PREVIOUS_VIDEO);
             actionIndicator.setVisible(true);
@@ -1333,9 +1333,9 @@ public class MainController implements Initializable {
     public void pressNextTrack(){
         controlBarController.mouseEventTracker.move();
 
-        if(!menuController.queueBox.queue.isEmpty() && (menuController.queueBox.activeItem.get() == null || menuController.queueBox.queue.size() > menuController.queueBox.activeIndex.get() + 1)){
+        if(!menuController.queuePage.queueBox.queue.isEmpty() && (menuController.queuePage.queueBox.activeItem.get() == null || menuController.queuePage.queueBox.queue.size() > menuController.queuePage.queueBox.activeIndex.get() + 1)){
 
-            if(menuController.queueBox.itemDragActive.get()) return;
+            if(menuController.queuePage.queueBox.itemDragActive.get()) return;
 
             actionIndicator.setIcon(NEXT_VIDEO);
             actionIndicator.setVisible(true);
@@ -1350,8 +1350,8 @@ public class MainController implements Initializable {
         controlBarController.mouseEventTracker.move();
         controlBarController.toggleFullScreen();
 
-        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
     }
@@ -1364,8 +1364,8 @@ public class MainController implements Initializable {
     public void pressC(){
         controlBarController.mouseEventTracker.move();
 
-        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
 
@@ -1690,8 +1690,8 @@ public class MainController implements Initializable {
 
         App.fullScreen = false;
 
-        if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
-        if(menuController.addOptionsContextMenu.showing) menuController.addOptionsContextMenu.hide();
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);

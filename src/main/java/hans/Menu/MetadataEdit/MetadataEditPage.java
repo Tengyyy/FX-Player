@@ -5,6 +5,7 @@ import hans.*;
 import hans.MediaItems.MediaItem;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.*;
+import hans.Menu.Queue.QueueItem;
 import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -12,7 +13,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -30,7 +30,6 @@ import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -499,14 +498,14 @@ public class MetadataEditPage {
 
         mediaItem.newMetadata = metadataEditItem.createMetadataMap();
 
-        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() == mediaItem){
+        if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() == mediaItem){
             menuController.mediaInterface.resetMediaPlayer();
         }
 
         MetadataEditTask metadataEditTask = new MetadataEditTask(mediaItem);
         metadataEditTask.setOnSucceeded(e -> {
             if(metadataEditTask.getValue()){
-                for(QueueItem queueItem : menuController.queueBox.queue){
+                for(QueueItem queueItem : menuController.queuePage.queueBox.queue){
                     if(queueItem.getMediaItem() == mediaItem){
                         for(Map.Entry<String, String> entry : mediaItem.getMediaInformation().entrySet()){
                             System.out.println(entry.getKey());
@@ -518,7 +517,7 @@ public class MetadataEditPage {
 
                 menuController.mainController.getControlBarController().updateNextAndPreviousVideoButtons();
 
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() == mediaItem) menuController.mediaInterface.createMedia(menuController.queueBox.activeItem.get());
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() == mediaItem) menuController.mediaInterface.createMedia(menuController.queuePage.queueBox.activeItem.get());
             }
         });
 

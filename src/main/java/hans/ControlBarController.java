@@ -414,7 +414,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverLabel.timeLabel.setText(newTime);
 
                 double offset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null &&  menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null &&  menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
 
                 double timeLabelMinTranslation = (mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.timeLabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                 double timeLabelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.timeLabel.getTranslateX() - offset + 13;
@@ -424,7 +424,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverLabel.timeLabel.setTranslateX(timeLabelNewTranslation);
 
                 double chapterOffset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null &&  menuController.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null &&  menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
 
 
                 double chapterLabelMinTranslation = (mainController.sliderHoverLabel.chapterlabel.localToScene(mainController.sliderHoverLabel.chapterlabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.chapterlabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + chapterOffset - 5;
@@ -437,7 +437,7 @@ public class ControlBarController implements Initializable {
 
                 if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
                     mainController.sliderHoverLabel.timeLabel.setVisible(true);
-                    if (menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+                    if (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
 
                 }
 
@@ -449,7 +449,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
 
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
@@ -472,7 +472,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverLabel.timeLabel.setText(newTime);
 
                 double offset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
 
                 double timeLabelMinTranslation = (mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.timeLabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                 double timeLabelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.timeLabel.getTranslateX() - offset + 13;
@@ -482,7 +482,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverLabel.timeLabel.setTranslateX(timeLabelNewTranslation);
 
                 double chapterOffset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null &&  menuController.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null &&  menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
 
 
                 double chapterLabelMinTranslation = (mainController.sliderHoverLabel.chapterlabel.localToScene(mainController.sliderHoverLabel.chapterlabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.chapterlabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + chapterOffset - 5;
@@ -503,11 +503,11 @@ public class ControlBarController implements Initializable {
                 if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
                     mainController.sliderHoverLabel.timeLabel.setVisible(true);
                     if(chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
-                    if (menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+                    if (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
                 }
 
 
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, false);
@@ -552,7 +552,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverLabel.timeLabel.setText(newTime);
 
                 double offset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
 
                 double timeLabelMinTranslation = (mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.timeLabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                 double timeLabelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.timeLabel.getTranslateX() - offset + 13;
@@ -562,7 +562,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverLabel.timeLabel.setTranslateX(timeLabelNewTranslation);
 
                 double chapterOffset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null &&  menuController.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null &&  menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
 
 
                 double chapterLabelMinTranslation = (mainController.sliderHoverLabel.chapterlabel.localToScene(mainController.sliderHoverLabel.chapterlabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.chapterlabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + chapterOffset - 5;
@@ -580,7 +580,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
@@ -613,12 +613,12 @@ public class ControlBarController implements Initializable {
             }
             else if (oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5 && mediaInterface.mediaActive.get()) {
 
-                if (menuController.queueBox.activeItem.get() == null || menuController.queueBox.activeIndex.get() == 0) {
+                if (menuController.queuePage.queueBox.activeItem.get() == null || menuController.queuePage.queueBox.activeIndex.get() == 0) {
                     disablePreviousVideoButton();
                 } else {
                     if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Previous video (SHIFT + P)");
 
-                    previousVideoTooltip.updateTooltip(menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(menuController.queueBox.activeIndex.get() - 1)));
+                    previousVideoTooltip.updateTooltip(menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() - 1)));
                 }
 
             }
@@ -635,7 +635,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverLabel.timeLabel.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
 
                 double offset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
 
                 double timeLabelMinTranslation = (mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.timeLabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                 double timeLabelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.timeLabel.getTranslateX() - offset + 13;
@@ -646,7 +646,7 @@ public class ControlBarController implements Initializable {
 
 
                 double chapterOffset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
 
                 double chapterLabelMinTranslation = (mainController.sliderHoverLabel.chapterlabel.localToScene(mainController.sliderHoverLabel.chapterlabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.chapterlabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + chapterOffset - 5;
                 double chapterLabelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.chapterlabel.localToScene(mainController.sliderHoverLabel.chapterlabel.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.chapterlabel.getTranslateX() - chapterOffset + 13;
@@ -663,7 +663,7 @@ public class ControlBarController implements Initializable {
 
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
@@ -681,7 +681,7 @@ public class ControlBarController implements Initializable {
 
             if (newValue) { // pause video when user starts seeking
 
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
                     if(mainController.miniplayerActive){
                         if(mediaInterface.playing.get()) mainController.miniplayer.miniplayerController.seekImageView.setImage(mainController.miniplayer.miniplayerController.videoImageView.getImage());
                         mainController.miniplayer.miniplayerController.seekImageView.setVisible(true);
@@ -702,7 +702,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverLabel.timeLabel.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
 
                 double offset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) offset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.timeLabel.getLayoutBounds().getMaxX())/2;
 
                 double labelMinTranslation = (mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.timeLabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + offset - 5;
                 double labelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.timeLabel.localToScene(mainController.sliderHoverLabel.timeLabel.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.timeLabel.getTranslateX() - offset + 13;
@@ -713,7 +713,7 @@ public class ControlBarController implements Initializable {
 
 
                 double chapterOffset = 0;
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo() && mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX() < mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX()) chapterOffset = (mainController.sliderHoverPreview.pane.getLayoutBounds().getMaxX() - mainController.sliderHoverLabel.chapterlabel.getLayoutBounds().getMaxX())/2;
 
                 double chapterLabelMinTranslation = (mainController.sliderHoverLabel.chapterlabel.localToScene(mainController.sliderHoverLabel.chapterlabel.getBoundsInLocal()).getMinX() - mainController.sliderHoverLabel.chapterlabel.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1 + chapterOffset - 5;
                 double chapterLabelMaxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverLabel.chapterlabel.localToScene(mainController.sliderHoverLabel.chapterlabel.getBoundsInLocal()).getMaxX() + mainController.sliderHoverLabel.chapterlabel.getTranslateX() - chapterOffset + 13;
@@ -733,11 +733,11 @@ public class ControlBarController implements Initializable {
 
                 if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
                     mainController.sliderHoverLabel.timeLabel.setVisible(true);
-                    if (menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+                    if (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
                 }
 
 
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
@@ -1234,8 +1234,8 @@ public class ControlBarController implements Initializable {
 
         if (durationSlider.getValue() > 5)
             previousVideoTooltip.updateTooltip(null);
-        else if(menuController.queueBox.activeIndex.get() > 0){
-            previousVideoTooltip.updateTooltip(menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(menuController.queueBox.activeIndex.get() - 1)));
+        else if(menuController.queuePage.queueBox.activeIndex.get() > 0){
+            previousVideoTooltip.updateTooltip(menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() - 1)));
         }
 
         previousVideoButton.setOnMouseEntered((e) -> previousVideoTooltip.mouseHover.set(true));
@@ -1314,8 +1314,8 @@ public class ControlBarController implements Initializable {
 
 
 
-        if(menuController.queueBox.activeItem.get() == null && !menuController.queueBox.queue.isEmpty()) nextVideoTooltip.updateTooltip(menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(0)));
-        else if(menuController.queueBox.queue.size() > menuController.queueBox.activeIndex.get()) nextVideoTooltip.updateTooltip(menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(menuController.queueBox.activeIndex.get() + 1)));
+        if(menuController.queuePage.queueBox.activeItem.get() == null && !menuController.queuePage.queueBox.queue.isEmpty()) nextVideoTooltip.updateTooltip(menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(0)));
+        else if(menuController.queuePage.queueBox.queue.size() > menuController.queuePage.queueBox.activeIndex.get()) nextVideoTooltip.updateTooltip(menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() + 1)));
 
         nextVideoButton.setOnMouseEntered((e) -> nextVideoTooltip.mouseHover.set(true));
         nextVideoButton.setOnMouseExited((e) -> nextVideoTooltip.mouseHover.set(false));
@@ -1345,16 +1345,16 @@ public class ControlBarController implements Initializable {
     }
 
     public void updateNextAndPreviousVideoButtons(){
-        if(menuController.queueBox.queue.isEmpty()){
+        if(menuController.queuePage.queueBox.queue.isEmpty()){
             disableNextVideoButton();
             disablePreviousVideoButton();
         }
         else {
-            if(menuController.queueBox.activeItem.get() != null){
-                if(menuController.queueBox.activeIndex.get() > 0 || durationSlider.getValue() > 5) enablePreviousVideoButton();
+            if(menuController.queuePage.queueBox.activeItem.get() != null){
+                if(menuController.queuePage.queueBox.activeIndex.get() > 0 || durationSlider.getValue() > 5) enablePreviousVideoButton();
                 else disablePreviousVideoButton();
 
-                if(menuController.queueBox.activeIndex.get() < menuController.queueBox.queue.size() - 1) enableNextVideoButton();
+                if(menuController.queuePage.queueBox.activeIndex.get() < menuController.queuePage.queueBox.queue.size() - 1) enableNextVideoButton();
                 else disableNextVideoButton();
             }
             else {

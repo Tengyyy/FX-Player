@@ -387,7 +387,7 @@ public class OpenSubtitlesPane {
             if(newValue) {
                 searchButton.setDisable(true);
             }
-            else if(searchState != 2 || captionsController.menuController.queueBox.activeItem.get() != null){
+            else if(searchState != 2 || captionsController.menuController.queuePage.queueBox.activeItem.get() != null){
                 searchButton.setDisable(false);
             }
         });
@@ -457,7 +457,7 @@ public class OpenSubtitlesPane {
             else imdbFieldBorder.setVisible(true);
         }
         else if(searchState == 2){
-            if(captionsController.menuController.queueBox.activeItem.get() != null) search();
+            if(captionsController.menuController.queuePage.queueBox.activeItem.get() != null) search();
         }
     }
 
@@ -574,7 +574,7 @@ public class OpenSubtitlesPane {
         imdbFieldBorder.setVisible(false);
         titleFieldBorder.setVisible(false);
 
-        if(captionsController.menuController.queueBox.activeItem.get() == null) searchButton.setDisable(true);
+        if(captionsController.menuController.queuePage.queueBox.activeItem.get() == null) searchButton.setDisable(true);
     }
 
     public void setImdbSearch(){

@@ -2,6 +2,7 @@ package hans.Menu;
 
 import hans.AnimationsClass;
 import hans.App;
+import hans.Menu.Queue.QueueItem;
 import hans.SVG;
 import hans.Shell32Util;
 import javafx.beans.binding.Bindings;

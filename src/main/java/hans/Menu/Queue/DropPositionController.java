@@ -1,10 +1,8 @@
-package hans.Menu;
+package hans.Menu.Queue;
 
-import hans.AnimationsClass;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.layout.Background;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -13,15 +11,15 @@ public class DropPositionController {
 
     QueueBox queueBox;
 
-    int position = Integer.MAX_VALUE;
+    public int position = Integer.MAX_VALUE;
     double countingY = 0;
 
     PauseTransition dragTimer = new PauseTransition(Duration.millis(350));
 
-    ArrayList<Transition> translateTransitions = new ArrayList<>();
-    ArrayList<Transition> removeTransitions = new ArrayList<>();
+    public ArrayList<Transition> translateTransitions = new ArrayList<>();
+    public ArrayList<Transition> removeTransitions = new ArrayList<>();
 
-    DropPositionController(QueueBox queueBox){
+    public DropPositionController(QueueBox queueBox){
         this.queueBox = queueBox;
 
 

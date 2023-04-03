@@ -1,7 +1,7 @@
 package hans.Settings;
 
 import hans.*;
-import hans.Menu.QueueItem;
+import hans.Menu.Queue.QueueItem;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -185,9 +185,9 @@ public class SettingsHomeController {
         File selectedFile = fileChooser.showOpenDialog(App.stage);
 
         if (selectedFile != null) {
-            QueueItem queueItem = new QueueItem(selectedFile, settingsController.menuController, settingsController.mediaInterface, 0);
-            if(settingsController.menuController.queueBox.activeItem.get() != null) settingsController.menuController.queueBox.add(settingsController.menuController.queueBox.activeItem.get().videoIndex + 1, queueItem, false);
-            else settingsController.menuController.queueBox.add(0, queueItem, false);
+            QueueItem queueItem = new QueueItem(selectedFile, settingsController.menuController.queuePage, settingsController.menuController, settingsController.mediaInterface, 0);
+            if(settingsController.menuController.queuePage.queueBox.activeItem.get() != null) settingsController.menuController.queuePage.queueBox.add(settingsController.menuController.queuePage.queueBox.activeItem.get().videoIndex + 1, queueItem, false);
+            else settingsController.menuController.queuePage.queueBox.add(0, queueItem, false);
             queueItem.play();
         }
     }

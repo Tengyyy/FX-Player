@@ -105,12 +105,12 @@ public class PlaybackOptionsController {
                 }
                 else if(autoplayTab.toggle.isSelected()) settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.repeatSVG);
 
-                settingsController.menuController.shuffleTooltip.updateText("Shuffle is off");
+                settingsController.menuController.queuePage.shuffleTooltip.updateText("Shuffle is off");
 
-                if(!settingsController.menuController.queueBox.queue.isEmpty()) settingsController.menuController.queueBox.shuffleOff();
+                if(!settingsController.menuController.queuePage.queueBox.queue.isEmpty()) settingsController.menuController.queuePage.queueBox.shuffleOff();
 
-                settingsController.menuController.shuffleToggle.setStyle("-fx-border-color: rgb(30,30,30); -fx-text-fill: white;");
-                settingsController.menuController.shuffleToggle.getGraphic().setStyle("-fx-background-color: white;");
+                settingsController.menuController.queuePage.shuffleToggle.setStyle("-fx-border-color: rgb(30,30,30); -fx-text-fill: white;");
+                settingsController.menuController.queuePage.shuffleToggle.getGraphic().setStyle("-fx-background-color: white;");
 
             } else { // ON
                 shuffleOn = true;
@@ -120,13 +120,13 @@ public class PlaybackOptionsController {
                     settingsController.settingsHomeController.playbackOptionsTab.mainIcon.setShape(settingsController.settingsHomeController.shuffleSVG);
                 }
 
-                settingsController.menuController.shuffleTooltip.updateText("Shuffle is on");
+                settingsController.menuController.queuePage.shuffleTooltip.updateText("Shuffle is on");
 
 
-                if(!settingsController.menuController.queueBox.queue.isEmpty()) settingsController.menuController.queueBox.shuffleOn();
+                if(!settingsController.menuController.queuePage.queueBox.queue.isEmpty()) settingsController.menuController.queuePage.queueBox.shuffleOn();
 
-                settingsController.menuController.shuffleToggle.setStyle("-fx-border-color: red; -fx-text-fill: red;");
-                settingsController.menuController.shuffleToggle.getGraphic().setStyle("-fx-background-color: red;");
+                settingsController.menuController.queuePage.shuffleToggle.setStyle("-fx-border-color: red; -fx-text-fill: red;");
+                settingsController.menuController.queuePage.shuffleToggle.getGraphic().setStyle("-fx-background-color: red;");
             }
 
         });

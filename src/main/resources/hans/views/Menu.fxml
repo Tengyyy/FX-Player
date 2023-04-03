@@ -14,10 +14,6 @@
                <StackPane.margin>
                   <Insets />
                </StackPane.margin>
-               <children>
-                  <VBox fx:id="queueBar" />
-                  <ScrollPane fx:id="queueScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll" VBox.vgrow="ALWAYS" />
-               </children>
             </VBox>
             <ScrollPane fx:id="metadataEditScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
                <StackPane.margin>

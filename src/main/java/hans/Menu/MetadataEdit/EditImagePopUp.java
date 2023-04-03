@@ -2,7 +2,6 @@ package hans.Menu.MetadataEdit;
 
 import hans.App;
 import hans.MediaItems.MediaItem;
-import hans.Menu.QueueItem;
 import hans.SVG;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;

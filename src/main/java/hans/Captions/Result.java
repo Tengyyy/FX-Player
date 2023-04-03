@@ -178,7 +178,7 @@ public class Result extends HBox {
             downloadTask.setOnSucceeded(e -> {
                 File file = downloadTask.getValue();
                 if(file != null){
-                    if(Utilities.getFileExtension(file).equals("srt") && captionsController.menuController.queueBox.activeItem.get() != null){
+                    if(Utilities.getFileExtension(file).equals("srt") && captionsController.menuController.queuePage.queueBox.activeItem.get() != null){
                         captionsController.captionsHome.createTab(file);
                     }
 

@@ -1,29 +1,23 @@
-package hans.Menu;
+package hans.Menu.Queue;
 
 import hans.AnimationsClass;
 import hans.ControlTooltip;
-import hans.MainController;
 import hans.MediaItems.MediaUtilities;
+import hans.Menu.MenuController;
+import hans.Menu.QueueItemContextMenu;
 import hans.Utilities;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -35,6 +29,7 @@ import java.util.Random;
 
 public class QueueBox extends VBox {
 
+    QueuePage queuePage;
     MenuController menuController;
 
 
@@ -54,11 +49,14 @@ public class QueueBox extends VBox {
     public ObservableList<Integer> queueOrder = FXCollections.observableArrayList();
 
 
-    DropPositionController dropPositionController;
+    public DropPositionController dropPositionController;
 
 
-    QueueBox(MenuController menuController){
+    public QueueBox(MenuController menuController, QueuePage queuePage){
+
+        this.queuePage = queuePage;
         this.menuController = menuController;
+
         this.setAlignment(Pos.TOP_CENTER);
         this.setFillWidth(true);
 
@@ -174,7 +172,7 @@ public class QueueBox extends VBox {
 
         queue.remove(index);
         queueOrder.remove((Integer) index);
-        if(!isDrag) menuController.selectedItems.remove(queueItem);
+        if(!isDrag) queuePage.selectedItems.remove(queueItem);
 
         if(queueOrder.size() != index){
             for(int i=0; i<queueOrder.size(); i++){
@@ -210,7 +208,7 @@ public class QueueBox extends VBox {
 
         queue.clear();
         queueOrder.clear();
-        menuController.selectedItems.clear();
+        queuePage.selectedItems.clear();
 
         if(activeItem.get() != null) activeItem.get().setInactive();
 
@@ -376,7 +374,7 @@ public class QueueBox extends VBox {
             queueItem.playButtonTooltip = new ControlTooltip(menuController.mainController, "Play video", queueItem.playButton, 1000);
             queueItem.removeButtonTooltip = new ControlTooltip(menuController.mainController,"Remove video", queueItem.removeButton, 1000);
             queueItem.optionsButtonTooltip = new ControlTooltip(menuController.mainController, "Options", queueItem.optionsButton, 1000);
-            queueItem.menuItemContextMenu = new MenuItemContextMenu(queueItem);
+            queueItem.menuItemContextMenu = new QueueItemContextMenu(queueItem);
 
             QueueItem.height = queueItem.getBoundsInParent().getHeight();
 
@@ -385,7 +383,7 @@ public class QueueBox extends VBox {
 
     private void updateQueue(){
 
-        menuController.clearQueueButton.setDisable(queueOrder.isEmpty());
+        queuePage.clearQueueButton.setDisable(queueOrder.isEmpty());
 
         for(int i=0; i < queueOrder.size(); i++){
             queue.get(queueOrder.get(i)).updateIndex(i);
@@ -411,7 +409,7 @@ public class QueueBox extends VBox {
 
         ParallelTransition parallelTransition = new ParallelTransition();
         for(QueueItem queueItem : queue){
-            if((menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode) && menuController.selectedItems.contains(queueItem)) || draggedNode == queueItem) continue;
+            if((queuePage.selectionActive.get() && queuePage.selectedItems.contains(draggedNode) && queuePage.selectedItems.contains(queueItem)) || draggedNode == queueItem) continue;
             FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), queueItem);
             fadeTransition.setFromValue(queueItem.getOpacity());
             fadeTransition.setToValue(0.5);
@@ -428,9 +426,9 @@ public class QueueBox extends VBox {
 
             draggedNode.setViewOrder(1);
 
-            if(menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode)){ // drag multiple items
+            if(queuePage.selectionActive.get() && queuePage.selectedItems.contains(draggedNode)){ // drag multiple items
                 ParallelTransition parallelRemove = new ParallelTransition();
-                for(QueueItem queueItem : menuController.selectedItems){
+                for(QueueItem queueItem : queuePage.selectedItems){
                     if(queueItem != draggedNode) queueItem.setMouseTransparent(true);
 
                     if(queueItem.getOpacity() == 0) continue;
@@ -492,7 +490,7 @@ public class QueueBox extends VBox {
 
         ParallelTransition parallelTransition = new ParallelTransition();
         for(QueueItem queueItem : queue){
-            if((menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode) && menuController.selectedItems.contains(queueItem)) || draggedNode == queueItem) continue;
+            if((queuePage.selectionActive.get() && queuePage.selectedItems.contains(draggedNode) && queuePage.selectedItems.contains(queueItem)) || draggedNode == queueItem) continue;
             FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), queueItem);
             fadeTransition.setFromValue(queueItem.getOpacity());
             fadeTransition.setToValue(1);
@@ -520,7 +518,7 @@ public class QueueBox extends VBox {
         for(int i = dropPositionController.position; i >= 0; i--){
 
             if(i >= queue.size()) continue;
-            if(queue.get(queueOrder.get(i)) == draggedNode || menuController.selectedItems.contains(queue.get(queueOrder.get(i)))) continue;
+            if(queue.get(queueOrder.get(i)) == draggedNode || queuePage.selectedItems.contains(queue.get(queueOrder.get(i)))) continue;
 
             hoverItem = queue.get(queueOrder.get(i));
             if(i != dropPositionController.position) correction = 1;
@@ -529,7 +527,7 @@ public class QueueBox extends VBox {
         }
         if(hoverItem == null){
             for(int i = dropPositionController.position; i<queue.size(); i++){
-                if(queue.get(queueOrder.get(i)) == draggedNode || menuController.selectedItems.contains(queue.get(queueOrder.get(i)))) continue;
+                if(queue.get(queueOrder.get(i)) == draggedNode || queuePage.selectedItems.contains(queue.get(queueOrder.get(i)))) continue;
 
                 hoverItem = queue.get(queueOrder.get(i));
                 correction = 0;
@@ -539,8 +537,8 @@ public class QueueBox extends VBox {
         }
 
 
-        if(menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode)){
-            for(QueueItem queueItem : menuController.selectedItems){
+        if(queuePage.selectionActive.get() && queuePage.selectedItems.contains(draggedNode)){
+            for(QueueItem queueItem : queuePage.selectedItems){
                 remove(queueItem, true);
             }
         }
@@ -549,10 +547,10 @@ public class QueueBox extends VBox {
         int index = Integer.MAX_VALUE;
         if(hoverItem != null) index = queueOrder.indexOf(queue.indexOf(hoverItem)) + correction;
 
-        if(menuController.selectionActive.get() && menuController.selectedItems.contains(draggedNode)){
+        if(queuePage.selectionActive.get() && queuePage.selectedItems.contains(draggedNode)){
             if(index >= queue.size()){
-                for(int i=0; i<menuController.selectedItems.size(); i++){
-                    QueueItem queueItem = menuController.selectedItems.get(i);
+                for(int i=0; i<queuePage.selectedItems.size(); i++){
+                    QueueItem queueItem = queuePage.selectedItems.get(i);
 
                     queueItem.setMinHeight(QueueItem.height);
                     queueItem.setMaxHeight(QueueItem.height);
@@ -563,8 +561,8 @@ public class QueueBox extends VBox {
                 }
             }
             else {
-                for(int i=0; i<menuController.selectedItems.size(); i++){
-                    QueueItem queueItem = menuController.selectedItems.get(i);
+                for(int i=0; i<queuePage.selectedItems.size(); i++){
+                    QueueItem queueItem = queuePage.selectedItems.get(i);
                     if(i == 0){
                         queueItem.setMinHeight(QueueItem.height);
                         queueItem.setMaxHeight(QueueItem.height);
@@ -614,15 +612,15 @@ public class QueueBox extends VBox {
 
         for (int i=0; i < dragBoardMedia.size(); i++) {
             QueueItem queueItem;
-            if(i == 0) queueItem = new QueueItem(dragBoardMedia.get(i), menuController, menuController.mediaInterface, translation);
-            else queueItem = new QueueItem(dragBoardMedia.get(i), menuController, menuController.mediaInterface, 0);
+            if(i == 0) queueItem = new QueueItem(dragBoardMedia.get(i), queuePage, menuController, menuController.mediaInterface, translation);
+            else queueItem = new QueueItem(dragBoardMedia.get(i), queuePage, menuController, menuController.mediaInterface, 0);
 
             this.add(index + i, queueItem, false);
         }
 
         if(last){
             if(dragBoardMedia.size() == 1){
-                Platform.runLater(() -> menuController.queueScroll.setVvalue(1));
+                Platform.runLater(() -> queuePage.queueScroll.setVvalue(1));
             }
         }
 

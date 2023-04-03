@@ -8,24 +8,19 @@ import hans.Chapters.ChapterFrameGrabberTask;
 import hans.Chapters.ChapterItem;
 import hans.MediaItems.MediaItem;
 import hans.Menu.MenuController;
-import hans.Menu.QueueItem;
+import hans.Menu.Queue.QueueItem;
 import hans.Settings.SettingsController;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
-import uk.co.caprica.vlcj.media.Meta;
 import uk.co.caprica.vlcj.player.base.Equalizer;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
@@ -162,8 +157,8 @@ public class MediaInterface {
                     image = mainController.miniplayer.miniplayerController.videoImageView.getImage();
                 }
 
-                if(image != null && menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null){
-                    MediaItem mediaItem = menuController.queueBox.activeItem.get().getMediaItem();
+                if(image != null && menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null){
+                    MediaItem mediaItem = menuController.queuePage.queueBox.activeItem.get().getMediaItem();
                     mediaItem.width = image.getWidth();
                     mediaItem.height = image.getHeight();
 
@@ -188,9 +183,9 @@ public class MediaInterface {
                     if(controlBarController.showingTimeLeft) Utilities.setTimeLeftLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
                     else Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
 
-                    chapterController.initializeChapters(mediaPlayer.chapters().descriptions(), menuController.queueBox.activeItem.get().file);
+                    chapterController.initializeChapters(mediaPlayer.chapters().descriptions(), menuController.queuePage.queueBox.activeItem.get().file);
 
-                    if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
+                    if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
                         ExecutorService executorService = Executors.newFixedThreadPool(1);
                         for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
                             ChapterItem chapterItem = (ChapterItem) node;
@@ -278,7 +273,7 @@ public class MediaInterface {
             // restart current video
         }
         else {
-            if(menuController.queueBox.queue.isEmpty() || menuController.queueBox.activeIndex.get() >= menuController.queueBox.queue.size() - 1) defaultEnd();
+            if(menuController.queuePage.queueBox.queue.isEmpty() || menuController.queuePage.queueBox.activeIndex.get() >= menuController.queuePage.queueBox.queue.size() - 1) defaultEnd();
             else playNext();
 
         }
@@ -380,16 +375,16 @@ public class MediaInterface {
 
         controlBarController.mouseEventTracker.move();
 
-        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.queue.size() > menuController.queueBox.activeIndex.get() + 1){
-            menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(menuController.queueBox.activeIndex.get() + 1)).play();
+        if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.queue.size() > menuController.queuePage.queueBox.activeIndex.get() + 1){
+            menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() + 1)).play();
         }
-        else if(menuController.queueBox.activeItem.get() == null && !menuController.queueBox.queue.isEmpty()) menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(0)).play();
+        else if(menuController.queuePage.queueBox.activeItem.get() == null && !menuController.queuePage.queueBox.queue.isEmpty()) menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(0)).play();
     }
 
     public void playPrevious(){
         controlBarController.mouseEventTracker.move();
 
-        if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeIndex.get() > 0) menuController.queueBox.queue.get(menuController.queueBox.queueOrder.get(menuController.queueBox.activeIndex.get() -1)).play();
+        if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeIndex.get() > 0) menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() -1)).play();
     }
 
     public void defaultEnd(){
@@ -402,7 +397,7 @@ public class MediaInterface {
 
         controlBarController.end();
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.end();
-        if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.activeItem.get().updateIconToPlay();
+        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.activeItem.get().updateIconToPlay();
 
         playing.set(false);
 
@@ -423,7 +418,7 @@ public class MediaInterface {
 
         controlBarController.play();
 
-        if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.activeItem.get().updateIconToPause();
+        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.activeItem.get().updateIconToPause();
 
         wasPlaying = true;
 
@@ -444,7 +439,7 @@ public class MediaInterface {
 
         controlBarController.pause();
 
-        if(menuController.queueBox.activeItem.get() != null) menuController.queueBox.activeItem.get().updateIconToPlay();
+        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.activeItem.get().updateIconToPlay();
 
     }
 
@@ -539,7 +534,7 @@ public class MediaInterface {
             }
             else { // caption extraction is ongoing, have to wait for it to finish before adding caption tabs
                 mediaItem.captionExtractionInProgress.addListener((observableValue, oldValue, newValue) -> {
-                    if(!newValue && menuController.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
+                    if(!newValue && menuController.queuePage.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
                 });
             }
         }
@@ -547,7 +542,7 @@ public class MediaInterface {
             executorService = Executors.newFixedThreadPool(1);
             subtitleExtractionTask = new SubtitleExtractionTask(captionsController, mediaItem);
             subtitleExtractionTask.setOnSucceeded(e -> {
-                if(subtitleExtractionTask.getValue() != null && subtitleExtractionTask.getValue() && menuController.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
+                if(subtitleExtractionTask.getValue() != null && subtitleExtractionTask.getValue() && menuController.queuePage.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
             });
             executorService.execute(subtitleExtractionTask);
             executorService.shutdown();

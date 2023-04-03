@@ -317,7 +317,7 @@ public class MiniplayerController {
 
                 sliderHoverLabel.timeLabel.setText(Utilities.getTime(Duration.seconds(slider.getValue())));
 
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
                     if(controlBarController.pauseTransition != null && controlBarController.pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     controlBarController.pauseTransition = new PauseTransition(Duration.millis(50));
@@ -338,7 +338,7 @@ public class MiniplayerController {
 
                 showControls();
 
-                if(menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeItem.get().getMediaItem() != null && menuController.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
                     if(mediaInterface.playing.get()) seekImageView.setImage(videoImageView.getImage());
                     seekImageView.setVisible(true);
                     videoImageView.setVisible(false);
@@ -548,7 +548,7 @@ public class MiniplayerController {
         previousVideoIcon.setShape(previousVideoSVG);
         previousVideoIcon.setEffect(new DropShadow());
 
-        if(menuController.queueBox.queue.isEmpty() || menuController.queueBox.activeItem.get() == null || menuController.queueBox.activeIndex.get() == 0) disablePreviousVideoButton();
+        if(menuController.queuePage.queueBox.queue.isEmpty() || menuController.queuePage.queueBox.activeItem.get() == null || menuController.queuePage.queueBox.activeIndex.get() == 0) disablePreviousVideoButton();
         else enablePreviousVideoButton();
 
 
@@ -632,7 +632,7 @@ public class MiniplayerController {
         nextVideoIcon.setShape(nextVideoSVG);
         nextVideoIcon.setEffect(new DropShadow());
 
-        if(menuController.queueBox.queue.isEmpty() || (menuController.queueBox.activeItem.get() != null && menuController.queueBox.activeIndex.get() >= menuController.queueBox.queue.size() - 1)) disableNextVideoButton();
+        if(menuController.queuePage.queueBox.queue.isEmpty() || (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeIndex.get() >= menuController.queuePage.queueBox.queue.size() - 1)) disableNextVideoButton();
         else enableNextVideoButton();
 
     }

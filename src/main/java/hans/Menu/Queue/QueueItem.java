@@ -1,9 +1,12 @@
-package hans.Menu;
+package hans.Menu.Queue;
 
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
 import hans.MediaItems.MediaItem;
+import hans.Menu.Columns;
+import hans.Menu.MenuController;
+import hans.Menu.QueueItemContextMenu;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.animation.Transition;
 import javafx.beans.property.BooleanProperty;
@@ -48,9 +51,9 @@ public class QueueItem extends GridPane {
 
     VBox textWrapper = new VBox();
 
-    JFXButton optionsButton = new JFXButton();
+    public JFXButton optionsButton = new JFXButton();
 
-    JFXButton removeButton = new JFXButton();
+    public JFXButton removeButton = new JFXButton();
 
     MenuController menuController;
 
@@ -69,48 +72,50 @@ public class QueueItem extends GridPane {
 
     StackPane indexPane = new StackPane();
     public Label indexLabel = new Label();
-    MFXCheckbox checkbox = new MFXCheckbox();
+    public MFXCheckbox checkbox = new MFXCheckbox();
 
-    Button playButton = new Button();
-    Region playButtonIcon = new Region();
+    public Button playButton = new Button();
+    public Region playButtonIcon = new Region();
 
-    StackPane playButtonBackground = new StackPane();
-    Columns columns = new Columns();
+    public StackPane playButtonBackground = new StackPane();
+    public Columns columns = new Columns();
 
     public StackPane captionsPane = new StackPane();
     public Region captionsIcon = new Region();
 
-    ControlTooltip playButtonTooltip, removeButtonTooltip, optionsButtonTooltip;
+    public ControlTooltip playButtonTooltip, removeButtonTooltip, optionsButtonTooltip;
 
-    boolean mouseHover = false;
+    public boolean mouseHover = false;
 
     SVGPath playSVG = new SVGPath(), removeSVG = new SVGPath(), optionsSVG = new SVGPath(), pauseSVG = new SVGPath(), captionsSVG = new SVGPath();
 
     //TODO: incorporate activeitemcontextmenu to this
-    public MenuItemContextMenu menuItemContextMenu;
+    public QueueItemContextMenu menuItemContextMenu;
 
     MediaInterface mediaInterface;
 
-    static double height = 90;
+    public static double height = 90;
 
     public File file;
     MediaItem mediaItem;
-    BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
+    public BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
 
-    BooleanProperty isActive = new SimpleBooleanProperty(false);
+    public BooleanProperty isActive = new SimpleBooleanProperty(false);
     BooleanProperty isSelected = new SimpleBooleanProperty(false);
 
     public int videoIndex = -1;
 
     QueueBox queueBox;
+    public QueuePage queuePage;
 
 
-    public QueueItem(File file, MenuController menuController, MediaInterface mediaInterface, double initialHeight) {
+    public QueueItem(File file, QueuePage queuePage, MenuController menuController, MediaInterface mediaInterface, double initialHeight) {
 
         this.file = file;
+        this.queuePage = queuePage;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
-        this.queueBox = menuController.queueBox;
+        this.queueBox = queuePage.queueBox;
 
         initialize(initialHeight);
 
@@ -154,13 +159,14 @@ public class QueueItem extends GridPane {
         }
     }
 
-    QueueItem(MediaItem mediaItem, MenuController menuController, MediaInterface mediaInterface, double initialHeight) {
+    QueueItem(MediaItem mediaItem, QueuePage queuePage, MenuController menuController, MediaInterface mediaInterface, double initialHeight) {
 
         this.file = mediaItem.getFile();
         this.mediaItem = mediaItem;
+        this.queuePage = queuePage;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
-        this.queueBox = menuController.queueBox;
+        this.queueBox = queuePage.queueBox;
 
         mediaItemGenerated.set(true);
 
@@ -349,16 +355,16 @@ public class QueueItem extends GridPane {
         optionsButton.setText(null);
 
         optionsButton.setOnAction((e) -> {
-            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing && !menuController.activeMenuItemContextMenu.equals(menuItemContextMenu)) menuController.activeMenuItemContextMenu.hide();
+            if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing && !queuePage.activeQueueItemContextMenu.equals(menuItemContextMenu)) queuePage.activeQueueItemContextMenu.hide();
             if(menuItemContextMenu.showing) menuItemContextMenu.hide();
             else menuItemContextMenu.showOptions(true);
         });
 
         this.setOnMouseClicked(e -> {
-            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
             else if (e.getButton() == MouseButton.PRIMARY){
-                if(!menuController.selectionActive.get() && !isActive.get()) play();
-                else if(menuController.selectionActive.get()) checkbox.fire();
+                if(!queuePage.selectionActive.get() && !isActive.get()) play();
+                else if(queuePage.selectionActive.get()) checkbox.fire();
             }
         });
 
@@ -409,7 +415,7 @@ public class QueueItem extends GridPane {
             playButtonIcon.setVisible(false);
             playButtonBackground.setVisible(false);
 
-            if(!menuController.selectionActive.get()){
+            if(!queuePage.selectionActive.get()){
                 checkbox.setVisible(false);
                 if(isActive.get()) columns.setVisible(true);
                 else indexLabel.setVisible(true);
@@ -440,8 +446,8 @@ public class QueueItem extends GridPane {
 
             Label dragLabel;
 
-            if(!menuController.selectionActive.get() || menuController.selectedItems.size() == 1 || !menuController.selectedItems.contains(this)) dragLabel = new Label("1 item");
-            else dragLabel = new Label(menuController.selectedItems.size() + " items");
+            if(!queuePage.selectionActive.get() || queuePage.selectedItems.size() == 1 || !queuePage.selectedItems.contains(this)) dragLabel = new Label("1 item");
+            else dragLabel = new Label(queuePage.selectedItems.size() + " items");
 
             dragLabel.setId("dragLabel");
 
@@ -473,9 +479,9 @@ public class QueueItem extends GridPane {
                 queueBox.dropPositionController.removeTransitions.clear();
             }
 
-            if(menuController.selectionActive.get() && menuController.selectedItems.contains(queueBox.draggedNode)){
-                for(int i=0; i<menuController.selectedItems.size(); i++){
-                    QueueItem queueItem = menuController.selectedItems.get(i);
+            if(queuePage.selectionActive.get() && queuePage.selectedItems.contains(queueBox.draggedNode)){
+                for(int i=0; i<queuePage.selectedItems.size(); i++){
+                    QueueItem queueItem = queuePage.selectedItems.get(i);
                     queueItem.setMinHeight(QueueItem.height);
                     queueItem.setMaxHeight(QueueItem.height);
                     queueItem.setOpacity(1);
@@ -501,7 +507,7 @@ public class QueueItem extends GridPane {
 
         playButton.setOnAction((e) -> {
 
-            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
 
             if(!this.isActive.get()) return;
 
@@ -522,12 +528,12 @@ public class QueueItem extends GridPane {
         removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
 
         removeButton.setOnAction((e) -> {
-            if(menuController.activeMenuItemContextMenu != null && menuController.activeMenuItemContextMenu.showing) menuController.activeMenuItemContextMenu.hide();
+            if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
             remove();
         });
     }
 
-    void remove() {
+    public void remove() {
         if (this.isActive.get()) {
 
             this.setInactive();
@@ -674,8 +680,8 @@ public class QueueItem extends GridPane {
 
     public void playNext(){
         QueueItem newItem;
-        if(this.mediaItemGenerated.get()) newItem = new QueueItem(this.mediaItem, menuController, mediaInterface, 0);
-        else newItem = new QueueItem(this.file, menuController, mediaInterface, 0);
+        if(this.mediaItemGenerated.get()) newItem = new QueueItem(this.mediaItem, queuePage, menuController, mediaInterface, 0);
+        else newItem = new QueueItem(this.file, queuePage, menuController, mediaInterface, 0);
 
         if(queueBox.activeItem.get() != null) queueBox.add(queueBox.activeIndex.get() + 1, newItem, false);
         else queueBox.add(0, newItem, false);
@@ -749,7 +755,7 @@ public class QueueItem extends GridPane {
         }
         else {
             this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-            if(!menuController.selectionActive.get()) columns.setVisible(true);
+            if(!queuePage.selectionActive.get()) columns.setVisible(true);
         }
     }
 
@@ -765,7 +771,7 @@ public class QueueItem extends GridPane {
         playButton.setMouseTransparent(true);
 
         if(!mouseHover) {
-            if(!menuController.selectionActive.get()) indexLabel.setVisible(true);
+            if(!queuePage.selectionActive.get()) indexLabel.setVisible(true);
             this.setStyle("-fx-background-color: transparent;");
         }
     }
@@ -793,13 +799,13 @@ public class QueueItem extends GridPane {
     }
 
     public void select(){
-        menuController.selectedItems.add(this);
+        queuePage.selectedItems.add(this);
 
         if(!mouseHover) this.setStyle("-fx-background-color: rgba(90,90,90,0.6);");
     }
 
     public void unselect(){
-        menuController.selectedItems.remove(this);
+        queuePage.selectedItems.remove(this);
 
         if(mouseHover) this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
         else if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");

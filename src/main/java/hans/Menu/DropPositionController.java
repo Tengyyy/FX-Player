@@ -62,20 +62,20 @@ public class DropPositionController {
                     translateTransition.setToY(0);
                     parallelTransition.getChildren().add(translateTransition);
                 }
-                else if(i >= position && queueItem.getTranslateY() != 90) {
+                else if(i >= position && queueItem.getTranslateY() != QueueItem.height) {
                     TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), queueItem);
                     translateTransition.setFromY(queueItem.getTranslateY());
-                    translateTransition.setToY(90);
+                    translateTransition.setToY(QueueItem.height);
                     parallelTransition.getChildren().add(translateTransition);
                 }
             }
 
             for (int i = queueBox.draggedNode.videoIndex + 1; i < queueBox.queue.size(); i++) {
                 QueueItem queueItem = queueBox.queue.get(queueBox.queueOrder.get(i));
-                if(i < position && queueItem.getTranslateY() != -90){
+                if(i < position && queueItem.getTranslateY() != -QueueItem.height){
                     TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), queueItem);
                     translateTransition.setFromY(queueItem.getTranslateY());
-                    translateTransition.setToY(-90);
+                    translateTransition.setToY(-QueueItem.height);
                     parallelTransition.getChildren().add(translateTransition);
                 }
                 else if(i >= position && queueItem.getTranslateY() != 0){
@@ -107,11 +107,11 @@ public class DropPositionController {
                         translateTransition.setToY(0);
                         parallelTransition.getChildren().add(translateTransition);
                     }
-                    else if(i >= position && node.getTranslateY() < 90){
+                    else if(i >= position && node.getTranslateY() < QueueItem.height){
                         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), node);
 
                         translateTransition.setFromY(node.getTranslateY());
-                        translateTransition.setToY(90);
+                        translateTransition.setToY(QueueItem.height);
                         parallelTransition.getChildren().add(translateTransition);
                     }
                 }

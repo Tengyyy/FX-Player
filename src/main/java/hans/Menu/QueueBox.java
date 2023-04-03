@@ -113,8 +113,8 @@ public class QueueBox extends VBox {
         this.getChildren().add(index, child);
         initialize(child);
 
-        Timeline minHeightTransition = AnimationsClass.animateMinHeight(90, child);
-        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(90, child);
+        Timeline minHeightTransition = AnimationsClass.animateMinHeight(QueueItem.height, child);
+        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(QueueItem.height, child);
         ParallelTransition parallelTransition = new ParallelTransition(minHeightTransition, maxHeightTransition);
         if(isDrag) parallelTransition.playFromStart();
         else {
@@ -147,8 +147,8 @@ public class QueueBox extends VBox {
         this.getChildren().add(child);
         initialize(child);
 
-        Timeline minHeightTransition = AnimationsClass.animateMinHeight(90, child);
-        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(90, child);
+        Timeline minHeightTransition = AnimationsClass.animateMinHeight(QueueItem.height, child);
+        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(QueueItem.height, child);
         ParallelTransition parallelTransition = new ParallelTransition(minHeightTransition, maxHeightTransition);
         if(isDrag) parallelTransition.playFromStart();
         else {
@@ -554,8 +554,8 @@ public class QueueBox extends VBox {
                 for(int i=0; i<menuController.selectedItems.size(); i++){
                     QueueItem queueItem = menuController.selectedItems.get(i);
 
-                    queueItem.setMinHeight(90);
-                    queueItem.setMaxHeight(90);
+                    queueItem.setMinHeight(QueueItem.height);
+                    queueItem.setMaxHeight(QueueItem.height);
                     queueItem.setOpacity(0);
                     queueItem.setMouseTransparent(false);
 
@@ -566,8 +566,8 @@ public class QueueBox extends VBox {
                 for(int i=0; i<menuController.selectedItems.size(); i++){
                     QueueItem queueItem = menuController.selectedItems.get(i);
                     if(i == 0){
-                        queueItem.setMinHeight(90);
-                        queueItem.setMaxHeight(90);
+                        queueItem.setMinHeight(QueueItem.height);
+                        queueItem.setMaxHeight(QueueItem.height);
                     }
                     else {
                         queueItem.setMinHeight(0);
@@ -584,8 +584,8 @@ public class QueueBox extends VBox {
         }
         else {
 
-            draggedNode.setMinHeight(90);
-            draggedNode.setMaxHeight(90);
+            draggedNode.setMinHeight(QueueItem.height);
+            draggedNode.setMaxHeight(QueueItem.height);
             draggedNode.setOpacity(0);
             draggedNode.setMouseTransparent(false);
 
@@ -628,6 +628,30 @@ public class QueueBox extends VBox {
 
         dragBoardMedia.clear();
         dragBoardFiles.clear();
+    }
+
+    public void extend(){
+        this.setPadding(new Insets(0, 50,20, 50));
+
+        QueueItem.height = 100;
+
+        for(QueueItem queueItem : this.queue){
+            queueItem.updateHeight();
+            queueItem.applyRoundStyling();
+        }
+
+
+    }
+
+    public void shrink(){
+        this.setPadding(new Insets(0, 0,20, 0));
+
+        QueueItem.height = 100;
+
+        for(QueueItem queueItem : this.queue){
+            queueItem.updateHeight();
+            queueItem.removeRoundStyling();
+        }
     }
 
 }

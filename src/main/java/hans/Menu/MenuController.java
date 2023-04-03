@@ -623,7 +623,7 @@ public class MenuController implements Initializable {
         queueBarButtonWrapper.setMinHeight(100);
         queueBarButtonWrapper.setPrefHeight(100);
 
-        queueBox.setPadding(new Insets(0, 50,20, 50));
+        queueBox.extend();
     }
 
     private void setMenuShrinked(){
@@ -636,8 +636,7 @@ public class MenuController implements Initializable {
         queueBarButtonWrapper.setMinHeight(80);
         queueBarButtonWrapper.setPrefHeight(80);
 
-        queueBox.setPadding(new Insets(0, 0,20, 0));
-
+        queueBox.shrink();
 
         menuBar.shrink();
     }

@@ -476,15 +476,15 @@ public class QueueItem extends GridPane {
             if(menuController.selectionActive.get() && menuController.selectedItems.contains(queueBox.draggedNode)){
                 for(int i=0; i<menuController.selectedItems.size(); i++){
                     QueueItem queueItem = menuController.selectedItems.get(i);
-                    queueItem.setMinHeight(90);
-                    queueItem.setMaxHeight(90);
+                    queueItem.setMinHeight(QueueItem.height);
+                    queueItem.setMaxHeight(QueueItem.height);
                     queueItem.setOpacity(1);
                     queueItem.setMouseTransparent(false);
                 }
             }
             else {
-                queueBox.draggedNode.setMinHeight(90);
-                queueBox.draggedNode.setMaxHeight(90);
+                queueBox.draggedNode.setMinHeight(QueueItem.height);
+                queueBox.draggedNode.setMaxHeight(QueueItem.height);
                 queueBox.draggedNode.setOpacity(1);
                 queueBox.draggedNode.setMouseTransparent(false);
             }
@@ -560,8 +560,6 @@ public class QueueItem extends GridPane {
         duration.setStyle("-fx-background-color: transparent;");
         duration.setMinHeight(0);
         duration.setMinWidth(0);
-
-        System.out.println(duration.getText().equals(null));
 
         videoTitle.setStyle("-fx-background-color: transparent;");
         videoTitle.setMinHeight(0);
@@ -806,5 +804,20 @@ public class QueueItem extends GridPane {
         if(mouseHover) this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
         else if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
         else this.setStyle("-fx-background-color: transparent;");
+    }
+
+    public void updateHeight(){
+        this.setMinHeight(QueueItem.height);
+        this.setMaxHeight(QueueItem.height);
+    }
+
+    public void applyRoundStyling(){
+        if(!this.getStyleClass().contains("queueItemRound")) this.getStyleClass().add("queueItemRound");
+        this.setPadding(new Insets(5, 10, 0 , 0));
+    }
+
+    public void removeRoundStyling(){
+        this.getStyleClass().remove("queueItemRound");
+        this.setPadding(new Insets(0, 10, 0 , 0));
     }
 }

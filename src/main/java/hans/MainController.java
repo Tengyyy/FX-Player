@@ -99,7 +99,7 @@ public class MainController implements Initializable {
 
     String snapshotDirectory;
 
-    StackPane videoTitleBox = new StackPane();
+    public StackPane videoTitleBox = new StackPane();
     public Label videoTitleLabel = new Label();
 
 
@@ -146,14 +146,13 @@ public class MainController implements Initializable {
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
         sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
 
-        videoImageViewWrapper.getChildren().add(2, captionsController.captionsBuffer);
-        videoImageViewWrapper.getChildren().add(3, settingsController.settingsBuffer);
+        videoImageViewWrapper.getChildren().add(5, captionsController.captionsBuffer);
+        videoImageViewWrapper.getChildren().add(6, settingsController.settingsBuffer);
 
 
         snapshotDirectory = System.getProperty("user.home").concat("/FXPlayer/screenshots/");
 
 
-        // declaring media control images
         menuSVG = new SVGPath();
         menuSVG.setContent(App.svgMap.get(MENU));
 
@@ -182,6 +181,7 @@ public class MainController implements Initializable {
 
         videoImageViewWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
         videoImageViewInnerWrapper.setStyle("-fx-background-color: rgb(0,0,0)");
+        videoImageViewInnerWrapper.setViewOrder(Double.MAX_VALUE);
 
 
         miniplayerActiveText.setText("Media active in miniplayer");
@@ -391,7 +391,7 @@ public class MainController implements Initializable {
         menuButton.setMaxSize(50, 50);
         menuButton.setBackground(Background.EMPTY);
         menuButton.setCursor(Cursor.HAND);
-        menuButton.setOnAction(e -> openMenu());
+        menuButton.setOnAction(e -> menuController.openMenu());
 
 
         menuIcon.setShape(menuSVG);
@@ -517,52 +517,6 @@ public class MainController implements Initializable {
         videoImageView.requestFocus();
     }
 
-
-    public void openMenu() {
-
-        if(menuController.menuInTransition
-                || controlBarController.durationSlider.isValueChanging()
-                || controlBarController.volumeSlider.isValueChanging()
-                || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging()
-                || captionsController.captionsBox.captionsDragActive
-                || settingsController.equalizerController.sliderActive) return;
-
-        menuController.queuePage.queueBox.requestFocus();
-
-        menuController.menuInTransition = true;
-        menuController.menuState = MenuState.QUEUE_OPEN;
-
-        if(menuController.queuePage.queueBox.activeItem.get() != null){
-            double heightViewPort = menuController.queuePage.queueScroll.getViewportBounds().getHeight();
-            double heightScrollPane = menuController.queuePage.queueScroll.getContent().getBoundsInLocal().getHeight();
-            double y = menuController.queuePage.queueBox.activeItem.get().getBoundsInParent().getMaxY();
-            if (y<(heightViewPort/2)){
-                menuController.queuePage.queueScroll.setVvalue(0);
-            }
-            else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
-                menuController.queuePage.queueScroll.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
-            }
-            else if( y>= (heightScrollPane-(heightViewPort/2))){
-                menuController.queuePage.queueScroll.setVvalue(1);
-            }
-        }
-
-        if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
-
-        controlBarController.controlBarWrapper.setMouseTransparent(true);
-
-        if(controlBarController.controlBarOpen) AnimationsClass.hideControls(controlBarController, captionsController, this);
-
-        videoImageViewWrapper.getScene().setCursor(Cursor.DEFAULT);
-
-        AnimationsClass.openMenu(menuController);
-
-        captionsController.captionsBox.captionsContainer.setMouseTransparent(true);
-
-
-    }
-
     public void handleDragEntered(DragEvent e){
         if(e.getDragboard().getFiles().isEmpty() || menuController.queuePage.queueBox.itemDragActive.get() || menuController.queuePage.queueBox.draggedNode != null) return;
         File file = e.getDragboard().getFiles().get(0);
@@ -574,7 +528,7 @@ public class MainController implements Initializable {
         if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
         if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
 
-        AnimationsClass.hideControls(controlBarController, captionsController, this);
+        AnimationsClass.hideControlsAndTitle(controlBarController, captionsController, this);
 
     }
 
@@ -1267,15 +1221,16 @@ public class MainController implements Initializable {
 
         if(addYoutubeVideoWindow.showing || menuController.queuePage.queueBox.itemDragActive.get()) return;
 
+        controlBarController.mouseEventTracker.move();
+
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         if(menuController.menuState != MenuState.CLOSED && !menuController.menuInTransition){
             menuController.closeMenu();
-            controlBarController.mouseEventTracker.move();
         }
-        else openMenu();
+        else menuController.openMenu();
     }
 
     public void pressS(){

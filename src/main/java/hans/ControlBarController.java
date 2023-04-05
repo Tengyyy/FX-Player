@@ -189,6 +189,8 @@ public class ControlBarController implements Initializable {
             nextVideoTooltip = new VideoTooltip(mainController, nextVideoButton, false);
         });
 
+        controlBarWrapper.setViewOrder(2);
+
         previousVideoSVG = new SVGPath();
         previousVideoSVG.setContent(App.svgMap.get(SVG.PREVIOUS_VIDEO));
 

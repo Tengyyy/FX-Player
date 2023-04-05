@@ -375,9 +375,6 @@ public class QueueBox extends VBox {
             queueItem.removeButtonTooltip = new ControlTooltip(menuController.mainController,"Remove video", queueItem.removeButton, 1000);
             queueItem.optionsButtonTooltip = new ControlTooltip(menuController.mainController, "Options", queueItem.optionsButton, 1000);
             queueItem.menuItemContextMenu = new QueueItemContextMenu(queueItem);
-
-            QueueItem.height = queueItem.getBoundsInParent().getHeight();
-
         });
     }
 
@@ -644,7 +641,7 @@ public class QueueBox extends VBox {
     public void shrink(){
         this.setPadding(new Insets(0, 0,20, 0));
 
-        QueueItem.height = 100;
+        QueueItem.height = 90;
 
         for(QueueItem queueItem : this.queue){
             queueItem.updateHeight();

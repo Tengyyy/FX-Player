@@ -2,11 +2,13 @@ package hans.Menu.Queue;
 
 import com.jfoenix.controls.JFXButton;
 import hans.App;
+import hans.Captions.CaptionsState;
 import hans.ControlTooltip;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.MenuController;
 import hans.Menu.QueueItemContextMenu;
 import hans.SVG;
+import hans.Settings.SettingsState;
 import hans.Utilities;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -143,6 +145,13 @@ public class QueuePage {
         shuffleToggle.setRipplerFill(Color.TRANSPARENT);
 
         shuffleToggle.setOnAction(e -> {
+
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+
             if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
             menuController.settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!menuController.settingsController.playbackOptionsController.shuffleTab.toggle.isSelected());
         });
@@ -196,6 +205,12 @@ public class QueuePage {
         });
 
         addOptionsButton.setOnAction(e -> {
+
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             if(addOptionsContextMenu.showing) addOptionsContextMenu.hide();
             else addOptionsContextMenu.showOptions(true);
         });
@@ -208,6 +223,11 @@ public class QueuePage {
         StackPane.setMargin(addButtonContainer, new Insets(0, 30, 0, 0));
 
         addButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
             openVideoChooser();
         });
@@ -228,6 +248,11 @@ public class QueuePage {
         clearQueueButton.setDisable(true);
 
         clearQueueButton.setOnAction((e) -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
             clearQueue();
         });
@@ -268,6 +293,11 @@ public class QueuePage {
         clearSelectionLabel.setOnMouseEntered(e -> clearSelectionLabel.setUnderline(true));
         clearSelectionLabel.setOnMouseExited(e -> clearSelectionLabel.setUnderline(false));
         clearSelectionLabel.setOnMouseClicked(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             while(!selectedItems.isEmpty()){
                 selectedItems.get(0).checkbox.setSelected(false);
             }
@@ -336,6 +366,11 @@ public class QueuePage {
         removeButton.setCursor(Cursor.HAND);
         removeButton.setGraphic(removeIcon);
         removeButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             while(!selectedItems.isEmpty()){
                 selectedItems.get(0).remove();
             }
@@ -390,13 +425,11 @@ public class QueuePage {
 
         menuController.queueWrapper.getChildren().addAll(queueBar, queueScroll);
 
-
         Platform.runLater(() -> {
             addOptionsContextMenu = new AddOptionsContextMenu(this);
             shuffleTooltip = new ControlTooltip(menuController.mainController,"Shuffle is off", shuffleToggle, 1000);
             addTooltip = new ControlTooltip(menuController.mainController,"Browse for files to add to the play queue", addButton, 1000);
             addOptionsTooltip = new ControlTooltip(menuController.mainController,"More options for adding media to the play queue", addOptionsButton, 1000);
-
         });
     }
 
@@ -406,7 +439,6 @@ public class QueuePage {
             double newValue = sb.getValue() + scrollVelocity;
             newValue = Math.min(newValue, 1.0);
             newValue = Math.max(newValue, 0.0);
-
 
             sb.setValue(newValue);
 

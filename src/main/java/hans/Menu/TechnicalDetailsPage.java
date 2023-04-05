@@ -2,8 +2,10 @@ package hans.Menu;
 
 import hans.AnimationsClass;
 import hans.App;
+import hans.Captions.CaptionsState;
 import hans.Menu.Queue.QueueItem;
 import hans.SVG;
+import hans.Settings.SettingsState;
 import hans.Shell32Util;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -68,7 +70,14 @@ public class TechnicalDetailsPage {
         backButton.setCursor(Cursor.HAND);
         backButton.setBackground(Background.EMPTY);
 
-        backButton.setOnAction(e -> exitTechnicalDetailsPage());
+        backButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+            exitTechnicalDetailsPage();
+        });
 
         backButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(backIcon, (Color) backIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
@@ -93,7 +102,14 @@ public class TechnicalDetailsPage {
         closeButton.setCursor(Cursor.HAND);
         closeButton.setBackground(Background.EMPTY);
 
-        closeButton.setOnAction(e -> menuController.closeMenu());
+        closeButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+            menuController.closeMenu();
+        });
 
         closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 

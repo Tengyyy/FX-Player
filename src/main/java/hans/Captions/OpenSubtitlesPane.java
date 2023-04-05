@@ -432,6 +432,9 @@ public class OpenSubtitlesPane {
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
             captionsController.clip.setHeight(captionsController.captionsHome.scrollPane.getPrefHeight());
+
+            imdbFieldBorder.setVisible(false);
+            titleFieldBorder.setVisible(false);
         });
 
         parallelTransition.play();
@@ -450,11 +453,17 @@ public class OpenSubtitlesPane {
 
         if(searchState == 0){
             if(!titleField.getText().isEmpty()) search();
-            else titleFieldBorder.setVisible(true);
+            else {
+                titleFieldBorder.setVisible(true);
+                titleField.requestFocus();
+            }
         }
         else if(searchState == 1){
             if(!imdbField.getText().isEmpty()) search();
-            else imdbFieldBorder.setVisible(true);
+            else {
+                imdbFieldBorder.setVisible(true);
+                imdbField.requestFocus();
+            }
         }
         else if(searchState == 2){
             if(captionsController.menuController.queuePage.queueBox.activeItem.get() != null) search();

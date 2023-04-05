@@ -18,10 +18,6 @@ public class AnimationsClass {
 
     public static final double ANIMATION_SPEED = 200;
 
-    static ParallelTransition nextVideoNotificationOnTransition;
-    static ParallelTransition nextVideoNotificationOffTransition;
-
-
     public static void displayControls(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
 
         controlBarController.controlBarOpen = true;
@@ -39,8 +35,8 @@ public class AnimationsClass {
         else {
             captionsTransition.setToY(captionsController.captionsBox.captionsContainer.getTranslateY());
         }
-        FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarWrapper);
-        controlBarFade.setFromValue(controlBarController.controlBarWrapper.getOpacity());
+        FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBar);
+        controlBarFade.setFromValue(controlBarController.controlBar.getOpacity());
         controlBarFade.setToValue(1);
         controlBarFade.setCycleCount(1);
 
@@ -49,27 +45,13 @@ public class AnimationsClass {
         controlBarBackgroundFade.setToValue(1);
         controlBarBackgroundFade.setCycleCount(1);
 
-
-        mainController.videoTitleBox.setVisible(true);
-        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBox);
-        videoTitleTransition.setFromValue(mainController.videoTitleBox.getOpacity());
-        videoTitleTransition.setToValue(1);
-
-        mainController.videoTitleBackground.setVisible(true);
-        FadeTransition videoTitleBackgroundTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBackground);
-        videoTitleTransition.setFromValue(mainController.videoTitleBackground.getOpacity());
-        videoTitleTransition.setToValue(1);
-
-
-        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, controlBarBackgroundFade, videoTitleTransition, videoTitleBackgroundTransition);
+        ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, controlBarBackgroundFade);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
 
         parallelTransition.play();
-
-        controlBarController.mainController.menuButton.setVisible(true);
     }
 
-    public static void hideControls(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
+    public static void hideControlsAndTitle(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
 
         if(captionsController.captionsBox.captionsTransition != null && captionsController.captionsBox.captionsTransition.getStatus() == Animation.Status.RUNNING) captionsController.captionsBox.captionsTransition.stop();
 
@@ -87,8 +69,8 @@ public class AnimationsClass {
             captionsTransition.setToY(captionsController.captionsBox.captionsContainer.getTranslateY());
         }
 
-        FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBarWrapper);
-        controlBarFade.setFromValue(controlBarController.controlBarWrapper.getOpacity());
+        FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBar);
+        controlBarFade.setFromValue(controlBarController.controlBar.getOpacity());
         controlBarFade.setToValue(0);
         controlBarFade.setCycleCount(1);
 
@@ -117,8 +99,49 @@ public class AnimationsClass {
             captionsController.captionsBox.captionsAnimating = false;
             captionsController.captionsBox.captionsContainer.setStyle("-fx-background-color: transparent;");
         });
+
+        parallelTransition.play();
+    }
+
+    public static void displayTitle(MainController mainController){
+        mainController.videoTitleBox.setVisible(true);
+        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBox);
+        videoTitleTransition.setFromValue(mainController.videoTitleBox.getOpacity());
+        videoTitleTransition.setToValue(1);
+
+        mainController.videoTitleBackground.setVisible(true);
+        FadeTransition videoTitleBackgroundTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBackground);
+        videoTitleBackgroundTransition.setFromValue(mainController.videoTitleBackground.getOpacity());
+        videoTitleBackgroundTransition.setToValue(1);
+
+        ParallelTransition parallelTransition = new ParallelTransition(videoTitleTransition, videoTitleBackgroundTransition);
+        parallelTransition.setInterpolator(Interpolator.LINEAR);
+
         parallelTransition.play();
 
+        mainController.menuButton.setVisible(true);
+
+    }
+
+    public static void hideTitle(MainController mainController){
+        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBox);
+        videoTitleTransition.setFromValue(mainController.videoTitleBox.getOpacity());
+        videoTitleTransition.setToValue(0);
+
+        FadeTransition videoTitleBackgroundTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBackground);
+        videoTitleTransition.setFromValue(mainController.videoTitleBackground.getOpacity());
+        videoTitleTransition.setToValue(0);
+
+
+
+        ParallelTransition parallelTransition = new ParallelTransition(videoTitleTransition, videoTitleBackgroundTransition);
+        parallelTransition.setInterpolator(Interpolator.LINEAR);
+        parallelTransition.setOnFinished((e) -> {
+            mainController.videoTitleBox.setVisible(false);
+            mainController.videoTitleBackground.setVisible(false);
+        });
+
+        parallelTransition.play();
     }
 
 
@@ -194,48 +217,6 @@ public class AnimationsClass {
         return sequentialTransition;
     }
 
-    public static void openMenu(MenuController menuController){
-
-        TranslateTransition openMenu = new TranslateTransition(Duration.millis(300), menuController.menu);
-        openMenu.setFromX(menuController.menu.getTranslateX());
-        openMenu.setToX(0);
-        openMenu.setInterpolator(Interpolator.EASE_OUT);
-
-        openMenu.setOnFinished((e) -> {
-            menuController.menu.setMouseTransparent(false);
-            menuController.menuInTransition = false;
-        });
-
-        openMenu.play();
-
-    }
-
-    public static void closeMenu(MenuController menuController) {
-
-        TranslateTransition closeMenu = new TranslateTransition(Duration.millis(300), menuController.menu);
-        closeMenu.setFromX(menuController.menu.getTranslateX());
-        closeMenu.setToX(-menuController.menu.getWidth());
-
-        closeMenu.setOnFinished((e) -> {
-            //TODO: only reset the variables relevant to the current menu state
-            menuController.menuInTransition = false;
-            menuController.metadataEditScroll.setVisible(false);
-            menuController.technicalDetailsScroll.setVisible(false);
-            menuController.chapterScroll.setVisible(false);
-            menuController.queueWrapper.setVisible(true);
-
-            menuController.metadataEditPage.metadataEditItem = null;
-            menuController.metadataEditPage.textBox.getChildren().clear();
-            menuController.metadataEditPage.imageView.setImage(null);
-            menuController.metadataEditPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
-
-            menuController.technicalDetailsPage.textBox.getChildren().clear();
-            menuController.technicalDetailsPage.imageView.setImage(null);
-            menuController.technicalDetailsPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
-        });
-        closeMenu.play();
-    }
-
     public static FadeTransition fadeIn(Node child){
         Duration animationDuration = Duration.millis(ANIMATION_SPEED);
         FadeTransition fadeTransition = new FadeTransition(animationDuration, child);
@@ -286,6 +267,7 @@ public class AnimationsClass {
 
         tr.play();
     }
+
 
 
     public static void animateTextColor(Label label, Color toColor, int duration) {

@@ -98,7 +98,7 @@ public class SettingsController {
 
     public void openSettings(){
 
-        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || menuController.menuState != MenuState.CLOSED || captionsController.captionsBox.captionsDragActive || captionsController.animating.get()) return;
+        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || (menuController.menuState != MenuState.CLOSED && !menuController.extended)|| captionsController.captionsBox.captionsDragActive || captionsController.animating.get()) return;
 
         mainController.videoImageView.requestFocus();
         if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
@@ -121,6 +121,7 @@ public class SettingsController {
         controlBarController.settingsButton.setOnMouseEntered(null);
         controlBarController.miniplayerButton.setOnMouseEntered(null);
         controlBarController.fullScreenButton.setOnMouseEntered(null);
+
 
         settingsBuffer.setMouseTransparent(false);
         settingsBackground.setVisible(true);

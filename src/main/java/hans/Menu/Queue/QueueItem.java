@@ -3,10 +3,12 @@ package hans.Menu.Queue;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
+import hans.Captions.CaptionsState;
 import hans.MediaItems.MediaItem;
 import hans.Menu.Columns;
 import hans.Menu.MenuController;
 import hans.Menu.QueueItemContextMenu;
+import hans.Settings.SettingsState;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.animation.Transition;
 import javafx.beans.property.BooleanProperty;
@@ -222,6 +224,12 @@ public class QueueItem extends GridPane {
         checkbox.setText(null);
         checkbox.setContentDisposition(ContentDisplay.CENTER);
         checkbox.setTextExpand(false);
+        checkbox.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+        });
 
         isSelected.bind(checkbox.selectedProperty());
         isSelected.addListener((observableValue, oldValue, newValue) -> {
@@ -355,12 +363,22 @@ public class QueueItem extends GridPane {
         optionsButton.setText(null);
 
         optionsButton.setOnAction((e) -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing && !queuePage.activeQueueItemContextMenu.equals(menuItemContextMenu)) queuePage.activeQueueItemContextMenu.hide();
             if(menuItemContextMenu.showing) menuItemContextMenu.hide();
             else menuItemContextMenu.showOptions(true);
         });
 
         this.setOnMouseClicked(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
             else if (e.getButton() == MouseButton.PRIMARY){
                 if(!queuePage.selectionActive.get() && !isActive.get()) play();
@@ -385,7 +403,9 @@ public class QueueItem extends GridPane {
         this.add(removeButtonWrapper, 3, 0);
         this.add(optionsButtonWrapper, 4, 0);
 
-        this.setPadding(new Insets(0, 10, 0, 0));
+        if(!menuController.extended) this.setPadding(new Insets(0, 10, 0, 0));
+        else applyRoundStyling();
+
         this.setViewOrder(1);
 
         this.setOnMouseEntered((e) -> {
@@ -507,6 +527,12 @@ public class QueueItem extends GridPane {
 
         playButton.setOnAction((e) -> {
 
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+
             if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
 
             if(!this.isActive.get()) return;
@@ -528,6 +554,13 @@ public class QueueItem extends GridPane {
         removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
 
         removeButton.setOnAction((e) -> {
+
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+
             if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
             remove();
         });

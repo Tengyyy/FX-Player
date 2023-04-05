@@ -1,6 +1,10 @@
 package hans.Menu.MetadataEdit;
 
 
+import hans.Captions.CaptionsState;
+import hans.Settings.SettingsState;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -31,10 +35,15 @@ public class ComboBoxItem extends VBox{
 
         comboBox.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
 
-        comboBox.setValue(initialValue);
-        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            metadataEditPage.mediaItem.changesMade.set(true);
+        comboBox.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
+            if(newValue && metadataEditPage.menuController.extended){
+                if(metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) metadataEditPage.menuController.captionsController.closeCaptions();
+                if(metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) metadataEditPage.menuController.settingsController.closeSettings();
+            }
         });
+
+        comboBox.setValue(initialValue);
+        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> metadataEditPage.mediaItem.changesMade.set(true));
 
         this.getChildren().addAll(label, comboBox);
         if(add) parent.getChildren().add(this);

@@ -1,9 +1,9 @@
 package hans.Menu.MetadataEdit;
 
-import hans.MediaItems.MediaItem;
 import javafx.scene.layout.VBox;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FlacEditItem implements MetadataEditItem{
 

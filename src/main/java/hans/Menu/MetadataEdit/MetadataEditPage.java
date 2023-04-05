@@ -2,10 +2,12 @@ package hans.Menu.MetadataEdit;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
+import hans.Captions.CaptionsState;
 import hans.MediaItems.MediaItem;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.*;
 import hans.Menu.Queue.QueueItem;
+import hans.Settings.SettingsState;
 import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -157,7 +159,14 @@ public class MetadataEditPage {
         backButton.setCursor(Cursor.HAND);
         backButton.setBackground(Background.EMPTY);
 
-        backButton.setOnAction(e -> exitMetadataEditPage());
+        backButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+            exitMetadataEditPage();
+        });
         backButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(backIcon, (Color) backIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
         backButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> AnimationsClass.animateBackgroundColor(backIcon, (Color) backIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200));
@@ -181,7 +190,14 @@ public class MetadataEditPage {
         closeButton.setCursor(Cursor.HAND);
         closeButton.setBackground(Background.EMPTY);
 
-        closeButton.setOnAction(e -> menuController.closeMenu());
+        closeButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+            menuController.closeMenu();
+        });
 
         closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
@@ -248,11 +264,11 @@ public class MetadataEditPage {
         editImageButton.setCursor(Cursor.HAND);
         editImageButton.disableProperty().bind(fieldsDisabledProperty);
 
+        editImageButton.setOnAction(e -> editImageButtonClick());
+
         Platform.runLater(() -> {
             editImageTooltip = new ControlTooltip(menuController.mainController, "Edit cover", editImageButton, 1000);
             editImagePopUp = new EditImagePopUp(this);
-
-            editImageButton.setOnAction(e -> editImageButtonClick());
         });
 
         content.setAlignment(Pos.TOP_CENTER);
@@ -288,7 +304,14 @@ public class MetadataEditPage {
         applyButton.getStyleClass().add("mainButton");
         applyButton.setCursor(Cursor.HAND);
         applyButton.setDisable(true);
-        applyButton.setOnAction(e -> saveMetadata());
+        applyButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+            saveMetadata();
+        });
         applyButton.setDisable(true);
 
         saveIcon.setShape(saveIconSVG);
@@ -304,6 +327,11 @@ public class MetadataEditPage {
         discardButton.setDisable(true);
 
         discardButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             if(mediaItem.metadataEditActive.get()) return;
             reloadMetadata();
         });
@@ -403,7 +431,7 @@ public class MetadataEditPage {
         menuController.metadataEditScroll.setVisible(true);
         menuController.queueWrapper.setVisible(false);
 
-        if(menuController.menuState == MenuState.CLOSED) menuController.mainController.openMenu();
+        if(menuController.menuState == MenuState.CLOSED) menuController.openMenu();
 
         menuController.menuState = MenuState.METADATA_EDIT_OPEN;
     }
@@ -441,7 +469,14 @@ public class MetadataEditPage {
 
     private void enableImageEdit(){
         imageEditEnabled = true;
-        editImageButton.setOnAction(e -> editImageButtonClick());
+        editImageButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+            editImageButtonClick();
+        });
         editImageIcon.setShape(editIconSVG);
         editImageTooltip.updateDelay(Duration.seconds(1));
         editImageTooltip.updateText("Edit cover");
@@ -449,13 +484,19 @@ public class MetadataEditPage {
 
     private void disableImageEdit(){
         imageEditEnabled = false;
-        editImageButton.setOnAction(null);
+        editImageButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+        });
         editImageIcon.setShape(editIconOffSVG);
         editImageTooltip.updateDelay(Duration.ZERO);
         editImageTooltip.updateText("Cover editing unavailable for this media format");
     }
 
     private void editImageButtonClick(){
+
         if(mediaItem.metadataEditActive.get()) return;
         if(mediaItem.newCoverImage != null || (mediaItem.getCover() != null && !mediaItem.coverRemoved)){
             if(editImagePopUp.isShowing()) editImagePopUp.hide();

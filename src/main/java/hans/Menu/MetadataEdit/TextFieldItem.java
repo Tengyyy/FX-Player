@@ -1,6 +1,8 @@
 package hans.Menu.MetadataEdit;
 
+import hans.Captions.CaptionsState;
 import hans.Menu.ExpandableTextArea;
+import hans.Settings.SettingsState;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -32,6 +34,14 @@ public class TextFieldItem extends VBox{
         textField.setPrefHeight(36);
         textField.setMinHeight(36);
         textField.setMaxHeight(36);
+
+        textField.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
+            if(newValue && metadataEditPage.menuController.extended){
+                if(metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) metadataEditPage.menuController.captionsController.closeCaptions();
+                if(metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) metadataEditPage.menuController.settingsController.closeSettings();
+            }
+
+        });
 
         this.getChildren().addAll(label, textField);
         if(add) parent.getChildren().add(this);

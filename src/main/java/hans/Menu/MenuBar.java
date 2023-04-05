@@ -1,7 +1,9 @@
 package hans.Menu;
 
 import hans.App;
+import hans.Captions.CaptionsState;
 import hans.SVG;
+import hans.Settings.SettingsState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
@@ -33,6 +35,11 @@ public class MenuBar {
         settingsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.SETTINGS), 19, 19, "Settings", "Settings");
 
         queueButton.button.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             historyButton.setInactive();
             musicLibraryButton.setInactive();
             playlistsButton.setInactive();
@@ -43,6 +50,11 @@ public class MenuBar {
         queueButton.setActive();
 
         historyButton.button.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             historyButton.setActive();
             musicLibraryButton.setInactive();
             playlistsButton.setInactive();
@@ -51,6 +63,11 @@ public class MenuBar {
         });
 
         musicLibraryButton.button.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             historyButton.setInactive();
             musicLibraryButton.setActive();
             playlistsButton.setInactive();
@@ -59,6 +76,11 @@ public class MenuBar {
         });
 
         playlistsButton.button.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             historyButton.setInactive();
             musicLibraryButton.setInactive();
             playlistsButton.setActive();
@@ -67,6 +89,11 @@ public class MenuBar {
         });
 
         settingsButton.button.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
             historyButton.setInactive();
             musicLibraryButton.setInactive();
             playlistsButton.setInactive();

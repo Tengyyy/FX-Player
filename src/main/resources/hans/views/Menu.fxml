@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="menu" minWidth="350.0" prefWidth="400.0" style="-fx-background-color: transparent;" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Menu.MenuController">
+<StackPane fx:id="menu" minWidth="350.0" prefWidth="400.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Menu.MenuController">
    <children>
       <StackPane id="menuContent" fx:id="menuContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" StackPane.alignment="CENTER">
          <children>

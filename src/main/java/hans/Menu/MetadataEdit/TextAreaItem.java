@@ -1,6 +1,8 @@
 package hans.Menu.MetadataEdit;
 
+import hans.Captions.CaptionsState;
 import hans.Menu.ExpandableTextArea;
+import hans.Settings.SettingsState;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -28,6 +30,14 @@ public class TextAreaItem extends VBox{
             metadataEditPage.mediaItem.changesMade.set(true);
         });
         textArea.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+
+        textArea.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
+            if(newValue && metadataEditPage.menuController.extended){
+                if(metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) metadataEditPage.menuController.captionsController.closeCaptions();
+                if(metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) metadataEditPage.menuController.settingsController.closeSettings();
+            }
+
+        });
 
 
         this.getChildren().addAll(label, textArea);

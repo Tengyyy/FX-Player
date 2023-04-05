@@ -28,9 +28,9 @@
                </children>
             </StackPane>
               <fx:include fx:id="controlBar" minWidth="601.0" source="ControlBar.fxml" StackPane.alignment="BOTTOM_RIGHT" />
+              <fx:include fx:id="menu" minWidth="0.0" prefWidth="0.0" source="Menu.fxml" StackPane.alignment="CENTER_LEFT" />
          </children>
       </StackPane>
-        <fx:include fx:id="menu" minWidth="0.0" prefWidth="0.0" source="Menu.fxml" StackPane.alignment="CENTER_LEFT" />
       <StackPane fx:id="popupWindowContainer" prefHeight="150.0" prefWidth="200.0" />
    </children>
    <stylesheets>

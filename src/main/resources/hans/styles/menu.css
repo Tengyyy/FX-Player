@@ -27,8 +27,12 @@
     -fx-border-color: rgb(50, 50,50);
 }
 
-#menuContent {
+#menu {
     -fx-background-color: rgba(0,0,0,0.8);
+}
+
+#menuContent {
+    -fx-background-color: transparent;
 }
 
 

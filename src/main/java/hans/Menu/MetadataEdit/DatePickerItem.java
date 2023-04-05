@@ -1,5 +1,9 @@
 package hans.Menu.MetadataEdit;
 
+import hans.Captions.CaptionsState;
+import hans.Settings.SettingsState;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -38,6 +42,15 @@ public class DatePickerItem extends VBox{
         }
         catch (DateTimeParseException ignored){
         }
+
+        datePicker.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
+
+            if(newValue && metadataEditPage.menuController.extended){
+                if(metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) metadataEditPage.menuController.captionsController.closeCaptions();
+                if(metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) metadataEditPage.menuController.settingsController.closeSettings();
+            }
+
+        });
 
         datePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {
             metadataEditPage.mediaItem.changesMade.set(true);

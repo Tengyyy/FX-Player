@@ -2,9 +2,11 @@ package hans.Chapters;
 
 import hans.AnimationsClass;
 import hans.App;
+import hans.Captions.CaptionsState;
 import hans.Menu.MenuController;
 import hans.Menu.MenuState;
 import hans.SVG;
+import hans.Settings.SettingsState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -53,7 +55,14 @@ public class ChapterPage {
         closeButton.setCursor(Cursor.HAND);
         closeButton.setBackground(Background.EMPTY);
 
-        closeButton.setOnAction(e -> menuController.closeMenu());
+        closeButton.setOnAction(e -> {
+            if(menuController.extended){
+                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            }
+
+            menuController.closeMenu();
+        });
 
         closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
 
@@ -88,7 +97,7 @@ public class ChapterPage {
         menuController.chapterScroll.setVisible(true);
         menuController.queueWrapper.setVisible(false);
 
-        if(menuController.menuState == MenuState.CLOSED) menuController.mainController.openMenu();
+        if(menuController.menuState == MenuState.CLOSED) menuController.openMenu();
 
         menuController.menuState = MenuState.CHAPTERS_OPEN;
     }

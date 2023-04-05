@@ -1,5 +1,9 @@
 package hans.Menu.MetadataEdit;
 
+import hans.Captions.CaptionsState;
+import hans.Settings.SettingsState;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 
@@ -18,6 +22,14 @@ public class NumberSpinner{
         spinner.setPrefHeight(36);
         spinner.setMaxHeight(36);
         spinner.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+
+        spinner.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
+            if(newValue && metadataEditPage.menuController.extended){
+                if(metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) metadataEditPage.menuController.captionsController.closeCaptions();
+                if(metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) metadataEditPage.menuController.settingsController.closeSettings();
+            }
+
+        });
 
 
         spinner.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {

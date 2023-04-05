@@ -146,7 +146,7 @@ public class App extends Application {
             });
 
 
-            primaryStage.setMinHeight(350);
+            primaryStage.setMinHeight(450);
             primaryStage.setMinWidth(705);
 
             App.stage = primaryStage;

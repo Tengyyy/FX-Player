@@ -98,7 +98,7 @@ public class SettingsController {
 
     public void openSettings(){
 
-        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || (menuController.menuState != MenuState.CLOSED && !menuController.extended)|| captionsController.captionsBox.captionsDragActive || captionsController.animating.get()) return;
+        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || (menuController.menuState != MenuState.CLOSED && !menuController.extended.get())|| captionsController.captionsBox.captionsDragActive || captionsController.animating.get()) return;
 
         mainController.videoImageView.requestFocus();
         if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();

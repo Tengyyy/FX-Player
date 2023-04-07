@@ -200,7 +200,7 @@ public class MainController implements Initializable {
 
             videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 double newWidth = Math.max(menuController.MIN_WIDTH, (newValue.doubleValue() + 30)/2);
-                if(!menuController.extended && newWidth < menuController.menu.getMaxWidth()){
+                if(!menuController.extended.get() && newWidth < menuController.menu.getMaxWidth()){
                     menuController.menu.setMaxWidth(newWidth);
                     menuController.menu.setPrefWidth(newWidth);
                 }

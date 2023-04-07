@@ -31,16 +31,6 @@ public class TechnicalDetailsPage {
 
     MenuController menuController;
 
-    Button closeButton = new Button();
-    Region closeIcon = new Region();
-
-    StackPane backButtonPane = new StackPane();
-    Button backButton = new Button();
-    Region backIcon = new Region();
-
-    SVGPath closeIconSVG = new SVGPath();
-    SVGPath backIconSVG = new SVGPath();
-
     StackPane closeButtonBar = new StackPane();
     StackPane closeButtonPane = new StackPane();
 
@@ -56,73 +46,12 @@ public class TechnicalDetailsPage {
 
         this.menuController = menuController;
 
-
-        backIconSVG.setContent(App.svgMap.get(SVG.ARROW_LEFT));
-        backIcon.setShape(backIconSVG);
-        backIcon.setPrefSize(20, 20);
-        backIcon.setMaxSize(20, 20);
-        backIcon.setId("backIcon");
-        backIcon.setMouseTransparent(true);
-
-
-        backButton.setPrefSize(40, 40);
-        backButton.setMaxSize(40, 40);
-        backButton.setCursor(Cursor.HAND);
-        backButton.setBackground(Background.EMPTY);
-
-        backButton.setOnAction(e -> {
-            if(menuController.extended){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
-            }
-
-            exitTechnicalDetailsPage();
-        });
-
-        backButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(backIcon, (Color) backIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
-
-        backButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> AnimationsClass.animateBackgroundColor(backIcon, (Color) backIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200));
-
-        backButtonPane.setPrefSize(50, 50);
-        backButtonPane.setMaxSize(50, 50);
-        backButtonPane.getChildren().addAll(backButton, backIcon);
-        StackPane.setAlignment(backButtonPane, Pos.CENTER_LEFT);
-
-
-
-        closeIconSVG.setContent(App.svgMap.get(SVG.CLOSE));
-        closeIcon.setShape(closeIconSVG);
-        closeIcon.setPrefSize(20, 20);
-        closeIcon.setMaxSize(20, 20);
-        closeIcon.setId("closeIcon");
-        closeIcon.setMouseTransparent(true);
-
-        closeButton.setPrefSize(40, 40);
-        closeButton.setMaxSize(40, 40);
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setBackground(Background.EMPTY);
-
-        closeButton.setOnAction(e -> {
-            if(menuController.extended){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
-            }
-
-            menuController.closeMenu();
-        });
-
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
-
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> AnimationsClass.animateBackgroundColor(closeIcon, (Color) closeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200));
-
         closeButtonPane.setPrefSize(50, 50);
         closeButtonPane.setMaxSize(50, 50);
-        closeButtonPane.getChildren().addAll(closeButton, closeIcon);
         StackPane.setAlignment(closeButtonPane, Pos.CENTER_RIGHT);
 
         closeButtonBar.setPrefHeight(60);
         closeButtonBar.setMinHeight(60);
-        closeButtonBar.getChildren().addAll(backButtonPane, closeButtonPane);
 
         imageViewWrapper.getChildren().add(imageViewContainer);
         imageViewWrapper.setPadding(new Insets(20, 0, 50, 0));

@@ -144,10 +144,8 @@ public class ChapterItem extends HBox {
         });
 
         this.setOnMouseClicked(e -> {
-            if(chapterController.menuController.extended){
-                if(chapterController.menuController.captionsController.captionsState != CaptionsState.CLOSED) chapterController.menuController.captionsController.closeCaptions();
-                if(chapterController.menuController.settingsController.settingsState != SettingsState.CLOSED) chapterController.menuController.settingsController.closeSettings();
-            }
+            if(chapterController.menuController.captionsController.captionsState != CaptionsState.CLOSED) chapterController.menuController.captionsController.closeCaptions();
+            if(chapterController.menuController.settingsController.settingsState != SettingsState.CLOSED) chapterController.menuController.settingsController.closeSettings();
 
             chapterController.setActiveChapter(this.index);
             chapterController.controlBarController.durationSlider.setValue(startTime.toSeconds());

@@ -32,7 +32,7 @@ public class TextAreaItem extends VBox{
         textArea.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
 
         textArea.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
-            if(newValue && metadataEditPage.menuController.extended){
+            if(newValue){
                 if(metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) metadataEditPage.menuController.captionsController.closeCaptions();
                 if(metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) metadataEditPage.menuController.settingsController.closeSettings();
             }

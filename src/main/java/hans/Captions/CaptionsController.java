@@ -284,7 +284,7 @@ public class CaptionsController {
 
     public void openCaptions(){
 
-        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || (menuController.menuState != MenuState.CLOSED && !menuController.extended) || captionsBox.captionsDragActive || settingsController.animating.get() || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || settingsController.equalizerController.sliderActive) return;
+        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || (menuController.menuState != MenuState.CLOSED && !menuController.extended.get()) || captionsBox.captionsDragActive || settingsController.animating.get() || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || settingsController.equalizerController.sliderActive) return;
 
         mainController.videoImageView.requestFocus();
 

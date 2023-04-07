@@ -24,7 +24,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
@@ -45,10 +44,6 @@ import java.util.List;
 public class QueuePage {
 
     MenuController menuController;
-
-    SVGPath collapseSVG = new SVGPath();
-    Region collapseIcon = new Region();
-    public Button collapseButton = new Button();
 
     VBox queueWrapper = new VBox();
     VBox queueBar = new VBox();
@@ -114,24 +109,6 @@ public class QueuePage {
 
         queueBox = new QueueBox(menuController, this);
 
-
-        collapseSVG.setContent(App.svgMap.get(SVG.COLLAPSE_LEFT));
-        collapseIcon.setShape(collapseSVG);
-        collapseIcon.setPrefSize(20, 20);
-        collapseIcon.setMaxSize(20, 20);
-        collapseIcon.getStyleClass().addAll("menuIcon", "graphic");
-
-        collapseButton.setPrefSize(40, 40);
-        collapseButton.setMaxSize(40, 40);
-        collapseButton.setCursor(Cursor.HAND);
-        collapseButton.getStyleClass().add("menuBarButton");
-        collapseButton.setGraphic(collapseIcon);
-        collapseButton.setVisible(false);
-        collapseButton.setOnAction(e -> menuController.shrinkMenu());
-
-        StackPane.setAlignment(collapseButton, Pos.TOP_RIGHT);
-        StackPane.setMargin(collapseButton, new Insets(20, 50 , 0, 0));
-
         queueWrapper.setBackground(Background.EMPTY);
 
         queueBar.setFillWidth(true);
@@ -174,11 +151,8 @@ public class QueuePage {
 
         shuffleToggle.setOnAction(e -> {
 
-            if(menuController.extended){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
-            }
-
+            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
 
             if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
             menuController.settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!menuController.settingsController.playbackOptionsController.shuffleTab.toggle.isSelected());
@@ -234,10 +208,9 @@ public class QueuePage {
 
         addOptionsButton.setOnAction(e -> {
 
-            if(menuController.extended){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
-            }
+            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+
 
             if(addOptionsContextMenu.showing) addOptionsContextMenu.hide();
             else addOptionsContextMenu.showOptions(true);
@@ -251,10 +224,8 @@ public class QueuePage {
         StackPane.setMargin(addButtonContainer, new Insets(0, 30, 0, 0));
 
         addButton.setOnAction(e -> {
-            if(menuController.extended){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
-            }
+            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
 
             if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
             openVideoChooser();
@@ -276,10 +247,8 @@ public class QueuePage {
         clearQueueButton.setDisable(true);
 
         clearQueueButton.setOnAction((e) -> {
-            if(menuController.extended){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
-            }
+            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
 
             if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
             clearQueue();
@@ -321,10 +290,8 @@ public class QueuePage {
         clearSelectionLabel.setOnMouseEntered(e -> clearSelectionLabel.setUnderline(true));
         clearSelectionLabel.setOnMouseExited(e -> clearSelectionLabel.setUnderline(false));
         clearSelectionLabel.setOnMouseClicked(e -> {
-            if(menuController.extended){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
-            }
+            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
 
             while(!selectedItems.isEmpty()){
                 selectedItems.get(0).checkbox.setSelected(false);
@@ -394,10 +361,8 @@ public class QueuePage {
         removeButton.setCursor(Cursor.HAND);
         removeButton.setGraphic(removeIcon);
         removeButton.setOnAction(e -> {
-            if(menuController.extended){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
-            }
+            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
+            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
 
             while(!selectedItems.isEmpty()){
                 selectedItems.get(0).remove();
@@ -452,7 +417,7 @@ public class QueuePage {
         lowerBottomBound.bind(queueScroll.heightProperty().subtract(80));
 
         queueWrapper.getChildren().addAll(queueBar, queueScroll);
-        menuController.queueContainer.getChildren().addAll(queueWrapper, collapseButton);
+        menuController.queueContainer.getChildren().add(queueWrapper);
 
         Platform.runLater(() -> {
             addOptionsContextMenu = new AddOptionsContextMenu(this);

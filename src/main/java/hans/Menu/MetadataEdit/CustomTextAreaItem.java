@@ -117,10 +117,8 @@ public class CustomTextAreaItem extends VBox{
 
         keyField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                if(otherEditItem.metadataEditPage.menuController.extended){
                     if(otherEditItem.metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) otherEditItem.metadataEditPage.menuController.captionsController.closeCaptions();
                     if(otherEditItem.metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) otherEditItem.metadataEditPage.menuController.settingsController.closeSettings();
-                }
 
                 removeEditButton();
             }

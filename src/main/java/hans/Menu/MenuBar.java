@@ -35,7 +35,7 @@ public class MenuBar {
         settingsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.SETTINGS), 19, 19, "Settings", "Settings");
 
         queueButton.button.setOnAction(e -> {
-            if(menuController.extended){
+            if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
@@ -50,7 +50,7 @@ public class MenuBar {
         queueButton.setActive();
 
         historyButton.button.setOnAction(e -> {
-            if(menuController.extended){
+            if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
@@ -63,7 +63,7 @@ public class MenuBar {
         });
 
         musicLibraryButton.button.setOnAction(e -> {
-            if(menuController.extended){
+            if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
@@ -76,7 +76,7 @@ public class MenuBar {
         });
 
         playlistsButton.button.setOnAction(e -> {
-            if(menuController.extended){
+            if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
@@ -89,7 +89,7 @@ public class MenuBar {
         });
 
         settingsButton.button.setOnAction(e -> {
-            if(menuController.extended){
+            if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
@@ -113,6 +113,7 @@ public class MenuBar {
     }
 
     public void extend(){
+        StackPane.setMargin(menuController.menuContent, new Insets(0, 0, 0, 300));
         sideBar.setPrefWidth(300);
 
         queueButton.extend();
@@ -123,6 +124,7 @@ public class MenuBar {
     }
 
     public void shrink(){
+        StackPane.setMargin(menuController.menuContent, new Insets(0, 0, 0, 50));
         sideBar.setPrefWidth(50);
 
         queueButton.shrink();

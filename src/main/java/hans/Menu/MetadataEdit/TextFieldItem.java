@@ -36,7 +36,7 @@ public class TextFieldItem extends VBox{
         textField.setMaxHeight(36);
 
         textField.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
-            if(newValue && metadataEditPage.menuController.extended){
+            if(newValue){
                 if(metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) metadataEditPage.menuController.captionsController.closeCaptions();
                 if(metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) metadataEditPage.menuController.settingsController.closeSettings();
             }

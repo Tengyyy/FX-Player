@@ -78,7 +78,7 @@ public class ControlTooltip extends Tooltip {
             this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMinX() + nodeMiddleX - tooltipMiddle)), bounds.getMinY() - tooltipHeight - 10);
         }
         else if(tooltipType == TooltipType.MENUBAR_TOOLTIP){
-            this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMaxX() + 5)), bounds.getMinY() + (nodeMiddleY - (tooltipHeight-18)/2));
+            this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMaxX() + 10)), bounds.getMinY() + (nodeMiddleY - (tooltipHeight-18)/2));
         }
         else if(tooltipType == TooltipType.MENU_TOOLTIP){
             this.show(tooltipParent, Math.max(minX, Math.min(maxX, bounds.getMinX() + nodeMiddleX - tooltipMiddle)), bounds.getMaxY() + 10);

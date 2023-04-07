@@ -190,7 +190,7 @@ public class ControlBarController implements Initializable {
         });
 
         controlBarWrapper.setViewOrder(2);
-        controlBarWrapper.setId("controlBarWrapper");
+        controlBarWrapper.getStyleClass().add("controlBarWrapper");
 
         previousVideoSVG = new SVGPath();
         previousVideoSVG.setContent(App.svgMap.get(SVG.PREVIOUS_VIDEO));

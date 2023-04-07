@@ -30,7 +30,7 @@ public class MouseEventTracker {
 
         mouseMoving.addListener((obs, wasMoving, isNowMoving) -> {
             if (!isNowMoving) {
-                if (mainController.mediaInterface.playing.get() && settingsController.settingsState == SettingsState.CLOSED && mainController.captionsController.captionsState == CaptionsState.CLOSED && !controlBarController.volumeSlider.isValueChanging() && !controlBarController.durationSlider.isValueChanging() && controlBarController.controlBarOpen && !mainController.captionsController.captionsBox.captionsDragActive && (mainController.getMenuController().menuState == MenuState.CLOSED || !mainController.getMenuController().extended)) {
+                if (mainController.mediaInterface.playing.get() && settingsController.settingsState == SettingsState.CLOSED && mainController.captionsController.captionsState == CaptionsState.CLOSED && !controlBarController.volumeSlider.isValueChanging() && !controlBarController.durationSlider.isValueChanging() && controlBarController.controlBarOpen && !mainController.captionsController.captionsBox.captionsDragActive && (mainController.getMenuController().menuState == MenuState.CLOSED || !mainController.getMenuController().extended.get())) {
                     controlBarController.controlBarWrapper.setMouseTransparent(true);
                     AnimationsClass.hideControlsAndTitle(controlBarController, controlBarController.captionsController, mainController); // hides controlbar if no mouse or other relevant events have not occurred in the last 4 seconds and the video is not paused, settings page and captions page are not open and user is not seeking video or changing volume
                     mainController.videoTitleLabel.getScene().setCursor(Cursor.NONE);

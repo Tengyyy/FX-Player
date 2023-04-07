@@ -24,6 +24,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
@@ -45,6 +46,11 @@ public class QueuePage {
 
     MenuController menuController;
 
+    SVGPath collapseSVG = new SVGPath();
+    Region collapseIcon = new Region();
+    public Button collapseButton = new Button();
+
+    VBox queueWrapper = new VBox();
     VBox queueBar = new VBox();
     public ScrollPane queueScroll = new ScrollPane();
     VBox queueContent = new VBox();
@@ -101,10 +107,32 @@ public class QueuePage {
     private double scrollVelocity = 0;
     private final int scrollSpeed = 6;
 
+    boolean extended = false;
+
     public QueuePage(MenuController menuController){
         this.menuController = menuController;
 
         queueBox = new QueueBox(menuController, this);
+
+
+        collapseSVG.setContent(App.svgMap.get(SVG.COLLAPSE_LEFT));
+        collapseIcon.setShape(collapseSVG);
+        collapseIcon.setPrefSize(20, 20);
+        collapseIcon.setMaxSize(20, 20);
+        collapseIcon.getStyleClass().addAll("menuIcon", "graphic");
+
+        collapseButton.setPrefSize(40, 40);
+        collapseButton.setMaxSize(40, 40);
+        collapseButton.setCursor(Cursor.HAND);
+        collapseButton.getStyleClass().add("menuBarButton");
+        collapseButton.setGraphic(collapseIcon);
+        collapseButton.setVisible(false);
+        collapseButton.setOnAction(e -> menuController.shrinkMenu());
+
+        StackPane.setAlignment(collapseButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(collapseButton, new Insets(20, 50 , 0, 0));
+
+        queueWrapper.setBackground(Background.EMPTY);
 
         queueBar.setFillWidth(true);
 
@@ -423,7 +451,8 @@ public class QueuePage {
 
         lowerBottomBound.bind(queueScroll.heightProperty().subtract(80));
 
-        menuController.queueWrapper.getChildren().addAll(queueBar, queueScroll);
+        queueWrapper.getChildren().addAll(queueBar, queueScroll);
+        menuController.queueContainer.getChildren().addAll(queueWrapper, collapseButton);
 
         Platform.runLater(() -> {
             addOptionsContextMenu = new AddOptionsContextMenu(this);

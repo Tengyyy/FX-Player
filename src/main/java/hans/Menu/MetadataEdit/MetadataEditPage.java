@@ -429,7 +429,7 @@ public class MetadataEditPage {
 
 
         menuController.metadataEditScroll.setVisible(true);
-        menuController.queueWrapper.setVisible(false);
+        menuController.queueContainer.setVisible(false);
 
         if(menuController.menuState == MenuState.CLOSED) menuController.openMenu();
 
@@ -458,7 +458,7 @@ public class MetadataEditPage {
         metadataEditItem = null;
 
         menuController.metadataEditScroll.setVisible(false);
-        menuController.queueWrapper.setVisible(true);
+        menuController.queueContainer.setVisible(true);
 
         textBox.getChildren().clear();
         imageView.setImage(null);

@@ -27,8 +27,28 @@
     -fx-border-color: rgb(50, 50,50);
 }
 
+#menu {
+    -fx-background-color: transparent;
+}
+
 #menuContent {
+    -fx-background-color: transparent;
+}
+
+#menuWrapper {
     -fx-background-color: rgba(0,0,0,0.8);
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: #909090;
+    -fx-border-style: none solid none none;
+}
+
+#dragPane {
+    -fx-background-color: rgba(0,0,0,0.8);
+    -fx-border-radius: 0 5 5 0;
+    -fx-background-radius: 0 5 5 0;
+    -fx-border-width: 1 1 1 0;
+    -fx-border-color: #909090;
+    -fx-border-style: solid solid solid none;
 }
 
 
@@ -265,12 +285,6 @@
 
 .column {
     -fx-background-color: red;
-}
-
-#dragPane {
-    -fx-border-width: 0 0 0 1;
-    -fx-border-color: #909090;
-    -fx-border-style: none none none solid;
 }
 
 #dragLabel {

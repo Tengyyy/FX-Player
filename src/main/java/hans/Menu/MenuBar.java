@@ -99,8 +99,6 @@ public class MenuBar {
             playlistsButton.setInactive();
             settingsButton.setActive();
             queueButton.setInactive();
-
-            menuController.extendMenu();
         });
 
 

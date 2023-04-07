@@ -63,5 +63,7 @@ public enum SVG {
     VIDEO_FILE,
     HISTORY,
     QUEUE,
-    PLAYLIST
+    PLAYLIST,
+    DRAG_VERTICAL,
+    COLLAPSE_LEFT
 }

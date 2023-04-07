@@ -1,13 +1,10 @@
 package hans.Menu;
 
 
-import hans.AnimationsClass;
+import hans.*;
 import hans.Captions.CaptionsController;
 import hans.Captions.CaptionsState;
 import hans.Chapters.ChapterController;
-import hans.ControlBarController;
-import hans.MainController;
-import hans.MediaInterface;
 import hans.MediaItems.MediaItem;
 import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.Menu.Queue.QueuePage;
@@ -22,6 +19,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -36,16 +34,12 @@ public class MenuController implements Initializable {
 
     @FXML
     public
-    StackPane menu, menuContent, sideBar;
+    StackPane menu, menuWrapper, menuContent, sideBar, dragPane, queueContainer;
 
-    @FXML
-    StackPane dragPane;
+    Region dragIcon = new Region();
 
     @FXML
     public ScrollPane metadataEditScroll, technicalDetailsScroll, chapterScroll;
-
-    @FXML
-    public VBox queueWrapper;
 
     public MainController mainController;
     public ControlBarController controlBarController;
@@ -64,7 +58,7 @@ public class MenuController implements Initializable {
 
     public boolean menuInTransition = false;
 
-    final double MIN_WIDTH = 500;
+    final public double MIN_WIDTH = 500;
 
     DragResizer dragResizer;
 
@@ -73,6 +67,8 @@ public class MenuController implements Initializable {
     MenuBar menuBar;
 
     public boolean extended = false;
+
+    double shrinkedWidth = MIN_WIDTH;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -117,6 +113,20 @@ public class MenuController implements Initializable {
                 if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
             }
         });
+
+        menuWrapper.setId("menuWrapper");
+
+        dragPane.setId("dragPane");
+        dragPane.getChildren().add(dragIcon);
+        dragPane.setCursor(Cursor.W_RESIZE);
+
+        SVGPath dragSVG = new SVGPath();
+        dragSVG.setContent(App.svgMap.get(SVG.DRAG_VERTICAL));
+        dragIcon.setShape(dragSVG);
+        dragIcon.getStyleClass().add("menuIcon2");
+        dragIcon.setMouseTransparent(true);
+        dragIcon.setPrefSize(5, 15);
+        dragIcon.setMaxSize(5, 15);
 
         dragResizer = new DragResizer(this);
 
@@ -187,7 +197,6 @@ public class MenuController implements Initializable {
 
         if(dragResizer.dragging) {
             dragResizer.dragging = false;
-            dragPane.setCursor(Cursor.DEFAULT);
         }
 
         menuInTransition = true;
@@ -203,9 +212,7 @@ public class MenuController implements Initializable {
         mainController.videoTitleLabel.getScene().setCursor(Cursor.DEFAULT);
         mainController.videoTitleBox.setMouseTransparent(false);
         if(captionsController.captionsSelected.get()) captionsController.captionsBox.captionsContainer.setMouseTransparent(false);
-
     }
-
 
 
     public void init(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MediaInterface mediaInterface, CaptionsController captionsController, ChapterController chapterController){
@@ -218,61 +225,115 @@ public class MenuController implements Initializable {
     }
 
     public void extendMenu(){
-        if(extended || menuInTransition) return;
+        if(extended || menuInTransition || menuState == MenuState.CLOSED) return;
 
-        extended = true;
         menu.setMouseTransparent(true);
 
-        dragPane.setMouseTransparent(true);
-        dragPane.setVisible(false);
+        menuInTransition = true;
 
-        if(menuState != MenuState.CLOSED){
-            menuInTransition = true;
+        Duration animationDuration = Duration.millis(300);
+        Timeline maxTimeline = new Timeline(new KeyFrame(animationDuration,
+                new KeyValue(menu.maxWidthProperty(), mainController.videoImageViewWrapper.getWidth() + 15, Interpolator.EASE_BOTH)));
 
-            Duration animationDuration = Duration.millis(300);
-            Timeline maxTimeline = new Timeline(new KeyFrame(animationDuration,
-                    new KeyValue(menu.maxWidthProperty(), mainController.videoImageViewWrapper.getWidth(), Interpolator.EASE_BOTH)));
+        Timeline prefTimeline = new Timeline(new KeyFrame(animationDuration,
+                new KeyValue(menu.prefWidthProperty(), mainController.videoImageViewWrapper.getWidth() + 15, Interpolator.EASE_BOTH)));
 
-            Timeline prefTimeline = new Timeline(new KeyFrame(animationDuration,
-                    new KeyValue(menu.prefWidthProperty(), mainController.videoImageViewWrapper.getWidth(), Interpolator.EASE_BOTH)));
+        FadeTransition menuContentFade = new FadeTransition(animationDuration, menuContent);
+        menuContentFade.setFromValue(menuContent.getOpacity());
+        menuContentFade.setToValue(0);
 
-            FadeTransition sideBarFade = new FadeTransition(animationDuration, sideBar);
-            sideBarFade.setFromValue(sideBar.getOpacity());
-            sideBarFade.setToValue(0);
-
-            FadeTransition menuContentFade = new FadeTransition(animationDuration, menuContent);
-            menuContentFade.setFromValue(menuContent.getOpacity());
-            menuContentFade.setToValue(0);
-
-            ParallelTransition parallelFade = new ParallelTransition(sideBarFade, menuContentFade);
-            ParallelTransition parallelWidth = new ParallelTransition(maxTimeline, prefTimeline);
+        ParallelTransition parallelWidth = new ParallelTransition(maxTimeline, prefTimeline);
 
 
-            SequentialTransition sequentialTransition = new SequentialTransition(parallelFade, parallelWidth);
+        SequentialTransition sequentialTransition = new SequentialTransition(menuContentFade, parallelWidth);
 
-            sequentialTransition.setOnFinished(e -> {
-                setMenuExtended();
-                menu.setMouseTransparent(false);
-                sideBar.setOpacity(1);
-                menuContent.setOpacity(1);
-            });
+        sequentialTransition.setOnFinished(e -> {
+            setMenuExtended();
+            menu.setMouseTransparent(false);
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), menuContent);
+            fadeTransition.setFromValue(menuContent.getOpacity());
+            fadeTransition.setToValue(1);
+            fadeTransition.play();
+        });
 
-            sequentialTransition.playFromStart();
-        }
+        sequentialTransition.playFromStart();
     }
 
     public void shrinkMenu(){
+        if(!extended || menuInTransition || menuState == MenuState.CLOSED) return;
 
+        menu.setMouseTransparent(true);
+        menuInTransition = true;
+
+        menu.maxWidthProperty().unbind();
+        menu.prefWidthProperty().unbind();
+
+        menu.setPrefWidth(mainController.videoImageViewWrapper.getWidth() + 15);
+        menu.setMaxWidth(mainController.videoImageViewWrapper.getWidth() + 15);
+
+        menuBar.shrink();
+        StackPane.setMargin(menuContent, new Insets(0, 0, 0, 50));
+        StackPane.setMargin(menuWrapper, new Insets(0, 15, 0, 0));
+        StackPane.setMargin(menu, Insets.EMPTY);
+
+        controlBarController.controlBarWrapper.setStyle("-fx-background-color: transparent;");
+
+        dragPane.setMouseTransparent(false);
+        dragPane.setVisible(true);
+
+        controlBarController.controlBarWrapper.setViewOrder(2);
+        menu.setViewOrder(1);
+
+        menuWrapper.setStyle("-fx-border-color: #909090;");
+
+        shrinkedWidth = Math.max(MIN_WIDTH, Math.min(shrinkedWidth, (mainController.videoImageViewWrapper.getWidth() + 30)/2));
+
+
+        Duration animationDuration = Duration.millis(300);
+        Timeline maxTimeline = new Timeline(new KeyFrame(animationDuration,
+                new KeyValue(menu.maxWidthProperty(), shrinkedWidth, Interpolator.EASE_BOTH)));
+
+        Timeline prefTimeline = new Timeline(new KeyFrame(animationDuration,
+                new KeyValue(menu.prefWidthProperty(), shrinkedWidth, Interpolator.EASE_BOTH)));
+
+        FadeTransition menuContentFade = new FadeTransition(animationDuration, menuContent);
+        menuContentFade.setFromValue(menuContent.getOpacity());
+        menuContentFade.setToValue(0);
+
+        ParallelTransition parallelWidth = new ParallelTransition(maxTimeline, prefTimeline);
+
+
+        SequentialTransition sequentialTransition = new SequentialTransition(menuContentFade, parallelWidth);
+
+        sequentialTransition.setOnFinished(e -> {
+            setMenuShrinked();
+            menu.setMouseTransparent(false);
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), menuContent);
+            fadeTransition.setFromValue(menuContent.getOpacity());
+            fadeTransition.setToValue(1);
+            fadeTransition.play();
+        });
+
+        sequentialTransition.playFromStart();
+        AnimationsClass.hideControlsAndTitle(controlBarController, captionsController, mainController);
     }
 
     private void setMenuExtended(){
         menuInTransition = false;
         extended = true;
 
+        queuePage.collapseButton.setVisible(true);
+        queuePage.collapseButton.setMouseTransparent(false);
+
         menu.setTranslateX(0);
         if(menuState == MenuState.CLOSED) menu.setOpacity(0);
         menu.maxWidthProperty().bind(mainController.videoImageViewWrapper.widthProperty());
         menu.prefWidthProperty().bind(mainController.videoImageViewWrapper.widthProperty());
+
+        dragPane.setMouseTransparent(true);
+        dragPane.setVisible(false);
+        StackPane.setMargin(menuWrapper, Insets.EMPTY);
+        menuWrapper.setStyle("-fx-border-color: transparent;");
 
         if(mainController.videoImageViewWrapper.getWidth() < 1200) StackPane.setMargin(menuContent, new Insets(0, 0, 0, 50));
         else {
@@ -286,22 +347,26 @@ public class MenuController implements Initializable {
         controlBarController.controlBarWrapper.setViewOrder(1);
         menu.setViewOrder(2);
 
-        StackPane.setMargin(menu, new Insets(0, 0, controlBarController.controlBarWrapper.getHeight(), 0));
+        StackPane.setMargin(menu, new Insets(0, 0, controlBarController.controlBarWrapper.getHeight() - 6, 0));
         if(menuState != MenuState.CLOSED){
-            controlBarController.controlBarWrapper.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
+            controlBarController.controlBarWrapper.setStyle("-fx-background-color: rgba(0,0,0,0.8); -fx-background-insets: 6 0 0 0;");
             AnimationsClass.displayControls(controlBarController, captionsController, mainController);
         }
     }
 
     private void setMenuShrinked(){
 
+        menuInTransition = false;
         extended = false;
+
+        queuePage.collapseButton.setVisible(false);
+        queuePage.collapseButton.setMouseTransparent(true);
 
         menu.setOpacity(1);
         if(menuState == MenuState.CLOSED) menu.setTranslateX(-menu.getWidth());
 
-        StackPane.setMargin(menuContent, new Insets(0, 3, 0, 50));
-
+        StackPane.setMargin(menuContent, new Insets(0, 0, 0, 50));
+        StackPane.setMargin(menuWrapper, new Insets(0, 15, 0, 0));
         StackPane.setMargin(menu, Insets.EMPTY);
 
         controlBarController.controlBarWrapper.setStyle("-fx-background-color: transparent;");
@@ -311,6 +376,19 @@ public class MenuController implements Initializable {
 
         queuePage.shrink();
         menuBar.shrink();
+
+        menu.maxWidthProperty().unbind();
+        menu.prefWidthProperty().unbind();
+
+        shrinkedWidth = Math.max(MIN_WIDTH, Math.min(shrinkedWidth, (mainController.videoImageViewWrapper.getWidth() + 30)/2));
+        menu.setPrefWidth(shrinkedWidth);
+        menu.setMaxWidth(shrinkedWidth);
+
+        dragPane.setMouseTransparent(false);
+        dragPane.setVisible(true);
+        menuWrapper.setStyle("-fx-border-color: #909090;");
+
+        if(controlBarController.controlBarOpen) AnimationsClass.hideControlsAndTitle(controlBarController, captionsController, mainController);
     }
 
     private void openExtendedMenu(){
@@ -391,7 +469,7 @@ public class MenuController implements Initializable {
             metadataEditScroll.setVisible(false);
             technicalDetailsScroll.setVisible(false);
             chapterScroll.setVisible(false);
-            queueWrapper.setVisible(true);
+            queueContainer.setVisible(true);
 
             metadataEditPage.metadataEditItem = null;
             metadataEditPage.textBox.getChildren().clear();
@@ -417,7 +495,7 @@ public class MenuController implements Initializable {
             metadataEditScroll.setVisible(false);
             technicalDetailsScroll.setVisible(false);
             chapterScroll.setVisible(false);
-            queueWrapper.setVisible(true);
+            queueContainer.setVisible(true);
 
             metadataEditPage.metadataEditItem = null;
             metadataEditPage.textBox.getChildren().clear();

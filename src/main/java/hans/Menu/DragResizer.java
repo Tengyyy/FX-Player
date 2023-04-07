@@ -1,14 +1,14 @@
 package hans.Menu;
 
-import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 
 public class DragResizer {
 
 
-    private Region parentNode;
-    private static Region dragTarget;
+    StackPane menu;
+    StackPane dragPane;
     MenuController menuController;
 
 
@@ -17,17 +17,20 @@ public class DragResizer {
 
     public DragResizer(MenuController menuController) {
         this.menuController = menuController;
-        this.parentNode = menuController.menu;
-        dragTarget = menuController.dragPane;
+        this.menu = menuController.menu;
+        dragPane = menuController.dragPane;
 
-        dragTarget.setOnMousePressed(this::mousePressed);
-        dragTarget.setOnMouseDragged(this::mouseDragged);
-        dragTarget.setOnMouseReleased(this::mouseReleased);
+        dragPane.setOnMouseClicked(e -> {
+            if(e.getClickCount() == 2) menuController.extendMenu();
+        });
+
+        dragPane.setOnMousePressed(this::mousePressed);
+        dragPane.setOnMouseDragged(this::mouseDragged);
+        dragPane.setOnMouseReleased(this::mouseReleased);
     }
 
     protected void mouseReleased(MouseEvent event) {
         dragging = false;
-        menuController.dragPane.setCursor(Cursor.H_RESIZE);
     }
 
 
@@ -36,16 +39,21 @@ public class DragResizer {
             return;
         }
 
-        if(event.getSceneX() + correction >= menuController.MIN_WIDTH) {
-            parentNode.setMaxWidth(event.getSceneX() + correction);
-        }
+        double requestedWidth = event.getSceneX() + correction;
+        double newWidth = Math.max(
+                Math.min(
+                        (menuController.mainController.videoImageViewWrapper.getWidth() + 30)/2
+                        , requestedWidth)
+                , menuController.MIN_WIDTH);
 
+        menu.setMaxWidth(newWidth);
+        menuController.shrinkedWidth = newWidth;
     }
 
     protected void mousePressed(MouseEvent event) {
 
         dragging = true;
-        correction = parentNode.getBoundsInLocal().getMaxX() - event.getSceneX();
+        correction = menu.getBoundsInLocal().getMaxX() - event.getSceneX();
 
 
     }

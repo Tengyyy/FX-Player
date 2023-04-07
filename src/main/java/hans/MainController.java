@@ -199,9 +199,10 @@ public class MainController implements Initializable {
             viewMetadataTooltip = new ControlTooltip(this,"Media metadata", metadataButton, 0, TooltipType.MENU_TOOLTIP);
 
             videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
-                if(!menuController.extended && newValue.doubleValue() < menuController.menu.getMaxWidth()){
-                    menuController.menu.setMaxWidth(newValue.doubleValue());
-                    menuController.menu.setPrefWidth(newValue.doubleValue());
+                double newWidth = Math.max(menuController.MIN_WIDTH, (newValue.doubleValue() + 30)/2);
+                if(!menuController.extended && newWidth < menuController.menu.getMaxWidth()){
+                    menuController.menu.setMaxWidth(newWidth);
+                    menuController.menu.setPrefWidth(newWidth);
                 }
             });
         });

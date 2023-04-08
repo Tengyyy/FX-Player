@@ -283,7 +283,7 @@ public class MetadataEditPage {
 
     }
 
-    public void enterMetadataEditPage(MediaItem mediaItem){
+    public void loadMetadataEditPage(MediaItem mediaItem){
 
         if(mediaItem == null) return;
 
@@ -356,45 +356,6 @@ public class MetadataEditPage {
                 enableImageEdit();
             }
         }
-
-
-        menuController.metadataEditScroll.setVisible(true);
-        menuController.queueContainer.setVisible(false);
-
-        if(menuController.menuState == MenuState.CLOSED) menuController.openMenu();
-
-        menuController.menuState = MenuState.METADATA_EDIT_OPEN;
-    }
-
-    public void exitMetadataEditPage(){
-
-        mediaItem.metadataEditProgress.removeListener(progressListener);
-        mediaItem.metadataEditActive.removeListener(metadataEditActiveListener);
-        if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
-        if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
-        progressBar.setProgress(0);
-        applyButton.disableProperty().unbind();
-        editImageButton.disableProperty().unbind();
-        discardButton.disableProperty().unbind();
-        fieldsDisabledProperty.unbind();
-
-        savedLabel.setVisible(false);
-        progressBar.setVisible(false);
-
-        if(!mediaItem.metadataEditActive.get() && mediaItem.changesMade.get()){
-            mediaItem.newMetadata = metadataEditItem.createMetadataMap();
-        }
-
-        metadataEditItem = null;
-
-        menuController.metadataEditScroll.setVisible(false);
-        menuController.queueContainer.setVisible(true);
-
-        textBox.getChildren().clear();
-        imageView.setImage(null);
-        imageViewContainer.setStyle("-fx-background-color: transparent;");
-
-        menuController.menuState = MenuState.QUEUE_OPEN;
     }
 
     private void enableImageEdit(){
@@ -511,7 +472,56 @@ public class MetadataEditPage {
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");
 
-        enterMetadataEditPage(mediaItem);
+        loadMetadataEditPage(mediaItem);
     }
 
+    public void openMetadataEditPage(){
+        menuController.metadataEditScroll.setVisible(true);
+    }
+
+    public void closeMetadataEditPage(){
+        menuController.metadataEditScroll.setVisible(false);
+
+        metadataEditItem = null;
+        textBox.getChildren().clear();
+        imageView.setImage(null);
+        imageViewContainer.setStyle("-fx-background-color: transparent;");
+
+        mediaItem.metadataEditProgress.removeListener(progressListener);
+        mediaItem.metadataEditActive.removeListener(metadataEditActiveListener);
+        if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
+        if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
+        progressBar.setProgress(0);
+        applyButton.disableProperty().unbind();
+        editImageButton.disableProperty().unbind();
+        discardButton.disableProperty().unbind();
+        fieldsDisabledProperty.unbind();
+
+        savedLabel.setVisible(false);
+        progressBar.setVisible(false);
+
+        if(!mediaItem.metadataEditActive.get() && mediaItem.changesMade.get()){
+            mediaItem.newMetadata = metadataEditItem.createMetadataMap();
+        }
+
+        metadataEditItem = null;
+    }
+
+    public void enter(MediaItem mediaItem){
+
+        if(menuController.menuInTransition) return;
+
+        menuController.menuBar.setActiveButton(null);
+
+        loadMetadataEditPage(mediaItem);
+
+        if(menuController.menuState == MenuState.CLOSED){
+            if(!menuController.extended.get()) menuController.setMenuExtended(MenuState.METADATA_EDIT_OPEN);
+            menuController.openMenu(MenuState.METADATA_EDIT_OPEN);
+        }
+        else {
+            if(!menuController.extended.get()) menuController.extendMenu(MenuState.METADATA_EDIT_OPEN);
+            else menuController.animateStateSwitch(MenuState.METADATA_EDIT_OPEN);
+        }
+    }
 }

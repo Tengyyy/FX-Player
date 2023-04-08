@@ -392,7 +392,7 @@ public class MainController implements Initializable {
         menuButton.setMaxSize(50, 50);
         menuButton.setBackground(Background.EMPTY);
         menuButton.setCursor(Cursor.HAND);
-        menuButton.setOnAction(e -> menuController.openMenu());
+        menuButton.setOnAction(e -> menuController.queuePage.enter());
 
 
         menuIcon.setShape(menuSVG);
@@ -1228,10 +1228,10 @@ public class MainController implements Initializable {
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
-        if(menuController.menuState != MenuState.CLOSED && !menuController.menuInTransition){
-            menuController.closeMenu();
+        if(!menuController.menuInTransition){
+            if(menuController.menuState != MenuState.CLOSED) menuController.closeMenu();
+            else menuController.queuePage.enter();
         }
-        else menuController.openMenu();
     }
 
     public void pressS(){

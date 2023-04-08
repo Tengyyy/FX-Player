@@ -6,6 +6,7 @@ import hans.SVG;
 import hans.Settings.SettingsState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -17,11 +18,13 @@ public class MenuBar {
 
     VBox topBar = new VBox();
 
-    MenuBarButton queueButton;
-    MenuBarButton historyButton;
-    MenuBarButton musicLibraryButton;
-    MenuBarButton playlistsButton;
-    MenuBarButton settingsButton;
+    public MenuBarButton queueButton;
+    public MenuBarButton historyButton;
+    public MenuBarButton musicLibraryButton;
+    public MenuBarButton playlistsButton;
+    public MenuBarButton settingsButton;
+
+    MenuBarButton activeButton = null;
 
 
     MenuBar(MenuController menuController, StackPane sideBar){
@@ -35,70 +38,63 @@ public class MenuBar {
         settingsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.SETTINGS), 19, 19, "Settings", "Settings");
 
         queueButton.button.setOnAction(e -> {
+
             if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
 
-            historyButton.setInactive();
-            musicLibraryButton.setInactive();
-            playlistsButton.setInactive();
-            settingsButton.setInactive();
-            queueButton.setActive();
+            if(menuController.menuState == MenuState.QUEUE_OPEN) return;
+
+            menuController.queuePage.enter();
         });
 
-        queueButton.setActive();
-
         historyButton.button.setOnAction(e -> {
+
             if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
 
-            historyButton.setActive();
-            musicLibraryButton.setInactive();
-            playlistsButton.setInactive();
-            settingsButton.setInactive();
-            queueButton.setInactive();
+            if(menuController.menuState == MenuState.RECENT_MEDIA_OPEN) return;
+
+            menuController.recentMediaPage.enter();
         });
 
         musicLibraryButton.button.setOnAction(e -> {
+
             if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
 
-            historyButton.setInactive();
-            musicLibraryButton.setActive();
-            playlistsButton.setInactive();
-            settingsButton.setInactive();
-            queueButton.setInactive();
+            if(menuController.menuState == MenuState.MUSIC_LIBRARY_OPEN) return;
+
+            menuController.musicLibraryPage.enter();
         });
 
         playlistsButton.button.setOnAction(e -> {
+
             if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
 
-            historyButton.setInactive();
-            musicLibraryButton.setInactive();
-            playlistsButton.setActive();
-            settingsButton.setInactive();
-            queueButton.setInactive();
+            if(menuController.menuState == MenuState.PLAYLISTS_OPEN) return;
+
+            menuController.playlistsPage.enter();
         });
 
         settingsButton.button.setOnAction(e -> {
+
             if(menuController.extended.get()){
                 if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
                 if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
             }
 
-            historyButton.setInactive();
-            musicLibraryButton.setInactive();
-            playlistsButton.setInactive();
-            settingsButton.setActive();
-            queueButton.setInactive();
+            if(menuController.menuState == MenuState.SETTINGS_OPEN) return;
+
+            menuController.settingsPage.enter();
         });
 
 
@@ -132,5 +128,11 @@ public class MenuBar {
         musicLibraryButton.shrink();
         playlistsButton.shrink();
         settingsButton.shrink();
+    }
+
+    public void setActiveButton(MenuBarButton button){
+        if(activeButton != null) activeButton.setInactive();
+        activeButton = button;
+        if(button != null) button.setActive();
     }
 }

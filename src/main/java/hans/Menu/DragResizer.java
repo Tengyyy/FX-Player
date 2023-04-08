@@ -21,7 +21,7 @@ public class DragResizer {
         dragPane = menuController.dragPane;
 
         dragPane.setOnMouseClicked(e -> {
-            if(e.getClickCount() == 2) menuController.extendMenu();
+            if(e.getClickCount() == 2) menuController.extendMenu(menuController.menuState);
         });
 
         dragPane.setOnMousePressed(this::mousePressed);

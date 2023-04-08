@@ -52,12 +52,15 @@ public class MenuController implements Initializable {
     public CaptionsController captionsController;
     public MediaInterface mediaInterface;
 
-    public QueuePage queuePage;
-
     public ChapterController chapterController;
 
     public MetadataEditPage metadataEditPage;
     public TechnicalDetailsPage technicalDetailsPage;
+    public QueuePage queuePage;
+    public SettingsPage settingsPage;
+    public RecentMediaPage recentMediaPage;
+    public MusicLibraryPage musicLibraryPage;
+    public PlaylistsPage playlistsPage;
 
     public MenuState menuState = MenuState.CLOSED;
 
@@ -69,7 +72,7 @@ public class MenuController implements Initializable {
 
     public ArrayList<MediaItem> ongoingMetadataEditProcesses = new ArrayList<>();
 
-    MenuBar menuBar;
+    public MenuBar menuBar;
 
     public BooleanProperty extended = new SimpleBooleanProperty(false);
 
@@ -88,6 +91,10 @@ public class MenuController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         queuePage = new QueuePage(this);
+        settingsPage = new SettingsPage(this);
+        recentMediaPage = new RecentMediaPage(this);
+        musicLibraryPage = new MusicLibraryPage(this);
+        playlistsPage = new PlaylistsPage(this);
         metadataEditPage = new MetadataEditPage(this);
         technicalDetailsPage = new TechnicalDetailsPage(this);
         menuBar = new MenuBar(this, sideBar);
@@ -217,23 +224,9 @@ public class MenuController implements Initializable {
                 || captionsController.captionsBox.captionsDragActive
                 || settingsController.equalizerController.sliderActive) return;
 
+        if(newState != menuState) updateState(newState);
 
         menuInTransition = true;
-
-        if(queuePage.queueBox.activeItem.get() != null){
-            double heightViewPort = queuePage.queueScroll.getViewportBounds().getHeight();
-            double heightScrollPane = queuePage.queueScroll.getContent().getBoundsInLocal().getHeight();
-            double y = queuePage.queueBox.activeItem.get().getBoundsInParent().getMaxY();
-            if (y<(heightViewPort/2)){
-                queuePage.queueScroll.setVvalue(0);
-            }
-            else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
-                queuePage.queueScroll.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
-            }
-            else if( y>= (heightScrollPane-(heightViewPort/2))){
-                queuePage.queueScroll.setVvalue(1);
-            }
-        }
 
         mainController.videoImageViewWrapper.getScene().setCursor(Cursor.DEFAULT);
 
@@ -265,7 +258,6 @@ public class MenuController implements Initializable {
         }
 
         menuInTransition = true;
-        menuState = MenuState.CLOSED;
         menu.setMouseTransparent(true);
 
         if(extended.get()) closeExtendedMenu();
@@ -289,7 +281,7 @@ public class MenuController implements Initializable {
         this.chapterController = chapterController;
     }
 
-    public void extendMenu(){
+    public void extendMenu(MenuState newState){
         if(extended.get() || menuInTransition || menuState == MenuState.CLOSED) return;
 
         menu.setMouseTransparent(true);
@@ -313,7 +305,7 @@ public class MenuController implements Initializable {
         SequentialTransition sequentialTransition = new SequentialTransition(menuContentFade, parallelWidth);
 
         sequentialTransition.setOnFinished(e -> {
-            setMenuExtended();
+            setMenuExtended(newState);
             menu.setMouseTransparent(false);
             FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), menuContent);
             fadeTransition.setFromValue(menuContent.getOpacity());
@@ -358,6 +350,7 @@ public class MenuController implements Initializable {
             StackPane.setMargin(closeButton, new Insets(5, 5, 0, 0));
 
             queuePage.shrink();
+            chapterController.chapterPage.shrink();
             menuBar.shrink();
 
             shrinkedWidth = Math.max(MIN_WIDTH, Math.min(shrinkedWidth, (mainController.videoImageViewWrapper.getWidth() + 30)/2));
@@ -400,13 +393,13 @@ public class MenuController implements Initializable {
         AnimationsClass.hideControlsAndTitle(controlBarController, captionsController, mainController);
     }
 
-    private void setMenuExtended(){
+    public void setMenuExtended(MenuState newState){
 
         extended.set(true);
 
+        if(newState != menuState) updateState(newState);
+
         StackPane.setMargin(closeButton, new Insets(10, 10, 0, 0));
-
-
 
         menu.setTranslateX(0);
         if(menuState == MenuState.CLOSED) menu.setOpacity(0);
@@ -423,6 +416,7 @@ public class MenuController implements Initializable {
         }
 
         queuePage.extend();
+        chapterController.chapterPage.extend();
 
         controlBarController.controlBarWrapper.setMouseTransparent(false);
         controlBarController.controlBarWrapper.setViewOrder(1);
@@ -436,7 +430,7 @@ public class MenuController implements Initializable {
         }
     }
 
-    private void setMenuShrinked(){
+    public void setMenuShrinked(){
 
         extended.set(false);
 
@@ -455,6 +449,7 @@ public class MenuController implements Initializable {
 
         queuePage.shrink();
         menuBar.shrink();
+        chapterController.chapterPage.shrink();
 
         menu.maxWidthProperty().unbind();
         menu.prefWidthProperty().unbind();
@@ -546,21 +541,10 @@ public class MenuController implements Initializable {
         ParallelTransition parallelTransition = new ParallelTransition(controlBarFade, menuFade);
         parallelTransition.setOnFinished(e -> {
             menuInTransition = false;
-            metadataEditScroll.setVisible(false);
-            technicalDetailsScroll.setVisible(false);
-            chapterScroll.setVisible(false);
-            queueContainer.setVisible(false);
+
+            updateState(MenuState.CLOSED);
 
             controlBarController.controlBarWrapper.setBackground(new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0), CornerRadii.EMPTY, new Insets(6, 0, 0, 0))));
-
-            metadataEditPage.metadataEditItem = null;
-            metadataEditPage.textBox.getChildren().clear();
-            metadataEditPage.imageView.setImage(null);
-            metadataEditPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
-
-            technicalDetailsPage.textBox.getChildren().clear();
-            technicalDetailsPage.imageView.setImage(null);
-            technicalDetailsPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
         });
 
         parallelTransition.play();
@@ -572,33 +556,64 @@ public class MenuController implements Initializable {
         closeMenu.setToX(-menu.getWidth());
 
         closeMenu.setOnFinished((e) -> {
-            //TODO: only reset the variables relevant to the current menu state
             menuInTransition = false;
-            metadataEditScroll.setVisible(false);
-            technicalDetailsScroll.setVisible(false);
-            chapterScroll.setVisible(false);
-            queueContainer.setVisible(false);
 
-            metadataEditPage.metadataEditItem = null;
-            metadataEditPage.textBox.getChildren().clear();
-            metadataEditPage.imageView.setImage(null);
-            metadataEditPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
-
-            technicalDetailsPage.textBox.getChildren().clear();
-            technicalDetailsPage.imageView.setImage(null);
-            technicalDetailsPage.imageViewContainer.setStyle("-fx-background-color: transparent;");
+            updateState(MenuState.CLOSED);
         });
         closeMenu.play();
     }
 
+    public void animateStateSwitch(MenuState newState){
+        menuInTransition = true;
 
-    public void updateState(MenuState newState){
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(200), menuContent);
+        fadeOut.setFromValue(menuContent.getOpacity());
+        fadeOut.setToValue(0);
+
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(200), menuContent);
+        fadeIn.setFromValue(menuContent.getOpacity());
+        fadeIn.setToValue(1);
+        fadeIn.setOnFinished(e -> menuInTransition = false);
+
+        fadeOut.setOnFinished(e -> {
+            updateState(newState);
+            fadeIn.play();
+        });
+
+        fadeOut.play();
+    }
+
+
+    private void updateState(MenuState newState){
         MenuState oldState = this.menuState;
 
-        switch (oldState){
+        this.menuState = newState;
 
+        switch (oldState){
+            case QUEUE_OPEN -> queuePage.closeQueuePage();
+            case CHAPTERS_OPEN -> chapterController.chapterPage.closeChaptersPage();
+            case SETTINGS_OPEN -> settingsPage.closeSettingsPage();
+            case PLAYLISTS_OPEN -> playlistsPage.closePlaylistsPage();
+            case RECENT_MEDIA_OPEN -> recentMediaPage.closeRecentMediaPage();
+            case METADATA_EDIT_OPEN -> metadataEditPage.closeMetadataEditPage();
+            case MUSIC_LIBRARY_OPEN -> musicLibraryPage.closeMusicLibraryPage();
+            case TECHNICAL_DETAILS_OPEN -> technicalDetailsPage.closeTechnicalDetailsPage();
+        }
+
+        switch (newState){
+            case QUEUE_OPEN -> queuePage.openQueuePage();
+            case CHAPTERS_OPEN -> chapterController.chapterPage.openChaptersPage();
+            case SETTINGS_OPEN -> settingsPage.openSettingsPage();
+            case PLAYLISTS_OPEN -> playlistsPage.openPlaylistsPage();
+            case RECENT_MEDIA_OPEN -> recentMediaPage.openRecentMediaPage();
+            case METADATA_EDIT_OPEN -> metadataEditPage.openMetadataEditPage();
+            case MUSIC_LIBRARY_OPEN -> musicLibraryPage.openMusicLibraryPage();
+            case TECHNICAL_DETAILS_OPEN -> technicalDetailsPage.openTechnicalDetailsPage();
         }
     }
+
+
 }
 
 

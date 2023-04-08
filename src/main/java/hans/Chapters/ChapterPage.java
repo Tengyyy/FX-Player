@@ -2,6 +2,7 @@ package hans.Chapters;
 
 import hans.Menu.MenuController;
 import hans.Menu.MenuState;
+import hans.Menu.Queue.QueueItem;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -50,13 +51,29 @@ public class ChapterPage {
 
     }
 
-    public void enterChaptersPage(){
-
+    public void openChaptersPage(){
         menuController.chapterScroll.setVisible(true);
-        menuController.queueContainer.setVisible(false);
+    }
 
-        if(menuController.menuState == MenuState.CLOSED) menuController.openMenu();
+    public void closeChaptersPage(){
+        menuController.chapterScroll.setVisible(false);
+    }
 
-        menuController.menuState = MenuState.CHAPTERS_OPEN;
+    public void extend(){
+
+    }
+
+    public void shrink(){
+
+    }
+
+    public void enter(){
+
+        if(menuController.menuInTransition) return;
+
+        menuController.menuBar.setActiveButton(null);
+
+        if(menuController.menuState == MenuState.CLOSED) menuController.openMenu(MenuState.CHAPTERS_OPEN);
+        else menuController.animateStateSwitch(MenuState.CHAPTERS_OPEN);
     }
 }

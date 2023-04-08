@@ -7,6 +7,7 @@ import hans.Captions.CaptionsState;
 import hans.MediaItems.MediaItem;
 import hans.Menu.Columns;
 import hans.Menu.MenuController;
+import hans.Menu.MenuState;
 import hans.Menu.QueueItemContextMenu;
 import hans.Settings.SettingsState;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
@@ -675,17 +676,14 @@ public class QueueItem extends GridPane {
     }
 
     public void showMetadata(){
-        // must be disabled until ffprobe has returned
-        if(menuController.menuInTransition) return;
-
-        menuController.metadataEditPage.enterMetadataEditPage(this.getMediaItem());
+        menuController.metadataEditPage.enter(this.getMediaItem());
     }
 
     public void showTechnicalDetails() {
-        // must be disabled until ffprobe has returned
+
         if(menuController.menuInTransition) return;
 
-        menuController.technicalDetailsPage.enterTechnicalDetailsPage(this);
+        menuController.technicalDetailsPage.enter(this);
     }
 
 

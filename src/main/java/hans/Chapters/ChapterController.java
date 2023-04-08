@@ -99,9 +99,7 @@ public class ChapterController {
             if (mainController.getSettingsController().settingsState != SettingsState.CLOSED) mainController.getSettingsController().closeSettings();
             if (mainController.getCaptionsController().captionsState != CaptionsState.CLOSED) mainController.getCaptionsController().closeCaptions();
 
-            if(menuController.menuInTransition) return;
-
-            chapterPage.enterChaptersPage();
+            chapterPage.enter();
         });
 
         Platform.runLater(() -> {

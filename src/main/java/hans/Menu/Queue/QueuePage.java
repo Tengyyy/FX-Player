@@ -6,6 +6,7 @@ import hans.Captions.CaptionsState;
 import hans.ControlTooltip;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.MenuController;
+import hans.Menu.MenuState;
 import hans.Menu.QueueItemContextMenu;
 import hans.SVG;
 import hans.Settings.SettingsState;
@@ -132,7 +133,7 @@ public class QueuePage {
 
         folderChooser.setTitle("Add folder to play queue");
 
-        queueBarTitle.setId("queueTitle");
+        queueBarTitle.getStyleClass().add("menuTitle");
         VBox.setMargin(queueBarTitle, new Insets(0, 30, 0, 30));
 
         shuffleSVG.setContent(App.svgMap.get(SVG.SHUFFLE));
@@ -506,5 +507,38 @@ public class QueuePage {
         queueBarButtonWrapper.setPrefHeight(80);
 
         queueBox.shrink();
+    }
+
+    public void openQueuePage(){
+        if(queueBox.activeItem.get() != null){
+            double heightViewPort = queueScroll.getViewportBounds().getHeight();
+            double heightScrollPane = queueScroll.getContent().getBoundsInLocal().getHeight();
+            double y = queueBox.activeItem.get().getBoundsInParent().getMaxY();
+            if (y<(heightViewPort/2)){
+                queueScroll.setVvalue(0);
+            }
+            else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
+                queueScroll.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
+            }
+            else if( y>= (heightScrollPane-(heightViewPort/2))){
+                queueScroll.setVvalue(1);
+            }
+        }
+
+        menuController.queueContainer.setVisible(true);
+    }
+
+    public void closeQueuePage(){
+        menuController.queueContainer.setVisible(false);
+    }
+
+    public void enter(){
+
+        if(menuController.menuInTransition) return;
+
+        menuController.menuBar.setActiveButton(menuController.menuBar.queueButton);
+
+        if(menuController.menuState == MenuState.CLOSED) menuController.openMenu(MenuState.QUEUE_OPEN);
+        else menuController.animateStateSwitch(MenuState.QUEUE_OPEN);
     }
 }

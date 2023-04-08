@@ -3,7 +3,9 @@ package hans.Menu;
 import hans.AnimationsClass;
 import hans.App;
 import hans.Captions.CaptionsState;
+import hans.MediaItems.MediaItem;
 import hans.Menu.Queue.QueueItem;
+import hans.Menu.Queue.QueuePage;
 import hans.SVG;
 import hans.Settings.SettingsState;
 import hans.Shell32Util;
@@ -76,44 +78,28 @@ public class TechnicalDetailsPage {
         textBox.setSpacing(10);
     }
 
-    public void enterTechnicalDetailsPage(QueueItem menuObject){
+    public void loadTechnicalDetailsPage(QueueItem queueItem){
 
-
-        if(menuObject.getMediaItem().getCover() != null){
-            imageView.setImage(menuObject.getMediaItem().getCover());
-            Color color = menuObject.getMediaItem().getCoverBackgroundColor();
+        if(queueItem.getMediaItem().getCover() != null){
+            imageView.setImage(queueItem.getMediaItem().getCover());
+            Color color = queueItem.getMediaItem().getCoverBackgroundColor();
             imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
         }
         else {
-            imageView.setImage(menuObject.getMediaItem().getPlaceholderCover());
+            imageView.setImage(queueItem.getMediaItem().getPlaceholderCover());
             imageViewContainer.setStyle("-fx-background-color: red;");
         }
 
 
-        Map<String, String> map = menuObject.getMediaItem().getMediaDetails();
+        Map<String, String> map = queueItem.getMediaItem().getMediaDetails();
+
         if(map != null && !map.isEmpty()){
             createFileSection(map);
             if(map.containsKey("hasVideo") && Objects.equals(map.get("hasVideo"), "true")) createVideoSection(map);
             if(map.containsKey("hasAudio") && Objects.equals(map.get("hasAudio"), "true")) createAudioSection(map);
         }
-
-        menuController.queueContainer.setVisible(false);
-        menuController.technicalDetailsScroll.setVisible(true);
-
-        menuController.menuState = MenuState.TECHNICAL_DETAILS_OPEN;
     }
 
-
-    public void exitTechnicalDetailsPage(){
-        menuController.queueContainer.setVisible(true);
-        menuController.technicalDetailsScroll.setVisible(false);
-
-        textBox.getChildren().clear();
-        imageView.setImage(null);
-        imageViewContainer.setStyle("-fx-background-color: transparent;");
-
-        menuController.menuState = MenuState.QUEUE_OPEN;
-    }
 
     private void createTitle(String title){
         Label label = new Label(title);
@@ -208,4 +194,33 @@ public class TechnicalDetailsPage {
 
     }
 
+    public void openTechnicalDetailsPage(){
+        menuController.technicalDetailsScroll.setVisible(true);
+    }
+
+    public void closeTechnicalDetailsPage(){
+        menuController.technicalDetailsScroll.setVisible(false);
+
+        textBox.getChildren().clear();
+        imageView.setImage(null);
+        imageViewContainer.setStyle("-fx-background-color: transparent;");
+    }
+
+    public void enter(QueueItem queueItem){
+
+        if(menuController.menuInTransition) return;
+
+        menuController.menuBar.setActiveButton(null);
+
+        loadTechnicalDetailsPage(queueItem);
+
+        if(menuController.menuState == MenuState.CLOSED){
+            if(!menuController.extended.get()) menuController.setMenuExtended(MenuState.TECHNICAL_DETAILS_OPEN);
+            menuController.openMenu(MenuState.TECHNICAL_DETAILS_OPEN);
+        }
+        else {
+            if(!menuController.extended.get()) menuController.extendMenu(MenuState.TECHNICAL_DETAILS_OPEN);
+            else menuController.animateStateSwitch(MenuState.TECHNICAL_DETAILS_OPEN);
+        }
+    }
 }

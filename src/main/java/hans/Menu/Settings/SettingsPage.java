@@ -1,6 +1,7 @@
-package hans.Menu;
+package hans.Menu.Settings;
 
-import hans.Menu.Queue.QueueItem;
+import hans.Menu.MenuController;
+import hans.Menu.MenuState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -22,10 +23,14 @@ public class SettingsPage {
 
     public Label settingsTitle = new Label("Settings");
 
+    SubtitleSection subtitleSection;
 
-    SettingsPage(MenuController menuController){
+
+    public SettingsPage(MenuController menuController){
 
         this.menuController = menuController;
+
+        subtitleSection = new SubtitleSection(this);
 
         settingsWrapper.setBackground(Background.EMPTY);
 
@@ -66,6 +71,10 @@ public class SettingsPage {
 
         settingsWrapper.getChildren().addAll(settingsBar, settingsScroll);
         menuController.settingsContainer.getChildren().add(settingsWrapper);
+
+
+        settingsContent.getChildren().add(subtitleSection);
+        settingsContent.setSpacing(30);
 
     }
 

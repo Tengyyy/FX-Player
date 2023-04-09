@@ -6,7 +6,6 @@ import hans.SVG;
 import hans.Settings.SettingsState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -36,6 +35,7 @@ public class MenuBar {
         musicLibraryButton = new MenuBarButton(menuController, App.svgMap.get(SVG.MUSIC), 19, 18, "Music library", "Music library");
         playlistsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.PLAYLIST), 19, 21, "Playlists", "Playlists");
         settingsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.SETTINGS), 19, 19, "Settings", "Settings");
+
 
         queueButton.button.setOnAction(e -> {
 

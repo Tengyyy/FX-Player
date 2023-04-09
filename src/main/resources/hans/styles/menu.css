@@ -70,10 +70,6 @@
     -fx-font-size: 36;
 }
 
-.menuActionButton{
-    -fx-background-color: #ff5447;
-}
-
 #clearQueueButton {
     -fx-text-fill: rgb(150,150,150);
     -fx-background-radius: 5;
@@ -143,6 +139,7 @@
     -fx-border-width: 1;
     -fx-border-color: rgb(40,40,40);
     -fx-border-radius: 5;
+    -fx-cursor: hand;
 }
 
 #timingSaveButton {
@@ -161,6 +158,10 @@
 
 .menuButton:pressed > .graphic {
     -fx-background-color: rgb(180,180,180);
+}
+
+.menuActionButton{
+    -fx-background-color: #ff5447;
 }
 
 .menuBarButton {
@@ -218,6 +219,7 @@
     -fx-font-family: "Roboto";
     -fx-padding: 7 11 7 9;
     -fx-graphic-text-gap: 7;
+    -fx-cursor: hand;
 }
 
 .mainButton:hover {
@@ -458,6 +460,50 @@
 .clearSelection {
     -fx-text-fill: red;
     -fx-cursor: hand;
+}
+
+.settingsSectionTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 25;
+}
+
+.highlightedSection {
+    -fx-background-color: rgba(40,40,40,0.9);
+    -fx-background-radius: 10;
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+    -fx-border-radius: 10;
+
+}
+
+.settingsSubsectionTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 22;
+}
+
+.settingsText {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 19;
+}
+
+.settingsLink {
+    -fx-underline: false;
+    -fx-cursor: hand;
+}
+
+.settingsLink:hover {
+    -fx-underline: true;
+}
+
+.infoIcon {
+    -fx-background-color: rgb(200,200,200);
+}
+
+.infoLabel:hover > .infoIcon {
+    -fx-background-color: rgb(255,255,255);
 }
 
 

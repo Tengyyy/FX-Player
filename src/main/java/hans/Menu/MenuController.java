@@ -8,6 +8,7 @@ import hans.Chapters.ChapterController;
 import hans.MediaItems.MediaItem;
 import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.Menu.Queue.QueuePage;
+import hans.Menu.Settings.SettingsPage;
 import hans.Settings.SettingsController;
 import hans.Settings.SettingsState;
 import javafx.animation.*;

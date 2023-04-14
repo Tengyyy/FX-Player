@@ -24,13 +24,18 @@ public class SettingsPage {
     public Label settingsTitle = new Label("Settings");
 
     SubtitleSection subtitleSection;
-
+    MetadataSection metadataSection;
+    public PreferencesSection preferencesSection;
+    LibrariesSection librariesSection;
 
     public SettingsPage(MenuController menuController){
 
         this.menuController = menuController;
 
         subtitleSection = new SubtitleSection(this);
+        metadataSection = new MetadataSection(this);
+        preferencesSection = new PreferencesSection(this);
+        librariesSection = new LibrariesSection(this);
 
         settingsWrapper.setBackground(Background.EMPTY);
 
@@ -49,13 +54,10 @@ public class SettingsPage {
 
         VBox.setVgrow(settingsScroll, Priority.ALWAYS);
 
-
         settingsTitle.getStyleClass().add("menuTitle");
 
         VBox.setMargin(settingsTitle, new Insets(20, 40, 5, 50));
         settingsBar.setPadding(new Insets(35, 0, 0, 0));
-
-
 
         settingsBar.setAlignment(Pos.CENTER_LEFT);
         settingsBar.getChildren().addAll(settingsTitle);
@@ -73,7 +75,7 @@ public class SettingsPage {
         menuController.settingsContainer.getChildren().add(settingsWrapper);
 
 
-        settingsContent.getChildren().add(subtitleSection);
+        settingsContent.getChildren().addAll(subtitleSection, metadataSection, preferencesSection, librariesSection);
         settingsContent.setSpacing(30);
 
     }
@@ -100,5 +102,13 @@ public class SettingsPage {
             if(!menuController.extended.get()) menuController.extendMenu(MenuState.SETTINGS_OPEN);
             else menuController.animateStateSwitch(MenuState.SETTINGS_OPEN);
         }
+    }
+
+    private void animateScroll(double newValue){
+
+    }
+
+    private void getTargetScrollValue(Section section){
+
     }
 }

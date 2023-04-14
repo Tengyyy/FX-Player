@@ -103,7 +103,7 @@ public class CaptionsHome {
 
         captionsTitleLabel.setPrefSize(165, 40);
         captionsTitleLabel.setMaxSize(165, 40);
-        captionsTitleLabel.setText("Subtitles/CC");
+        captionsTitleLabel.setText("Subtitles");
         captionsTitleLabel.getStyleClass().add("settingsPaneText");
 
 

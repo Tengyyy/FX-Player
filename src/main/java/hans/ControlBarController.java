@@ -183,7 +183,7 @@ public class ControlBarController implements Initializable {
             mute = new ControlTooltip(mainController,"Mute (m)", volumeButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             settings = new ControlTooltip(mainController,"Settings (s)", settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            captions = new ControlTooltip(mainController,"Subtitles (c)", captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             previousVideoTooltip = new VideoTooltip(mainController, previousVideoButton, true);
             nextVideoTooltip = new VideoTooltip(mainController, nextVideoButton, false);
@@ -217,7 +217,7 @@ public class ControlBarController implements Initializable {
         volumeMutedSVG.setContent(App.svgMap.get(SVG.VOLUME_MUTED));
 
         captionsSVG = new SVGPath();
-        captionsSVG.setContent(App.svgMap.get(SVG.CAPTIONS));
+        captionsSVG.setContent(App.svgMap.get(SVG.SUBTITLES));
 
         settingsSVG = new SVGPath();
         settingsSVG.setContent(App.svgMap.get(SVG.SETTINGS));

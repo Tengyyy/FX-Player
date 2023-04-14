@@ -10,7 +10,7 @@ public enum SVG {
     VOLUME_HIGH,
     VOLUME_LOW,
     VOLUME_MUTED,
-    CAPTIONS,
+    SUBTITLES,
     SETTINGS,
     MAXIMIZE,
     MINIMIZE,
@@ -67,5 +67,7 @@ public enum SVG {
     DRAG_VERTICAL,
     COLLAPSE_LEFT,
     EYE,
-    EYE_OFF
+    EYE_OFF,
+    WRENCH,
+    REFRESH
 }

@@ -209,7 +209,7 @@ public class QueueItem extends GridPane {
         removeSVG.setContent(App.svgMap.get(SVG.REMOVE));
         optionsSVG.setContent(App.svgMap.get(SVG.OPTIONS));
         pauseSVG.setContent(App.svgMap.get(SVG.PAUSE));
-        captionsSVG.setContent(App.svgMap.get(SVG.CAPTIONS));
+        captionsSVG.setContent(App.svgMap.get(SVG.SUBTITLES));
 
         coverImage.setFitHeight(70);
         coverImage.setFitWidth(125);

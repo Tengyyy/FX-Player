@@ -158,7 +158,7 @@ public class SettingsController {
 
             controlBarController.miniplayer = new ControlTooltip(mainController, "Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
-            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             if (App.fullScreen)
                 controlBarController.fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
@@ -166,7 +166,7 @@ public class SettingsController {
                 controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
         }
         else if (controlBarController.captionsButtonHover) {
-            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             controlBarController.captions.showTooltip();
 
@@ -185,7 +185,7 @@ public class SettingsController {
                 controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             }
 
-            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             controlBarController.miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             controlBarController.miniplayer.showTooltip();
@@ -200,13 +200,13 @@ public class SettingsController {
             }
             controlBarController.fullScreen.showTooltip();
 
-            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             controlBarController.miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             controlBarController.settings = new ControlTooltip(mainController,"Settings (s)", controlBarController.settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
         }
         else {
-            controlBarController.captions = new ControlTooltip(mainController,"Subtitles/closed captions (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.captions = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 
             controlBarController.settings = new ControlTooltip(mainController,"Settings (s)", controlBarController.settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
 

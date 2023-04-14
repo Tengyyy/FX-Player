@@ -280,6 +280,9 @@ public class MenuController implements Initializable {
         this.mediaInterface = mediaInterface;
         this.captionsController = captionsController;
         this.chapterController = chapterController;
+
+
+        settingsPage.preferencesSection.loadLanguageBox();
     }
 
     public void extendMenu(MenuState newState){

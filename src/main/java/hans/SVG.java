@@ -32,8 +32,11 @@ public enum SVG {
     SPEED,
     CAPTIONS_OUTLINE,
     SHUFFLE,
+    SHUFFLE_OFF,
     REPEAT,
+    REPEAT_OFF,
     REPEAT_ONCE,
+    REPEAT_ONCE_OFF,
     DOUBLE_RIGHT,
     DOUBLE_LEFT,
     TUNE,
@@ -69,5 +72,6 @@ public enum SVG {
     EYE,
     EYE_OFF,
     WRENCH,
-    REFRESH
+    REFRESH,
+    QUEUE_CLEAR
 }

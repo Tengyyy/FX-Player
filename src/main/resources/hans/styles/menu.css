@@ -474,7 +474,13 @@
     -fx-border-width: 1;
     -fx-border-color: rgb(40,40,40);
     -fx-border-radius: 5;
+}
 
+.borderedSection {
+    -fx-background-color: rgba(15,15,15,0.75);
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+    -fx-border-radius: 5;
 }
 
 .settingsSubsectionTitle {
@@ -494,6 +500,18 @@
     -fx-font-family: "Roboto Regular";
     -fx-font-size: 17;
     -fx-graphic-text-gap: 15;
+}
+
+.keycap {
+    -fx-text-fill: rgb(200,200,200);
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 17;
+    -fx-background-color: rgb(75,75,75);
+    -fx-background-radius: 5;
+    -fx-padding: 4 6 4 6;
+    -fx-min-width: 40px;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
 }
 
 .settingsLink {
@@ -523,6 +541,10 @@
     -fx-border-radius: 5;
     -fx-border-width: 1;
     -fx-border-color: rgb(40,40,40);
+}
+
+.controlItemOdd {
+    -fx-background-color: rgb(30,30,30);
 }
 
 

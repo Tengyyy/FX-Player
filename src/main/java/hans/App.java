@@ -1,16 +1,14 @@
 package hans;
 
 
+import hans.Captions.CaptionsController;
 import hans.Menu.ExpandableTextArea;
 import hans.Menu.MenuController;
 import hans.Settings.SettingsController;
-import hans.Captions.CaptionsController;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
@@ -19,19 +17,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import org.controlsfx.control.CheckComboBox;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Objects;
 
 import static hans.SVG.*;
-import static javafx.scene.input.KeyCode.F11;
+
 
 
 public class App extends Application {
 
     public static Stage stage;
-
 
     public static boolean fullScreen;
     public static boolean isWindows = false;
@@ -45,11 +42,14 @@ public class App extends Application {
 
     MediaInterface mediaInterface;
 
+    HotkeyController hotkeyController;
+
     public static EnumMap<SVG, String> svgMap = new EnumMap<>(SVG.class);
 
 
     @Override
     public void start(Stage primaryStage) {
+
         try {
 
             svgMap.put(MENU, "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z");
@@ -80,8 +80,11 @@ public class App extends Application {
             svgMap.put(CHEVRON_LEFT, "M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z");
             svgMap.put(CHECK, "M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z");
             svgMap.put(REPEAT, "M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z");
+            svgMap.put(REPEAT_OFF, "M2,5.27L3.28,4L20,20.72L18.73,22L15.73,19H7V22L3,18L7,14V17H13.73L7,10.27V11H5V8.27L2,5.27M17,13H19V17.18L17,15.18V13M17,5V2L21,6L17,10V7H8.82L6.82,5H17Z");
             svgMap.put(REPEAT_ONCE, "M13,15V9H12L10,10V11H11.5V15M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z");
-            svgMap.put(SHUFFLE, "M17,3L22.25,7.5L17,12L22.25,16.5L17,21V18H14.26L11.44,15.18L13.56,13.06L15.5,15H17V12L17,9H15.5L6.5,18H2V15H5.26L14.26,6H17V3M2,6H6.5L9.32,8.82L7.2,10.94L5.26,9H2V6Z");
+            svgMap.put(REPEAT_ONCE_OFF, "m 6.8356489,28.808752 -0.8112346,0.02985 0.02454,-8.282203 H 5.3068712 v -0.03803 L 6.2665833,16.92797 6.8356489,16.90559 Z M 1.0470635,10.066247 1.7171842,7.6404153 10.470635,39.577351 9.8057498,42.022284 8.2351546,36.291973 H 3.6647223 v 5.730311 l -2.094127,-7.640415 2.094127,-7.640415 v 5.730311 H 7.188091 L 3.6647223,19.616766 v 1.394376 H 2.6176588 V 15.796559 L 1.0470635,10.066247 M 8.9000399,24.83135 h 1.0470635 v 7.984234 L 8.9000399,28.995376 V 24.83135 m 0,-15.2808309 V 3.8202077 L 10.994167,11.460623 8.9000399,19.101038 V 13.370727 H 4.6175501 L 3.5704866,9.5505191 Z");
+            svgMap.put(SHUFFLE, "M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,16.54L14.83,13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,9.5V4M10.59,9.17L5.41,4L4,5.41L9.17,10.58L10.59,9.17Z");
+            svgMap.put(SHUFFLE_OFF, "M16,4.5V7H5V9H16V11.5L19.5,8M16,12.5V15H5V17H16V19.5L19.5,16");
             svgMap.put(MAGNIFY, "M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z");
             svgMap.put(SPEED, "M13,2.05V4.05C17.39,4.59 20.5,8.58 19.96,12.97C19.5,16.61 16.64,19.5 13,19.93V21.93C18.5,21.38 22.5,16.5 21.95,11C21.5,6.25 17.73,2.5 13,2.03V2.05M5.67,19.74C7.18,21 9.04,21.79 11,22V20C9.58,19.82 8.23,19.25 7.1,18.37L5.67,19.74M7.1,5.74C8.22,4.84 9.57,4.26 11,4.06V2.06C9.05,2.25 7.19,3 5.67,4.26L7.1,5.74M5.69,7.1L4.26,5.67C3,7.19 2.25,9.04 2.05,11H4.05C4.24,9.58 4.8,8.23 5.69,7.1M4.06,13H2.06C2.26,14.96 3.03,16.81 4.27,18.33L5.69,16.9C4.81,15.77 4.24,14.42 4.06,13M10,16.5L16,12L10,7.5V16.5Z");
             svgMap.put(CAPTIONS_OUTLINE, "M5,4C4.45,4 4,4.18 3.59,4.57C3.2,4.96 3,5.44 3,6V18C3,18.56 3.2,19.04 3.59,19.43C4,19.82 4.45,20 5,20H19C19.5,20 20,19.81 20.39,19.41C20.8,19 21,18.53 21,18V6C21,5.47 20.8,5 20.39,4.59C20,4.19 19.5,4 19,4H5M4.5,5.5H19.5V18.5H4.5V5.5M7,9C6.7,9 6.47,9.09 6.28,9.28C6.09,9.47 6,9.7 6,10V14C6,14.3 6.09,14.53 6.28,14.72C6.47,14.91 6.7,15 7,15H10C10.27,15 10.5,14.91 10.71,14.72C10.91,14.53 11,14.3 11,14V13H9.5V13.5H7.5V10.5H9.5V11H11V10C11,9.7 10.91,9.47 10.71,9.28C10.5,9.09 10.27,9 10,9H7M14,9C13.73,9 13.5,9.09 13.29,9.28C13.09,9.47 13,9.7 13,10V14C13,14.3 13.09,14.53 13.29,14.72C13.5,14.91 13.73,15 14,15H17C17.3,15 17.53,14.91 17.72,14.72C17.91,14.53 18,14.3 18,14V13H16.5V13.5H14.5V10.5H16.5V11H18V10C18,9.7 17.91,9.47 17.72,9.28C17.53,9.09 17.3,9 17,9H14Z");
@@ -121,7 +124,7 @@ public class App extends Application {
             svgMap.put(EYE, "M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z");
             svgMap.put(WRENCH, "M22.7,19L13.6,9.9C14.5,7.6 14,4.9 12.1,3C10.1,1 7.1,0.6 4.7,1.7L9,6L6,9L1.6,4.7C0.4,7.1 0.9,10.1 2.9,12.1C4.8,14 7.5,14.5 9.8,13.6L18.9,22.7C19.3,23.1 19.9,23.1 20.3,22.7L22.6,20.4C23.1,20 23.1,19.3 22.7,19Z");
             svgMap.put(REFRESH, "M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z");
-
+            svgMap.put(QUEUE_CLEAR, "M14 10H3V12H14V10M14 6H3V8H14V6M3 16H10V14H3V16M14.4 22L17 19.4L19.6 22L21 20.6L18.4 18L21 15.4L19.6 14L17 16.6L14.4 14L13 15.4L15.6 18L13 20.6L14.4 22Z");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("views/Main.fxml"));
 
             Parent root = loader.load();
@@ -138,6 +141,8 @@ public class App extends Application {
             captionsController = mainController.getCaptionsController();
 
             mediaInterface = mainController.getMediaInterface();
+
+            hotkeyController = new HotkeyController(mainController);
 
 
             Scene scene = new Scene(root, 705, 400);
@@ -161,69 +166,11 @@ public class App extends Application {
 
 
             primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-
-                switch (event.getCode()){
-                    case TAB -> mainController.pressTAB(event);
-                    case FAST_FWD -> mainController.pressL(event);
-                    case REWIND -> mainController.pressJ();
-                    case MUTE -> mainController.pressM();
-                    case PLAY, PAUSE -> mainController.pressSPACE(event);
-                    case TRACK_PREV ->  mainController.pressPreviousTrack();
-                    case TRACK_NEXT -> mainController.pressNextTrack();
-                    case F11 -> mainController.pressF();
-                    case ESCAPE -> mainController.pressESCAPE();
-                    case ENTER -> mainController.pressEnter();
-                }
-
-                if(!(event.getTarget() instanceof ExpandableTextArea)
-                        && !(event.getTarget() instanceof TextField)
-                        && !(event.getTarget() instanceof DatePicker)
-                        && !(event.getTarget() instanceof Spinner)){
-                    switch (event.getCode()) {
-                        case RIGHT -> mainController.pressRIGHT(event);
-                        case LEFT -> mainController.pressLEFT(event);
-                        case UP -> mainController.pressUP(event);
-                        case DOWN -> mainController.pressDOWN(event);
-                        case L -> mainController.pressL(event);
-                        case J -> mainController.pressJ();
-                        case DIGIT1 -> mainController.press1();
-                        case DIGIT2 -> mainController.press2();
-                        case DIGIT3 -> mainController.press3();
-                        case DIGIT4 -> mainController.press4();
-                        case DIGIT5 -> mainController.press5();
-                        case DIGIT6 -> mainController.press6();
-                        case DIGIT7 -> mainController.press7();
-                        case DIGIT8 -> mainController.press8();
-                        case DIGIT9 -> mainController.press9();
-                        case DIGIT0, HOME -> mainController.press0();
-                        case END -> mainController.pressEND();
-                        case M -> mainController.pressM();
-                        case F12 -> mainController.pressF12();
-                        case SPACE -> mainController.pressSPACE(event);
-                        case K -> mainController.pressK(event);
-                        case P -> mainController.pressP(event);
-                        case N -> mainController.pressN(event);
-                        case COMMA -> mainController.pressCOMMA(event);
-                        case PERIOD -> mainController.pressPERIOD(event);
-                        case F -> mainController.pressF();
-                        case C -> mainController.pressC();
-                        case S -> mainController.pressS();
-                        case Q -> mainController.pressQ();
-                        case I -> mainController.pressI();
-                        default -> {
-                        }
-                    }
-                }
+                hotkeyController.handleKeyPress(event);
             });
 
             primaryStage.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
-                if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.COMMA || event.getCode() == KeyCode.PERIOD){
-                    settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(false);
-                }
-
-                if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.J || event.getCode() == KeyCode.L || event.getCode() == KeyCode.REWIND || event.getCode() == KeyCode.FAST_FWD || event.getCode() == KeyCode.DIGIT1 || event.getCode() == KeyCode.DIGIT2 || event.getCode() == KeyCode.DIGIT3 || event.getCode() == KeyCode.DIGIT4 || event.getCode() == KeyCode.DIGIT5 || event.getCode() == KeyCode.DIGIT6 || event.getCode() == KeyCode.DIGIT7 || event.getCode() == KeyCode.DIGIT8 || event.getCode() == KeyCode.DIGIT9 || event.getCode() == KeyCode.DIGIT0 || event.getCode() == KeyCode.HOME || event.getCode() == KeyCode.END){
-                    mainController.seekingWithKeys = false;
-                }
+                hotkeyController.handleKeyRelease(event);
             });
 
             primaryStage.setScene(scene);

@@ -140,6 +140,11 @@ public class CloseConfirmationWindow {
             mainController.addYoutubeVideoWindow.showing = false;
         }
 
+        if(mainController.hotkeyChangeWindow.showing){
+            mainController.hotkeyChangeWindow.window.setVisible(false);
+            mainController.hotkeyChangeWindow.showing = false;
+        }
+
         this.showing = true;
 
         mainController.popupWindowContainer.setMouseTransparent(false);

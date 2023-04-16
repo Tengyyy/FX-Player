@@ -121,6 +121,7 @@ public class MainController implements Initializable {
 
     public AddYoutubeVideoWindow addYoutubeVideoWindow;
     public CloseConfirmationWindow closeConfirmationWindow;
+    public HotkeyChangeWindow hotkeyChangeWindow;
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -142,6 +143,7 @@ public class MainController implements Initializable {
 
         addYoutubeVideoWindow = new AddYoutubeVideoWindow(this);
         closeConfirmationWindow = new CloseConfirmationWindow(this);
+        hotkeyChangeWindow = new HotkeyChangeWindow(this);
 
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
         sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
@@ -825,19 +827,146 @@ public class MainController implements Initializable {
         //windowsTaskBarController = new WindowsTaskBarController(menuController, mediaInterface);
     }
 
-
-    public void pressRIGHT(KeyEvent e){
+    public void pressTAB(KeyEvent event){
         controlBarController.mouseEventTracker.move();
 
-        if(settingsController.settingsState == SettingsState.CUSTOM_SPEED_OPEN){
-            // if custom speed pane is open, dont seek video with arrows
-            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
-            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
-            e.consume();
-            return;
+        if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN){
+            if(event.isShiftDown()) captionsController.openSubtitlesPane.focusBackward();
+            else captionsController.openSubtitlesPane.focusForward();
         }
 
-        if (!controlBarController.volumeSlider.isFocused() && mediaInterface.mediaActive.get()) {
+        event.consume();
+    }
+
+    public void pressESCAPE(){
+        captionsController.captionsBox.cancelDrag();
+
+        controlBarController.mouseEventTracker.move();
+        if (settingsController.settingsState != SettingsState.CLOSED && !App.fullScreen) {
+            settingsController.closeSettings();
+        }
+        else if (captionsController.captionsState != CaptionsState.CLOSED && !App.fullScreen) {
+            captionsController.closeCaptions();
+        }
+
+        App.fullScreen = false;
+
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+        controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
+        App.stage.setFullScreen(false);
+
+        if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED)
+            controlBarController.fullScreen = new ControlTooltip(this,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+    }
+
+    public void pressEnter(){
+        if(captionsController.captionsState != CaptionsState.OPENSUBTITLES_OPEN) return;
+
+        captionsController.openSubtitlesPane.searchButton.fire();
+    }
+
+    public void PLAY_PAUSEAction(){
+        controlBarController.mouseEventTracker.move();
+        if (!controlBarController.durationSlider.isValueChanging() && mediaInterface.mediaActive.get() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())) { // wont let user play/pause video while media slider is seeking
+            if (mediaInterface.atEnd) {
+                mediaInterface.replay();
+                actionIndicator.setIcon(REPLAY);
+            } else {
+                if (mediaInterface.playing.get()) {
+                    mediaInterface.wasPlaying = false;
+                    mediaInterface.pause();
+                    actionIndicator.setIcon(PAUSE);
+                } else {
+                    mediaInterface.play();
+                    actionIndicator.setIcon(PLAY);
+                }
+            }
+
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+        }
+    }
+
+    public void MUTEAction(){
+        controlBarController.mouseEventTracker.move();
+        if (!controlBarController.muted) {
+            controlBarController.mute();
+            actionIndicator.setIcon(VOLUME_MUTED);
+        } else {
+            controlBarController.unmute();
+            actionIndicator.setIcon(VOLUME_HIGH);
+        }
+
+        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+        valueIndicator.play();
+
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+
+    public void VOLUME_UP5Action(){
+        controlBarController.mouseEventTracker.move();
+
+        controlBarController.volumeSlider.setValue(Math.min(controlBarController.volumeSlider.getValue() + 5, 100));
+        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+
+        valueIndicator.play();
+
+        actionIndicator.setIcon(VOLUME_HIGH);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void VOLUME_DOWN5Action(){
+        controlBarController.mouseEventTracker.move();
+
+        controlBarController.volumeSlider.setValue(Math.max(controlBarController.volumeSlider.getValue() - 5, 0));
+        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+
+        valueIndicator.play();
+
+        if(controlBarController.volumeSlider.getValue() == 0) actionIndicator.setIcon(VOLUME_MUTED);
+        else actionIndicator.setIcon(VOLUME_LOW);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void VOLUME_UP1Action(){
+        controlBarController.mouseEventTracker.move();
+
+        controlBarController.volumeSlider.setValue(Math.min(controlBarController.volumeSlider.getValue() + 1, 100));
+        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+
+        valueIndicator.play();
+
+        actionIndicator.setIcon(VOLUME_HIGH);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void VOLUME_DOWN1Action(){
+        controlBarController.mouseEventTracker.move();
+
+        controlBarController.volumeSlider.setValue(Math.max(controlBarController.volumeSlider.getValue() - 1, 0));
+        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
+
+        valueIndicator.play();
+
+        if(controlBarController.volumeSlider.getValue() == 0) actionIndicator.setIcon(VOLUME_MUTED);
+        else actionIndicator.setIcon(VOLUME_LOW);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+
+    public void FORWARD5Action(){
+        controlBarController.mouseEventTracker.move();
+
+        if (mediaInterface.mediaActive.get()) {
 
             if(backwardsIndicator.wrapper.isVisible()){
                 backwardsIndicator.setVisible(false);
@@ -875,24 +1004,13 @@ public class MainController implements Initializable {
                 }
                 else videoImageView.setVisible(true);
             }
-
-            e.consume();
-
         }
     }
 
-    public void pressLEFT(KeyEvent e){
+    public void REWIND5Action(){
         controlBarController.mouseEventTracker.move();
 
-        if(settingsController.settingsState == SettingsState.CUSTOM_SPEED_OPEN){
-            // if custom speed pane is open, dont seek video with arrows
-            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
-            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
-            e.consume();
-            return;
-        }
-
-        if (!controlBarController.volumeSlider.isFocused() && mediaInterface.mediaActive.get()) {
+        if (mediaInterface.mediaActive.get()) {
 
             if(forwardsIndicator.wrapper.isVisible()){
                 forwardsIndicator.setVisible(false);
@@ -927,114 +1045,11 @@ public class MainController implements Initializable {
                 }
                 else videoImageView.setVisible(true);
             }
-
-
-            e.consume();
-
         }
     }
 
-    public void pressTAB(KeyEvent event){
-        controlBarController.mouseEventTracker.move();
 
-        if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN){
-            if(event.isShiftDown()) captionsController.openSubtitlesPane.focusBackward();
-            else captionsController.openSubtitlesPane.focusForward();
-        }
-
-        event.consume(); // TODO: replace builtin focus traversal with custom engine
-    }
-
-    public void pressM(){
-        controlBarController.mouseEventTracker.move();
-        if (!controlBarController.muted) {
-            controlBarController.mute();
-            actionIndicator.setIcon(VOLUME_MUTED);
-        } else {
-            controlBarController.unmute();
-            actionIndicator.setIcon(VOLUME_HIGH);
-        }
-
-        valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
-        valueIndicator.play();
-
-        actionIndicator.setVisible(true);
-        actionIndicator.animate();
-    }
-
-    public void pressK(KeyEvent e){
-        controlBarController.mouseEventTracker.move();
-        if (!controlBarController.durationSlider.isValueChanging() && mediaInterface.mediaActive.get() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())) { // wont let user play/pause video while media slider is seeking
-            if (mediaInterface.atEnd) {
-                mediaInterface.replay();
-                actionIndicator.setIcon(REPLAY);
-            } else {
-                if (mediaInterface.playing.get()) {
-                    mediaInterface.wasPlaying = false;
-                    mediaInterface.pause();
-                    actionIndicator.setIcon(PAUSE);
-                } else {
-                    mediaInterface.play();
-                    actionIndicator.setIcon(PLAY);
-                }
-            }
-            actionIndicator.setVisible(true);
-            actionIndicator.animate();
-
-            e.consume(); // might have to add a check to consume the space event only if any controlbar buttons are focused (might use space bar to navigate settings or menu)
-        }
-    }
-
-    public void pressSPACE(KeyEvent e){
-        if(e.getTarget() instanceof CheckComboBox<?> && captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN){
-            captionsController.openSubtitlesPane.languageBox.show();
-        }
-        else {
-            pressK(e);
-        }
-    }
-
-    public void pressJ(){
-        controlBarController.mouseEventTracker.move();
-
-        if (mediaInterface.mediaActive.get()) {
-            mediaInterface.seekedToEnd = false;
-
-            if(forwardsIndicator.wrapper.isVisible()){
-                forwardsIndicator.setVisible(false);
-            }
-            backwardsIndicator.setText("10 seconds");
-            backwardsIndicator.reset();
-            backwardsIndicator.setVisible(true);
-            backwardsIndicator.animate();
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);
-
-            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
-                seekImageView.setImage(null);
-                seekImageView.setVisible(false);
-
-                if(miniplayerActive){
-                    miniplayer.miniplayerController.videoImageView.setVisible(true);
-                    miniplayer.miniplayerController.seekImageView.setVisible(false);
-                    miniplayer.miniplayerController.seekImageView.setImage(null);
-                }
-                else videoImageView.setVisible(true);
-            }
-        }
-    }
-
-    public void pressL(KeyEvent e){
+    public void FORWARD10Action(){
         controlBarController.mouseEventTracker.move();
 
 
@@ -1076,35 +1091,35 @@ public class MainController implements Initializable {
                 }
                 else videoImageView.setVisible(true);
             }
-
-            e.consume();
-
         }
     }
 
-    public void pressCOMMA(KeyEvent e){
+
+    public void REWIND10Action(){
         controlBarController.mouseEventTracker.move();
 
-        if(e.isShiftDown()){ // decrease playback speed by 0.25
-            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
-            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.25);
-
-            valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
-            valueIndicator.play();
-
-            actionIndicator.setIcon(REWIND);
-            actionIndicator.setVisible(true);
-            actionIndicator.animate();
-
-
-            e.consume();
-            return;
-        }
-
-        // seek backwards by 100 milliseconds
-        if(!mediaInterface.playing.get() && mediaInterface.mediaActive.get()) {
+        if (mediaInterface.mediaActive.get()) {
             mediaInterface.seekedToEnd = false;
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 0.1);
+
+            if(forwardsIndicator.wrapper.isVisible()){
+                forwardsIndicator.setVisible(false);
+            }
+            backwardsIndicator.setText("10 seconds");
+            backwardsIndicator.reset();
+            backwardsIndicator.setVisible(true);
+            backwardsIndicator.animate();
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);
 
             if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
                 seekImageView.setImage(null);
@@ -1118,30 +1133,11 @@ public class MainController implements Initializable {
                 else videoImageView.setVisible(true);
             }
         }
-        e.consume();
     }
 
-    public void pressPERIOD(KeyEvent e){
+    public void FRAME_FORWARDAction(){
 
         controlBarController.mouseEventTracker.move();
-
-        if(e.isShiftDown()){ // increase playback speed by 0.25
-            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
-            settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.25);
-
-            valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
-            valueIndicator.play();
-
-            actionIndicator.setIcon(FORWARD);
-            actionIndicator.setVisible(true);
-            actionIndicator.animate();
-
-
-            // also show new playback speed as a label top center of the mediaviewpane
-
-            e.consume();
-            return;
-        }
 
         // seek forward by 100 milliseconds
         if(!mediaInterface.playing.get() && mediaInterface.mediaActive.get()){
@@ -1164,175 +1160,15 @@ public class MainController implements Initializable {
                 else videoImageView.setVisible(true);
             }
         }
-        e.consume();
     }
 
-    public void pressUP(KeyEvent event){
+    public void FRAME_BACKWARDAction(){
         controlBarController.mouseEventTracker.move();
 
-        if(event.isShiftDown()){
-            // change focus between menu items
-        }
-        else {
-            controlBarController.volumeSlider.setValue(Math.min(controlBarController.volumeSlider.getValue() + 5, 100));
-            valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
-
-            valueIndicator.play();
-
-            actionIndicator.setIcon(VOLUME_HIGH);
-            actionIndicator.setVisible(true);
-            actionIndicator.animate();
-        }
-
-        event.consume();
-    }
-
-    public void pressDOWN(KeyEvent event){
-        controlBarController.mouseEventTracker.move();
-
-        if(event.isShiftDown()){
-            // change focus between menu items
-        }
-        else {
-            controlBarController.volumeSlider.setValue(Math.max(controlBarController.volumeSlider.getValue() - 5, 0));
-            valueIndicator.setValue((int) (controlBarController.volumeSlider.getValue()) + "%");
-
-            valueIndicator.play();
-
-            if(controlBarController.volumeSlider.getValue() == 0) actionIndicator.setIcon(VOLUME_MUTED);
-            else actionIndicator.setIcon(VOLUME_LOW);
-            actionIndicator.setVisible(true);
-            actionIndicator.animate();
-        }
-
-        event.consume();
-    }
-
-    public void pressI(){
-
-        if(miniplayerActive) closeMiniplayer();
-        else openMiniplayer();
-
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
-        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
-        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-    }
-
-    public void pressQ(){
-
-        if(addYoutubeVideoWindow.showing || menuController.queuePage.queueBox.itemDragActive.get()) return;
-
-        controlBarController.mouseEventTracker.move();
-
-        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
-        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
-
-        if(!menuController.menuInTransition){
-            if(menuController.menuState != MenuState.CLOSED) menuController.closeMenu();
-            else menuController.queuePage.enter();
-        }
-    }
-
-    public void pressS(){
-        controlBarController.mouseEventTracker.move();
-
-        if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
-        } else {
-            settingsController.openSettings();
-        }
-
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
-    }
-
-    public void pressN(KeyEvent e){
-        controlBarController.mouseEventTracker.move();
-
-        if(e.isShiftDown()){
-            pressNextTrack();
-        }
-    }
-
-    public void pressP(KeyEvent e){
-        controlBarController.mouseEventTracker.move();
-
-        if(e.isShiftDown()){
-            pressPreviousTrack();
-        }
-    }
-
-    public void pressPreviousTrack(){
-        controlBarController.mouseEventTracker.move();
-
-        if(mediaInterface.mediaActive.get() && controlBarController.durationSlider.getValue() > 5){ // restart current video
-            actionIndicator.setIcon(REPLAY);
-            actionIndicator.setVisible(true);
-            actionIndicator.animate();
-
+        // seek backwards by 100 milliseconds
+        if(!mediaInterface.playing.get() && mediaInterface.mediaActive.get()) {
             mediaInterface.seekedToEnd = false;
-            controlBarController.durationSlider.setValue(0);
-
-        }
-        else if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeIndex.get() > 0){ // play previous video
-
-            if(menuController.queuePage.queueBox.itemDragActive.get()) return;
-
-            actionIndicator.setIcon(PREVIOUS_VIDEO);
-            actionIndicator.setVisible(true);
-            actionIndicator.animate();
-
-            mediaInterface.playPrevious();
-        }
-    }
-
-    public void pressNextTrack(){
-        controlBarController.mouseEventTracker.move();
-
-        if(!menuController.queuePage.queueBox.queue.isEmpty() && (menuController.queuePage.queueBox.activeItem.get() == null || menuController.queuePage.queueBox.queue.size() > menuController.queuePage.queueBox.activeIndex.get() + 1)){
-
-            if(menuController.queuePage.queueBox.itemDragActive.get()) return;
-
-            actionIndicator.setIcon(NEXT_VIDEO);
-            actionIndicator.setVisible(true);
-            actionIndicator.animate();
-
-            mediaInterface.playNext();
-        }
-    }
-
-    public void pressF(){
-
-        controlBarController.mouseEventTracker.move();
-        controlBarController.toggleFullScreen();
-
-        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
-        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
-
-    }
-
-    public void pressF12(){
-        takeScreenshot();
-        controlBarController.mouseEventTracker.move();
-    }
-
-    public void pressC(){
-        controlBarController.mouseEventTracker.move();
-
-        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
-        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
-
-
-        if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
-        else captionsController.openCaptions();
-    }
-
-    public void press1(){
-        controlBarController.mouseEventTracker.move();
-        if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 1 / 10);
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 0.1);
 
             if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
                 seekImageView.setImage(null);
@@ -1345,261 +1181,10 @@ public class MainController implements Initializable {
                 }
                 else videoImageView.setVisible(true);
             }
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
         }
     }
 
-    public void press2(){
-        controlBarController.mouseEventTracker.move();
-        if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 2 / 10);
-
-            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
-                seekImageView.setImage(null);
-                seekImageView.setVisible(false);
-
-                if(miniplayerActive){
-                    miniplayer.miniplayerController.videoImageView.setVisible(true);
-                    miniplayer.miniplayerController.seekImageView.setVisible(false);
-                    miniplayer.miniplayerController.seekImageView.setImage(null);
-                }
-                else videoImageView.setVisible(true);
-            }
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
-        }
-    }
-
-    public void press3(){
-        controlBarController.mouseEventTracker.move();
-        if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 3 / 10);
-
-            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
-                seekImageView.setImage(null);
-                seekImageView.setVisible(false);
-
-                if(miniplayerActive){
-                    miniplayer.miniplayerController.videoImageView.setVisible(true);
-                    miniplayer.miniplayerController.seekImageView.setVisible(false);
-                    miniplayer.miniplayerController.seekImageView.setImage(null);
-                }
-                else videoImageView.setVisible(true);
-            }
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
-        }
-    }
-
-    public void press4(){
-        controlBarController.mouseEventTracker.move();
-        if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 4 / 10);
-
-            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
-                seekImageView.setImage(null);
-                seekImageView.setVisible(false);
-
-                if(miniplayerActive){
-                    miniplayer.miniplayerController.videoImageView.setVisible(true);
-                    miniplayer.miniplayerController.seekImageView.setVisible(false);
-                    miniplayer.miniplayerController.seekImageView.setImage(null);
-                }
-                else videoImageView.setVisible(true);
-            }
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
-        }
-    }
-
-    public void press5(){
-        controlBarController.mouseEventTracker.move();
-        if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 5 / 10);
-
-            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
-                seekImageView.setImage(null);
-                seekImageView.setVisible(false);
-
-                if(miniplayerActive){
-                    miniplayer.miniplayerController.videoImageView.setVisible(true);
-                    miniplayer.miniplayerController.seekImageView.setVisible(false);
-                    miniplayer.miniplayerController.seekImageView.setImage(null);
-                }
-                else videoImageView.setVisible(true);
-            }
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
-        }
-    }
-
-    public void press6(){
-        controlBarController.mouseEventTracker.move();
-        if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 6 / 10);
-
-            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
-                seekImageView.setImage(null);
-                seekImageView.setVisible(false);
-
-                if(miniplayerActive){
-                    miniplayer.miniplayerController.videoImageView.setVisible(true);
-                    miniplayer.miniplayerController.seekImageView.setVisible(false);
-                    miniplayer.miniplayerController.seekImageView.setImage(null);
-                }
-                else videoImageView.setVisible(true);
-            }
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
-        }
-    }
-
-    public void press7(){
-        controlBarController.mouseEventTracker.move();
-        if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 7 / 10);
-
-            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
-                seekImageView.setImage(null);
-                seekImageView.setVisible(false);
-
-                if(miniplayerActive){
-                    miniplayer.miniplayerController.videoImageView.setVisible(true);
-                    miniplayer.miniplayerController.seekImageView.setVisible(false);
-                    miniplayer.miniplayerController.seekImageView.setImage(null);
-                }
-                else videoImageView.setVisible(true);
-            }
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
-        }
-    }
-
-    public void press8(){
-        controlBarController.mouseEventTracker.move();
-        if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 8 / 10);
-
-            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
-                seekImageView.setImage(null);
-                seekImageView.setVisible(false);
-
-                if(miniplayerActive){
-                    miniplayer.miniplayerController.videoImageView.setVisible(true);
-                    miniplayer.miniplayerController.seekImageView.setVisible(false);
-                    miniplayer.miniplayerController.seekImageView.setImage(null);
-                }
-                else videoImageView.setVisible(true);
-            }
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
-        }
-    }
-
-    public void press9(){
-        controlBarController.mouseEventTracker.move();
-        if(mediaInterface.mediaActive.get()){
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 9 / 10);
-
-            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
-                seekImageView.setImage(null);
-                seekImageView.setVisible(false);
-
-                if(miniplayerActive){
-                    miniplayer.miniplayerController.videoImageView.setVisible(true);
-                    miniplayer.miniplayerController.seekImageView.setVisible(false);
-                    miniplayer.miniplayerController.seekImageView.setImage(null);
-                }
-                else videoImageView.setVisible(true);
-            }
-
-            seekingWithKeys = true;
-            if(miniplayerActive) {
-                miniplayer.miniplayerController.sliderPane.setVisible(true);
-
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
-                }
-
-                miniplayer.miniplayerController.progressBarTimer.playFromStart();
-            }
-        }
-    }
-
-    public void press0(){
+    public void SEEK0Action(){
         controlBarController.mouseEventTracker.move();
         mediaInterface.seekedToEnd = false;
         if(mediaInterface.mediaActive.get()){
@@ -1633,31 +1218,364 @@ public class MainController implements Initializable {
         }
     }
 
-    public void pressESCAPE(){
-        captionsController.captionsBox.cancelDrag();
-
+    public void SEEK10Action(){
         controlBarController.mouseEventTracker.move();
-        if (settingsController.settingsState != SettingsState.CLOSED && !App.fullScreen) {
-            settingsController.closeSettings();
+        if(mediaInterface.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 1 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
         }
-        else if (captionsController.captionsState != CaptionsState.CLOSED && !App.fullScreen) {
-            captionsController.closeCaptions();
-        }
-
-        App.fullScreen = false;
-
-        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
-        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
-
-        controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
-        App.stage.setFullScreen(false);
-
-        if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED)
-            controlBarController.fullScreen = new ControlTooltip(this,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
     }
 
-    public void pressEND(){
+    public void SEEK20Action(){
+        controlBarController.mouseEventTracker.move();
+        if(mediaInterface.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 2 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
+        }
+    }
+
+    public void SEEK30Action(){
+        controlBarController.mouseEventTracker.move();
+        if(mediaInterface.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 3 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
+        }
+    }
+
+    public void SEEK40Action(){
+        controlBarController.mouseEventTracker.move();
+        if(mediaInterface.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 4 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
+        }
+    }
+
+    public void SEEK50Action(){
+        controlBarController.mouseEventTracker.move();
+        if(mediaInterface.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 5 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
+        }
+    }
+
+    public void SEEK60Action(){
+        controlBarController.mouseEventTracker.move();
+        if(mediaInterface.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 6 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
+        }
+    }
+
+    public void SEEK70Action(){
+        controlBarController.mouseEventTracker.move();
+        if(mediaInterface.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 7 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
+        }
+    }
+
+    public void SEEK80Action(){
+        controlBarController.mouseEventTracker.move();
+        if(mediaInterface.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 8 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
+        }
+    }
+
+    public void SEEK90Action(){
+        controlBarController.mouseEventTracker.move();
+        if(mediaInterface.mediaActive.get()){
+            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax() * 9 / 10);
+
+            if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
+                seekImageView.setImage(null);
+                seekImageView.setVisible(false);
+
+                if(miniplayerActive){
+                    miniplayer.miniplayerController.videoImageView.setVisible(true);
+                    miniplayer.miniplayerController.seekImageView.setVisible(false);
+                    miniplayer.miniplayerController.seekImageView.setImage(null);
+                }
+                else videoImageView.setVisible(true);
+            }
+
+            seekingWithKeys = true;
+            if(miniplayerActive) {
+                miniplayer.miniplayerController.sliderPane.setVisible(true);
+
+                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
+                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                }
+
+                miniplayer.miniplayerController.progressBarTimer.playFromStart();
+            }
+        }
+    }
+
+    public void PLAYBACK_SPEED_UP25Action(){
+
+        settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.25);
+
+        valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+        valueIndicator.play();
+
+        actionIndicator.setIcon(FORWARD);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void PLAYBACK_SPEED_DOWN25Action(){
+
+        settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.25);
+
+        valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+        valueIndicator.play();
+
+        actionIndicator.setIcon(REWIND);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void PLAYBACK_SPEED_UP5Action(){
+
+        settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
+
+        valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+        valueIndicator.play();
+
+        actionIndicator.setIcon(FORWARD);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void PLAYBACK_SPEED_DOWN5Action(){
+
+        settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
+
+        valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+        valueIndicator.play();
+
+        actionIndicator.setIcon(REWIND);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+    }
+
+    public void NEXTAction(){
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.queuePage.queueBox.itemDragActive.get()) return;
+
+        if(!menuController.queuePage.queueBox.queue.isEmpty() && (menuController.queuePage.queueBox.activeItem.get() == null || menuController.queuePage.queueBox.queue.size() > menuController.queuePage.queueBox.activeIndex.get() + 1)){
+
+            actionIndicator.setIcon(NEXT_VIDEO);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+
+            mediaInterface.playNext();
+        }
+    }
+
+    public void PREVIOUSAction(){
+        controlBarController.mouseEventTracker.move();
+
+        if(mediaInterface.mediaActive.get() && controlBarController.durationSlider.getValue() > 5){ // restart current video
+            actionIndicator.setIcon(REPLAY);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+
+            mediaInterface.seekedToEnd = false;
+            controlBarController.durationSlider.setValue(0);
+
+        }
+        else if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeIndex.get() > 0){ // play previous video
+
+            if(menuController.queuePage.queueBox.itemDragActive.get()) return;
+
+            actionIndicator.setIcon(PREVIOUS_VIDEO);
+            actionIndicator.setVisible(true);
+            actionIndicator.animate();
+
+            mediaInterface.playPrevious();
+        }
+    }
+
+    public void ENDAction(){
         controlBarController.mouseEventTracker.move();
         mediaInterface.seekedToEnd = true;
         if(mediaInterface.mediaActive.get()){
@@ -1691,13 +1609,197 @@ public class MainController implements Initializable {
         }
     }
 
-    public void pressEnter(){
-        if(captionsController.captionsState != CaptionsState.OPENSUBTITLES_OPEN) return;
+    public void FULLSCREENAction(){
 
-        captionsController.openSubtitlesPane.searchButton.fire();
+        controlBarController.mouseEventTracker.move();
+        controlBarController.toggleFullScreen();
+
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+    }
+
+    public void SNAPSHOTAction(){
+        takeScreenshot();
+        controlBarController.mouseEventTracker.move();
     }
 
 
+
+    public void MINIPLAYERAction(){
+
+        if(miniplayerActive) closeMiniplayer();
+        else openMiniplayer();
+
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+    }
+
+
+    public void SUBTITLESAction() {
+        controlBarController.mouseEventTracker.move();
+
+        if (menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing)
+            menuController.queuePage.activeQueueItemContextMenu.hide();
+        if (menuController.queuePage.addOptionsContextMenu.showing)
+            menuController.queuePage.addOptionsContextMenu.hide();
+        if (captionsController.openSubtitlesPane.searchOptionsContextMenu.showing)
+            captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        else captionsController.openCaptions();
+    }
+
+
+    public void PLAYBACK_SETTINGSAction(){
+        controlBarController.mouseEventTracker.move();
+
+        if (settingsController.settingsState != SettingsState.CLOSED) {
+            settingsController.closeSettings();
+        } else {
+            settingsController.openSettings();
+        }
+
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+    }
+
+
+    public void MENUAction(){
+
+        if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get()) return;
+
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+        if(!menuController.menuInTransition){
+            if(menuController.menuState != MenuState.CLOSED) menuController.closeMenu();
+            else menuController.queuePage.enter();
+        }
+    }
+
+    public void CLEAR_QUEUEAction(){
+
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.queuePage.queueBox.queue.isEmpty()) return;
+
+        actionIndicator.setIcon(QUEUE_CLEAR);
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+
+        menuController.queuePage.clearQueue();
+    }
+
+    public void SHUFFLEAction(){
+
+        controlBarController.mouseEventTracker.move();
+
+        if(settingsController.playbackOptionsController.shuffleTab.toggle.isSelected())
+            actionIndicator.setIcon(SHUFFLE_OFF);
+        else actionIndicator.setIcon(SHUFFLE);
+
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+
+        settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!settingsController.playbackOptionsController.shuffleTab.toggle.isSelected());
+    }
+
+    public void AUTOPLAYAction(){
+
+        controlBarController.mouseEventTracker.move();
+
+        if(settingsController.playbackOptionsController.autoplayTab.toggle.isSelected())
+            actionIndicator.setIcon(REPEAT_OFF);
+        else actionIndicator.setIcon(REPEAT);
+
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+
+        settingsController.playbackOptionsController.autoplayTab.toggle.setSelected(!settingsController.playbackOptionsController.autoplayTab.toggle.isSelected());
+    }
+
+    public void LOOPAction(){
+
+        controlBarController.mouseEventTracker.move();
+
+        if(settingsController.playbackOptionsController.loopTab.toggle.isSelected())
+            actionIndicator.setIcon(REPEAT_ONCE_OFF);
+        else actionIndicator.setIcon(REPEAT_ONCE);
+
+        actionIndicator.setVisible(true);
+        actionIndicator.animate();
+
+        settingsController.playbackOptionsController.loopTab.toggle.setSelected(!settingsController.playbackOptionsController.loopTab.toggle.isSelected());
+    }
+
+    public void OPEN_QUEUEAction(){
+
+        if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.QUEUE_OPEN) return;
+
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+        menuController.queuePage.enter();
+    }
+
+    public void OPEN_RECENT_MEDIAAction(){
+        if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.RECENT_MEDIA_OPEN) return;
+
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+        menuController.recentMediaPage.enter();
+    }
+
+    public void OPEN_MUSIC_LIBRARYAction(){
+
+        if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.MUSIC_LIBRARY_OPEN) return;
+
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+        menuController.musicLibraryPage.enter();
+    }
+
+    public void OPEN_PLAYLISTSAction(){
+
+        if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.PLAYLISTS_OPEN) return;
+
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+        menuController.playlistsPage.enter();
+    }
+
+    public void OPEN_SETTINGSAction(){
+
+        if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.SETTINGS_OPEN) return;
+
+        controlBarController.mouseEventTracker.move();
+
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+        menuController.settingsPage.enter();
+    }
 
     public SettingsController getSettingsController() {
         return settingsController;

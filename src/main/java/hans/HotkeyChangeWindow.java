@@ -4,9 +4,11 @@ import com.jfoenix.controls.JFXButton;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -17,15 +19,17 @@ import javafx.scene.text.TextAlignment;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AddYoutubeVideoWindow {
+public class HotkeyChangeWindow {
 
     MainController mainController;
 
     VBox window = new VBox();
     Label title = new Label();
-    TextField textField = new TextField();
+    Label hotkeyText = new Label("Hotkey:");
+    HBox hotkeyBox = new HBox();
+    Label warningLabel = new Label();
     StackPane buttonContainer = new StackPane();
-    JFXButton mainButton = new JFXButton(), secondaryButton = new JFXButton();
+    Button mainButton = new Button(), secondaryButton = new Button();
 
     StackPane closeButtonContainer = new StackPane();
     StackPane closeButtonPane = new StackPane();
@@ -35,11 +39,7 @@ public class AddYoutubeVideoWindow {
 
     boolean showing = false;
 
-
-    String pattern = "^(?:https?:)?(?:\\/\\/)?(?:youtu\\.be\\/|(?:www\\.|m\\.)?youtube\\.com\\/(?:watch|v|embed)(?:\\.php)?(?:\\?.*v=|\\/))([a-zA-Z0-9\\_-]{7,15})(?:[\\?&][a-zA-Z0-9\\_-]+=[a-zA-Z0-9\\_-]+)*(?:[&\\/\\#].*)?$";
-    Pattern regexPatern = Pattern.compile(pattern);
-
-    public AddYoutubeVideoWindow(MainController mainController){
+    public HotkeyChangeWindow(MainController mainController){
         this.mainController = mainController;
 
         mainController.popupWindowContainer.getChildren().add(window);
@@ -84,26 +84,9 @@ public class AddYoutubeVideoWindow {
         closeButtonIcon.setMouseTransparent(true);
         closeButtonIcon.getStyleClass().add("menuIcon");
 
-        title.setText("Add YouTube video(s)");
+        title.setText("Edit hotkey");
         title.getStyleClass().add("popupWindowTitle");
         VBox.setMargin(title, new Insets(0, 15, 25, 15));
-
-        textField.getStyleClass().add("customTextField");
-        textField.setPromptText("Enter the URL for a YouTube video or playlist");
-        textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            Matcher matcher = regexPatern.matcher(newValue);
-            if(matcher.find()){
-                mainButton.setDisable(false);
-                System.out.println(matcher.group(1)); // see peaks olema youtube video id
-            }
-            else mainButton.setDisable(true);
-        });
-        textField.setPrefHeight(36);
-        textField.setMinHeight(36);
-        textField.setMaxHeight(36);
-        textField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
-        VBox.setMargin(textField, new Insets(0, 15, 0, 15));
-
 
         buttonContainer.getChildren().addAll(mainButton, secondaryButton);
         VBox.setMargin(buttonContainer, new Insets(20, 0, 0, 0));
@@ -116,31 +99,27 @@ public class AddYoutubeVideoWindow {
         secondaryButton.setOnAction(e -> this.hide());
         secondaryButton.setTextAlignment(TextAlignment.CENTER);
         secondaryButton.setPrefWidth(155);
-        secondaryButton.setRipplerFill(Color.TRANSPARENT);
         StackPane.setAlignment(secondaryButton, Pos.CENTER_RIGHT);
 
-        mainButton.setText("Add");
+        mainButton.setText("Unset");
         mainButton.getStyleClass().add("mainButton");
         mainButton.setCursor(Cursor.HAND);
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(155);
-        mainButton.setRipplerFill(Color.TRANSPARENT);
-        mainButton.setDisable(true);
         StackPane.setAlignment(mainButton, Pos.CENTER_LEFT);
 
-        window.getChildren().addAll(closeButtonContainer, title, textField, buttonContainer);
+        window.getChildren().addAll(closeButtonContainer, title, hotkeyText, hotkeyBox, warningLabel, buttonContainer);
     }
 
     public void show(){
-
         if(mainController.closeConfirmationWindow.showing){
             mainController.closeConfirmationWindow.window.setVisible(false);
             mainController.closeConfirmationWindow.showing = false;
         }
 
-        if(mainController.hotkeyChangeWindow.showing){
-            mainController.hotkeyChangeWindow.window.setVisible(false);
-            mainController.hotkeyChangeWindow.showing = false;
+        if(mainController.addYoutubeVideoWindow.showing){
+            mainController.addYoutubeVideoWindow.window.setVisible(false);
+            mainController.addYoutubeVideoWindow.showing = false;
         }
 
         this.showing = true;
@@ -151,7 +130,6 @@ public class AddYoutubeVideoWindow {
     }
 
     public void hide(){
-
         this.showing = false;
 
         mainController.popupWindowContainer.setMouseTransparent(true);

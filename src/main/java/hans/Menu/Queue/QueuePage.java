@@ -251,7 +251,6 @@ public class QueuePage {
             if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
             if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
 
-            if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
             clearQueue();
         });
 
@@ -486,6 +485,7 @@ public class QueuePage {
     }
 
     public void clearQueue(){
+        if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
         queueBox.clear();
     }
 

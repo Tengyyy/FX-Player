@@ -71,6 +71,8 @@ public class MainController implements Initializable {
 
     MediaInterface mediaInterface;
 
+    HotkeyController hotkeyController;
+
     public ChapterController chapterController;
 
     ControlTooltip openMenuTooltip, viewMetadataTooltip;

@@ -117,7 +117,11 @@ public class HotkeyController {
 
     private static final List<KeyCode> mediaKeys = List.of(KeyCode.LEFT, KeyCode.RIGHT, KeyCode.J, KeyCode.L, KeyCode.REWIND, KeyCode.FAST_FWD, KeyCode.DIGIT0, KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4, KeyCode.DIGIT5, KeyCode.DIGIT6, KeyCode.DIGIT7, KeyCode.DIGIT8, KeyCode.DIGIT9, KeyCode.HOME, KeyCode.END);
 
+    public static final List<KeyCode> invalidKeys = List.of(KeyCode.CONTROL, KeyCode.ALT, KeyCode.SHIFT, KeyCode.TAB, KeyCode.FAST_FWD, KeyCode.REWIND, KeyCode.MUTE, KeyCode.PLAY, KeyCode.PAUSE, KeyCode.TRACK_PREV, KeyCode.TRACK_NEXT, KeyCode.F11, KeyCode.ESCAPE, KeyCode.ENTER);
+
     MainController mainController;
+
+    private boolean keybindChangeActive = false;
 
     HotkeyController(MainController mainController){
         this.mainController = mainController;
@@ -125,6 +129,12 @@ public class HotkeyController {
 
 
     public void handleKeyPress(KeyEvent event){
+
+        if(keybindChangeActive) {
+            mainController.hotkeyChangeWindow.updateHotkey(eventToKeyCodeArray(event));
+            return;
+        }
+
 
         // universal keybinds that the user cant change
         switch (event.getCode()){
@@ -266,19 +276,35 @@ public class HotkeyController {
 
 
     public void handleKeyRelease(KeyEvent event){
-        //TODO: handle custom speed slider value changing
+
+        if(keybindChangeActive) {
+            KeyCode[] keyCodes = eventToKeyCodeArray(event);
+            if(mainController.hotkeyChangeWindow.hotkey != null && mainController.hotkeyChangeWindow.hotkey.length > 0 && mainController.hotkeyChangeWindow.hotkey[mainController.hotkeyChangeWindow.hotkey.length - 1] == keyCodes[keyCodes.length -1])
+                    mainController.hotkeyChangeWindow.checkHotkey();
+            return;
+        }
+
         if(mediaKeys.contains(event.getCode())) mainController.seekingWithKeys = false;
     }
 
 
     private KeyCode[] eventToKeyCodeArray(KeyEvent event){
         List<KeyCode> keyCodeList = new ArrayList<>();
+
         if(event.isControlDown()) keyCodeList.add(KeyCode.CONTROL);
         if(event.isShiftDown()) keyCodeList.add(KeyCode.SHIFT);
         if(event.isAltDown()) keyCodeList.add(KeyCode.ALT);
-        keyCodeList.add(event.getCode());
+
+        if(!keyCodeList.contains(event.getCode())) keyCodeList.add(event.getCode());
 
         return keyCodeList.toArray(new KeyCode[0]);
     }
 
+    public boolean isKeybindChangeActive(){
+        return keybindChangeActive;
+    }
+
+    public void setKeybindChangeActive(boolean value){
+        keybindChangeActive = value;
+    }
 }

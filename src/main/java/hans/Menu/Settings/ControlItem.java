@@ -27,14 +27,14 @@ public class ControlItem extends StackPane {
     Button editButton = new Button();
     ControlTooltip editTooltip;
 
-    Action action;
+    public Action action;
     StackPane actionPane = new StackPane();
     Label actionLabel = new Label();
 
     StackPane keybindPane = new StackPane();
     HBox keybindBox = new HBox();
 
-    private static final Map<KeyCode, String> symbols = Map.ofEntries(
+    public static final Map<KeyCode, String> symbols = Map.ofEntries(
             Map.entry(KeyCode.RIGHT, "\u2192"),
             Map.entry(KeyCode.UP, "\u2191"),
             Map.entry(KeyCode.LEFT, "\u2190"),
@@ -137,6 +137,6 @@ public class ControlItem extends StackPane {
     private void openKeyBindEditScreen(){
         HotkeyChangeWindow hotkeyChangeWindow = controlsSection.settingsPage.menuController.mainController.hotkeyChangeWindow;
 
-        hotkeyChangeWindow.show();
+        hotkeyChangeWindow.show(this);
     }
 }

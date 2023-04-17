@@ -406,6 +406,10 @@
     -fx-font-size: 20;
 }
 
+.hotkeyChangeWindowTitle {
+    -fx-font-size: 18;
+}
+
 .popupWindowText {
     -fx-text-fill: rgb(220,220,220);
     -fx-font-family: "Roboto Medium";

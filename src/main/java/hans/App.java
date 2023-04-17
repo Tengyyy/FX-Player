@@ -144,6 +144,8 @@ public class App extends Application {
 
             hotkeyController = new HotkeyController(mainController);
 
+            mainController.hotkeyController = hotkeyController;
+
 
             Scene scene = new Scene(root, 705, 400);
 
@@ -165,13 +167,9 @@ public class App extends Application {
             primaryStage.setFullScreenExitHint("Press Esc to exit fullscreen mode");
 
 
-            primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                hotkeyController.handleKeyPress(event);
-            });
+            primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> hotkeyController.handleKeyPress(event));
 
-            primaryStage.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
-                hotkeyController.handleKeyRelease(event);
-            });
+            primaryStage.addEventFilter(KeyEvent.KEY_RELEASED, event -> hotkeyController.handleKeyRelease(event));
 
             primaryStage.setScene(scene);
             primaryStage.setTitle("FXPlayer");

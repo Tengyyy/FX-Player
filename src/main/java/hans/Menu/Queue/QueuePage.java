@@ -25,6 +25,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
@@ -67,28 +68,28 @@ public class QueuePage {
     Label multiselectLabel = new Label();
     Label bulletinLabel = new Label("•");
     Label clearSelectionLabel = new Label("Clear");
-    JFXButton removeButton = new JFXButton("Remove");
+    Button removeButton = new Button("Remove");
     Region removeIcon = new Region();
     SVGPath removeSVG = new SVGPath();
 
     public ObservableList<QueueItem> selectedItems = FXCollections.observableArrayList();
     public BooleanProperty selectionActive = new SimpleBooleanProperty();
 
-    public JFXButton clearQueueButton = new JFXButton();
+    public Button clearQueueButton = new Button();
     SVGPath clearSVG = new SVGPath();
     Region clearIcon = new Region();
 
-    public JFXButton shuffleToggle = new JFXButton();
+    public Button shuffleToggle = new Button();
     SVGPath shuffleSVG = new SVGPath();
     public Region shuffleIcon = new Region();
 
     public HBox addButtonContainer = new HBox();
 
-    JFXButton addButton = new JFXButton();
+    Button addButton = new Button();
     SVGPath folderSVG = new SVGPath();
     Region folderIcon = new Region();
 
-    JFXButton addOptionsButton = new JFXButton();
+    Button addOptionsButton = new Button();
     SVGPath chevronDownSVG = new SVGPath();
     Region chevronDownIcon = new Region();
     public AddOptionsContextMenu addOptionsContextMenu;
@@ -146,9 +147,7 @@ public class QueuePage {
         shuffleToggle.setCursor(Cursor.HAND);
         shuffleToggle.getStyleClass().add("menuButton");
         shuffleToggle.setText("Shuffle");
-        shuffleToggle.setRipplerFill(Color.WHITE);
         shuffleToggle.setGraphic(shuffleIcon);
-        shuffleToggle.setRipplerFill(Color.TRANSPARENT);
 
         shuffleToggle.setOnAction(e -> {
 
@@ -171,7 +170,6 @@ public class QueuePage {
         addButton.getStyleClass().add("menuButton");
         addButton.setId("addButton");
         addButton.setText("Add file(s)");
-        addButton.setRipplerFill(Color.TRANSPARENT);
         addButton.setGraphic(folderIcon);
 
         chevronDownSVG.setContent(App.svgMap.get(SVG.CHEVRON_DOWN));
@@ -185,7 +183,6 @@ public class QueuePage {
         addOptionsButton.setCursor(Cursor.HAND);
         addOptionsButton.getStyleClass().add("menuButton");
         addOptionsButton.setId("addOptionsButton");
-        addOptionsButton.setRipplerFill(Color.TRANSPARENT);
         addOptionsButton.setGraphic(chevronDownIcon);
 
         TranslateTransition chevronDownAnimation = new TranslateTransition(Duration.millis(100), chevronDownIcon);
@@ -241,7 +238,6 @@ public class QueuePage {
         clearIcon.setMouseTransparent(true);
 
         clearQueueButton.getStyleClass().add("menuButton");
-        clearQueueButton.setRipplerFill(Color.TRANSPARENT);
         clearQueueButton.setCursor(Cursor.HAND);
         clearQueueButton.setText("Clear");
         clearQueueButton.setGraphic(clearIcon);
@@ -357,7 +353,6 @@ public class QueuePage {
         removeIcon.setMouseTransparent(true);
 
         removeButton.getStyleClass().add("menuButton");
-        removeButton.setRipplerFill(Color.TRANSPARENT);
         removeButton.setCursor(Cursor.HAND);
         removeButton.setGraphic(removeIcon);
         removeButton.setOnAction(e -> {

@@ -1,9 +1,11 @@
 package hans.Menu.Settings;
 
 import hans.App;
+import hans.Captions.CaptionsState;
 import hans.ControlTooltip;
 import hans.HotkeyChangeWindow;
 import hans.SVG;
+import hans.Settings.SettingsState;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,7 +22,7 @@ import java.util.Map;
 
 public class ControlItem extends StackPane {
 
-    ControlsSection controlsSection;
+    public ControlsSection controlsSection;
 
     SVGPath editSVG = new SVGPath();
     Region editIcon = new Region();
@@ -32,7 +34,7 @@ public class ControlItem extends StackPane {
     Label actionLabel = new Label();
 
     StackPane keybindPane = new StackPane();
-    HBox keybindBox = new HBox();
+    public HBox keybindBox = new HBox();
 
     public static final Map<KeyCode, String> symbols = Map.ofEntries(
             Map.entry(KeyCode.RIGHT, "\u2192"),
@@ -63,8 +65,10 @@ public class ControlItem extends StackPane {
 
         this.action = action;
         this.getChildren().addAll(editButton, actionPane, keybindPane);
+        this.setMinHeight(47);
 
-        this.setPadding(new Insets(7, 10, 7, 5));
+
+        this.setPadding(new Insets(7, 5, 7, 5));
         if(isOdd) this.getStyleClass().add("controlItemOdd");
 
         this.setOnMouseEntered(e -> editButton.setVisible(true));
@@ -81,7 +85,12 @@ public class ControlItem extends StackPane {
         editButton.getStyleClass().add("transparentButton");
         editButton.setGraphic(editIcon);
         editButton.setVisible(false);
-        editButton.setOnAction(e -> openKeyBindEditScreen());
+        editButton.setOnAction(e -> {
+            if(controlsSection.settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) controlsSection.settingsPage.menuController.captionsController.closeCaptions();
+            if(controlsSection.settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) controlsSection.settingsPage.menuController.settingsController.closeSettings();
+
+            openKeyBindEditScreen();
+        });
 
         StackPane.setAlignment(editButton, Pos.CENTER_LEFT);
 
@@ -92,12 +101,13 @@ public class ControlItem extends StackPane {
 
         actionLabel.setText(action.getContent());
         actionLabel.getStyleClass().add("toggleText");
+        actionLabel.prefWidthProperty().bind(this.widthProperty().subtract(60).subtract(keybindPane.widthProperty()));
+        actionLabel.maxWidthProperty().bind(this.widthProperty().subtract(60).subtract(keybindPane.widthProperty()));
         StackPane.setAlignment(actionLabel, Pos.CENTER_LEFT);
 
         StackPane.setAlignment(keybindPane, Pos.CENTER_RIGHT);
-        keybindPane.prefWidthProperty().bind(this.widthProperty().subtract(15).divide(2.5));
-        keybindPane.maxWidthProperty().bind(this.widthProperty().subtract(15).divide(2.5));
-
+        keybindPane.prefWidthProperty().bind(this.widthProperty().subtract(10).divide(2));
+        keybindPane.maxWidthProperty().bind(this.widthProperty().subtract(10).divide(2));
         keybindPane.getChildren().add(keybindBox);
 
         StackPane.setAlignment(keybindBox, Pos.CENTER_RIGHT);
@@ -107,31 +117,33 @@ public class ControlItem extends StackPane {
 
         loadKeyLabel(keyCodes);
 
-        Platform.runLater(() -> {
-            editTooltip = new ControlTooltip(controlsSection.settingsPage.menuController.mainController,"Edit keybind", editButton, 1000);
-        });
+        Platform.runLater(() -> editTooltip = new ControlTooltip(controlsSection.settingsPage.menuController.mainController,"Edit hotkey", editButton, 1000));
     }
 
-    private void loadKeyLabel(KeyCode[] keyCodes){
+    public void loadKeyLabel(KeyCode[] keyCodes){
 
         for (KeyCode keyCode : keyCodes) {
             Label keyLabel;
             keyLabel = new Label(symbols.getOrDefault(keyCode, keyCode.getName()));
             keyLabel.getStyleClass().add("keycap");
+            if(keyCode.equals(KeyCode.SHIFT)) keyLabel.setMinWidth(50);
 
             StackPane keycapContainer = new StackPane();
             keycapContainer.getStyleClass().add("keycapContainer");
             keycapContainer.getChildren().add(keyLabel);
             keycapContainer.setPadding(new Insets(0, 0, 4, 0));
             keycapContainer.setBackground(new Background(new BackgroundFill(Color.rgb(55, 55, 55), new CornerRadii(6), Insets.EMPTY)));
+            HBox.setHgrow(keycapContainer, Priority.NEVER);
 
             Label plus = new Label("+");
+            plus.setMinWidth(15);
+            HBox.setHgrow(plus, Priority.NEVER);
             plus.getStyleClass().add("toggleText");
 
             keybindBox.getChildren().addAll(keycapContainer, plus);
         }
 
-        keybindBox.getChildren().remove(keybindBox.getChildren().size() - 1);
+        if(!keybindBox.getChildren().isEmpty()) keybindBox.getChildren().remove(keybindBox.getChildren().size() - 1);
     }
 
     private void openKeyBindEditScreen(){

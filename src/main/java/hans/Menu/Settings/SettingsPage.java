@@ -27,7 +27,7 @@ public class SettingsPage {
     MetadataSection metadataSection;
     public PreferencesSection preferencesSection;
     LibrariesSection librariesSection;
-    ControlsSection controlsSection;
+    public ControlsSection controlsSection;
 
     public SettingsPage(MenuController menuController){
 
@@ -95,6 +95,7 @@ public class SettingsPage {
         if(menuController.menuInTransition) return;
 
         menuController.menuBar.setActiveButton(menuController.menuBar.settingsButton);
+        settingsScroll.setVvalue(0);
 
         if(menuController.menuState == MenuState.CLOSED){
             if(!menuController.extended.get()) menuController.setMenuExtended(MenuState.SETTINGS_OPEN);

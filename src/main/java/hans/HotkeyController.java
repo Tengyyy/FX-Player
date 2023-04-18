@@ -3,6 +3,7 @@ package hans;
 import hans.Captions.CaptionsState;
 import hans.Menu.ExpandableTextArea;
 import hans.Menu.Settings.Action;
+import hans.Menu.Settings.ControlsSection;
 import hans.Settings.SettingsState;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
@@ -11,109 +12,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.controlsfx.control.CheckComboBox;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import java.util.Map;
+import java.util.*;
 
 public class HotkeyController {
 
-    public static final Map<String, Action> keybindActionMap = Map.ofEntries(
-            Map.entry("[SPACE]", Action.PLAY_PAUSE1),
-            Map.entry("[K]", Action.PLAY_PAUSE2),
-            Map.entry("[M]", Action.MUTE),
-            Map.entry("[UP]", Action.VOLUME_UP5),
-            Map.entry("[DOWN]", Action.VOLUME_DOWN5),
-            Map.entry("[SHIFT, UP]", Action.VOLUME_UP1),
-            Map.entry("[SHIFT, DOWN]", Action.VOLUME_DOWN1),
-            Map.entry("[RIGHT]", Action.FORWARD5),
-            Map.entry("[LEFT]", Action.REWIND5),
-            Map.entry("[L]", Action.FORWARD10),
-            Map.entry("[J]", Action.REWIND10),
-            Map.entry("[PERIOD]", Action.FRAME_FORWARD),
-            Map.entry("[COMMA]", Action.FRAME_BACKWARD),
-            Map.entry("[DIGIT0]", Action.SEEK0),
-            Map.entry("[DIGIT1]", Action.SEEK10),
-            Map.entry("[DIGIT2]", Action.SEEK20),
-            Map.entry("[DIGIT3]", Action.SEEK30),
-            Map.entry("[DIGIT4]", Action.SEEK40),
-            Map.entry("[DIGIT5]", Action.SEEK50),
-            Map.entry("[DIGIT6]", Action.SEEK60),
-            Map.entry("[DIGIT7]", Action.SEEK70),
-            Map.entry("[DIGIT8]", Action.SEEK80),
-            Map.entry("[DIGIT9]", Action.SEEK90),
-            Map.entry("[SHIFT, PERIOD]", Action.PLAYBACK_SPEED_UP25),
-            Map.entry("[SHIFT, COMMA]", Action.PLAYBACK_SPEED_DOWN25),
-            Map.entry("[CONTROL, SHIFT, PERIOD]", Action.PLAYBACK_SPEED_UP5),
-            Map.entry("[CONTROL, SHIFT, COMMA]", Action.PLAYBACK_SPEED_DOWN5),
-            Map.entry("[SHIFT, N]", Action.NEXT),
-            Map.entry("[SHIFT, P]", Action.PREVIOUS),
-            Map.entry("[END]", Action.END),
-            Map.entry("[F]", Action.FULLSCREEN),
-            Map.entry("[F12]", Action.SNAPSHOT),
-            Map.entry("[I]", Action.MINIPLAYER),
-            Map.entry("[C]", Action.SUBTITLES),
-            Map.entry("[S]", Action.PLAYBACK_SETTINGS),
-            Map.entry("[Q]", Action.MENU),
-            Map.entry("[CONTROL, SHIFT, C]", Action.CLEAR_QUEUE),
-            Map.entry("[CONTROL, S]", Action.SHUFFLE),
-            Map.entry("[CONTROL, A]", Action.AUTOPLAY),
-            Map.entry("[CONTROL, L]", Action.LOOP),
-            Map.entry("[CONTROL, SHIFT, Q]", Action.OPEN_QUEUE),
-            Map.entry("[CONTROL, SHIFT, R]", Action.OPEN_RECENT_MEDIA),
-            Map.entry("[CONTROL, SHIFT, M]", Action.OPEN_MUSIC_LIBRARY),
-            Map.entry("[CONTROL, SHIFT, P]", Action.OPEN_PLAYLISTS),
-            Map.entry("[CONTROL, SHIFT, S]", Action.OPEN_SETTINGS)
-    );
+    public Map<String, Action> keybindActionMap = new HashMap<>();
 
-    public static final Map<Action, KeyCode[]> actionKeybindMap = Map.ofEntries(
-            Map.entry(Action.PLAY_PAUSE1, new KeyCode[]{KeyCode.SPACE}),
-            Map.entry(Action.PLAY_PAUSE2, new KeyCode[]{KeyCode.K}),
-            Map.entry(Action.MUTE, new KeyCode[]{KeyCode.M}),
-            Map.entry(Action.VOLUME_UP5, new KeyCode[]{KeyCode.UP}),
-            Map.entry(Action.VOLUME_DOWN5, new KeyCode[]{KeyCode.DOWN}),
-            Map.entry(Action.VOLUME_UP1, new KeyCode[]{KeyCode.SHIFT, KeyCode.UP}),
-            Map.entry(Action.VOLUME_DOWN1, new KeyCode[]{KeyCode.SHIFT, KeyCode.DOWN}),
-            Map.entry(Action.FORWARD5, new KeyCode[]{KeyCode.RIGHT}),
-            Map.entry(Action.REWIND5, new KeyCode[]{KeyCode.LEFT}),
-            Map.entry(Action.FORWARD10, new KeyCode[]{KeyCode.L}),
-            Map.entry(Action.REWIND10, new KeyCode[]{KeyCode.J}),
-            Map.entry(Action.FRAME_FORWARD, new KeyCode[]{KeyCode.PERIOD}),
-            Map.entry(Action.FRAME_BACKWARD, new KeyCode[]{KeyCode.COMMA}),
-            Map.entry(Action.SEEK0, new KeyCode[]{KeyCode.DIGIT0}),
-            Map.entry(Action.SEEK10, new KeyCode[]{KeyCode.DIGIT1}),
-            Map.entry(Action.SEEK20, new KeyCode[]{KeyCode.DIGIT2}),
-            Map.entry(Action.SEEK30, new KeyCode[]{KeyCode.DIGIT3}),
-            Map.entry(Action.SEEK40, new KeyCode[]{KeyCode.DIGIT4}),
-            Map.entry(Action.SEEK50, new KeyCode[]{KeyCode.DIGIT5}),
-            Map.entry(Action.SEEK60, new KeyCode[]{KeyCode.DIGIT6}),
-            Map.entry(Action.SEEK70, new KeyCode[]{KeyCode.DIGIT7}),
-            Map.entry(Action.SEEK80, new KeyCode[]{KeyCode.DIGIT8}),
-            Map.entry(Action.SEEK90, new KeyCode[]{KeyCode.DIGIT9}),
-            Map.entry(Action.PLAYBACK_SPEED_UP25, new KeyCode[]{KeyCode.SHIFT, KeyCode.PERIOD}),
-            Map.entry(Action.PLAYBACK_SPEED_DOWN25, new KeyCode[]{KeyCode.SHIFT, KeyCode.COMMA}),
-            Map.entry(Action.PLAYBACK_SPEED_UP5, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.PERIOD}),
-            Map.entry(Action.PLAYBACK_SPEED_DOWN5, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.COMMA}),
-            Map.entry(Action.NEXT, new KeyCode[]{KeyCode.SHIFT, KeyCode.N}),
-            Map.entry(Action.PREVIOUS, new KeyCode[]{KeyCode.SHIFT, KeyCode.P}),
-            Map.entry(Action.END, new KeyCode[]{KeyCode.END}),
-            Map.entry(Action.FULLSCREEN, new KeyCode[]{KeyCode.F}),
-            Map.entry(Action.SNAPSHOT, new KeyCode[]{KeyCode.F12}),
-            Map.entry(Action.MINIPLAYER, new KeyCode[]{KeyCode.I}),
-            Map.entry(Action.SUBTITLES, new KeyCode[]{KeyCode.C}),
-            Map.entry(Action.PLAYBACK_SETTINGS, new KeyCode[]{KeyCode.S}),
-            Map.entry(Action.MENU, new KeyCode[]{KeyCode.Q}),
-            Map.entry(Action.CLEAR_QUEUE, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.C}),
-            Map.entry(Action.SHUFFLE, new KeyCode[]{KeyCode.CONTROL, KeyCode.S}),
-            Map.entry(Action.AUTOPLAY, new KeyCode[]{KeyCode.CONTROL, KeyCode.A}),
-            Map.entry(Action.LOOP, new KeyCode[]{KeyCode.CONTROL, KeyCode.L}),
-            Map.entry(Action.OPEN_QUEUE, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.Q}),
-            Map.entry(Action.OPEN_RECENT_MEDIA, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.R}),
-            Map.entry(Action.OPEN_MUSIC_LIBRARY, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.M}),
-            Map.entry(Action.OPEN_PLAYLISTS, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.P}),
-            Map.entry(Action.OPEN_SETTINGS, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.S})
-    );
+    public HashMap<Action, KeyCode[]> actionKeybindMap = new HashMap<>();
 
     private static final List<KeyCode> mediaKeys = List.of(KeyCode.LEFT, KeyCode.RIGHT, KeyCode.J, KeyCode.L, KeyCode.REWIND, KeyCode.FAST_FWD, KeyCode.DIGIT0, KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4, KeyCode.DIGIT5, KeyCode.DIGIT6, KeyCode.DIGIT7, KeyCode.DIGIT8, KeyCode.DIGIT9, KeyCode.HOME, KeyCode.END);
 
@@ -125,16 +30,118 @@ public class HotkeyController {
 
     HotkeyController(MainController mainController){
         this.mainController = mainController;
+
+        keybindActionMap.put("[SPACE]", Action.PLAY_PAUSE1);
+        keybindActionMap.put("[K]", Action.PLAY_PAUSE2);
+        keybindActionMap.put("[M]", Action.MUTE);
+        keybindActionMap.put("[UP]", Action.VOLUME_UP5);
+        keybindActionMap.put("[DOWN]", Action.VOLUME_DOWN5);
+        keybindActionMap.put("[SHIFT, UP]", Action.VOLUME_UP1);
+        keybindActionMap.put("[SHIFT, DOWN]", Action.VOLUME_DOWN1);
+        keybindActionMap.put("[RIGHT]", Action.FORWARD5);
+        keybindActionMap.put("[LEFT]", Action.REWIND5);
+        keybindActionMap.put("[L]", Action.FORWARD10);
+        keybindActionMap.put("[J]", Action.REWIND10);
+        keybindActionMap.put("[PERIOD]", Action.FRAME_FORWARD);
+        keybindActionMap.put("[COMMA]", Action.FRAME_BACKWARD);
+        keybindActionMap.put("[DIGIT0]", Action.SEEK0);
+        keybindActionMap.put("[DIGIT1]", Action.SEEK10);
+        keybindActionMap.put("[DIGIT2]", Action.SEEK20);
+        keybindActionMap.put("[DIGIT3]", Action.SEEK30);
+        keybindActionMap.put("[DIGIT4]", Action.SEEK40);
+        keybindActionMap.put("[DIGIT5]", Action.SEEK50);
+        keybindActionMap.put("[DIGIT6]", Action.SEEK60);
+        keybindActionMap.put("[DIGIT7]", Action.SEEK70);
+        keybindActionMap.put("[DIGIT8]", Action.SEEK80);
+        keybindActionMap.put("[DIGIT9]", Action.SEEK90);
+        keybindActionMap.put("[SHIFT, PERIOD]", Action.PLAYBACK_SPEED_UP25);
+        keybindActionMap.put("[SHIFT, COMMA]", Action.PLAYBACK_SPEED_DOWN25);
+        keybindActionMap.put("[CONTROL, SHIFT, PERIOD]", Action.PLAYBACK_SPEED_UP5);
+        keybindActionMap.put("[CONTROL, SHIFT, COMMA]", Action.PLAYBACK_SPEED_DOWN5);
+        keybindActionMap.put("[SHIFT, N]", Action.NEXT);
+        keybindActionMap.put("[SHIFT, P]", Action.PREVIOUS);
+        keybindActionMap.put("[END]", Action.END);
+        keybindActionMap.put("[F]", Action.FULLSCREEN);
+        keybindActionMap.put("[F12]", Action.SNAPSHOT);
+        keybindActionMap.put("[I]", Action.MINIPLAYER);
+        keybindActionMap.put("[C]", Action.SUBTITLES);
+        keybindActionMap.put("[S]", Action.PLAYBACK_SETTINGS);
+        keybindActionMap.put("[Q]", Action.MENU);
+        keybindActionMap.put("[CONTROL, SHIFT, C]", Action.CLEAR_QUEUE);
+        keybindActionMap.put("[CONTROL, S]", Action.SHUFFLE);
+        keybindActionMap.put("[CONTROL, A]", Action.AUTOPLAY);
+        keybindActionMap.put("[CONTROL, L]", Action.LOOP);
+        keybindActionMap.put("[CONTROL, SHIFT, Q]", Action.OPEN_QUEUE);
+        keybindActionMap.put("[CONTROL, SHIFT, R]", Action.OPEN_RECENT_MEDIA);
+        keybindActionMap.put("[CONTROL, SHIFT, M]", Action.OPEN_MUSIC_LIBRARY);
+        keybindActionMap.put("[CONTROL, SHIFT, P]", Action.OPEN_PLAYLISTS);
+        keybindActionMap.put("[CONTROL, SHIFT, S]", Action.OPEN_SETTINGS);
+
+
+        actionKeybindMap.put(Action.PLAY_PAUSE1, new KeyCode[]{KeyCode.SPACE});
+        actionKeybindMap.put(Action.PLAY_PAUSE2, new KeyCode[]{KeyCode.K});
+        actionKeybindMap.put(Action.MUTE, new KeyCode[]{KeyCode.M});
+        actionKeybindMap.put(Action.VOLUME_UP5, new KeyCode[]{KeyCode.UP});
+        actionKeybindMap.put(Action.VOLUME_DOWN5, new KeyCode[]{KeyCode.DOWN});
+        actionKeybindMap.put(Action.VOLUME_UP1, new KeyCode[]{KeyCode.SHIFT, KeyCode.UP});
+        actionKeybindMap.put(Action.VOLUME_DOWN1, new KeyCode[]{KeyCode.SHIFT, KeyCode.DOWN});
+        actionKeybindMap.put(Action.FORWARD5, new KeyCode[]{KeyCode.RIGHT});
+        actionKeybindMap.put(Action.REWIND5, new KeyCode[]{KeyCode.LEFT});
+        actionKeybindMap.put(Action.FORWARD10, new KeyCode[]{KeyCode.L});
+        actionKeybindMap.put(Action.REWIND10, new KeyCode[]{KeyCode.J});
+        actionKeybindMap.put(Action.FRAME_FORWARD, new KeyCode[]{KeyCode.PERIOD});
+        actionKeybindMap.put(Action.FRAME_BACKWARD, new KeyCode[]{KeyCode.COMMA});
+        actionKeybindMap.put(Action.SEEK0, new KeyCode[]{KeyCode.DIGIT0});
+        actionKeybindMap.put(Action.SEEK10, new KeyCode[]{KeyCode.DIGIT1});
+        actionKeybindMap.put(Action.SEEK20, new KeyCode[]{KeyCode.DIGIT2});
+        actionKeybindMap.put(Action.SEEK30, new KeyCode[]{KeyCode.DIGIT3});
+        actionKeybindMap.put(Action.SEEK40, new KeyCode[]{KeyCode.DIGIT4});
+        actionKeybindMap.put(Action.SEEK50, new KeyCode[]{KeyCode.DIGIT5});
+        actionKeybindMap.put(Action.SEEK60, new KeyCode[]{KeyCode.DIGIT6});
+        actionKeybindMap.put(Action.SEEK70, new KeyCode[]{KeyCode.DIGIT7});
+        actionKeybindMap.put(Action.SEEK80, new KeyCode[]{KeyCode.DIGIT8});
+        actionKeybindMap.put(Action.SEEK90, new KeyCode[]{KeyCode.DIGIT9});
+        actionKeybindMap.put(Action.PLAYBACK_SPEED_UP25, new KeyCode[]{KeyCode.SHIFT, KeyCode.PERIOD});
+        actionKeybindMap.put(Action.PLAYBACK_SPEED_DOWN25, new KeyCode[]{KeyCode.SHIFT, KeyCode.COMMA});
+        actionKeybindMap.put(Action.PLAYBACK_SPEED_UP5, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.PERIOD});
+        actionKeybindMap.put(Action.PLAYBACK_SPEED_DOWN5, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.COMMA});
+        actionKeybindMap.put(Action.NEXT, new KeyCode[]{KeyCode.SHIFT, KeyCode.N});
+        actionKeybindMap.put(Action.PREVIOUS, new KeyCode[]{KeyCode.SHIFT, KeyCode.P});
+        actionKeybindMap.put(Action.END, new KeyCode[]{KeyCode.END});
+        actionKeybindMap.put(Action.FULLSCREEN, new KeyCode[]{KeyCode.F});
+        actionKeybindMap.put(Action.SNAPSHOT, new KeyCode[]{KeyCode.F12});
+        actionKeybindMap.put(Action.MINIPLAYER, new KeyCode[]{KeyCode.I});
+        actionKeybindMap.put(Action.SUBTITLES, new KeyCode[]{KeyCode.C});
+        actionKeybindMap.put(Action.PLAYBACK_SETTINGS, new KeyCode[]{KeyCode.S});
+        actionKeybindMap.put(Action.MENU, new KeyCode[]{KeyCode.Q});
+        actionKeybindMap.put(Action.CLEAR_QUEUE, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.C});
+        actionKeybindMap.put(Action.SHUFFLE, new KeyCode[]{KeyCode.CONTROL, KeyCode.S});
+        actionKeybindMap.put(Action.AUTOPLAY, new KeyCode[]{KeyCode.CONTROL, KeyCode.A});
+        actionKeybindMap.put(Action.LOOP, new KeyCode[]{KeyCode.CONTROL, KeyCode.L});
+        actionKeybindMap.put(Action.OPEN_QUEUE, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.Q});
+        actionKeybindMap.put(Action.OPEN_RECENT_MEDIA, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.R});
+        actionKeybindMap.put(Action.OPEN_MUSIC_LIBRARY, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.M});
+        actionKeybindMap.put(Action.OPEN_PLAYLISTS, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.P});
+        actionKeybindMap.put(Action.OPEN_SETTINGS, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.S});
     }
 
 
     public void handleKeyPress(KeyEvent event){
 
-        if(keybindChangeActive) {
-            mainController.hotkeyChangeWindow.updateHotkey(eventToKeyCodeArray(event));
+        if(event.getCode() == KeyCode.ESCAPE){
+            mainController.pressESCAPE();
+            return;
+        }
+        else if(event.getCode() == KeyCode.F11){
+            mainController.FULLSCREENAction();
             return;
         }
 
+        if(keybindChangeActive) {
+            mainController.hotkeyChangeWindow.updateHotkey(eventToKeyCodeArray(event));
+            event.consume();
+            return;
+        }
 
         // universal keybinds that the user cant change
         switch (event.getCode()){
@@ -166,19 +173,12 @@ public class HotkeyController {
                 mainController.NEXTAction();
                 return;
             }
-            case F11 -> {
-                mainController.FULLSCREENAction();
-                return;
-            }
-            case ESCAPE -> {
-                mainController.pressESCAPE();
-                return;
-            }
             case ENTER -> {
                 mainController.pressEnter();
                 return;
             }
         }
+
 
 
         if(        !(event.getTarget() instanceof ExpandableTextArea)
@@ -306,5 +306,15 @@ public class HotkeyController {
 
     public void setKeybindChangeActive(boolean value){
         keybindChangeActive = value;
+    }
+
+    // check if the active keybinds are the same as the default keybinds
+    public boolean isDefault() {
+        if (actionKeybindMap.size() != ControlsSection.defaultControls.size()) {
+            return false;
+        }
+
+        return actionKeybindMap.entrySet().stream()
+                .allMatch(e -> Arrays.equals(e.getValue(), ControlsSection.defaultControls.get(e.getKey())));
     }
 }

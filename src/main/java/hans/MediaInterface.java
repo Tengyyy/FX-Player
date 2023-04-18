@@ -168,8 +168,10 @@ public class MediaInterface {
                     int newWidth = (int) Math.min(160, 90 * ratio);
                     int newHeight = (int) Math.min(90, 160/ratio);
 
-                    fFmpegFrameGrabber.setImageWidth(newWidth);
-                    fFmpegFrameGrabber.setImageHeight(newHeight);
+                    if(fFmpegFrameGrabber != null){
+                        fFmpegFrameGrabber.setImageWidth(newWidth);
+                        fFmpegFrameGrabber.setImageHeight(newHeight);
+                    }
                 }
 
                 mediaActive.set(true);

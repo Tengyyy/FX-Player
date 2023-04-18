@@ -375,7 +375,6 @@ public class MenuController implements Initializable {
         menuContentFade.setFromValue(menuContent.getOpacity());
         menuContentFade.setToValue(0);
         menuContentFade.setOnFinished(e -> {
-            StackPane.setMargin(menu, Insets.EMPTY);
 
             controlBarController.controlBarWrapper.setViewOrder(2);
             menu.setViewOrder(1);
@@ -389,6 +388,7 @@ public class MenuController implements Initializable {
             dragPane.setVisible(true);
 
             menuWrapper.setStyle("-fx-border-color: #909090;");
+            menuWrapper.setPadding(Insets.EMPTY);
 
             parallelWidth.playFromStart();
         });
@@ -426,10 +426,9 @@ public class MenuController implements Initializable {
         controlBarController.controlBarWrapper.setViewOrder(1);
         menu.setViewOrder(2);
 
-        StackPane.setMargin(menu, new Insets(0, 0, controlBarController.controlBarWrapper.getHeight() - 6, 0));
+        menuWrapper.setPadding(new Insets(0, 0, 65, 0));
+
         if(menuState != MenuState.CLOSED){
-            controlBarController.controlBarWrapper.getStyleClass().remove("controlBarWrapper");
-            if(!controlBarController.controlBarWrapper.getStyleClass().contains("controlBarWrapperExtended")) controlBarController.controlBarWrapper.getStyleClass().add("controlBarWrapperExtended");
             AnimationsClass.displayControls(controlBarController, captionsController, mainController);
         }
     }
@@ -444,10 +443,8 @@ public class MenuController implements Initializable {
         if(menuState == MenuState.CLOSED) menu.setTranslateX(-menu.getWidth());
 
         StackPane.setMargin(menuWrapper, new Insets(0, 15, 0, 0));
-        StackPane.setMargin(menu, Insets.EMPTY);
+        menuWrapper.setPadding(Insets.EMPTY);
 
-        controlBarController.controlBarWrapper.getStyleClass().remove("controlBarWrapperExtended");
-        if(!controlBarController.controlBarWrapper.getStyleClass().contains("controlBarWrapper")) controlBarController.controlBarWrapper.getStyleClass().add("controlBarWrapper");
         controlBarController.controlBarWrapper.setViewOrder(2);
         menu.setViewOrder(1);
 

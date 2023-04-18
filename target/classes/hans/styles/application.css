@@ -406,6 +406,10 @@
     -fx-font-size: 20;
 }
 
+.hotkeyChangeWindowTitle {
+    -fx-font-size: 18;
+}
+
 .popupWindowText {
     -fx-text-fill: rgb(220,220,220);
     -fx-font-family: "Roboto Medium";
@@ -440,13 +444,8 @@
 }
 
 .controlBarWrapper {
-    -fx-background-insets: 6 0 0 0;
     -fx-background-color: transparent;
 }
 
-.controlBarWrapperExtended {
-    -fx-background-insets: 6 0 0 0;
-    -fx-background-color: rgba(0,0,0,0.8);
-}
 
 

@@ -2,7 +2,9 @@ package hans.Menu.Settings;
 
 
 import hans.App;
+import hans.Captions.CaptionsState;
 import hans.SVG;
+import hans.Settings.SettingsState;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
@@ -66,8 +68,8 @@ public class SubtitleSection extends VBox {
         toggleContainer.setPadding(new Insets(0, 0, 10, 0));
         toggleContainer.setSpacing(10);
 
-        extrationToggle = new Toggle("Extract subtitles embedded into media file containers", extractionOn);
-        searchToggle = new Toggle("Scan parent folder for subtitle file with matching name", searchOn);
+        extrationToggle = new Toggle(settingsPage, "Extract subtitles embedded into media file containers", extractionOn);
+        searchToggle = new Toggle(settingsPage, "Scan parent folder for subtitle file with matching name", searchOn);
 
         toggleContainer.getChildren().addAll(extrationToggle, searchToggle);
 
@@ -127,6 +129,17 @@ public class SubtitleSection extends VBox {
         usernameField.setPrefHeight(36);
         usernameField.setMinHeight(36);
         usernameField.setMaxHeight(36);
+        usernameField.setOnAction(e -> {
+            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
+            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+        });
+
+        usernameField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
+                if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            }
+        });
 
         passwordBox.getChildren().addAll(passwordLabel, passwordField);
 
@@ -139,12 +152,26 @@ public class SubtitleSection extends VBox {
         passwordField.setPrefHeight(36);
         passwordField.setMinHeight(36);
         passwordField.setMaxHeight(36);
+        passwordField.setOnAction(e -> {
+            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
+            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+        });
+
+        passwordField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
+                if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            }
+        });
 
         openSubtitlesFooterPane.getChildren().addAll(createAccountLabel, testConnectionButton);
         openSubtitlesFooterPane.setAlignment(Pos.CENTER_LEFT);
 
         createAccountLabel.getStyleClass().addAll("settingsText", "settingsLink");
         createAccountLabel.setOnMouseClicked(e -> {
+            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
+            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+
             // open opensubtitles account creation page in web browser
             if(Desktop.isDesktopSupported()){
                 try {
@@ -159,6 +186,10 @@ public class SubtitleSection extends VBox {
         StackPane.setAlignment(testConnectionButton, Pos.CENTER_RIGHT);
         testConnectionButton.getStyleClass().add("mainButton");
         testConnectionButton.disableProperty().bind(usernameField.textProperty().isEmpty().or(passwordField.textProperty().isEmpty()));
+        testConnectionButton.setOnAction(e -> {
+            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
+            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+        });
 
     }
 }

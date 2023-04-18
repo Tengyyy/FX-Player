@@ -19,7 +19,7 @@ public class MetadataSection extends VBox {
 
         metadataSectionTitle.getStyleClass().add("settingsSectionTitle");
 
-        overwriteToggle = new Toggle("Overwrite original file when editing metadata", overwriteOn);
+        overwriteToggle = new Toggle(settingsPage, "Overwrite original file when editing metadata", overwriteOn);
 
         this.getChildren().addAll(metadataSectionTitle, overwriteToggle);
         this.setSpacing(25);

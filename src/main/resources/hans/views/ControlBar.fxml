@@ -16,9 +16,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<StackPane fx:id="controlBarWrapper" maxHeight="-Infinity" minHeight="-Infinity" minWidth="601.0" prefHeight="71.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.ControlBarController">
+<StackPane fx:id="controlBarWrapper" maxHeight="-Infinity" minHeight="-Infinity" minWidth="601.0" prefHeight="70.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.ControlBarController">
    <children>
-      <VBox fx:id="controlBar" alignment="TOP_CENTER" maxHeight="-Infinity" minHeight="-Infinity" minWidth="601.0" onMouseClicked="#controlBarClick" onMouseExited="#exitArea" pickOnBounds="false" prefHeight="70.0" prefWidth="601.0" style="-fx-background-color: transparent;" StackPane.alignment="BOTTOM_CENTER">
+      <VBox fx:id="controlBar" alignment="TOP_CENTER" maxHeight="70.0" minHeight="-Infinity" minWidth="601.0" onMouseClicked="#controlBarClick" onMouseExited="#exitArea" pickOnBounds="false" prefHeight="70.0" prefWidth="601.0" style="-fx-background-color: transparent;" StackPane.alignment="BOTTOM_CENTER">
           <children>
               <GridPane minWidth="601.0" prefHeight="16.0" prefWidth="601.0">
                   <columnConstraints>

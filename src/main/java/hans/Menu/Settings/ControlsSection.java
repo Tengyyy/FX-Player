@@ -1,18 +1,17 @@
 package hans.Menu.Settings;
 
-import hans.Captions.CaptionsState;
-import hans.Settings.SettingsState;
+import hans.HotkeyController;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +28,11 @@ public class ControlsSection extends VBox {
     Label hotkeyHeader = new Label("Hotkey");
 
     VBox controlsWrapper = new VBox();
-    public VBox controlsBox = new VBox();
+    VBox controlsBox = new VBox();
     StackPane resetBox = new StackPane();
-    public Button resetButton = new Button("Reset to default");
+    Button resetButton = new Button("Reset to default");
+
+    BooleanProperty bindingChangeActive = new SimpleBooleanProperty(false);
 
     public static final Map<Action, KeyCode[]> defaultControls = Map.ofEntries(
         Map.entry(Action.PLAY_PAUSE1, new KeyCode[]{KeyCode.SPACE}),
@@ -106,50 +107,33 @@ public class ControlsSection extends VBox {
         StackPane.setAlignment(actionHeader, Pos.CENTER_LEFT);
         actionHeader.getStyleClass().add("settingsText");
 
-        hotkeyHeader.prefWidthProperty().bind(this.widthProperty().subtract(10).divide(2));
-        hotkeyHeader.maxWidthProperty().bind(this.widthProperty().subtract(10).divide(2));
+        hotkeyHeader.prefWidthProperty().bind(this.widthProperty().subtract(15).divide(2.5));
+        hotkeyHeader.maxWidthProperty().bind(this.widthProperty().subtract(15).divide(2.5));
         hotkeyHeader.getStyleClass().add("settingsText");
         StackPane.setAlignment(hotkeyHeader, Pos.CENTER_RIGHT);
 
 
         controlsBox.getStyleClass().add("borderedSection");
+        initializeControlsBox();
 
         resetBox.getChildren().add(resetButton);
         StackPane.setAlignment(resetButton, Pos.CENTER_RIGHT);
         resetButton.setCursor(Cursor.HAND);
         resetButton.getStyleClass().add("menuButton");
-        resetButton.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
-            resetToDefault();
-        });
-        resetButton.setFocusTraversable(false);
+        resetButton.setOnAction(e -> resetToDefault());
 
     }
 
     private void resetToDefault(){
-
-        settingsPage.menuController.mainController.hotkeyController.actionKeybindMap.putAll(defaultControls);
-
-        settingsPage.menuController.mainController.hotkeyController.keybindActionMap.clear();
-
-        for(Map.Entry<Action, KeyCode[]> entry : defaultControls.entrySet()){
-            settingsPage.menuController.mainController.hotkeyController.keybindActionMap.put(Arrays.toString(entry.getValue()), entry.getKey());
+        controlsBox.getChildren().clear();
+        for(int i=0; i < actionOrder.size(); i++){
+            controlsBox.getChildren().add(new ControlItem(this, actionOrder.get(i), defaultControls.get(actionOrder.get(i)), i % 2 != 0));
         }
-
-        for(Node node : controlsBox.getChildren()){
-            ControlItem controlItem = (ControlItem) node;
-            controlItem.keybindBox.getChildren().clear();
-            controlItem.loadKeyLabel(defaultControls.get(controlItem.action));
-        }
-
-        resetButton.setDisable(true);
     }
 
-    public void initializeControlsBox(){
-        resetButton.setDisable(settingsPage.menuController.mainController.hotkeyController.isDefault());
+    private void initializeControlsBox(){
         for(int i=0; i < actionOrder.size(); i++){
-            controlsBox.getChildren().add(new ControlItem(this, actionOrder.get(i), settingsPage.menuController.mainController.hotkeyController.actionKeybindMap.get(actionOrder.get(i)), i % 2 != 0));
+            controlsBox.getChildren().add(new ControlItem(this, actionOrder.get(i), HotkeyController.actionKeybindMap.get(actionOrder.get(i)), i % 2 != 0));
         }
     }
 }

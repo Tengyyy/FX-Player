@@ -71,7 +71,7 @@ public class MainController implements Initializable {
 
     MediaInterface mediaInterface;
 
-    public HotkeyController hotkeyController;
+    HotkeyController hotkeyController;
 
     public ChapterController chapterController;
 

@@ -1,10 +1,8 @@
 package hans.Menu.Settings;
 
 import hans.App;
-import hans.Captions.CaptionsState;
 import hans.ControlTooltip;
 import hans.SVG;
-import hans.Settings.SettingsState;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -72,11 +70,7 @@ public class LibraryItem extends StackPane {
         refreshButton.setCursor(Cursor.HAND);
         refreshButton.getStyleClass().add("menuButton");
         refreshButton.setGraphic(refreshIcon);
-        refreshButton.setOnAction(e -> {
-            if(librariesSection.settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) librariesSection.settingsPage.menuController.captionsController.closeCaptions();
-            if(librariesSection.settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) librariesSection.settingsPage.menuController.settingsController.closeSettings();
-            librariesSection.refreshLibrary(file);
-        });
+        refreshButton.setOnAction(e -> librariesSection.refreshLibrary(file));
 
         removeSVG.setContent(App.svgMap.get(SVG.REMOVE));
         removeIcon.setShape(removeSVG);
@@ -89,11 +83,7 @@ public class LibraryItem extends StackPane {
         removeButton.setCursor(Cursor.HAND);
         removeButton.getStyleClass().add("menuButton");
         removeButton.setGraphic(removeIcon);
-        removeButton.setOnAction(e -> {
-            if(librariesSection.settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) librariesSection.settingsPage.menuController.captionsController.closeCaptions();
-            if(librariesSection.settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) librariesSection.settingsPage.menuController.settingsController.closeSettings();
-            librariesSection.removeLibrary(this);
-        });
+        removeButton.setOnAction(e -> librariesSection.removeLibrary(this));
 
         Platform.runLater(() -> {
             refreshTooltip = new ControlTooltip(librariesSection.settingsPage.menuController.mainController,"Refresh folder", refreshButton, 1000);

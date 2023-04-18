@@ -1,9 +1,7 @@
 package hans.Menu.Settings;
 
 import hans.App;
-import hans.Captions.CaptionsState;
 import hans.SVG;
-import hans.Settings.SettingsState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -80,11 +78,7 @@ public class LibrariesSection extends StackPane {
         addFolderButton.setCursor(Cursor.HAND);
         addFolderButton.getStyleClass().add("menuButton");
         addFolderButton.setGraphic(folderIcon);
-        addFolderButton.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
-            openLibraryChooser();
-        });
+        addFolderButton.setOnAction(e -> openLibraryChooser());
 
         librariesContainer.setSpacing(8);
 
@@ -117,11 +111,7 @@ public class LibrariesSection extends StackPane {
         refreshAllButton.setCursor(Cursor.HAND);
         refreshAllButton.getStyleClass().add("menuButton");
         refreshAllButton.setGraphic(refreshIcon);
-        refreshAllButton.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
-            refreshAll();
-        });
+        refreshAllButton.setOnAction(e -> refreshAll());
         refreshAllButton.setDisable(true);
 
         infoSVG.setContent(App.svgMap.get(SVG.INFORMATION_OUTLINE));

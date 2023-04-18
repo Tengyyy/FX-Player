@@ -1,10 +1,6 @@
 package hans.Menu.Settings;
 
-import hans.Captions.CaptionsState;
-import hans.Settings.SettingsState;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
@@ -36,7 +32,7 @@ public class PreferencesSection extends VBox {
 
         preferencesSectionTitle.getStyleClass().add("settingsSectionTitle");
 
-        seekPreviewToggle = new Toggle(settingsPage, "Show frame preview above seekbar", seekPreviewOn);
+        seekPreviewToggle = new Toggle("Show frame preview above seekbar", seekPreviewOn);
 
 
         languagePane.getChildren().addAll(languageLabel, languageBox);
@@ -50,17 +46,6 @@ public class PreferencesSection extends VBox {
 
         languageBox.setPrefWidth(150);
         languageBox.setMaxWidth(150);
-        languageBox.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
-        });
-
-        languageBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(newValue){
-                if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-                if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
-            }
-        });
 
         languageProperty.bind(languageBox.getSelectionModel().selectedItemProperty());
 
@@ -78,18 +63,6 @@ public class PreferencesSection extends VBox {
         recentMediaSizeBox.getItems().add(100);
         recentMediaSizeBox.setPrefWidth(150);
         recentMediaSizeBox.setMaxWidth(150);
-
-        recentMediaSizeBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(newValue){
-                if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-                if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
-            }
-        });
-
-        recentMediaSizeBox.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
-        });
 
 
         recentMediaSizeProperty.bind(recentMediaSizeBox.getSelectionModel().selectedItemProperty());

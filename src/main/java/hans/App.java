@@ -145,7 +145,6 @@ public class App extends Application {
             hotkeyController = new HotkeyController(mainController);
 
             mainController.hotkeyController = hotkeyController;
-            mainController.getMenuController().settingsPage.controlsSection.initializeControlsBox();
 
 
             Scene scene = new Scene(root, 705, 400);

@@ -2,9 +2,9 @@ package hans.Menu.Settings;
 
 
 import hans.App;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.SVG;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
@@ -130,14 +130,14 @@ public class SubtitleSection extends VBox {
         usernameField.setMinHeight(36);
         usernameField.setMaxHeight(36);
         usernameField.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
         });
 
         usernameField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-                if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+                if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+                if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             }
         });
 
@@ -153,14 +153,14 @@ public class SubtitleSection extends VBox {
         passwordField.setMinHeight(36);
         passwordField.setMaxHeight(36);
         passwordField.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
         });
 
         passwordField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-                if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+                if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+                if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             }
         });
 
@@ -169,8 +169,8 @@ public class SubtitleSection extends VBox {
 
         createAccountLabel.getStyleClass().addAll("settingsText", "settingsLink");
         createAccountLabel.setOnMouseClicked(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 
             // open opensubtitles account creation page in web browser
             if(Desktop.isDesktopSupported()){
@@ -187,8 +187,8 @@ public class SubtitleSection extends VBox {
         testConnectionButton.getStyleClass().add("mainButton");
         testConnectionButton.disableProperty().bind(usernameField.textProperty().isEmpty().or(passwordField.textProperty().isEmpty()));
         testConnectionButton.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
         });
 
     }

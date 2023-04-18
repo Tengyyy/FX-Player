@@ -1,11 +1,11 @@
 package hans.Menu.Settings;
 
 import hans.App;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.ControlTooltip;
 import hans.HotkeyChangeWindow;
 import hans.SVG;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -86,8 +86,8 @@ public class ControlItem extends StackPane {
         editButton.setGraphic(editIcon);
         editButton.setVisible(false);
         editButton.setOnAction(e -> {
-            if(controlsSection.settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) controlsSection.settingsPage.menuController.captionsController.closeCaptions();
-            if(controlsSection.settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) controlsSection.settingsPage.menuController.settingsController.closeSettings();
+            if(controlsSection.settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) controlsSection.settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(controlsSection.settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) controlsSection.settingsPage.menuController.playbackSettingsController.closeSettings();
 
             openKeyBindEditScreen();
         });

@@ -1,24 +1,18 @@
 package hans;
 
 
-import hans.Captions.CaptionsController;
-import hans.Menu.ExpandableTextArea;
+import hans.Subtitles.SubtitlesController;
 import hans.Menu.MenuController;
-import hans.Settings.SettingsController;
+import hans.PlaybackSettings.PlaybackSettingsController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Objects;
 
@@ -35,9 +29,9 @@ public class App extends Application {
 
 
     ControlBarController controlBarController;
-    SettingsController settingsController;
+    PlaybackSettingsController playbackSettingsController;
     MenuController menuController;
-    CaptionsController captionsController;
+    SubtitlesController subtitlesController;
     MainController mainController;
 
     MediaInterface mediaInterface;
@@ -134,11 +128,11 @@ public class App extends Application {
 
             controlBarController = mainController.getControlBarController();
 
-            settingsController = mainController.getSettingsController();
+            playbackSettingsController = mainController.getSettingsController();
 
             menuController = mainController.getMenuController();
 
-            captionsController = mainController.getCaptionsController();
+            subtitlesController = mainController.getSubtitlesController();
 
             mediaInterface = mainController.getMediaInterface();
 

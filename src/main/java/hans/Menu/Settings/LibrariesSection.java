@@ -1,9 +1,9 @@
 package hans.Menu.Settings;
 
 import hans.App;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.SVG;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -81,8 +81,8 @@ public class LibrariesSection extends StackPane {
         addFolderButton.getStyleClass().add("menuButton");
         addFolderButton.setGraphic(folderIcon);
         addFolderButton.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             openLibraryChooser();
         });
 
@@ -118,8 +118,8 @@ public class LibrariesSection extends StackPane {
         refreshAllButton.getStyleClass().add("menuButton");
         refreshAllButton.setGraphic(refreshIcon);
         refreshAllButton.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             refreshAll();
         });
         refreshAllButton.setDisable(true);

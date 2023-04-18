@@ -1,13 +1,9 @@
 package hans.Menu.MetadataEdit;
 
-import hans.Captions.CaptionsState;
-import hans.Menu.ExpandableTextArea;
-import hans.Settings.SettingsState;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import hans.Subtitles.SubtitlesState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
@@ -37,8 +33,8 @@ public class TextFieldItem extends VBox{
 
         textField.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
             if(newValue){
-                if(metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) metadataEditPage.menuController.captionsController.closeCaptions();
-                if(metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) metadataEditPage.menuController.settingsController.closeSettings();
+                if(metadataEditPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) metadataEditPage.menuController.subtitlesController.closeSubtitles();
+                if(metadataEditPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) metadataEditPage.menuController.playbackSettingsController.closeSettings();
             }
 
         });

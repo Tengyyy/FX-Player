@@ -1,10 +1,9 @@
 package hans.Chapters;
 
 import hans.*;
-import hans.Captions.CaptionsState;
-import hans.MediaItems.MediaItem;
+import hans.Subtitles.SubtitlesState;
 import hans.Menu.MenuController;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -96,8 +95,8 @@ public class ChapterController {
 
         chapterLabelBox.setOnMouseClicked(e -> {
 
-            if (mainController.getSettingsController().settingsState != SettingsState.CLOSED) mainController.getSettingsController().closeSettings();
-            if (mainController.getCaptionsController().captionsState != CaptionsState.CLOSED) mainController.getCaptionsController().closeCaptions();
+            if (mainController.getSettingsController().playbackSettingsState != PlaybackSettingsState.CLOSED) mainController.getSettingsController().closeSettings();
+            if (mainController.getSubtitlesController().subtitlesState != SubtitlesState.CLOSED) mainController.getSubtitlesController().closeSubtitles();
 
             chapterPage.enter();
         });

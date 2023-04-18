@@ -1,10 +1,8 @@
 package hans.Menu.Settings;
 
-import hans.Captions.CaptionsState;
-import hans.Settings.SettingsState;
+import hans.Subtitles.SubtitlesState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
@@ -51,14 +49,14 @@ public class PreferencesSection extends VBox {
         languageBox.setPrefWidth(150);
         languageBox.setMaxWidth(150);
         languageBox.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
         });
 
         languageBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-                if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+                if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+                if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             }
         });
 
@@ -81,14 +79,14 @@ public class PreferencesSection extends VBox {
 
         recentMediaSizeBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-                if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+                if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+                if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             }
         });
 
         recentMediaSizeBox.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
         });
 
 
@@ -99,7 +97,7 @@ public class PreferencesSection extends VBox {
     }
 
     public void loadLanguageBox(){
-        for(String string : settingsPage.menuController.captionsController.openSubtitlesPane.supportedLanguages){
+        for(String string : settingsPage.menuController.subtitlesController.openSubtitlesPane.supportedLanguages){
             languageBox.getItems().add(string);
         }
     }

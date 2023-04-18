@@ -2,12 +2,12 @@ package hans.Menu.MetadataEdit;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.MediaItems.MediaItem;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.*;
 import hans.Menu.Queue.QueueItem;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -20,11 +20,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -239,8 +237,8 @@ public class MetadataEditPage {
         applyButton.setCursor(Cursor.HAND);
         applyButton.setDisable(true);
         applyButton.setOnAction(e -> {
-            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
             saveMetadata();
         });
@@ -259,8 +257,8 @@ public class MetadataEditPage {
         discardButton.setDisable(true);
 
         discardButton.setOnAction(e -> {
-            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
             if(mediaItem.metadataEditActive.get()) return;
             reloadMetadata();
@@ -361,8 +359,8 @@ public class MetadataEditPage {
     private void enableImageEdit(){
         imageEditEnabled = true;
         editImageButton.setOnAction(e -> {
-            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
             editImageButtonClick();
         });
@@ -374,8 +372,8 @@ public class MetadataEditPage {
     private void disableImageEdit(){
         imageEditEnabled = false;
         editImageButton.setOnAction(e -> {
-            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
         });
         editImageIcon.setShape(editIconOffSVG);
         editImageTooltip.updateDelay(Duration.ZERO);

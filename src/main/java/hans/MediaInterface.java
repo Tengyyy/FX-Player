@@ -1,15 +1,15 @@
 package hans;
 
 
-import hans.Captions.CaptionsController;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesController;
+import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
 import hans.Chapters.ChapterFrameGrabberTask;
 import hans.Chapters.ChapterItem;
 import hans.MediaItems.MediaItem;
 import hans.Menu.MenuController;
 import hans.Menu.Queue.QueueItem;
-import hans.Settings.SettingsController;
+import hans.PlaybackSettings.PlaybackSettingsController;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -37,9 +37,9 @@ public class MediaInterface {
 
     MainController mainController;
     ControlBarController controlBarController;
-    SettingsController settingsController;
+    PlaybackSettingsController playbackSettingsController;
     MenuController menuController;
-    CaptionsController captionsController;
+    SubtitlesController subtitlesController;
     ChapterController chapterController;
 
     public MediaPlayerFactory mediaPlayerFactory;
@@ -67,12 +67,12 @@ public class MediaInterface {
 
     ImageViewVideoSurface imageViewVideoSurface = null;
 
-    MediaInterface(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MenuController menuController, CaptionsController captionsController) {
+    MediaInterface(MainController mainController, ControlBarController controlBarController, PlaybackSettingsController playbackSettingsController, MenuController menuController, SubtitlesController subtitlesController) {
         this.mainController = mainController;
         this.controlBarController = controlBarController;
-        this.settingsController = settingsController;
+        this.playbackSettingsController = playbackSettingsController;
         this.menuController = menuController;
-        this.captionsController = captionsController;
+        this.subtitlesController = subtitlesController;
 
         mediaActive.addListener((observableValue, oldValue, newValue) -> {
             controlBarController.durationPane.setMouseTransparent(!newValue);
@@ -222,7 +222,7 @@ public class MediaInterface {
         if (newValue >= controlBarController.durationSlider.getMax()) {
             if (controlBarController.durationSlider.isValueChanging() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging())) seekedToEnd = true;
             else if(seekedToEnd) defaultEnd();
-            else if(settingsController.playbackOptionsController.loopOn){
+            else if(playbackSettingsController.playbackOptionsController.loopOn){
                 controlBarController.durationSlider.setValue(0);
                 return;
             }
@@ -238,7 +238,7 @@ public class MediaInterface {
             if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())){
                 seek(Duration.seconds(newValue));
 
-                if(!seekedToEnd && !settingsController.playbackOptionsController.loopOn) endMedia();
+                if(!seekedToEnd && !playbackSettingsController.playbackOptionsController.loopOn) endMedia();
             }
 
         }
@@ -266,10 +266,10 @@ public class MediaInterface {
     public void endMedia() {
 
 
-        if ((!settingsController.playbackOptionsController.shuffleOn && !settingsController.playbackOptionsController.loopOn && !settingsController.playbackOptionsController.autoplayOn) || (settingsController.playbackOptionsController.loopOn && seekedToEnd)) {
+        if ((!playbackSettingsController.playbackOptionsController.shuffleOn && !playbackSettingsController.playbackOptionsController.loopOn && !playbackSettingsController.playbackOptionsController.autoplayOn) || (playbackSettingsController.playbackOptionsController.loopOn && seekedToEnd)) {
             defaultEnd();
 
-        } else if (settingsController.playbackOptionsController.loopOn) {
+        } else if (playbackSettingsController.playbackOptionsController.loopOn) {
             controlBarController.mouseEventTracker.move();
 
             // restart current video
@@ -287,18 +287,18 @@ public class MediaInterface {
         mainController.coverImageContainer.setVisible(false);
         mainController.miniplayerActiveText.setVisible(false);
 
-        captionsController.timingPane.resetTiming();
+        subtitlesController.timingPane.resetTiming();
 
         if(mainController.miniplayerActive){
             mainController.miniplayer.miniplayerController.videoImageView.setImage(null);
             mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
         }
 
-        captionsController.openSubtitlesPane.fileSearchLabel.setText("Current media file:\n" + queueItem.file.getName());
-        captionsController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER_LEFT);
-        if(!captionsController.openSubtitlesPane.fileSearchLabelContainer.getChildren().contains(captionsController.openSubtitlesPane.fileSearchExplanationLabel)) captionsController.openSubtitlesPane.fileSearchLabelContainer.getChildren().add(captionsController.openSubtitlesPane.fileSearchExplanationLabel);
+        subtitlesController.openSubtitlesPane.fileSearchLabel.setText("Current media file:\n" + queueItem.file.getName());
+        subtitlesController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER_LEFT);
+        if(!subtitlesController.openSubtitlesPane.fileSearchLabelContainer.getChildren().contains(subtitlesController.openSubtitlesPane.fileSearchExplanationLabel)) subtitlesController.openSubtitlesPane.fileSearchLabelContainer.getChildren().add(subtitlesController.openSubtitlesPane.fileSearchExplanationLabel);
 
-        if(!captionsController.openSubtitlesPane.searchInProgress.get()) captionsController.openSubtitlesPane.searchButton.setDisable(false);
+        if(!subtitlesController.openSubtitlesPane.searchInProgress.get()) subtitlesController.openSubtitlesPane.searchButton.setDisable(false);
 
         MediaItem mediaItem = queueItem.getMediaItem();
 
@@ -343,16 +343,16 @@ public class MediaInterface {
         mainController.metadataButtonPane.setVisible(false);
         mainController.metadataButtonPane.setMouseTransparent(true);
 
-        if(settingsController.playbackOptionsController.loopOn) settingsController.playbackOptionsController.loopTab.toggle.fire();
+        if(playbackSettingsController.playbackOptionsController.loopOn) playbackSettingsController.playbackOptionsController.loopTab.toggle.fire();
 
         mainController.sliderHoverPreview.setImage(null);
 
-        captionsController.clearCaptions();
-        captionsController.openSubtitlesPane.fileSearchLabel.setText("Select a media file to use this feature");
-        captionsController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER);
-        captionsController.openSubtitlesPane.fileSearchLabelContainer.getChildren().remove(captionsController.openSubtitlesPane.fileSearchExplanationLabel);
+        subtitlesController.clearSubtitles();
+        subtitlesController.openSubtitlesPane.fileSearchLabel.setText("Select a media file to use this feature");
+        subtitlesController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER);
+        subtitlesController.openSubtitlesPane.fileSearchLabelContainer.getChildren().remove(subtitlesController.openSubtitlesPane.fileSearchExplanationLabel);
 
-        if(captionsController.openSubtitlesPane.searchState == 2) captionsController.openSubtitlesPane.searchButton.setDisable(true);
+        if(subtitlesController.openSubtitlesPane.searchState == 2) subtitlesController.openSubtitlesPane.searchButton.setDisable(true);
 
 
         controlBarController.disablePreviousVideoButton();
@@ -364,7 +364,7 @@ public class MediaInterface {
         wasPlaying = false;
         currentTime = 0;
 
-        captionsController.timingPane.resetTiming();
+        subtitlesController.timingPane.resetTiming();
 
         try {
             if(fFmpegFrameGrabber != null) fFmpegFrameGrabber.close();
@@ -530,21 +530,21 @@ public class MediaInterface {
         mainController.metadataButtonPane.setVisible(true);
         mainController.metadataButtonPane.setMouseTransparent(false);
 
-        if(!mediaItem.captionGenerationTime.isEmpty()){ // caption extraction has started for this mediaitem
-            if(!mediaItem.captionExtractionInProgress.get()){ // caption extraction has already been completed, can simply add caption tabs
-                captionsController.createSubtitleTabs(mediaItem);
+        if(!mediaItem.subtitlesGenerationTime.isEmpty()){ // caption extraction has started for this mediaitem
+            if(!mediaItem.subtitlesExtractionInProgress.get()){ // caption extraction has already been completed, can simply add caption tabs
+                subtitlesController.createSubtitleTabs(mediaItem);
             }
             else { // caption extraction is ongoing, have to wait for it to finish before adding caption tabs
-                mediaItem.captionExtractionInProgress.addListener((observableValue, oldValue, newValue) -> {
-                    if(!newValue && menuController.queuePage.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
+                mediaItem.subtitlesExtractionInProgress.addListener((observableValue, oldValue, newValue) -> {
+                    if(!newValue && menuController.queuePage.queueBox.activeItem.get() == queueItem) subtitlesController.createSubtitleTabs(mediaItem);
                 });
             }
         }
         else { // caption extraction has not started, will create subtitle extraction task and on completion add subtitles
             executorService = Executors.newFixedThreadPool(1);
-            subtitleExtractionTask = new SubtitleExtractionTask(captionsController, mediaItem);
+            subtitleExtractionTask = new SubtitleExtractionTask(subtitlesController, mediaItem);
             subtitleExtractionTask.setOnSucceeded(e -> {
-                if(subtitleExtractionTask.getValue() != null && subtitleExtractionTask.getValue() && menuController.queuePage.queueBox.activeItem.get() == queueItem) captionsController.createSubtitleTabs(mediaItem);
+                if(subtitleExtractionTask.getValue() != null && subtitleExtractionTask.getValue() && menuController.queuePage.queueBox.activeItem.get() == queueItem) subtitlesController.createSubtitleTabs(mediaItem);
             });
             executorService.execute(subtitleExtractionTask);
             executorService.shutdown();
@@ -568,11 +568,11 @@ public class MediaInterface {
             executorService.shutdown();
         }
 
-        if(captionsController.captionsState == CaptionsState.CLOSED){
+        if(subtitlesController.subtitlesState == SubtitlesState.CLOSED){
             Map<String, String> metadata = mediaItem.getMediaInformation();
-            if(metadata.containsKey("title") && !metadata.get("title").isBlank()) captionsController.openSubtitlesPane.titleField.setText(metadata.get("title"));
-            if(metadata.containsKey("season") && !metadata.get("season").isBlank()) captionsController.openSubtitlesPane.seasonField.setText(metadata.get("season"));
-            if(metadata.containsKey("episode") && !metadata.get("episode").isBlank()) captionsController.openSubtitlesPane.episodeField.setText(metadata.get("episode"));
+            if(metadata.containsKey("title") && !metadata.get("title").isBlank()) subtitlesController.openSubtitlesPane.titleField.setText(metadata.get("title"));
+            if(metadata.containsKey("season") && !metadata.get("season").isBlank()) subtitlesController.openSubtitlesPane.seasonField.setText(metadata.get("season"));
+            if(metadata.containsKey("episode") && !metadata.get("episode").isBlank()) subtitlesController.openSubtitlesPane.episodeField.setText(metadata.get("episode"));
         }
 
     }

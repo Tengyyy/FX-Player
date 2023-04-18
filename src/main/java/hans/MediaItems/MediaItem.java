@@ -62,8 +62,8 @@ public class MediaItem {
     public Stream videoStream = null;
     Stream audioStream = null;
 
-    public String captionGenerationTime = "";
-    public BooleanProperty captionExtractionInProgress = new SimpleBooleanProperty(false);
+    public String subtitlesGenerationTime = "";
+    public BooleanProperty subtitlesExtractionInProgress = new SimpleBooleanProperty(false);
 
 
     //Metadata edit variables

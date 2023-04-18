@@ -1,25 +1,16 @@
 package hans.Menu;
 
-import hans.AnimationsClass;
 import hans.App;
-import hans.Captions.CaptionsState;
-import hans.MediaItems.MediaItem;
 import hans.Menu.Queue.QueueItem;
-import hans.Menu.Queue.QueuePage;
-import hans.SVG;
-import hans.Settings.SettingsState;
 import hans.Shell32Util;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 

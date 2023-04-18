@@ -2,15 +2,15 @@ package hans.Menu;
 
 
 import hans.*;
-import hans.Captions.CaptionsController;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesController;
+import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
 import hans.MediaItems.MediaItem;
 import hans.Menu.MetadataEdit.MetadataEditPage;
 import hans.Menu.Queue.QueuePage;
 import hans.Menu.Settings.SettingsPage;
-import hans.Settings.SettingsController;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsController;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -49,8 +49,8 @@ public class MenuController implements Initializable {
 
     public MainController mainController;
     public ControlBarController controlBarController;
-    public SettingsController settingsController;
-    public CaptionsController captionsController;
+    public PlaybackSettingsController playbackSettingsController;
+    public SubtitlesController subtitlesController;
     public MediaInterface mediaInterface;
 
     public ChapterController chapterController;
@@ -124,8 +124,8 @@ public class MenuController implements Initializable {
         menu.setClip(menuClip);
 
         menu.setOnMouseClicked(e -> {
-            if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
-            if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+            if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+            if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
         });
 
 
@@ -141,8 +141,8 @@ public class MenuController implements Initializable {
         closeButton.getStyleClass().add("transparentButton");
         closeButton.setGraphic(closeIcon);
         closeButton.setOnAction(e -> {
-            if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
-            if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
+            if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+            if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
 
             closeMenu();
         });
@@ -221,9 +221,9 @@ public class MenuController implements Initializable {
         if(        menuInTransition
                 || controlBarController.durationSlider.isValueChanging()
                 || controlBarController.volumeSlider.isValueChanging()
-                || settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging()
-                || captionsController.captionsBox.captionsDragActive
-                || settingsController.equalizerController.sliderActive) return;
+                || playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging()
+                || subtitlesController.subtitlesBox.subtitlesDragActive
+                || playbackSettingsController.equalizerController.sliderActive) return;
 
         if(newState != menuState) updateState(newState);
 
@@ -231,10 +231,10 @@ public class MenuController implements Initializable {
 
         mainController.videoImageViewWrapper.getScene().setCursor(Cursor.DEFAULT);
 
-        captionsController.captionsBox.captionsContainer.setMouseTransparent(true);
+        subtitlesController.subtitlesBox.subtitlesContainer.setMouseTransparent(true);
 
-        if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         if(extended.get()){
             if(controlBarController.controlBarOpen) AnimationsClass.hideTitle(mainController);
@@ -242,7 +242,7 @@ public class MenuController implements Initializable {
         }
         else {
             controlBarController.controlBarWrapper.setMouseTransparent(true);
-            if(controlBarController.controlBarOpen) AnimationsClass.hideControlsAndTitle(controlBarController, captionsController, mainController);
+            if(controlBarController.controlBarOpen) AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
 
             openShrinkedMenu();
         }
@@ -269,16 +269,16 @@ public class MenuController implements Initializable {
         AnimationsClass.displayTitle(mainController);
         mainController.videoTitleLabel.getScene().setCursor(Cursor.DEFAULT);
         mainController.videoTitleBox.setMouseTransparent(false);
-        if(captionsController.captionsSelected.get()) captionsController.captionsBox.captionsContainer.setMouseTransparent(false);
+        if(subtitlesController.subtitlesSelected.get()) subtitlesController.subtitlesBox.subtitlesContainer.setMouseTransparent(false);
     }
 
 
-    public void init(MainController mainController, ControlBarController controlBarController, SettingsController settingsController, MediaInterface mediaInterface, CaptionsController captionsController, ChapterController chapterController){
+    public void init(MainController mainController, ControlBarController controlBarController, PlaybackSettingsController playbackSettingsController, MediaInterface mediaInterface, SubtitlesController subtitlesController, ChapterController chapterController){
         this.mainController = mainController;
         this.controlBarController = controlBarController;
-        this.settingsController = settingsController;
+        this.playbackSettingsController = playbackSettingsController;
         this.mediaInterface = mediaInterface;
-        this.captionsController = captionsController;
+        this.subtitlesController = subtitlesController;
         this.chapterController = chapterController;
 
 
@@ -394,7 +394,7 @@ public class MenuController implements Initializable {
         });
 
         menuContentFade.playFromStart();
-        AnimationsClass.hideControlsAndTitle(controlBarController, captionsController, mainController);
+        AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
     }
 
     public void setMenuExtended(MenuState newState){
@@ -429,7 +429,7 @@ public class MenuController implements Initializable {
         menuWrapper.setPadding(new Insets(0, 0, 65, 0));
 
         if(menuState != MenuState.CLOSED){
-            AnimationsClass.displayControls(controlBarController, captionsController, mainController);
+            AnimationsClass.displayControls(controlBarController, subtitlesController, mainController);
         }
     }
 
@@ -463,7 +463,7 @@ public class MenuController implements Initializable {
         dragPane.setVisible(true);
         menuWrapper.setStyle("-fx-border-color: #909090;");
 
-        if(controlBarController.controlBarOpen) AnimationsClass.hideControlsAndTitle(controlBarController, captionsController, mainController);
+        if(controlBarController.controlBarOpen) AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
     }
 
     private void openExtendedMenu(){

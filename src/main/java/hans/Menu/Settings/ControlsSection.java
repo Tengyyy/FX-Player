@@ -1,7 +1,7 @@
 package hans.Menu.Settings;
 
-import hans.Captions.CaptionsState;
-import hans.Settings.SettingsState;
+import hans.Subtitles.SubtitlesState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -119,8 +119,8 @@ public class ControlsSection extends VBox {
         resetButton.setCursor(Cursor.HAND);
         resetButton.getStyleClass().add("menuButton");
         resetButton.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             resetToDefault();
         });
         resetButton.setFocusTraversable(false);

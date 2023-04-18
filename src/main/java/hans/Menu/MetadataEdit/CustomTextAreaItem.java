@@ -2,12 +2,10 @@ package hans.Menu.MetadataEdit;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.Menu.ExpandableTextArea;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -117,8 +115,8 @@ public class CustomTextAreaItem extends VBox{
 
         keyField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                    if(otherEditItem.metadataEditPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) otherEditItem.metadataEditPage.menuController.captionsController.closeCaptions();
-                    if(otherEditItem.metadataEditPage.menuController.settingsController.settingsState != SettingsState.CLOSED) otherEditItem.metadataEditPage.menuController.settingsController.closeSettings();
+                    if(otherEditItem.metadataEditPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) otherEditItem.metadataEditPage.menuController.subtitlesController.closeSubtitles();
+                    if(otherEditItem.metadataEditPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) otherEditItem.metadataEditPage.menuController.playbackSettingsController.closeSettings();
 
                 removeEditButton();
             }

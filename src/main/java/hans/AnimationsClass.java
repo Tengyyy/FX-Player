@@ -1,7 +1,6 @@
 package hans;
 
-import hans.Menu.MenuController;
-import hans.Captions.CaptionsController;
+import hans.Subtitles.SubtitlesController;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,22 +17,22 @@ public class AnimationsClass {
 
     public static final double ANIMATION_SPEED = 200;
 
-    public static void displayControls(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
+    public static void displayControls(ControlBarController controlBarController, SubtitlesController subtitlesController, MainController mainController) {
 
         controlBarController.controlBarOpen = true;
 
-        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox.captionsContainer);
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), subtitlesController.subtitlesBox.subtitlesContainer);
         captionsTransition.setCycleCount(1);
-        captionsTransition.setFromY(captionsController.captionsBox.captionsContainer.getTranslateY());
+        captionsTransition.setFromY(subtitlesController.subtitlesBox.subtitlesContainer.getTranslateY());
 
-        if((captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT) && !mainController.miniplayerActive){
+        if((subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT) && !mainController.miniplayerActive){
             captionsTransition.setToY(-90);
         }
-        else if((captionsController.captionsBox.captionsLocation == Pos.TOP_CENTER || captionsController.captionsBox.captionsLocation == Pos.TOP_LEFT || captionsController.captionsBox.captionsLocation == Pos.TOP_RIGHT) && !mainController.miniplayerActive){
+        else if((subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_RIGHT) && !mainController.miniplayerActive){
             captionsTransition.setToY(70);
         }
         else {
-            captionsTransition.setToY(captionsController.captionsBox.captionsContainer.getTranslateY());
+            captionsTransition.setToY(subtitlesController.subtitlesBox.subtitlesContainer.getTranslateY());
         }
         FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBar);
         controlBarFade.setFromValue(controlBarController.controlBar.getOpacity());
@@ -51,22 +50,22 @@ public class AnimationsClass {
         parallelTransition.play();
     }
 
-    public static void hideControlsAndTitle(ControlBarController controlBarController, CaptionsController captionsController, MainController mainController) {
+    public static void hideControlsAndTitle(ControlBarController controlBarController, SubtitlesController subtitlesController, MainController mainController) {
 
-        if(captionsController.captionsBox.captionsTransition != null && captionsController.captionsBox.captionsTransition.getStatus() == Animation.Status.RUNNING) captionsController.captionsBox.captionsTransition.stop();
+        if(subtitlesController.subtitlesBox.subtitlesTransition != null && subtitlesController.subtitlesBox.subtitlesTransition.getStatus() == Animation.Status.RUNNING) subtitlesController.subtitlesBox.subtitlesTransition.stop();
 
-        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), captionsController.captionsBox.captionsContainer);
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), subtitlesController.subtitlesBox.subtitlesContainer);
         captionsTransition.setCycleCount(1);
-        captionsTransition.setFromY(captionsController.captionsBox.captionsContainer.getTranslateY());
+        captionsTransition.setFromY(subtitlesController.subtitlesBox.subtitlesContainer.getTranslateY());
 
-        if((captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT) && !mainController.miniplayerActive){
+        if((subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT) && !mainController.miniplayerActive){
             captionsTransition.setToY(-30);
         }
-        else if((captionsController.captionsBox.captionsLocation == Pos.TOP_CENTER || captionsController.captionsBox.captionsLocation == Pos.TOP_LEFT || captionsController.captionsBox.captionsLocation == Pos.TOP_RIGHT) && !mainController.miniplayerActive){
+        else if((subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_RIGHT) && !mainController.miniplayerActive){
             captionsTransition.setToY(30);
         }
         else {
-            captionsTransition.setToY(captionsController.captionsBox.captionsContainer.getTranslateY());
+            captionsTransition.setToY(subtitlesController.subtitlesBox.subtitlesContainer.getTranslateY());
         }
 
         FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBarController.controlBar);
@@ -96,8 +95,8 @@ public class AnimationsClass {
             controlBarController.mouseEventTracker.mouseMoving.set(false);
             mainController.videoTitleBox.setVisible(false);
             mainController.videoTitleBackground.setVisible(false);
-            captionsController.captionsBox.captionsAnimating = false;
-            captionsController.captionsBox.captionsContainer.setStyle("-fx-background-color: transparent;");
+            subtitlesController.subtitlesBox.subtitlesAnimating = false;
+            subtitlesController.subtitlesBox.subtitlesContainer.setStyle("-fx-background-color: transparent;");
         });
 
         parallelTransition.play();

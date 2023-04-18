@@ -1,10 +1,10 @@
 package hans.Menu.Settings;
 
 import hans.App;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.ControlTooltip;
 import hans.SVG;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -73,8 +73,8 @@ public class LibraryItem extends StackPane {
         refreshButton.getStyleClass().add("menuButton");
         refreshButton.setGraphic(refreshIcon);
         refreshButton.setOnAction(e -> {
-            if(librariesSection.settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) librariesSection.settingsPage.menuController.captionsController.closeCaptions();
-            if(librariesSection.settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) librariesSection.settingsPage.menuController.settingsController.closeSettings();
+            if(librariesSection.settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) librariesSection.settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(librariesSection.settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) librariesSection.settingsPage.menuController.playbackSettingsController.closeSettings();
             librariesSection.refreshLibrary(file);
         });
 
@@ -90,8 +90,8 @@ public class LibraryItem extends StackPane {
         removeButton.getStyleClass().add("menuButton");
         removeButton.setGraphic(removeIcon);
         removeButton.setOnAction(e -> {
-            if(librariesSection.settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) librariesSection.settingsPage.menuController.captionsController.closeCaptions();
-            if(librariesSection.settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) librariesSection.settingsPage.menuController.settingsController.closeSettings();
+            if(librariesSection.settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) librariesSection.settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(librariesSection.settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) librariesSection.settingsPage.menuController.playbackSettingsController.closeSettings();
             librariesSection.removeLibrary(this);
         });
 

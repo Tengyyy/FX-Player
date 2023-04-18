@@ -3,8 +3,7 @@ package hans;
 
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene;
 import hans.Menu.MenuController;
-import hans.Settings.SettingsController;
-import javafx.application.Platform;
+import hans.PlaybackSettings.PlaybackSettingsController;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -20,7 +19,7 @@ public class Miniplayer {
     ControlBarController controlBarController;
     MenuController menuController;
     MediaInterface mediaInterface;
-    SettingsController settingsController;
+    PlaybackSettingsController playbackSettingsController;
 
     Stage stage;
     BorderlessScene scene;
@@ -32,13 +31,13 @@ public class Miniplayer {
     final int MAX_WIDTH = 900;
     final int MAX_HEIGHT = 700;
 
-    Miniplayer(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface, SettingsController settingsController){
+    Miniplayer(MainController mainController, ControlBarController controlBarController, MenuController menuController, MediaInterface mediaInterface, PlaybackSettingsController playbackSettingsController){
 
         this.mainController = mainController;
         this.controlBarController = controlBarController;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
-        this.settingsController = settingsController;
+        this.playbackSettingsController = playbackSettingsController;
 
         miniplayerController = new MiniplayerController(mainController, controlBarController, menuController, mediaInterface, this);
 

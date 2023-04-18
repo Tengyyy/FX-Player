@@ -1,9 +1,9 @@
 package hans.Menu;
 
 import hans.App;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.SVG;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
@@ -40,8 +40,8 @@ public class MenuBar {
         queueButton.button.setOnAction(e -> {
 
             if(menuController.extended.get()){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+                if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+                if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
 
             if(menuController.menuState == MenuState.QUEUE_OPEN) return;
@@ -52,8 +52,8 @@ public class MenuBar {
         historyButton.button.setOnAction(e -> {
 
             if(menuController.extended.get()){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+                if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+                if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
 
             if(menuController.menuState == MenuState.RECENT_MEDIA_OPEN) return;
@@ -64,8 +64,8 @@ public class MenuBar {
         musicLibraryButton.button.setOnAction(e -> {
 
             if(menuController.extended.get()){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+                if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+                if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
 
             if(menuController.menuState == MenuState.MUSIC_LIBRARY_OPEN) return;
@@ -76,8 +76,8 @@ public class MenuBar {
         playlistsButton.button.setOnAction(e -> {
 
             if(menuController.extended.get()){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+                if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+                if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
 
             if(menuController.menuState == MenuState.PLAYLISTS_OPEN) return;
@@ -88,8 +88,8 @@ public class MenuBar {
         settingsButton.button.setOnAction(e -> {
 
             if(menuController.extended.get()){
-                if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-                if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+                if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+                if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
 
             if(menuController.menuState == MenuState.SETTINGS_OPEN) return;

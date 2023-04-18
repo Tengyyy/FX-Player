@@ -1,7 +1,7 @@
 package hans.Menu.Settings;
 
-import hans.Captions.CaptionsState;
-import hans.Settings.SettingsState;
+import hans.Subtitles.SubtitlesState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
@@ -20,8 +20,8 @@ public class Toggle extends StackPane{
         this.setPadding(new Insets(8, 10, 8, 10));
         this.getStyleClass().add("highlightedSection");
         this.setOnMouseClicked(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             toggleButton.fire();
         });
 
@@ -32,8 +32,8 @@ public class Toggle extends StackPane{
         toggleButton.selectedProperty().bindBidirectional(booleanProperty);
         toggleButton.setRadius(10);
         toggleButton.setOnAction(e -> {
-            if(settingsPage.menuController.captionsController.captionsState != CaptionsState.CLOSED) settingsPage.menuController.captionsController.closeCaptions();
-            if(settingsPage.menuController.settingsController.settingsState != SettingsState.CLOSED) settingsPage.menuController.settingsController.closeSettings();
+            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
         });
         StackPane.setAlignment(toggleButton, Pos.CENTER_RIGHT);
     }

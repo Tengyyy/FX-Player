@@ -1,14 +1,14 @@
 package hans;
 
-import hans.Captions.CaptionsController;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesController;
+import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.MenuController;
 import hans.Menu.MenuState;
 import hans.Menu.Queue.QueueItem;
-import hans.Settings.SettingsController;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsController;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -33,7 +33,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-import org.controlsfx.control.CheckComboBox;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
 import java.io.File;
@@ -66,8 +65,8 @@ public class MainController implements Initializable {
     @FXML
     private MenuController menuController;
 
-    SettingsController settingsController;
-    CaptionsController captionsController;
+    PlaybackSettingsController playbackSettingsController;
+    SubtitlesController subtitlesController;
 
     MediaInterface mediaInterface;
 
@@ -128,15 +127,15 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
-        settingsController = new SettingsController(this, controlBarController, menuController);
-        captionsController = new CaptionsController(settingsController, this, controlBarController, menuController);
-        mediaInterface = new MediaInterface(this, controlBarController, settingsController, menuController, captionsController);
+        playbackSettingsController = new PlaybackSettingsController(this, controlBarController, menuController);
+        subtitlesController = new SubtitlesController(playbackSettingsController, this, controlBarController, menuController);
+        mediaInterface = new MediaInterface(this, controlBarController, playbackSettingsController, menuController, subtitlesController);
         chapterController = new ChapterController(this, controlBarController, menuController, mediaInterface);
 
-        controlBarController.init(this, settingsController, menuController, mediaInterface, captionsController, chapterController); // shares references of all the controllers between eachother
-        menuController.init(this, controlBarController, settingsController, mediaInterface, captionsController, chapterController);
-        settingsController.init(mediaInterface, captionsController);
-        captionsController.init(mediaInterface);
+        controlBarController.init(this, playbackSettingsController, menuController, mediaInterface, subtitlesController, chapterController); // shares references of all the controllers between eachother
+        menuController.init(this, controlBarController, playbackSettingsController, mediaInterface, subtitlesController, chapterController);
+        playbackSettingsController.init(mediaInterface, subtitlesController);
+        subtitlesController.init(mediaInterface);
         mediaInterface.init(chapterController);
 
         popupWindowContainer.setId("popupWindowContainer");
@@ -150,8 +149,8 @@ public class MainController implements Initializable {
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
         sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
 
-        videoImageViewWrapper.getChildren().add(5, captionsController.captionsBuffer);
-        videoImageViewWrapper.getChildren().add(6, settingsController.settingsBuffer);
+        videoImageViewWrapper.getChildren().add(5, subtitlesController.subtitlesBuffer);
+        videoImageViewWrapper.getChildren().add(6, playbackSettingsController.playbackSettingsBuffer);
 
 
         snapshotDirectory = System.getProperty("user.home").concat("/FXPlayer/screenshots/");
@@ -214,7 +213,7 @@ public class MainController implements Initializable {
         widthListener = (observableValue, oldValue, newValue) -> {
 
             if(newValue.doubleValue() < 800){
-                captionsController.captionsBox.mediaWidthMultiplier.set(0.4);
+                subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.4);
 
                 sizeMultiplier.set(0.55);
                 if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
@@ -223,7 +222,7 @@ public class MainController implements Initializable {
                 valueIndicator.resize();
             }
             else if((newValue.doubleValue() >= 800 && newValue.doubleValue() < 1200)){
-                captionsController.captionsBox.mediaWidthMultiplier.set(0.6);
+                subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.6);
 
                 sizeMultiplier.set(0.65);
                 if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
@@ -233,7 +232,7 @@ public class MainController implements Initializable {
 
             }
             else if((newValue.doubleValue() >= 1200 && newValue.doubleValue() < 1800)){
-                captionsController.captionsBox.mediaWidthMultiplier.set(0.8);
+                subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.8);
 
                 sizeMultiplier.set(0.8);
                 if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
@@ -243,7 +242,7 @@ public class MainController implements Initializable {
 
             }
             else if((newValue.doubleValue() >= 1800 && newValue.doubleValue() < 2400)){
-                captionsController.captionsBox.mediaWidthMultiplier.set(1.0);
+                subtitlesController.subtitlesBox.mediaWidthMultiplier.set(1.0);
 
 
                 sizeMultiplier.set(1);
@@ -254,7 +253,7 @@ public class MainController implements Initializable {
 
             }
             else if(newValue.doubleValue() >= 2400){
-                captionsController.captionsBox.mediaWidthMultiplier.set(1.2);
+                subtitlesController.subtitlesBox.mediaWidthMultiplier.set(1.2);
 
                 sizeMultiplier.set(1.2);
                 if(actionIndicator.wrapper.isVisible()) actionIndicator.updateSize();
@@ -334,14 +333,14 @@ public class MainController implements Initializable {
 
 
         videoImageViewWrapper.setOnMouseDragOver(e -> {
-            if(captionsController.captionsBox.captionsDragActive){
-                if(e.getY() - captionsController.captionsBox.dragPositionY <= captionsController.captionsBox.minimumY) captionsController.captionsBox.captionsContainer.setTranslateY(((captionsController.captionsBox.startY - captionsController.captionsBox.minimumY) * -1) + captionsController.captionsBox.startTranslateY);
-                else if(e.getY() - captionsController.captionsBox.dragPositionY + captionsController.captionsBox.captionsContainer.getLayoutBounds().getMaxY() > captionsController.captionsBox.maximumY) captionsController.captionsBox.captionsContainer.setTranslateY(captionsController.captionsBox.maximumY - captionsController.captionsBox.startY - captionsController.captionsBox.captionsContainer.getLayoutBounds().getMaxY() + captionsController.captionsBox.startTranslateY);
-                else captionsController.captionsBox.captionsContainer.setTranslateY(e.getY() - captionsController.captionsBox.dragPositionY - captionsController.captionsBox.startY + captionsController.captionsBox.startTranslateY);
+            if(subtitlesController.subtitlesBox.subtitlesDragActive){
+                if(e.getY() - subtitlesController.subtitlesBox.dragPositionY <= subtitlesController.subtitlesBox.minimumY) subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(((subtitlesController.subtitlesBox.startY - subtitlesController.subtitlesBox.minimumY) * -1) + subtitlesController.subtitlesBox.startTranslateY);
+                else if(e.getY() - subtitlesController.subtitlesBox.dragPositionY + subtitlesController.subtitlesBox.subtitlesContainer.getLayoutBounds().getMaxY() > subtitlesController.subtitlesBox.maximumY) subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(subtitlesController.subtitlesBox.maximumY - subtitlesController.subtitlesBox.startY - subtitlesController.subtitlesBox.subtitlesContainer.getLayoutBounds().getMaxY() + subtitlesController.subtitlesBox.startTranslateY);
+                else subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(e.getY() - subtitlesController.subtitlesBox.dragPositionY - subtitlesController.subtitlesBox.startY + subtitlesController.subtitlesBox.startTranslateY);
 
-                if(e.getX() - captionsController.captionsBox.dragPositionX <= captionsController.captionsBox.minimumX) captionsController.captionsBox.captionsContainer.setTranslateX(((captionsController.captionsBox.startX - captionsController.captionsBox.minimumX) * -1) + captionsController.captionsBox.startTranslateX);
-                else if(e.getX() - captionsController.captionsBox.dragPositionX + captionsController.captionsBox.captionsContainer.getLayoutBounds().getMaxX() > captionsController.captionsBox.maximumX) captionsController.captionsBox.captionsContainer.setTranslateX(captionsController.captionsBox.maximumX - captionsController.captionsBox.startX - captionsController.captionsBox.captionsContainer.getLayoutBounds().getMaxX() + captionsController.captionsBox.startTranslateX);
-                else captionsController.captionsBox.captionsContainer.setTranslateX(e.getX() - captionsController.captionsBox.dragPositionX - captionsController.captionsBox.startX + captionsController.captionsBox.startTranslateX);
+                if(e.getX() - subtitlesController.subtitlesBox.dragPositionX <= subtitlesController.subtitlesBox.minimumX) subtitlesController.subtitlesBox.subtitlesContainer.setTranslateX(((subtitlesController.subtitlesBox.startX - subtitlesController.subtitlesBox.minimumX) * -1) + subtitlesController.subtitlesBox.startTranslateX);
+                else if(e.getX() - subtitlesController.subtitlesBox.dragPositionX + subtitlesController.subtitlesBox.subtitlesContainer.getLayoutBounds().getMaxX() > subtitlesController.subtitlesBox.maximumX) subtitlesController.subtitlesBox.subtitlesContainer.setTranslateX(subtitlesController.subtitlesBox.maximumX - subtitlesController.subtitlesBox.startX - subtitlesController.subtitlesBox.subtitlesContainer.getLayoutBounds().getMaxX() + subtitlesController.subtitlesBox.startTranslateX);
+                else subtitlesController.subtitlesBox.subtitlesContainer.setTranslateX(e.getX() - subtitlesController.subtitlesBox.dragPositionX - subtitlesController.subtitlesBox.startX + subtitlesController.subtitlesBox.startTranslateX);
             }
 
             e.consume();
@@ -415,8 +414,8 @@ public class MainController implements Initializable {
         videoTitleLabel.setStyle("-fx-font-family: Roboto Medium; -fx-font-size: 20");
         videoTitleLabel.setEffect(new DropShadow());
         videoTitleLabel.setOnMouseClicked(e -> {
-            if(settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-            if(captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+            if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+            if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
             e.consume();
         });
 
@@ -481,8 +480,8 @@ public class MainController implements Initializable {
         // otherwise play/pause/replay the video
 
         if(e.getButton() == MouseButton.SECONDARY){
-            if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-            if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+            if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+            if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
             if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.isShowing()) menuController.queuePage.activeQueueItemContextMenu.hide();
             return;
         }
@@ -495,11 +494,11 @@ public class MainController implements Initializable {
         if(menuController.menuState != MenuState.CLOSED && !menuController.menuInTransition){
             menuController.closeMenu();
         }
-        else if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
+        else if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) {
+            playbackSettingsController.closeSettings();
         }
-        else if (captionsController.captionsState != CaptionsState.CLOSED) {
-            captionsController.closeCaptions();
+        else if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) {
+            subtitlesController.closeSubtitles();
         }
         else if(mediaInterface.mediaActive.get()){
             if (mediaInterface.atEnd) {
@@ -530,10 +529,10 @@ public class MainController implements Initializable {
         actionIndicator.setIcon(PLUS);
         actionIndicator.setVisible(true);
 
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
-        AnimationsClass.hideControlsAndTitle(controlBarController, captionsController, this);
+        AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, this);
 
     }
 
@@ -600,7 +599,7 @@ public class MainController implements Initializable {
         videoImageViewInnerWrapper.heightProperty().removeListener(heightListener);
 
 
-        miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface, settingsController);
+        miniplayer = new Miniplayer(this, controlBarController, menuController, mediaInterface, playbackSettingsController);
         miniplayer.miniplayerController.videoImageView.requestFocus();
 
 
@@ -634,7 +633,7 @@ public class MainController implements Initializable {
 
 
         miniplayer.miniplayerController.moveIndicators();
-        captionsController.captionsBox.moveToMiniplayer();
+        subtitlesController.subtitlesBox.moveToMiniplayer();
 
         if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
             miniplayerActiveText.setVisible(true);
@@ -663,7 +662,7 @@ public class MainController implements Initializable {
         backwardsIndicator.moveToMainplayer();
         valueIndicator.moveToMainplayer();
 
-        captionsController.captionsBox.moveToMainplayer();
+        subtitlesController.subtitlesBox.moveToMainplayer();
 
         miniplayerActive = false;
 
@@ -702,7 +701,7 @@ public class MainController implements Initializable {
 
     public void resizeIndicators(){
         if(videoImageViewInnerWrapper.getWidth() < 800){
-            captionsController.captionsBox.mediaWidthMultiplier.set(0.4);
+            subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.4);
 
             sizeMultiplier.set(0.55);
             forwardsIndicator.resize();
@@ -710,7 +709,7 @@ public class MainController implements Initializable {
             valueIndicator.resize();
         }
         else if(videoImageViewInnerWrapper.getWidth() >= 800 && videoImageViewInnerWrapper.getWidth() < 1200){
-            captionsController.captionsBox.mediaWidthMultiplier.set(0.6);
+            subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.6);
 
             sizeMultiplier.set(0.65);
             forwardsIndicator.resize();
@@ -719,7 +718,7 @@ public class MainController implements Initializable {
 
         }
         else if(videoImageViewInnerWrapper.getWidth() >= 1200 && videoImageViewInnerWrapper.getWidth() < 1800){
-            captionsController.captionsBox.mediaWidthMultiplier.set(0.8);
+            subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.8);
 
             sizeMultiplier.set(0.8);
             forwardsIndicator.resize();
@@ -728,7 +727,7 @@ public class MainController implements Initializable {
 
         }
         else if(videoImageViewInnerWrapper.getWidth() >= 1800 && videoImageViewInnerWrapper.getWidth() < 2400){
-            captionsController.captionsBox.mediaWidthMultiplier.set(1.0);
+            subtitlesController.subtitlesBox.mediaWidthMultiplier.set(1.0);
 
 
             sizeMultiplier.set(1);
@@ -738,7 +737,7 @@ public class MainController implements Initializable {
 
         }
         else if(videoImageViewInnerWrapper.getWidth() >= 2400){
-            captionsController.captionsBox.mediaWidthMultiplier.set(1.2);
+            subtitlesController.subtitlesBox.mediaWidthMultiplier.set(1.2);
 
             sizeMultiplier.set(1.2);
             forwardsIndicator.resize();
@@ -832,42 +831,42 @@ public class MainController implements Initializable {
     public void pressTAB(KeyEvent event){
         controlBarController.mouseEventTracker.move();
 
-        if(captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN){
-            if(event.isShiftDown()) captionsController.openSubtitlesPane.focusBackward();
-            else captionsController.openSubtitlesPane.focusForward();
+        if(subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN){
+            if(event.isShiftDown()) subtitlesController.openSubtitlesPane.focusBackward();
+            else subtitlesController.openSubtitlesPane.focusForward();
         }
 
         event.consume();
     }
 
     public void pressESCAPE(){
-        captionsController.captionsBox.cancelDrag();
+        subtitlesController.subtitlesBox.cancelDrag();
 
         controlBarController.mouseEventTracker.move();
-        if (settingsController.settingsState != SettingsState.CLOSED && !App.fullScreen) {
-            settingsController.closeSettings();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED && !App.fullScreen) {
+            playbackSettingsController.closeSettings();
         }
-        else if (captionsController.captionsState != CaptionsState.CLOSED && !App.fullScreen) {
-            captionsController.closeCaptions();
+        else if (subtitlesController.subtitlesState != SubtitlesState.CLOSED && !App.fullScreen) {
+            subtitlesController.closeSubtitles();
         }
 
         App.fullScreen = false;
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
         App.stage.setFullScreen(false);
 
-        if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED)
+        if (playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && subtitlesController.subtitlesState == SubtitlesState.CLOSED)
             controlBarController.fullScreen = new ControlTooltip(this,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
     }
 
     public void pressEnter(){
-        if(captionsController.captionsState != CaptionsState.OPENSUBTITLES_OPEN) return;
+        if(subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_OPEN) return;
 
-        captionsController.openSubtitlesPane.searchButton.fire();
+        subtitlesController.openSubtitlesPane.searchButton.fire();
     }
 
     public void PLAY_PAUSEAction(){
@@ -986,8 +985,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1028,8 +1027,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1074,8 +1073,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1115,8 +1114,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1194,8 +1193,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1241,8 +1240,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1271,8 +1270,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1301,8 +1300,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1331,8 +1330,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1361,8 +1360,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1391,8 +1390,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1421,8 +1420,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1451,8 +1450,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1481,8 +1480,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1492,9 +1491,9 @@ public class MainController implements Initializable {
 
     public void PLAYBACK_SPEED_UP25Action(){
 
-        settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.25);
+        playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.25);
 
-        valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+        valueIndicator.setValue(playbackSettingsController.playbackSpeedController.df.format(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
         valueIndicator.play();
 
         actionIndicator.setIcon(FORWARD);
@@ -1504,9 +1503,9 @@ public class MainController implements Initializable {
 
     public void PLAYBACK_SPEED_DOWN25Action(){
 
-        settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.25);
+        playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.25);
 
-        valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+        valueIndicator.setValue(playbackSettingsController.playbackSpeedController.df.format(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
         valueIndicator.play();
 
         actionIndicator.setIcon(REWIND);
@@ -1516,9 +1515,9 @@ public class MainController implements Initializable {
 
     public void PLAYBACK_SPEED_UP5Action(){
 
-        settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
+        playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
 
-        valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+        valueIndicator.setValue(playbackSettingsController.playbackSpeedController.df.format(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
         valueIndicator.play();
 
         actionIndicator.setIcon(FORWARD);
@@ -1528,9 +1527,9 @@ public class MainController implements Initializable {
 
     public void PLAYBACK_SPEED_DOWN5Action(){
 
-        settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
+        playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
 
-        valueIndicator.setValue(settingsController.playbackSpeedController.df.format(settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
+        valueIndicator.setValue(playbackSettingsController.playbackSpeedController.df.format(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
         valueIndicator.play();
 
         actionIndicator.setIcon(REWIND);
@@ -1585,8 +1584,8 @@ public class MainController implements Initializable {
             if(miniplayerActive) {
                 miniplayer.miniplayerController.sliderPane.setVisible(true);
 
-                if(captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+                if(subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
                 }
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
@@ -1618,7 +1617,7 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
     }
 
@@ -1634,7 +1633,7 @@ public class MainController implements Initializable {
         if(miniplayerActive) closeMiniplayer();
         else openMiniplayer();
 
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
     }
@@ -1647,24 +1646,24 @@ public class MainController implements Initializable {
             menuController.queuePage.activeQueueItemContextMenu.hide();
         if (menuController.queuePage.addOptionsContextMenu.showing)
             menuController.queuePage.addOptionsContextMenu.hide();
-        if (captionsController.openSubtitlesPane.searchOptionsContextMenu.showing)
-            captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if (subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing)
+            subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
-        else captionsController.openCaptions();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+        else subtitlesController.openSubtitles();
     }
 
 
     public void PLAYBACK_SETTINGSAction(){
         controlBarController.mouseEventTracker.move();
 
-        if (settingsController.settingsState != SettingsState.CLOSED) {
-            settingsController.closeSettings();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) {
+            playbackSettingsController.closeSettings();
         } else {
-            settingsController.openSettings();
+            playbackSettingsController.openSettings();
         }
 
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
     }
 
 
@@ -1676,7 +1675,7 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         if(!menuController.menuInTransition){
             if(menuController.menuState != MenuState.CLOSED) menuController.closeMenu();
@@ -1701,42 +1700,42 @@ public class MainController implements Initializable {
 
         controlBarController.mouseEventTracker.move();
 
-        if(settingsController.playbackOptionsController.shuffleTab.toggle.isSelected())
+        if(playbackSettingsController.playbackOptionsController.shuffleTab.toggle.isSelected())
             actionIndicator.setIcon(SHUFFLE_OFF);
         else actionIndicator.setIcon(SHUFFLE);
 
         actionIndicator.setVisible(true);
         actionIndicator.animate();
 
-        settingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!settingsController.playbackOptionsController.shuffleTab.toggle.isSelected());
+        playbackSettingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!playbackSettingsController.playbackOptionsController.shuffleTab.toggle.isSelected());
     }
 
     public void AUTOPLAYAction(){
 
         controlBarController.mouseEventTracker.move();
 
-        if(settingsController.playbackOptionsController.autoplayTab.toggle.isSelected())
+        if(playbackSettingsController.playbackOptionsController.autoplayTab.toggle.isSelected())
             actionIndicator.setIcon(REPEAT_OFF);
         else actionIndicator.setIcon(REPEAT);
 
         actionIndicator.setVisible(true);
         actionIndicator.animate();
 
-        settingsController.playbackOptionsController.autoplayTab.toggle.setSelected(!settingsController.playbackOptionsController.autoplayTab.toggle.isSelected());
+        playbackSettingsController.playbackOptionsController.autoplayTab.toggle.setSelected(!playbackSettingsController.playbackOptionsController.autoplayTab.toggle.isSelected());
     }
 
     public void LOOPAction(){
 
         controlBarController.mouseEventTracker.move();
 
-        if(settingsController.playbackOptionsController.loopTab.toggle.isSelected())
+        if(playbackSettingsController.playbackOptionsController.loopTab.toggle.isSelected())
             actionIndicator.setIcon(REPEAT_ONCE_OFF);
         else actionIndicator.setIcon(REPEAT_ONCE);
 
         actionIndicator.setVisible(true);
         actionIndicator.animate();
 
-        settingsController.playbackOptionsController.loopTab.toggle.setSelected(!settingsController.playbackOptionsController.loopTab.toggle.isSelected());
+        playbackSettingsController.playbackOptionsController.loopTab.toggle.setSelected(!playbackSettingsController.playbackOptionsController.loopTab.toggle.isSelected());
     }
 
     public void OPEN_QUEUEAction(){
@@ -1747,7 +1746,7 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.queuePage.enter();
     }
@@ -1759,7 +1758,7 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.recentMediaPage.enter();
     }
@@ -1772,7 +1771,7 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.musicLibraryPage.enter();
     }
@@ -1785,7 +1784,7 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.playlistsPage.enter();
     }
@@ -1798,13 +1797,13 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(captionsController.openSubtitlesPane.searchOptionsContextMenu.showing) captionsController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.settingsPage.enter();
     }
 
-    public SettingsController getSettingsController() {
-        return settingsController;
+    public PlaybackSettingsController getSettingsController() {
+        return playbackSettingsController;
     }
 
     public ControlBarController getControlBarController() {
@@ -1817,12 +1816,12 @@ public class MainController implements Initializable {
         return mediaInterface;
     }
 
-    public CaptionsController getCaptionsController(){
-        return captionsController;
+    public SubtitlesController getSubtitlesController(){
+        return subtitlesController;
     }
 
     public void closeApp(){
-        captionsController.resetCaptions();
+        subtitlesController.resetSubtitles();
 
         mediaInterface.embeddedMediaPlayer.release();
         SleepSuppressor.allowSleep();

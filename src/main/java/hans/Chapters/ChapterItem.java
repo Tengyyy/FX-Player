@@ -1,10 +1,9 @@
 package hans.Chapters;
 
 import hans.App;
-import hans.Captions.CaptionsState;
-import hans.MediaItems.MediaItem;
+import hans.Subtitles.SubtitlesState;
 import hans.SVG;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import hans.Utilities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -144,8 +143,8 @@ public class ChapterItem extends HBox {
         });
 
         this.setOnMouseClicked(e -> {
-            if(chapterController.menuController.captionsController.captionsState != CaptionsState.CLOSED) chapterController.menuController.captionsController.closeCaptions();
-            if(chapterController.menuController.settingsController.settingsState != SettingsState.CLOSED) chapterController.menuController.settingsController.closeSettings();
+            if(chapterController.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) chapterController.menuController.subtitlesController.closeSubtitles();
+            if(chapterController.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) chapterController.menuController.playbackSettingsController.closeSettings();
 
             chapterController.setActiveChapter(this.index);
             chapterController.controlBarController.durationSlider.setValue(startTime.toSeconds());

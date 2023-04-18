@@ -1,10 +1,10 @@
 package hans;
 
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.Menu.ExpandableTextArea;
 import hans.Menu.Settings.Action;
 import hans.Menu.Settings.ControlsSection;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
@@ -186,25 +186,25 @@ public class HotkeyController {
                 && !(event.getTarget() instanceof DatePicker)
                 && !(event.getTarget() instanceof Spinner)){
 
-            if(event.getCode() == KeyCode.SPACE && event.getTarget() instanceof CheckComboBox<?> && mainController.captionsController.captionsState == CaptionsState.OPENSUBTITLES_OPEN){
-                mainController.captionsController.openSubtitlesPane.languageBox.show();
+            if(event.getCode() == KeyCode.SPACE && event.getTarget() instanceof CheckComboBox<?> && mainController.subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN){
+                mainController.subtitlesController.openSubtitlesPane.languageBox.show();
                 event.consume();
                 return;
             }
 
-            if(event.getCode() == KeyCode.RIGHT && mainController.settingsController.settingsState == SettingsState.CUSTOM_SPEED_OPEN){
+            if(event.getCode() == KeyCode.RIGHT && mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CUSTOM_SPEED_OPEN){
                 // if custom speed pane is open, dont seek video with arrows
-                mainController.settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
-                mainController.settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(mainController.settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
+                mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+                mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
                 event.consume();
                 return;
             }
 
 
-            if(event.getCode() == KeyCode.LEFT && mainController.settingsController.settingsState == SettingsState.CUSTOM_SPEED_OPEN){
+            if(event.getCode() == KeyCode.LEFT && mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CUSTOM_SPEED_OPEN){
                 // if custom speed pane is open, dont seek video with arrows
-                mainController.settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
-                mainController.settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(mainController.settingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
+                mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+                mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
                 event.consume();
                 return;
             }

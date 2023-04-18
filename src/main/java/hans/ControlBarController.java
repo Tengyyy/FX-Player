@@ -1,11 +1,11 @@
 package hans;
 
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
 import hans.Menu.MenuController;
-import hans.Settings.SettingsController;
-import hans.Settings.SettingsState;
-import hans.Captions.CaptionsController;
+import hans.PlaybackSettings.PlaybackSettingsController;
+import hans.PlaybackSettings.PlaybackSettingsState;
+import hans.Subtitles.SubtitlesController;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -53,7 +53,7 @@ public class ControlBarController implements Initializable {
     Button nextVideoButton;
     @FXML
     public
-    Button captionsButton;
+    Button subtitlesButton;
     @FXML
     Button previousVideoButton;
     @FXML
@@ -78,7 +78,7 @@ public class ControlBarController implements Initializable {
     @FXML
     StackPane volumeButtonPane;
     @FXML
-    StackPane captionsButtonPane;
+    StackPane subtitlesButtonPane;
     @FXML
     StackPane settingsButtonPane;
     @FXML
@@ -94,10 +94,10 @@ public class ControlBarController implements Initializable {
 
     @FXML
     public
-    Line captionsButtonLine;
+    Line subtitlesButtonLine;
 
     @FXML
-    public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, captionsIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
+    public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, subtitlesIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
 
     @FXML
     public
@@ -110,12 +110,12 @@ public class ControlBarController implements Initializable {
     public DurationTrack hoverTrack = null;
     public DurationTrack activeTrack = null;
 
-    SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, captionsSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
+    SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, subtitlesSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
 
     MainController mainController;
-    SettingsController settingsController;
+    PlaybackSettingsController playbackSettingsController;
     MenuController menuController;
-    CaptionsController captionsController;
+    SubtitlesController subtitlesController;
     ChapterController chapterController;
 
 
@@ -134,7 +134,7 @@ public class ControlBarController implements Initializable {
     boolean nextVideoButtonHover = false;
 
     boolean volumeButtonHover = false;
-    public boolean captionsButtonHover = false;
+    public boolean subtitlesButtonHover = false;
     public boolean settingsButtonHover = false;
     public boolean fullScreenButtonHover = false;
     public boolean miniplayerButtonHover = false;
@@ -151,7 +151,7 @@ public class ControlBarController implements Initializable {
     ControlTooltip mute;
     public ControlTooltip settings;
     public ControlTooltip fullScreen;
-    public ControlTooltip captions;
+    public ControlTooltip subtitles;
     VideoTooltip nextVideoTooltip;
     VideoTooltip previousVideoTooltip;
     public ControlTooltip miniplayer;
@@ -181,9 +181,9 @@ public class ControlBarController implements Initializable {
 
         Platform.runLater(() -> {
             mute = new ControlTooltip(mainController,"Mute (m)", volumeButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            settings = new ControlTooltip(mainController,"Settings (s)", settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            settings = new ControlTooltip(mainController,"Playback settings (s)", settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            captions = new ControlTooltip(mainController,"Subtitles (c)", captionsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            subtitles = new ControlTooltip(mainController,"Subtitles (c)", subtitlesButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
             previousVideoTooltip = new VideoTooltip(mainController, previousVideoButton, true);
             nextVideoTooltip = new VideoTooltip(mainController, nextVideoButton, false);
@@ -216,8 +216,8 @@ public class ControlBarController implements Initializable {
         volumeMutedSVG = new SVGPath();
         volumeMutedSVG.setContent(App.svgMap.get(SVG.VOLUME_MUTED));
 
-        captionsSVG = new SVGPath();
-        captionsSVG.setContent(App.svgMap.get(SVG.SUBTITLES));
+        subtitlesSVG = new SVGPath();
+        subtitlesSVG.setContent(App.svgMap.get(SVG.SUBTITLES));
 
         settingsSVG = new SVGPath();
         settingsSVG.setContent(App.svgMap.get(SVG.SETTINGS));
@@ -265,7 +265,7 @@ public class ControlBarController implements Initializable {
         volumeIcon.setPrefSize(15, 18);
         volumeIcon.setTranslateX(-3);
 
-        captionsIcon.setShape(captionsSVG);
+        subtitlesIcon.setShape(subtitlesSVG);
         settingsIcon.setShape(settingsSVG);
 
         miniplayerIcon.setShape(miniplayerSVG);
@@ -277,13 +277,13 @@ public class ControlBarController implements Initializable {
         fullScreenButton.setBackground(Background.EMPTY);
         settingsButton.setBackground(Background.EMPTY);
         volumeButton.setBackground(Background.EMPTY);
-        captionsButton.setBackground(Background.EMPTY);
+        subtitlesButton.setBackground(Background.EMPTY);
 
         previousVideoButton.setOnAction(e -> previousVideoButtonClick());
         playButton.setOnAction((e) -> playButtonClick());
         nextVideoButton.setOnAction(e -> nextVideoButtonClick());
         volumeButton.setOnAction(e -> volumeButtonClick());
-        captionsButton.setOnAction(e -> captionsButtonClick());
+        subtitlesButton.setOnAction(e -> subtitlesButtonClick());
         settingsButton.setOnAction(e -> settingsButtonClick());
         miniplayerButton.setOnAction(e -> miniplayerButtonClick());
         fullScreenButton.setOnAction(e -> fullScreenButtonClick());
@@ -305,8 +305,8 @@ public class ControlBarController implements Initializable {
         volumeButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(volumeButtonPane));
         volumeButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(volumeButtonPane));
 
-        captionsButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(captionsButtonPane));
-        captionsButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(captionsButtonPane));
+        subtitlesButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(subtitlesButtonPane));
+        subtitlesButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(subtitlesButtonPane));
 
         settingsButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(settingsButtonPane));
         settingsButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(settingsButtonPane));
@@ -327,8 +327,8 @@ public class ControlBarController implements Initializable {
         volumeSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
 
             if (!newValue) {
-                if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-                if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+                if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+                if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
                 if (isExited) volumeSliderExit();
             }
@@ -372,12 +372,12 @@ public class ControlBarController implements Initializable {
         });
 
         durationSlider.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (settingsController.settingsState != SettingsState.CLOSED) {
-                settingsController.closeSettings();
+            if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) {
+                playbackSettingsController.closeSettings();
             }
 
-            if (captionsController.captionsState != CaptionsState.CLOSED) {
-                captionsController.closeCaptions();
+            if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) {
+                subtitlesController.closeSubtitles();
             }
 
 
@@ -438,7 +438,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverLabel.chapterlabel.setTranslateX(chapterLabelNewTranslation);
 
 
-                if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
+                if (playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && subtitlesController.subtitlesState == SubtitlesState.CLOSED) {
                     mainController.sliderHoverLabel.timeLabel.setVisible(true);
                     if (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
 
@@ -503,7 +503,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-                if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
+                if (playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && subtitlesController.subtitlesState == SubtitlesState.CLOSED) {
                     mainController.sliderHoverLabel.timeLabel.setVisible(true);
                     if(chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
                     if (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
@@ -626,7 +626,7 @@ public class ControlBarController implements Initializable {
 
             }
 
-            captionsController.updateCaptions(newValue.doubleValue() * 1000);
+            subtitlesController.updateSubtitles(newValue.doubleValue() * 1000);
 
 
             if (durationSlider.isValueChanging()) {
@@ -734,7 +734,7 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverPreview.pane.setTranslateX(paneNewTranslation);
 
 
-                if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
+                if (playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && subtitlesController.subtitlesState == SubtitlesState.CLOSED) {
                     mainController.sliderHoverLabel.timeLabel.setVisible(true);
                     if (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
                 }
@@ -769,12 +769,12 @@ public class ControlBarController implements Initializable {
 
 
 
-                if (settingsController.settingsState != SettingsState.CLOSED) { // close settings pane after user finishes seeking media (if its open)
-                    settingsController.closeSettings();
+                if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) { // close settings pane after user finishes seeking media (if its open)
+                    playbackSettingsController.closeSettings();
                 }
 
-                if (captionsController.captionsState != CaptionsState.CLOSED) {
-                    captionsController.closeCaptions();
+                if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) {
+                    subtitlesController.closeSubtitles();
                 }
 
                 if (mediaInterface.atEnd) {
@@ -792,21 +792,21 @@ public class ControlBarController implements Initializable {
 
     }
 
-    public void init(MainController mainController, SettingsController settingsController, MenuController menuController, MediaInterface mediaInterface, CaptionsController captionsController, ChapterController chapterController) {
+    public void init(MainController mainController, PlaybackSettingsController playbackSettingsController, MenuController menuController, MediaInterface mediaInterface, SubtitlesController subtitlesController, ChapterController chapterController) {
         this.mainController = mainController;
-        this.settingsController = settingsController;
+        this.playbackSettingsController = playbackSettingsController;
         this.menuController = menuController;
         this.mediaInterface = mediaInterface;
-        this.captionsController = captionsController;
+        this.subtitlesController = subtitlesController;
         this.chapterController = chapterController;
 
-        mouseEventTracker = new MouseEventTracker(4, mainController, this, settingsController); // creates instance of the MouseEventTracker class which keeps track of when to hide and show the control-bar
+        mouseEventTracker = new MouseEventTracker(4, mainController, this, playbackSettingsController); // creates instance of the MouseEventTracker class which keeps track of when to hide and show the control-bar
     }
 
     public void toggleDurationLabel() {
 
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         if(mediaInterface.mediaActive.get()){
             if (showingTimeLeft) Utilities.setCurrentTimeLabel(durationLabel, Duration.seconds(durationSlider.getValue()), Duration.seconds(durationSlider.getMax()));
@@ -822,8 +822,8 @@ public class ControlBarController implements Initializable {
 
 
     public void playButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         if (mediaInterface.atEnd) mediaInterface.replay();
         else if (mediaInterface.playing.get()) {
@@ -901,7 +901,7 @@ public class ControlBarController implements Initializable {
 
     public void toggleFullScreen() {
 
-        captionsController.captionsBox.cancelDrag();
+        subtitlesController.subtitlesBox.cancelDrag();
         App.stage.setFullScreen(!App.stage.isFullScreen());
 
         mainController.videoImageView.requestFocus();
@@ -910,7 +910,7 @@ public class ControlBarController implements Initializable {
             fullScreenIcon.setShape(minimizeSVG);
             App.fullScreen = true;
 
-            if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
+            if (playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && subtitlesController.subtitlesState == SubtitlesState.CLOSED) {
                 if (fullScreen.isShowing()) {
                     fullScreen.hide();
                     fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
@@ -924,7 +924,7 @@ public class ControlBarController implements Initializable {
             fullScreenIcon.setShape(maximizeSVG);
             App.fullScreen = false;
 
-            if (settingsController.settingsState == SettingsState.CLOSED && captionsController.captionsState == CaptionsState.CLOSED) {
+            if (playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && subtitlesController.subtitlesState == SubtitlesState.CLOSED) {
                 if (fullScreen.isShowing()) {
                     fullScreen.hide();
                     fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
@@ -960,8 +960,8 @@ public class ControlBarController implements Initializable {
 
 
     public void volumeButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         if (!muted)
             mute();
@@ -982,16 +982,16 @@ public class ControlBarController implements Initializable {
 
 
     public void previousVideoButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         if(durationSlider.getValue() > 5) mediaInterface.replay();
         else mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition et
     }
 
     public void nextVideoButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         mediaInterface.playNext();
     }
@@ -999,22 +999,22 @@ public class ControlBarController implements Initializable {
 
     public void settingsButtonClick() {
 
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        else settingsController.openSettings();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        else playbackSettingsController.openSettings();
     }
 
 
     public void fullScreenButtonClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         toggleFullScreen();
     }
 
     public void miniplayerButtonClick() {
 
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         if (mainController.miniplayerActive) mainController.closeMiniplayer();
         else mainController.openMiniplayer();
@@ -1022,15 +1022,15 @@ public class ControlBarController implements Initializable {
 
 
     public void controlBarClick() {
-        if (settingsController.settingsState != SettingsState.CLOSED) settingsController.closeSettings();
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
     }
 
-    public void captionsButtonClick() {
+    public void subtitlesButtonClick() {
 
 
-        if (captionsController.captionsState != CaptionsState.CLOSED) captionsController.closeCaptions();
-        else captionsController.openCaptions();
+        if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+        else subtitlesController.openSubtitles();
     }
 
     public void durationSliderHoverOn(double value) {
@@ -1131,12 +1131,12 @@ public class ControlBarController implements Initializable {
         lastKnownSliderHoverPosition = value;
     }
 
-    public void enterCaptionsButton() {
-        captionsButtonHover = true;
+    public void enterSubtitlesButton() {
+        subtitlesButtonHover = true;
     }
 
-    public void exitCaptionsButton() {
-        captionsButtonHover = false;
+    public void exitSubtitlesButton() {
+        subtitlesButtonHover = false;
     }
 
     public void enterSettingsButton() {

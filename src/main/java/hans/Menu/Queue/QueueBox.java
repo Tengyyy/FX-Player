@@ -94,7 +94,7 @@ public class QueueBox extends VBox {
             return;
         }
 
-        if(menuController.settingsController.playbackOptionsController.shuffleOn) {
+        if(menuController.playbackSettingsController.playbackOptionsController.shuffleOn) {
             queue.add(child);
             queueOrder.add(index, queueOrder.size());
         }

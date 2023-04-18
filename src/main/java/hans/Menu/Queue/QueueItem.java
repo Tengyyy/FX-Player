@@ -3,13 +3,12 @@ package hans.Menu.Queue;
 
 import com.jfoenix.controls.JFXButton;
 import hans.*;
-import hans.Captions.CaptionsState;
+import hans.Subtitles.SubtitlesState;
 import hans.MediaItems.MediaItem;
 import hans.Menu.Columns;
 import hans.Menu.MenuController;
-import hans.Menu.MenuState;
 import hans.Menu.QueueItemContextMenu;
-import hans.Settings.SettingsState;
+import hans.PlaybackSettings.PlaybackSettingsState;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.animation.Transition;
 import javafx.beans.property.BooleanProperty;
@@ -226,8 +225,8 @@ public class QueueItem extends GridPane {
         checkbox.setContentDisposition(ContentDisplay.CENTER);
         checkbox.setTextExpand(false);
         checkbox.setOnAction(e -> {
-            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
         });
 
         isSelected.bind(checkbox.selectedProperty());
@@ -362,8 +361,8 @@ public class QueueItem extends GridPane {
         optionsButton.setText(null);
 
         optionsButton.setOnAction((e) -> {
-            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
 
             if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing && !queuePage.activeQueueItemContextMenu.equals(menuItemContextMenu)) queuePage.activeQueueItemContextMenu.hide();
@@ -372,8 +371,8 @@ public class QueueItem extends GridPane {
         });
 
         this.setOnMouseClicked(e -> {
-            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
             if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
             else if (e.getButton() == MouseButton.PRIMARY){
@@ -523,8 +522,8 @@ public class QueueItem extends GridPane {
 
         playButton.setOnAction((e) -> {
 
-            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
 
             if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
@@ -549,8 +548,8 @@ public class QueueItem extends GridPane {
 
         removeButton.setOnAction((e) -> {
 
-            if(menuController.captionsController.captionsState != CaptionsState.CLOSED) menuController.captionsController.closeCaptions();
-            if(menuController.settingsController.settingsState != SettingsState.CLOSED) menuController.settingsController.closeSettings();
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
 
             if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
@@ -565,7 +564,7 @@ public class QueueItem extends GridPane {
             queueBox.activeItem.set(null);
             queueBox.activeIndex.set(-1);
 
-            if(menuController.settingsController.playbackOptionsController.autoplayOn){
+            if(menuController.playbackSettingsController.playbackOptionsController.autoplayOn){
                 QueueItem queueItem = null;
                 if(queueBox.queue.size() > this.videoIndex + 1) queueItem = queueBox.queue.get(queueBox.queueOrder.get(this.videoIndex + 1));
                 else if(this.videoIndex > 0) queueItem = queueBox.queue.get(queueBox.queueOrder.get(this.videoIndex - 1));

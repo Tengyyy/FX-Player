@@ -5,7 +5,6 @@ import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -179,7 +178,7 @@ public class MiniplayerController {
         seekImageView.fitHeightProperty().bind(videoImageViewWrapper.heightProperty().subtract(2));
 
 
-        mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.4);
+        mainController.subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.4);
 
 
         mainController.sizeMultiplier.set(0.6);
@@ -206,8 +205,8 @@ public class MiniplayerController {
         progressBarTimer.setOnFinished(e -> {
             if(!miniplayerHover && !slider.isValueChanging()) {
                 sliderPane.setVisible(false);
-                if(mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                    mainController.captionsController.captionsBox.captionsContainer.setTranslateY(-10);
+                if(mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                    mainController.subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-10);
                 }
             }
         });
@@ -403,7 +402,7 @@ public class MiniplayerController {
 
             if(newValue.doubleValue() < 400){
 
-                mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.3);
+                mainController.subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.3);
 
                 mainController.sizeMultiplier.set(0.35);
                 if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
@@ -413,7 +412,7 @@ public class MiniplayerController {
             }
             else if((newValue.doubleValue() >= 400 && newValue.doubleValue() < 600)){
 
-                mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.4);
+                mainController.subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.4);
 
                 mainController.sizeMultiplier.set(0.5);
                 if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
@@ -424,7 +423,7 @@ public class MiniplayerController {
             }
             else if((newValue.doubleValue() >= 600 && newValue.doubleValue() < 800)){
 
-                mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.55);
+                mainController.subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.55);
 
                 mainController.sizeMultiplier.set(0.6);
                 if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
@@ -435,7 +434,7 @@ public class MiniplayerController {
             }
             else if(newValue.doubleValue() >= 800){
 
-                mainController.captionsController.captionsBox.mediaWidthMultiplier.set(0.65);
+                mainController.subtitlesController.subtitlesBox.mediaWidthMultiplier.set(0.65);
 
                 mainController.sizeMultiplier.set(0.7);
                 if(mainController.actionIndicator.wrapper.isVisible()) mainController.actionIndicator.updateSize();
@@ -829,8 +828,8 @@ public class MiniplayerController {
 
         sliderPane.setVisible(true);
 
-        if(mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-            mainController.captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+        if(mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+            mainController.subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
         }
     }
 
@@ -845,8 +844,8 @@ public class MiniplayerController {
             nextVideoButtonPane.setVisible(false);
             sliderPane.setVisible(false);
 
-            if(mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                mainController.captionsController.captionsBox.captionsContainer.setTranslateY(-10);
+            if(mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                mainController.subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-10);
             }
         }
     }
@@ -1008,8 +1007,8 @@ public class MiniplayerController {
 
             mainController.seekingWithKeys = true;
             sliderPane.setVisible(true);
-            if(mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                mainController.captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+            if(mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                mainController.subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
             }
             progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
@@ -1047,8 +1046,8 @@ public class MiniplayerController {
 
             mainController.seekingWithKeys = true;
             sliderPane.setVisible(true);
-            if(mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_LEFT || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_CENTER || mainController.captionsController.captionsBox.captionsLocation == Pos.BOTTOM_RIGHT){
-                mainController.captionsController.captionsBox.captionsContainer.setTranslateY(-30);
+            if(mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
+                mainController.subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
             }
             progressBarTimer.playFromStart();
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);

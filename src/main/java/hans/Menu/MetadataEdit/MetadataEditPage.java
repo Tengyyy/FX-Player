@@ -480,7 +480,6 @@ public class MetadataEditPage {
     public void closeMetadataEditPage(){
         menuController.metadataEditScroll.setVisible(false);
 
-        metadataEditItem = null;
         textBox.getChildren().clear();
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");

@@ -238,6 +238,7 @@ public class MenuController implements Initializable {
 
         if(extended.get()){
             if(controlBarController.controlBarOpen) AnimationsClass.hideTitle(mainController);
+            else AnimationsClass.displayControls(controlBarController, subtitlesController, mainController);
             openExtendedMenu();
         }
         else {
@@ -264,9 +265,6 @@ public class MenuController implements Initializable {
         if(extended.get()) closeExtendedMenu();
         else closeShrinkedMenu();
 
-        controlBarController.mouseEventTracker.move();
-
-        AnimationsClass.displayTitle(mainController);
         mainController.videoTitleLabel.getScene().setCursor(Cursor.DEFAULT);
         mainController.videoTitleBox.setMouseTransparent(false);
         if(subtitlesController.subtitlesSelected.get()) subtitlesController.subtitlesBox.subtitlesContainer.setMouseTransparent(false);
@@ -379,9 +377,6 @@ public class MenuController implements Initializable {
             controlBarController.controlBarWrapper.setViewOrder(2);
             menu.setViewOrder(1);
 
-            controlBarController.controlBarWrapper.getStyleClass().remove("controlBarWrapperExtended");
-            if(!controlBarController.controlBarWrapper.getStyleClass().contains("controlBarWrapper")) controlBarController.controlBarWrapper.getStyleClass().add("controlBarWrapper");
-
             StackPane.setMargin(menuWrapper, new Insets(0, 15, 0, 0));
 
             dragPane.setMouseTransparent(false);
@@ -469,35 +464,16 @@ public class MenuController implements Initializable {
     private void openExtendedMenu(){
         Duration animationDuration = Duration.millis(300);
 
-        Rectangle rect = new Rectangle();
-        rect.setFill(Color.rgb(0,0,0,0));
-
-        FillTransition controlBarFade = new FillTransition();
-        controlBarFade.setShape(rect);
-        controlBarFade.setDuration(animationDuration);
-        controlBarFade.setFromValue(Color.rgb(0,0,0,0));
-        controlBarFade.setToValue(Color.rgb(0,0,0,0.8));
-
-        controlBarFade.setInterpolator(new Interpolator() {
-            @Override
-            protected double curve(double t) {
-                controlBarController.controlBarWrapper.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, new Insets(6, 0, 0, 0))));
-                return t;
-            }
-        });
-
         FadeTransition menuFade = new FadeTransition(animationDuration, menu);
         menuFade.setFromValue(menu.getOpacity());
         menuFade.setToValue(1);
 
-        ParallelTransition parallelTransition = new ParallelTransition(controlBarFade, menuFade);
-        parallelTransition.setOnFinished(e -> {
+        menuFade.setOnFinished(e -> {
             menu.setMouseTransparent(false);
             menuInTransition = false;
-            controlBarController.controlBarWrapper.setBackground(new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0.8), CornerRadii.EMPTY, new Insets(6, 0, 0, 0))));
         });
 
-        parallelTransition.play();
+        menuFade.play();
     }
 
     private void openShrinkedMenu(){
@@ -518,37 +494,21 @@ public class MenuController implements Initializable {
 
         Duration animationDuration = Duration.millis(300);
 
-        Rectangle rect = new Rectangle();
-        rect.setFill(Color.rgb(0,0,0,0.8));
-
-        FillTransition controlBarFade = new FillTransition();
-        controlBarFade.setShape(rect);
-        controlBarFade.setDuration(animationDuration);
-        controlBarFade.setFromValue(Color.rgb(0,0,0,0.8));
-        controlBarFade.setToValue(Color.rgb(0,0,0,0));
-
-        controlBarFade.setInterpolator(new Interpolator() {
-            @Override
-            protected double curve(double t) {
-                controlBarController.controlBarWrapper.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, new Insets(6, 0, 0, 0))));
-                return t;
-            }
-        });
-
         FadeTransition menuFade = new FadeTransition(animationDuration, menu);
         menuFade.setFromValue(menu.getOpacity());
         menuFade.setToValue(0);
 
-        ParallelTransition parallelTransition = new ParallelTransition(controlBarFade, menuFade);
-        parallelTransition.setOnFinished(e -> {
+        menuFade.setOnFinished(e -> {
             menuInTransition = false;
 
             updateState(MenuState.CLOSED);
 
-            controlBarController.controlBarWrapper.setBackground(new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0), CornerRadii.EMPTY, new Insets(6, 0, 0, 0))));
+            controlBarController.mouseEventTracker.move();
         });
 
-        parallelTransition.play();
+        menuFade.play();
+
+        AnimationsClass.displayTitle(mainController);
     }
 
     private void closeShrinkedMenu(){
@@ -560,6 +520,8 @@ public class MenuController implements Initializable {
             menuInTransition = false;
 
             updateState(MenuState.CLOSED);
+
+            controlBarController.mouseEventTracker.move();
         });
         closeMenu.play();
     }

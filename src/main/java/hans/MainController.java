@@ -1671,8 +1671,6 @@ public class MainController implements Initializable {
 
         if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get()) return;
 
-        controlBarController.mouseEventTracker.move();
-
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();

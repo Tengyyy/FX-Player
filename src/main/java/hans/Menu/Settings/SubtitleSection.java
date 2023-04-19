@@ -56,7 +56,7 @@ public class SubtitleSection extends VBox {
     PasswordField passwordField = new PasswordField();
 
     StackPane openSubtitlesFooterPane = new StackPane();
-    Label createAccountLabel = new Label("Create account");
+    Button createAccountButton = new Button("Create account");
     Button testConnectionButton = new Button("Test connection");
 
     SubtitleSection(SettingsPage settingsPage){
@@ -164,11 +164,11 @@ public class SubtitleSection extends VBox {
             }
         });
 
-        openSubtitlesFooterPane.getChildren().addAll(createAccountLabel, testConnectionButton);
+        openSubtitlesFooterPane.getChildren().addAll(createAccountButton, testConnectionButton);
         openSubtitlesFooterPane.setAlignment(Pos.CENTER_LEFT);
 
-        createAccountLabel.getStyleClass().addAll("settingsText", "settingsLink");
-        createAccountLabel.setOnMouseClicked(e -> {
+        createAccountButton.getStyleClass().add("linkButton");
+        createAccountButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 

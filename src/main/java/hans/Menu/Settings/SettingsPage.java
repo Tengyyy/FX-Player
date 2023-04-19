@@ -28,6 +28,7 @@ public class SettingsPage {
     public PreferencesSection preferencesSection;
     LibrariesSection librariesSection;
     public ControlsSection controlsSection;
+    AboutSection aboutSection;
 
     public SettingsPage(MenuController menuController){
 
@@ -38,6 +39,7 @@ public class SettingsPage {
         preferencesSection = new PreferencesSection(this);
         librariesSection = new LibrariesSection(this);
         controlsSection = new ControlsSection(this);
+        aboutSection = new AboutSection(this);
 
         settingsWrapper.setBackground(Background.EMPTY);
 
@@ -77,7 +79,7 @@ public class SettingsPage {
         menuController.settingsContainer.getChildren().add(settingsWrapper);
 
 
-        settingsContent.getChildren().addAll(subtitleSection, metadataSection, preferencesSection, librariesSection, controlsSection);
+        settingsContent.getChildren().addAll(subtitleSection, metadataSection, preferencesSection, librariesSection, controlsSection, aboutSection);
         settingsContent.setSpacing(30);
 
     }

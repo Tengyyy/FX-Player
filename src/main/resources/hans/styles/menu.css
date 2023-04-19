@@ -42,16 +42,6 @@
     -fx-border-style: none solid none none;
 }
 
-#dragPane {
-    -fx-background-color: rgba(0,0,0,0.8);
-    -fx-border-radius: 0 5 5 0;
-    -fx-background-radius: 0 5 5 0;
-    -fx-border-width: 1 1 1 0;
-    -fx-border-color: #909090;
-    -fx-border-style: solid solid solid none;
-}
-
-
 .menuBoxHeader {
     -fx-padding: 10 10 10 10;
     -fx-background-color: transparent;

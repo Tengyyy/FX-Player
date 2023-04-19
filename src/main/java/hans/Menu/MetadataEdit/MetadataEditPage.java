@@ -20,6 +20,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -49,10 +50,10 @@ public class MetadataEditPage {
 
     GridPane footerPane = new GridPane();
 
-    JFXButton applyButton = new JFXButton();
+    Button applyButton = new Button();
     Region saveIcon = new Region();
 
-    JFXButton discardButton = new JFXButton();
+    Button discardButton = new Button();
 
     public VBox content = new VBox();
 
@@ -61,7 +62,7 @@ public class MetadataEditPage {
     public ImageView imageView = new ImageView();
     StackPane imageFilter = new StackPane();
     StackPane editImageButtonWrapper = new StackPane();
-    JFXButton editImageButton = new JFXButton();
+    Button editImageButton = new Button();
     Region editImageIcon = new Region();
     ControlTooltip editImageTooltip;
 
@@ -190,7 +191,6 @@ public class MetadataEditPage {
 
         editImageButton.setPrefSize(80, 80);
         editImageButton.setMaxSize(80, 80);
-        editImageButton.setRipplerFill(Color.WHITE);
         editImageButton.setId("editImageButton");
         editImageButton.setOpacity(0);
         editImageButton.setCursor(Cursor.HAND);
@@ -231,7 +231,6 @@ public class MetadataEditPage {
         GridPane.setHalignment(progressPane, HPos.CENTER);
         GridPane.setHalignment(applyButton, HPos.CENTER);
 
-        applyButton.setRipplerFill(Color.WHITE);
         applyButton.setText("Save changes");
         applyButton.getStyleClass().add("mainButton");
         applyButton.setCursor(Cursor.HAND);
@@ -250,7 +249,6 @@ public class MetadataEditPage {
         saveIcon.setMaxSize(18, 18);
         applyButton.setGraphic(saveIcon);
 
-        discardButton.setRipplerFill(Color.TRANSPARENT);
         discardButton.setCursor(Cursor.HAND);
         discardButton.setText("Discard changes");
         discardButton.getStyleClass().add("menuButton");

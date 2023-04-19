@@ -38,12 +38,12 @@
             <StackPane id="sideBar" fx:id="sideBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="50.0" prefHeight="150.0" prefWidth="50.0" StackPane.alignment="CENTER_LEFT" />
          </children>
          <StackPane.margin>
-            <Insets right="15.0" />
+            <Insets right="5.0" />
          </StackPane.margin>
       </StackPane>
-      <StackPane fx:id="dragPane" maxHeight="50.0" maxWidth="15.0" minHeight="50.0" minWidth="15.0" prefHeight="50.0" prefWidth="15.0" StackPane.alignment="TOP_RIGHT">
+      <StackPane fx:id="dragPane" maxHeight="1.7976931348623157E308" maxWidth="5.0" minHeight="50.0" minWidth="5.0" prefHeight="50.0" prefWidth="5.0" StackPane.alignment="TOP_RIGHT">
          <StackPane.margin>
-            <Insets top="15.0" />
+            <Insets />
          </StackPane.margin>
       </StackPane>
    </children>

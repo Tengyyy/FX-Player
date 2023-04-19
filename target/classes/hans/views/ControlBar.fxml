@@ -16,9 +16,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<StackPane fx:id="controlBarWrapper" maxHeight="-Infinity" minHeight="-Infinity" minWidth="601.0" prefHeight="70.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.ControlBarController">
+<StackPane fx:id="controlBarWrapper" maxHeight="-Infinity" minHeight="-Infinity" minWidth="601.0" prefHeight="71.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.ControlBarController">
    <children>
-      <VBox fx:id="controlBar" alignment="TOP_CENTER" maxHeight="70.0" minHeight="-Infinity" minWidth="601.0" onMouseClicked="#controlBarClick" onMouseExited="#exitArea" pickOnBounds="false" prefHeight="70.0" prefWidth="601.0" style="-fx-background-color: transparent;" StackPane.alignment="BOTTOM_CENTER">
+      <VBox fx:id="controlBar" alignment="TOP_CENTER" maxHeight="-Infinity" minHeight="-Infinity" minWidth="601.0" onMouseClicked="#controlBarClick" onMouseExited="#exitArea" pickOnBounds="false" prefHeight="70.0" prefWidth="601.0" style="-fx-background-color: transparent;" StackPane.alignment="BOTTOM_CENTER">
           <children>
               <GridPane minWidth="601.0" prefHeight="16.0" prefWidth="601.0">
                   <columnConstraints>
@@ -144,15 +144,15 @@
                         <Insets right="10.0" />
                      </padding>
                   </HBox>
-                  <StackPane fx:id="captionsButtonPane" minWidth="52.0" onMouseEntered="#enterCaptionsButton" onMouseExited="#exitCaptionsButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="6">
+                  <StackPane fx:id="subtitlesButtonPane" minWidth="52.0" onMouseEntered="#enterSubtitlesButton" onMouseExited="#exitSubtitlesButton" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="6">
                      <children>
-                        <Button fx:id="captionsButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
+                        <Button fx:id="subtitlesButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </Button>
-                        <Region fx:id="captionsIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="17.0" prefWidth="21.0" styleClass="controlIcon" />
-                        <Line fx:id="captionsButtonLine" endX="10.0" mouseTransparent="true" scaleX="0.0" startX="-10.0" stroke="RED" strokeLineCap="ROUND" strokeWidth="3.0" StackPane.alignment="BOTTOM_CENTER">
+                        <Region fx:id="subtitlesIcon" maxHeight="-Infinity" maxWidth="-Infinity" mouseTransparent="true" prefHeight="17.0" prefWidth="21.0" styleClass="controlIcon" />
+                        <Line fx:id="subtitlesButtonLine" endX="10.0" mouseTransparent="true" scaleX="0.0" startX="-10.0" stroke="RED" strokeLineCap="ROUND" strokeWidth="3.0" StackPane.alignment="BOTTOM_CENTER">
                            <StackPane.margin>
                               <Insets />
                            </StackPane.margin>

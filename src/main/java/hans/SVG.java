@@ -68,7 +68,6 @@ public enum SVG {
     QUEUE,
     PLAYLIST,
     DRAG_VERTICAL,
-    COLLAPSE_LEFT,
     EYE,
     EYE_OFF,
     WRENCH,

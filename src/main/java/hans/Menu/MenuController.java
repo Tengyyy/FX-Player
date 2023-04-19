@@ -23,7 +23,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
@@ -41,8 +40,6 @@ public class MenuController implements Initializable {
     @FXML
     public
     StackPane menu, menuWrapper, menuContent, sideBar, dragPane, queueContainer, settingsContainer, recentMediaContainer, musicLibraryContainer, playlistsContainer;
-
-    Region dragIcon = new Region();
 
     @FXML
     public ScrollPane metadataEditScroll, technicalDetailsScroll, chapterScroll;
@@ -80,9 +77,10 @@ public class MenuController implements Initializable {
     double shrinkedWidth = MIN_WIDTH;
 
     SVGPath collapseSVG = new SVGPath();
-    Region collapseIcon = new Region();
-    public Button collapseButton = new Button();
-    ControlTooltip collapseTooltip;
+    SVGPath extendSVG = new SVGPath();
+    Region extendIcon = new Region();
+    public Button extendButton = new Button();
+    ControlTooltip extendTooltip;
 
     SVGPath closeSVG = new SVGPath();
     Region closeIcon = new Region();
@@ -147,48 +145,39 @@ public class MenuController implements Initializable {
             closeMenu();
         });
 
+        closeButton.visibleProperty().bind(extended);
+        closeButton.mouseTransparentProperty().bind(extended.not());
+
         StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
-        StackPane.setMargin(closeButton, new Insets(5, 5 , 0, 0));
+        StackPane.setMargin(closeButton, new Insets(10, 10 , 0, 0));
 
-        collapseSVG.setContent(App.svgMap.get(SVG.COLLAPSE_LEFT));
-        collapseIcon.setShape(collapseSVG);
-        collapseIcon.setPrefSize(20, 20);
-        collapseIcon.setMaxSize(20, 20);
-        collapseIcon.getStyleClass().add("graphic");
+        collapseSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
+        extendSVG.setContent(App.svgMap.get(SVG.CHEVRON_RIGHT));
+        extendIcon.setShape(extendSVG);
+        extendIcon.setPrefSize(14, 20);
+        extendIcon.setMaxSize(14, 20);
+        extendIcon.getStyleClass().add("graphic");
 
-        collapseButton.setPrefSize(40, 40);
-        collapseButton.setMaxSize(40, 40);
-        collapseButton.setCursor(Cursor.HAND);
-        collapseButton.getStyleClass().add("transparentButton");
-        collapseButton.setGraphic(collapseIcon);
-        collapseButton.setVisible(false);
-        collapseButton.setOnAction(e -> shrinkMenu());
-        collapseButton.visibleProperty().bind(extended);
-        collapseButton.mouseTransparentProperty().bind(extended.not());
+        extendButton.setPrefSize(40, 40);
+        extendButton.setMaxSize(40, 40);
+        extendButton.setCursor(Cursor.HAND);
+        extendButton.getStyleClass().add("transparentButton");
+        extendButton.setGraphic(extendIcon);
+        extendButton.setVisible(false);
+        extendButton.setOnAction(e -> extendMenu(menuState));
 
-        Platform.runLater(() -> {
-            collapseTooltip = new ControlTooltip(mainController, "Collapse menu", collapseButton, 1000, TooltipType.MENU_TOOLTIP);
-        });
 
-        StackPane.setAlignment(collapseButton, Pos.TOP_RIGHT);
-        StackPane.setMargin(collapseButton, new Insets(10, 60 , 0, 0));
+        Platform.runLater(() -> extendTooltip = new ControlTooltip(mainController, "Extend menu", extendButton, 1000, TooltipType.MENU_TOOLTIP));
+
+        StackPane.setAlignment(extendButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(extendButton, new Insets(5, 5 , 0, 0));
 
         menuWrapper.setId("menuWrapper");
-        menuWrapper.getChildren().addAll(closeButton, collapseButton);
+
+        menuContent.getChildren().addAll(closeButton, extendButton);
 
 
-        dragPane.setId("dragPane");
-        dragPane.getChildren().add(dragIcon);
         dragPane.setCursor(Cursor.W_RESIZE);
-
-        SVGPath dragSVG = new SVGPath();
-        dragSVG.setContent(App.svgMap.get(SVG.DRAG_VERTICAL));
-        dragIcon.setShape(dragSVG);
-        dragIcon.getStyleClass().add("menuIcon2");
-        dragIcon.setMouseTransparent(true);
-        dragIcon.setPrefSize(5, 15);
-        dragIcon.setMaxSize(5, 15);
-
         dragResizer = new DragResizer(this);
 
         metadataEditScroll.setVisible(false);
@@ -349,7 +338,13 @@ public class MenuController implements Initializable {
 
             extended.set(false);
 
-            StackPane.setMargin(closeButton, new Insets(5, 5, 0, 0));
+            StackPane.setMargin(extendButton, new Insets(5, 5, 0, 0));
+
+            extendButton.setOnAction(ev -> extendMenu(menuState));
+            extendIcon.setShape(extendSVG);
+            extendTooltip.updateText("Extend menu");
+            extendButton.setVisible(true);
+            extendButton.setMouseTransparent(false);
 
             queuePage.shrink();
             chapterController.chapterPage.shrink();
@@ -377,7 +372,7 @@ public class MenuController implements Initializable {
             controlBarController.controlBarWrapper.setViewOrder(2);
             menu.setViewOrder(1);
 
-            StackPane.setMargin(menuWrapper, new Insets(0, 15, 0, 0));
+            StackPane.setMargin(menuWrapper, new Insets(0, 5, 0, 0));
 
             dragPane.setMouseTransparent(false);
             dragPane.setVisible(true);
@@ -398,7 +393,19 @@ public class MenuController implements Initializable {
 
         if(newState != menuState) updateState(newState);
 
-        StackPane.setMargin(closeButton, new Insets(10, 10, 0, 0));
+        StackPane.setMargin(extendButton, new Insets(10, 60, 0, 0));
+
+        extendButton.setOnAction(e -> shrinkMenu());
+        extendIcon.setShape(collapseSVG);
+        extendTooltip.updateText("Collapse menu");
+        if(newState == MenuState.QUEUE_OPEN || newState == MenuState.CHAPTERS_OPEN){
+            extendButton.setVisible(true);
+            extendButton.setMouseTransparent(false);
+        }
+        else {
+            extendButton.setVisible(false);
+            extendButton.setMouseTransparent(true);
+        }
 
         menu.setTranslateX(0);
         if(menuState == MenuState.CLOSED) menu.setOpacity(0);
@@ -432,12 +439,18 @@ public class MenuController implements Initializable {
 
         extended.set(false);
 
-        StackPane.setMargin(closeButton, new Insets(5, 5, 0, 0));
+        StackPane.setMargin(extendButton, new Insets(5, 5, 0, 0));
+
+        extendButton.setOnAction(e -> extendMenu(menuState));
+        extendIcon.setShape(extendSVG);
+        extendTooltip.updateText("Extend menu");
+        extendButton.setVisible(true);
+        extendButton.setMouseTransparent(false);
 
         menu.setOpacity(1);
         if(menuState == MenuState.CLOSED) menu.setTranslateX(-menu.getWidth());
 
-        StackPane.setMargin(menuWrapper, new Insets(0, 15, 0, 0));
+        StackPane.setMargin(menuWrapper, new Insets(0, 5, 0, 0));
         menuWrapper.setPadding(Insets.EMPTY);
 
         controlBarController.controlBarWrapper.setViewOrder(2);
@@ -552,6 +565,15 @@ public class MenuController implements Initializable {
         MenuState oldState = this.menuState;
 
         this.menuState = newState;
+
+        if(newState == MenuState.QUEUE_OPEN || newState == MenuState.CHAPTERS_OPEN){
+            extendButton.setVisible(true);
+            extendButton.setMouseTransparent(false);
+        }
+        else {
+            extendButton.setVisible(false);
+            extendButton.setMouseTransparent(true);
+        }
 
         switch (oldState){
             case QUEUE_OPEN -> queuePage.closeQueuePage();

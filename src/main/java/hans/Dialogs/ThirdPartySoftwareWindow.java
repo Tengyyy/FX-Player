@@ -191,9 +191,9 @@ public class ThirdPartySoftwareWindow {
 
         String text;
         try {
-            text = Files.readString(Path.of("LICENSE.md"), StandardCharsets.UTF_8);
+            text = Files.readString(Path.of("ACKNOWLEDGEMENTS.md"), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            text = "Failed to load THIRD-PARTY-SOFTWARE-ACKNOWLEDGEMENTS.md";
+            text = "Failed to load ACKNOWLEDGEMENTS.md";
         }
 
         markdownView = new MarkdownView(text);

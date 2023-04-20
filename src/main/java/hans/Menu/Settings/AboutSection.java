@@ -2,6 +2,7 @@ package hans.Menu.Settings;
 
 import hans.PlaybackSettings.PlaybackSettingsState;
 import hans.Subtitles.SubtitlesState;
+import hans.Utilities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
@@ -78,14 +79,8 @@ public class AboutSection extends VBox {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 
-            // open opensubtitles account creation page in web browser
-            if(Desktop.isDesktopSupported()){
-                try {
-                    Desktop.getDesktop().browse(new URL("https://github.com/Tengyyy/FX-Player/wiki").toURI());
-                } catch (IOException | URISyntaxException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            Utilities.openBrowser("https://github.com/Tengyyy/FX-Player/wiki");
+
         });
         helpButton.setFocusTraversable(false);
 
@@ -94,14 +89,7 @@ public class AboutSection extends VBox {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 
-            // open opensubtitles account creation page in web browser
-            if(Desktop.isDesktopSupported()){
-                try {
-                    Desktop.getDesktop().browse(new URL("https://github.com/Tengyyy/FX-Player/issues").toURI());
-                } catch (IOException | URISyntaxException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            Utilities.openBrowser("https://github.com/Tengyyy/FX-Player/issues");
         });
         feedbackButton.setFocusTraversable(false);
     }

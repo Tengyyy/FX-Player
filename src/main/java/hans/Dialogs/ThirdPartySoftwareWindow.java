@@ -1,10 +1,6 @@
 package hans.Dialogs;
 
-import com.sandec.mdfx.MarkdownView;
-import hans.AnimationsClass;
-import hans.App;
-import hans.MainController;
-import hans.SVG;
+import hans.*;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -22,12 +18,6 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Objects;
-
 public class ThirdPartySoftwareWindow {
 
     MainController mainController;
@@ -40,8 +30,17 @@ public class ThirdPartySoftwareWindow {
     VBox titleContainer = new VBox();
     Label title = new Label("Third-Party Software");
 
-    ScrollPane markdownScroll = new ScrollPane();
-    MarkdownView markdownView;
+    ScrollPane textScroll = new ScrollPane();
+
+    VBox textContainer = new VBox();
+    Label descriptionLabel = new Label("The following is a list of third-party software that has enabled the creation of FX Player");
+
+    VBox uiBox = new VBox();
+    VBox mediaBox = new VBox();
+    VBox subtitlesBox = new VBox();
+    VBox mediaInfoBox = new VBox();
+    VBox loggingBox = new VBox();
+
 
     StackPane buttonContainer = new StackPane();
     Button mainButton = new Button("Close");
@@ -60,8 +59,8 @@ public class ThirdPartySoftwareWindow {
 
         window.setAlignment(Pos.TOP_LEFT);
 
-        window.prefWidthProperty().bind(Bindings.max(500, Bindings.min(800, mainController.videoImageViewWrapper.widthProperty().multiply(0.5))));
-        window.maxWidthProperty().bind(Bindings.max(500, Bindings.min(800, mainController.videoImageViewWrapper.widthProperty().multiply(0.5))));
+        window.prefWidthProperty().bind(Bindings.max(400, Bindings.min(500, mainController.videoImageViewWrapper.widthProperty().multiply(0.45))));
+        window.maxWidthProperty().bind(Bindings.max(400, Bindings.min(500, mainController.videoImageViewWrapper.widthProperty().multiply(0.45))));
 
         window.prefHeightProperty().bind(Bindings.max(350, Bindings.min(1000, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
         window.maxHeightProperty().bind(Bindings.max(350, Bindings.min(1000, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
@@ -98,20 +97,77 @@ public class ThirdPartySoftwareWindow {
         closeButtonIcon.setMouseTransparent(true);
         closeButtonIcon.getStyleClass().add("menuIcon");
 
-        initializeMarkdownView();
+        descriptionLabel.setWrapText(true);
+        descriptionLabel.setPrefHeight(60);
+        descriptionLabel.setMinHeight(60);
+        descriptionLabel.getStyleClass().add("thirdPartyText");
 
-        markdownScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        markdownScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        markdownScroll.getStyleClass().add("menuScroll");
-        markdownScroll.setFitToWidth(true);
-        markdownScroll.setFitToHeight(true);
-        markdownScroll.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        markdownScroll.setBackground(Background.EMPTY);
-        markdownScroll.setContent(markdownView);
+        textContainer.setPadding(new Insets(15, 0, 15, 0));
+        textContainer.setSpacing(15);
+        textContainer.getChildren().addAll(descriptionLabel, uiBox, mediaBox, subtitlesBox, mediaInfoBox, loggingBox);
+
+        uiBox.setSpacing(10);
+        uiBox.getChildren().addAll(
+                createTitleLabel("Application User Interface"),
+                createLinkLabel("JavaFX", "https://openjfx.io/"),
+                createLinkLabel("MaterialFX", "https://github.com/palexdev/MaterialFX"),
+                createLinkLabel("FX-BorderlessScene", "https://github.com/goxr3plus/FX-BorderlessScene"),
+                createLinkLabel("ControlsFX", "https://github.com/controlsfx/controlsfx"),
+                createLinkLabel("MDFX Markdown renderer for JavaFX", "https://github.com/JPro-one/markdown-javafx-renderer")
+        );
+
+
+        mediaBox.setSpacing(10);
+        mediaBox.getChildren().addAll(
+                createTitleLabel("Media playback and parsing"),
+                createLinkLabel("LibVLC", "https://www.videolan.org/vlc/libvlc.html"),
+                createLinkLabel("VLCJ Java framework for VLC Media Player", "https://github.com/caprica/vlcj"),
+                createLinkLabel("FFmpeg", "https://ffmpeg.org/"),
+                createLinkLabel("JavaCV", "https://github.com/bytedeco/javacv"),
+                createLinkLabel("Jaffree FFmpeg command line wrapper", "https://github.com/kokorin/Jaffree")
+        );
+
+
+        subtitlesBox.setSpacing(10);
+        subtitlesBox.getChildren().addAll(
+                createTitleLabel("Subtitles"),
+                createLinkLabel("SRTParser", "https://github.com/gusthavosouza/SRTParser"),
+                createLinkLabel("OpenSubtitles", "https://www.opensubtitles.org/"),
+                createLinkLabel("Java library for OpenSubtitles", "https://github.com/wtekiela/opensub4j")
+        );
+
+
+        mediaInfoBox.setSpacing(10);
+        mediaInfoBox.getChildren().addAll(
+                createTitleLabel("Media information"),
+                createLinkLabel("The Movie Database - TMDb", "https://www.themoviedb.org/"),
+                createLinkLabel("TMDb Java wrapper", "https://github.com/UweTrottmann/tmdb-java"),
+                createLinkLabel("Discogs music database", "https://www.discogs.com/"),
+                createLinkLabel("Discogs-client-4j", "https://bitbucket.org/kristof_debruyne/discogs-client-4j/src/master/")
+        );
+
+
+        loggingBox.setSpacing(10);
+        loggingBox.getChildren().addAll(
+                createTitleLabel("Logging"),
+                createLinkLabel("Log4J", "https://logging.apache.org/log4j/2.x/"),
+                createLinkLabel("SLF4J", "https://www.slf4j.org/"),
+                createLinkLabel("Logback", "https://logback.qos.ch/")
+        );
+
+
+        textScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        textScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        textScroll.getStyleClass().add("menuScroll");
+        textScroll.setFitToWidth(true);
+        textScroll.setFitToHeight(true);
+        textScroll.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        textScroll.setBackground(Background.EMPTY);
+        textScroll.setContent(textContainer);
 
 
         windowContainer.setPadding(new Insets(15, 15, 15, 15));
-        windowContainer.getChildren().addAll(titleContainer, markdownScroll);
+        windowContainer.getChildren().addAll(titleContainer, textScroll);
         windowContainer.setSpacing(20);
         StackPane.setMargin(windowContainer, new Insets(0, 0, 80, 0));
 
@@ -181,25 +237,25 @@ public class ThirdPartySoftwareWindow {
         fadeTransition.setToValue(0);
         fadeTransition.setOnFinished(e -> {
             window.setVisible(false);
-            markdownScroll.setVvalue(0);
+            textScroll.setVvalue(0);
         });
         fadeTransition.play();
     }
 
+    private Label createTitleLabel(String text){
+        Label label = new Label(text);
+        label.getStyleClass().add("thirdPartyTitle");
+        return label;
+    }
 
-    private void initializeMarkdownView(){
 
-        String text;
-        try {
-            text = Files.readString(Path.of("ACKNOWLEDGEMENTS.md"), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            text = "Failed to load ACKNOWLEDGEMENTS.md";
-        }
+    private Label createLinkLabel(String displayText, String url){
+        Label label = new Label(displayText);
+        label.getStyleClass().addAll("thirdPartyText", "thirdPartyLink");
+        label.setOnMouseClicked(e -> Utilities.openBrowser(url));
+        label.setOnMouseEntered(e -> label.setUnderline(true));
+        label.setOnMouseExited(e -> label.setUnderline(false));
 
-        markdownView = new MarkdownView(text);
-        markdownView.getStylesheets().clear();
-        markdownView.getStylesheets().add(Objects.requireNonNull(mainController.getClass().getResource("styles/mdfx-custom.css")).toExternalForm());
-        markdownView.getStylesheets().add(Objects.requireNonNull(mainController.getClass().getResource("styles/mdfx-style.css")).toExternalForm());
-        markdownView.setPadding(new Insets(15, 0, 15, 0));
+        return label;
     }
 }

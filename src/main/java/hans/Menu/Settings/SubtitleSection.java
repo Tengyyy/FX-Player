@@ -5,6 +5,7 @@ import hans.App;
 import hans.Subtitles.SubtitlesState;
 import hans.SVG;
 import hans.PlaybackSettings.PlaybackSettingsState;
+import hans.Utilities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
@@ -167,19 +168,14 @@ public class SubtitleSection extends VBox {
         openSubtitlesFooterPane.getChildren().addAll(createAccountButton, testConnectionButton);
         openSubtitlesFooterPane.setAlignment(Pos.CENTER_LEFT);
 
+        createAccountButton.setTranslateX(-11);
         createAccountButton.getStyleClass().add("linkButton");
         createAccountButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 
             // open opensubtitles account creation page in web browser
-            if(Desktop.isDesktopSupported()){
-                try {
-                    Desktop.getDesktop().browse(new URL("https://www.opensubtitles.org/en/newuser").toURI());
-                } catch (IOException | URISyntaxException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            Utilities.openBrowser("https://www.opensubtitles.org/en/newuser");
         });
 
 

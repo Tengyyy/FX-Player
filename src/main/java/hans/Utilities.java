@@ -10,8 +10,12 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -196,5 +200,15 @@ public class Utilities {
             finalIndex+=tempIndex;
         }
         return --finalIndex;
+    }
+
+    public static void openBrowser(String url){
+        if(Desktop.isDesktopSupported()){
+            try {
+                Desktop.getDesktop().browse(new URL(url).toURI());
+            } catch (IOException | URISyntaxException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }

@@ -410,6 +410,10 @@
     -fx-font-size: 18;
 }
 
+.licenseWindowTitle {
+    -fx-font-size: 23;
+}
+
 .popupWindowText {
     -fx-text-fill: rgb(220,220,220);
     -fx-font-family: "Roboto Medium";

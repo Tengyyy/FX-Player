@@ -1,5 +1,6 @@
 package hans;
 
+import hans.Dialogs.*;
 import hans.Subtitles.SubtitlesController;
 import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
@@ -123,6 +124,9 @@ public class MainController implements Initializable {
     public AddYoutubeVideoWindow addYoutubeVideoWindow;
     public CloseConfirmationWindow closeConfirmationWindow;
     public HotkeyChangeWindow hotkeyChangeWindow;
+    public LicenseWindow licenseWindow;
+    public ThirdPartySoftwareWindow thirdPartySoftwareWindow;
+
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -145,6 +149,8 @@ public class MainController implements Initializable {
         addYoutubeVideoWindow = new AddYoutubeVideoWindow(this);
         closeConfirmationWindow = new CloseConfirmationWindow(this);
         hotkeyChangeWindow = new HotkeyChangeWindow(this);
+        licenseWindow = new LicenseWindow(this);
+        thirdPartySoftwareWindow = new ThirdPartySoftwareWindow(this);
 
         sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
         sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);

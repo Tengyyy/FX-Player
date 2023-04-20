@@ -1,6 +1,11 @@
-package hans;
+package hans.Dialogs;
 
 import com.jfoenix.controls.JFXButton;
+import hans.AnimationsClass;
+import hans.App;
+import hans.MainController;
+import hans.SVG;
+import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -13,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +39,7 @@ public class AddYoutubeVideoWindow {
     SVGPath closeButtonSVG = new SVGPath();
     JFXButton closeButton = new JFXButton();
 
-    boolean showing = false;
+    public boolean showing = false;
 
 
     String pattern = "^(?:https?:)?(?:\\/\\/)?(?:youtu\\.be\\/|(?:www\\.|m\\.)?youtube\\.com\\/(?:watch|v|embed)(?:\\.php)?(?:\\?.*v=|\\/))([a-zA-Z0-9\\_-]{7,15})(?:[\\?&][a-zA-Z0-9\\_-]+=[a-zA-Z0-9\\_-]+)*(?:[&\\/\\#].*)?$";
@@ -143,6 +149,16 @@ public class AddYoutubeVideoWindow {
             mainController.hotkeyChangeWindow.showing = false;
         }
 
+        if(mainController.licenseWindow.showing){
+            mainController.licenseWindow.window.setVisible(false);
+            mainController.licenseWindow.showing = false;
+        }
+
+        if(mainController.thirdPartySoftwareWindow.showing){
+            mainController.thirdPartySoftwareWindow.window.setVisible(false);
+            mainController.thirdPartySoftwareWindow.showing = false;
+        }
+
         this.showing = true;
         window.setVisible(true);
 
@@ -155,6 +171,10 @@ public class AddYoutubeVideoWindow {
         this.showing = false;
 
         mainController.popupWindowContainer.setMouseTransparent(true);
-        AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 1, 0, false, 1, true);
-    }
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(100), mainController.popupWindowContainer);
+        fadeTransition.setFromValue(mainController.popupWindowContainer.getOpacity());
+        fadeTransition.setToValue(0);
+        fadeTransition.setOnFinished(e -> window.setVisible(false));
+        fadeTransition.play();    }
 }

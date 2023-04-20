@@ -59,13 +59,19 @@ public class AboutSection extends VBox {
         licenseButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
+
+            settingsPage.menuController.mainController.licenseWindow.show();
         });
+        licenseButton.setFocusTraversable(false);
 
         thirdPartyButton.getStyleClass().add("linkButton");
         thirdPartyButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
+
+            settingsPage.menuController.mainController.thirdPartySoftwareWindow.show();
         });
+        thirdPartyButton.setFocusTraversable(false);
 
         helpButton.getStyleClass().add("linkButton");
         helpButton.setOnAction(e -> {
@@ -81,6 +87,7 @@ public class AboutSection extends VBox {
                 }
             }
         });
+        helpButton.setFocusTraversable(false);
 
         feedbackButton.getStyleClass().add("linkButton");
         feedbackButton.setOnAction(e -> {
@@ -96,5 +103,6 @@ public class AboutSection extends VBox {
                 }
             }
         });
+        feedbackButton.setFocusTraversable(false);
     }
 }

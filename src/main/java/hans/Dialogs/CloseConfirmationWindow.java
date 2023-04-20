@@ -1,9 +1,15 @@
-package hans;
+package hans.Dialogs;
 
 import com.jfoenix.controls.JFXButton;
+import hans.AnimationsClass;
+import hans.App;
+import hans.MainController;
+import hans.SVG;
+import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -14,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,15 +36,15 @@ public class CloseConfirmationWindow {
     Label title = new Label();
     Label text = new Label();
     StackPane buttonContainer = new StackPane();
-    JFXButton mainButton = new JFXButton(), secondaryButton = new JFXButton();
+    Button mainButton = new Button(), secondaryButton = new Button();
 
     StackPane closeButtonContainer = new StackPane();
     StackPane closeButtonPane = new StackPane();
     Region closeButtonIcon = new Region();
     SVGPath closeButtonSVG = new SVGPath();
-    JFXButton closeButton = new JFXButton();
+    Button closeButton = new Button();
 
-    boolean showing = false;
+    public boolean showing = false;
 
 
 
@@ -66,7 +73,6 @@ public class CloseConfirmationWindow {
 
         closeButton.setPrefWidth(25);
         closeButton.setPrefHeight(25);
-        closeButton.setRipplerFill(Color.WHITE);
         closeButton.getStyleClass().add("popupWindowCloseButton");
         closeButton.setCursor(Cursor.HAND);
         closeButton.setOpacity(0);
@@ -118,7 +124,6 @@ public class CloseConfirmationWindow {
         secondaryButton.setOnAction(e -> this.hide());
         secondaryButton.setTextAlignment(TextAlignment.CENTER);
         secondaryButton.setPrefWidth(155);
-        secondaryButton.setRipplerFill(Color.TRANSPARENT);
         StackPane.setAlignment(secondaryButton, Pos.CENTER_RIGHT);
 
         mainButton.setText("Close app");
@@ -126,7 +131,6 @@ public class CloseConfirmationWindow {
         mainButton.setCursor(Cursor.HAND);
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(155);
-        mainButton.setRipplerFill(Color.TRANSPARENT);
         mainButton.setOnAction(e -> mainController.closeApp());
         StackPane.setAlignment(mainButton, Pos.CENTER_LEFT);
 
@@ -145,6 +149,16 @@ public class CloseConfirmationWindow {
             mainController.hotkeyChangeWindow.showing = false;
         }
 
+        if(mainController.licenseWindow.showing){
+            mainController.licenseWindow.window.setVisible(false);
+            mainController.licenseWindow.showing = false;
+        }
+
+        if(mainController.thirdPartySoftwareWindow.showing){
+            mainController.thirdPartySoftwareWindow.window.setVisible(false);
+            mainController.thirdPartySoftwareWindow.showing = false;
+        }
+
         this.showing = true;
 
         mainController.popupWindowContainer.setMouseTransparent(false);
@@ -156,6 +170,10 @@ public class CloseConfirmationWindow {
         this.showing = false;
 
         mainController.popupWindowContainer.setMouseTransparent(true);
-        AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 1, 0, false, 1, true);
-    }
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(100), mainController.popupWindowContainer);
+        fadeTransition.setFromValue(mainController.popupWindowContainer.getOpacity());
+        fadeTransition.setToValue(0);
+        fadeTransition.setOnFinished(e -> window.setVisible(false));
+        fadeTransition.play();    }
 }

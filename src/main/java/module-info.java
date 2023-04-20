@@ -19,6 +19,7 @@ module hans {
     requires opensub4j;
     requires org.controlsfx.controls;
     requires xmlrpc.common;
+    requires com.sandec.mdfx;
 
 
     opens hans to javafx.graphics, javafx.fxml;
@@ -43,4 +44,6 @@ module hans {
     exports hans.Menu.Settings;
     opens hans.Menu.Settings to javafx.fxml, javafx.graphics;
     exports hans.SRTParser.srt;
+    exports hans.Dialogs;
+    opens hans.Dialogs to javafx.fxml, javafx.graphics;
 }

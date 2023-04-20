@@ -22,6 +22,11 @@
       <option name="url" value="https://releases.groupdocs.com/java/repo/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="sandec.jfrog.io" />
+      <option name="name" value="sandec.jfrog.io" />
+      <option name="url" value="https://sandec.jfrog.io/artifactory/repo" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="teragam-repo" />
       <option name="name" value="IcarusCoding Repository" />
       <option name="url" value="https://archiva.teragam.de/repository/IcarusCoding/" />

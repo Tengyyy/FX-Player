@@ -3,7 +3,7 @@ package hans.Menu.Settings;
 import hans.App;
 import hans.Subtitles.SubtitlesState;
 import hans.ControlTooltip;
-import hans.HotkeyChangeWindow;
+import hans.Dialogs.HotkeyChangeWindow;
 import hans.SVG;
 import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.application.Platform;

@@ -1,8 +1,10 @@
-package hans;
+package hans.Dialogs;
 
 import com.jfoenix.controls.JFXButton;
+import hans.*;
 import hans.Menu.Settings.Action;
 import hans.Menu.Settings.ControlItem;
+import javafx.animation.FadeTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
@@ -19,6 +21,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 import java.util.Arrays;
 
@@ -49,12 +52,12 @@ public class HotkeyChangeWindow {
     SVGPath closeButtonSVG = new SVGPath();
     JFXButton closeButton = new JFXButton();
 
-    boolean showing = false;
+    public boolean showing = false;
     BooleanProperty isValid = new SimpleBooleanProperty(true);
 
     ControlItem controlItem;
     Action action;
-    KeyCode[] hotkey;
+    public KeyCode[] hotkey;
 
     public HotkeyChangeWindow(MainController mainController){
         this.mainController = mainController;
@@ -168,6 +171,16 @@ public class HotkeyChangeWindow {
             mainController.addYoutubeVideoWindow.showing = false;
         }
 
+        if(mainController.licenseWindow.showing){
+            mainController.licenseWindow.window.setVisible(false);
+            mainController.licenseWindow.showing = false;
+        }
+
+        if(mainController.thirdPartySoftwareWindow.showing){
+            mainController.thirdPartySoftwareWindow.window.setVisible(false);
+            mainController.thirdPartySoftwareWindow.showing = false;
+        }
+
         this.showing = true;
         window.setVisible(true);
 
@@ -184,8 +197,12 @@ public class HotkeyChangeWindow {
         mainController.hotkeyController.setKeybindChangeActive(false);
 
         mainController.popupWindowContainer.setMouseTransparent(true);
-        AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 1, 0, false, 1, true);
-    }
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(100), mainController.popupWindowContainer);
+        fadeTransition.setFromValue(mainController.popupWindowContainer.getOpacity());
+        fadeTransition.setToValue(0);
+        fadeTransition.setOnFinished(e -> window.setVisible(false));
+        fadeTransition.play();    }
 
 
     private void initializeWindow(ControlItem controlItem){

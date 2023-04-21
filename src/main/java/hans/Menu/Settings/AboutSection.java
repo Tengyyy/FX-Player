@@ -61,6 +61,8 @@ public class AboutSection extends VBox {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 
+            if(settingsPage.settingsMenu.showing) settingsPage.settingsMenu.hide();
+
             settingsPage.menuController.mainController.licenseWindow.show();
         });
         licenseButton.setFocusTraversable(false);
@@ -69,6 +71,8 @@ public class AboutSection extends VBox {
         thirdPartyButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
+
+            if(settingsPage.settingsMenu.showing) settingsPage.settingsMenu.hide();
 
             settingsPage.menuController.mainController.thirdPartySoftwareWindow.show();
         });
@@ -79,6 +83,8 @@ public class AboutSection extends VBox {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 
+            if(settingsPage.settingsMenu.showing) settingsPage.settingsMenu.hide();
+
             Utilities.openBrowser("https://github.com/Tengyyy/FX-Player/wiki");
 
         });
@@ -88,6 +94,8 @@ public class AboutSection extends VBox {
         feedbackButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
+
+            if(settingsPage.settingsMenu.showing) settingsPage.settingsMenu.hide();
 
             Utilities.openBrowser("https://github.com/Tengyyy/FX-Player/issues");
         });

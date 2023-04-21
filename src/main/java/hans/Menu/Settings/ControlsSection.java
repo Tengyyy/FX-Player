@@ -121,6 +121,9 @@ public class ControlsSection extends VBox {
         resetButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
+
+            if(settingsPage.settingsMenu.showing) settingsPage.settingsMenu.hide();
+
             resetToDefault();
         });
         resetButton.setFocusTraversable(false);

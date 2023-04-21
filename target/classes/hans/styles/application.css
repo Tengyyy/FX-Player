@@ -410,6 +410,10 @@
     -fx-font-size: 18;
 }
 
+.licenseWindowTitle {
+    -fx-font-size: 23;
+}
+
 .popupWindowText {
     -fx-text-fill: rgb(220,220,220);
     -fx-font-family: "Roboto Medium";
@@ -445,6 +449,25 @@
 
 .controlBarWrapper {
     -fx-background-color: transparent;
+}
+
+
+.thirdPartyTitle {
+    -fx-font-family: "Roboto Medium";
+    -fx-text-fill: white;
+    -fx-font-size: 19;
+    -fx-padding: 8 0 0 0;
+}
+
+.thirdPartyText {
+    -fx-font-family: "Roboto Regular";
+    -fx-text-fill: white;
+    -fx-font-size: 17;
+}
+
+.thirdPartyLink {
+    -fx-text-fill: rgb(237, 64, 64);
+    -fx-cursor: hand;
 }
 
 

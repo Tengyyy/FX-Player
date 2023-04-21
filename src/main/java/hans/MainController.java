@@ -855,6 +855,7 @@ public class MainController implements Initializable {
         else if (subtitlesController.subtitlesState != SubtitlesState.CLOSED && !App.fullScreen) {
             subtitlesController.closeSubtitles();
         }
+        else if(!App.fullScreen && menuController.settingsPage.settingsMenu.showing) menuController.settingsPage.settingsMenu.hide();
 
         App.fullScreen = false;
 
@@ -1624,6 +1625,7 @@ public class MainController implements Initializable {
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
+        if(menuController.settingsPage.settingsMenu.showing) menuController.settingsPage.settingsMenu.hide();
 
     }
 

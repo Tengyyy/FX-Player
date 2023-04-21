@@ -23,7 +23,9 @@ public class Toggle extends StackPane{
         this.setOnMouseClicked(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
-            toggleButton.fire();
+
+            if(settingsPage.settingsMenu.showing) settingsPage.settingsMenu.hide();
+            else toggleButton.fire();
         });
 
         label.setText(text);
@@ -36,6 +38,8 @@ public class Toggle extends StackPane{
         toggleButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
+
+            if(settingsPage.settingsMenu.showing) settingsPage.settingsMenu.hide();
         });
         StackPane.setAlignment(toggleButton, Pos.CENTER_RIGHT);
     }

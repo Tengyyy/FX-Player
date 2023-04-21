@@ -257,6 +257,13 @@ public class ControlBarController implements Initializable {
         controlBarBackground.setMaxHeight(200);
         StackPane.setAlignment(controlBarBackground, Pos.BOTTOM_CENTER);
 
+        controlBar.setOnMouseClicked(e -> {
+            if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+            if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+
+            if(menuController.settingsPage.settingsMenu.showing) menuController.settingsPage.settingsMenu.hide();
+        });
+
         previousVideoIcon.setShape(previousVideoSVG);
         playIcon.setShape(playSVG);
         nextVideoIcon.setShape(nextVideoSVG);
@@ -807,6 +814,8 @@ public class ControlBarController implements Initializable {
 
         if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
         if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+        if(menuController.settingsPage.settingsMenu.showing) menuController.settingsPage.settingsMenu.hide();
+
 
         if(mediaInterface.mediaActive.get()){
             if (showingTimeLeft) Utilities.setCurrentTimeLabel(durationLabel, Duration.seconds(durationSlider.getValue()), Duration.seconds(durationSlider.getMax()));

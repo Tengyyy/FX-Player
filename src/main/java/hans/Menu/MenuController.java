@@ -124,6 +124,8 @@ public class MenuController implements Initializable {
         menu.setOnMouseClicked(e -> {
             if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
             if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+
+            menu.requestFocus();
         });
 
 

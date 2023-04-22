@@ -209,6 +209,7 @@ public class SettingsPage {
 
     }
 
+
     public void openSettingsPage(){
         menuController.settingsContainer.setVisible(true);
     }

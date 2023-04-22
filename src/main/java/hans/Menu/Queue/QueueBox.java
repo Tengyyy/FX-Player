@@ -9,6 +9,8 @@ import hans.Utilities;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -73,6 +75,16 @@ public class QueueBox extends VBox {
 
 
         activeIndex.addListener((observableValue, oldValue, newValue) -> menuController.controlBarController.updateNextAndPreviousVideoButtons());
+
+        activeItem.addListener((observableValue, oldItem, newItem) -> {
+            if(newItem == null){
+                queuePage.scrollUpButtonContainer.setVisible(false);
+                queuePage.scrollDownButtonContainer.setVisible(false);
+            }
+            else {
+                queuePage.checkScroll();
+            }
+        });
 
         dragAndDropActive.addListener((observableValue, oldValue, newValue) -> {
             if(newValue) startDragAction();

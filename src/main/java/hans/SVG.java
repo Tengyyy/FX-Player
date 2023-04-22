@@ -72,5 +72,7 @@ public enum SVG {
     EYE_OFF,
     WRENCH,
     REFRESH,
-    QUEUE_CLEAR
+    QUEUE_CLEAR,
+    ARROW_DOWN,
+    ARROW_UP
 }

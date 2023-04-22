@@ -16,6 +16,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -28,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -103,6 +106,17 @@ public class QueuePage {
     private final int scrollSpeed = 6;
 
     boolean extended = false;
+
+
+    StackPane scrollUpButtonContainer = new StackPane();
+    Button scrollUpButton = new Button();
+    Region scrollUpIcon = new Region();
+    SVGPath arrowDownSVG = new SVGPath();
+    SVGPath arrowUpSVG = new SVGPath();
+
+    StackPane scrollDownButtonContainer = new StackPane();
+    Button scrollDownButton = new Button();
+    Region scrollDownIcon = new Region();
 
     public QueuePage(MenuController menuController){
         this.menuController = menuController;
@@ -410,7 +424,52 @@ public class QueuePage {
         lowerBottomBound.bind(queueScroll.heightProperty().subtract(80));
 
         queueWrapper.getChildren().addAll(queueBar, queueScroll);
-        menuController.queueContainer.getChildren().add(queueWrapper);
+
+        arrowDownSVG.setContent(App.svgMap.get(SVG.ARROW_DOWN));
+        arrowUpSVG.setContent(App.svgMap.get(SVG.ARROW_UP));
+
+        scrollUpIcon.setShape(arrowUpSVG);
+        scrollUpIcon.getStyleClass().addAll("menuIcon", "graphic");
+        scrollUpIcon.setPrefSize(12, 10);
+        scrollUpIcon.setMaxSize(12, 10);
+
+        StackPane.setAlignment(scrollUpButtonContainer, Pos.TOP_CENTER);
+        StackPane.setMargin(scrollUpButtonContainer, new Insets(130, 0, 0, 0));
+        scrollUpButtonContainer.setMaxHeight(20);
+        scrollUpButtonContainer.getChildren().add(scrollUpButton);
+        StackPane.setMargin(scrollUpButton, new Insets(5, 10, 0, 5));
+        scrollUpButton.prefWidthProperty().bind(queueWrapper.widthProperty());
+        scrollUpButton.setPrefHeight(15);
+        scrollUpButton.getStyleClass().add("scrollToActiveButton");
+        scrollUpButton.setGraphic(scrollUpIcon);
+        scrollUpButton.setOnAction(e -> animateScroll());
+        scrollUpButtonContainer.setVisible(false);
+
+        scrollDownIcon.setShape(arrowDownSVG);
+        scrollDownIcon.getStyleClass().addAll("menuIcon", "graphic");
+        scrollDownIcon.setPrefSize(12, 10);
+        scrollDownIcon.setMaxSize(12, 10);
+
+        StackPane.setAlignment(scrollDownButtonContainer, Pos.BOTTOM_CENTER);
+        scrollDownButtonContainer.getChildren().add(scrollDownButton);
+        scrollDownButtonContainer.setMaxHeight(20);
+        StackPane.setMargin(scrollDownButton, new Insets(0, 10, 5, 5));
+        scrollDownButton.prefWidthProperty().bind(queueWrapper.widthProperty());
+        scrollDownButton.setPrefHeight(15);
+        scrollDownButton.getStyleClass().add("scrollToActiveButton");
+        scrollDownButton.setGraphic(scrollDownIcon);
+        scrollDownButton.setOnAction(e -> animateScroll());
+        scrollDownButtonContainer.setVisible(false);
+
+        queueScroll.vvalueProperty().addListener((observableValue, oldValue, newValue) -> checkScroll());
+
+
+        queueScroll.heightProperty().addListener((observableValue, number, t1) -> checkScroll());
+
+
+
+
+        menuController.queueContainer.getChildren().addAll(queueWrapper, scrollUpButtonContainer, scrollDownButtonContainer);
 
         Platform.runLater(() -> {
             addOptionsContextMenu = new AddOptionsContextMenu(this);
@@ -503,20 +562,7 @@ public class QueuePage {
     }
 
     public void openQueuePage(){
-        if(queueBox.activeItem.get() != null){
-            double heightViewPort = queueScroll.getViewportBounds().getHeight();
-            double heightScrollPane = queueScroll.getContent().getBoundsInLocal().getHeight();
-            double y = queueBox.activeItem.get().getBoundsInParent().getMaxY();
-            if (y<(heightViewPort/2)){
-                queueScroll.setVvalue(0);
-            }
-            else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
-                queueScroll.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
-            }
-            else if( y>= (heightScrollPane-(heightViewPort/2))){
-                queueScroll.setVvalue(1);
-            }
-        }
+        scrollToActiveItem();
 
         menuController.queueContainer.setVisible(true);
     }
@@ -533,5 +579,74 @@ public class QueuePage {
 
         if(menuController.menuState == MenuState.CLOSED) menuController.openMenu(MenuState.QUEUE_OPEN);
         else menuController.animateStateSwitch(MenuState.QUEUE_OPEN);
+    }
+
+    public void scrollToActiveItem(){
+        if(queueBox.activeItem.get() != null){
+            double heightViewPort = queueScroll.getViewportBounds().getHeight();
+            double heightScrollPane = queueScroll.getContent().getBoundsInLocal().getHeight();
+            double y = queueBox.activeItem.get().getBoundsInParent().getMaxY();
+            if (y<(heightViewPort/2)){
+                queueScroll.setVvalue(0);
+            }
+            else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
+                queueScroll.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
+            }
+            else if( y>= (heightScrollPane-(heightViewPort/2))){
+                queueScroll.setVvalue(1);
+            }
+        }
+    }
+
+    public void checkScroll(){
+        if(queueBox.activeItem.get() == null) return;
+
+        double scroll = queueScroll.getVvalue();
+
+        double heightViewPort = queueScroll.getViewportBounds().getHeight();
+        double heightScrollPane = queueScroll.getContent().getBoundsInLocal().getHeight();
+        double minY = queueBox.activeItem.get().getBoundsInParent().getMinY();
+        double maxY = queueBox.activeItem.get().getBoundsInParent().getMaxY();
+
+        double maxScroll = maxY/(heightScrollPane - heightViewPort);
+        double minScroll = (minY-(heightViewPort))/(heightScrollPane-heightViewPort);
+
+        if(scroll < minScroll){
+            scrollDownButtonContainer.setVisible(true);
+            scrollUpButtonContainer.setVisible(false);
+        }
+        else if(scroll > maxScroll){
+            scrollUpButtonContainer.setVisible(true);
+            scrollDownButtonContainer.setVisible(false);
+        }
+        else {
+            scrollDownButtonContainer.setVisible(false);
+            scrollUpButtonContainer.setVisible(false);
+        }
+    }
+
+    public void animateScroll(){
+        if(queueBox.activeItem.get() == null) return;
+
+        double heightViewPort = queueScroll.getViewportBounds().getHeight();
+        double heightScrollPane = queueScroll.getContent().getBoundsInLocal().getHeight();
+        double y = queueBox.activeItem.get().getBoundsInParent().getMaxY();
+
+        double target;
+
+        if (y<(heightViewPort/2)){
+            target = 0;
+        }
+        else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
+            target = (y-(heightViewPort/2))/(heightScrollPane-heightViewPort);
+        }
+        else {
+            target = 1;
+        }
+
+        Timeline scrollTimeline = new Timeline(new KeyFrame(Duration.millis(500),
+                new KeyValue(queueScroll.vvalueProperty(), target, Interpolator.EASE_BOTH)));
+
+        scrollTimeline.playFromStart();
     }
 }

@@ -579,4 +579,28 @@
 }
 
 
+.scrollToActiveButton {
+    -fx-background-radius: 5;
+    -fx-background-color: rgba(30,30,30, 0.85);
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}
+
+.scrollToActiveButton:hover {
+    -fx-background-color: rgba(38, 38, 38, 0.85);
+    -fx-border-color: rgb(45,45,45);
+}
+
+.scrollToActiveButton:pressed {
+    -fx-background-color: rgba(20,20,20,0.85);
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.scrollToActiveButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+
 

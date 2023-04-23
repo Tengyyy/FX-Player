@@ -77,6 +77,7 @@ public class QueueBox extends VBox {
         activeIndex.addListener((observableValue, oldValue, newValue) -> menuController.controlBarController.updateNextAndPreviousVideoButtons());
 
         activeItem.addListener((observableValue, oldItem, newItem) -> {
+
             if(newItem == null){
                 queuePage.scrollUpButtonContainer.setVisible(false);
                 queuePage.scrollDownButtonContainer.setVisible(false);
@@ -101,7 +102,7 @@ public class QueueBox extends VBox {
 
 
         if(index < 0) return;
-        else if(index >= this.getChildren().size()){
+        else if(index >= queue.size()){
             this.add(child, isDrag);
             return;
         }
@@ -116,7 +117,7 @@ public class QueueBox extends VBox {
         }
 
         if(child.isActive.get()) activeIndex.set(index);
-        else if(activeIndex.get() != -1 && index < activeIndex.get()) activeIndex.set(activeIndex.get() + 1);
+        else if(activeIndex.get() != -1 && index <= activeIndex.get()) activeIndex.set(activeIndex.get() + 1);
 
         updateQueue();
 
@@ -186,7 +187,7 @@ public class QueueBox extends VBox {
         queueOrder.remove((Integer) index);
         if(!isDrag) queuePage.selectedItems.remove(queueItem);
 
-        if(queueOrder.size() != index){
+        if(queueOrder.size() > index){
             for(int i=0; i<queueOrder.size(); i++){
                 if(queueOrder.get(i) > index) queueOrder.set(i, queueOrder.get(i) -1);
             }
@@ -200,6 +201,7 @@ public class QueueBox extends VBox {
             this.getChildren().remove(queueItem);
             return;
         }
+
 
         queueItem.setMouseTransparent(true);
 
@@ -522,26 +524,28 @@ public class QueueBox extends VBox {
         QueueItem hoverItem = null;
         int correction = 0;
 
-        dropPositionController.position = Math.min(queue.size(), dropPositionController.position);
+        if(dropPositionController.position < queue.size()) {
 
-        for(int i = dropPositionController.position; i >= 0; i--){
+            for (int i = dropPositionController.position; i >= 0; i--) {
 
-            if(i >= queue.size()) continue;
-            if(queue.get(queueOrder.get(i)) == draggedNode || queuePage.selectedItems.contains(queue.get(queueOrder.get(i)))) continue;
-
-            hoverItem = queue.get(queueOrder.get(i));
-            if(i != dropPositionController.position) correction = 1;
-
-            break;
-        }
-        if(hoverItem == null){
-            for(int i = dropPositionController.position; i<queue.size(); i++){
-                if(queue.get(queueOrder.get(i)) == draggedNode || queuePage.selectedItems.contains(queue.get(queueOrder.get(i)))) continue;
+                if (queue.get(queueOrder.get(i)) == draggedNode || queuePage.selectedItems.contains(queue.get(queueOrder.get(i))))
+                    continue;
 
                 hoverItem = queue.get(queueOrder.get(i));
-                correction = 0;
+                if (i != dropPositionController.position) correction = 1;
 
                 break;
+            }
+            if (hoverItem == null) {
+                for (int i = dropPositionController.position; i < queue.size(); i++) {
+                    if (queue.get(queueOrder.get(i)) == draggedNode || queuePage.selectedItems.contains(queue.get(queueOrder.get(i))))
+                        continue;
+
+                    hoverItem = queue.get(queueOrder.get(i));
+                    correction = 0;
+
+                    break;
+                }
             }
         }
 
@@ -558,8 +562,7 @@ public class QueueBox extends VBox {
 
         if(queuePage.selectionActive.get() && queuePage.selectedItems.contains(draggedNode)){
             if(index >= queue.size()){
-                for(int i=0; i<queuePage.selectedItems.size(); i++){
-                    QueueItem queueItem = queuePage.selectedItems.get(i);
+                for(QueueItem queueItem : queuePage.selectedItems){
 
                     queueItem.setMinHeight(QueueItem.height);
                     queueItem.setMaxHeight(QueueItem.height);

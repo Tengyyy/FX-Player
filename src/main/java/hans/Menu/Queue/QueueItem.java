@@ -442,7 +442,7 @@ public class QueueItem extends GridPane {
 
             if(!queueBox.dragAndDropActive.get() && (!queueBox.itemDragActive.get() || queueBox.draggedNode == this)) return;
 
-            if (e.getY() > 45) queueBox.dropPositionController.updatePosition(this.videoIndex + 1);
+            if (e.getY() > QueueItem.height/2) queueBox.dropPositionController.updatePosition(this.videoIndex + 1);
             else queueBox.dropPositionController.updatePosition(this.videoIndex);
 
         });

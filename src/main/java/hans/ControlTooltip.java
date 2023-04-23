@@ -4,9 +4,11 @@ package hans;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -21,7 +23,8 @@ import java.util.Objects;
 
 public class ControlTooltip extends Tooltip {
 
-    String tooltipText;
+    String actionText;
+    String hotkeyText;
 
     Region tooltipParent;
 
@@ -33,7 +36,7 @@ public class ControlTooltip extends Tooltip {
 
     int delay;
 
-    BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
+    public BooleanProperty mouseHover = new SimpleBooleanProperty(false); // if true the user has been hovering tooltip parent button for longer than the delay time
     public PauseTransition countdown;
 
     TooltipType tooltipType = null;
@@ -41,16 +44,57 @@ public class ControlTooltip extends Tooltip {
     MainController mainController;
 
 
+    EventHandler<MouseEvent> enterHandler;
+    EventHandler<MouseEvent> exitHandler;
 
 
-    public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay) {
-        createTooltip(mainController, tooltipText, tooltipParent, delay);
+    public ControlTooltip(MainController mainController, String actionText, String hotkeyText, Region tooltipParent, int delay) {
+        createTooltip(mainController, actionText, hotkeyText, tooltipParent, delay);
     }
 
-    public ControlTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay, TooltipType tooltipType){
+    public ControlTooltip(MainController mainController, String actionText, String hotkeyText, Region tooltipParent, int delay, TooltipType tooltipType){
         this.tooltipType = tooltipType;
-        createTooltip(mainController, tooltipText, tooltipParent, delay);
+        createTooltip(mainController, actionText, hotkeyText, tooltipParent, delay);
     }
+
+
+    private void createTooltip(MainController mainController, String actionText, String hotkeyText, Region tooltipParent, int delay){
+        this.actionText = actionText;
+        this.hotkeyText = hotkeyText;
+        this.tooltipParent = tooltipParent;
+        this.delay = delay;
+        this.mainController = mainController;
+
+        this.getStyleClass().add("tooltip");
+        this.setStyle("-fx-padding: 10;");
+        this.setText(actionText + hotkeyText);
+
+
+        this.enterHandler = mouseEvent -> {
+            countdown.playFromStart();
+        };
+
+        this.exitHandler = mouseEvent -> {
+            this.hide();
+            mouseHover.set(false);
+            countdown.stop();
+        };
+
+
+        mouseHover.addListener((obs, wasHover, isHover) -> {
+            if(isHover){
+                showTooltip();
+            }
+        });
+
+        countdown = new PauseTransition(Duration.millis(delay));
+        countdown.setOnFinished((e) -> mouseHover.set(true));
+
+        tooltipParent.addEventHandler(MouseEvent.MOUSE_ENTERED, enterHandler);
+        tooltipParent.addEventHandler(MouseEvent.MOUSE_EXITED, exitHandler);
+    }
+
+
 
     public void showTooltip() {
 
@@ -87,11 +131,26 @@ public class ControlTooltip extends Tooltip {
     }
 
 
-    public void updateText(String newText){
+    public void updateActionText(String newText){
 
-        if(Objects.equals(this.getText(), newText)) return;
+        if(Objects.equals(actionText, newText)) return;
 
-        this.setText(newText);
+        actionText = newText;
+
+        this.setText(actionText + hotkeyText);
+
+        if(this.isShowing()){
+            this.hide();
+            this.showTooltip();
+        }
+    }
+
+    public void updateHotkeyText(String newText){
+        if(Objects.equals(hotkeyText, newText)) return;
+
+        hotkeyText = newText;
+
+        this.setText(actionText + hotkeyText);
 
         if(this.isShowing()){
             this.hide();
@@ -100,40 +159,24 @@ public class ControlTooltip extends Tooltip {
     }
 
 
+
+    public void disableTooltip(){
+        tooltipParent.removeEventHandler(MouseEvent.MOUSE_ENTERED, enterHandler);
+
+        this.hide();
+        mouseHover.set(false);
+        countdown.stop();
+    }
+
+    public void enableTooltip(){
+        tooltipParent.addEventHandler(MouseEvent.MOUSE_ENTERED, enterHandler);
+    }
+
+
+
     public void updateDelay(Duration duration){
         delay = (int) duration.toSeconds();
         countdown.setDuration(duration);
-    }
-
-    private void createTooltip(MainController mainController, String tooltipText, Region tooltipParent, int delay){
-        this.tooltipText = tooltipText;
-        this.tooltipParent = tooltipParent;
-        this.delay = delay;
-        this.mainController = mainController;
-
-        this.getStyleClass().add("tooltip");
-        this.setStyle("-fx-padding: 10;");
-        this.setText(tooltipText);
-
-
-        mouseHover.addListener((obs, wasHover, isHover) -> {
-            if(isHover){
-                showTooltip();
-            }
-        });
-
-        countdown = new PauseTransition(Duration.millis(delay));
-        countdown.setOnFinished((e) -> mouseHover.set(true));
-
-        tooltipParent.setOnMouseEntered(e -> {
-            countdown.playFromStart();
-        });
-
-        tooltipParent.setOnMouseExited((e) -> {
-            this.hide();
-            mouseHover.set(false);
-            countdown.stop();
-        });
     }
 
 }

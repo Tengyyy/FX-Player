@@ -105,7 +105,7 @@ public class PlaybackOptionsController {
                 }
                 else if(autoplayTab.toggle.isSelected()) playbackSettingsController.playbackSettingsHomeController.playbackOptionsTab.mainIcon.setShape(playbackSettingsController.playbackSettingsHomeController.repeatSVG);
 
-                playbackSettingsController.menuController.queuePage.shuffleTooltip.updateText("Shuffle is off");
+                playbackSettingsController.menuController.queuePage.shuffleTooltip.updateActionText("Shuffle is off");
 
                 if(!playbackSettingsController.menuController.queuePage.queueBox.queue.isEmpty()) playbackSettingsController.menuController.queuePage.queueBox.shuffleOff();
 
@@ -120,7 +120,7 @@ public class PlaybackOptionsController {
                     playbackSettingsController.playbackSettingsHomeController.playbackOptionsTab.mainIcon.setShape(playbackSettingsController.playbackSettingsHomeController.shuffleSVG);
                 }
 
-                playbackSettingsController.menuController.queuePage.shuffleTooltip.updateText("Shuffle is on");
+                playbackSettingsController.menuController.queuePage.shuffleTooltip.updateActionText("Shuffle is on");
 
 
                 if(!playbackSettingsController.menuController.queuePage.queueBox.queue.isEmpty()) playbackSettingsController.menuController.queuePage.queueBox.shuffleOn();

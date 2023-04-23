@@ -804,7 +804,7 @@ public class QueueItem extends GridPane {
         playButtonIcon.setPrefSize(30, 32);
         playButtonIcon.setMaxSize(30, 32);
         playButtonIcon.setShape(playSVG);
-        if(playButtonTooltip != null) playButtonTooltip.updateText("Play video");
+        if(playButtonTooltip != null) playButtonTooltip.updateActionText("Play video");
         columns.pause();
     }
 
@@ -815,7 +815,7 @@ public class QueueItem extends GridPane {
         playButtonIcon.setPrefSize(30, 30);
         playButtonIcon.setMaxSize(30, 30);
         playButtonIcon.setShape(pauseSVG);
-        if(playButtonTooltip != null) playButtonTooltip.updateText("Pause video");
+        if(playButtonTooltip != null) playButtonTooltip.updateActionText("Pause video");
         columns.play();
     }
 

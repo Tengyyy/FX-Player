@@ -111,16 +111,10 @@ public class PlaybackSettingsController {
         mainController.sliderHoverLabel.chapterlabel.setVisible(false);
         mainController.sliderHoverPreview.pane.setVisible(false);
 
-        if(controlBarController.subtitles.isShowing()) controlBarController.subtitles.hide();
-        if(controlBarController.settings.isShowing()) controlBarController.settings.hide();
-        if(controlBarController.miniplayer.isShowing()) controlBarController.miniplayer.hide();
-        if(controlBarController.fullScreen.isShowing()) controlBarController.fullScreen.hide();
-
-
-        controlBarController.subtitlesButton.setOnMouseEntered(null);
-        controlBarController.settingsButton.setOnMouseEntered(null);
-        controlBarController.miniplayerButton.setOnMouseEntered(null);
-        controlBarController.fullScreenButton.setOnMouseEntered(null);
+        controlBarController.subtitles.disableTooltip();
+        controlBarController.settings.disableTooltip();
+        controlBarController.fullScreen.disableTooltip();
+        controlBarController.miniplayer.disableTooltip();
 
 
         playbackSettingsBuffer.setMouseTransparent(false);
@@ -151,72 +145,16 @@ public class PlaybackSettingsController {
         mainController.videoImageView.requestFocus();
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 45, 0, false, 1, true);
 
+        controlBarController.settings.enableTooltip();
+        controlBarController.miniplayer.enableTooltip();
+        controlBarController.subtitles.enableTooltip();
+        controlBarController.fullScreen.enableTooltip();
 
-        if (controlBarController.settingsButtonHover) {
-            controlBarController.settings = new ControlTooltip(mainController, " Playback settings (s)", controlBarController.settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            controlBarController.settings.showTooltip();
+        if (controlBarController.settingsButtonHover) controlBarController.settings.mouseHover.set(true);
+        else if (controlBarController.subtitlesButtonHover) controlBarController.subtitles.mouseHover.set(true);
+        else if(controlBarController.miniplayerButtonHover) controlBarController.miniplayer.mouseHover.set(true);
+        else if (controlBarController.fullScreenButtonHover) controlBarController.fullScreen.mouseHover.set(true);
 
-            controlBarController.miniplayer = new ControlTooltip(mainController, "Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            controlBarController.subtitles = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.subtitlesButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            if (App.fullScreen)
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        }
-        else if (controlBarController.subtitlesButtonHover) {
-            controlBarController.subtitles = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.subtitlesButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            controlBarController.subtitles.showTooltip();
-
-            controlBarController.miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            controlBarController.settings = new ControlTooltip(mainController,"Playback settings (s)", controlBarController.settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            if (App.fullScreen)
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        }
-        else if(controlBarController.miniplayerButtonHover){
-            if (App.fullScreen) {
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            } else {
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            }
-
-            controlBarController.subtitles = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.subtitlesButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            controlBarController.miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            controlBarController.miniplayer.showTooltip();
-
-            controlBarController.settings = new ControlTooltip(mainController,"Playback settings (s)", controlBarController.settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        }
-        else if (controlBarController.fullScreenButtonHover) {
-            if (App.fullScreen) {
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            } else {
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            }
-            controlBarController.fullScreen.showTooltip();
-
-            controlBarController.subtitles = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.subtitlesButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            controlBarController.miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            controlBarController.settings = new ControlTooltip(mainController,"Playback settings (s)", controlBarController.settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        }
-        else {
-            controlBarController.subtitles = new ControlTooltip(mainController,"Subtitles (c)", controlBarController.subtitlesButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            controlBarController.settings = new ControlTooltip(mainController,"Playback settings (s)", controlBarController.settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            controlBarController.miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", controlBarController.miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-
-            if (App.fullScreen)
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            else
-                controlBarController.fullScreen = new ControlTooltip(mainController,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        }
 
         switch (playbackSettingsState) {
             case HOME_OPEN -> closeSettingsFromHome();
@@ -235,7 +173,6 @@ public class PlaybackSettingsController {
             if(mainController.chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
             if(menuController.queuePage.queueBox.activeIndex.get() != -1 && menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get())).getMediaItem() != null && menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get())).getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
         }
-
     }
 
 

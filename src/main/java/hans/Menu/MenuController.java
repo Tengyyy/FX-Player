@@ -169,7 +169,7 @@ public class MenuController implements Initializable {
         extendButton.setOnAction(e -> extendMenu(menuState));
 
 
-        Platform.runLater(() -> extendTooltip = new ControlTooltip(mainController, "Extend menu", extendButton, 1000, TooltipType.MENU_TOOLTIP));
+        Platform.runLater(() -> extendTooltip = new ControlTooltip(mainController, "Extend menu", "", extendButton, 1000, TooltipType.MENU_TOOLTIP));
 
         StackPane.setAlignment(extendButton, Pos.TOP_RIGHT);
         StackPane.setMargin(extendButton, new Insets(5, 5 , 0, 0));
@@ -344,13 +344,18 @@ public class MenuController implements Initializable {
 
             extendButton.setOnAction(ev -> extendMenu(menuState));
             extendIcon.setShape(extendSVG);
-            extendTooltip.updateText("Extend menu");
+            extendTooltip.updateActionText("Extend menu");
             extendButton.setVisible(true);
             extendButton.setMouseTransparent(false);
+
+            mainController.sliderHoverLabel.setBackground(false);
 
             queuePage.shrink();
             chapterController.chapterPage.shrink();
             menuBar.shrink();
+
+            StackPane.setMargin(queuePage.scrollUpButtonContainer, new Insets(130, 0, 0, 0));
+
 
             shrinkedWidth = Math.max(MIN_WIDTH, Math.min(shrinkedWidth, (mainController.videoImageViewWrapper.getWidth() + 30)/2));
             menu.setPrefWidth(shrinkedWidth);
@@ -399,7 +404,7 @@ public class MenuController implements Initializable {
 
         extendButton.setOnAction(e -> shrinkMenu());
         extendIcon.setShape(collapseSVG);
-        extendTooltip.updateText("Collapse menu");
+        extendTooltip.updateActionText("Collapse menu");
         if(newState == MenuState.QUEUE_OPEN || newState == MenuState.CHAPTERS_OPEN){
             extendButton.setVisible(true);
             extendButton.setMouseTransparent(false);
@@ -408,6 +413,9 @@ public class MenuController implements Initializable {
             extendButton.setVisible(false);
             extendButton.setMouseTransparent(true);
         }
+
+        mainController.sliderHoverLabel.setBackground(true);
+
 
         menu.setTranslateX(0);
         if(menuState == MenuState.CLOSED) menu.setOpacity(0);
@@ -432,6 +440,9 @@ public class MenuController implements Initializable {
 
         menuWrapper.setPadding(new Insets(0, 0, 65, 0));
 
+        StackPane.setMargin(queuePage.scrollUpButtonContainer, new Insets(190, 0, 0, 0));
+
+
         if(menuState != MenuState.CLOSED){
             AnimationsClass.displayControls(controlBarController, subtitlesController, mainController);
         }
@@ -445,9 +456,11 @@ public class MenuController implements Initializable {
 
         extendButton.setOnAction(e -> extendMenu(menuState));
         extendIcon.setShape(extendSVG);
-        extendTooltip.updateText("Extend menu");
+        extendTooltip.updateActionText("Extend menu");
         extendButton.setVisible(true);
         extendButton.setMouseTransparent(false);
+
+        mainController.sliderHoverLabel.setBackground(false);
 
         menu.setOpacity(1);
         if(menuState == MenuState.CLOSED) menu.setTranslateX(-menu.getWidth());
@@ -473,6 +486,8 @@ public class MenuController implements Initializable {
         dragPane.setVisible(true);
         menuWrapper.setStyle("-fx-border-color: #909090;");
 
+        StackPane.setMargin(queuePage.scrollUpButtonContainer, new Insets(130, 0, 0, 0));
+
         if(controlBarController.controlBarOpen) AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
     }
 
@@ -486,6 +501,9 @@ public class MenuController implements Initializable {
         menuFade.setOnFinished(e -> {
             menu.setMouseTransparent(false);
             menuInTransition = false;
+
+            mainController.sliderHoverLabel.setBackground(true);
+
         });
 
         menuFade.play();
@@ -515,6 +533,8 @@ public class MenuController implements Initializable {
 
         menuFade.setOnFinished(e -> {
             menuInTransition = false;
+
+            mainController.sliderHoverLabel.setBackground(false);
 
             updateState(MenuState.CLOSED);
 

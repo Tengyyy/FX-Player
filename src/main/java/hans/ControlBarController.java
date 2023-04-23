@@ -1,5 +1,6 @@
 package hans;
 
+import hans.Menu.Settings.Action;
 import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
 import hans.Menu.MenuController;
@@ -147,13 +148,13 @@ public class ControlBarController implements Initializable {
 
     public MouseEventTracker mouseEventTracker;
 
-    ControlTooltip play;
-    ControlTooltip mute;
+    public ControlTooltip play;
+    public ControlTooltip mute;
     public ControlTooltip settings;
     public ControlTooltip fullScreen;
     public ControlTooltip subtitles;
-    VideoTooltip nextVideoTooltip;
-    VideoTooltip previousVideoTooltip;
+    public VideoTooltip nextVideoTooltip;
+    public VideoTooltip previousVideoTooltip;
     public ControlTooltip miniplayer;
 
     MediaInterface mediaInterface;
@@ -178,16 +179,6 @@ public class ControlBarController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         trackContainer.getChildren().add(defaultTrack.progressBar);
-
-        Platform.runLater(() -> {
-            mute = new ControlTooltip(mainController,"Mute (m)", volumeButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            settings = new ControlTooltip(mainController,"Playback settings (s)", settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            subtitles = new ControlTooltip(mainController,"Subtitles (c)", subtitlesButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            miniplayer = new ControlTooltip(mainController,"Miniplayer (i)", miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-            previousVideoTooltip = new VideoTooltip(mainController, previousVideoButton, true);
-            nextVideoTooltip = new VideoTooltip(mainController, nextVideoButton, false);
-        });
 
         controlBarWrapper.setViewOrder(2);
         controlBarWrapper.getStyleClass().add("controlBarWrapper");
@@ -285,6 +276,7 @@ public class ControlBarController implements Initializable {
         settingsButton.setBackground(Background.EMPTY);
         volumeButton.setBackground(Background.EMPTY);
         subtitlesButton.setBackground(Background.EMPTY);
+        
 
         previousVideoButton.setOnAction(e -> previousVideoButtonClick());
         playButton.setOnAction((e) -> playButtonClick());
@@ -294,41 +286,89 @@ public class ControlBarController implements Initializable {
         settingsButton.setOnAction(e -> settingsButtonClick());
         miniplayerButton.setOnAction(e -> miniplayerButtonClick());
         fullScreenButton.setOnAction(e -> fullScreenButtonClick());
+        
+        
+        previousVideoButton.setOnMouseEntered(e -> {
+            previousVideoButtonHoverOn();
+        });
+
+        previousVideoButton.setOnMouseExited(e -> {
+            previousVideoButtonHoverOff();
+        });
+
+
+        playButton.setOnMouseEntered(e -> {
+            playButtonHoverOn();
+        });
+
+        playButton.setOnMouseExited(e -> {
+            playButtonHoverOff();
+        });
+
+        nextVideoButton.setOnMouseEntered(e -> {
+            nextVideoButtonHoverOn();
+        });
+
+        nextVideoButton.setOnMouseExited(e -> {
+            nextVideoButtonHoverOff();
+        });
+
+        volumeButton.setOnMouseEntered(e -> {
+            controlButtonHoverOn(volumeButtonPane);
+            volumeButtonHover = true;
+        });
+
+        volumeButton.setOnMouseExited(e -> {
+            controlButtonHoverOff(volumeButtonPane);
+            volumeButtonHover = false;
+        });
+
+        subtitlesButton.setOnMouseEntered(e -> {
+            controlButtonHoverOn(subtitlesButtonPane);
+            subtitlesButtonHover = true;
+        });
+
+        subtitlesButton.setOnMouseExited(e -> {
+            controlButtonHoverOff(subtitlesButtonPane);
+            subtitlesButtonHover = false;
+        });
+
+        settingsButton.setOnMouseEntered(e -> {
+            controlButtonHoverOn(settingsButtonPane);
+            settingsButtonHover = true;
+        });
+
+        settingsButton.setOnMouseExited(e -> {
+            controlButtonHoverOff(settingsButtonPane);
+            settingsButtonHover = false;
+        });
+
+        miniplayerButton.setOnMouseEntered(e -> {
+            controlButtonHoverOn(miniplayerButtonPane);
+            miniplayerButtonHover = true;
+        });
+
+        miniplayerButton.setOnMouseExited(e -> {
+            controlButtonHoverOff(miniplayerButtonPane);
+            miniplayerButtonHover = false;
+        });
+
+
+        fullScreenButton.setOnMouseEntered(e -> {
+            controlButtonHoverOn(fullScreenButtonPane);
+            fullScreenButtonHover = true;
+            fullScreenButtonScaleTransition = AnimationsClass.scaleAnimation(200, fullScreenIcon, 1, 1.3, 1, 1.3, true, 2, true);
+        });
+
+        fullScreenButton.setOnMouseExited(e -> {
+            controlButtonHoverOff(fullScreenButtonPane);
+            fullScreenButtonHover = false;
+        });
 
 
         volumeSlider.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> volumeSlider.setValueChanging(true));
         volumeSlider.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> volumeSlider.setValueChanging(false));
 
-
-        previousVideoPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> previousVideoButtonHoverOn());
-        previousVideoPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> previousVideoButtonHoverOff());
-
-        playButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> playButtonHoverOn());
-        playButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> playButtonHoverOff());
-
-        nextVideoPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> nextVideoButtonHoverOn());
-        nextVideoPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> nextVideoButtonHoverOff());
-
-        volumeButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(volumeButtonPane));
-        volumeButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(volumeButtonPane));
-
-        subtitlesButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(subtitlesButtonPane));
-        subtitlesButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(subtitlesButtonPane));
-
-        settingsButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(settingsButtonPane));
-        settingsButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(settingsButtonPane));
-
-        miniplayerButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(miniplayerButtonPane));
-        miniplayerButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(miniplayerButtonPane));
-
-        fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlButtonHoverOn(fullScreenButtonPane));
-        fullScreenButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlButtonHoverOff(fullScreenButtonPane));
-
-        Platform.runLater(() -> {
-            disablePreviousVideoButton();
-            disablePlayButton();
-            disableNextVideoButton();
-        });
 
 
         volumeSlider.valueChangingProperty().addListener((observable, oldValue, newValue) -> {
@@ -352,19 +392,19 @@ public class ControlBarController implements Initializable {
                 volumeIcon.setPrefSize(20, 20);
                 volumeIcon.setTranslateX(0);
                 muted = true;
-                mute.updateText("Unmute (m)");
+                mute.updateActionText("Unmute");
             } else if (newValue.doubleValue() < 50) {
                 volumeIcon.setShape(lowVolumeSVG);
                 volumeIcon.setPrefSize(15, 18);
                 volumeIcon.setTranslateX(-3);
                 muted = false;
-                mute.updateText("Mute (m)");
+                mute.updateActionText("Mute");
             } else {
                 volumeIcon.setShape(highVolumeSVG);
                 volumeIcon.setPrefSize(20, 20);
                 volumeIcon.setTranslateX(0);
                 muted = false;
-                mute.updateText("Mute (m)");
+                mute.updateActionText("Mute");
             }
         });
 
@@ -534,7 +574,6 @@ public class ControlBarController implements Initializable {
                 durationSliderHover = false;
 
                 if (!e.isPrimaryButtonDown()) {
-
                     durationSliderHoverOff(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX());
                     mainController.sliderHoverLabel.timeLabel.setVisible(false);
                     mainController.sliderHoverLabel.chapterlabel.setVisible(false);
@@ -617,8 +656,11 @@ public class ControlBarController implements Initializable {
                 else {
                     previousVideoTooltip.updateTooltip(null);
 
-                    if (mainController.miniplayerActive)
-                        mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Replay");
+                    if (mainController.miniplayerActive){
+                        mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateActionText("Replay");
+                        mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateHotkeyText("");
+
+                    }
                 }
             }
             else if (oldValue.doubleValue() > 5 && newValue.doubleValue() <= 5 && mediaInterface.mediaActive.get()) {
@@ -626,7 +668,10 @@ public class ControlBarController implements Initializable {
                 if (menuController.queuePage.queueBox.activeItem.get() == null || menuController.queuePage.queueBox.activeIndex.get() == 0) {
                     disablePreviousVideoButton();
                 } else {
-                    if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateText("Previous video (SHIFT + P)");
+                    if (mainController.miniplayerActive){
+                        mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateActionText("Previous video");
+                        mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(Action.PREVIOUS));
+                    }
 
                     previousVideoTooltip.updateTooltip(menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() - 1)));
                 }
@@ -847,7 +892,7 @@ public class ControlBarController implements Initializable {
         playIcon.setShape(pauseSVG);
         playIcon.setPrefSize(20, 20);
 
-        if(play != null) play.updateText("Pause (k)");
+        play.updateActionText("Pause");
 
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.play();
     }
@@ -857,7 +902,7 @@ public class ControlBarController implements Initializable {
         playIcon.setShape(playSVG);
         playIcon.setPrefSize(20, 20);
 
-        if (play != null) play.updateText("Play (k)");
+        play.updateActionText("Play");
 
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.pause();
     }
@@ -866,7 +911,7 @@ public class ControlBarController implements Initializable {
         playIcon.setShape(replaySVG);
         playIcon.setPrefSize(24, 24);
 
-        if (play != null) play.updateText("Replay (k)");
+        play.updateActionText("Replay");
 
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.end();
     }
@@ -919,52 +964,14 @@ public class ControlBarController implements Initializable {
             fullScreenIcon.setShape(minimizeSVG);
             App.fullScreen = true;
 
-            if (playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && subtitlesController.subtitlesState == SubtitlesState.CLOSED) {
-                if (fullScreen.isShowing()) {
-                    fullScreen.hide();
-                    fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-                    fullScreen.showTooltip();
-                } else {
-                    fullScreen = new ControlTooltip(mainController,"Exit full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-                }
-            }
+            fullScreen.updateActionText("Exit full screen");
         }
         else {
             fullScreenIcon.setShape(maximizeSVG);
             App.fullScreen = false;
 
-            if (playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && subtitlesController.subtitlesState == SubtitlesState.CLOSED) {
-                if (fullScreen.isShowing()) {
-                    fullScreen.hide();
-                    fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-                    fullScreen.showTooltip();
-                } else {
-                    fullScreen = new ControlTooltip(mainController,"Full screen (f)", fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-                }
-            }
+            fullScreen.updateActionText("Full screen");
         }
-    }
-
-    public void fullScreenButtonHoverOn() {
-        fullScreenButtonHover = true;
-        fullScreenButtonScaleTransition = AnimationsClass.scaleAnimation(200, fullScreenIcon, 1, 1.3, 1, 1.3, true, 2, true);
-
-    }
-
-    public void fullScreenButtonHoverOff() {
-        fullScreenButtonHover = false;
-        if (fullScreenButtonScaleTransition != null && fullScreenButtonScaleTransition.getStatus() == Animation.Status.RUNNING)
-            fullScreenButtonScaleTransition.stop();
-        fullScreenIcon.setScaleX(1);
-        fullScreenIcon.setScaleY(1);
-    }
-
-    public void miniplayerButtonHoverOn() {
-        miniplayerButtonHover = true;
-    }
-
-    public void miniplayerButtonHoverOff() {
-        miniplayerButtonHover = false;
     }
 
 
@@ -995,7 +1002,7 @@ public class ControlBarController implements Initializable {
         if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         if(durationSlider.getValue() > 5) mediaInterface.replay();
-        else mediaInterface.playPrevious(); // reset styling of current active history item, decrement historyposition et
+        else mediaInterface.playPrevious();
     }
 
     public void nextVideoButtonClick() {
@@ -1140,23 +1147,6 @@ public class ControlBarController implements Initializable {
         lastKnownSliderHoverPosition = value;
     }
 
-    public void enterSubtitlesButton() {
-        subtitlesButtonHover = true;
-    }
-
-    public void exitSubtitlesButton() {
-        subtitlesButtonHover = false;
-    }
-
-    public void enterSettingsButton() {
-        settingsButtonHover = true;
-    }
-
-    public void exitSettingsButton() {
-        settingsButtonHover = false;
-    }
-
-
     public void controlButtonHoverOn(StackPane stackPane) {
         Region icon = (Region) stackPane.getChildren().get(1);
 
@@ -1175,6 +1165,7 @@ public class ControlBarController implements Initializable {
 
         if (previousVideoButtonEnabled) {
             AnimationsClass.animateBackgroundColor(previousVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+            previousVideoTooltip.mouseHover.set(true);
         } else {
             AnimationsClass.animateBackgroundColor(previousVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
         }
@@ -1188,6 +1179,8 @@ public class ControlBarController implements Initializable {
         } else {
             AnimationsClass.animateBackgroundColor(previousVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
+
+        previousVideoTooltip.mouseHover.set(false);
     }
 
     public void playButtonHoverOn() {
@@ -1195,6 +1188,7 @@ public class ControlBarController implements Initializable {
 
         if (playButtonEnabled) {
             AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+            play.mouseHover.set(true);
         } else {
             AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
         }
@@ -1208,6 +1202,8 @@ public class ControlBarController implements Initializable {
         } else {
             AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
+
+        play.mouseHover.set(false);
     }
 
     public void nextVideoButtonHoverOn() {
@@ -1215,6 +1211,7 @@ public class ControlBarController implements Initializable {
 
         if (nextVideoButtonEnabled) {
             AnimationsClass.animateBackgroundColor(nextVideoIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+            nextVideoTooltip.mouseHover.set(true);
         } else {
             AnimationsClass.animateBackgroundColor(nextVideoIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
 
@@ -1229,6 +1226,8 @@ public class ControlBarController implements Initializable {
         } else {
             AnimationsClass.animateBackgroundColor(nextVideoIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
         }
+
+        nextVideoTooltip.mouseHover.set(false);
     }
 
     public void enablePreviousVideoButton() {
@@ -1250,9 +1249,6 @@ public class ControlBarController implements Initializable {
             previousVideoTooltip.updateTooltip(menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() - 1)));
         }
 
-        previousVideoButton.setOnMouseEntered((e) -> previousVideoTooltip.mouseHover.set(true));
-        previousVideoButton.setOnMouseExited((e) -> previousVideoTooltip.mouseHover.set(false));
-
         if (previousVideoButtonHover){
             previousVideoTooltip.mouseHover.set(true);
         }
@@ -1270,9 +1266,6 @@ public class ControlBarController implements Initializable {
         if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disablePreviousVideoButton();
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.disablePreviousVideoButton();
 
-        previousVideoButton.setOnMouseEntered(null);
-        previousVideoButton.setOnMouseExited(null);
-
         previousVideoTooltip.mouseHover.set(false);
     }
 
@@ -1287,12 +1280,13 @@ public class ControlBarController implements Initializable {
 
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.enablePlayButton();
 
+        if (mediaInterface.atEnd) play.updateActionText("Replay");
+        else if (mediaInterface.playing.get()) play.updateActionText("Pause");
+        else play.updateActionText("Play");
 
-        if (mediaInterface.atEnd) play = new ControlTooltip(mainController,"Replay (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        else if (mediaInterface.playing.get()) play = new ControlTooltip(mainController,"Pause (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        else play = new ControlTooltip(mainController,"Play (k)", playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        play.enableTooltip();
 
-        if (playButtonHover) play.showTooltip();
+        if (playButtonHover) play.mouseHover.set(true);
     }
 
     public void disablePlayButton() {
@@ -1304,12 +1298,11 @@ public class ControlBarController implements Initializable {
             playIcon.setStyle("-fx-background-color: rgb(120, 120, 120);");
         }
 
+
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.disablePlayButton();
 
 
-
-        playButton.setOnMouseEntered(null);
-        if (play != null && play.isShowing()) play.hide();
+        play.disableTooltip();
     }
 
     public void enableNextVideoButton() {
@@ -1329,8 +1322,6 @@ public class ControlBarController implements Initializable {
         if(menuController.queuePage.queueBox.activeItem.get() == null && !menuController.queuePage.queueBox.queue.isEmpty()) nextVideoTooltip.updateTooltip(menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(0)));
         else if(menuController.queuePage.queueBox.queue.size() > menuController.queuePage.queueBox.activeIndex.get()) nextVideoTooltip.updateTooltip(menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() + 1)));
 
-        nextVideoButton.setOnMouseEntered((e) -> nextVideoTooltip.mouseHover.set(true));
-        nextVideoButton.setOnMouseExited((e) -> nextVideoTooltip.mouseHover.set(false));
 
         if (nextVideoButtonHover){
             nextVideoTooltip.mouseHover.set(true);
@@ -1348,10 +1339,6 @@ public class ControlBarController implements Initializable {
 
         if (mainController.miniplayerActive) mainController.miniplayer.miniplayerController.disableNextVideoButton();
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.disableNextVideoButton();
-
-
-        nextVideoButton.setOnMouseEntered(null);
-        nextVideoButton.setOnMouseExited(null);
 
         nextVideoTooltip.mouseHover.set(false);
     }
@@ -1434,5 +1421,22 @@ public class ControlBarController implements Initializable {
                 }
             }
         }
+    }
+
+
+    public void loadTooltips(){
+        play = new ControlTooltip(mainController, "Play", mainController.hotkeyController.getHotkeyString(Action.PLAY_PAUSE2), playButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        mute = new ControlTooltip(mainController,"Mute", mainController.hotkeyController.getHotkeyString(Action.MUTE), volumeButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        settings = new ControlTooltip(mainController,"Playback settings", mainController.hotkeyController.getHotkeyString(Action.PLAYBACK_SETTINGS), settingsButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        fullScreen = new ControlTooltip(mainController,"Full screen", mainController.hotkeyController.getHotkeyString(Action.FULLSCREEN), fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        subtitles = new ControlTooltip(mainController,"Subtitles", mainController.hotkeyController.getHotkeyString(Action.SUBTITLES), subtitlesButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        miniplayer = new ControlTooltip(mainController,"Miniplayer", mainController.hotkeyController.getHotkeyString(Action.MINIPLAYER), miniplayerButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+        previousVideoTooltip = new VideoTooltip(mainController, previousVideoButton, true, mainController.hotkeyController.getHotkeyString(Action.PREVIOUS));
+        nextVideoTooltip = new VideoTooltip(mainController, nextVideoButton, false, mainController.hotkeyController.getHotkeyString(Action.NEXT));
+
+
+        disablePreviousVideoButton();
+        disablePlayButton();
+        disableNextVideoButton();
     }
 }

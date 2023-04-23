@@ -16,6 +16,31 @@ import java.util.*;
 
 public class HotkeyController {
 
+
+    public static final Map<KeyCode, String> symbols = Map.ofEntries(
+            Map.entry(KeyCode.RIGHT, "\u2192"),
+            Map.entry(KeyCode.UP, "\u2191"),
+            Map.entry(KeyCode.LEFT, "\u2190"),
+            Map.entry(KeyCode.DOWN, "\u2193"),
+            Map.entry(KeyCode.COMMA, ","),
+            Map.entry(KeyCode.PERIOD, "."),
+            Map.entry(KeyCode.SLASH, "/"),
+            Map.entry(KeyCode.BACK_SLASH, "\\"),
+            Map.entry(KeyCode.QUOTE, "'"),
+            Map.entry(KeyCode.SEMICOLON, ";"),
+            Map.entry(KeyCode.COLON, ":"),
+            Map.entry(KeyCode.EQUALS, "="),
+            Map.entry(KeyCode.MINUS, "-"),
+            Map.entry(KeyCode.PLUS, "+"),
+            Map.entry(KeyCode.AMPERSAND, "&"),
+            Map.entry(KeyCode.OPEN_BRACKET, "["),
+            Map.entry(KeyCode.CLOSE_BRACKET, "]"),
+            Map.entry(KeyCode.BACK_QUOTE, "`"),
+            Map.entry(KeyCode.LEFT_PARENTHESIS, "("),
+            Map.entry(KeyCode.RIGHT_PARENTHESIS, ")")
+    );
+
+
     public Map<String, Action> keybindActionMap = new HashMap<>();
 
     public HashMap<Action, KeyCode[]> actionKeybindMap = new HashMap<>();
@@ -28,8 +53,7 @@ public class HotkeyController {
 
     private boolean keybindChangeActive = false;
 
-    HotkeyController(MainController mainController){
-        this.mainController = mainController;
+    HotkeyController(){
 
         keybindActionMap.put("[SPACE]", Action.PLAY_PAUSE1);
         keybindActionMap.put("[K]", Action.PLAY_PAUSE2);
@@ -124,7 +148,6 @@ public class HotkeyController {
         actionKeybindMap.put(Action.OPEN_PLAYLISTS, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.P});
         actionKeybindMap.put(Action.OPEN_SETTINGS, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.S});
     }
-
 
     public void handleKeyPress(KeyEvent event){
 
@@ -275,6 +298,95 @@ public class HotkeyController {
     }
 
 
+
+
+    public void handleMiniplayerKeyPress(KeyEvent event){
+
+        if(keybindChangeActive) {
+            event.consume();
+            return;
+        }
+
+        // universal keybinds that the user cant change
+        switch (event.getCode()){
+            case FAST_FWD -> {
+                mainController.FORWARD10Action();
+                return;
+            }
+            case REWIND -> {
+                mainController.REWIND10Action();
+                return;
+            }
+            case MUTE -> {
+                mainController.MUTEAction();
+                return;
+            }
+            case PLAY, PAUSE -> {
+                mainController.PLAY_PAUSEAction();
+                return;
+            }
+            case TRACK_PREV ->  {
+                mainController.PREVIOUSAction();
+                return;
+            }
+            case TRACK_NEXT -> {
+                mainController.NEXTAction();
+                return;
+            }
+
+        }
+
+        KeyCode[] keyCodes = eventToKeyCodeArray(event);
+        String keyCodesString = Arrays.toString(keyCodes);
+
+        if(keybindActionMap.containsKey(keyCodesString)){
+
+            event.consume();
+
+            Action action = keybindActionMap.get(keyCodesString);
+
+            switch(action){
+                case PLAY_PAUSE1, PLAY_PAUSE2 -> mainController.PLAY_PAUSEAction();
+                case MUTE -> mainController.MUTEAction();
+                case VOLUME_UP5 -> mainController.VOLUME_UP5Action();
+                case VOLUME_DOWN5 -> mainController.VOLUME_DOWN5Action();
+                case VOLUME_UP1 -> mainController.VOLUME_UP1Action();
+                case VOLUME_DOWN1 -> mainController.VOLUME_DOWN1Action();
+                case FORWARD5 -> mainController.FORWARD5Action();
+                case REWIND5 -> mainController.REWIND5Action();
+                case FORWARD10 -> mainController.FORWARD10Action();
+                case REWIND10 -> mainController.REWIND10Action();
+                case FRAME_FORWARD -> mainController.FRAME_FORWARDAction();
+                case FRAME_BACKWARD -> mainController.FRAME_BACKWARDAction();
+                case SEEK0 -> mainController.SEEK0Action();
+                case SEEK10 -> mainController.SEEK10Action();
+                case SEEK20 -> mainController.SEEK20Action();
+                case SEEK30 -> mainController.SEEK30Action();
+                case SEEK40 -> mainController.SEEK40Action();
+                case SEEK50 -> mainController.SEEK50Action();
+                case SEEK60 -> mainController.SEEK60Action();
+                case SEEK70 -> mainController.SEEK70Action();
+                case SEEK80 -> mainController.SEEK80Action();
+                case SEEK90 -> mainController.SEEK90Action();
+                case PLAYBACK_SPEED_UP25 -> mainController.PLAYBACK_SPEED_UP25Action();
+                case PLAYBACK_SPEED_DOWN25 -> mainController.PLAYBACK_SPEED_DOWN25Action();
+                case PLAYBACK_SPEED_UP5 -> mainController.PLAYBACK_SPEED_UP5Action();
+                case PLAYBACK_SPEED_DOWN5 -> mainController.PLAYBACK_SPEED_DOWN5Action();
+                case NEXT -> mainController.NEXTAction();
+                case PREVIOUS -> mainController.PREVIOUSAction();
+                case END -> mainController.ENDAction();
+                case MINIPLAYER -> mainController.MINIPLAYERAction();
+                case SUBTITLES -> mainController.SUBTITLESAction();
+                case SHUFFLE -> mainController.SHUFFLEAction();
+                case AUTOPLAY -> mainController.AUTOPLAYAction();
+                case LOOP -> mainController.LOOPAction();
+            }
+        }
+    }
+
+
+
+
     public void handleKeyRelease(KeyEvent event){
 
         if(keybindChangeActive) {
@@ -317,4 +429,31 @@ public class HotkeyController {
         return actionKeybindMap.entrySet().stream()
                 .allMatch(e -> Arrays.equals(e.getValue(), ControlsSection.defaultControls.get(e.getKey())));
     }
+
+
+
+
+    public String getHotkeyString(Action action){
+        if(!actionKeybindMap.containsKey(action)) return "";
+        else {
+            KeyCode[] keyCodes = actionKeybindMap.get(action);
+            if(keyCodes.length == 0) return "";
+
+            StringBuilder hotkeyStringBuilder = new StringBuilder(" (");
+
+            for(KeyCode keyCode : keyCodes){
+                if(symbols.containsKey(keyCode)) hotkeyStringBuilder.append(symbols.get(keyCode));
+                else hotkeyStringBuilder.append(keyCode.getName());
+
+                hotkeyStringBuilder.append(" + ");
+            }
+
+            hotkeyStringBuilder.delete(hotkeyStringBuilder.length() - 3, hotkeyStringBuilder.length());
+
+            hotkeyStringBuilder.append(")");
+
+            return hotkeyStringBuilder.toString();
+        }
+    }
+
 }

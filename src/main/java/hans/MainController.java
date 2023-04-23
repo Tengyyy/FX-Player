@@ -1,6 +1,7 @@
 package hans;
 
 import hans.Dialogs.*;
+import hans.Menu.Settings.Action;
 import hans.Subtitles.SubtitlesController;
 import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
@@ -75,7 +76,8 @@ public class MainController implements Initializable {
 
     public ChapterController chapterController;
 
-    ControlTooltip openMenuTooltip, viewMetadataTooltip;
+    public ControlTooltip openMenuTooltip;
+    ControlTooltip viewMetadataTooltip;
 
     SVGPath menuSVG;
 
@@ -203,10 +205,6 @@ public class MainController implements Initializable {
         videoImageViewInnerWrapper.getChildren().addAll(controlBarController.controlBarBackground, videoTitleBackground, miniplayerActiveText, videoTitleBox);
 
         Platform.runLater(() -> {
-            // needs to be run later so that the rest of the app can load in and this tooltip popup has a parent window to be associated with
-            openMenuTooltip = new ControlTooltip(this,"Open menu (q)", menuButton, 0, TooltipType.MENU_TOOLTIP);
-            viewMetadataTooltip = new ControlTooltip(this,"Media metadata", metadataButton, 0, TooltipType.MENU_TOOLTIP);
-
             videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 double newWidth = Math.max(menuController.MIN_WIDTH, (newValue.doubleValue() + 30)/2);
                 if(!menuController.extended.get() && newWidth < menuController.menu.getMaxWidth()){
@@ -867,7 +865,7 @@ public class MainController implements Initializable {
         App.stage.setFullScreen(false);
 
         if (playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && subtitlesController.subtitlesState == SubtitlesState.CLOSED)
-            controlBarController.fullScreen = new ControlTooltip(this,"Full screen (f)", controlBarController.fullScreenButton, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            controlBarController.fullScreen.updateActionText("Full screen");
     }
 
     public void pressEnter(){
@@ -1834,5 +1832,10 @@ public class MainController implements Initializable {
 
         Platform.exit();
         System.exit(0);
+    }
+
+    public void loadTooltips(){
+        openMenuTooltip = new ControlTooltip(this,"Open menu", hotkeyController.getHotkeyString(Action.MENU), menuButton, 0, TooltipType.MENU_TOOLTIP);
+        viewMetadataTooltip = new ControlTooltip(this,"Media metadata", "", metadataButton, 0, TooltipType.MENU_TOOLTIP);
     }
 }

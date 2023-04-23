@@ -229,7 +229,7 @@ public class TimingPane {
 
         subtitlesController.subtitlesPane.getChildren().add(container);
 
-        Platform.runLater(() -> saveButtonTooltip = new ControlTooltip(subtitlesController.mainController, "Save changes to active subtitle file", saveButton, 1000));
+        Platform.runLater(() -> saveButtonTooltip = new ControlTooltip(subtitlesController.mainController, "Save changes to active subtitle file", "", saveButton, 1000));
 
     }
 

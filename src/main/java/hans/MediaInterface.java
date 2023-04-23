@@ -174,9 +174,10 @@ public class MediaInterface {
                     }
                 }
 
-                mediaActive.set(true);
 
                 Platform.runLater(() -> {
+
+                    mediaActive.set(true);
 
                     mediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
                     controlBarController.durationSlider.setMax((double)mediaPlayer.media().info().duration()/1000);

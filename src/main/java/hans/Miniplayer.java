@@ -63,41 +63,12 @@ public class Miniplayer {
         stage.setY(Screen.getPrimary().getBounds().getMinY());
         stage.setX(Math.max(0, Screen.getPrimary().getBounds().getMaxX() - 700));
 
-        /*stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            switch (event.getCode()) {
-                case RIGHT -> miniplayerController.pressRIGHT(event);
-                case LEFT -> miniplayerController.pressLEFT(event);
-                case UP -> mainController.pressUP(event);
-                case DOWN -> mainController.pressDOWN(event);
-                case J, REWIND -> mainController.pressJ();
-                case L, FAST_FWD -> mainController.pressL(event);
-                case P -> mainController.pressP(event);
-                case N -> mainController.pressN(event);
-                case COMMA -> mainController.pressCOMMA(event);
-                case PERIOD -> mainController.pressPERIOD(event);
-                case M -> mainController.pressM();
-                case I -> mainController.pressI();
-                case SPACE, K, PLAY, PAUSE -> mainController.pressSPACE(event);
-                case DIGIT1 -> mainController.press1();
-                case DIGIT2 -> mainController.press2();
-                case DIGIT3 -> mainController.press3();
-                case DIGIT4 -> mainController.press4();
-                case DIGIT5 -> mainController.press5();
-                case DIGIT6 -> mainController.press6();
-                case DIGIT7 -> mainController.press7();
-                case DIGIT8 -> mainController.press8();
-                case DIGIT9 -> mainController.press9();
-                case DIGIT0, HOME -> mainController.press0();
-                case END -> mainController.pressEND();
-                case TRACK_PREV -> mainController.pressPreviousTrack();
-                case TRACK_NEXT -> mainController.pressNextTrack();
-            }
-        });*/
+        stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+           mainController.hotkeyController.handleMiniplayerKeyPress(event);
+        });
 
         stage.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
-            if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.J || event.getCode() == KeyCode.L || event.getCode() == KeyCode.REWIND || event.getCode() == KeyCode.FAST_FWD || event.getCode() == KeyCode.DIGIT1 || event.getCode() == KeyCode.DIGIT2 || event.getCode() == KeyCode.DIGIT3 || event.getCode() == KeyCode.DIGIT4 || event.getCode() == KeyCode.DIGIT5 || event.getCode() == KeyCode.DIGIT6 || event.getCode() == KeyCode.DIGIT7 || event.getCode() == KeyCode.DIGIT8 || event.getCode() == KeyCode.DIGIT9 || event.getCode() == KeyCode.DIGIT0 || event.getCode() == KeyCode.HOME || event.getCode() == KeyCode.END){
-                mainController.seekingWithKeys = false;
-            }
+            mainController.hotkeyController.handleKeyRelease(event);
         });
 
         stage.setOnCloseRequest(event -> {

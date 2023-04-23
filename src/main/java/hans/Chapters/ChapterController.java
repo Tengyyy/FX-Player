@@ -102,7 +102,7 @@ public class ChapterController {
         });
 
         Platform.runLater(() -> {
-            chapterTooltip = new ControlTooltip(mainController,"View chapter", chapterLabelBox, 0, TooltipType.CONTROLBAR_TOOLTIP);
+            chapterTooltip = new ControlTooltip(mainController,"View chapter", "", chapterLabelBox, 0, TooltipType.CONTROLBAR_TOOLTIP);
         });
 
         chapterLabel.setPrefHeight(30);

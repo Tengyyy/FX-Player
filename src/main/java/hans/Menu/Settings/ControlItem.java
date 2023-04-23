@@ -1,6 +1,7 @@
 package hans.Menu.Settings;
 
 import hans.App;
+import hans.HotkeyController;
 import hans.Subtitles.SubtitlesState;
 import hans.ControlTooltip;
 import hans.Dialogs.HotkeyChangeWindow;
@@ -35,29 +36,6 @@ public class ControlItem extends StackPane {
 
     StackPane keybindPane = new StackPane();
     public HBox keybindBox = new HBox();
-
-    public static final Map<KeyCode, String> symbols = Map.ofEntries(
-            Map.entry(KeyCode.RIGHT, "\u2192"),
-            Map.entry(KeyCode.UP, "\u2191"),
-            Map.entry(KeyCode.LEFT, "\u2190"),
-            Map.entry(KeyCode.DOWN, "\u2193"),
-            Map.entry(KeyCode.COMMA, ","),
-            Map.entry(KeyCode.PERIOD, "."),
-            Map.entry(KeyCode.SLASH, "/"),
-            Map.entry(KeyCode.BACK_SLASH, "\\"),
-            Map.entry(KeyCode.QUOTE, "'"),
-            Map.entry(KeyCode.SEMICOLON, ";"),
-            Map.entry(KeyCode.COLON, ":"),
-            Map.entry(KeyCode.EQUALS, "="),
-            Map.entry(KeyCode.MINUS, "-"),
-            Map.entry(KeyCode.PLUS, "+"),
-            Map.entry(KeyCode.AMPERSAND, "&"),
-            Map.entry(KeyCode.OPEN_BRACKET, "["),
-            Map.entry(KeyCode.CLOSE_BRACKET, "]"),
-            Map.entry(KeyCode.BACK_QUOTE, "`"),
-            Map.entry(KeyCode.LEFT_PARENTHESIS, "("),
-            Map.entry(KeyCode.RIGHT_PARENTHESIS, ")")
-        );
 
     ControlItem(ControlsSection controlsSection, Action action, KeyCode[] keyCodes, boolean isOdd){
 
@@ -117,14 +95,14 @@ public class ControlItem extends StackPane {
 
         loadKeyLabel(keyCodes);
 
-        Platform.runLater(() -> editTooltip = new ControlTooltip(controlsSection.settingsPage.menuController.mainController,"Edit hotkey", editButton, 1000));
+        Platform.runLater(() -> editTooltip = new ControlTooltip(controlsSection.settingsPage.menuController.mainController,"Edit hotkey", "", editButton, 1000));
     }
 
     public void loadKeyLabel(KeyCode[] keyCodes){
 
         for (KeyCode keyCode : keyCodes) {
             Label keyLabel;
-            keyLabel = new Label(symbols.getOrDefault(keyCode, keyCode.getName()));
+            keyLabel = new Label(HotkeyController.symbols.getOrDefault(keyCode, keyCode.getName()));
             keyLabel.getStyleClass().add("keycap");
             if(keyCode.equals(KeyCode.SHIFT)) keyLabel.setMinWidth(50);
 

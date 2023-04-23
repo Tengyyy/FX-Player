@@ -1,6 +1,7 @@
 package hans.Menu.Queue;
 
 import hans.App;
+import hans.Menu.Settings.Action;
 import hans.Subtitles.SubtitlesState;
 import hans.ControlTooltip;
 import hans.MediaItems.MediaUtilities;
@@ -108,7 +109,7 @@ public class QueuePage {
     boolean extended = false;
 
 
-    StackPane scrollUpButtonContainer = new StackPane();
+    public StackPane scrollUpButtonContainer = new StackPane();
     Button scrollUpButton = new Button();
     Region scrollUpIcon = new Region();
     SVGPath arrowDownSVG = new SVGPath();
@@ -473,9 +474,9 @@ public class QueuePage {
 
         Platform.runLater(() -> {
             addOptionsContextMenu = new AddOptionsContextMenu(this);
-            shuffleTooltip = new ControlTooltip(menuController.mainController,"Shuffle is off", shuffleToggle, 1000);
-            addTooltip = new ControlTooltip(menuController.mainController,"Browse for files to add to the play queue", addButton, 1000);
-            addOptionsTooltip = new ControlTooltip(menuController.mainController,"More options for adding media to the play queue", addOptionsButton, 1000);
+            shuffleTooltip = new ControlTooltip(menuController.mainController,"Shuffle is off", menuController.mainController.hotkeyController.getHotkeyString(Action.SHUFFLE), shuffleToggle, 1000);
+            addTooltip = new ControlTooltip(menuController.mainController,"Browse for files to add to the play queue", "", addButton, 1000);
+            addOptionsTooltip = new ControlTooltip(menuController.mainController,"More options for adding media to the play queue", "", addOptionsButton, 1000);
         });
     }
 
@@ -605,6 +606,13 @@ public class QueuePage {
 
         double heightViewPort = queueScroll.getViewportBounds().getHeight();
         double heightScrollPane = queueScroll.getContent().getBoundsInLocal().getHeight();
+
+        if(Math.abs(heightViewPort - heightScrollPane) <= QueueItem.height){
+            scrollDownButtonContainer.setVisible(false);
+            scrollUpButtonContainer.setVisible(false);
+            return;
+        }
+
         double minY = queueBox.activeItem.get().getBoundsInParent().getMinY();
         double maxY = queueBox.activeItem.get().getBoundsInParent().getMaxY();
 
@@ -630,7 +638,7 @@ public class QueuePage {
 
         double heightViewPort = queueScroll.getViewportBounds().getHeight();
         double heightScrollPane = queueScroll.getContent().getBoundsInLocal().getHeight();
-        double y = queueBox.activeItem.get().getBoundsInParent().getMaxY();
+        double y = queueBox.activeItem.get().getBoundsInParent().getMinY() + QueueItem.height/2.0;
 
         double target;
 

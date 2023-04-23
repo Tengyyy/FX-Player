@@ -96,8 +96,8 @@ public class LibraryItem extends StackPane {
         });
 
         Platform.runLater(() -> {
-            refreshTooltip = new ControlTooltip(librariesSection.settingsPage.menuController.mainController,"Refresh folder", refreshButton, 1000);
-            removeTooltip = new ControlTooltip(librariesSection.settingsPage.menuController.mainController,"Remove folder", removeButton, 1000);
+            refreshTooltip = new ControlTooltip(librariesSection.settingsPage.menuController.mainController,"Refresh folder", "", refreshButton, 1000);
+            removeTooltip = new ControlTooltip(librariesSection.settingsPage.menuController.mainController,"Remove folder", "", removeButton, 1000);
         });
     }
 }

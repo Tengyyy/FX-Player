@@ -3,12 +3,14 @@ package hans;
 import hans.Menu.Queue.QueueItem;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -16,6 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
+
+import java.util.Objects;
 
 public class VideoTooltip extends Tooltip {
 
@@ -48,8 +52,10 @@ public class VideoTooltip extends Tooltip {
 
     Label graphicLabel = new Label();
 
+    String hotkeyText;
 
-    public VideoTooltip(MainController mainController, Region tooltipParent, boolean isPrevious){
+
+    public VideoTooltip(MainController mainController, Region tooltipParent, boolean isPrevious, String hotkeyText){
 
         this.mainController = mainController;
         this.tooltipParent = tooltipParent;
@@ -57,6 +63,8 @@ public class VideoTooltip extends Tooltip {
 
         this.getStyleClass().add("tooltip");
         this.setStyle("-fx-padding: 0;");
+
+        this.hotkeyText = hotkeyText;
 
         graphicLabel.getStyleClass().add("graphicLabel");
 
@@ -103,8 +111,8 @@ public class VideoTooltip extends Tooltip {
 
         mainTextLabel.setId("tooltipMainText");
         mainTextLabel.setPadding(new Insets(2, 0,0,0));
-        if(isPrevious) mainTextLabel.setText("PREVIOUS (SHIFT+P)");
-        else mainTextLabel.setText("NEXT (SHIFT+N)");
+        if(isPrevious) mainTextLabel.setText("PREVIOUS" + hotkeyText);
+        else mainTextLabel.setText("NEXT" + hotkeyText);
 
         titleLabel.setWrapText(true);
         titleLabel.setId("tooltipTitle");
@@ -193,6 +201,15 @@ public class VideoTooltip extends Tooltip {
         }
 
         this.setGraphic(graphicBackground);
+    }
+
+
+    public void updateHotkeyText(String newString){
+        if(Objects.equals(hotkeyText, newString)) return;
+
+        hotkeyText = newString;
+        if(isPrevious) mainTextLabel.setText("PREVIOUS" + hotkeyText);
+        else mainTextLabel.setText("NEXT" + hotkeyText);
     }
 }
 

@@ -223,9 +223,9 @@ public class CustomTextAreaItem extends VBox{
         otherEditItem.content.getChildren().add(otherEditItem.content.getChildren().indexOf(otherEditItem.addButton), this);
 
         Platform.runLater(() -> {
-            editButtonTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Edit key", editButton, 1000);
-            removeButtonTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Remove key", removeButton, 1000);
-            warningLabelTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Key can not be empty", warningLabel, 0, TooltipType.MENU_TOOLTIP);
+            editButtonTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Edit key", "", editButton, 1000);
+            removeButtonTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Remove key", "", removeButton, 1000);
+            warningLabelTooltip = new ControlTooltip(otherEditItem.metadataEditPage.menuController.mainController, "Key can not be empty", "", warningLabel, 0, TooltipType.MENU_TOOLTIP);
             warningLabelTooltip.getStyleClass().add("warningLabelTooltip");
             boolean changesMade = otherEditItem.metadataEditPage.mediaItem.changesMade.get();
             keyField.setText(key);

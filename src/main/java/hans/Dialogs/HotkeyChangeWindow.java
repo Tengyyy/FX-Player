@@ -290,7 +290,7 @@ public class HotkeyChangeWindow {
 
         for (KeyCode keyCode : hotkey) {
             Label keyLabel;
-            keyLabel = new Label(ControlItem.symbols.getOrDefault(keyCode, keyCode.getName()));
+            keyLabel = new Label(HotkeyController.symbols.getOrDefault(keyCode, keyCode.getName()));
             keyLabel.getStyleClass().add("keycap");
 
             StackPane keycapContainer = new StackPane();
@@ -321,6 +321,8 @@ public class HotkeyChangeWindow {
 
         controlItem.controlsSection.resetButton.setDisable(false);
 
+        updateTooltip(action);
+
         hide();
     }
 
@@ -339,9 +341,14 @@ public class HotkeyChangeWindow {
             Action duplicateAction = mainController.hotkeyController.keybindActionMap.get(newHotkeyString);
             mainController.hotkeyController.actionKeybindMap.put(duplicateAction, new KeyCode[0]);
 
+            updateTooltip(duplicateAction);
+
             for(Node node : mainController.getMenuController().settingsPage.controlsSection.controlsBox.getChildren()){
                 ControlItem duplicateItem = (ControlItem) node;
-                if(duplicateItem.action == duplicateAction) duplicateItem.keybindBox.getChildren().clear();
+                if(duplicateItem.action == duplicateAction){
+                    duplicateItem.keybindBox.getChildren().clear();
+                    break;
+                }
             }
         }
 
@@ -353,6 +360,38 @@ public class HotkeyChangeWindow {
 
         controlItem.controlsSection.resetButton.setDisable(mainController.hotkeyController.isDefault());
 
+        updateTooltip(action);
+
         hide();
+    }
+
+
+    private void updateTooltip(Action action){
+        switch (action){
+            case PLAY_PAUSE2 -> {
+                mainController.getControlBarController().play.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+                if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.playButtonTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            }
+            case MUTE -> mainController.getControlBarController().mute.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case NEXT -> {
+                mainController.getControlBarController().nextVideoTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+                if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.nextVideoButtonTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            }
+            case PREVIOUS -> {
+                mainController.getControlBarController().previousVideoTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+                if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.previousVideoButtonTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+
+            }
+            case FULLSCREEN -> mainController.getControlBarController().fullScreen.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case MINIPLAYER -> mainController.getControlBarController().miniplayer.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case SUBTITLES -> mainController.getControlBarController().subtitles.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case PLAYBACK_SETTINGS -> mainController.getControlBarController().settings.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case MENU -> mainController.openMenuTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case OPEN_QUEUE -> mainController.getMenuController().menuBar.queueButton.controlTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case OPEN_RECENT_MEDIA -> mainController.getMenuController().menuBar.historyButton.controlTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case OPEN_MUSIC_LIBRARY -> mainController.getMenuController().menuBar.musicLibraryButton.controlTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case OPEN_PLAYLISTS -> mainController.getMenuController().menuBar.playlistsButton.controlTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+            case OPEN_SETTINGS -> mainController.getMenuController().menuBar.settingsButton.controlTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(action));
+        }
     }
 }

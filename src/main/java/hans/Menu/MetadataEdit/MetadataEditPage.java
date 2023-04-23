@@ -199,7 +199,7 @@ public class MetadataEditPage {
         editImageButton.setOnAction(e -> editImageButtonClick());
 
         Platform.runLater(() -> {
-            editImageTooltip = new ControlTooltip(menuController.mainController, "Edit cover", editImageButton, 1000);
+            editImageTooltip = new ControlTooltip(menuController.mainController, "Edit cover", "", editImageButton, 1000);
             editImagePopUp = new EditImagePopUp(this);
         });
 
@@ -364,7 +364,7 @@ public class MetadataEditPage {
         });
         editImageIcon.setShape(editIconSVG);
         editImageTooltip.updateDelay(Duration.seconds(1));
-        editImageTooltip.updateText("Edit cover");
+        editImageTooltip.updateActionText("Edit cover");
     }
 
     private void disableImageEdit(){
@@ -375,7 +375,7 @@ public class MetadataEditPage {
         });
         editImageIcon.setShape(editIconOffSVG);
         editImageTooltip.updateDelay(Duration.ZERO);
-        editImageTooltip.updateText("Cover editing unavailable for this media format");
+        editImageTooltip.updateActionText("Cover editing unavailable for this media format");
     }
 
     private void editImageButtonClick(){
@@ -482,8 +482,8 @@ public class MetadataEditPage {
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");
 
-        mediaItem.metadataEditProgress.removeListener(progressListener);
-        mediaItem.metadataEditActive.removeListener(metadataEditActiveListener);
+        if(mediaItem != null) mediaItem.metadataEditProgress.removeListener(progressListener);
+        if(mediaItem != null) mediaItem.metadataEditActive.removeListener(metadataEditActiveListener);
         if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
         if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
         progressBar.setProgress(0);

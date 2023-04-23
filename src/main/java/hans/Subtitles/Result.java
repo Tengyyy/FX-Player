@@ -164,7 +164,7 @@ public class Result extends HBox {
 
         downloadButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, downloadButton, 1, 0, false, 1, true));
 
-        Platform.runLater(() -> downloadTooltip = new ControlTooltip(subtitlesController.mainController, "Download subtitle file", downloadButton, 1000));
+        Platform.runLater(() -> downloadTooltip = new ControlTooltip(subtitlesController.mainController, "Download subtitle file", "", downloadButton, 1000));
 
     }
 

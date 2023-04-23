@@ -1,6 +1,7 @@
 package hans.Menu;
 
 import hans.App;
+import hans.Menu.Settings.Action;
 import hans.Subtitles.SubtitlesState;
 import hans.SVG;
 import hans.PlaybackSettings.PlaybackSettingsState;
@@ -30,11 +31,11 @@ public class MenuBar {
         this.menuController = menuController;
         this.sideBar = sideBar;
 
-        queueButton = new MenuBarButton(menuController, App.svgMap.get(SVG.QUEUE), 19, 14, "Play queue", "Play queue");
-        historyButton = new MenuBarButton(menuController, App.svgMap.get(SVG.HISTORY), 19, 16, "Recent media", "Recent media");
-        musicLibraryButton = new MenuBarButton(menuController, App.svgMap.get(SVG.MUSIC), 19, 18, "Music library", "Music library");
-        playlistsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.PLAYLIST), 19, 21, "Playlists", "Playlists");
-        settingsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.SETTINGS), 19, 19, "Settings", "Settings");
+        queueButton = new MenuBarButton(menuController, App.svgMap.get(SVG.QUEUE), 19, 14, "Play queue");
+        historyButton = new MenuBarButton(menuController, App.svgMap.get(SVG.HISTORY), 19, 16, "Recent media");
+        musicLibraryButton = new MenuBarButton(menuController, App.svgMap.get(SVG.MUSIC), 19, 18, "Music library");
+        playlistsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.PLAYLIST), 19, 21, "Playlists");
+        settingsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.SETTINGS), 19, 19, "Settings");
 
 
         queueButton.button.setOnAction(e -> {
@@ -134,5 +135,13 @@ public class MenuBar {
         if(activeButton != null) activeButton.setInactive();
         activeButton = button;
         if(button != null) button.setActive();
+    }
+
+    public void loadTooltips(){
+        queueButton.loadTooltip("Play queue", menuController.mainController.hotkeyController.getHotkeyString(Action.OPEN_QUEUE));
+        historyButton.loadTooltip("Recent media", menuController.mainController.hotkeyController.getHotkeyString(Action.OPEN_RECENT_MEDIA));
+        musicLibraryButton.loadTooltip("Music library", menuController.mainController.hotkeyController.getHotkeyString(Action.OPEN_MUSIC_LIBRARY));
+        playlistsButton.loadTooltip("Playlists", menuController.mainController.hotkeyController.getHotkeyString(Action.OPEN_PLAYLISTS));
+        settingsButton.loadTooltip("Settings", menuController.mainController.hotkeyController.getHotkeyString(Action.OPEN_SETTINGS));
     }
 }

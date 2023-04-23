@@ -29,20 +29,18 @@ public class MenuBarButton extends StackPane {
     Region region = new Region();
 
     String text;
-    String tooltipText;
 
     boolean isActive = false;
 
     ScaleTransition scaleTransition = null;
 
-    ControlTooltip controlTooltip;
+    public ControlTooltip controlTooltip;
 
-    MenuBarButton(MenuController menuController, String svg, int iconWidth, int iconHeight, String text, String tooltipText){
+    MenuBarButton(MenuController menuController, String svg, int iconWidth, int iconHeight, String text){
 
         this.menuController = menuController;
 
         this.text = text;
-        this.tooltipText = tooltipText;
 
         this.setPrefSize(50, 40);
         this.setMaxSize(50, 40);
@@ -72,10 +70,6 @@ public class MenuBarButton extends StackPane {
         line.setStartY(20);
         line.setEndY(30);
         line.setScaleY(0);
-
-        Platform.runLater(() -> {
-            controlTooltip = new ControlTooltip(menuController.mainController, tooltipText, this.button, 1000, TooltipType.MENUBAR_TOOLTIP);
-        });
     }
 
 
@@ -117,7 +111,8 @@ public class MenuBarButton extends StackPane {
         button.setPrefWidth(290);
         button.setMaxWidth(290);
         button.setText(text);
-        button.setOnMouseEntered(null);
+
+        controlTooltip.disableTooltip();
     }
 
     public void shrink(){
@@ -127,6 +122,11 @@ public class MenuBarButton extends StackPane {
         button.setPrefWidth(40);
         button.setMaxWidth(40);
         button.setText("");
-        button.setOnMouseEntered(e -> controlTooltip.countdown.playFromStart());
+
+        controlTooltip.enableTooltip();
+    }
+
+    public void loadTooltip(String actionText, String hotkeyText){
+        controlTooltip = new ControlTooltip(menuController.mainController, actionText, hotkeyText, this.button, 1000, TooltipType.MENUBAR_TOOLTIP);
     }
 }

@@ -1,6 +1,7 @@
 package hans;
 
 import hans.Menu.MenuController;
+import hans.Menu.Settings.Action;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
@@ -76,7 +77,9 @@ public class MiniplayerController {
 
     boolean sliderHover = false;
 
-    ControlTooltip previousVideoButtonTooltip, playButtonTooltip, nextVideoButtonTooltip;
+    public ControlTooltip previousVideoButtonTooltip;
+    public ControlTooltip playButtonTooltip;
+    public ControlTooltip nextVideoButtonTooltip;
 
     ChangeListener<? super Number> widthListener;
     ChangeListener<? super Number> heightListener;
@@ -521,13 +524,9 @@ public class MiniplayerController {
 
         previousVideoButtonPane.translateXProperty().bind(videoImageViewWrapper.widthProperty().multiply(-0.25));
 
-        previousVideoButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-            previousVideoButtonHoverOn();
-        });
+        previousVideoButton.setOnMouseEntered( e -> previousVideoButtonHoverOn());
 
-        previousVideoButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-            previousVideoButtonHoverOff();
-        });
+        previousVideoButton.setOnMouseExited( e -> previousVideoButtonHoverOff());
 
         previousVideoButton.setPrefSize(60, 60);
         previousVideoButton.setBackground(Background.EMPTY);
@@ -547,20 +546,17 @@ public class MiniplayerController {
         previousVideoIcon.setShape(previousVideoSVG);
         previousVideoIcon.setEffect(new DropShadow());
 
-        if(menuController.queuePage.queueBox.queue.isEmpty() || menuController.queuePage.queueBox.activeItem.get() == null || menuController.queuePage.queueBox.activeIndex.get() == 0) disablePreviousVideoButton();
-        else enablePreviousVideoButton();
-
 
         playButtonPane.getChildren().addAll(playButton, playIcon);
         playButtonPane.setPrefSize(60, 60);
         playButtonPane.setMaxSize(60, 60);
         playButtonPane.setVisible(false);
 
-        playButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+        playButton.setOnMouseEntered( e -> {
             playButtonHoverOn();
         });
 
-        playButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+        playButton.setOnMouseExited( e -> {
             playButtonHoverOff();
         });
 
@@ -594,13 +590,6 @@ public class MiniplayerController {
         else if(mediaInterface.playing.get()) playIcon.setShape(pauseSVG);
         else playIcon.setShape(playSVG);
 
-        if(mediaInterface.mediaActive.get()){
-            enablePlayButton();
-        }
-        else {
-            disablePlayButton();
-        }
-
 
         nextVideoButtonPane.getChildren().addAll(nextVideoButton, nextVideoIcon);
         nextVideoButtonPane.setPrefSize(60, 60);
@@ -608,13 +597,9 @@ public class MiniplayerController {
         nextVideoButtonPane.translateXProperty().bind(videoImageViewWrapper.widthProperty().multiply(0.25));
         nextVideoButtonPane.setVisible(false);
 
-        nextVideoButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-            nextVideoButtonHoverOn();
-        });
+        nextVideoButton.setOnMouseEntered( e -> nextVideoButtonHoverOn());
 
-        nextVideoButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-            nextVideoButtonHoverOff();
-        });
+        nextVideoButton.setOnMouseExited( e -> nextVideoButtonHoverOff());
 
         nextVideoButton.setPrefSize(60, 60);
         nextVideoButton.setBackground(Background.EMPTY);
@@ -631,16 +616,32 @@ public class MiniplayerController {
         nextVideoIcon.setShape(nextVideoSVG);
         nextVideoIcon.setEffect(new DropShadow());
 
+        Platform.runLater(this::loadTooltips);
+
+    }
+
+    private void loadTooltips(){
+
+        previousVideoButtonTooltip = new ControlTooltip(mainController,"Previous video", mainController.hotkeyController.getHotkeyString(Action.PREVIOUS), previousVideoButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
+        playButtonTooltip = new ControlTooltip(mainController, "Play", mainController.hotkeyController.getHotkeyString(Action.PLAY_PAUSE2), playButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
+        nextVideoButtonTooltip = new ControlTooltip(mainController, "Next video", mainController.hotkeyController.getHotkeyString(Action.NEXT), nextVideoButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
+
+
+        if(menuController.queuePage.queueBox.queue.isEmpty() || menuController.queuePage.queueBox.activeItem.get() == null || (menuController.queuePage.queueBox.activeIndex.get() == 0 && controlBarController.durationSlider.getValue() <= 5)) disablePreviousVideoButton();
+        else enablePreviousVideoButton();
+
+
+        if(mediaInterface.mediaActive.get()) enablePlayButton();
+        else disablePlayButton();
+
         if(menuController.queuePage.queueBox.queue.isEmpty() || (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeIndex.get() >= menuController.queuePage.queueBox.queue.size() - 1)) disableNextVideoButton();
         else enableNextVideoButton();
-
     }
 
     public void initActions(){
         miniplayer.scene.setMoveControl(videoImageViewWrapper);
         miniplayer.scene.removeDefaultCSS();
         miniplayer.scene.setSnapEnabled(false);
-
     }
 
     public void moveIndicators(){
@@ -863,7 +864,7 @@ public class MiniplayerController {
             playIcon.setMaxSize(40, 40);
         }
 
-        if(playButtonTooltip != null) playButtonTooltip.updateText("Pause (k)");
+        if(playButtonTooltip != null) playButtonTooltip.updateActionText("Pause");
     }
 
 
@@ -879,7 +880,7 @@ public class MiniplayerController {
             playIcon.setMaxSize(40, 40);
         }
 
-        if(playButtonTooltip != null) playButtonTooltip.updateText("Play (k)");
+        if(playButtonTooltip != null) playButtonTooltip.updateActionText("Play");
     }
 
     public void end(){
@@ -894,7 +895,7 @@ public class MiniplayerController {
             playIcon.setMaxSize(48, 48);
         }
 
-        if(playButtonTooltip != null) playButtonTooltip.updateText("Replay (k)");
+        if(playButtonTooltip != null) playButtonTooltip.updateActionText("Replay");
     }
 
 
@@ -907,12 +908,17 @@ public class MiniplayerController {
             previousVideoIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
 
-        Platform.runLater(() -> {
-            if(controlBarController.durationSlider.getValue() > 5) previousVideoButtonTooltip = new ControlTooltip(mainController,"Replay", previousVideoButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
-            else previousVideoButtonTooltip = new ControlTooltip(mainController,"Previous video (SHIFT + P", previousVideoButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
+        if(controlBarController.durationSlider.getValue() > 5) {
+            previousVideoButtonTooltip.updateActionText("Replay");
+            previousVideoButtonTooltip.updateHotkeyText("");
+        }
+        else {
+            previousVideoButtonTooltip.updateActionText("Previous video");
+            previousVideoButtonTooltip.updateHotkeyText(mainController.hotkeyController.getHotkeyString(Action.PREVIOUS));
+        }
 
-            if(previousVideoButtonHover) previousVideoButtonTooltip.showTooltip();
-        });
+        previousVideoButtonTooltip.enableTooltip();
+        if(previousVideoButtonHover) previousVideoButtonTooltip.mouseHover.set(true);
 
 
     }
@@ -926,8 +932,7 @@ public class MiniplayerController {
             previousVideoIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
         }
 
-        previousVideoButton.setOnMouseEntered(null);
-        if(previousVideoButtonHover && previousVideoButtonTooltip != null) previousVideoButtonTooltip.hide();
+        previousVideoButtonTooltip.disableTooltip();
     }
 
     public void enablePlayButton(){
@@ -939,13 +944,13 @@ public class MiniplayerController {
             playIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
 
-        Platform.runLater(() -> {
-            if(mediaInterface.atEnd) playButtonTooltip = new ControlTooltip(mainController,"Replay (k)", playButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
-            else if(mediaInterface.playing.get()) playButtonTooltip = new ControlTooltip(mainController,"Pause (k)", playButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
-            else playButtonTooltip = new ControlTooltip(mainController,"Play (k)", playButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
 
-            if(playButtonHover) playButtonTooltip.showTooltip();
-        });
+        if(mediaInterface.atEnd) playButtonTooltip.updateActionText("Replay");
+        else if(mediaInterface.playing.get()) playButtonTooltip.updateActionText("Pause");
+        else playButtonTooltip.updateActionText("Play");
+
+        playButtonTooltip.enableTooltip();
+        if(playButtonHover) playButtonTooltip.mouseHover.set(true);
     }
 
     public void disablePlayButton(){
@@ -957,8 +962,7 @@ public class MiniplayerController {
             playIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
         }
 
-        playButton.setOnMouseEntered(null);
-        if(playButtonHover && playButtonTooltip != null) playButtonTooltip.hide();
+        playButtonTooltip.disableTooltip();
     }
 
     public void enableNextVideoButton(){
@@ -970,11 +974,8 @@ public class MiniplayerController {
             nextVideoIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
         }
 
-        Platform.runLater(() -> {
-            nextVideoButtonTooltip = new ControlTooltip(mainController,"Next video (SHIFT + N)", nextVideoButton, 0, TooltipType.MINIPLAYER_TOOLTIP);
-
-            if(nextVideoButtonHover) nextVideoButtonTooltip.showTooltip();
-        });
+        nextVideoButtonTooltip.enableTooltip();
+        if(nextVideoButtonHover) nextVideoButtonTooltip.mouseHover.set(true);
     }
 
     public void disableNextVideoButton(){
@@ -986,84 +987,7 @@ public class MiniplayerController {
             nextVideoIcon.setStyle("-fx-background-color: rgb(100, 100, 100);");
         }
 
-        nextVideoButton.setOnMouseEntered(null);
-        if(nextVideoButtonHover && nextVideoButtonTooltip != null) nextVideoButtonTooltip.hide();
-    }
-
-    public void pressLEFT(KeyEvent e){
-        controlBarController.mouseEventTracker.move();
-
-        if (mediaInterface.mediaActive.get()) {
-
-            if(mainController.forwardsIndicator.wrapper.isVisible()){
-                mainController.forwardsIndicator.setVisible(false);
-            }
-            mainController.backwardsIndicator.setText("5 seconds");
-            mainController.backwardsIndicator.reset();
-            mainController.backwardsIndicator.setVisible(true);
-            mainController.backwardsIndicator.animate();
-
-            mediaInterface.seekedToEnd = false;
-
-            mainController.seekingWithKeys = true;
-            sliderPane.setVisible(true);
-            if(mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
-                mainController.subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
-            }
-            progressBarTimer.playFromStart();
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
-
-            if(!controlBarController.durationSlider.isValueChanging() && !slider.isValueChanging()){
-                mainController.seekImageView.setImage(null);
-                mainController.seekImageView.setVisible(false);
-
-                videoImageView.setVisible(true);
-                seekImageView.setVisible(false);
-                seekImageView.setImage(null);
-            }
-
-            e.consume();
-
-        }
-    }
-
-    public void pressRIGHT(KeyEvent e){
-        controlBarController.mouseEventTracker.move();
-
-        if (mediaInterface.mediaActive.get()) {
-
-            if(mainController.backwardsIndicator.wrapper.isVisible()){
-                mainController.backwardsIndicator.setVisible(false);
-            }
-            mainController.forwardsIndicator.setText("5 seconds");
-            mainController.forwardsIndicator.reset();
-            mainController.forwardsIndicator.setVisible(true);
-            mainController.forwardsIndicator.animate();
-
-            if(mediaInterface.getCurrentTime().toSeconds() + 5 >= controlBarController.durationSlider.getMax()) {
-                mediaInterface.seekedToEnd = true;
-            }
-
-            mainController.seekingWithKeys = true;
-            sliderPane.setVisible(true);
-            if(mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || mainController.subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT){
-                mainController.subtitlesController.subtitlesBox.subtitlesContainer.setTranslateY(-30);
-            }
-            progressBarTimer.playFromStart();
-            controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() + 5);
-
-            if(!controlBarController.durationSlider.isValueChanging() && !slider.isValueChanging()){
-                mainController.seekImageView.setImage(null);
-                mainController.seekImageView.setVisible(false);
-
-                videoImageView.setVisible(true);
-                seekImageView.setVisible(false);
-                seekImageView.setImage(null);
-            }
-
-            e.consume();
-
-        }
+        nextVideoButtonTooltip.disableTooltip();
     }
 
     public void sliderHoverOn() {

@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -24,8 +25,13 @@ public class TechnicalDetailsPage {
 
     MenuController menuController;
 
-    StackPane closeButtonBar = new StackPane();
-    StackPane closeButtonPane = new StackPane();
+
+    VBox technicalDetailsWrapper = new VBox();
+
+    StackPane titlePane = new StackPane();
+    Label title = new Label("Technical details");
+
+    ScrollPane technicalDetailsScroll = new ScrollPane();
 
     StackPane imageViewWrapper = new StackPane();
     public StackPane imageViewContainer = new StackPane();
@@ -39,12 +45,24 @@ public class TechnicalDetailsPage {
 
         this.menuController = menuController;
 
-        closeButtonPane.setPrefSize(50, 50);
-        closeButtonPane.setMaxSize(50, 50);
-        StackPane.setAlignment(closeButtonPane, Pos.CENTER_RIGHT);
+        titlePane.setPadding(new Insets(55, 50, 20, 50));
+        titlePane.getChildren().add(title);
 
-        closeButtonBar.setPrefHeight(60);
-        closeButtonBar.setMinHeight(60);
+        StackPane.setAlignment(title, Pos.CENTER_LEFT);
+        title.getStyleClass().add("menuTitle");
+
+        technicalDetailsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        technicalDetailsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        technicalDetailsScroll.getStyleClass().add("menuScroll");
+        technicalDetailsScroll.setFitToWidth(true);
+        technicalDetailsScroll.setFitToHeight(true);
+        technicalDetailsScroll.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        technicalDetailsScroll.setBackground(Background.EMPTY);
+
+        content.setBackground(Background.EMPTY);
+        content.setPadding(new Insets(0, 50,20, 50));
+
+        technicalDetailsScroll.setContent(content);
 
         imageViewWrapper.getChildren().add(imageViewContainer);
         imageViewWrapper.setPadding(new Insets(20, 0, 50, 0));
@@ -59,14 +77,15 @@ public class TechnicalDetailsPage {
         imageView.fitHeightProperty().bind(Bindings.min(225, imageView.fitWidthProperty().multiply(9).divide(16)));
 
         content.setAlignment(Pos.TOP_CENTER);
-        content.getChildren().addAll(closeButtonBar, imageViewWrapper, textBox);
+        content.getChildren().addAll(imageViewWrapper, textBox);
         content.setBackground(Background.EMPTY);
-        content.setPadding(new Insets(0, 0, 20, 0));
-        menuController.technicalDetailsScroll.setContent(content);
 
         textBox.setAlignment(Pos.TOP_LEFT);
         textBox.setPadding(new Insets(0, 15, 0, 15));
         textBox.setSpacing(10);
+
+        technicalDetailsWrapper.getChildren().addAll(titlePane, technicalDetailsScroll);
+        menuController.technicalDetailsContainer.getChildren().add(technicalDetailsWrapper);
     }
 
     public void loadTechnicalDetailsPage(QueueItem queueItem){
@@ -186,11 +205,11 @@ public class TechnicalDetailsPage {
     }
 
     public void openTechnicalDetailsPage(){
-        menuController.technicalDetailsScroll.setVisible(true);
+        menuController.technicalDetailsContainer.setVisible(true);
     }
 
     public void closeTechnicalDetailsPage(){
-        menuController.technicalDetailsScroll.setVisible(false);
+        menuController.technicalDetailsContainer.setVisible(false);
 
         textBox.getChildren().clear();
         imageView.setImage(null);

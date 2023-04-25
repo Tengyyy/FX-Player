@@ -238,16 +238,22 @@ public class CustomTextAreaItem extends VBox{
 
     public void addEmptyKeyWarningLabel(){
         if(!labelBox.getChildren().contains(warningLabel)) labelBox.getChildren().add(0, warningLabel);
-        warningLabelTooltip.setText("Key can not be empty");
+        Platform.runLater(() -> {
+            warningLabelTooltip.setText("Key can not be empty");
+        });
     }
 
     public void addDuplicateKeyWarningLabels(ArrayList<CustomTextAreaItem> list){
         if(!labelBox.getChildren().contains(warningLabel)) labelBox.getChildren().add(0, warningLabel);
-        warningLabelTooltip.setText("Duplicate key");
+        Platform.runLater(() -> {
+            warningLabelTooltip.setText("Duplicate key");
+        });
 
         for(CustomTextAreaItem item : list){
             if(!item.labelBox.getChildren().contains(item.warningLabel))  item.labelBox.getChildren().add(0, item.warningLabel);
-            item.warningLabelTooltip.setText("Duplicate key");
+            Platform.runLater(() -> {
+                item.warningLabelTooltip.setText("Duplicate key");
+            });
         }
     }
 

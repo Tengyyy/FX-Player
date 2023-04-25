@@ -59,7 +59,7 @@ public class OtherEditItem implements MetadataEditItem{
             CustomTextAreaItem item = new CustomTextAreaItem(this, "", "");
             items.add(item);
             item.keyField.requestFocus();
-            metadataEditPage.menuController.metadataEditScroll.setVvalue(1.0);
+            metadataEditPage.metadataEditScroll.setVvalue(1.0);
             metadataEditPage.mediaItem.changesMade.set(true);
         });
         addButton.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);

@@ -1,13 +1,13 @@
 package hans.Menu.MetadataEdit;
 
-import com.jfoenix.controls.JFXButton;
 import hans.*;
-import hans.Subtitles.SubtitlesState;
 import hans.MediaItems.MediaItem;
 import hans.MediaItems.MediaUtilities;
-import hans.Menu.*;
+import hans.Menu.MenuController;
+import hans.Menu.MenuState;
 import hans.Menu.Queue.QueueItem;
 import hans.PlaybackSettings.PlaybackSettingsState;
+import hans.Subtitles.SubtitlesState;
 import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -22,6 +22,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -39,14 +40,17 @@ public class MetadataEditPage {
 
     MenuController menuController;
 
+    VBox metadataEditWrapper = new VBox();
+    ScrollPane metadataEditScroll = new ScrollPane();
+
+    StackPane titlePane = new StackPane();
+    Label title = new Label("Media information");
+
     FileChooser fileChooser;
 
     SVGPath editIconSVG = new SVGPath();
     SVGPath editIconOffSVG = new SVGPath();
     SVGPath saveIconSVG = new SVGPath();
-
-    StackPane closeButtonBar = new StackPane();
-    StackPane closeButtonPane = new StackPane();
 
     GridPane footerPane = new GridPane();
 
@@ -136,14 +140,26 @@ public class MetadataEditPage {
         editIconOffSVG.setContent(App.svgMap.get(SVG.EDIT_OFF));
         saveIconSVG.setContent(App.svgMap.get(SVG.SAVE));
 
+        titlePane.getChildren().addAll(title);
+        titlePane.setPadding(new Insets(55, 50, 20, 50));
 
-        closeButtonPane.setPrefSize(50, 50);
-        closeButtonPane.setMaxSize(50, 50);
-        StackPane.setAlignment(closeButtonPane, Pos.CENTER_RIGHT);
+        StackPane.setAlignment(title, Pos.CENTER_LEFT);
+        title.getStyleClass().add("menuTitle");
 
-        closeButtonBar.setPrefHeight(60);
-        closeButtonBar.setMinHeight(60);
-        closeButtonBar.getChildren().addAll(closeButtonPane);
+
+        metadataEditScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        metadataEditScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        metadataEditScroll.getStyleClass().add("menuScroll");
+        metadataEditScroll.setFitToWidth(true);
+        metadataEditScroll.setFitToHeight(true);
+        metadataEditScroll.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        metadataEditScroll.setBackground(Background.EMPTY);
+
+        content.setAlignment(Pos.TOP_CENTER);
+        content.getChildren().addAll(imageViewWrapper, textBox, footerPane);
+        content.setBackground(Background.EMPTY);
+        content.setPadding(new Insets(0, 50, 20, 50));
+        metadataEditScroll.setContent(content);
 
         imageViewWrapper.getChildren().add(imageViewContainer);
         imageViewWrapper.setPadding(new Insets(20, 0, 50, 0));
@@ -202,11 +218,6 @@ public class MetadataEditPage {
             editImageTooltip = new ControlTooltip(menuController.mainController, "Edit cover", "", editImageButton, 1000);
             editImagePopUp = new EditImagePopUp(this);
         });
-
-        content.setAlignment(Pos.TOP_CENTER);
-        content.getChildren().addAll(closeButtonBar, imageViewWrapper, textBox, footerPane);
-        content.setBackground(Background.EMPTY);
-        menuController.metadataEditScroll.setContent(content);
 
         textBox.setAlignment(Pos.TOP_LEFT);
         textBox.setPadding(new Insets(0, 15, 0, 15));
@@ -277,6 +288,9 @@ public class MetadataEditPage {
         progressBar.setVisible(false);
         StackPane.setAlignment(progressBar, Pos.CENTER);
 
+
+        metadataEditWrapper.getChildren().addAll(titlePane, metadataEditScroll);
+        menuController.metadataEditContainer.getChildren().add(metadataEditWrapper);
     }
 
     public void loadMetadataEditPage(MediaItem mediaItem){
@@ -472,11 +486,11 @@ public class MetadataEditPage {
     }
 
     public void openMetadataEditPage(){
-        menuController.metadataEditScroll.setVisible(true);
+        menuController.metadataEditContainer.setVisible(true);
     }
 
     public void closeMetadataEditPage(){
-        menuController.metadataEditScroll.setVisible(false);
+        menuController.metadataEditContainer.setVisible(false);
 
         textBox.getChildren().clear();
         imageView.setImage(null);

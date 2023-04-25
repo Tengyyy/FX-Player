@@ -1,6 +1,7 @@
 package hans.Chapters;
 
 import hans.App;
+import hans.Menu.Queue.QueueItem;
 import hans.Subtitles.SubtitlesState;
 import hans.SVG;
 import hans.PlaybackSettings.PlaybackSettingsState;
@@ -49,6 +50,8 @@ public class ChapterItem extends HBox {
     public Duration startTime;
     public Duration endTime;
 
+    static double height = 90;
+
     ChapterItem(ChapterController chapterController, String title, Duration startTime, Duration endTime, File file){
         this.file = file;
         this.chapterController = chapterController;
@@ -56,18 +59,23 @@ public class ChapterItem extends HBox {
         this.startTime = startTime;
         this.endTime = endTime;
 
-        this.setPrefHeight(90);
-        this.setMaxHeight(90);
+        this.setPrefHeight(height);
+        this.setMaxHeight(height);
         this.setCursor(Cursor.HAND);
         this.setBackground(Background.EMPTY);
         this.setAlignment(Pos.CENTER_LEFT);
-        this.setPadding(new Insets(0, 10, 0, 0));
+
+        this.getStyleClass().add("chapterItem");
+
+        if(!chapterController.menuController.extended.get()) this.setPadding(new Insets(0, 10, 0, 0));
+        else applyRoundStyling();
+
 
         playSVG.setContent(App.svgMap.get(SVG.PLAY));
 
         this.getChildren().addAll(playIconPane, imageWrapper, textWrapper);
 
-        this.index = chapterController.chapterPage.chapterBox.getChildren().size();
+        this.index = chapterController.chapterPage.chapterItems.size();
 
         indexLabel.setText(String.valueOf(this.index + 1));
         indexLabel.getStyleClass().add("indexLabel");
@@ -175,5 +183,21 @@ public class ChapterItem extends HBox {
         this.imageBorder.setVisible(false);
 
         if(!mouseHover) this.setStyle("-fx-background-color: transparent;");
+    }
+
+    public void updateHeight(){
+        this.setMinHeight(height);
+        this.setMaxHeight(height);
+    }
+
+
+    public void applyRoundStyling(){
+        if(!this.getStyleClass().contains("chapterItemRound")) this.getStyleClass().add("chapterItemRound");
+        this.setPadding(new Insets(5, 10, 0 , 0));
+    }
+
+    public void removeRoundStyling(){
+        this.getStyleClass().remove("chapterItemRound");
+        this.setPadding(new Insets(0, 10, 0 , 0));
     }
 }

@@ -526,7 +526,11 @@ public class MainController implements Initializable {
     }
 
     public void handleDragEntered(DragEvent e){
-        if(e.getDragboard().getFiles().isEmpty() || menuController.queuePage.queueBox.itemDragActive.get() || menuController.queuePage.queueBox.draggedNode != null) return;
+        if(menuController.menuState != MenuState.CLOSED ||
+                e.getDragboard().getFiles().isEmpty() ||
+                menuController.queuePage.queueBox.itemDragActive.get() ||
+                menuController.queuePage.queueBox.draggedNode != null) return;
+
         File file = e.getDragboard().getFiles().get(0);
         if(!MediaUtilities.mediaFormats.contains(Utilities.getFileExtension(file))) return;
 
@@ -545,7 +549,10 @@ public class MainController implements Initializable {
     }
 
     public void handleDragOver(DragEvent e){
-        if(e.getDragboard().getFiles().isEmpty()) return;
+        if(menuController.menuState != MenuState.CLOSED ||
+                e.getDragboard().getFiles().isEmpty() ||
+                menuController.queuePage.queueBox.itemDragActive.get() ||
+                menuController.queuePage.queueBox.draggedNode != null) return;
 
         File file = e.getDragboard().getFiles().get(0);
         if(!Utilities.getFileExtension(file).equals("mp4") &&
@@ -568,7 +575,10 @@ public class MainController implements Initializable {
 
     public void handleDragDropped(DragEvent e){
 
-        if(e.getDragboard().getFiles().isEmpty()) return;
+        if(menuController.menuState != MenuState.CLOSED ||
+                e.getDragboard().getFiles().isEmpty() ||
+                menuController.queuePage.queueBox.itemDragActive.get() ||
+                menuController.queuePage.queueBox.draggedNode != null) return;
 
         File file = e.getDragboard().getFiles().get(0);
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.StackPane?>
 
 <StackPane fx:id="menu" minWidth="350.0" prefWidth="400.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hans.Menu.MenuController">
@@ -15,17 +14,9 @@
                         <Insets />
                      </StackPane.margin>
                   </StackPane>
-                  <ScrollPane fx:id="metadataEditScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
-                     <StackPane.margin>
-                        <Insets />
-                     </StackPane.margin>
-                  </ScrollPane>
-                  <ScrollPane fx:id="technicalDetailsScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll">
-                     <StackPane.margin>
-                        <Insets />
-                     </StackPane.margin>
-                  </ScrollPane>
-                  <ScrollPane fx:id="chapterScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="345.0" prefHeight="200.0" prefWidth="350.0" styleClass="menuScroll" />
+                  <StackPane fx:id="metadataEditContainer" maxHeight="1.7976931348623157E308" />
+                  <StackPane fx:id="technicalDetailsContainer" maxHeight="1.7976931348623157E308" />
+                  <StackPane fx:id="chapterContainer" maxHeight="1.7976931348623157E308" />
                   <StackPane fx:id="settingsContainer" maxHeight="1.7976931348623157E308" />
                   <StackPane fx:id="recentMediaContainer" maxHeight="1.7976931348623157E308" />
                   <StackPane fx:id="musicLibraryContainer" maxHeight="1.7976931348623157E308" />

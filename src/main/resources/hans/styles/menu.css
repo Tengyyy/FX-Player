@@ -79,11 +79,11 @@
 }
 
 
-.queueItem{
+.queueItem, .chapterItem{
     -fx-background-color: transparent;
 }
 
-.queueItemRound{
+.queueItemRound, .chapterItemRound{
     -fx-background-insets: 5 0 5 0;
     -fx-background-radius: 15;
 }

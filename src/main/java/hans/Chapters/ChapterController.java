@@ -140,7 +140,7 @@ public class ChapterController {
             controlBarController.trackContainer.getChildren().add(durationTrack.progressBar);
 
             ChapterDescription chapterDescription = chapterDescriptions.get(0);
-            chapterPage.chapterBox.getChildren().add(new ChapterItem(this, chapterDescription.name(), Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()), file));
+            chapterPage.add(new ChapterItem(this, chapterDescription.name(), Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()), file));
         }
         else {
             double lastChapterEnd = 0;
@@ -157,7 +157,7 @@ public class ChapterController {
                 controlBarController.durationTracks.add(durationTrack);
                 controlBarController.trackContainer.getChildren().add(durationTrack.progressBar);
 
-                chapterPage.chapterBox.getChildren().add(new ChapterItem(this, chapterDescription.name(), Duration.seconds(lastChapterEnd * controlBarController.durationSlider.getMax()), Duration.seconds( endTime * controlBarController.durationSlider.getMax()), file));
+                chapterPage.add(new ChapterItem(this, chapterDescription.name(), Duration.seconds(lastChapterEnd * controlBarController.durationSlider.getMax()), Duration.seconds( endTime * controlBarController.durationSlider.getMax()), file));
 
                 lastChapterEnd = endTime;
 
@@ -187,7 +187,7 @@ public class ChapterController {
         mainController.sliderHoverPreview.pane.setTranslateY(-100);
         mainController.sliderHoverLabel.chapterlabel.setText("");
 
-        chapterPage.chapterBox.getChildren().clear();
+        chapterPage.clear();
     }
 
     public void setActiveChapter(int newChapter){
@@ -197,11 +197,11 @@ public class ChapterController {
             chapterLabel.setText(chapterDescription.name());
 
             if(this.activeChapter != -1){
-                ChapterItem chapterItem = (ChapterItem) chapterPage.chapterBox.getChildren().get(this.activeChapter);
+                ChapterItem chapterItem = chapterPage.chapterItems.get(this.activeChapter);
                 chapterItem.setInactive();
             }
 
-            ChapterItem newChapterItem = (ChapterItem) chapterPage.chapterBox.getChildren().get(newChapter);
+            ChapterItem newChapterItem = chapterPage.chapterItems.get(newChapter);
             newChapterItem.setActive();
 
             this.activeChapter = newChapter;

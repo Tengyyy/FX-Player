@@ -126,7 +126,8 @@ public class DropPositionController {
 
                     @Override
                     protected void interpolate(double progress) {
-                        queueBox.setPadding(new Insets(0, 0, 20 + queueBox.queue.get(queueBox.queueOrder.get(queueBox.queueOrder.size() - 1)).getTranslateY(), 0));
+                        if(queueBox.menuController.extended.get()) queueBox.setPadding(new Insets(0, 50, 20 + queueBox.queue.get(queueBox.queueOrder.get(queueBox.queueOrder.size() - 1)).getTranslateY(), 50));
+                        else queueBox.setPadding(new Insets(0, 0, 20 + queueBox.queue.get(queueBox.queueOrder.get(queueBox.queueOrder.size() - 1)).getTranslateY(), 0));
                     }
                 };
 

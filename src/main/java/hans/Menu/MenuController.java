@@ -39,10 +39,7 @@ public class MenuController implements Initializable {
 
     @FXML
     public
-    StackPane menu, menuWrapper, menuContent, sideBar, dragPane, queueContainer, settingsContainer, recentMediaContainer, musicLibraryContainer, playlistsContainer;
-
-    @FXML
-    public ScrollPane metadataEditScroll, technicalDetailsScroll, chapterScroll;
+    StackPane menu, menuWrapper, menuContent, sideBar, dragPane, queueContainer, settingsContainer, recentMediaContainer, musicLibraryContainer, playlistsContainer, metadataEditContainer, technicalDetailsContainer, chapterContainer;
 
     public MainController mainController;
     public ControlBarController controlBarController;
@@ -182,15 +179,6 @@ public class MenuController implements Initializable {
         dragPane.setCursor(Cursor.W_RESIZE);
         dragResizer = new DragResizer(this);
 
-        metadataEditScroll.setVisible(false);
-        metadataEditScroll.setBackground(Background.EMPTY);
-
-        technicalDetailsScroll.setVisible(false);
-        technicalDetailsScroll.setBackground(Background.EMPTY);
-
-        chapterScroll.setVisible(false);
-        chapterScroll.setBackground(Background.EMPTY);
-
         queueContainer.setVisible(false);
         queueContainer.setBackground(Background.EMPTY);
 
@@ -205,6 +193,15 @@ public class MenuController implements Initializable {
 
         playlistsContainer.setVisible(false);
         playlistsContainer.setBackground(Background.EMPTY);
+
+        metadataEditContainer.setVisible(false);
+        metadataEditContainer.setBackground(Background.EMPTY);
+
+        technicalDetailsContainer.setVisible(false);
+        technicalDetailsContainer.setBackground(Background.EMPTY);
+
+        chapterContainer.setVisible(false);
+        chapterContainer.setBackground(Background.EMPTY);
     }
 
     public void openMenu(MenuState newState) {

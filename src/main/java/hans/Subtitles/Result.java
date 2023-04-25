@@ -68,7 +68,7 @@ public class Result extends HBox {
         this.getChildren().addAll(indexLabel, nameLabel, languageLabel, downloadsLabel, downloadButtonPane);
         this.setPrefSize( 550, 50);
         this.setMaxSize(550, 50);
-        if(openSubtitlesResultsPane.results.size() % 2 == 1)
+        if(openSubtitlesResultsPane.results.size() % 2 == 0)
             this.setStyle("-fx-background-color: rgba(40,40,40,0.8);");
 
         indexLabel.setPrefSize(25, 40);

@@ -30,8 +30,8 @@ module hans {
     opens hans.PlaybackSettings to javafx.fxml, javafx.graphics;
     exports hans.Menu;
     opens hans.Menu to javafx.fxml, javafx.graphics;
-    exports hans.Menu.MetadataEdit;
-    opens hans.Menu.MetadataEdit to javafx.fxml, javafx.graphics;
+    exports hans.Menu.MediaInformation;
+    opens hans.Menu.MediaInformation to javafx.fxml, javafx.graphics;
     exports hans.Subtitles;
     opens hans.Subtitles to javafx.fxml, javafx.graphics;
     exports hans.windowstoolbar;

@@ -1,4 +1,4 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
 import hans.App;
 import hans.MediaItems.MediaItem;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class EditImagePopUp extends ContextMenu {
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
     MediaItem mediaItem;
 
     MenuItem removeItem = new MenuItem("Remove image");
@@ -32,13 +32,13 @@ public class EditImagePopUp extends ContextMenu {
     Region removeIcon = new Region(), imageIcon = new Region();
 
 
-    EditImagePopUp(MetadataEditPage metadataEditPage){
+    EditImagePopUp(MediaInformationPage mediaInformationPage){
 
-        this.metadataEditPage = metadataEditPage;
+        this.mediaInformationPage = mediaInformationPage;
         this.getStyleClass().add("menu-context-menu");
 
 
-        metadataEditPage.textBox.getScene().getStylesheets().add(Objects.requireNonNull(metadataEditPage.menuController.mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
+        mediaInformationPage.textBox.getScene().getStylesheets().add(Objects.requireNonNull(mediaInformationPage.menuController.mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 
 
         removePath.setContent(App.svgMap.get(SVG.REMOVE));
@@ -49,7 +49,7 @@ public class EditImagePopUp extends ContextMenu {
 
         removeItem.setGraphic(removeIcon);
         removeItem.getStyleClass().add("popUpItem");
-        removeItem.setOnAction((e) -> metadataEditPage.removeImage());
+        removeItem.setOnAction((e) -> mediaInformationPage.removeImage());
 
         imagePath.setContent(App.svgMap.get(SVG.IMAGE));
         imageIcon.setShape(imagePath);
@@ -59,7 +59,7 @@ public class EditImagePopUp extends ContextMenu {
 
         chooseItem.setGraphic(imageIcon);
         chooseItem.getStyleClass().add("popUpItem");
-        chooseItem.setOnAction((e) -> metadataEditPage.editImage());
+        chooseItem.setOnAction((e) -> mediaInformationPage.editImage());
 
 
 
@@ -67,7 +67,7 @@ public class EditImagePopUp extends ContextMenu {
 
         this.getItems().addAll(removeItem, chooseItem);
 
-        buttonWidth = metadataEditPage.editImageButton.getWidth();
+        buttonWidth = mediaInformationPage.editImageButton.getWidth();
 
         this.getStyleableNode().setOpacity(0);
 
@@ -75,9 +75,9 @@ public class EditImagePopUp extends ContextMenu {
 
     public void showOptions(MediaItem mediaItem){
         this.mediaItem = mediaItem;
-        this.show(metadataEditPage.editImageButton, // might not work
-                metadataEditPage.editImageButton.localToScreen(metadataEditPage.editImageButton.getBoundsInLocal()).getMinX() + buttonWidth/2 - popUpWidth/2,
-                metadataEditPage.editImageButton.localToScreen(metadataEditPage.editImageButton.getBoundsInLocal()).getMaxY() + 5);
+        this.show(mediaInformationPage.editImageButton, // might not work
+                mediaInformationPage.editImageButton.localToScreen(mediaInformationPage.editImageButton.getBoundsInLocal()).getMinX() + buttonWidth/2 - popUpWidth/2,
+                mediaInformationPage.editImageButton.localToScreen(mediaInformationPage.editImageButton.getBoundsInLocal()).getMaxY() + 5);
     }
 
 

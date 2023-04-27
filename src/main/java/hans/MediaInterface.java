@@ -341,8 +341,8 @@ public class MediaInterface {
         else controlBarController.durationLabel.setText("00:00/00:00");
 
         mainController.videoTitleLabel.setText(null);
-        mainController.metadataButtonPane.setVisible(false);
-        mainController.metadataButtonPane.setMouseTransparent(true);
+        mainController.mediaInformationButtonPane.setVisible(false);
+        mainController.mediaInformationButtonPane.setMouseTransparent(true);
 
         if(playbackSettingsController.playbackOptionsController.loopOn) playbackSettingsController.playbackOptionsController.loopTab.toggle.fire();
 
@@ -400,7 +400,7 @@ public class MediaInterface {
 
         controlBarController.end();
         if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.end();
-        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.activeItem.get().updateIconToPlay();
+        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.activeItem.get().columns.pause();
 
         playing.set(false);
 
@@ -421,7 +421,7 @@ public class MediaInterface {
 
         controlBarController.play();
 
-        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.activeItem.get().updateIconToPause();
+        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.activeItem.get().columns.play();
 
         wasPlaying = true;
 
@@ -442,7 +442,7 @@ public class MediaInterface {
 
         controlBarController.pause();
 
-        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.activeItem.get().updateIconToPlay();
+        if(menuController.queuePage.queueBox.activeItem.get() != null) menuController.queuePage.queueBox.activeItem.get().columns.pause();
 
     }
 
@@ -527,9 +527,9 @@ public class MediaInterface {
 
         mainController.videoTitleLabel.setText(queueItem.getTitle());
 
-        mainController.metadataButton.setOnAction(e -> queueItem.showMetadata());
-        mainController.metadataButtonPane.setVisible(true);
-        mainController.metadataButtonPane.setMouseTransparent(false);
+        mainController.mediaInformationButton.setOnAction(e -> queueItem.showMetadata());
+        mainController.mediaInformationButtonPane.setVisible(true);
+        mainController.mediaInformationButtonPane.setMouseTransparent(false);
 
         if(!mediaItem.subtitlesGenerationTime.isEmpty()){ // caption extraction has started for this mediaitem
             if(!mediaItem.subtitlesExtractionInProgress.get()){ // caption extraction has already been completed, can simply add caption tabs

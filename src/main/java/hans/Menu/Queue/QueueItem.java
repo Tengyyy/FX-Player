@@ -76,16 +76,12 @@ public class QueueItem extends GridPane {
     public Label indexLabel = new Label();
     public MFXCheckbox checkbox = new MFXCheckbox();
 
-    public Button playButton = new Button();
-    public Region playButtonIcon = new Region();
-
-    public StackPane playButtonBackground = new StackPane();
     public Columns columns = new Columns();
 
     public StackPane captionsPane = new StackPane();
     public Region captionsIcon = new Region();
 
-    public ControlTooltip playButtonTooltip, removeButtonTooltip, optionsButtonTooltip;
+    public ControlTooltip removeButtonTooltip, optionsButtonTooltip;
 
     public boolean mouseHover = false;
 
@@ -242,34 +238,12 @@ public class QueueItem extends GridPane {
         indexPane.setAlignment(Pos.CENTER);
         indexPane.getChildren().addAll(indexLabel, checkbox, columns);
 
-        playButton.setPrefWidth(125);
-        playButton.setPrefHeight(70);
-        playButton.getStyleClass().add("playButton");
-        playButton.setCursor(Cursor.HAND);
-        playButton.setMouseTransparent(true);
 
-
-        playButtonIcon = new Region();
-        playButtonIcon.setShape(playSVG);
-        playButtonIcon.setPrefSize(30, 32);
-        playButtonIcon.setMaxSize(30, 32);
-        playButtonIcon.setMouseTransparent(true);
-        playButtonIcon.setId("playIcon");
-        playButtonIcon.setVisible(false);
-
-        playButtonBackground = new StackPane();
-        playButtonBackground.setPrefSize(125, 70);
-        playButtonBackground.setMaxSize(125, 70);
-
-
-        playButtonBackground.getStyleClass().add("iconBackground");
-        playButtonBackground.setMouseTransparent(true);
-        playButtonBackground.setVisible(false);
 
         imageWrapper.setStyle("-fx-background-color: rgb(30,30,30);");
         imageWrapper.setPrefSize(125, 70);
         imageWrapper.setMaxSize(125, 70);
-        imageWrapper.getChildren().addAll(coverImage, playButtonBackground, playButton, playButtonIcon);
+        imageWrapper.getChildren().add(coverImage);
         imageWrapper.getStyleClass().add("imageWrapper");
 
         Rectangle imageWrapperClip = new Rectangle();
@@ -408,11 +382,6 @@ public class QueueItem extends GridPane {
 
             this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
-            if(isActive.get()){
-                playButtonIcon.setVisible(true);
-                playButtonBackground.setVisible(true);
-            }
-
             checkbox.setVisible(true);
             indexLabel.setVisible(false);
             columns.setVisible(false);
@@ -426,9 +395,6 @@ public class QueueItem extends GridPane {
             if(isSelected.get()) this.setStyle("-fx-background-color: rgba(90,90,90,0.6);");
             else if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
             else this.setStyle("-fx-background-color: transparent;");
-
-            playButtonIcon.setVisible(false);
-            playButtonBackground.setVisible(false);
 
             if(!queuePage.selectionActive.get()){
                 checkbox.setVisible(false);
@@ -513,29 +479,6 @@ public class QueueItem extends GridPane {
             queueBox.draggedNode = null;
             queueBox.itemDragActive.set(false);
             queueBox.dropPositionController.updatePosition(Integer.MAX_VALUE);
-        });
-
-
-        playButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.animateBackgroundColor(playButtonIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200));
-
-        playButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.animateBackgroundColor(playButtonIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200));
-
-        playButton.setOnAction((e) -> {
-
-            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
-            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
-
-
-            if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
-
-            if(!this.isActive.get()) return;
-
-            if(mediaInterface.atEnd) mediaInterface.replay();
-            else if (mediaInterface.playing.get()){
-                mediaInterface.wasPlaying = false;
-                mediaInterface.pause();
-            }
-            else mediaInterface.play();
         });
 
         optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, optionsButton, 0, 1, false, 1, true));
@@ -675,7 +618,7 @@ public class QueueItem extends GridPane {
     }
 
     public void showMetadata(){
-        menuController.metadataEditPage.enter(this.getMediaItem());
+        menuController.mediaInformationPage.enter(this.getMediaItem());
     }
 
     public void showTechnicalDetails() {
@@ -768,13 +711,8 @@ public class QueueItem extends GridPane {
 
         indexLabel.setVisible(false);
         imageBorder.setVisible(true);
-        playButton.setMouseTransparent(false);
 
-        if(mouseHover){
-            playButtonIcon.setVisible(true);
-            playButtonBackground.setVisible(true);
-        }
-        else {
+        if(!mouseHover) {
             this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
             if(!queuePage.selectionActive.get()) columns.setVisible(true);
         }
@@ -783,40 +721,15 @@ public class QueueItem extends GridPane {
     public void setInactive(){
         isActive.set(false);
 
-        playButtonIcon.setVisible(false);
-        playButtonBackground.setVisible(false);
 
         columns.setVisible(false);
         columns.pause();
         imageBorder.setVisible(false);
-        playButton.setMouseTransparent(true);
 
         if(!mouseHover) {
             if(!queuePage.selectionActive.get()) indexLabel.setVisible(true);
             this.setStyle("-fx-background-color: transparent;");
         }
-    }
-
-    public void updateIconToPlay(){
-
-        playButtonIcon.setTranslateX(4);
-
-        playButtonIcon.setPrefSize(30, 32);
-        playButtonIcon.setMaxSize(30, 32);
-        playButtonIcon.setShape(playSVG);
-        if(playButtonTooltip != null) playButtonTooltip.updateActionText("Play video");
-        columns.pause();
-    }
-
-    public void updateIconToPause(){
-
-        playButtonIcon.setTranslateX(0);
-
-        playButtonIcon.setPrefSize(30, 30);
-        playButtonIcon.setMaxSize(30, 30);
-        playButtonIcon.setShape(pauseSVG);
-        if(playButtonTooltip != null) playButtonTooltip.updateActionText("Pause video");
-        columns.play();
     }
 
     public void select(){

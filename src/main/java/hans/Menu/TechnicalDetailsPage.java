@@ -3,15 +3,15 @@ package hans.Menu;
 import hans.App;
 import hans.Menu.Queue.QueueItem;
 import hans.Shell32Util;
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -25,17 +25,12 @@ public class TechnicalDetailsPage {
 
     MenuController menuController;
 
-
     VBox technicalDetailsWrapper = new VBox();
 
     StackPane titlePane = new StackPane();
     Label title = new Label("Technical details");
 
     ScrollPane technicalDetailsScroll = new ScrollPane();
-
-    StackPane imageViewWrapper = new StackPane();
-    public StackPane imageViewContainer = new StackPane();
-    public ImageView imageView = new ImageView();
 
     public VBox content = new VBox();
 
@@ -64,24 +59,11 @@ public class TechnicalDetailsPage {
 
         technicalDetailsScroll.setContent(content);
 
-        imageViewWrapper.getChildren().add(imageViewContainer);
-        imageViewWrapper.setPadding(new Insets(20, 0, 50, 0));
-        imageViewWrapper.setBackground(Background.EMPTY);
-
-        imageViewContainer.getChildren().add(imageView);
-        imageViewContainer.setId("imageViewContainer");
-        imageViewContainer.maxWidthProperty().bind(Bindings.min(400, menuController.menu.widthProperty().multiply(0.7)));
-
-        imageView.setPreserveRatio(true);
-        imageView.fitWidthProperty().bind(Bindings.min(400, menuController.menu.widthProperty().multiply(0.7)));
-        imageView.fitHeightProperty().bind(Bindings.min(225, imageView.fitWidthProperty().multiply(9).divide(16)));
-
         content.setAlignment(Pos.TOP_CENTER);
-        content.getChildren().addAll(imageViewWrapper, textBox);
+        content.getChildren().add(textBox);
         content.setBackground(Background.EMPTY);
 
         textBox.setAlignment(Pos.TOP_LEFT);
-        textBox.setPadding(new Insets(0, 15, 0, 15));
         textBox.setSpacing(10);
 
         technicalDetailsWrapper.getChildren().addAll(titlePane, technicalDetailsScroll);
@@ -89,17 +71,6 @@ public class TechnicalDetailsPage {
     }
 
     public void loadTechnicalDetailsPage(QueueItem queueItem){
-
-        if(queueItem.getMediaItem().getCover() != null){
-            imageView.setImage(queueItem.getMediaItem().getCover());
-            Color color = queueItem.getMediaItem().getCoverBackgroundColor();
-            imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
-        }
-        else {
-            imageView.setImage(queueItem.getMediaItem().getPlaceholderCover());
-            imageViewContainer.setStyle("-fx-background-color: red;");
-        }
-
 
         Map<String, String> map = queueItem.getMediaItem().getMediaDetails();
 
@@ -170,9 +141,10 @@ public class TechnicalDetailsPage {
                                 ex.printStackTrace();
                             }
                         }
-                    }
+                }
             });
         }
+
         if(map.containsKey("size")) createItem("File size:", map.get("size"));
         if(map.containsKey("modified")) createItem("Last modified:", map.get("modified"));
         if(map.containsKey("format")) createItem("Format:", map.get("format"));
@@ -212,8 +184,6 @@ public class TechnicalDetailsPage {
         menuController.technicalDetailsContainer.setVisible(false);
 
         textBox.getChildren().clear();
-        imageView.setImage(null);
-        imageViewContainer.setStyle("-fx-background-color: transparent;");
     }
 
     public void enter(QueueItem queueItem){

@@ -14,6 +14,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
@@ -39,6 +40,7 @@ public class ChapterItem extends HBox {
     SVGPath playSVG = new SVGPath();
 
     public ImageView coverImage = new ImageView();
+    StackPane imageContainer = new StackPane();
     StackPane imageWrapper = new StackPane();
     Region imageBorder = new Region();
 
@@ -73,7 +75,7 @@ public class ChapterItem extends HBox {
 
         playSVG.setContent(App.svgMap.get(SVG.PLAY));
 
-        this.getChildren().addAll(playIconPane, imageWrapper, textWrapper);
+        this.getChildren().addAll(playIconPane, imageContainer, textWrapper);
 
         this.index = chapterController.chapterPage.chapterItems.size();
 
@@ -101,16 +103,26 @@ public class ChapterItem extends HBox {
         coverImage.setPreserveRatio(true);
 
 
-        imageWrapper.setStyle("-fx-background-color: rgba(64,64,64, 0.7);");
-
-
-        imageWrapper.setPrefSize(129, 74);
-        imageWrapper.setMaxSize(129, 74);
-        imageWrapper.getChildren().addAll(coverImage, imageBorder);
+        imageWrapper.setStyle("-fx-background-color: rgb(0,0,0);");
+        imageWrapper.setPrefSize(125, 70);
+        imageWrapper.setMaxSize(125, 70);
+        imageWrapper.getChildren().add(coverImage);
         imageWrapper.getStyleClass().add("imageWrapper");
 
-        imageBorder.setPrefSize(129, 74);
-        imageBorder.setMaxSize(129, 74);
+        Rectangle imageWrapperClip = new Rectangle();
+        imageWrapperClip.setWidth(125);
+        imageWrapperClip.setHeight(70);
+        imageWrapperClip.setArcWidth(20);
+        imageWrapperClip.setArcHeight(20);
+        imageWrapper.setClip(imageWrapperClip);
+
+        imageContainer.setPrefSize(127, 72);
+        imageContainer.setMaxSize(127, 72);
+        imageContainer.getChildren().addAll(imageWrapper, imageBorder);
+        imageContainer.setBackground(Background.EMPTY);
+
+        imageBorder.setPrefSize(127, 72);
+        imageBorder.setMaxSize(127, 72);
         imageBorder.setBackground(Background.EMPTY);
         imageBorder.getStyleClass().add("imageBorder");
         imageBorder.setMouseTransparent(true);
@@ -166,7 +178,7 @@ public class ChapterItem extends HBox {
         this.playIcon.setVisible(true);
         this.indexLabel.setVisible(false);
 
-        if(this.coverImage.getImage() != null) this.imageBorder.setVisible(true);
+        this.imageBorder.setVisible(true);
 
         if(!mouseHover) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
     }
@@ -178,7 +190,6 @@ public class ChapterItem extends HBox {
             this.playIcon.setVisible(false);
             this.indexLabel.setVisible(true);
         }
-        this.setCursor(Cursor.HAND);
 
         this.imageBorder.setVisible(false);
 

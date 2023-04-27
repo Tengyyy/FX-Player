@@ -34,7 +34,7 @@ public class ChapterPage {
         this.chapterController = chapterController;
 
         title.getStyleClass().add("menuTitle");
-        StackPane.setAlignment(titlePane, Pos.CENTER_LEFT);
+        StackPane.setAlignment(title, Pos.CENTER_LEFT);
 
         titlePane.getChildren().add(title);
         titlePane.setPadding(new Insets(20, 30, 100, 30));

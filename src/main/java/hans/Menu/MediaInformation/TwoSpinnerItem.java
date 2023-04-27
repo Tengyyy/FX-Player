@@ -1,4 +1,4 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -10,25 +10,25 @@ public class TwoSpinnerItem extends VBox{
     NumberSpinner numberSpinner1;
     NumberSpinner numberSpinner2;
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
 
 
-    TwoSpinnerItem(MetadataEditPage metadataEditPage, String key, String value1, String value2, VBox parent, boolean add){
+    TwoSpinnerItem(MediaInformationPage mediaInformationPage, String key, String value1, String value2, VBox parent, boolean add){
 
-        this.metadataEditPage = metadataEditPage;
+        this.mediaInformationPage = mediaInformationPage;
 
 
         label = new Label(key);
         label.getStyleClass().add("metadataKey");
 
 
-        numberSpinner1 = new NumberSpinner(metadataEditPage, value1);
+        numberSpinner1 = new NumberSpinner(mediaInformationPage, value1);
 
 
         Label slash = new Label("/");
         slash.getStyleClass().add("metadataKey");
 
-        numberSpinner2 = new NumberSpinner(metadataEditPage, value2);
+        numberSpinner2 = new NumberSpinner(mediaInformationPage, value2);
 
 
         HBox hBox = new HBox(numberSpinner1.spinner, slash, numberSpinner2.spinner);

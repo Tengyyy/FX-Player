@@ -1,4 +1,4 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
 import hans.Subtitles.SubtitlesState;
 import hans.PlaybackSettings.PlaybackSettingsState;
@@ -11,7 +11,7 @@ public class NumberSpinner{
     Spinner<Integer> spinner;
 
 
-    NumberSpinner(MetadataEditPage metadataEditPage, String value) {
+    NumberSpinner(MediaInformationPage mediaInformationPage, String value) {
 
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999);
         spinner = new Spinner<>(valueFactory);
@@ -19,12 +19,12 @@ public class NumberSpinner{
         spinner.setMinHeight(36);
         spinner.setPrefHeight(36);
         spinner.setMaxHeight(36);
-        spinner.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+        spinner.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
         spinner.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
             if(newValue){
-                if(metadataEditPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) metadataEditPage.menuController.subtitlesController.closeSubtitles();
-                if(metadataEditPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) metadataEditPage.menuController.playbackSettingsController.closeSettings();
+                if(mediaInformationPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) mediaInformationPage.menuController.subtitlesController.closeSubtitles();
+                if(mediaInformationPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) mediaInformationPage.menuController.playbackSettingsController.closeSettings();
             }
 
         });
@@ -55,7 +55,7 @@ public class NumberSpinner{
                 spinner.getValueFactory().setValue(0);
             }
 
-            metadataEditPage.mediaItem.changesMade.set(true);
+            mediaInformationPage.mediaItem.changesMade.set(true);
         });
     }
 }

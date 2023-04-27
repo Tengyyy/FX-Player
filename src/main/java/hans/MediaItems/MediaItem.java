@@ -272,7 +272,7 @@ public class MediaItem {
 
         boolean metadataEditSuccess = false;
 
-        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration);
+        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration, null);
 
         if(success){
             //overwrite curr file with new file
@@ -315,7 +315,6 @@ public class MediaItem {
         }
 
 
-        changesMade.set(false);
         metadataEditActive.set(false);
         metadataEditProgress.set(0);
         newMetadata = null;
@@ -328,6 +327,34 @@ public class MediaItem {
 
         return metadataEditSuccess;
     }
+
+
+
+    public boolean createNewFile(File outputFile){
+        this.metadataEditActive.set(true);
+        this.changesMade.set(false);
+
+        mainController.getMenuController().ongoingMetadataEditProcesses.add(this);
+
+        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration, outputFile);
+
+
+        metadataEditActive.set(false);
+        metadataEditProgress.set(0);
+        newMetadata = null;
+        coverRemoved = false;
+        newCoverImage = null;
+        newColor = null;
+        newCoverFile = null;
+
+        mainController.getMenuController().ongoingMetadataEditProcesses.remove(this);
+
+
+        return success;
+    }
+
+
+
 
     public Map<String, String> getMediaDetails() {
         return mediaDetails;

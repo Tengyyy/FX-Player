@@ -6,7 +6,7 @@ import hans.Subtitles.SubtitlesController;
 import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
 import hans.MediaItems.MediaItem;
-import hans.Menu.MetadataEdit.MetadataEditPage;
+import hans.Menu.MediaInformation.MediaInformationPage;
 import hans.Menu.Queue.QueuePage;
 import hans.Menu.Settings.SettingsPage;
 import hans.PlaybackSettings.PlaybackSettingsController;
@@ -21,7 +21,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
@@ -39,7 +38,7 @@ public class MenuController implements Initializable {
 
     @FXML
     public
-    StackPane menu, menuWrapper, menuContent, sideBar, dragPane, queueContainer, settingsContainer, recentMediaContainer, musicLibraryContainer, playlistsContainer, metadataEditContainer, technicalDetailsContainer, chapterContainer;
+    StackPane menu, menuWrapper, menuContent, sideBar, dragPane, queueContainer, settingsContainer, recentMediaContainer, musicLibraryContainer, playlistsContainer, mediaInformationContainer, technicalDetailsContainer, chapterContainer;
 
     public MainController mainController;
     public ControlBarController controlBarController;
@@ -49,7 +48,7 @@ public class MenuController implements Initializable {
 
     public ChapterController chapterController;
 
-    public MetadataEditPage metadataEditPage;
+    public MediaInformationPage mediaInformationPage;
     public TechnicalDetailsPage technicalDetailsPage;
     public QueuePage queuePage;
     public SettingsPage settingsPage;
@@ -91,7 +90,7 @@ public class MenuController implements Initializable {
         recentMediaPage = new RecentMediaPage(this);
         musicLibraryPage = new MusicLibraryPage(this);
         playlistsPage = new PlaylistsPage(this);
-        metadataEditPage = new MetadataEditPage(this);
+        mediaInformationPage = new MediaInformationPage(this);
         technicalDetailsPage = new TechnicalDetailsPage(this);
         menuBar = new MenuBar(this, sideBar);
 
@@ -194,8 +193,8 @@ public class MenuController implements Initializable {
         playlistsContainer.setVisible(false);
         playlistsContainer.setBackground(Background.EMPTY);
 
-        metadataEditContainer.setVisible(false);
-        metadataEditContainer.setBackground(Background.EMPTY);
+        mediaInformationContainer.setVisible(false);
+        mediaInformationContainer.setBackground(Background.EMPTY);
 
         technicalDetailsContainer.setVisible(false);
         technicalDetailsContainer.setBackground(Background.EMPTY);
@@ -600,7 +599,7 @@ public class MenuController implements Initializable {
             case SETTINGS_OPEN -> settingsPage.closeSettingsPage();
             case PLAYLISTS_OPEN -> playlistsPage.closePlaylistsPage();
             case RECENT_MEDIA_OPEN -> recentMediaPage.closeRecentMediaPage();
-            case METADATA_EDIT_OPEN -> metadataEditPage.closeMetadataEditPage();
+            case MEDIA_INFORMATION_OPEN -> mediaInformationPage.closeMediaInformationPage();
             case MUSIC_LIBRARY_OPEN -> musicLibraryPage.closeMusicLibraryPage();
             case TECHNICAL_DETAILS_OPEN -> technicalDetailsPage.closeTechnicalDetailsPage();
         }
@@ -611,7 +610,7 @@ public class MenuController implements Initializable {
             case SETTINGS_OPEN -> settingsPage.openSettingsPage();
             case PLAYLISTS_OPEN -> playlistsPage.openPlaylistsPage();
             case RECENT_MEDIA_OPEN -> recentMediaPage.openRecentMediaPage();
-            case METADATA_EDIT_OPEN -> metadataEditPage.openMetadataEditPage();
+            case MEDIA_INFORMATION_OPEN -> mediaInformationPage.openMediaInformationPage();
             case MUSIC_LIBRARY_OPEN -> musicLibraryPage.openMusicLibraryPage();
             case TECHNICAL_DETAILS_OPEN -> technicalDetailsPage.openTechnicalDetailsPage();
         }

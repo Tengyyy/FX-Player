@@ -1,13 +1,13 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
 import hans.MediaItems.MediaItem;
 import javafx.scene.layout.VBox;
 
 import java.util.*;
 
-public class WavEditItem implements MetadataEditItem{
+public class WavItem implements MediaInformationItem {
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
     MediaItem mediaItem;
 
     TextAreaItem titleItem = null;
@@ -24,18 +24,18 @@ public class WavEditItem implements MetadataEditItem{
     Map<String, String> metadata;
 
 
-    WavEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
-        this.metadataEditPage = metadataEditPage;
+    WavItem(MediaInformationPage mediaInformationPage, Map<String, String> metadata){
+        this.mediaInformationPage = mediaInformationPage;
         this.metadata = metadata;
 
         content.setSpacing(15);
 
 
         if(metadata != null) {
-            titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
-            artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").isBlank() ? metadata.get("artist") : "", content, true);
-            albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("album") && !metadata.get("album").isBlank() ? metadata.get("album") : "", content, true);
-            releaseDateItem = new DatePickerItem(metadataEditPage, metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
+            titleItem = new TextAreaItem(mediaInformationPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
+            artistItem = new TextAreaItem(mediaInformationPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").isBlank() ? metadata.get("artist") : "", content, true);
+            albumItem = new TextAreaItem(mediaInformationPage, "Album", metadata.containsKey("album") && !metadata.get("album").isBlank() ? metadata.get("album") : "", content, true);
+            releaseDateItem = new DatePickerItem(mediaInformationPage, metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
             String track = "";
             String trackTotal = "";
             if(metadata.containsKey("track")){
@@ -46,12 +46,12 @@ public class WavEditItem implements MetadataEditItem{
                 }
                 else track = trackData;
             }
-            trackItem = new TwoSpinnerItem(metadataEditPage, "Track number", track, trackTotal, content, true);
-            genreItem = new TextAreaItem(metadataEditPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").isBlank() ? metadata.get("genre") : "", content, true);
-            commentItem = new TextAreaItem(metadataEditPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").isBlank() ? metadata.get("comment") : "", content, true);
+            trackItem = new TwoSpinnerItem(mediaInformationPage, "Track number", track, trackTotal, content, true);
+            genreItem = new TextAreaItem(mediaInformationPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").isBlank() ? metadata.get("genre") : "", content, true);
+            commentItem = new TextAreaItem(mediaInformationPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").isBlank() ? metadata.get("comment") : "", content, true);
         }
 
-        metadataEditPage.textBox.getChildren().add(content);
+        mediaInformationPage.textBox.getChildren().add(content);
     }
 
     @Override

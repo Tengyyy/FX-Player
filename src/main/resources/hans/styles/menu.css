@@ -231,6 +231,35 @@
     -fx-border-width: 1 0 1 1;
 }
 
+#saveButton {
+    -fx-border-radius: 5 0 0 5;
+    -fx-background-radius: 5 0 0 5;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: white;
+    -fx-background-insets: 0;
+    -fx-insets: 0;
+}
+
+#saveOptionsButton {
+    -fx-background-radius: 0 5 5 0;
+    -fx-padding: 8 9 8 9;
+    -fx-background-insets: 0;
+    -fx-insets: 0;
+}
+
+#saveButton:hover, #saveOptionsButton:hover {
+    -fx-background-color: rgb(200, 55, 55);
+}
+
+#saveButton:pressed, #saveOptionsButton:pressed {
+    -fx-background-color: rgb(180, 40, 40);
+    -fx-text-fill: rgb(180,180,180);
+}
+
+#saveButton:pressed > .graphic, #saveOptionsButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
 #addOptionsButton, #searchOptionsButton {
     -fx-border-radius: 0 5 5 0;
     -fx-background-radius: 0 5 5 0;
@@ -258,6 +287,10 @@
 
 #chevronDownIcon {
     -fx-background-color: rgb(150, 150, 150);
+}
+
+#saveOptionsIcon {
+    -fx-background-color: white;
 }
 
 .menuIcon {
@@ -524,6 +557,28 @@
     -fx-border-width: 1;
     -fx-border-color: rgb(40,40,40);
 }
+
+#mediaInfoWindow {
+    -fx-background-color: rgba(20,20,20,0.9);
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+}
+
+#mediaInfoWindowTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 18;
+}
+
+.mediaInfoWindowText {
+    -fx-text-fill: rgb(200,200,200);
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 17;
+}
+
+
 
 .controlItemOdd {
     -fx-background-color: rgb(30,30,30);

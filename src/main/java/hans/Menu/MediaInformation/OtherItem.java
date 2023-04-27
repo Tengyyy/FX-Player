@@ -1,10 +1,8 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
 import com.jfoenix.controls.JFXButton;
 import hans.App;
-import hans.MediaItems.MediaItem;
 import hans.SVG;
-import hans.Utilities;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Region;
@@ -16,9 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OtherEditItem implements MetadataEditItem{
+public class OtherItem implements MediaInformationItem {
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
 
     TextAreaItem titleItem = null;
     ArrayList<CustomTextAreaItem> items = new ArrayList<>();
@@ -34,8 +32,8 @@ public class OtherEditItem implements MetadataEditItem{
     Map<String, String> metadata;
 
 
-    OtherEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
-        this.metadataEditPage = metadataEditPage;
+    OtherItem(MediaInformationPage mediaInformationPage, Map<String, String> metadata){
+        this.mediaInformationPage = mediaInformationPage;
         this.metadata = metadata;
 
         addSVG.setContent(App.svgMap.get(SVG.PLUS));
@@ -59,16 +57,16 @@ public class OtherEditItem implements MetadataEditItem{
             CustomTextAreaItem item = new CustomTextAreaItem(this, "", "");
             items.add(item);
             item.keyField.requestFocus();
-            metadataEditPage.metadataEditScroll.setVvalue(1.0);
-            metadataEditPage.mediaItem.changesMade.set(true);
+            mediaInformationPage.mediaInformationScroll.setVvalue(1.0);
+            mediaInformationPage.mediaItem.changesMade.set(true);
         });
-        addButton.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+        addButton.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
 
         content.getChildren().add(addButton);
 
         if(metadata != null) {
-            titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
+            titleItem = new TextAreaItem(mediaInformationPage, "Title", metadata.containsKey("title") && !metadata.get("title").trim().isEmpty() ? metadata.get("title") : "", content, false);
 
             content.getChildren().add(0, titleItem);
 
@@ -81,7 +79,7 @@ public class OtherEditItem implements MetadataEditItem{
 
         }
 
-        metadataEditPage.textBox.getChildren().add(content);
+        mediaInformationPage.textBox.getChildren().add(content);
     }
 
 

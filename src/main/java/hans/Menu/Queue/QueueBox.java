@@ -385,7 +385,6 @@ public class QueueBox extends VBox {
 
     public void initialize(QueueItem queueItem){
         Platform.runLater(() -> {
-            queueItem.playButtonTooltip = new ControlTooltip(menuController.mainController, "Play video", "", queueItem.playButton, 1000);
             queueItem.removeButtonTooltip = new ControlTooltip(menuController.mainController,"Remove video", "", queueItem.removeButton, 1000);
             queueItem.optionsButtonTooltip = new ControlTooltip(menuController.mainController, "Options", "", queueItem.optionsButton, 1000);
             queueItem.menuItemContextMenu = new QueueItemContextMenu(queueItem);

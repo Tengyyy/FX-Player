@@ -106,8 +106,6 @@ public class QueuePage {
     private double scrollVelocity = 0;
     private final int scrollSpeed = 6;
 
-    boolean extended = false;
-
 
     public StackPane scrollUpButtonContainer = new StackPane();
     Button scrollUpButton = new Button();

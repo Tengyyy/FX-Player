@@ -150,7 +150,7 @@ public class MediaUtilities {
         return cover;
     }
 
-    public static boolean updateMetadata(MediaItem mediaItem, File file, Map<String, String> metadata, boolean hasCover, Image oldCover, File newCover, boolean coverRemoved, int videoStreams, int attachmentStreams, Duration duration){
+    public static boolean updateMetadata(MediaItem mediaItem, File file, Map<String, String> metadata, boolean hasCover, Image oldCover, File newCover, boolean coverRemoved, int videoStreams, int attachmentStreams, Duration duration, File outputFile){
 
         boolean success = false;
 
@@ -175,15 +175,16 @@ public class MediaUtilities {
         else {
             if(hasCover && oldCover != null && extension.equals("mkv")){
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(oldCover, null);
-                String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".png";
-                File outputFile = new File(outputPath);
+
+                String picturePath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".png";
+                File pictureFile = new File(picturePath);
 
                 try {
-                    ImageIO.write(bufferedImage, "png",  outputFile);
+                    ImageIO.write(bufferedImage, "png",  pictureFile);
 
-                    currentImageFile = outputFile;
+                    currentImageFile = pictureFile;
 
-                    fFmpeg.addArguments("-attach", outputPath);
+                    fFmpeg.addArguments("-attach", picturePath);
                     fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "mimetype=image/png");
                     fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "filename=cover.png");
 
@@ -262,38 +263,44 @@ public class MediaUtilities {
             });
         }
 
-        String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + "." + (extension.equals("mov") ? "mp4" : extension);
-        File tempFile = new File(outputPath);
+
+        String outputPath;
+        File tempFile = null;
+
+        if(outputFile != null) outputPath = outputFile.getAbsolutePath();
+        else {
+            outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + "." + (extension.equals("mov") ? "mp4" : extension);
+            tempFile = new File(outputPath);
+        }
 
         fFmpeg.addOutput(UrlOutput.toUrl(outputPath));
         FFmpegResult fFmpegResult = fFmpeg.execute();
 
-        if(fFmpegResult.getVideoSize() > 0 || fFmpegResult.getAudioSize() > 0){
-            try {
-                boolean deleteSuccess = file.delete();
-                if(deleteSuccess){
-                    boolean renameSuccess = tempFile.renameTo(file);
-                    if(!renameSuccess)throw new IOException("Failed to rename new file");
+        if(outputFile == null){
+            if(fFmpegResult.getVideoSize() > 0 || fFmpegResult.getAudioSize() > 0){
+                try {
+                    boolean deleteSuccess = file.delete();
+                    if(deleteSuccess){
+                        boolean renameSuccess = tempFile.renameTo(file);
+                        if(!renameSuccess) throw new IOException("Failed to rename new file");
 
-                    success = true;
+                        success = true;
+                    }
+                    else throw new IOException("Failed to delete old file");
+                } catch (IOException e){
+                    e.printStackTrace();
                 }
-                else throw new IOException("Failed to delete old file");
-            } catch (IOException e){
-                e.printStackTrace();
-            }
 
-        }
-        else {
-            if(tempFile.exists()) tempFile.delete();
+            }
+            else {
+                if(tempFile.exists()) tempFile.delete();
+            }
         }
 
         if(currentImageFile != null && currentImageFile.exists()) currentImageFile.delete();
 
         return success;
     }
-
-
-
 
     public static Color findDominantColor(Image image){
 

@@ -1,4 +1,4 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
 import hans.Subtitles.SubtitlesState;
 import hans.Menu.ExpandableTextArea;
@@ -12,11 +12,11 @@ public class TextAreaItem extends VBox{
     Label label;
     ExpandableTextArea textArea;
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
 
-    TextAreaItem(MetadataEditPage metadataEditPage, String key, String value, VBox parent, boolean add){
+    TextAreaItem(MediaInformationPage mediaInformationPage, String key, String value, VBox parent, boolean add){
 
-        this.metadataEditPage = metadataEditPage;
+        this.mediaInformationPage = mediaInformationPage;
 
         label = new Label(key);
         VBox.setMargin(label, new Insets(0, 0, 3, 0));
@@ -25,14 +25,14 @@ public class TextAreaItem extends VBox{
         textArea = new ExpandableTextArea();
         textArea.initializeText(value);
         textArea.textProperty().addListener((observableValue, s, t1) -> {
-            metadataEditPage.mediaItem.changesMade.set(true);
+            mediaInformationPage.mediaItem.changesMade.set(true);
         });
-        textArea.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+        textArea.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
         textArea.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
             if(newValue){
-                if(metadataEditPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) metadataEditPage.menuController.subtitlesController.closeSubtitles();
-                if(metadataEditPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) metadataEditPage.menuController.playbackSettingsController.closeSettings();
+                if(mediaInformationPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) mediaInformationPage.menuController.subtitlesController.closeSubtitles();
+                if(mediaInformationPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) mediaInformationPage.menuController.playbackSettingsController.closeSettings();
             }
 
         });

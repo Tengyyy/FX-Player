@@ -77,7 +77,7 @@ public class MainController implements Initializable {
     public ChapterController chapterController;
 
     public ControlTooltip openMenuTooltip;
-    ControlTooltip viewMetadataTooltip;
+    ControlTooltip viewMediaInformationTooltip;
 
     SVGPath menuSVG;
 
@@ -116,10 +116,10 @@ public class MainController implements Initializable {
     public StackPane menuButtonPane = new StackPane();
     Region menuIcon = new Region();
 
-    SVGPath metadataPath = new SVGPath();
-    StackPane metadataButtonPane = new StackPane();
-    Button metadataButton = new Button();
-    Region metadataIcon = new Region();
+    SVGPath mediaInformationPath = new SVGPath();
+    StackPane mediaInformationButtonPane = new StackPane();
+    Button mediaInformationButton = new Button();
+    Region mediaInformationIcon = new Region();
 
     WindowsTaskBarController windowsTaskBarController;
 
@@ -383,7 +383,7 @@ public class MainController implements Initializable {
         videoTitleBox.setAlignment(Pos.CENTER_LEFT);
         StackPane.setAlignment(videoTitleBox, Pos.TOP_LEFT);
 
-        videoTitleBox.getChildren().addAll(menuButtonPane, videoTitleLabel, metadataButtonPane);
+        videoTitleBox.getChildren().addAll(menuButtonPane, videoTitleLabel, mediaInformationButtonPane);
 
         menuButtonPane.setPrefSize(50, 50);
         menuButtonPane.setMaxSize(50, 50);
@@ -427,32 +427,32 @@ public class MainController implements Initializable {
 
         videoTitleLabel.setOnMouseExited(e -> AnimationsClass.animateTextColor(videoTitleLabel, Color.rgb(200, 200,200), 200));
 
-        metadataButtonPane.setPrefSize(50, 50);
-        metadataButtonPane.setMaxSize(50, 50);
-        metadataButtonPane.setBackground(Background.EMPTY);
-        metadataButtonPane.getChildren().addAll(metadataButton, metadataIcon);
-        StackPane.setAlignment(metadataButtonPane, Pos.CENTER_RIGHT);
-        StackPane.setMargin(metadataButtonPane, new Insets(0, 20, 0, 0));
+        mediaInformationButtonPane.setPrefSize(50, 50);
+        mediaInformationButtonPane.setMaxSize(50, 50);
+        mediaInformationButtonPane.setBackground(Background.EMPTY);
+        mediaInformationButtonPane.getChildren().addAll(mediaInformationButton, mediaInformationIcon);
+        StackPane.setAlignment(mediaInformationButtonPane, Pos.CENTER_RIGHT);
+        StackPane.setMargin(mediaInformationButtonPane, new Insets(0, 20, 0, 0));
 
-        metadataButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlBarController.controlButtonHoverOn(metadataButtonPane));
+        mediaInformationButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlBarController.controlButtonHoverOn(mediaInformationButtonPane));
 
-        metadataButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlBarController.controlButtonHoverOff(metadataButtonPane));
+        mediaInformationButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlBarController.controlButtonHoverOff(mediaInformationButtonPane));
 
-        metadataButtonPane.setVisible(false);
-        metadataButtonPane.setMouseTransparent(true);
+        mediaInformationButtonPane.setVisible(false);
+        mediaInformationButtonPane.setMouseTransparent(true);
 
 
-        metadataButton.setPrefSize(50, 50);
-        metadataButton.setMaxSize(50, 50);
-        metadataButton.setBackground(Background.EMPTY);
-        metadataButton.setCursor(Cursor.HAND);
+        mediaInformationButton.setPrefSize(50, 50);
+        mediaInformationButton.setMaxSize(50, 50);
+        mediaInformationButton.setBackground(Background.EMPTY);
+        mediaInformationButton.setCursor(Cursor.HAND);
 
-        metadataPath.setContent(App.svgMap.get(INFORMATION));
-        metadataIcon.setShape(metadataPath);
-        metadataIcon.setPrefSize(25, 25);
-        metadataIcon.setMaxSize(25, 25);
-        metadataIcon.setMouseTransparent(true);
-        metadataIcon.getStyleClass().add("controlIcon");
+        mediaInformationPath.setContent(App.svgMap.get(INFORMATION));
+        mediaInformationIcon.setShape(mediaInformationPath);
+        mediaInformationIcon.setPrefSize(25, 25);
+        mediaInformationIcon.setMaxSize(25, 25);
+        mediaInformationIcon.setMouseTransparent(true);
+        mediaInformationIcon.getStyleClass().add("controlIcon");
 
         coverImageContainer.setVisible(false);
         coverImageContainer.setMouseTransparent(true);
@@ -1846,6 +1846,6 @@ public class MainController implements Initializable {
 
     public void loadTooltips(){
         openMenuTooltip = new ControlTooltip(this,"Open menu", hotkeyController.getHotkeyString(Action.MENU), menuButton, 0, TooltipType.MENU_TOOLTIP);
-        viewMetadataTooltip = new ControlTooltip(this,"Media metadata", "", metadataButton, 0, TooltipType.MENU_TOOLTIP);
+        viewMediaInformationTooltip = new ControlTooltip(this,"Media information", "", mediaInformationButton, 0, TooltipType.MENU_TOOLTIP);
     }
 }

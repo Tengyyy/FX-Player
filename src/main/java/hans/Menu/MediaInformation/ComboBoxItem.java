@@ -1,4 +1,4 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
 
 import hans.Subtitles.SubtitlesState;
@@ -13,11 +13,11 @@ public class ComboBoxItem extends VBox{
     Label label;
     ComboBox<String> comboBox;
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
 
-    ComboBoxItem(MetadataEditPage metadataEditPage, VBox parent, boolean add, String initialValue, String... values) {
+    ComboBoxItem(MediaInformationPage mediaInformationPage, VBox parent, boolean add, String initialValue, String... values) {
 
-        this.metadataEditPage = metadataEditPage;
+        this.mediaInformationPage = mediaInformationPage;
 
         label = new Label("Media type");
         label.getStyleClass().add("metadataKey");
@@ -31,17 +31,17 @@ public class ComboBoxItem extends VBox{
             comboBox.getItems().add(value);
         }
 
-        comboBox.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+        comboBox.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
         comboBox.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
             if(newValue){
-                if(metadataEditPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) metadataEditPage.menuController.subtitlesController.closeSubtitles();
-                if(metadataEditPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) metadataEditPage.menuController.playbackSettingsController.closeSettings();
+                if(mediaInformationPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) mediaInformationPage.menuController.subtitlesController.closeSubtitles();
+                if(mediaInformationPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) mediaInformationPage.menuController.playbackSettingsController.closeSettings();
             }
         });
 
         comboBox.setValue(initialValue);
-        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> metadataEditPage.mediaItem.changesMade.set(true));
+        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> mediaInformationPage.mediaItem.changesMade.set(true));
 
         this.getChildren().addAll(label, comboBox);
         if(add) parent.getChildren().add(this);

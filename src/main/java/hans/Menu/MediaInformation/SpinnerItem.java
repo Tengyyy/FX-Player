@@ -1,4 +1,4 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -8,19 +8,19 @@ public class SpinnerItem extends VBox{
     Label label;
     NumberSpinner numberSpinner;
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
 
 
-    SpinnerItem(MetadataEditPage metadataEditPage, String key, String value1, VBox parent, boolean add){
+    SpinnerItem(MediaInformationPage mediaInformationPage, String key, String value1, VBox parent, boolean add){
 
-        this.metadataEditPage = metadataEditPage;
+        this.mediaInformationPage = mediaInformationPage;
 
 
         label = new Label(key);
         label.getStyleClass().add("metadataKey");
 
 
-        numberSpinner = new NumberSpinner(metadataEditPage, value1);
+        numberSpinner = new NumberSpinner(mediaInformationPage, value1);
 
         this.getChildren().addAll(label, numberSpinner.spinner);
         if(add) parent.getChildren().add(this);

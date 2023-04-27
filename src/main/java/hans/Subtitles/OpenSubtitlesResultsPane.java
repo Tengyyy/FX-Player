@@ -221,7 +221,6 @@ public class OpenSubtitlesResultsPane {
         }
     }
 
-
     public File findFileName(String name){
         File parent;
         if(subtitlesController.menuController.queuePage.queueBox.activeItem.get() != null){

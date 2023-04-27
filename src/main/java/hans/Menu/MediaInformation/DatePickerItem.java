@@ -1,4 +1,4 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
 import hans.Subtitles.SubtitlesState;
 import hans.PlaybackSettings.PlaybackSettingsState;
@@ -15,13 +15,13 @@ public class DatePickerItem extends VBox{
     Label label;
     DatePicker datePicker;
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
     DateTimeFormatter dateTimeFormatter;
 
 
-    DatePickerItem(MetadataEditPage metadataEditPage, String value, VBox parent, boolean add){
+    DatePickerItem(MediaInformationPage mediaInformationPage, String value, VBox parent, boolean add){
 
-        this.metadataEditPage = metadataEditPage;
+        this.mediaInformationPage = mediaInformationPage;
 
 
         label = new Label("Release date");
@@ -30,7 +30,7 @@ public class DatePickerItem extends VBox{
         datePicker.setMinHeight(36);
         datePicker.setPrefHeight(36);
         datePicker.setMaxHeight(36);
-        datePicker.disableProperty().bind(metadataEditPage.fieldsDisabledProperty);
+        datePicker.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
 
         dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
@@ -44,14 +44,14 @@ public class DatePickerItem extends VBox{
         datePicker.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
 
             if(newValue){
-                if(metadataEditPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) metadataEditPage.menuController.subtitlesController.closeSubtitles();
-                if(metadataEditPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) metadataEditPage.menuController.playbackSettingsController.closeSettings();
+                if(mediaInformationPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) mediaInformationPage.menuController.subtitlesController.closeSubtitles();
+                if(mediaInformationPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) mediaInformationPage.menuController.playbackSettingsController.closeSettings();
             }
 
         });
 
         datePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            metadataEditPage.mediaItem.changesMade.set(true);
+            mediaInformationPage.mediaItem.changesMade.set(true);
         });
 
 

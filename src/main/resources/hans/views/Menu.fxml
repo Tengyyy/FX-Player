@@ -14,7 +14,7 @@
                         <Insets />
                      </StackPane.margin>
                   </StackPane>
-                  <StackPane fx:id="metadataEditContainer" maxHeight="1.7976931348623157E308" />
+                  <StackPane fx:id="mediaInformationContainer" maxHeight="1.7976931348623157E308" />
                   <StackPane fx:id="technicalDetailsContainer" maxHeight="1.7976931348623157E308" />
                   <StackPane fx:id="chapterContainer" maxHeight="1.7976931348623157E308" />
                   <StackPane fx:id="settingsContainer" maxHeight="1.7976931348623157E308" />

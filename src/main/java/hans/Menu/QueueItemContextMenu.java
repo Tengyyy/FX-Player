@@ -23,7 +23,7 @@ public class QueueItemContextMenu extends ContextMenu {
     QueueItem queueItem;
 
     MenuItem playNext = new MenuItem("Play next");
-    MenuItem metadata = new MenuItem("Media metadata");
+    MenuItem mediaInformation = new MenuItem("Media information");
     MenuItem technicalDetails = new MenuItem("Technical details");
     MenuItem openFileLocation = new MenuItem("Open file in location");
 
@@ -32,8 +32,8 @@ public class QueueItemContextMenu extends ContextMenu {
 
     FadeTransition showTransition, hideTransition;
 
-    SVGPath playNextPath = new SVGPath(), metadataPath = new SVGPath(), technicalDetailsPath = new SVGPath(), folderPath = new SVGPath();
-    Region playNextIcon = new Region(), metadataIcon = new Region(), technicalDetailsIcon = new Region(), folderIcon = new Region();
+    SVGPath playNextPath = new SVGPath(), infoPath = new SVGPath(), technicalDetailsPath = new SVGPath(), folderPath = new SVGPath();
+    Region playNextIcon = new Region(), infoIcon = new Region(), technicalDetailsIcon = new Region(), folderIcon = new Region();
 
     public boolean showing = false;
 
@@ -56,16 +56,16 @@ public class QueueItemContextMenu extends ContextMenu {
         playNext.getStyleClass().add("popUpItem");
         playNext.setOnAction((e) -> queueItem.playNext());
 
-        metadataPath.setContent(App.svgMap.get(SVG.INFORMATION_OUTLINE));
-        metadataIcon.setShape(metadataPath);
-        metadataIcon.getStyleClass().add("icon");
-        metadataIcon.setPrefSize(14, 14);
-        metadataIcon.setMaxSize(14, 14);
+        infoPath.setContent(App.svgMap.get(SVG.INFORMATION_OUTLINE));
+        infoIcon.setShape(infoPath);
+        infoIcon.getStyleClass().add("icon");
+        infoIcon.setPrefSize(14, 14);
+        infoIcon.setMaxSize(14, 14);
 
-        metadata.setGraphic(metadataIcon);
-        metadata.getStyleClass().add("popUpItem");
-        metadata.setOnAction((e) -> queueItem.showMetadata());
-        metadata.disableProperty().bind(queueItem.mediaItemGenerated.not());
+        mediaInformation.setGraphic(infoIcon);
+        mediaInformation.getStyleClass().add("popUpItem");
+        mediaInformation.setOnAction((e) -> queueItem.showMetadata());
+        mediaInformation.disableProperty().bind(queueItem.mediaItemGenerated.not());
 
         technicalDetailsPath.setContent(App.svgMap.get(SVG.COGS));
         technicalDetailsIcon.setShape(technicalDetailsPath);
@@ -90,7 +90,7 @@ public class QueueItemContextMenu extends ContextMenu {
         openFileLocation.setOnAction((e) -> openFileLocation(queueItem.getMediaItem().getMediaDetails().get("path")));
 
 
-        this.getItems().addAll(playNext, metadata, technicalDetails, openFileLocation);
+        this.getItems().addAll(playNext, mediaInformation, technicalDetails, openFileLocation);
 
         buttonWidth = queueItem.getOptionsButton().getWidth();
 
@@ -131,8 +131,7 @@ public class QueueItemContextMenu extends ContextMenu {
         showing = false;
 
         if(!queueItem.getHover()){
-            queueItem.playButtonIcon.setVisible(false);
-            queueItem.playButtonBackground.setVisible(false);
+
             queueItem.checkbox.setVisible(false);
 
             if(queueItem.isActive.get()) {

@@ -1,15 +1,14 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
-import hans.MediaItems.MediaItem;
 import hans.Utilities;
 import javafx.scene.layout.VBox;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AviEditItem implements MetadataEditItem{
+public class AviItem implements MediaInformationItem {
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
 
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;
@@ -26,28 +25,28 @@ public class AviEditItem implements MetadataEditItem{
     Map<String, String> metadata;
 
 
-    AviEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
-        this.metadataEditPage = metadataEditPage;
+    AviItem(MediaInformationPage mediaInformationPage, Map<String, String> metadata){
+        this.mediaInformationPage = mediaInformationPage;
         this.metadata = metadata;
 
         content.setSpacing(15);
 
         if(metadata != null) {
-            titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
-            artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").isBlank() ? metadata.get("artist") : "", content, true);
-            albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("product") && !metadata.get("product").isBlank() ? metadata.get("product") : "", content, true);
+            titleItem = new TextAreaItem(mediaInformationPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
+            artistItem = new TextAreaItem(mediaInformationPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").isBlank() ? metadata.get("artist") : "", content, true);
+            albumItem = new TextAreaItem(mediaInformationPage, "Album", metadata.containsKey("product") && !metadata.get("product").isBlank() ? metadata.get("product") : "", content, true);
 
             String[] trackString = Utilities.splitString(metadata.getOrDefault("track", ""));
-            trackItem = new TwoSpinnerItem(metadataEditPage, "Track number", trackString[0], trackString[1], content, true);
+            trackItem = new TwoSpinnerItem(mediaInformationPage, "Track number", trackString[0], trackString[1], content, true);
 
-            genreItem = new TextAreaItem(metadataEditPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").isBlank() ? metadata.get("genre") : "", content, true);
-            languageItem = new TextAreaItem(metadataEditPage, "Language", metadata.containsKey("language") && !metadata.get("language").isBlank() ? metadata.get("language") : "", content, true);
-            releaseDateItem = new DatePickerItem(metadataEditPage, metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
-            copyrightItem = new TextAreaItem(metadataEditPage, "Copyright", metadata.containsKey("copyright") && !metadata.get("copyright").isBlank() ? metadata.get("copyright") : "", content, true);
-            commentItem = new TextAreaItem(metadataEditPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").isBlank() ? metadata.get("comment") : "", content, true);
+            genreItem = new TextAreaItem(mediaInformationPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").isBlank() ? metadata.get("genre") : "", content, true);
+            languageItem = new TextAreaItem(mediaInformationPage, "Language", metadata.containsKey("language") && !metadata.get("language").isBlank() ? metadata.get("language") : "", content, true);
+            releaseDateItem = new DatePickerItem(mediaInformationPage, metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
+            copyrightItem = new TextAreaItem(mediaInformationPage, "Copyright", metadata.containsKey("copyright") && !metadata.get("copyright").isBlank() ? metadata.get("copyright") : "", content, true);
+            commentItem = new TextAreaItem(mediaInformationPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").isBlank() ? metadata.get("comment") : "", content, true);
         }
 
-        metadataEditPage.textBox.getChildren().add(content);
+        mediaInformationPage.textBox.getChildren().add(content);
     }
 
     @Override

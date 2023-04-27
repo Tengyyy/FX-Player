@@ -62,7 +62,7 @@ public class Utilities {
         if (extensionIndex > 0) {
             return fileName.substring(extensionIndex + 1);
         } else {
-            return " ";
+            return "";
         }
 
     }

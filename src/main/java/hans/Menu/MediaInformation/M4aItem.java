@@ -1,18 +1,14 @@
-package hans.Menu.MetadataEdit;
+package hans.Menu.MediaInformation;
 
-import hans.MediaItems.MediaItem;
 import hans.Utilities;
-import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-public class M4aEditItem implements MetadataEditItem{
+public class M4aItem implements MediaInformationItem {
 
-    MetadataEditPage metadataEditPage;
+    MediaInformationPage mediaInformationPage;
 
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;
@@ -32,38 +28,38 @@ public class M4aEditItem implements MetadataEditItem{
 
 
 
-    M4aEditItem(MetadataEditPage metadataEditPage, Map<String, String> metadata){
-        this.metadataEditPage = metadataEditPage;
+    M4aItem(MediaInformationPage mediaInformationPage, Map<String, String> metadata){
+        this.mediaInformationPage = mediaInformationPage;
         this.metadata = metadata;
 
         content.setSpacing(15);
 
         if(metadata != null) {
-            titleItem = new TextAreaItem(metadataEditPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
+            titleItem = new TextAreaItem(mediaInformationPage, "Title", metadata.containsKey("title") && !metadata.get("title").isBlank() ? metadata.get("title") : "", content, true);
 
-            artistItem = new TextAreaItem(metadataEditPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").isBlank() ? metadata.get("artist") : "", content, true);
+            artistItem = new TextAreaItem(mediaInformationPage, "Artist", metadata.containsKey("artist") && !metadata.get("artist").isBlank() ? metadata.get("artist") : "", content, true);
 
-            albumItem = new TextAreaItem(metadataEditPage, "Album", metadata.containsKey("album") && !metadata.get("album").isBlank() ? metadata.get("album") : "", content, true);
+            albumItem = new TextAreaItem(mediaInformationPage, "Album", metadata.containsKey("album") && !metadata.get("album").isBlank() ? metadata.get("album") : "", content, true);
 
             String[] trackString = Utilities.splitString(metadata.getOrDefault("track", ""));
-            trackItem = new TwoSpinnerItem(metadataEditPage, "Track number", trackString[0], trackString[1], content, true);
+            trackItem = new TwoSpinnerItem(mediaInformationPage, "Track number", trackString[0], trackString[1], content, true);
 
-            releaseDateItem = new DatePickerItem(metadataEditPage, metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
+            releaseDateItem = new DatePickerItem(mediaInformationPage, metadata.containsKey("date") && !metadata.get("date").isBlank() ? metadata.get("date") : "", content, true);
 
-            albumArtistItem = new TextAreaItem(metadataEditPage, "Album artist", metadata.containsKey("album_artist") && !metadata.get("album_artist").isBlank() ? metadata.get("album_artist") : "", content, true);
+            albumArtistItem = new TextAreaItem(mediaInformationPage, "Album artist", metadata.containsKey("album_artist") && !metadata.get("album_artist").isBlank() ? metadata.get("album_artist") : "", content, true);
 
-            composerItem = new TextAreaItem(metadataEditPage, "Composer", metadata.containsKey("composer") && !metadata.get("composer").isBlank() ? metadata.get("composer") : "", content, true);
+            composerItem = new TextAreaItem(mediaInformationPage, "Composer", metadata.containsKey("composer") && !metadata.get("composer").isBlank() ? metadata.get("composer") : "", content, true);
 
-            genreItem = new TextAreaItem(metadataEditPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").isBlank() ? metadata.get("genre") : "", content, true);
+            genreItem = new TextAreaItem(mediaInformationPage, "Genre", metadata.containsKey("genre") && !metadata.get("genre").isBlank() ? metadata.get("genre") : "", content, true);
 
-            lyricsItem = new TextAreaItem(metadataEditPage, "Lyrics", metadata.containsKey("lyrics") && !metadata.get("lyrics").isBlank() ? metadata.get("lyrics") : "", content, true);
+            lyricsItem = new TextAreaItem(mediaInformationPage, "Lyrics", metadata.containsKey("lyrics") && !metadata.get("lyrics").isBlank() ? metadata.get("lyrics") : "", content, true);
 
-            descriptionItem = new TextAreaItem(metadataEditPage, "Description", metadata.containsKey("description") && !metadata.get("description").isBlank() ? metadata.get("description") : "", content, true);
+            descriptionItem = new TextAreaItem(mediaInformationPage, "Description", metadata.containsKey("description") && !metadata.get("description").isBlank() ? metadata.get("description") : "", content, true);
 
-            commentItem = new TextAreaItem(metadataEditPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").isBlank() ? metadata.get("comment") : "", content, true);
+            commentItem = new TextAreaItem(mediaInformationPage, "Comment", metadata.containsKey("comment") && !metadata.get("comment").isBlank() ? metadata.get("comment") : "", content, true);
         }
 
-        metadataEditPage.textBox.getChildren().add(content);
+        mediaInformationPage.textBox.getChildren().add(content);
     }
 
     @Override

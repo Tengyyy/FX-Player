@@ -18,6 +18,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class EqualizerController {
 
@@ -49,20 +50,54 @@ public class EqualizerController {
     MFXCheckbox checkbox = new MFXCheckbox("Move nearby sliders together");
     boolean moveSlidersTogether = true;
 
-    final float[] flatEQ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    final float[] classicalEQ = {0, 0, 0, 0, 0, 0, -7.2F, -7.2F, -7.2F, -9.6F};
-    final float[] clubEQ = {0, 0, 8, 5.6F, 5.6F, 5.6F, 3.2F, 0, 0, 0};
-    final float[] danceEQ = {9.6F, 7.2F, 2.4F, 0, 0, -5.6F, -7.2F, -7.2F, 0, 0};
-    final float[] fullBassEQ = {-8, 9.6F, 9.6F, 5.6F, 1.6F, -4, -8, -10.3F, -11.2F, -11.2F};
-    final float[] fullTrebleEQ = {-9.6F, -9.6F, -9.6F, -4, 2.4F, 11.2F, 16, 16, 16, 16.7F};
-    final float[] headphonesEQ = {4.8F, 11.2F, 5.6F, -3.2F, -2.4f, 1.6F, 4.8F, 9.6F, 12.8F, 14.4F};
-    final float[] largeHallEQ = {10.3F, 10.3F, 5.6F, 5.6F, 0, -4.8F, -4.8F, -4.8F, 0, 0};
-    final float[] liveEQ = {-4.8F, 0, 4, 5.6F, 5.6F, 5.6F, 4, 2.4F, 2.4F, 2.4F};
-    final float[] partyEQ = {7.2F, 7.2F, 0, 0, 0, 0, 0, 0, 7.2F, 7.2F};
-    final float[] popEQ = {-1.6F, 4.8F, 7.2F, 8, 5.6F, 0, -2.4F, -2.4F, -1.6F, -1.6F};
-    final float[] rockEQ = {8, 4.8F, -5.6F, -8, -3.2F, 4, 8.8F, 11.2F, 11.2F, 11.2F};
-    final float[] softEQ = {4.8F, 1.6F, 0, -2.4F, 0, 4, 8, 9.6F, 11.2F, 12};
-    final float[] technoEQ = {8, 5.6F, 0, -5.6F, -4.8F, 0, 8, 9.6F, 9.6F, 8.8F};
+    static final double[] flatEQ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    static final double[] classicalEQ = {0, 0, 0, 0, 0, 0, -7.2F, -7.2F, -7.2F, -9.6F};
+    static final double[] clubEQ = {0, 0, 8, 5.6F, 5.6F, 5.6F, 3.2F, 0, 0, 0};
+    static final double[] danceEQ = {9.6F, 7.2F, 2.4F, 0, 0, -5.6F, -7.2F, -7.2F, 0, 0};
+    static final double[] fullBassEQ = {-8, 9.6F, 9.6F, 5.6F, 1.6F, -4, -8, -10.3F, -11.2F, -11.2F};
+    static final double[] fullTrebleEQ = {-9.6F, -9.6F, -9.6F, -4, 2.4F, 11.2F, 16, 16, 16, 16.7F};
+    static final double[] headphonesEQ = {4.8F, 11.2F, 5.6F, -3.2F, -2.4f, 1.6F, 4.8F, 9.6F, 12.8F, 14.4F};
+    static final double[] largeHallEQ = {10.3F, 10.3F, 5.6F, 5.6F, 0, -4.8F, -4.8F, -4.8F, 0, 0};
+    static final double[] liveEQ = {-4.8F, 0, 4, 5.6F, 5.6F, 5.6F, 4, 2.4F, 2.4F, 2.4F};
+    static final double[] partyEQ = {7.2F, 7.2F, 0, 0, 0, 0, 0, 0, 7.2F, 7.2F};
+    static final double[] popEQ = {-1.6F, 4.8F, 7.2F, 8, 5.6F, 0, -2.4F, -2.4F, -1.6F, -1.6F};
+    static final double[] rockEQ = {8, 4.8F, -5.6F, -8, -3.2F, 4, 8.8F, 11.2F, 11.2F, 11.2F};
+    static final double[] softEQ = {4.8F, 1.6F, 0, -2.4F, 0, 4, 8, 9.6F, 11.2F, 12};
+    static final double[] technoEQ = {8, 5.6F, 0, -5.6F, -4.8F, 0, 8, 9.6F, 9.6F, 8.8F};
+
+    static final String FLAT = "flat";
+    static final String CLASSICAL = "classical";
+    static final String CLUB = "club";
+    static final String DANCE = "dance";
+    static final String FULL_BASS = "full_bass";
+    static final String FULL_TREBLE = "full_treble";
+    static final String HEADPHONES = "headphones";
+    static final String LARGE_HALL = "large_hall";
+    static final String LIVE = "live";
+    static final String PARTY = "party";
+    static final String POP = "pop";
+    static final String ROCK = "rock";
+    static final String SOFT = "soft";
+    static final String TECHNO = "techno";
+    static final String CUSTOM = "custom";
+
+
+
+    //preferences key constants:
+
+    public static final String EQUALIZER_PRESET = "eq_preset";
+    public static final String EQUALIZER_BAND1 = "eq_band1";
+    public static final String EQUALIZER_BAND2 = "eq_band2";
+    public static final String EQUALIZER_BAND3 = "eq_band3";
+    public static final String EQUALIZER_BAND4 = "eq_band4";
+    public static final String EQUALIZER_BAND5 = "eq_band5";
+    public static final String EQUALIZER_BAND6 = "eq_band6";
+    public static final String EQUALIZER_BAND7 = "eq_band7";
+    public static final String EQUALIZER_BAND8 = "eq_band8";
+    public static final String EQUALIZER_BAND9 = "eq_band9";
+    public static final String EQUALIZER_BAND10 = "eq_band10";
+
+    public static final String EQUALIZER_MOVE_SLIDERS_TOGETHER = "eq_move_sliders_together";
 
 
     EqualizerController(PlaybackSettingsController playbackSettingsController){
@@ -121,32 +156,8 @@ public class EqualizerController {
         titleLabel.getStyleClass().add("settingsPaneText");
         titleLabel.setOnMouseClicked((e) -> closeEqualizer());
 
-        StackPane.setAlignment(comboBox, Pos.CENTER_RIGHT);
-        comboBox.getItems().addAll("Flat", "Classical", "Club", "Dance", "Full bass", "Full treble", "Headphones", "Large hall", "Live", "Party", "Pop", "Rock", "Soft", "Techno", "Custom");
-        comboBox.setPrefSize(150, 35);
-        comboBox.setMaxSize(150, 35);
-        comboBox.setVisibleRowCount(5);
-        comboBox.setValue("Flat");
-        comboBox.setId("equalizerCombo");
 
-        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            switch(newValue){
-                case "Flat" -> applyPreset(flatEQ);
-                case "Classical" -> applyPreset(classicalEQ);
-                case "Club" -> applyPreset(clubEQ);
-                case "Dance" -> applyPreset(danceEQ);
-                case "Full bass" -> applyPreset(fullBassEQ);
-                case "Full treble" -> applyPreset(fullTrebleEQ);
-                case "Headphones" -> applyPreset(headphonesEQ);
-                case "Large hall" -> applyPreset(largeHallEQ);
-                case "Live" -> applyPreset(liveEQ);
-                case "Party" -> applyPreset(partyEQ);
-                case "Pop" -> applyPreset(popEQ);
-                case "Rock" -> applyPreset(rockEQ);
-                case "Soft" -> applyPreset(softEQ);
-                case "Techno" -> applyPreset(technoEQ);
-            }
-        });
+
 
 
         sliderBox.setPrefSize(535, 200);
@@ -197,14 +208,48 @@ public class EqualizerController {
             }
         }
 
+
+
+        StackPane.setAlignment(comboBox, Pos.CENTER_RIGHT);
+        comboBox.getItems().addAll("Flat", "Classical", "Club", "Dance", "Full bass", "Full treble", "Headphones", "Large hall", "Live", "Party", "Pop", "Rock", "Soft", "Techno", "Custom");
+        comboBox.setPrefSize(150, 35);
+        comboBox.setMaxSize(150, 35);
+        comboBox.setVisibleRowCount(5);
+        comboBox.setId("equalizerCombo");
+
+        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            switch(newValue){
+                case "Flat" -> applyPreset(flatEQ, FLAT);
+                case "Classical" -> applyPreset(classicalEQ, CLASSICAL);
+                case "Club" -> applyPreset(clubEQ, CLUB);
+                case "Dance" -> applyPreset(danceEQ, DANCE);
+                case "Full bass" -> applyPreset(fullBassEQ, FULL_BASS);
+                case "Full treble" -> applyPreset(fullTrebleEQ, FULL_TREBLE);
+                case "Headphones" -> applyPreset(headphonesEQ, HEADPHONES);
+                case "Large hall" -> applyPreset(largeHallEQ, LARGE_HALL);
+                case "Live" -> applyPreset(liveEQ, LIVE);
+                case "Party" -> applyPreset(partyEQ, PARTY);
+                case "Pop" -> applyPreset(popEQ, POP);
+                case "Rock" -> applyPreset(rockEQ, ROCK);
+                case "Soft" -> applyPreset(softEQ, SOFT);
+                case "Techno" -> applyPreset(technoEQ, TECHNO);
+                case "Custom" -> playbackSettingsController.mainController.pref.preferences.put(EQUALIZER_PRESET, CUSTOM);
+            }
+        });
+
         checkBoxContainer.getChildren().add(checkbox);
         checkBoxContainer.setPadding(new Insets(20, 0, 0, 40));
-        checkbox.setSelected(true);
-        checkbox.selectedProperty().addListener((observableValue, oldValue, newValue) -> moveSlidersTogether = newValue);
+        moveSlidersTogether = playbackSettingsController.mainController.pref.preferences.getBoolean(EQUALIZER_MOVE_SLIDERS_TOGETHER, true);
+        checkbox.setSelected(moveSlidersTogether);
+
+
+        checkbox.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            moveSlidersTogether = newValue;
+            playbackSettingsController.mainController.pref.preferences.putBoolean(EQUALIZER_MOVE_SLIDERS_TOGETHER, moveSlidersTogether);
+        });
 
 
         playbackSettingsController.playbackSettingsPane.getChildren().add(scrollPane);
-
     }
 
     public void closeEqualizer(){
@@ -245,11 +290,59 @@ public class EqualizerController {
     }
 
 
-    public void applyPreset(float[] preset){
+    public void loadEqualizer(){
+        String preset = playbackSettingsController.mainController.pref.preferences.get(EQUALIZER_PRESET, FLAT);
+
+        if(!preset.equals(CUSTOM)){
+            switch(preset){
+                case FLAT -> comboBox.setValue("Flat");
+                case CLASSICAL -> comboBox.setValue("Classical");
+                case CLUB -> comboBox.setValue("Club");
+                case DANCE -> comboBox.setValue("Dance");
+                case FULL_BASS -> comboBox.setValue("Full bass");
+                case FULL_TREBLE -> comboBox.setValue("Full treble");
+                case HEADPHONES -> comboBox.setValue("Headphones");
+                case LARGE_HALL -> comboBox.setValue("Large hall");
+                case LIVE -> comboBox.setValue("Live");
+                case PARTY -> comboBox.setValue("Party");
+                case POP -> comboBox.setValue("Pop");
+                case ROCK -> comboBox.setValue("Rock");
+                case SOFT -> comboBox.setValue("Soft");
+                case TECHNO -> comboBox.setValue("Techno");
+            }
+        }
+        else {
+            double[] amps = {
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND1, 0),
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND2, 0),
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND3, 0),
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND4, 0),
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND5, 0),
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND6, 0),
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND7, 0),
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND8, 0),
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND9, 0),
+                    playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND10, 0)
+            };
+
+            applyPreset(amps, CUSTOM);
+        }
+    }
+
+
+    public void applyPreset(double[] preset, String name){
         for(int i = 0; i < sliders.size(); i++){
             sliders.get(i).slider.setValue(preset[i]);
         }
 
-        playbackSettingsController.mediaInterface.embeddedMediaPlayer.audio().equalizer().setAmps(preset);
+        playbackSettingsController.mainController.pref.preferences.put(EQUALIZER_PRESET, name);
+
+        float[] floatArray = new float[preset.length];
+        for (int i = 0 ; i < preset.length; i++)
+        {
+            floatArray[i] = (float) preset[i];
+        }
+
+        playbackSettingsController.mediaInterface.embeddedMediaPlayer.audio().equalizer().setAmps(floatArray);
     }
 }

@@ -106,64 +106,31 @@ public class FontOpacityPane {
 
         _25Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(0.25, "25%");
 
             _25Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontOpacityTab.subText.setText("25%");
-
-            subtitlesController.subtitlesBox.currentTextOpacity.set(0.25);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _50Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(0.5, "50%");
 
             _50Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontOpacityTab.subText.setText("50%");
-
-            subtitlesController.subtitlesBox.currentTextOpacity.set(0.5);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _75Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(0.75, "75%");
 
             _75Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontOpacityTab.subText.setText("75%");
-
-            subtitlesController.subtitlesBox.currentTextOpacity.set(0.75);
-
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _100Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(1.0, "100%");
 
             _100Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontOpacityTab.subText.setText("100%");
 
-            subtitlesController.subtitlesBox.currentTextOpacity.set(1.0);
-
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
@@ -209,6 +176,20 @@ public class FontOpacityPane {
 
         parallelTransition.play();
         subtitlesController.animating.set(true);
+    }
+
+    private void updateValue(double newValue, String displayText){
+
+        for(CheckTab checkTab : checkTabs){
+            checkTab.checkIcon.setVisible(false);
+        }
+
+        subtitlesOptionsPane.fontOpacityTab.subText.setText(displayText);
+
+        subtitlesController.subtitlesBox.currentTextOpacity.set(newValue);
+        subtitlesController.mainController.pref.preferences.putDouble(SubtitlesBox.SUBTITLES_TEXT_OPACITY, newValue);
+
+        subtitlesController.subtitlesBox.showCaptions();
     }
 }
 

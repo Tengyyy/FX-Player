@@ -509,6 +509,9 @@ public class SubtitlesOptionsPane {
         subtitlesController.subtitlesBox.currentFontFamily.set(subtitlesController.subtitlesBox.defaultFontFamily);
         subtitlesController.subtitlesBox.currentFontSize.set(subtitlesController.subtitlesBox.defaultFontSize);
 
+        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_FONT_FAMILY, subtitlesController.subtitlesBox.defaultFontFamily);
+        subtitlesController.mainController.pref.preferences.putDouble(SubtitlesBox.SUBTITLES_FONT_SIZE, subtitlesController.subtitlesBox.defaultFontSize);
+
         for(CheckTab checkTab : fontColorPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
         }
@@ -517,6 +520,8 @@ public class SubtitlesOptionsPane {
         fontColorTab.subText.setText("White");
 
         subtitlesController.subtitlesBox.currentTextColor.set(subtitlesController.subtitlesBox.defaultTextColor);
+
+        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_TEXT_COLOR, subtitlesController.subtitlesBox.defaultTextColor.toString());
 
         for(CheckTab checkTab : fontSizePane.checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -535,6 +540,8 @@ public class SubtitlesOptionsPane {
 
         subtitlesController.subtitlesBox.currentTextAlignment.set(subtitlesController.subtitlesBox.defaultTextAlignment);
 
+        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_TEXT_ALIGNMENT, subtitlesController.subtitlesBox.defaultTextAlignment.toString());
+
         for(CheckTab checkTab : backgroundOpacityPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
         }
@@ -552,6 +559,8 @@ public class SubtitlesOptionsPane {
 
         subtitlesController.subtitlesBox.currentBackgroundColor.set(subtitlesController.subtitlesBox.defaultBackgroundColor);
 
+        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_BACKGROUND_COLOR, subtitlesController.subtitlesBox.defaultBackgroundColor.toString());
+
         for(CheckTab checkTab : lineSpacingPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
         }
@@ -560,6 +569,7 @@ public class SubtitlesOptionsPane {
         lineSpacingTab.subText.setText("100%");
 
         subtitlesController.subtitlesBox.currentSpacing.set(subtitlesController.subtitlesBox.defaultSpacing);
+        subtitlesController.mainController.pref.preferences.putInt(SubtitlesBox.SUBTITLES_SPACING, subtitlesController.subtitlesBox.defaultSpacing);
 
         for(CheckTab checkTab : fontOpacityPane.checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -569,6 +579,8 @@ public class SubtitlesOptionsPane {
         fontOpacityTab.subText.setText("100%");
 
         subtitlesController.subtitlesBox.currentTextOpacity.set(subtitlesController.subtitlesBox.defaultTextOpacity);
+
+        subtitlesController.mainController.pref.preferences.putDouble(SubtitlesBox.SUBTITLES_TEXT_OPACITY, subtitlesController.subtitlesBox.defaultTextOpacity);
     }
 
 

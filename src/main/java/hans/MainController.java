@@ -130,8 +130,13 @@ public class MainController implements Initializable {
     public ThirdPartySoftwareWindow thirdPartySoftwareWindow;
 
 
+    public Pref pref;
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+
+        pref = new Pref();
+        hotkeyController = new HotkeyController(this, pref);
 
         playbackSettingsController = new PlaybackSettingsController(this, controlBarController, menuController);
         subtitlesController = new SubtitlesController(playbackSettingsController, this, controlBarController, menuController);
@@ -143,6 +148,8 @@ public class MainController implements Initializable {
         playbackSettingsController.init(mediaInterface, subtitlesController);
         subtitlesController.init(mediaInterface);
         mediaInterface.init(chapterController);
+
+        playbackSettingsController.equalizerController.loadEqualizer();
 
         popupWindowContainer.setId("popupWindowContainer");
         popupWindowContainer.setOpacity(0);
@@ -1825,6 +1832,8 @@ public class MainController implements Initializable {
     }
 
     public MenuController getMenuController(){ return menuController;}
+
+    public HotkeyController getHotkeyController(){ return hotkeyController;}
 
     public MediaInterface getMediaInterface() {
         return mediaInterface;

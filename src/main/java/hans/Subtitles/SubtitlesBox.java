@@ -28,25 +28,37 @@ public class SubtitlesBox {
 
     public VBox subtitlesContainer = new VBox();
 
-    public String defaultFontFamily = "\"Roboto Medium\"";
-    public int defaultFontSize = 30;
-    public double defaultTextOpacity = 1.0;
-    public int defaultSpacing = 10;
-    public Color defaultBackgroundColor = Color.rgb(0, 0, 0, 0.75);
-    public Color defaultTextColor = Color.WHITE;
-    public Pos defaultTextAlignment = Pos.CENTER;
+    public final String defaultFontFamily = "\"Roboto Medium\"";
+    public final double defaultFontSize = 30;
+    public final double defaultTextOpacity = 1.0;
+    public final int defaultSpacing = 10;
+    public final Color defaultBackgroundColor = Color.rgb(0, 0, 0, 0.75);
+    public final Color defaultTextColor = Color.WHITE;
+    public final Pos defaultTextAlignment = Pos.CENTER;
+    public final Pos defaultSubtitlesLocation = Pos.BOTTOM_CENTER;
 
     public DoubleProperty mediaWidthMultiplier = new SimpleDoubleProperty(0.4);
 
-    public StringProperty currentFontFamily = new SimpleStringProperty(defaultFontFamily);
-    public DoubleProperty currentFontSize = new SimpleDoubleProperty(defaultFontSize);
-    public DoubleProperty currentTextOpacity = new SimpleDoubleProperty(defaultTextOpacity);
-    public IntegerProperty currentSpacing = new SimpleIntegerProperty(defaultSpacing);
-    public ObjectProperty<Color> currentBackgroundColor = new SimpleObjectProperty<>(defaultBackgroundColor);
-    public ObjectProperty<Color> currentTextColor = new SimpleObjectProperty<>(defaultTextColor);
-    public ObjectProperty<Pos> currentTextAlignment = new SimpleObjectProperty<>(defaultTextAlignment);
 
-    public Pos subtitlesLocation = Pos.BOTTOM_CENTER;
+    //preferences keys
+    public static final String SUBTITLES_FONT_FAMILY = "subtitles_font_family";
+    public static final String SUBTITLES_FONT_SIZE = "subtitles_font_size";
+    public static final String SUBTITLES_TEXT_OPACITY = "subtitles_text_opacity";
+    public static final String SUBTITLES_SPACING = "subtitles_spacing";
+    public static final String SUBTITLES_BACKGROUND_COLOR = "subtitles_background_color";
+    public static final String SUBTITLES_TEXT_COLOR = "subtitles_text_color";
+    public static final String SUBTITLES_TEXT_ALIGNMENT = "subtitles_text_alignment";
+    public static final String SUBTITLES_LOCATION = "subtitles_location";
+
+
+    public StringProperty currentFontFamily = new SimpleStringProperty();
+    public DoubleProperty currentFontSize = new SimpleDoubleProperty();
+    public DoubleProperty currentTextOpacity = new SimpleDoubleProperty();
+    public IntegerProperty currentSpacing = new SimpleIntegerProperty();
+    public ObjectProperty<Color> currentBackgroundColor = new SimpleObjectProperty<>();
+    public ObjectProperty<Color> currentTextColor = new SimpleObjectProperty<>();
+    public ObjectProperty<Pos> currentTextAlignment = new SimpleObjectProperty<>();
+    public Pos subtitlesLocation;
 
     PauseTransition showSubtitlesTimer;
 
@@ -71,11 +83,19 @@ public class SubtitlesBox {
 
     SubtitlesBox(SubtitlesController subtitlesController, MainController mainController){
 
+        currentFontFamily.set(mainController.pref.preferences.get(SUBTITLES_FONT_FAMILY, defaultFontFamily));
+        currentFontSize.set(mainController.pref.preferences.getDouble(SUBTITLES_FONT_SIZE, defaultFontSize));
+        currentTextOpacity.set(mainController.pref.preferences.getDouble(SUBTITLES_TEXT_OPACITY, defaultTextOpacity));
+        currentSpacing.set(mainController.pref.preferences.getInt(SUBTITLES_SPACING, defaultSpacing));
+        currentBackgroundColor.set(Color.valueOf(mainController.pref.preferences.get(SUBTITLES_BACKGROUND_COLOR, defaultBackgroundColor.toString())));
+        currentTextColor.set(Color.valueOf(mainController.pref.preferences.get(SUBTITLES_TEXT_COLOR, defaultTextColor.toString())));
+        currentTextAlignment.set(Pos.valueOf(mainController.pref.preferences.get(SUBTITLES_TEXT_ALIGNMENT, defaultTextAlignment.toString())));
+        subtitlesLocation = Pos.valueOf(mainController.pref.preferences.get(SUBTITLES_LOCATION, defaultSubtitlesLocation.toString()));
+
         this.subtitlesController = subtitlesController;
         this.mainController = mainController;
 
         subtitlesContainer.spacingProperty().bind(mediaWidthMultiplier.multiply(currentSpacing));
-        subtitlesContainer.setTranslateY(-90);
         subtitlesContainer.minWidthProperty().bind(mediaWidthMultiplier.multiply(400));
         subtitlesContainer.minHeightProperty().bind(Bindings.createObjectBinding(() -> mediaWidthMultiplier.get() * (currentFontSize.get() * 3 + currentSpacing.get()) + 10, mediaWidthMultiplier, currentFontSize, currentSpacing));
         subtitlesContainer.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
@@ -85,6 +105,10 @@ public class SubtitlesBox {
         subtitlesContainer.setPadding(new Insets(5, 10, 5, 10));
         subtitlesContainer.opacityProperty().bind(currentTextOpacity);
         subtitlesContainer.setCursor(Cursor.OPEN_HAND);
+
+
+        StackPane.setAlignment(subtitlesContainer, subtitlesLocation);
+        setTranslation();
 
 
         subtitlesContainer.setOnMousePressed(e -> {
@@ -153,6 +177,7 @@ public class SubtitlesBox {
             StackPane.setAlignment(subtitlesContainer, newPosition);
             subtitlesContainer.setTranslateX(translation.getX());
             subtitlesContainer.setTranslateY(translation.getY());
+            mainController.pref.preferences.put(SUBTITLES_LOCATION, subtitlesLocation.toString());
 
             subtitlesTransition = createTranslateTransition(newPosition);
             subtitlesTransition.setOnFinished(ev -> {
@@ -192,8 +217,6 @@ public class SubtitlesBox {
             subtitlesContainer.startFullDrag();
         });
 
-
-        StackPane.setAlignment(subtitlesContainer, Pos.BOTTOM_CENTER);
         mainController.videoImageViewInnerWrapper.getChildren().add(subtitlesContainer);
     }
 
@@ -458,6 +481,10 @@ public class SubtitlesBox {
         mainController.miniplayer.miniplayerController.videoImageViewInnerWrapper.getChildren().remove(subtitlesContainer);
         mainController.videoImageViewInnerWrapper.getChildren().add(subtitlesContainer);
 
+        setTranslation();
+    }
+
+    private void setTranslation(){
         switch(subtitlesLocation){
             case BOTTOM_RIGHT: {
                 subtitlesContainer.setTranslateX(-30);

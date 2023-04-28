@@ -49,7 +49,9 @@ public class EqualizerSlider {
 
         slider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
             sliderTrack.getProgressBar().setProgress((newValue.doubleValue() + 20) / 40);
-            if(slider.isValueChanging() && !equalizerController.comboBox.getValue().equals("Custom")) equalizerController.comboBox.setValue("Custom");
+            if(slider.isValueChanging() && (equalizerController.comboBox.getValue() == null || !equalizerController.comboBox.getValue().equals("Custom"))){
+                equalizerController.comboBox.setValue("Custom");
+            }
 
             if(slider.isValueChanging() && equalizerController.moveSlidersTogether) moveNearbySliders(equalizerController.sliders.indexOf(this), oldValue.doubleValue(), newValue.doubleValue());
         });
@@ -63,6 +65,17 @@ public class EqualizerSlider {
                 for(int i = 0; i < 10; i++){
                     amps[i] = (float) equalizerController.sliders.get(i).slider.getValue();
                 }
+
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND1, amps[0]);
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND2, amps[1]);
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND3, amps[2]);
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND4, amps[3]);
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND5, amps[4]);
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND6, amps[5]);
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND7, amps[6]);
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND8, amps[7]);
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND9, amps[8]);
+                equalizerController.playbackSettingsController.mainController.pref.preferences.putDouble(EqualizerController.EQUALIZER_BAND10, amps[9]);
 
                 equalizerController.playbackSettingsController.mediaInterface.embeddedMediaPlayer.audio().equalizer().setAmps(amps);
             }

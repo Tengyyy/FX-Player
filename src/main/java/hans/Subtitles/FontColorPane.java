@@ -116,119 +116,61 @@ public class FontColorPane {
 
         whiteTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.WHITE, "White");
 
             whiteTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontColorTab.subText.setText("White");
-
-            subtitlesController.subtitlesBox.currentTextColor.set(Color.WHITE);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         yellowTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.YELLOW, "Yellow");
 
             yellowTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontColorTab.subText.setText("Yellow");
 
-            subtitlesController.subtitlesBox.currentTextColor.set(Color.YELLOW);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         greenTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.LIME, "Green");
 
             greenTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontColorTab.subText.setText("Green");
-
-            subtitlesController.subtitlesBox.currentTextColor.set(Color.LIME);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         cyanTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.CYAN, "Cyan");
 
             cyanTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontColorTab.subText.setText("Cyan");
-
-            subtitlesController.subtitlesBox.currentTextColor.set(Color.CYAN);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         blueTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.BLUE, "Blue");
 
             blueTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontColorTab.subText.setText("Blue");
 
-            subtitlesController.subtitlesBox.currentTextColor.set(Color.BLUE);
-;
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         magentaTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.MAGENTA, "Magenta");
 
             magentaTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontColorTab.subText.setText("Magenta");
-
-            subtitlesController.subtitlesBox.currentTextColor.set(Color.MAGENTA);
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         redTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.RED, "Red");
 
             redTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontColorTab.subText.setText("Red");
 
-            subtitlesController.subtitlesBox.currentTextColor.set(Color.RED);
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         blackTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.BLACK, "Black");
 
             blackTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontColorTab.subText.setText("Black");
-
-            subtitlesController.subtitlesBox.currentTextColor.set(Color.BLACK);
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
@@ -274,5 +216,18 @@ public class FontColorPane {
 
         parallelTransition.play();
         subtitlesController.animating.set(true);
+    }
+
+    private void updateValue(Color color, String displayText){
+        for(CheckTab checkTab : checkTabs){
+            checkTab.checkIcon.setVisible(false);
+        }
+
+        subtitlesOptionsPane.fontColorTab.subText.setText(displayText);
+
+        subtitlesController.subtitlesBox.currentTextColor.set(color);
+        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_TEXT_COLOR, color.toString());
+
+        subtitlesController.subtitlesBox.showCaptions();
     }
 }

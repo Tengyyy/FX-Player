@@ -113,122 +113,64 @@ public class BackgroundColorPane {
 
         whiteTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.rgb(255, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "White");
 
             whiteTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.backgroundColorTab.subText.setText("White");
 
-            subtitlesController.subtitlesBox.currentBackgroundColor.set(Color.rgb(255, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()));
 
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         yellowTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.rgb(255, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Yellow");
 
             yellowTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.backgroundColorTab.subText.setText("Yellow");
 
-            subtitlesController.subtitlesBox.currentBackgroundColor.set(Color.rgb(255, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()));
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         greenTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.rgb(0, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Green");
 
             greenTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.backgroundColorTab.subText.setText("Green");
 
-            subtitlesController.subtitlesBox.currentBackgroundColor.set(Color.rgb(0, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()));
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         cyanTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.rgb(0, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Cyan");
 
             cyanTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.backgroundColorTab.subText.setText("Cyan");
 
-
-            subtitlesController.subtitlesBox.currentBackgroundColor.set(Color.rgb(0, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()));
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         blueTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
-
+            updateValue(Color.rgb(0, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Blue");
             blueTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.backgroundColorTab.subText.setText("Blue");
 
-
-            subtitlesController.subtitlesBox.currentBackgroundColor.set(Color.rgb(0, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()));
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         magentaTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.rgb(255, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Magenta");
 
             magentaTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.backgroundColorTab.subText.setText("Magenta");
 
-            subtitlesController.subtitlesBox.currentBackgroundColor.set(Color.rgb(255, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()));
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         redTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.rgb(255, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Red");
 
             redTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.backgroundColorTab.subText.setText("Red");
-
-
-            subtitlesController.subtitlesBox.currentBackgroundColor.set(Color.rgb(255, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()));
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         blackTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Color.rgb(0, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Black");
 
             blackTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.backgroundColorTab.subText.setText("Black");
-
-            subtitlesController.subtitlesBox.currentBackgroundColor.set(Color.rgb(0, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()));
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
@@ -274,6 +216,20 @@ public class BackgroundColorPane {
 
         parallelTransition.play();
         subtitlesController.animating.set(true);
+    }
+
+
+    private void updateValue(Color color, String displayText){
+
+        for(CheckTab checkTab : checkTabs){
+            checkTab.checkIcon.setVisible(false);
+        }
+
+        subtitlesOptionsPane.backgroundColorTab.subText.setText(displayText);
+        subtitlesController.subtitlesBox.currentBackgroundColor.set(color);
+        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_BACKGROUND_COLOR, color.toString());
+
+        subtitlesController.subtitlesBox.showCaptions();
     }
 }
 

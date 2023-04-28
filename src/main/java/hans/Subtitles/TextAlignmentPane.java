@@ -106,44 +106,25 @@ public class TextAlignmentPane {
 
         leftTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Pos.CENTER, "Center");
 
             leftTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.textAlignmentTab.subText.setText("Left");
-
-            subtitlesController.subtitlesBox.currentTextAlignment.set(Pos.CENTER_LEFT);
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         centerTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Pos.CENTER, "Center");
 
             centerTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.textAlignmentTab.subText.setText("Center");
 
-            subtitlesController.subtitlesBox.currentTextAlignment.set(Pos.CENTER);
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         rightTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(Pos.CENTER_RIGHT, "Right");
 
             rightTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.textAlignmentTab.subText.setText("Right");
 
-            subtitlesController.subtitlesBox.currentTextAlignment.set(Pos.CENTER_RIGHT);
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
 
@@ -190,6 +171,20 @@ public class TextAlignmentPane {
 
         parallelTransition.play();
         subtitlesController.animating.set(true);
+    }
+
+    private void updateValue(Pos newValue, String displayText){
+
+        for(CheckTab checkTab : checkTabs){
+            checkTab.checkIcon.setVisible(false);
+        }
+
+        subtitlesOptionsPane.textAlignmentTab.subText.setText(displayText);
+
+        subtitlesController.subtitlesBox.currentTextAlignment.set(newValue);
+        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_TEXT_ALIGNMENT, newValue.toString());
+
+        subtitlesController.subtitlesBox.showCaptions();
     }
 }
 

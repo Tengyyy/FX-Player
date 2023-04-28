@@ -20,6 +20,7 @@ module hans {
     requires org.controlsfx.controls;
     requires xmlrpc.common;
     requires com.sandec.mdfx;
+    requires java.prefs;
 
 
     opens hans to javafx.graphics, javafx.fxml;

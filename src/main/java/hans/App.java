@@ -45,7 +45,6 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 
-
         svgMap.put(MENU, "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z");
         svgMap.put(PREVIOUS_VIDEO, "M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z");
         svgMap.put(PLAY, "M8,5.14V19.14L19,12.14L8,5.14Z");
@@ -122,11 +121,6 @@ public class App extends Application {
         svgMap.put(ARROW_UP, "M1,21H23L12,2");
 
 
-        //TODO: config sisse laadida
-
-        hotkeyController = new HotkeyController();
-
-
         FXMLLoader loader = new FXMLLoader(getClass().getResource("views/Main.fxml"));
 
         Parent root = loader.load();
@@ -138,10 +132,7 @@ public class App extends Application {
         menuController = mainController.getMenuController();
         subtitlesController = mainController.getSubtitlesController();
         mediaInterface = mainController.getMediaInterface();
-
-        mainController.hotkeyController = hotkeyController;
-        hotkeyController.mainController = mainController;
-
+        hotkeyController = mainController.getHotkeyController();
 
         initializeConfig();
 
@@ -173,6 +164,7 @@ public class App extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("FXPlayer");
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("images/appIcon.png")).toExternalForm()));
+        primaryStage.setMaximized(true);
         primaryStage.show();
 
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
@@ -195,8 +187,8 @@ public class App extends Application {
     }
 
 
-
     private void initializeConfig(){
+
         menuController.settingsPage.controlsSection.initializeControlsBox();
 
         controlBarController.loadTooltips();

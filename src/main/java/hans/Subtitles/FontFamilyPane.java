@@ -56,7 +56,6 @@ public class FontFamilyPane {
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         fontFamilyBox.setAlignment(Pos.BOTTOM_CENTER);
 
-
         fontFamilyBox.setPrefSize(200, 311);
         fontFamilyBox.setMaxSize(200, 311);
         fontFamilyBox.setPadding(new Insets(0, 0, 8, 0));
@@ -112,104 +111,53 @@ public class FontFamilyPane {
 
         sansSerifRegularTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue("\"Roboto\"", "Sans-Serif Regular");
 
             sansSerifRegularTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontFamilyTab.subText.setText("Sans-Serif Regular");
-
-            subtitlesController.subtitlesBox.currentFontFamily.set("\"Roboto\"");
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         sansSerifMediumTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue("\"Roboto Medium\"", "Sans-Serif Medium");
 
             sansSerifMediumTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontFamilyTab.subText.setText("Sans-Serif Medium");
-
-            subtitlesController.subtitlesBox.currentFontFamily.set("\"Roboto Medium\"");
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         sansSerifBoldTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue("\"Roboto Bold\"", "Sans-Serif Bold");
 
             sansSerifBoldTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontFamilyTab.subText.setText("Sans-Serif Bold");
-
-            subtitlesController.subtitlesBox.currentFontFamily.set("\"Roboto Bold\"");
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         serifTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue("\"EB Garamond Medium\"", "Serif");
 
             serifTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontFamilyTab.subText.setText("Serif");
-
-            subtitlesController.subtitlesBox.currentFontFamily.set("\"EB Garamond Medium\"");
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
 
         casualTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue("\"Comic Neue Bold\"", "Casual");
 
             casualTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontFamilyTab.subText.setText("Casual");
-
-            subtitlesController.subtitlesBox.currentFontFamily.set("\"Comic Neue Bold\"");
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
 
         cursiveTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue("\"Kalam Bold\"", "Cursive");
 
             cursiveTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontFamilyTab.subText.setText("Cursive");
-
-            subtitlesController.subtitlesBox.currentFontFamily.set("\"Kalam Bold\"");
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         smallCapitalsTab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue("\"Alegreya Sans SC Medium\"", "Small Capitals");
 
             smallCapitalsTab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontFamilyTab.subText.setText("Small Capitals");
-
-            subtitlesController.subtitlesBox.currentFontFamily.set("\"Alegreya Sans SC Medium\"");
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
 
@@ -256,5 +204,19 @@ public class FontFamilyPane {
 
         parallelTransition.play();
         subtitlesController.animating.set(true);
+    }
+
+    private void updateValue(String fontName, String displayText){
+
+        for(CheckTab checkTab : checkTabs){
+            checkTab.checkIcon.setVisible(false);
+        }
+
+        subtitlesOptionsPane.fontFamilyTab.subText.setText(displayText);
+
+        subtitlesController.subtitlesBox.currentFontFamily.set(fontName);
+        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_FONT_FAMILY, fontName);
+
+        subtitlesController.subtitlesBox.showCaptions();
     }
 }

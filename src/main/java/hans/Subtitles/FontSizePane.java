@@ -113,111 +113,53 @@ public class FontSizePane {
 
         _50Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(0.75 * subtitlesController.subtitlesBox.defaultFontSize, "50%");
 
             _50Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontSizeTab.subText.setText("50%");
 
-            subtitlesController.subtitlesBox.currentFontSize.set(0.75 * subtitlesController.subtitlesBox.defaultFontSize);
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _75Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(0.875 * subtitlesController.subtitlesBox.defaultFontSize, "75%");
 
             _75Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontSizeTab.subText.setText("75%");
-
-            subtitlesController.subtitlesBox.currentFontSize.set(0.875 * subtitlesController.subtitlesBox.defaultFontSize);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _100Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(subtitlesController.subtitlesBox.defaultFontSize, "100%");
 
             _100Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontSizeTab.subText.setText("100%");
-
-
-            subtitlesController.subtitlesBox.currentFontSize.set(subtitlesController.subtitlesBox.defaultFontSize);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _150Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(1.25 * subtitlesController.subtitlesBox.defaultFontSize, "150%");
 
             _150Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontSizeTab.subText.setText("150%");
-
-
-            subtitlesController.subtitlesBox.currentFontSize.set(1.25 * subtitlesController.subtitlesBox.defaultFontSize);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _200Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(1.5 * subtitlesController.subtitlesBox.defaultFontSize, "200%");
 
             _200Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontSizeTab.subText.setText("200%");
-
-
-            subtitlesController.subtitlesBox.currentFontSize.set(1.5 * subtitlesController.subtitlesBox.defaultFontSize);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _300Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(2 * subtitlesController.subtitlesBox.defaultFontSize, "300%");
 
             _300Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontSizeTab.subText.setText("300%");
 
-
-            subtitlesController.subtitlesBox.currentFontSize.set(2 * subtitlesController.subtitlesBox.defaultFontSize);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _400Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(2.25 * subtitlesController.subtitlesBox.defaultFontSize, "400%");
 
             _400Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.fontSizeTab.subText.setText("400%");
-
-
-            subtitlesController.subtitlesBox.currentFontSize.set(2.25 * subtitlesController.subtitlesBox.defaultFontSize);
-
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
 
@@ -264,6 +206,20 @@ public class FontSizePane {
 
         parallelTransition.play();
         subtitlesController.animating.set(true);
+    }
+
+    private void updateValue(double newValue, String displayText){
+
+        for(CheckTab checkTab : checkTabs){
+            checkTab.checkIcon.setVisible(false);
+        }
+
+        subtitlesOptionsPane.fontSizeTab.subText.setText(displayText);
+
+        subtitlesController.subtitlesBox.currentFontSize.set(newValue);
+        subtitlesController.mainController.pref.preferences.putDouble(SubtitlesBox.SUBTITLES_FONT_SIZE, newValue);
+
+        subtitlesController.subtitlesBox.showCaptions();
     }
 }
 

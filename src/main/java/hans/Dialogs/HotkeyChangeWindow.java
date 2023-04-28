@@ -316,6 +316,7 @@ public class HotkeyChangeWindow {
 
         mainController.hotkeyController.keybindActionMap.remove(hotkeyString);
         mainController.hotkeyController.actionKeybindMap.put(action, new KeyCode[0]);
+        mainController.pref.preferences.put(action.toString(), "[]");
 
         controlItem.keybindBox.getChildren().clear();
 
@@ -340,6 +341,7 @@ public class HotkeyChangeWindow {
             //hotkey is already assigned to another action, have to unbind that action.
             Action duplicateAction = mainController.hotkeyController.keybindActionMap.get(newHotkeyString);
             mainController.hotkeyController.actionKeybindMap.put(duplicateAction, new KeyCode[0]);
+            mainController.pref.preferences.put(duplicateAction.toString(), "[]");
 
             updateTooltip(duplicateAction);
 
@@ -354,6 +356,7 @@ public class HotkeyChangeWindow {
 
         mainController.hotkeyController.keybindActionMap.put(newHotkeyString, action);
         mainController.hotkeyController.actionKeybindMap.put(action, hotkey);
+        mainController.pref.preferences.put(action.toString(), newHotkeyString);
 
         controlItem.keybindBox.getChildren().clear();
         controlItem.loadKeyLabel(hotkey);

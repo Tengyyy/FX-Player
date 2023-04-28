@@ -113,100 +113,51 @@ public class LineSpacingPane {
 
         _0Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(0, "0%");
 
             _0Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.lineSpacingTab.subText.setText("0%");
-
-            subtitlesController.subtitlesBox.currentSpacing.set(0);
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _50Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 0.5), "50%");
 
             _50Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.lineSpacingTab.subText.setText("50%");
-
-            subtitlesController.subtitlesBox.currentSpacing.set((int) (subtitlesController.subtitlesBox.defaultSpacing * 0.5));
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _75Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 0.75), "75%");
 
             _75Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.lineSpacingTab.subText.setText("75%");
-
-            subtitlesController.subtitlesBox.currentSpacing.set((int) (subtitlesController.subtitlesBox.defaultSpacing * 0.75));
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _100Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue(subtitlesController.subtitlesBox.defaultSpacing, "100%");
 
             _100Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.lineSpacingTab.subText.setText("100%");
-
-            subtitlesController.subtitlesBox.currentSpacing.set((int) (subtitlesController.subtitlesBox.defaultSpacing));
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _125Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 1.25), "125%");
 
             _125Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.lineSpacingTab.subText.setText("125%");
-
-            subtitlesController.subtitlesBox.currentSpacing.set((int) (subtitlesController.subtitlesBox.defaultSpacing * 1.25));
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _150Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 1.5), "150%");
 
             _150Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.lineSpacingTab.subText.setText("150%");
-
-            subtitlesController.subtitlesBox.currentSpacing.set((int) (subtitlesController.subtitlesBox.defaultSpacing * 1.5));
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         _200Tab.setOnMouseClicked(e -> {
 
-            for(CheckTab checkTab : checkTabs){
-                checkTab.checkIcon.setVisible(false);
-            }
+            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 2.0), "200%");
 
             _200Tab.checkIcon.setVisible(true);
-            subtitlesOptionsPane.lineSpacingTab.subText.setText("200%");
-
-            subtitlesController.subtitlesBox.currentSpacing.set((int) (subtitlesController.subtitlesBox.defaultSpacing * 2.0));
-
-            subtitlesController.subtitlesBox.showCaptions();
         });
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
@@ -252,6 +203,20 @@ public class LineSpacingPane {
 
         parallelTransition.play();
         subtitlesController.animating.set(true);
+    }
+
+    private void updateValue(int newValue, String displayText){
+
+        for(CheckTab checkTab : checkTabs){
+            checkTab.checkIcon.setVisible(false);
+        }
+
+        subtitlesOptionsPane.lineSpacingTab.subText.setText(displayText);
+
+        subtitlesController.subtitlesBox.currentSpacing.set(newValue);
+        subtitlesController.mainController.pref.preferences.putInt(SubtitlesBox.SUBTITLES_SPACING, newValue);
+
+        subtitlesController.subtitlesBox.showCaptions();
     }
 }
 

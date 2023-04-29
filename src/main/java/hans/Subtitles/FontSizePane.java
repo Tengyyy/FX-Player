@@ -96,7 +96,7 @@ public class FontSizePane {
 
         _50Tab = new CheckTab(false, "50%");
         _75Tab = new CheckTab(false, "75%");
-        _100Tab = new CheckTab(true, "100%");
+        _100Tab = new CheckTab(false, "100%");
         _150Tab = new CheckTab(false, "150%");
         _200Tab = new CheckTab(false, "200%");
         _300Tab = new CheckTab(false, "300%");
@@ -111,57 +111,13 @@ public class FontSizePane {
         checkTabs.add(_300Tab);
         checkTabs.add(_400Tab);
 
-        _50Tab.setOnMouseClicked(e -> {
-
-            updateValue(0.75 * subtitlesController.subtitlesBox.defaultFontSize, "50%");
-
-            _50Tab.checkIcon.setVisible(true);
-
-        });
-
-        _75Tab.setOnMouseClicked(e -> {
-
-            updateValue(0.875 * subtitlesController.subtitlesBox.defaultFontSize, "75%");
-
-            _75Tab.checkIcon.setVisible(true);
-        });
-
-        _100Tab.setOnMouseClicked(e -> {
-
-            updateValue(subtitlesController.subtitlesBox.defaultFontSize, "100%");
-
-            _100Tab.checkIcon.setVisible(true);
-        });
-
-        _150Tab.setOnMouseClicked(e -> {
-
-            updateValue(1.25 * subtitlesController.subtitlesBox.defaultFontSize, "150%");
-
-            _150Tab.checkIcon.setVisible(true);
-        });
-
-        _200Tab.setOnMouseClicked(e -> {
-
-            updateValue(1.5 * subtitlesController.subtitlesBox.defaultFontSize, "200%");
-
-            _200Tab.checkIcon.setVisible(true);
-        });
-
-        _300Tab.setOnMouseClicked(e -> {
-
-            updateValue(2 * subtitlesController.subtitlesBox.defaultFontSize, "300%");
-
-            _300Tab.checkIcon.setVisible(true);
-
-        });
-
-        _400Tab.setOnMouseClicked(e -> {
-
-            updateValue(2.25 * subtitlesController.subtitlesBox.defaultFontSize, "400%");
-
-            _400Tab.checkIcon.setVisible(true);
-        });
-
+        _50Tab.setOnMouseClicked(e -> press_50Tab(false));
+        _75Tab.setOnMouseClicked(e -> press_75Tab(false));
+        _100Tab.setOnMouseClicked(e -> press_100Tab(false));
+        _150Tab.setOnMouseClicked(e -> press_150Tab(false));
+        _200Tab.setOnMouseClicked(e -> press_200Tab(false));
+        _300Tab.setOnMouseClicked(e -> press_300Tab(false));
+        _400Tab.setOnMouseClicked(e -> press_400Tab(false));
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -208,7 +164,7 @@ public class FontSizePane {
         subtitlesController.animating.set(true);
     }
 
-    private void updateValue(double newValue, String displayText){
+    public void updateValue(double newValue, String displayText){
 
         for(CheckTab checkTab : checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -216,10 +172,76 @@ public class FontSizePane {
 
         subtitlesOptionsPane.fontSizeTab.subText.setText(displayText);
 
-        subtitlesController.subtitlesBox.currentFontSize.set(newValue);
+        subtitlesController.subtitlesBox.currentFontSize.set(newValue * subtitlesController.subtitlesBox.defaultFontSize);
         subtitlesController.mainController.pref.preferences.putDouble(SubtitlesBox.SUBTITLES_FONT_SIZE, newValue);
 
         subtitlesController.subtitlesBox.showCaptions();
+    }
+
+    private void initializeValue(double newValue, String displayText){
+        subtitlesOptionsPane.fontSizeTab.subText.setText(displayText);
+        subtitlesController.subtitlesBox.currentFontSize.set(newValue * subtitlesController.subtitlesBox.defaultFontSize);
+    }
+
+    public void setInitialValue(double fontSize){
+        if(fontSize == 0.75) press_50Tab(true);
+        else if(fontSize == 0.875) press_75Tab(true);
+        else if(fontSize == 1.0) press_100Tab(true);
+        else if(fontSize == 1.25) press_150Tab(true);
+        else if(fontSize == 1.5) press_200Tab(true);
+        else if(fontSize == 2.0) press_300Tab(true);
+        else press_400Tab(true);
+
+    }
+
+
+    public void press_50Tab(boolean initial){
+        if(initial) initializeValue(0.75, "50%");
+        else updateValue(0.75, "50%");
+
+        _50Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_75Tab(boolean initial){
+        if(initial) initializeValue(0.875, "75%");
+        else updateValue(0.875, "75%");
+
+        _75Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_100Tab(boolean initial){
+        if(initial) initializeValue(1.0, "100%");
+        else updateValue(1.0, "100%");
+
+        _100Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_150Tab(boolean initial){
+        if(initial) initializeValue(1.25, "150%");
+        else updateValue(1.25, "150%");
+
+        _150Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_200Tab(boolean initial){
+        if(initial) initializeValue(1.5, "200%");
+        else updateValue(1.5, "200%");
+
+        _200Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_300Tab(boolean initial){
+        if(initial) initializeValue(2, "300%");
+        else updateValue(2, "300%");
+
+        _300Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_400Tab(boolean initial){
+        if(initial) initializeValue(2.25, "400%");
+        else updateValue(2.25, "400%");
+
+        _400Tab.checkIcon.setVisible(true);
     }
 }
 

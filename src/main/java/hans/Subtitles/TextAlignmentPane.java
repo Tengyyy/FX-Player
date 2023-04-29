@@ -95,38 +95,17 @@ public class TextAlignmentPane {
         textAlignmentTitleLabel.setOnMouseClicked((e) -> closeTextAlignmentPane());
 
         leftTab = new CheckTab(false, "Left");
-        centerTab = new CheckTab(true, "Center");
+        centerTab = new CheckTab(false, "Center");
         rightTab = new CheckTab(false, "Right");
-
 
         textAlignmentBox.getChildren().addAll(leftTab, centerTab, rightTab);
         checkTabs.add(leftTab);
         checkTabs.add(centerTab);
         checkTabs.add(rightTab);
 
-        leftTab.setOnMouseClicked(e -> {
-
-            updateValue(Pos.CENTER, "Center");
-
-            leftTab.checkIcon.setVisible(true);
-        });
-
-        centerTab.setOnMouseClicked(e -> {
-
-            updateValue(Pos.CENTER, "Center");
-
-            centerTab.checkIcon.setVisible(true);
-
-        });
-
-        rightTab.setOnMouseClicked(e -> {
-
-            updateValue(Pos.CENTER_RIGHT, "Right");
-
-            rightTab.checkIcon.setVisible(true);
-
-        });
-
+        leftTab.setOnMouseClicked(e -> pressLeftTab(false));
+        centerTab.setOnMouseClicked(e -> pressCenterTab(false));
+        rightTab.setOnMouseClicked(e -> pressRightTab(false));
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -173,7 +152,7 @@ public class TextAlignmentPane {
         subtitlesController.animating.set(true);
     }
 
-    private void updateValue(Pos newValue, String displayText){
+    public void updateValue(Pos newValue, String displayText){
 
         for(CheckTab checkTab : checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -185,6 +164,38 @@ public class TextAlignmentPane {
         subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_TEXT_ALIGNMENT, newValue.toString());
 
         subtitlesController.subtitlesBox.showCaptions();
+    }
+
+    private void initializeValue(Pos newValue, String displayText){
+        subtitlesOptionsPane.textAlignmentTab.subText.setText(displayText);
+        subtitlesController.subtitlesBox.currentTextAlignment.set(newValue);
+    }
+
+    public void setInitialValue(Pos position){
+        if(position.equals(Pos.CENTER_LEFT)) pressLeftTab(true);
+        else if(position.equals(Pos.CENTER)) pressCenterTab(true);
+        else pressRightTab(true);
+    }
+
+    public void pressLeftTab(boolean initial){
+        if(initial) initializeValue(Pos.CENTER_LEFT, "Left");
+        else updateValue(Pos.CENTER_LEFT, "Left");
+
+        leftTab.checkIcon.setVisible(true);
+    }
+
+    public void pressCenterTab(boolean initial){
+        if(initial) initializeValue(Pos.CENTER, "Center");
+        else updateValue(Pos.CENTER, "Center");
+
+        centerTab.checkIcon.setVisible(true);
+    }
+
+    public void pressRightTab(boolean initial){
+        if(initial) initializeValue(Pos.CENTER_RIGHT, "Right");
+        else updateValue(Pos.CENTER_RIGHT, "Right");
+
+        rightTab.checkIcon.setVisible(true);
     }
 }
 

@@ -96,7 +96,7 @@ public class FontOpacityPane {
         _25Tab = new CheckTab(false, "25%");
         _50Tab = new CheckTab(false, "50%");
         _75Tab = new CheckTab(false, "75%");
-        _100Tab = new CheckTab(true, "100%");
+        _100Tab = new CheckTab(false, "100%");
 
         opacityBox.getChildren().addAll(_25Tab, _50Tab, _75Tab, _100Tab);
         checkTabs.add(_25Tab);
@@ -104,34 +104,10 @@ public class FontOpacityPane {
         checkTabs.add(_75Tab);
         checkTabs.add(_100Tab);
 
-        _25Tab.setOnMouseClicked(e -> {
-
-            updateValue(0.25, "25%");
-
-            _25Tab.checkIcon.setVisible(true);
-        });
-
-        _50Tab.setOnMouseClicked(e -> {
-
-            updateValue(0.5, "50%");
-
-            _50Tab.checkIcon.setVisible(true);
-        });
-
-        _75Tab.setOnMouseClicked(e -> {
-
-            updateValue(0.75, "75%");
-
-            _75Tab.checkIcon.setVisible(true);
-        });
-
-        _100Tab.setOnMouseClicked(e -> {
-
-            updateValue(1.0, "100%");
-
-            _100Tab.checkIcon.setVisible(true);
-
-        });
+        _25Tab.setOnMouseClicked(e -> press_25Tab(false));
+        _50Tab.setOnMouseClicked(e -> press_50Tab(false));
+        _75Tab.setOnMouseClicked(e -> press_75Tab(false));
+        _100Tab.setOnMouseClicked(e -> press_100Tab(false));
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -178,7 +154,7 @@ public class FontOpacityPane {
         subtitlesController.animating.set(true);
     }
 
-    private void updateValue(double newValue, String displayText){
+    public void updateValue(double newValue, String displayText){
 
         for(CheckTab checkTab : checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -190,6 +166,46 @@ public class FontOpacityPane {
         subtitlesController.mainController.pref.preferences.putDouble(SubtitlesBox.SUBTITLES_TEXT_OPACITY, newValue);
 
         subtitlesController.subtitlesBox.showCaptions();
+    }
+
+    private void initializeValue(double newValue, String displayText){
+        subtitlesOptionsPane.fontOpacityTab.subText.setText(displayText);
+        subtitlesController.subtitlesBox.currentTextOpacity.set(newValue);
+    }
+
+    public void setInitialValue(double textOpacity){
+        if(textOpacity == 0.25) press_25Tab(true);
+        else if(textOpacity == 0.5) press_50Tab(true);
+        else if(textOpacity == 0.75) press_75Tab(true);
+        else press_100Tab(true);
+    }
+
+    public void press_25Tab(boolean initial){
+        if(initial) initializeValue(0.25, "25%");
+        else updateValue(0.25, "25%");
+
+        _25Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_50Tab(boolean initial){
+        if(initial) initializeValue(0.5, "50%");
+        else updateValue(0.5, "50%");
+
+        _50Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_75Tab(boolean initial){
+        if(initial) initializeValue(0.75, "75%");
+        else updateValue(0.75, "75%");
+
+        _75Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_100Tab(boolean initial){
+        if(initial) initializeValue(1.0, "100%");
+        else updateValue(1.0, "100%");
+
+        _100Tab.checkIcon.setVisible(true);
     }
 }
 

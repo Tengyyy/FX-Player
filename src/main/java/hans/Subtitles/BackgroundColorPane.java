@@ -98,7 +98,7 @@ public class BackgroundColorPane {
         blueTab = new CheckTab(false, "Blue");
         magentaTab = new CheckTab(false, "Magenta");
         redTab = new CheckTab(false, "Red");
-        blackTab = new CheckTab(true, "Black");
+        blackTab = new CheckTab(false, "Black");
 
         backgroundColorBox.getChildren().addAll(whiteTab, yellowTab, greenTab, cyanTab, blueTab, magentaTab, redTab, blackTab);
         checkTabs.add(whiteTab);
@@ -111,68 +111,14 @@ public class BackgroundColorPane {
         checkTabs.add(blackTab);
 
 
-        whiteTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.rgb(255, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "White");
-
-            whiteTab.checkIcon.setVisible(true);
-
-
-        });
-
-        yellowTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.rgb(255, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Yellow");
-
-            yellowTab.checkIcon.setVisible(true);
-
-        });
-
-        greenTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.rgb(0, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Green");
-
-            greenTab.checkIcon.setVisible(true);
-
-        });
-
-        cyanTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.rgb(0, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Cyan");
-
-            cyanTab.checkIcon.setVisible(true);
-
-        });
-
-        blueTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.rgb(0, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Blue");
-            blueTab.checkIcon.setVisible(true);
-
-        });
-
-        magentaTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.rgb(255, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Magenta");
-
-            magentaTab.checkIcon.setVisible(true);
-
-        });
-
-        redTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.rgb(255, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Red");
-
-            redTab.checkIcon.setVisible(true);
-        });
-
-        blackTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.rgb(0, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Black");
-
-            blackTab.checkIcon.setVisible(true);
-        });
-
+        whiteTab.setOnMouseClicked(e -> pressWhiteTab(false));
+        yellowTab.setOnMouseClicked(e -> pressYellowTab(false));
+        greenTab.setOnMouseClicked(e -> pressGreenTab(false));
+        cyanTab.setOnMouseClicked(e -> pressCyanTab(false));
+        blueTab.setOnMouseClicked(e -> pressBlueTab(false));
+        magentaTab.setOnMouseClicked(e -> pressMagentaTab(false));
+        redTab.setOnMouseClicked(e -> pressRedTab(false));
+        blackTab.setOnMouseClicked(e -> pressBlackTab(false));
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
 
@@ -219,7 +165,7 @@ public class BackgroundColorPane {
     }
 
 
-    private void updateValue(Color color, String displayText){
+    public void updateValue(Color color, String displayText){
 
         for(CheckTab checkTab : checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -230,6 +176,82 @@ public class BackgroundColorPane {
         subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_BACKGROUND_COLOR, color.toString());
 
         subtitlesController.subtitlesBox.showCaptions();
+    }
+
+    private void initializeValue(Color color, String displayText){
+        subtitlesOptionsPane.backgroundColorTab.subText.setText(displayText);
+        subtitlesController.subtitlesBox.currentBackgroundColor.set(color);
+    }
+
+    public void setInitialValue(Color color){
+        int red = (int) (color.getRed() * 255);
+        int green = (int) (color.getGreen() * 255);
+        int blue = (int) (color.getBlue() * 255);
+
+        if(red == 255 && green == 255 && blue == 255) pressWhiteTab(true);
+        else if(red == 255 && green == 255 && blue == 0) pressYellowTab(true);
+        else if(red == 0 && green == 255 && blue == 0) pressGreenTab(true);
+        else if(red == 0 && green == 255 && blue == 255) pressCyanTab(true);
+        else if(red == 0 && green == 0 && blue == 255) pressBlueTab(true);
+        else if(red == 255 && green == 0 && blue == 255) pressMagentaTab(true);
+        else if(red == 255 && green == 0 && blue == 0) pressRedTab(true);
+        else pressBlackTab(true);
+    }
+
+
+    public void pressWhiteTab(boolean initial){
+        if( initial) initializeValue(Color.rgb(255, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "White");
+        else updateValue(Color.rgb(255, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "White");
+
+        whiteTab.checkIcon.setVisible(true);
+    }
+
+    public void pressYellowTab(boolean initial){
+        if( initial) initializeValue(Color.rgb(255, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Yellow");
+        else updateValue(Color.rgb(255, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Yellow");
+
+        yellowTab.checkIcon.setVisible(true);
+    }
+
+    public void pressGreenTab(boolean initial){
+        if( initial) initializeValue(Color.rgb(0, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Green");
+        else updateValue(Color.rgb(0, 255, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Green");
+
+        greenTab.checkIcon.setVisible(true);
+    }
+
+    public void pressCyanTab(boolean initial){
+        if( initial) initializeValue(Color.rgb(0, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Cyan");
+        else updateValue(Color.rgb(0, 255, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Cyan");
+
+        cyanTab.checkIcon.setVisible(true);
+    }
+
+    public void pressBlueTab(boolean initial){
+        if( initial) initializeValue(Color.rgb(0, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Blue");
+        else updateValue(Color.rgb(0, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Blue");
+        blueTab.checkIcon.setVisible(true);
+    }
+
+    public void pressMagentaTab(boolean initial){
+        if( initial) initializeValue(Color.rgb(255, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Magenta");
+        else updateValue(Color.rgb(255, 0, 255, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Magenta");
+
+        magentaTab.checkIcon.setVisible(true);
+    }
+
+    public void pressRedTab(boolean initial){
+        if( initial) initializeValue(Color.rgb(255, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Red");
+        else updateValue(Color.rgb(255, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Red");
+
+        redTab.checkIcon.setVisible(true);
+    }
+
+    public void pressBlackTab(boolean initial){
+        if( initial) initializeValue(Color.rgb(0, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Black");
+        else updateValue(Color.rgb(0, 0, 0, subtitlesController.subtitlesBox.currentBackgroundColor.get().getOpacity()), "Black");
+
+        blackTab.checkIcon.setVisible(true);
     }
 }
 

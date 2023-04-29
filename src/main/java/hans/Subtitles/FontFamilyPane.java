@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.skin.CellSkinBase;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -93,7 +94,7 @@ public class FontFamilyPane {
         fontFamilyTitleLabel.setOnMouseClicked((e) -> closeFontFamilyPane());
 
         sansSerifRegularTab = new CheckTab(false, "Sans-Serif Regular");
-        sansSerifMediumTab = new CheckTab(true, "Sans-Serif Medium");
+        sansSerifMediumTab = new CheckTab(false, "Sans-Serif Medium");
         sansSerifBoldTab = new CheckTab(false, "Sans-Serif Bold");
         serifTab = new CheckTab(false, "Serif");
         casualTab = new CheckTab(false, "Casual");
@@ -109,57 +110,13 @@ public class FontFamilyPane {
         checkTabs.add(cursiveTab);
         checkTabs.add(smallCapitalsTab);
 
-        sansSerifRegularTab.setOnMouseClicked(e -> {
-
-            updateValue("\"Roboto\"", "Sans-Serif Regular");
-
-            sansSerifRegularTab.checkIcon.setVisible(true);
-        });
-
-        sansSerifMediumTab.setOnMouseClicked(e -> {
-
-            updateValue("\"Roboto Medium\"", "Sans-Serif Medium");
-
-            sansSerifMediumTab.checkIcon.setVisible(true);
-        });
-
-        sansSerifBoldTab.setOnMouseClicked(e -> {
-
-            updateValue("\"Roboto Bold\"", "Sans-Serif Bold");
-
-            sansSerifBoldTab.checkIcon.setVisible(true);
-        });
-
-        serifTab.setOnMouseClicked(e -> {
-
-            updateValue("\"EB Garamond Medium\"", "Serif");
-
-            serifTab.checkIcon.setVisible(true);
-        });
-
-
-        casualTab.setOnMouseClicked(e -> {
-
-            updateValue("\"Comic Neue Bold\"", "Casual");
-
-            casualTab.checkIcon.setVisible(true);
-        });
-
-
-        cursiveTab.setOnMouseClicked(e -> {
-
-            updateValue("\"Kalam Bold\"", "Cursive");
-
-            cursiveTab.checkIcon.setVisible(true);
-        });
-
-        smallCapitalsTab.setOnMouseClicked(e -> {
-
-            updateValue("\"Alegreya Sans SC Medium\"", "Small Capitals");
-
-            smallCapitalsTab.checkIcon.setVisible(true);
-        });
-
+        sansSerifRegularTab.setOnMouseClicked(e -> pressSansSerifRegularTab(false));
+        sansSerifMediumTab.setOnMouseClicked(e -> pressSansSerifMediumTab(false));
+        sansSerifBoldTab.setOnMouseClicked(e -> pressSansSerifBoldTab(false));
+        serifTab.setOnMouseClicked(e -> pressSerifTab(false));
+        casualTab.setOnMouseClicked(e -> pressCasualTab(false));
+        cursiveTab.setOnMouseClicked(e -> pressCursiveTab(false));
+        smallCapitalsTab.setOnMouseClicked(e -> pressSmallCapitalsTab(false));
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -206,7 +163,7 @@ public class FontFamilyPane {
         subtitlesController.animating.set(true);
     }
 
-    private void updateValue(String fontName, String displayText){
+    public void updateValue(String fontName, String displayText){
 
         for(CheckTab checkTab : checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -219,4 +176,73 @@ public class FontFamilyPane {
 
         subtitlesController.subtitlesBox.showCaptions();
     }
+
+    private void initializeValue(String fontName, String displayText){
+        subtitlesOptionsPane.fontFamilyTab.subText.setText(displayText);
+        subtitlesController.subtitlesBox.currentFontFamily.set(fontName);
+    }
+    
+    public void setInitialValue(String fontFamily){
+        switch(fontFamily){
+            case "\"Roboto\"" -> pressSansSerifRegularTab(true);
+            case "\"Roboto Medium\"" -> pressSansSerifMediumTab(true);
+            case "\"Roboto Bold\"" -> pressSansSerifBoldTab(true);
+            case "\"EB Garamond Medium\"" -> pressSerifTab(true);
+            case "\"Comic Neue Bold\"" -> pressCasualTab(true);
+            case "\"Kalam Bold\"" -> pressCursiveTab(true);
+            default -> pressSmallCapitalsTab(true);
+        }
+    }
+
+
+    public void pressSansSerifRegularTab(boolean initial){
+
+        if(initial) initializeValue("\"Roboto\"", "Sans-Serif Regular");
+        else updateValue("\"Roboto\"", "Sans-Serif Regular");
+
+        sansSerifRegularTab.checkIcon.setVisible(true);
+    }
+
+    public void pressSansSerifMediumTab(boolean initial){
+        if(initial) initializeValue("\"Roboto Medium\"", "Sans-Serif Medium");
+        else updateValue("\"Roboto Medium\"", "Sans-Serif Medium");
+
+        sansSerifMediumTab.checkIcon.setVisible(true);
+    }
+
+    public void pressSansSerifBoldTab(boolean initial){
+        if (initial) initializeValue("\"Roboto Bold\"", "Sans-Serif Bold");
+        else updateValue("\"Roboto Bold\"", "Sans-Serif Bold");
+
+        sansSerifBoldTab.checkIcon.setVisible(true);
+    }
+
+    public void pressSerifTab(boolean initial){
+        if(initial) initializeValue("\"EB Garamond Medium\"", "Serif");
+        else updateValue("\"EB Garamond Medium\"", "Serif");
+
+        serifTab.checkIcon.setVisible(true);
+    }
+
+    public void pressCasualTab(boolean initial){
+        if(initial) initializeValue("\"Comic Neue Bold\"", "Casual");
+        else updateValue("\"Comic Neue Bold\"", "Casual");
+
+        casualTab.checkIcon.setVisible(true);
+    }
+
+    public void pressCursiveTab(boolean initial){
+        if(initial) initializeValue("\"Kalam Bold\"", "Cursive");
+        else updateValue("\"Kalam Bold\"", "Cursive");
+
+        cursiveTab.checkIcon.setVisible(true);
+    }
+
+    public void pressSmallCapitalsTab(boolean initial){
+        if(initial) initializeValue("\"Alegreya Sans SC Medium\"", "Small Capitals");
+        else updateValue("\"Alegreya Sans SC Medium\"", "Small Capitals");
+
+        smallCapitalsTab.checkIcon.setVisible(true);
+    }
+
 }

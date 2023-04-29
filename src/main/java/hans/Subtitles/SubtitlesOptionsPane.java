@@ -499,88 +499,14 @@ public class SubtitlesOptionsPane {
     public void resetCaptions(){
         // revert to default settings
 
-        for(CheckTab checkTab : fontFamilyPane.checkTabs){
-            checkTab.checkIcon.setVisible(false);
-        }
-
-        fontFamilyPane.sansSerifMediumTab.checkIcon.setVisible(true);
-        fontFamilyTab.subText.setText("Sans-Serif Medium");
-
-        subtitlesController.subtitlesBox.currentFontFamily.set(subtitlesController.subtitlesBox.defaultFontFamily);
-        subtitlesController.subtitlesBox.currentFontSize.set(subtitlesController.subtitlesBox.defaultFontSize);
-
-        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_FONT_FAMILY, subtitlesController.subtitlesBox.defaultFontFamily);
-        subtitlesController.mainController.pref.preferences.putDouble(SubtitlesBox.SUBTITLES_FONT_SIZE, subtitlesController.subtitlesBox.defaultFontSize);
-
-        for(CheckTab checkTab : fontColorPane.checkTabs){
-            checkTab.checkIcon.setVisible(false);
-        }
-
-        fontColorPane.whiteTab.checkIcon.setVisible(true);
-        fontColorTab.subText.setText("White");
-
-        subtitlesController.subtitlesBox.currentTextColor.set(subtitlesController.subtitlesBox.defaultTextColor);
-
-        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_TEXT_COLOR, subtitlesController.subtitlesBox.defaultTextColor.toString());
-
-        for(CheckTab checkTab : fontSizePane.checkTabs){
-            checkTab.checkIcon.setVisible(false);
-        }
-
-        fontSizePane._100Tab.checkIcon.setVisible(true);
-        fontSizeTab.subText.setText("100%");
-
-
-        for(CheckTab checkTab : textAlignmentPane.checkTabs){
-            checkTab.checkIcon.setVisible(false);
-        }
-
-        textAlignmentPane.centerTab.checkIcon.setVisible(true);
-        textAlignmentTab.subText.setText("Center");
-
-        subtitlesController.subtitlesBox.currentTextAlignment.set(subtitlesController.subtitlesBox.defaultTextAlignment);
-
-        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_TEXT_ALIGNMENT, subtitlesController.subtitlesBox.defaultTextAlignment.toString());
-
-        for(CheckTab checkTab : backgroundOpacityPane.checkTabs){
-            checkTab.checkIcon.setVisible(false);
-        }
-
-        backgroundOpacityPane._75Tab.checkIcon.setVisible(true);
-        backgroundOpacityTab.subText.setText("75%");
-
-
-        for(CheckTab checkTab : backgroundColorPane.checkTabs){
-            checkTab.checkIcon.setVisible(false);
-        }
-
-        backgroundColorPane.blackTab.checkIcon.setVisible(true);
-        backgroundColorTab.subText.setText("Black");
-
-        subtitlesController.subtitlesBox.currentBackgroundColor.set(subtitlesController.subtitlesBox.defaultBackgroundColor);
-
-        subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_BACKGROUND_COLOR, subtitlesController.subtitlesBox.defaultBackgroundColor.toString());
-
-        for(CheckTab checkTab : lineSpacingPane.checkTabs){
-            checkTab.checkIcon.setVisible(false);
-        }
-
-        lineSpacingPane._100Tab.checkIcon.setVisible(true);
-        lineSpacingTab.subText.setText("100%");
-
-        subtitlesController.subtitlesBox.currentSpacing.set(subtitlesController.subtitlesBox.defaultSpacing);
-        subtitlesController.mainController.pref.preferences.putInt(SubtitlesBox.SUBTITLES_SPACING, subtitlesController.subtitlesBox.defaultSpacing);
-
-        for(CheckTab checkTab : fontOpacityPane.checkTabs){
-            checkTab.checkIcon.setVisible(false);
-        }
-
-        fontOpacityPane._100Tab.checkIcon.setVisible(true);
-        fontOpacityTab.subText.setText("100%");
-
-        subtitlesController.subtitlesBox.currentTextOpacity.set(subtitlesController.subtitlesBox.defaultTextOpacity);
-
-        subtitlesController.mainController.pref.preferences.putDouble(SubtitlesBox.SUBTITLES_TEXT_OPACITY, subtitlesController.subtitlesBox.defaultTextOpacity);
+        backgroundColorPane.pressBlackTab(false);
+        backgroundOpacityPane.press_75Tab(false);
+        fontColorPane.pressWhiteTab(false);
+        fontFamilyPane.pressSansSerifMediumTab(false);
+        fontOpacityPane.press_100Tab(false);
+        fontSizePane.press_100Tab(false);
+        lineSpacingPane.press_100Tab(false);
+        textAlignmentPane.pressCenterTab(false);
     }
 
 

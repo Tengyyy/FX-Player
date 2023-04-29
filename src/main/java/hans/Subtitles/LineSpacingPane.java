@@ -97,7 +97,7 @@ public class LineSpacingPane {
         _0Tab = new CheckTab(false, "0%");
         _50Tab = new CheckTab(false, "50%");
         _75Tab = new CheckTab(false, "75%");
-        _100Tab = new CheckTab(true, "100%");
+        _100Tab = new CheckTab(false, "100%");
         _125Tab = new CheckTab(false, "125%");
         _150Tab = new CheckTab(false, "150%");
         _200Tab = new CheckTab(false, "200%");
@@ -111,54 +111,13 @@ public class LineSpacingPane {
         checkTabs.add(_150Tab);
         checkTabs.add(_200Tab);
 
-        _0Tab.setOnMouseClicked(e -> {
-
-            updateValue(0, "0%");
-
-            _0Tab.checkIcon.setVisible(true);
-        });
-
-        _50Tab.setOnMouseClicked(e -> {
-
-            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 0.5), "50%");
-
-            _50Tab.checkIcon.setVisible(true);
-        });
-
-        _75Tab.setOnMouseClicked(e -> {
-
-            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 0.75), "75%");
-
-            _75Tab.checkIcon.setVisible(true);
-        });
-
-        _100Tab.setOnMouseClicked(e -> {
-
-            updateValue(subtitlesController.subtitlesBox.defaultSpacing, "100%");
-
-            _100Tab.checkIcon.setVisible(true);
-        });
-
-        _125Tab.setOnMouseClicked(e -> {
-
-            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 1.25), "125%");
-
-            _125Tab.checkIcon.setVisible(true);
-        });
-
-        _150Tab.setOnMouseClicked(e -> {
-
-            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 1.5), "150%");
-
-            _150Tab.checkIcon.setVisible(true);
-        });
-
-        _200Tab.setOnMouseClicked(e -> {
-
-            updateValue((int) (subtitlesController.subtitlesBox.defaultSpacing * 2.0), "200%");
-
-            _200Tab.checkIcon.setVisible(true);
-        });
+        _0Tab.setOnMouseClicked(e -> press_0Tab(false));
+        _50Tab.setOnMouseClicked(e -> press_50Tab(false));
+        _75Tab.setOnMouseClicked(e -> press_75Tab(false));
+        _100Tab.setOnMouseClicked(e -> press_100Tab(false));
+        _125Tab.setOnMouseClicked(e -> press_125Tab(false));
+        _150Tab.setOnMouseClicked(e -> press_150Tab(false));
+        _200Tab.setOnMouseClicked(e -> press_200Tab(false));
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -205,7 +164,7 @@ public class LineSpacingPane {
         subtitlesController.animating.set(true);
     }
 
-    private void updateValue(int newValue, String displayText){
+    public void updateValue(double newValue, String displayText){
 
         for(CheckTab checkTab : checkTabs){
             checkTab.checkIcon.setVisible(false);
@@ -213,10 +172,74 @@ public class LineSpacingPane {
 
         subtitlesOptionsPane.lineSpacingTab.subText.setText(displayText);
 
-        subtitlesController.subtitlesBox.currentSpacing.set(newValue);
-        subtitlesController.mainController.pref.preferences.putInt(SubtitlesBox.SUBTITLES_SPACING, newValue);
+        subtitlesController.subtitlesBox.currentSpacing.set((int) (newValue * subtitlesController.subtitlesBox.defaultSpacing));
+        subtitlesController.mainController.pref.preferences.putDouble(SubtitlesBox.SUBTITLES_SPACING, newValue);
 
         subtitlesController.subtitlesBox.showCaptions();
+    }
+
+    private void initializeValue(double newValue, String displayText){
+        subtitlesOptionsPane.lineSpacingTab.subText.setText(displayText);
+        subtitlesController.subtitlesBox.currentSpacing.set((int) (newValue * subtitlesController.subtitlesBox.defaultSpacing));
+    }
+
+    public void setInitialValue(double spacing){
+        if(spacing == 0.0) press_0Tab(true);
+        else if(spacing == 0.5) press_50Tab(true);
+        else if(spacing == 0.75) press_75Tab(true);
+        else if(spacing == 1.0) press_100Tab(true);
+        else if(spacing == 1.25) press_125Tab(true);
+        else if(spacing == 1.5) press_150Tab(true);
+        else press_200Tab(true);
+    }
+
+    public void press_0Tab(boolean initial){
+        if(initial) initializeValue(0.0, "0%");
+        else updateValue(0.0, "0%");
+
+        _0Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_50Tab(boolean initial){
+        if(initial) initializeValue(0.5, "50%");
+        else updateValue(0.5, "50%");
+
+        _50Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_75Tab(boolean initial){
+        if(initial) initializeValue(0.75, "75%");
+        else updateValue(0.75, "75%");
+
+        _75Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_100Tab(boolean initial){
+        if(initial) initializeValue(1.0, "100%");
+        else updateValue(1.0, "100%");
+
+        _100Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_125Tab(boolean initial){
+        if(initial) initializeValue(1.25, "125%");
+        else updateValue(1.25, "125%");
+
+        _125Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_150Tab(boolean initial){
+        if(initial) initializeValue(1.5, "150%");
+        else updateValue(1.5, "150%");
+
+        _150Tab.checkIcon.setVisible(true);
+    }
+
+    public void press_200Tab(boolean initial){
+        if(initial) initializeValue(2.0, "200%");
+        else updateValue(2.0, "200%");
+
+        _200Tab.checkIcon.setVisible(true);
     }
 }
 

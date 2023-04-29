@@ -83,15 +83,6 @@ public class SubtitlesBox {
 
     SubtitlesBox(SubtitlesController subtitlesController, MainController mainController){
 
-        currentFontFamily.set(mainController.pref.preferences.get(SUBTITLES_FONT_FAMILY, defaultFontFamily));
-        currentFontSize.set(mainController.pref.preferences.getDouble(SUBTITLES_FONT_SIZE, defaultFontSize));
-        currentTextOpacity.set(mainController.pref.preferences.getDouble(SUBTITLES_TEXT_OPACITY, defaultTextOpacity));
-        currentSpacing.set(mainController.pref.preferences.getInt(SUBTITLES_SPACING, defaultSpacing));
-        currentBackgroundColor.set(Color.valueOf(mainController.pref.preferences.get(SUBTITLES_BACKGROUND_COLOR, defaultBackgroundColor.toString())));
-        currentTextColor.set(Color.valueOf(mainController.pref.preferences.get(SUBTITLES_TEXT_COLOR, defaultTextColor.toString())));
-        currentTextAlignment.set(Pos.valueOf(mainController.pref.preferences.get(SUBTITLES_TEXT_ALIGNMENT, defaultTextAlignment.toString())));
-        subtitlesLocation = Pos.valueOf(mainController.pref.preferences.get(SUBTITLES_LOCATION, defaultSubtitlesLocation.toString()));
-
         this.subtitlesController = subtitlesController;
         this.mainController = mainController;
 
@@ -105,10 +96,6 @@ public class SubtitlesBox {
         subtitlesContainer.setPadding(new Insets(5, 10, 5, 10));
         subtitlesContainer.opacityProperty().bind(currentTextOpacity);
         subtitlesContainer.setCursor(Cursor.OPEN_HAND);
-
-
-        StackPane.setAlignment(subtitlesContainer, subtitlesLocation);
-        setTranslation();
 
 
         subtitlesContainer.setOnMousePressed(e -> {
@@ -531,5 +518,32 @@ public class SubtitlesBox {
                 subtitlesContainer.setTranslateY(70);
             }
         }
+    }
+
+
+    public void loadSubtitlePreferences(){
+        String fontFamily = mainController.pref.preferences.get(SUBTITLES_FONT_FAMILY, defaultFontFamily);
+        double fontSize = mainController.pref.preferences.getDouble(SUBTITLES_FONT_SIZE, 1.0);
+        double textOpacity = mainController.pref.preferences.getDouble(SUBTITLES_TEXT_OPACITY, defaultTextOpacity);
+        double spacing = mainController.pref.preferences.getDouble(SUBTITLES_SPACING, 1.0);
+        Color backgroundColor = Color.valueOf(mainController.pref.preferences.get(SUBTITLES_BACKGROUND_COLOR, defaultBackgroundColor.toString()));
+        Color textColor = Color.valueOf(mainController.pref.preferences.get(SUBTITLES_TEXT_COLOR, defaultTextColor.toString()));
+        Pos textAlignment = Pos.valueOf(mainController.pref.preferences.get(SUBTITLES_TEXT_ALIGNMENT, defaultTextAlignment.toString()));
+        subtitlesLocation = Pos.valueOf(mainController.pref.preferences.get(SUBTITLES_LOCATION, defaultSubtitlesLocation.toString()));
+
+        StackPane.setAlignment(subtitlesContainer, subtitlesLocation);
+        setTranslation();
+
+        currentBackgroundColor.set(backgroundColor);
+
+        subtitlesController.subtitlesOptionsPane.fontFamilyPane.setInitialValue(fontFamily);
+        subtitlesController.subtitlesOptionsPane.fontSizePane.setInitialValue(fontSize);
+        subtitlesController.subtitlesOptionsPane.fontOpacityPane.setInitialValue(textOpacity);
+        subtitlesController.subtitlesOptionsPane.lineSpacingPane.setInitialValue(spacing);
+        subtitlesController.subtitlesOptionsPane.backgroundOpacityPane.setInitialValue(backgroundColor.getOpacity());
+        subtitlesController.subtitlesOptionsPane.backgroundColorPane.setInitialValue(backgroundColor);
+        subtitlesController.subtitlesOptionsPane.fontColorPane.setInitialValue(textColor);
+        subtitlesController.subtitlesOptionsPane.textAlignmentPane.setInitialValue(textAlignment);
+
     }
 }

@@ -95,7 +95,7 @@ public class FontColorPane {
         fontColorTitleLabel.getStyleClass().add("settingsPaneText");
         fontColorTitleLabel.setOnMouseClicked((e) -> closeFontColorPane());
 
-        whiteTab = new CheckTab(true, "White");
+        whiteTab = new CheckTab(false, "White");
         yellowTab = new CheckTab(false, "Yellow");
         greenTab = new CheckTab(false, "Green");
         cyanTab = new CheckTab(false, "Cyan");
@@ -114,64 +114,14 @@ public class FontColorPane {
         checkTabs.add(redTab);
         checkTabs.add(blackTab);
 
-        whiteTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.WHITE, "White");
-
-            whiteTab.checkIcon.setVisible(true);
-        });
-
-        yellowTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.YELLOW, "Yellow");
-
-            yellowTab.checkIcon.setVisible(true);
-
-        });
-
-        greenTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.LIME, "Green");
-
-            greenTab.checkIcon.setVisible(true);
-        });
-
-        cyanTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.CYAN, "Cyan");
-
-            cyanTab.checkIcon.setVisible(true);
-        });
-
-        blueTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.BLUE, "Blue");
-
-            blueTab.checkIcon.setVisible(true);
-
-        });
-
-        magentaTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.MAGENTA, "Magenta");
-
-            magentaTab.checkIcon.setVisible(true);
-        });
-
-        redTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.RED, "Red");
-
-            redTab.checkIcon.setVisible(true);
-
-        });
-
-        blackTab.setOnMouseClicked(e -> {
-
-            updateValue(Color.BLACK, "Black");
-
-            blackTab.checkIcon.setVisible(true);
-        });
+        whiteTab.setOnMouseClicked(e -> pressWhiteTab(false));
+        yellowTab.setOnMouseClicked(e -> pressYellowTab(false));
+        greenTab.setOnMouseClicked(e -> pressGreenTab(false));
+        cyanTab.setOnMouseClicked(e -> pressCyanTab(false));
+        blueTab.setOnMouseClicked(e -> pressBlueTab(false));
+        magentaTab.setOnMouseClicked(e -> pressMagentaTab(false));
+        redTab.setOnMouseClicked(e -> pressRedTab(false));
+        blackTab.setOnMouseClicked(e -> pressBlackTab(false));
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -218,7 +168,7 @@ public class FontColorPane {
         subtitlesController.animating.set(true);
     }
 
-    private void updateValue(Color color, String displayText){
+    public void updateValue(Color color, String displayText){
         for(CheckTab checkTab : checkTabs){
             checkTab.checkIcon.setVisible(false);
         }
@@ -229,5 +179,79 @@ public class FontColorPane {
         subtitlesController.mainController.pref.preferences.put(SubtitlesBox.SUBTITLES_TEXT_COLOR, color.toString());
 
         subtitlesController.subtitlesBox.showCaptions();
+    }
+
+    private void initializeValue(Color color, String displayText){
+        subtitlesOptionsPane.fontColorTab.subText.setText(displayText);
+        subtitlesController.subtitlesBox.currentTextColor.set(color);
+    }
+
+    public void setInitialValue(Color color){
+        if(color.equals(Color.WHITE)) pressWhiteTab(true);
+        else if(color.equals(Color.YELLOW)) pressYellowTab(true);
+        else if(color.equals(Color.LIME)) pressGreenTab(true);
+        else if(color.equals(Color.CYAN)) pressCyanTab(true);
+        else if(color.equals(Color.BLUE)) pressBlueTab(true);
+        else if(color.equals(Color.MAGENTA)) pressMagentaTab(true);
+        else if(color.equals(Color.RED)) pressRedTab(true);
+        else pressBlackTab(true);
+
+    }
+
+
+    public void pressWhiteTab(boolean initial){
+        if(initial) initializeValue(Color.WHITE, "White");
+        else updateValue(Color.WHITE, "White");
+
+        whiteTab.checkIcon.setVisible(true);
+    }
+
+    public void pressYellowTab(boolean initial){
+        if(initial) initializeValue(Color.YELLOW, "Yellow");
+        else updateValue(Color.YELLOW, "Yellow");
+
+        yellowTab.checkIcon.setVisible(true);
+    }
+
+    public void pressGreenTab(boolean initial){
+        if(initial) initializeValue(Color.LIME, "Green");
+        else updateValue(Color.LIME, "Green");
+
+        greenTab.checkIcon.setVisible(true);
+    }
+
+    public void pressCyanTab(boolean initial){
+        if(initial) initializeValue(Color.CYAN, "Cyan");
+        else updateValue(Color.CYAN, "Cyan");
+
+        cyanTab.checkIcon.setVisible(true);
+    }
+
+    public void pressBlueTab(boolean initial){
+        if(initial) initializeValue(Color.BLUE, "Blue");
+        else updateValue(Color.BLUE, "Blue");
+
+        blueTab.checkIcon.setVisible(true);
+    }
+
+    public void pressMagentaTab(boolean initial){
+        if(initial) initializeValue(Color.MAGENTA, "Magenta");
+        else updateValue(Color.MAGENTA, "Magenta");
+
+        magentaTab.checkIcon.setVisible(true);
+    }
+
+    public void pressRedTab(boolean initial){
+        if(initial) initializeValue(Color.RED, "Red");
+        else updateValue(Color.RED, "Red");
+
+        redTab.checkIcon.setVisible(true);
+    }
+
+    public void pressBlackTab(boolean initial){
+        if(initial) initializeValue(Color.BLACK, "Black");
+        else updateValue(Color.BLACK, "Black");
+
+        blackTab.checkIcon.setVisible(true);
     }
 }

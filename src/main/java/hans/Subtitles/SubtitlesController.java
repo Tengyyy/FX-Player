@@ -111,6 +111,8 @@ public class SubtitlesController {
         openSubtitlesResultsPane = new OpenSubtitlesResultsPane(subtitlesHome, this);
         timingPane = new TimingPane(subtitlesHome, this);
 
+        subtitlesBox.loadSubtitlePreferences();
+
         subtitlesSelected.addListener((observableValue, oldValue, newValue) -> {
             subtitlesBox.toggleVisibility(newValue);
             if(newValue) AnimationsClass.scaleAnimation(100, controlBarController.subtitlesButtonLine, 0, 1, 1, 1, false, 1, true);

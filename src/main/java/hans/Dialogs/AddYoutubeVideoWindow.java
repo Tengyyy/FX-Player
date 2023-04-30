@@ -81,7 +81,7 @@ public class AddYoutubeVideoWindow {
 
         closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
 
-        closeButtonSVG.setContent(App.svgMap.get(SVG.CLOSE));
+        closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
         closeButtonIcon.setShape(closeButtonSVG);
         closeButtonIcon.setMinSize(13, 13);

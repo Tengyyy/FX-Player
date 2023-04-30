@@ -42,7 +42,7 @@ public class LineSpacingPane {
         this.subtitlesController = subtitlesController;
         this.subtitlesOptionsPane = subtitlesOptionsPane;
 
-        backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
+        backSVG.setContent(SVG.CHEVRON_LEFT.getContent());
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");

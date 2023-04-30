@@ -61,7 +61,7 @@ public class TimingPane {
         this.subtitlesHome = subtitlesHome;
         this.subtitlesController = subtitlesController;
 
-        backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
+        backSVG.setContent(SVG.CHEVRON_LEFT.getContent());
 
         container.setPrefSize(235, 175);
         container.setMaxSize(235, 175);

@@ -110,8 +110,8 @@ public class OpenSubtitlesPane {
         this.subtitlesHome = subtitlesHome;
         this.subtitlesController = subtitlesController;
 
-        backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
-        searchSVG.setContent(App.svgMap.get(SVG.MAGNIFY));
+        backSVG.setContent(SVG.CHEVRON_LEFT.getContent());
+        searchSVG.setContent(SVG.MAGNIFY.getContent());
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
@@ -338,7 +338,7 @@ public class OpenSubtitlesPane {
         searchButton.setGraphic(searchIcon);
         searchButton.setOnAction(e -> attemptSearch());
 
-        chevronUpSVG.setContent(App.svgMap.get(SVG.CHEVRON_UP));
+        chevronUpSVG.setContent(SVG.CHEVRON_UP.getContent());
 
         chevronUpIcon.setShape(chevronUpSVG);
         chevronUpIcon.setPrefSize(14, 8);

@@ -83,7 +83,7 @@ public class CloseConfirmationWindow {
 
         closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
 
-        closeButtonSVG.setContent(App.svgMap.get(SVG.CLOSE));
+        closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
         closeButtonIcon.setShape(closeButtonSVG);
         closeButtonIcon.setMinSize(13, 13);
@@ -97,7 +97,7 @@ public class CloseConfirmationWindow {
         titleContainer.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(titleContainer, new Insets(0, 15, 25, 15));
 
-        warningSVG.setContent(App.svgMap.get(SVG.WARNING));
+        warningSVG.setContent(SVG.WARNING.getContent());
         warningIcon.setMouseTransparent(true);
         warningIcon.getStyleClass().add("menuIcon");
         warningIcon.setShape(warningSVG);

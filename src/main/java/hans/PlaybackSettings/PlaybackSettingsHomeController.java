@@ -41,13 +41,13 @@ public class PlaybackSettingsHomeController {
                 new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov"),
                 new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac"));
 
-        shuffleSVG.setContent(App.svgMap.get(SVG.SHUFFLE));
-        repeatSVG.setContent(App.svgMap.get(SVG.REPEAT));
-        repeatOnceSVG.setContent(App.svgMap.get(SVG.REPEAT_ONCE));
-        magnifySVG.setContent(App.svgMap.get(SVG.MAGNIFY));
-        speedSVG.setContent(App.svgMap.get(SVG.SPEED));
-        equalizerSVG.setContent(App.svgMap.get(SVG.TUNE_VERTICAL));
-        tuneSVG.setContent(App.svgMap.get(SVG.TUNE));
+        shuffleSVG.setContent(SVG.SHUFFLE.getContent());
+        repeatSVG.setContent(SVG.REPEAT.getContent());
+        repeatOnceSVG.setContent(SVG.REPEAT_ONCE.getContent());
+        magnifySVG.setContent(SVG.MAGNIFY.getContent());
+        speedSVG.setContent(SVG.SPEED.getContent());
+        equalizerSVG.setContent(SVG.TUNE_VERTICAL.getContent());
+        tuneSVG.setContent(SVG.TUNE.getContent());
 
         playbackSettingsController.playbackSettingsPane.getChildren().add(playbackSettingsHome);
         playbackSettingsHome.setPrefSize(235, 156);

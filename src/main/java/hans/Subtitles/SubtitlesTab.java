@@ -49,8 +49,8 @@ public class SubtitlesTab extends HBox {
         this.subtitleFile = file;
         this.removable = removable;
 
-        checkSVG.setContent(App.svgMap.get(SVG.CHECK));
-        removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
+        checkSVG.setContent(SVG.CHECK.getContent());
+        removeSVG.setContent(SVG.CLOSE.getContent());
 
         this.setPrefSize(245, 35);
         this.setMaxSize(245, 35);

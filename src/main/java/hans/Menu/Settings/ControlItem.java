@@ -52,7 +52,7 @@ public class ControlItem extends StackPane {
         this.setOnMouseEntered(e -> editButton.setVisible(true));
         this.setOnMouseExited(e -> editButton.setVisible(false));
 
-        editSVG.setContent(App.svgMap.get(SVG.EDIT));
+        editSVG.setContent(SVG.EDIT.getContent());
         editIcon.setShape(editSVG);
         editIcon.setMouseTransparent(true);
         editIcon.setPrefSize(19, 19);

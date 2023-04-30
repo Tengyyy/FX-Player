@@ -39,7 +39,7 @@ public class VisiblePasswordFieldSkin extends TextFieldSkin {
         actionButton.setCursor(Cursor.HAND);
         actionButton.toFront();
 
-        actionIcon.setContent(App.svgMap.get(SVG.EYE));
+        actionIcon.setContent(SVG.EYE.getContent());
         actionIcon.setFill(Color.rgb(200, 200, 200));
         actionButton.setGraphic(actionIcon);
 
@@ -48,10 +48,10 @@ public class VisiblePasswordFieldSkin extends TextFieldSkin {
         actionButton.setOnMouseClicked(event -> {
 
             if(mask) {
-                actionIcon.setContent(App.svgMap.get(SVG.EYE_OFF));
+                actionIcon.setContent(SVG.EYE_OFF.getContent());
                 mask = false;
             } else {
-                actionIcon.setContent(App.svgMap.get(SVG.EYE));
+                actionIcon.setContent(SVG.EYE.getContent());
                 mask = true;
             }
             textField.setText(textField.getText());

@@ -184,43 +184,43 @@ public class ControlBarController implements Initializable {
         controlBarWrapper.getStyleClass().add("controlBarWrapper");
 
         previousVideoSVG = new SVGPath();
-        previousVideoSVG.setContent(App.svgMap.get(SVG.PREVIOUS_VIDEO));
+        previousVideoSVG.setContent(SVG.PREVIOUS_VIDEO.getContent());
 
         playSVG = new SVGPath();
-        playSVG.setContent(App.svgMap.get(SVG.PLAY));
+        playSVG.setContent(SVG.PLAY.getContent());
 
         pauseSVG = new SVGPath();
-        pauseSVG.setContent(App.svgMap.get(SVG.PAUSE));
+        pauseSVG.setContent(SVG.PAUSE.getContent());
 
         replaySVG = new SVGPath();
-        replaySVG.setContent(App.svgMap.get(SVG.REPLAY));
+        replaySVG.setContent(SVG.REPLAY.getContent());
 
         nextVideoSVG = new SVGPath();
-        nextVideoSVG.setContent(App.svgMap.get(SVG.NEXT_VIDEO));
+        nextVideoSVG.setContent(SVG.NEXT_VIDEO.getContent());
 
         highVolumeSVG = new SVGPath();
-        highVolumeSVG.setContent(App.svgMap.get(SVG.VOLUME_HIGH));
+        highVolumeSVG.setContent(SVG.VOLUME_HIGH.getContent());
 
         lowVolumeSVG = new SVGPath();
-        lowVolumeSVG.setContent(App.svgMap.get(SVG.VOLUME_LOW));
+        lowVolumeSVG.setContent(SVG.VOLUME_LOW.getContent());
 
         volumeMutedSVG = new SVGPath();
-        volumeMutedSVG.setContent(App.svgMap.get(SVG.VOLUME_MUTED));
+        volumeMutedSVG.setContent(SVG.VOLUME_MUTED.getContent());
 
         subtitlesSVG = new SVGPath();
-        subtitlesSVG.setContent(App.svgMap.get(SVG.SUBTITLES));
+        subtitlesSVG.setContent(SVG.SUBTITLES.getContent());
 
         settingsSVG = new SVGPath();
-        settingsSVG.setContent(App.svgMap.get(SVG.SETTINGS));
+        settingsSVG.setContent(SVG.SETTINGS.getContent());
 
         maximizeSVG = new SVGPath();
-        maximizeSVG.setContent(App.svgMap.get(SVG.MAXIMIZE));
+        maximizeSVG.setContent(SVG.MAXIMIZE.getContent());
 
         minimizeSVG = new SVGPath();
-        minimizeSVG.setContent(App.svgMap.get(SVG.MINIMIZE));
+        minimizeSVG.setContent(SVG.MINIMIZE.getContent());
 
         miniplayerSVG = new SVGPath();
-        miniplayerSVG.setContent(App.svgMap.get(SVG.MINIPLAYER));
+        miniplayerSVG.setContent(SVG.MINIPLAYER.getContent());
 
         volumeSliderPane.setClip(new Rectangle(0, 30));
 

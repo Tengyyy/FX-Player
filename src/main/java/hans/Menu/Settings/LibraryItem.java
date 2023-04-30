@@ -46,7 +46,7 @@ public class LibraryItem extends StackPane {
         this.setPadding(new Insets(8, 10, 8, 10));
         this.getStyleClass().add("highlightedSection");
 
-        folderSVG.setContent(App.svgMap.get(SVG.FOLDER));
+        folderSVG.setContent(SVG.FOLDER.getContent());
         folderIcon.setShape(folderSVG);
         folderIcon.setPrefSize(14, 12);
         folderIcon.setMaxSize(14,12);
@@ -60,7 +60,7 @@ public class LibraryItem extends StackPane {
         pathLabel.maxWidthProperty().bind(this.widthProperty().subtract(130));
         StackPane.setAlignment(pathLabel, Pos.CENTER_LEFT);
 
-        refreshSVG.setContent(App.svgMap.get(SVG.REFRESH));
+        refreshSVG.setContent(SVG.REFRESH.getContent());
         refreshIcon.setShape(refreshSVG);
         refreshIcon.setPrefSize(15, 15);
         refreshIcon.setMaxSize(15,15);
@@ -78,7 +78,7 @@ public class LibraryItem extends StackPane {
             librariesSection.refreshLibrary(file);
         });
 
-        removeSVG.setContent(App.svgMap.get(SVG.REMOVE));
+        removeSVG.setContent(SVG.REMOVE.getContent());
         removeIcon.setShape(removeSVG);
         removeIcon.setPrefSize(15, 15);
         removeIcon.setMaxSize(15,15);

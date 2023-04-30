@@ -54,7 +54,7 @@ public class SeekIndicator {
         StackPane.setAlignment(background, Pos.CENTER);
 
         iconPath = new SVGPath();
-        iconPath.setContent(App.svgMap.get(SVG.PLAY));
+        iconPath.setContent(SVG.PLAY.getContent());
 
         arrow1 = new Region();
         arrow1.setMinSize(15 * mainController.sizeMultiplier.doubleValue(),20 * mainController.sizeMultiplier.doubleValue());

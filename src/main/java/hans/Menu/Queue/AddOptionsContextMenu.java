@@ -45,7 +45,7 @@ public class AddOptionsContextMenu extends ContextMenu {
 
         queuePage.addButtonContainer.getScene().getStylesheets().add(Objects.requireNonNull(queuePage.menuController.mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 
-        filePath.setContent(App.svgMap.get(SVG.FOLDER));
+        filePath.setContent(SVG.FOLDER.getContent());
         fileIcon.setShape(filePath);
         fileIcon.getStyleClass().add("icon");
         fileIcon.setPrefSize(14, 14);
@@ -55,7 +55,7 @@ public class AddOptionsContextMenu extends ContextMenu {
         fileItem.getStyleClass().add("popUpItem");
         fileItem.setOnAction((e) -> queuePage.openVideoChooser());
 
-        folderPath.setContent(App.svgMap.get(SVG.FOLDER_PLUS));
+        folderPath.setContent(SVG.FOLDER_PLUS.getContent());
         folderIcon.setShape(folderPath);
         folderIcon.getStyleClass().add("icon");
         folderIcon.setPrefSize(14, 14);
@@ -65,7 +65,7 @@ public class AddOptionsContextMenu extends ContextMenu {
         folderItem.getStyleClass().add("popUpItem");
         folderItem.setOnAction((e) -> queuePage.openFolderChooser());
 
-        youtubePath.setContent(App.svgMap.get(SVG.YOUTUBE));
+        youtubePath.setContent(SVG.YOUTUBE.getContent());
         youtubeIcon.setShape(youtubePath);
         youtubeIcon.getStyleClass().add("icon");
         youtubeIcon.setPrefSize(14, 12);

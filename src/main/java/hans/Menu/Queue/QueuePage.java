@@ -148,7 +148,7 @@ public class QueuePage {
         queueBarTitle.getStyleClass().add("menuTitle");
         VBox.setMargin(queueBarTitle, new Insets(0, 30, 0, 30));
 
-        shuffleSVG.setContent(App.svgMap.get(SVG.SHUFFLE));
+        shuffleSVG.setContent(SVG.SHUFFLE.getContent());
 
         shuffleIcon.setShape(shuffleSVG);
         shuffleIcon.setPrefSize(14, 14);
@@ -169,7 +169,7 @@ public class QueuePage {
             menuController.playbackSettingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!menuController.playbackSettingsController.playbackOptionsController.shuffleTab.toggle.isSelected());
         });
 
-        folderSVG.setContent(App.svgMap.get(SVG.FOLDER));
+        folderSVG.setContent(SVG.FOLDER.getContent());
 
         folderIcon.setShape(folderSVG);
         folderIcon.setPrefSize(14, 12);
@@ -183,7 +183,7 @@ public class QueuePage {
         addButton.setText("Add file(s)");
         addButton.setGraphic(folderIcon);
 
-        chevronDownSVG.setContent(App.svgMap.get(SVG.CHEVRON_DOWN));
+        chevronDownSVG.setContent(SVG.CHEVRON_DOWN.getContent());
 
         chevronDownIcon.setShape(chevronDownSVG);
         chevronDownIcon.setPrefSize(14, 8);
@@ -240,7 +240,7 @@ public class QueuePage {
             openVideoChooser();
         });
 
-        clearSVG.setContent(App.svgMap.get(SVG.REMOVE));
+        clearSVG.setContent(SVG.REMOVE.getContent());
 
         clearIcon.setShape(clearSVG);
         clearIcon.setPrefSize(14, 14);
@@ -355,7 +355,7 @@ public class QueuePage {
 
         StackPane.setAlignment(removeButton, Pos.CENTER_RIGHT);
 
-        removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
+        removeSVG.setContent(SVG.CLOSE.getContent());
 
         removeIcon.setShape(removeSVG);
         removeIcon.setPrefSize(14, 14);
@@ -424,8 +424,8 @@ public class QueuePage {
 
         queueWrapper.getChildren().addAll(queueBar, queueScroll);
 
-        arrowDownSVG.setContent(App.svgMap.get(SVG.ARROW_DOWN));
-        arrowUpSVG.setContent(App.svgMap.get(SVG.ARROW_UP));
+        arrowDownSVG.setContent(SVG.ARROW_DOWN.getContent());
+        arrowUpSVG.setContent(SVG.ARROW_UP.getContent());
 
         scrollUpIcon.setShape(arrowUpSVG);
         scrollUpIcon.getStyleClass().addAll("menuIcon", "graphic");

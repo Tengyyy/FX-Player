@@ -46,7 +46,7 @@ public class QueueItemContextMenu extends ContextMenu {
 
         queueItem.getScene().getStylesheets().add(Objects.requireNonNull(queueItem.getMenuController().mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 
-        playNextPath.setContent(App.svgMap.get(SVG.PLAY_CIRCLE));
+        playNextPath.setContent(SVG.PLAY_CIRCLE.getContent());
         playNextIcon.setShape(playNextPath);
         playNextIcon.getStyleClass().add("icon");
         playNextIcon.setPrefSize(14, 14);
@@ -56,7 +56,7 @@ public class QueueItemContextMenu extends ContextMenu {
         playNext.getStyleClass().add("popUpItem");
         playNext.setOnAction((e) -> queueItem.playNext());
 
-        infoPath.setContent(App.svgMap.get(SVG.INFORMATION_OUTLINE));
+        infoPath.setContent(SVG.INFORMATION_OUTLINE.getContent());
         infoIcon.setShape(infoPath);
         infoIcon.getStyleClass().add("icon");
         infoIcon.setPrefSize(14, 14);
@@ -67,7 +67,7 @@ public class QueueItemContextMenu extends ContextMenu {
         mediaInformation.setOnAction((e) -> queueItem.showMetadata());
         mediaInformation.disableProperty().bind(queueItem.mediaItemGenerated.not());
 
-        technicalDetailsPath.setContent(App.svgMap.get(SVG.COGS));
+        technicalDetailsPath.setContent(SVG.COGS.getContent());
         technicalDetailsIcon.setShape(technicalDetailsPath);
         technicalDetailsIcon.getStyleClass().add("icon");
         technicalDetailsIcon.setPrefSize(14, 14);
@@ -79,7 +79,7 @@ public class QueueItemContextMenu extends ContextMenu {
         technicalDetails.disableProperty().bind(queueItem.mediaItemGenerated.not());
 
 
-        folderPath.setContent(App.svgMap.get(SVG.FOLDER));
+        folderPath.setContent(SVG.FOLDER.getContent());
         folderIcon.setShape(folderPath);
         folderIcon.getStyleClass().add("icon");
         folderIcon.setPrefSize(14, 14);

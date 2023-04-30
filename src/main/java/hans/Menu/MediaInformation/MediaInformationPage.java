@@ -167,9 +167,9 @@ public class MediaInformationPage {
         fileChooser.setTitle("Choose image");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Supported images", "*.jpg", "*.jpeg", "*.png"));
 
-        editIconSVG.setContent(App.svgMap.get(SVG.EDIT));
-        editIconOffSVG.setContent(App.svgMap.get(SVG.EDIT_OFF));
-        saveIconSVG.setContent(App.svgMap.get(SVG.SAVE));
+        editIconSVG.setContent(SVG.EDIT.getContent());
+        editIconOffSVG.setContent(SVG.EDIT_OFF.getContent());
+        saveIconSVG.setContent(SVG.SAVE.getContent());
 
         titlePane.getChildren().addAll(title);
         titlePane.setPadding(new Insets(55, 50, 20, 50));
@@ -290,7 +290,7 @@ public class MediaInformationPage {
         saveIcon.setMaxSize(14, 14);
         saveButton.setGraphic(saveIcon);
 
-        chevronUpSVG.setContent(App.svgMap.get(SVG.CHEVRON_UP));
+        chevronUpSVG.setContent(SVG.CHEVRON_UP.getContent());
 
         chevronUpIcon.setShape(chevronUpSVG);
         chevronUpIcon.setPrefSize(14, 8);
@@ -422,7 +422,7 @@ public class MediaInformationPage {
 
         closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
 
-        closeSVG.setContent(App.svgMap.get(SVG.CLOSE));
+        closeSVG.setContent(SVG.CLOSE.getContent());
 
         closeButtonIcon.setShape(closeSVG);
         closeButtonIcon.setMinSize(13, 13);

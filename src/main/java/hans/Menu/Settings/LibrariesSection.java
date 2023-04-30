@@ -68,7 +68,7 @@ public class LibrariesSection extends StackPane {
         StackPane.setAlignment(librariesSectionTitle, Pos.CENTER_LEFT);
         librariesSectionTitle.getStyleClass().add("settingsSectionTitle");
 
-        folderSVG.setContent(App.svgMap.get(SVG.FOLDER));
+        folderSVG.setContent(SVG.FOLDER.getContent());
         folderIcon.setShape(folderSVG);
         folderIcon.setPrefSize(14, 12);
         folderIcon.setMaxSize(14,12);
@@ -95,7 +95,7 @@ public class LibrariesSection extends StackPane {
 
         StackPane.setAlignment(refreshAllLabel, Pos.CENTER_LEFT);
 
-        wrenchSVG.setContent(App.svgMap.get(SVG.WRENCH));
+        wrenchSVG.setContent(SVG.WRENCH.getContent());
         wrenchIcon.setShape(wrenchSVG);
         wrenchIcon.setPrefSize(17, 17);
         wrenchIcon.setMaxSize(17,17);
@@ -107,7 +107,7 @@ public class LibrariesSection extends StackPane {
         refreshAllLabel.setPadding(new Insets(0, 0, 0, 8));
 
         StackPane.setAlignment(refreshAllButton, Pos.CENTER_RIGHT);
-        refreshSVG.setContent(App.svgMap.get(SVG.REFRESH));
+        refreshSVG.setContent(SVG.REFRESH.getContent());
         refreshIcon.setShape(refreshSVG);
         refreshIcon.setPrefSize(15, 15);
         refreshIcon.setMaxSize(15,15);
@@ -124,7 +124,7 @@ public class LibrariesSection extends StackPane {
         });
         refreshAllButton.setDisable(true);
 
-        infoSVG.setContent(App.svgMap.get(SVG.INFORMATION_OUTLINE));
+        infoSVG.setContent(SVG.INFORMATION_OUTLINE.getContent());
 
         infoIcon.setShape(infoSVG);
         infoIcon.setPrefSize(25, 25);

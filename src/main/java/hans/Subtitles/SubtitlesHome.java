@@ -59,9 +59,9 @@ public class SubtitlesHome {
     public SubtitlesHome(SubtitlesController subtitlesController){
         this.subtitlesController = subtitlesController;
 
-        folderSVG.setContent(App.svgMap.get(SVG.FOLDER));
-        globeSVG.setContent(App.svgMap.get(SVG.GLOBE));
-        timerSVG.setContent(App.svgMap.get(SVG.TIMER));
+        folderSVG.setContent(SVG.FOLDER.getContent());
+        globeSVG.setContent(SVG.GLOBE.getContent());
+        timerSVG.setContent(SVG.TIMER.getContent());
 
         fileChooser = new FileChooser();
         fileChooser.setTitle("Choose subtitle file");

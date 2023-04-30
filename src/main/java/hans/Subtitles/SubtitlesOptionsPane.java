@@ -44,7 +44,7 @@ public class SubtitlesOptionsPane {
     public SubtitlesOptionsPane(SubtitlesController subtitlesController){
         this.subtitlesController = subtitlesController;
 
-        backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
+        backSVG.setContent(SVG.CHEVRON_LEFT.getContent());
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");

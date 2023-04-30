@@ -31,11 +31,11 @@ public class MenuBar {
         this.menuController = menuController;
         this.sideBar = sideBar;
 
-        queueButton = new MenuBarButton(menuController, App.svgMap.get(SVG.QUEUE), 19, 14, "Play queue");
-        historyButton = new MenuBarButton(menuController, App.svgMap.get(SVG.HISTORY), 19, 16, "Recent media");
-        musicLibraryButton = new MenuBarButton(menuController, App.svgMap.get(SVG.MUSIC), 19, 18, "Music library");
-        playlistsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.PLAYLIST), 19, 21, "Playlists");
-        settingsButton = new MenuBarButton(menuController, App.svgMap.get(SVG.SETTINGS), 19, 19, "Settings");
+        queueButton = new MenuBarButton(menuController, SVG.QUEUE.getContent(), 19, 14, "Play queue");
+        historyButton = new MenuBarButton(menuController, SVG.HISTORY.getContent(), 19, 16, "Recent media");
+        musicLibraryButton = new MenuBarButton(menuController, SVG.MUSIC.getContent(), 19, 18, "Music library");
+        playlistsButton = new MenuBarButton(menuController, SVG.PLAYLIST.getContent(), 19, 21, "Playlists");
+        settingsButton = new MenuBarButton(menuController, SVG.SETTINGS.getContent(), 19, 19, "Settings");
 
 
         queueButton.button.setOnAction(e -> {

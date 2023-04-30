@@ -109,7 +109,7 @@ public class ChapterController {
         chapterLabel.getStyleClass().add("controlBarLabel");
         chapterLabel.setTextAlignment(TextAlignment.LEFT);
 
-        chevronSVG.setContent(App.svgMap.get(SVG.CHEVRON_RIGHT));
+        chevronSVG.setContent(SVG.CHEVRON_RIGHT.getContent());
 
         chevronPane.setPrefSize(12, 30);
         chevronPane.setMaxSize(12, 30);

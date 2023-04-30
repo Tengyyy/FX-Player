@@ -124,9 +124,9 @@ public class Result extends HBox {
         downloadButton.setText(null);
         downloadButton.setOnAction(e -> downloadFile());
 
-        checkSVG.setContent(App.svgMap.get(SVG.CHECK));
-        crossSVG.setContent(App.svgMap.get(SVG.CLOSE));
-        downloadSVG.setContent(App.svgMap.get(SVG.DOWNLOAD));
+        checkSVG.setContent(SVG.CHECK.getContent());
+        crossSVG.setContent(SVG.CLOSE.getContent());
+        downloadSVG.setContent(SVG.DOWNLOAD.getContent());
         downloadIcon.setShape(downloadSVG);
         downloadIcon.setMinSize(16, 16);
         downloadIcon.setPrefSize(16, 16);

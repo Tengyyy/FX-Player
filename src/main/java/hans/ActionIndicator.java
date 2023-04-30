@@ -74,7 +74,7 @@ public class ActionIndicator {
     }
 
     public void setIcon(SVG svg){
-        iconPath.setContent(App.svgMap.get(svg));
+        iconPath.setContent(svg.getContent());
         icon.setShape(iconPath);
         updateSize();
     }
@@ -85,29 +85,29 @@ public class ActionIndicator {
         background.setPrefSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
         background.setMaxSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
 
-        if(Objects.equals(iconPath.getContent(), App.svgMap.get(PLAY))){
+        if(Objects.equals(iconPath.getContent(), PLAY.getContent())){
             icon.setMinSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setPrefSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setMaxSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setTranslateX(icon.getWidth() / 10);
         }
-        else if(Objects.equals(iconPath.getContent(), App.svgMap.get(PAUSE)) || Objects.equals(iconPath.getContent(), App.svgMap.get(VOLUME_MUTED)) || Objects.equals(iconPath.getContent(), App.svgMap.get(VOLUME_HIGH)) || Objects.equals(iconPath.getContent(), App.svgMap.get(PREVIOUS_VIDEO)) || Objects.equals(iconPath.getContent(), App.svgMap.get(NEXT_VIDEO))){
+        else if(Objects.equals(iconPath.getContent(), PAUSE.getContent()) || Objects.equals(iconPath.getContent(), VOLUME_MUTED.getContent()) || Objects.equals(iconPath.getContent(), VOLUME_HIGH.getContent()) || Objects.equals(iconPath.getContent(), PREVIOUS_VIDEO.getContent()) || Objects.equals(iconPath.getContent(), NEXT_VIDEO.getContent())){
             icon.setMinSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setPrefSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setMaxSize(30 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setTranslateX(0);
         }
-        else if(Objects.equals(iconPath.getContent(), App.svgMap.get(VOLUME_LOW))){
+        else if(Objects.equals(iconPath.getContent(), VOLUME_LOW.getContent())){
             icon.setMinSize(22 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setPrefSize(22 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setMaxSize(22 * mainController.sizeMultiplier.doubleValue(), 30 * mainController.sizeMultiplier.doubleValue());
             icon.setTranslateX(-4 * mainController.sizeMultiplier.doubleValue());
         }
-        else if(Objects.equals(iconPath.getContent(), App.svgMap.get(FORWARD)) || Objects.equals(iconPath.getContent(), App.svgMap.get(REWIND))){
+        else if(Objects.equals(iconPath.getContent(), FORWARD.getContent()) || Objects.equals(iconPath.getContent(), REWIND.getContent())){
             icon.setMinSize(35 * mainController.sizeMultiplier.doubleValue(), 23 * mainController.sizeMultiplier.doubleValue());
             icon.setPrefSize(35 * mainController.sizeMultiplier.doubleValue(), 23 * mainController.sizeMultiplier.doubleValue());
             icon.setMaxSize(35 * mainController.sizeMultiplier.doubleValue(), 23 * mainController.sizeMultiplier.doubleValue());
-            if(Objects.equals(iconPath.getContent(), App.svgMap.get(FORWARD))) icon.setTranslateX(icon.getWidth() / 10);
+            if(Objects.equals(iconPath.getContent(), FORWARD.getContent())) icon.setTranslateX(icon.getWidth() / 10);
             else icon.setTranslateX(-icon.getWidth() / 10);
         }
         else {

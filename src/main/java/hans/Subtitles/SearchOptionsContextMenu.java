@@ -61,11 +61,11 @@ public class SearchOptionsContextMenu extends ContextMenu {
 
         this.openSubtitlesPane = openSubtitlesPane;
 
-        checkSVG.setContent(App.svgMap.get(SVG.CHECK));
+        checkSVG.setContent(SVG.CHECK.getContent());
 
         this.getStyleClass().add("menu-context-menu");
 
-        filePath.setContent(App.svgMap.get(SVG.VIDEO_FILE));
+        filePath.setContent(SVG.VIDEO_FILE.getContent());
         fileIcon.setShape(filePath);
         fileIcon.getStyleClass().add("icon");
         fileIcon.setPrefSize(12, 15);
@@ -97,7 +97,7 @@ public class SearchOptionsContextMenu extends ContextMenu {
             openSubtitlesPane.setFileSearch();
         });
 
-        imdbPath.setContent(App.svgMap.get(SVG.IMDB));
+        imdbPath.setContent(SVG.IMDB.getContent());
         imdbIcon.setShape(imdbPath);
         imdbIcon.getStyleClass().add("icon");
         imdbIcon.setPrefSize(17, 17);
@@ -129,7 +129,7 @@ public class SearchOptionsContextMenu extends ContextMenu {
             openSubtitlesPane.setImdbSearch();
         });
 
-        queryPath.setContent(App.svgMap.get(SVG.FILM));
+        queryPath.setContent(SVG.FILM.getContent());
         queryIcon.setShape(queryPath);
         queryIcon.getStyleClass().add("icon");
         queryIcon.setPrefSize(15, 15);

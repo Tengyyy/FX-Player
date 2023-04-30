@@ -73,7 +73,7 @@ public class ChapterItem extends HBox {
         else applyRoundStyling();
 
 
-        playSVG.setContent(App.svgMap.get(SVG.PLAY));
+        playSVG.setContent(SVG.PLAY.getContent());
 
         this.getChildren().addAll(playIconPane, imageContainer, textWrapper);
 

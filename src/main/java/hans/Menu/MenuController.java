@@ -125,7 +125,7 @@ public class MenuController implements Initializable {
         });
 
 
-        closeSVG.setContent(App.svgMap.get(SVG.CLOSE));
+        closeSVG.setContent(SVG.CLOSE.getContent());
         closeIcon.setShape(closeSVG);
         closeIcon.setPrefSize(20, 20);
         closeIcon.setMaxSize(20, 20);
@@ -149,8 +149,8 @@ public class MenuController implements Initializable {
         StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
         StackPane.setMargin(closeButton, new Insets(10, 10 , 0, 0));
 
-        collapseSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
-        extendSVG.setContent(App.svgMap.get(SVG.CHEVRON_RIGHT));
+        collapseSVG.setContent(SVG.CHEVRON_LEFT.getContent());
+        extendSVG.setContent(SVG.CHEVRON_RIGHT.getContent());
         extendIcon.setShape(extendSVG);
         extendIcon.setPrefSize(14, 20);
         extendIcon.setMaxSize(14, 20);

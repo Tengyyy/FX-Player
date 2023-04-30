@@ -32,7 +32,7 @@ public class SubtitlesOptionsTab extends StackPane {
         this.subtitlesController = subtitlesController;
         this.subtitlesOptionsPane = subtitlesOptionsPane;
 
-        arrowSVG.setContent(App.svgMap.get(SVG.CHEVRON_RIGHT));
+        arrowSVG.setContent(SVG.CHEVRON_RIGHT.getContent());
 
         this.setPrefSize(270, 35);
         this.setMaxSize(270, 35);

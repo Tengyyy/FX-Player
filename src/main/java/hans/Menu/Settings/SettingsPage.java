@@ -97,7 +97,7 @@ public class SettingsPage {
         settingsTitle.getStyleClass().add("menuTitle");
 
         StackPane.setAlignment(linksButton, Pos.CENTER_RIGHT);
-        linksSVG.setContent(App.svgMap.get(SVG.MENU));
+        linksSVG.setContent(SVG.MENU.getContent());
 
         linksIcon.setShape(linksSVG);
         linksIcon.getStyleClass().add("graphic");

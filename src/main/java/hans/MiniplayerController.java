@@ -507,7 +507,7 @@ public class MiniplayerController {
             mainController.closeMiniplayer();
         });
 
-        closeSVG.setContent(App.svgMap.get(SVG.CLOSE));
+        closeSVG.setContent(SVG.CLOSE.getContent());
 
         closeIcon.setShape(closeSVG);
         closeIcon.setMouseTransparent(true);
@@ -537,7 +537,7 @@ public class MiniplayerController {
         });
 
 
-        previousVideoSVG.setContent(App.svgMap.get(SVG.PREVIOUS_VIDEO));
+        previousVideoSVG.setContent(SVG.PREVIOUS_VIDEO.getContent());
 
         previousVideoIcon.setPrefSize(40, 40);
         previousVideoIcon.setMaxSize(40, 40);
@@ -573,9 +573,9 @@ public class MiniplayerController {
         });
 
 
-        playSVG.setContent(App.svgMap.get(SVG.PLAY));
-        pauseSVG.setContent(App.svgMap.get(SVG.PAUSE));
-        replaySVG.setContent(App.svgMap.get(SVG.REPLAY));
+        playSVG.setContent(SVG.PLAY.getContent());
+        pauseSVG.setContent(SVG.PAUSE.getContent());
+        replaySVG.setContent(SVG.REPLAY.getContent());
 
         playIcon.setPrefSize(40, 40);
         playIcon.setMaxSize(40, 40);
@@ -607,7 +607,7 @@ public class MiniplayerController {
         nextVideoButton.setOnAction(e -> mediaInterface.playNext());
 
 
-        nextVideoSVG.setContent(App.svgMap.get(SVG.NEXT_VIDEO));
+        nextVideoSVG.setContent(SVG.NEXT_VIDEO.getContent());
 
         nextVideoIcon.setPrefSize(40, 40);
         nextVideoIcon.setMaxSize(40, 40);

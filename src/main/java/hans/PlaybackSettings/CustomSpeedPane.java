@@ -41,7 +41,7 @@ public class CustomSpeedPane {
     CustomSpeedPane(PlaybackSpeedController playbackSpeedController){
         this.playbackSpeedController = playbackSpeedController;
 
-        backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
+        backSVG.setContent(SVG.CHEVRON_LEFT.getContent());
 
         customSpeedBox.setPrefSize(235, 150);
         customSpeedBox.setMaxSize(235, 150);

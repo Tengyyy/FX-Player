@@ -32,7 +32,7 @@ public class PlaybackSpeedTab extends HBox {
         this.playbackSpeedController = playbackSpeedController;
         this.playbackSpeedPane = playbackSpeedPane;
 
-        checkSVG.setContent(App.svgMap.get(SVG.CHECK));
+        checkSVG.setContent(SVG.CHECK.getContent());
 
         this.setPrefSize(235, 35);
         this.setMaxSize(235, 35);

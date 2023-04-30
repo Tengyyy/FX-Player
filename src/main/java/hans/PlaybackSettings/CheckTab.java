@@ -22,7 +22,7 @@ public class CheckTab extends HBox {
 
     public CheckTab(boolean selected, String value){
 
-        checkSVG.setContent(App.svgMap.get(SVG.CHECK));
+        checkSVG.setContent(SVG.CHECK.getContent());
 
         this.setPrefSize(200, 35);
         this.setMaxSize(200, 35);

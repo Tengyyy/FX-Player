@@ -37,7 +37,7 @@ public class PlaybackOptionsController {
     PlaybackOptionsController(PlaybackSettingsController playbackSettingsController){
         this.playbackSettingsController = playbackSettingsController;
 
-        backSVG.setContent(App.svgMap.get(SVG.CHEVRON_LEFT));
+        backSVG.setContent(SVG.CHEVRON_LEFT.getContent());
 
         playbackOptionsBox.setPrefSize(235, 171);
         playbackOptionsBox.setMaxSize(235, 171);

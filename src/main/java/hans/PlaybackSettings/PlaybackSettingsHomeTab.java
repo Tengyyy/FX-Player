@@ -39,7 +39,7 @@ public class PlaybackSettingsHomeTab extends HBox {
         this.getChildren().addAll(iconPane, mainText, arrowPane);
         if(requiresSubText) this.getChildren().add(2, subText);
 
-        arrowSVG.setContent(App.svgMap.get(SVG.CHEVRON_RIGHT));
+        arrowSVG.setContent(SVG.CHEVRON_RIGHT.getContent());
 
         iconPane.setMinSize(25, 35);
         iconPane.setPrefSize(25, 35);

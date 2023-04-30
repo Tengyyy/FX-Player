@@ -52,8 +52,8 @@ public class CustomTextAreaItem extends VBox{
 
         this.otherItem = otherItem;
 
-        editSVG.setContent(App.svgMap.get(SVG.EDIT));
-        removeSVG.setContent(App.svgMap.get(SVG.CLOSE));
+        editSVG.setContent(SVG.EDIT.getContent());
+        removeSVG.setContent(SVG.CLOSE.getContent());
 
         warningLabel.getStyleClass().add("warningLabel");
         warningLabel.setPadding(new Insets(5, 5, 5, 5));

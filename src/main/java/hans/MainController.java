@@ -172,7 +172,7 @@ public class MainController implements Initializable {
 
 
         menuSVG = new SVGPath();
-        menuSVG.setContent(App.svgMap.get(MENU));
+        menuSVG.setContent(MENU.getContent());
 
         sizeMultiplier.set(0.65);
 
@@ -454,7 +454,7 @@ public class MainController implements Initializable {
         mediaInformationButton.setBackground(Background.EMPTY);
         mediaInformationButton.setCursor(Cursor.HAND);
 
-        mediaInformationPath.setContent(App.svgMap.get(INFORMATION));
+        mediaInformationPath.setContent(INFORMATION.getContent());
         mediaInformationIcon.setShape(mediaInformationPath);
         mediaInformationIcon.setPrefSize(25, 25);
         mediaInformationIcon.setMaxSize(25, 25);

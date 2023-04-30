@@ -41,7 +41,7 @@ public class EditImagePopUp extends ContextMenu {
         mediaInformationPage.textBox.getScene().getStylesheets().add(Objects.requireNonNull(mediaInformationPage.menuController.mainController.getClass().getResource("styles/optionsPopUp.css")).toExternalForm());
 
 
-        removePath.setContent(App.svgMap.get(SVG.REMOVE));
+        removePath.setContent(SVG.REMOVE.getContent());
         removeIcon.setShape(removePath);
         removeIcon.getStyleClass().add("icon");
         removeIcon.setPrefSize(15, 15);
@@ -51,7 +51,7 @@ public class EditImagePopUp extends ContextMenu {
         removeItem.getStyleClass().add("popUpItem");
         removeItem.setOnAction((e) -> mediaInformationPage.removeImage());
 
-        imagePath.setContent(App.svgMap.get(SVG.IMAGE));
+        imagePath.setContent(SVG.IMAGE.getContent());
         imageIcon.setShape(imagePath);
         imageIcon.getStyleClass().add("icon");
         imageIcon.setPrefSize(15, 15);

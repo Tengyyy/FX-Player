@@ -36,7 +36,7 @@ public class OtherItem implements MediaInformationItem {
         this.mediaInformationPage = mediaInformationPage;
         this.metadata = metadata;
 
-        addSVG.setContent(App.svgMap.get(SVG.PLUS));
+        addSVG.setContent(SVG.PLUS.getContent());
 
         content.setSpacing(20);
 

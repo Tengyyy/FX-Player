@@ -91,7 +91,7 @@ public class SubtitleSection extends VBox {
 
         StackPane.setAlignment(infoToggle, Pos.CENTER_RIGHT);
 
-        infoSVG.setContent(App.svgMap.get(SVG.INFORMATION_OUTLINE));
+        infoSVG.setContent(SVG.INFORMATION_OUTLINE.getContent());
 
         infoIcon.setShape(infoSVG);
         infoIcon.setPrefSize(25, 25);

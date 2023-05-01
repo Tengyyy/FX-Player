@@ -87,7 +87,9 @@ public class QueueItemContextMenu extends ContextMenu {
 
         openFileLocation.setGraphic(folderIcon);
         openFileLocation.getStyleClass().add("popUpItem");
-        openFileLocation.setOnAction((e) -> openFileLocation(queueItem.getMediaItem().getMediaDetails().get("path")));
+        openFileLocation.setOnAction((e) -> {
+            if(queueItem.getMediaItem() != null) openFileLocation(queueItem.getMediaItem().getMediaDetails().get("path"));
+        });
 
 
         this.getItems().addAll(playNext, mediaInformation, technicalDetails, openFileLocation);

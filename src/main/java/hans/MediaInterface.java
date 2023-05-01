@@ -329,6 +329,8 @@ public class MediaInterface {
         mainController.coverImageContainer.setVisible(false);
         mainController.miniplayerActiveText.setVisible(false);
 
+        mainController.sliderHoverBox.getChildren().remove(mainController.sliderHoverBox.imagePane);
+
         mediaActive.set(false);
         chapterController.resetChapters();
 
@@ -346,7 +348,7 @@ public class MediaInterface {
 
         if(playbackSettingsController.playbackOptionsController.loopOn) playbackSettingsController.playbackOptionsController.loopTab.toggle.fire();
 
-        mainController.sliderHoverPreview.setImage(null);
+        mainController.sliderHoverBox.setImage(null);
 
         subtitlesController.clearSubtitles();
         subtitlesController.openSubtitlesPane.fileSearchLabel.setText("Select a media file to use this feature");
@@ -481,7 +483,7 @@ public class MediaInterface {
                 mainController.miniplayer.miniplayerController.seekImageView.setImage(image);
             }
             else {
-                mainController.sliderHoverPreview.imageView.setImage(image);
+                mainController.sliderHoverBox.setImage(image);
                 if(controlBarController.durationSlider.isValueChanging()){
                     if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.seekImageView.setImage(image);
                     else mainController.seekImageView.setImage(image);
@@ -500,6 +502,8 @@ public class MediaInterface {
         if(mediaItem == null) return;
 
         if(mediaItem.hasVideo()){
+
+            if(!mainController.sliderHoverBox.getChildren().contains(mainController.sliderHoverBox.imagePane)) mainController.sliderHoverBox.getChildren().add(0, mainController.sliderHoverBox.imagePane);
 
             fFmpegFrameGrabber = new FFmpegFrameGrabber(mediaItem.getFile());
             fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);

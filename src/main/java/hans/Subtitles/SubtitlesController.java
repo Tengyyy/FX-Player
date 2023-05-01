@@ -288,9 +288,7 @@ public class SubtitlesController {
 
         subtitlesState = SubtitlesState.HOME_OPEN;
 
-        mainController.sliderHoverLabel.timeLabel.setVisible(false);
-        mainController.sliderHoverLabel.chapterlabel.setVisible(false);
-        mainController.sliderHoverPreview.pane.setVisible(false);
+        mainController.sliderHoverBox.setVisible(false);
 
 
         controlBarController.subtitles.disableTooltip();
@@ -356,9 +354,7 @@ public class SubtitlesController {
         subtitlesState = SubtitlesState.CLOSED;
 
         if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()){
-            mainController.sliderHoverLabel.timeLabel.setVisible(true);
-            if(mainController.chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
-            if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+            mainController.sliderHoverBox.setVisible(true);
         }
 
     }

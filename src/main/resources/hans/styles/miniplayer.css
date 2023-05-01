@@ -55,3 +55,8 @@
 	-fx-background-color: red;
 	-fx-padding: 8; /* hides thumb by default */
 }
+
+.timeHoverLabel {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 15;
+}

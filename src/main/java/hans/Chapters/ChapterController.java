@@ -166,8 +166,8 @@ public class ChapterController {
 
         if(!controlBarController.labelBox.getChildren().contains(chapterLabelWrapper)) controlBarController.labelBox.getChildren().add(chapterLabelWrapper);
 
-        mainController.sliderHoverLabel.timeLabel.setTranslateY(-85);
-        mainController.sliderHoverPreview.pane.setTranslateY(-130);
+        if(!mainController.sliderHoverBox.getChildren().contains(mainController.sliderHoverBox.chapterlabel))
+            mainController.sliderHoverBox.getChildren().add(mainController.sliderHoverBox.getChildren().size() - 1, mainController.sliderHoverBox.chapterlabel);
 
         setActiveChapter(0);
     }
@@ -183,9 +183,8 @@ public class ChapterController {
         chapterLabel.setText("");
         controlBarController.labelBox.getChildren().remove(chapterLabelWrapper);
 
-        mainController.sliderHoverLabel.timeLabel.setTranslateY(-75);
-        mainController.sliderHoverPreview.pane.setTranslateY(-100);
-        mainController.sliderHoverLabel.chapterlabel.setText("");
+        mainController.sliderHoverBox.getChildren().remove(mainController.sliderHoverBox.chapterlabel);
+        mainController.sliderHoverBox.chapterlabel.setText("");
 
         chapterPage.clear();
     }

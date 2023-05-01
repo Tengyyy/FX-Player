@@ -240,7 +240,7 @@ public class QueueItem extends GridPane {
 
 
 
-        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30);");
+        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
         imageWrapper.setPrefSize(125, 70);
         imageWrapper.setMaxSize(125, 70);
         imageWrapper.getChildren().add(coverImage);
@@ -268,7 +268,7 @@ public class QueueItem extends GridPane {
         videoTitle.getStyleClass().add("videoTitle");
         videoTitle.setWrapText(true);
         videoTitle.setMaxHeight(40);
-        videoTitle.setStyle("-fx-background-color: rgb(30,30,30);");
+        videoTitle.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
         videoTitle.setMinHeight(20);
         videoTitle.setMinWidth(160);
 
@@ -290,7 +290,7 @@ public class QueueItem extends GridPane {
         artist.getStyleClass().add("subText");
 
         duration.getStyleClass().add("subText");
-        duration.setStyle("-fx-background-color: rgb(30,30,30);");
+        duration.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
         duration.setMinHeight(18);
         duration.setMinWidth(90);
 

@@ -346,7 +346,7 @@ public class MenuController implements Initializable {
             extendButton.setVisible(true);
             extendButton.setMouseTransparent(false);
 
-            mainController.sliderHoverLabel.setBackground(false);
+            mainController.sliderHoverBox.setBackground(false);
 
             queuePage.shrink();
             chapterController.chapterPage.shrink();
@@ -413,7 +413,7 @@ public class MenuController implements Initializable {
             extendButton.setMouseTransparent(true);
         }
 
-        mainController.sliderHoverLabel.setBackground(true);
+        mainController.sliderHoverBox.setBackground(true);
 
 
         menu.setTranslateX(0);
@@ -460,7 +460,7 @@ public class MenuController implements Initializable {
         extendButton.setVisible(true);
         extendButton.setMouseTransparent(false);
 
-        mainController.sliderHoverLabel.setBackground(false);
+        mainController.sliderHoverBox.setBackground(false);
 
         menu.setOpacity(1);
         if(menuState == MenuState.CLOSED) menu.setTranslateX(-menu.getWidth());
@@ -505,7 +505,7 @@ public class MenuController implements Initializable {
             menu.setMouseTransparent(false);
             menuInTransition = false;
 
-            mainController.sliderHoverLabel.setBackground(true);
+            mainController.sliderHoverBox.setBackground(true);
 
         });
 
@@ -537,7 +537,7 @@ public class MenuController implements Initializable {
         menuFade.setOnFinished(e -> {
             menuInTransition = false;
 
-            mainController.sliderHoverLabel.setBackground(false);
+            mainController.sliderHoverBox.setBackground(false);
 
             updateState(MenuState.CLOSED);
 

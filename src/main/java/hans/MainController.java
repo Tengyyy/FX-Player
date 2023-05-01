@@ -108,8 +108,7 @@ public class MainController implements Initializable {
     public Label videoTitleLabel = new Label();
 
 
-    public SliderHoverLabel sliderHoverLabel;
-    public SliderHoverPreview sliderHoverPreview;
+    public SliderHoverBox sliderHoverBox;
 
 
     StackPane videoTitleBackground = new StackPane();
@@ -162,11 +161,10 @@ public class MainController implements Initializable {
         licenseWindow = new LicenseWindow(this);
         thirdPartySoftwareWindow = new ThirdPartySoftwareWindow(this);
 
-        sliderHoverLabel = new SliderHoverLabel(videoImageViewWrapper, controlBarController, false);
-        sliderHoverPreview = new SliderHoverPreview(videoImageViewWrapper, controlBarController);
+        sliderHoverBox = new SliderHoverBox(videoImageViewWrapper, false);
 
-        videoImageViewWrapper.getChildren().add(5, subtitlesController.subtitlesBuffer);
-        videoImageViewWrapper.getChildren().add(6, playbackSettingsController.playbackSettingsBuffer);
+        videoImageViewWrapper.getChildren().add(4, subtitlesController.subtitlesBuffer);
+        videoImageViewWrapper.getChildren().add(5, playbackSettingsController.playbackSettingsBuffer);
 
 
         snapshotDirectory = System.getProperty("user.home").concat("/FXPlayer/screenshots/");

@@ -107,9 +107,7 @@ public class PlaybackSettingsController {
 
         playbackSettingsState = PlaybackSettingsState.HOME_OPEN;
 
-        mainController.sliderHoverLabel.timeLabel.setVisible(false);
-        mainController.sliderHoverLabel.chapterlabel.setVisible(false);
-        mainController.sliderHoverPreview.pane.setVisible(false);
+        mainController.sliderHoverBox.setVisible(false);
 
         controlBarController.subtitles.disableTooltip();
         controlBarController.settings.disableTooltip();
@@ -169,9 +167,7 @@ public class PlaybackSettingsController {
         playbackSettingsState = PlaybackSettingsState.CLOSED;
 
         if(controlBarController.durationSliderHover || controlBarController.durationSlider.isValueChanging()){
-            mainController.sliderHoverLabel.timeLabel.setVisible(true);
-            if(mainController.chapterController.activeChapter != -1) mainController.sliderHoverLabel.chapterlabel.setVisible(true);
-            if(menuController.queuePage.queueBox.activeIndex.get() != -1 && menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get())).getMediaItem() != null && menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get())).getMediaItem().hasVideo()) mainController.sliderHoverPreview.pane.setVisible(true);
+            mainController.sliderHoverBox.setVisible(true);
         }
     }
 

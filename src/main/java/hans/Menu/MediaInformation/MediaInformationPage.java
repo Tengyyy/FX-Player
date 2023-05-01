@@ -80,6 +80,7 @@ public class MediaInformationPage {
     Button editImageButton = new Button();
     Region editImageIcon = new Region();
     ControlTooltip editImageTooltip;
+    boolean imageHover = false;
 
     public VBox textBox = new VBox();
 
@@ -204,12 +205,17 @@ public class MediaInformationPage {
         imageFilter.setOpacity(0);
         imageFilter.setMouseTransparent(true);
         imageViewContainer.setOnMouseEntered(e -> {
+            imageHover = true;
             AnimationsClass.fadeAnimation(200, imageFilter, imageFilter.getOpacity(), 0.5, false, 1, true);
             AnimationsClass.fadeAnimation(200, editImageIcon, editImageIcon.getOpacity(), 1, false, 1, true);
         });
         imageViewContainer.setOnMouseExited(e -> {
-            AnimationsClass.fadeAnimation(200, imageFilter, imageFilter.getOpacity(), 0, false, 1, true);
-            AnimationsClass.fadeAnimation(200, editImageIcon, editImageIcon.getOpacity(), 0, false, 1, true);
+            imageHover = false;
+
+            if(!editImagePopUp.isShowing()){
+                AnimationsClass.fadeAnimation(200, imageFilter, imageFilter.getOpacity(), 0, false, 1, true);
+                AnimationsClass.fadeAnimation(200, editImageIcon, editImageIcon.getOpacity(), 0, false, 1, true);
+            }
         });
 
         imageView.setMouseTransparent(true);

@@ -224,6 +224,8 @@ public class MenuController implements Initializable {
         if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         if(extended.get()){
+            controlBarController.controlBarWrapper.setMouseTransparent(false);
+
             if(controlBarController.controlBarOpen) AnimationsClass.hideTitle(mainController);
             else AnimationsClass.displayControls(controlBarController, subtitlesController, mainController);
             openExtendedMenu();
@@ -388,6 +390,7 @@ public class MenuController implements Initializable {
 
         menuContentFade.playFromStart();
         AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
+        controlBarController.controlBarWrapper.setMouseTransparent(true);
     }
 
     public void setMenuExtended(MenuState newState){
@@ -440,6 +443,7 @@ public class MenuController implements Initializable {
 
 
         if(menuState != MenuState.CLOSED){
+            controlBarController.controlBarWrapper.setMouseTransparent(false);
             AnimationsClass.displayControls(controlBarController, subtitlesController, mainController);
         }
     }
@@ -484,7 +488,10 @@ public class MenuController implements Initializable {
 
         StackPane.setMargin(queuePage.scrollUpButtonContainer, new Insets(130, 0, 0, 0));
 
-        if(controlBarController.controlBarOpen) AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
+        if(controlBarController.controlBarOpen){
+            controlBarController.controlBarWrapper.setMouseTransparent(true);
+            AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
+        }
     }
 
     private void openExtendedMenu(){

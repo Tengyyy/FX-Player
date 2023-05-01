@@ -244,6 +244,12 @@
     -fx-background-color: rgba(73,73,73,0.8);
 }
 
+#captionsChooserTab {
+    -fx-border-color: rgb(70,70,70);
+    -fx-border-width: 0;
+    -fx-border-insets: -3 0 0 0;
+}
+
 .settingsPaneText {
     -fx-text-fill: rgb(200,200,200);
     -fx-font-family: "Roboto Bold";
@@ -302,16 +308,16 @@
 	-fx-opacity: 1;
 }
 
-.settingsPaneTitle, #openSubtitlesTab {
+.settingsPaneTitle {
     -fx-border-color: rgb(70,70,70);
     -fx-border-width: 0 0 1 0;
-    -fx-border-insets: 0 0 -1 0;
+    -fx-border-insets: 0 0 -2 0;
 }
 
-#captionsChooserTab {
+#openSubtitlesTab {
     -fx-border-color: rgb(70,70,70);
-    -fx-border-width: 0;
-    -fx-border-insets: -1 0 0 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-insets: 0 0 -3 0;
 }
 
 .settingsBackground {

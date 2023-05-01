@@ -13,6 +13,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
@@ -133,7 +134,7 @@ public class MiniplayerController {
         coverImageContainer.setMinHeight(0);
         coverImageContainer.getChildren().addAll(coverBackground, coverFilter);
 
-        coverFilter.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        coverFilter.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7);");
         coverFilter.getChildren().add(coverImageWrapper);
 
         coverImageWrapper.getChildren().add(coverImage);
@@ -142,7 +143,6 @@ public class MiniplayerController {
         coverBackground.fitWidthProperty().bind(videoImageViewWrapper.widthProperty());
         coverBackground.fitHeightProperty().bind(videoImageViewWrapper.heightProperty());
         coverBackground.setPreserveRatio(false);
-        coverBackground.setEffect(new GaussianBlur(100));
 
 
         Rectangle rectangle = new Rectangle();
@@ -154,7 +154,6 @@ public class MiniplayerController {
 
         coverImageWrapper.maxWidthProperty().bind(coverImage.fitWidthProperty());
         coverImageWrapper.maxHeightProperty().bind(coverImage.fitHeightProperty());
-        coverImageWrapper.setEffect(new DropShadow(20, Color.BLACK));
 
         videoImageViewInnerWrapper.setBackground(Background.EMPTY);
         videoImageViewInnerWrapper.setMouseTransparent(true);

@@ -23,6 +23,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
@@ -470,7 +471,6 @@ public class MainController implements Initializable {
         coverBackground.fitWidthProperty().bind(videoImageViewWrapper.widthProperty());
         coverBackground.fitHeightProperty().bind(videoImageViewWrapper.heightProperty());
         coverBackground.setPreserveRatio(false);
-        coverBackground.setEffect(new GaussianBlur(100));
 
 
         Rectangle rectangle = new Rectangle();
@@ -482,7 +482,6 @@ public class MainController implements Initializable {
 
         coverImageWrapper.maxWidthProperty().bind(coverImage.fitWidthProperty());
         coverImageWrapper.maxHeightProperty().bind(coverImage.fitHeightProperty());
-        coverImageWrapper.setEffect(new DropShadow(20, Color.BLACK));
     }
 
     public void mediaClick(MouseEvent e) {

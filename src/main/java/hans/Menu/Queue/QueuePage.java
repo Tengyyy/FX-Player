@@ -541,9 +541,9 @@ public class QueuePage {
     }
 
     public void extend(){
-        VBox.setMargin(queueBarTitle, new Insets(20, 40, 5, 50));
-        queueBar.setPadding(new Insets(35, 0, 0, 0));
-        queueBarButtonWrapper.setPadding(new Insets(10, 20, 10, 20));
+        VBox.setMargin(queueBarTitle, new Insets(20, 10, 5, 10));
+        queueBar.setPadding(new Insets(35, 40, 0, 40));
+        queueBarButtonWrapper.setPadding(new Insets(10, 0, 10, 0));
         queueBarButtonWrapper.setMinHeight(100);
         queueBarButtonWrapper.setPrefHeight(100);
 
@@ -599,6 +599,12 @@ public class QueuePage {
 
     public void checkScroll(){
         if(queueBox.activeItem.get() == null) return;
+
+        if(queueBox.itemDragActive.get() && (queueBox.draggedNode == queueBox.activeItem.get() || selectionActive.get() && selectedItems.contains(queueBox.activeItem.get()))){
+            scrollDownButtonContainer.setVisible(false);
+            scrollUpButtonContainer.setVisible(false);
+            return;
+        }
 
         double scroll = queueScroll.getVvalue();
 

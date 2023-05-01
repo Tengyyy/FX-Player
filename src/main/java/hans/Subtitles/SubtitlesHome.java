@@ -91,7 +91,7 @@ public class SubtitlesHome {
         subtitlesTitle.setMaxSize(245, 48);
         subtitlesTitle.setPadding(new Insets(0, 10, 0, 10));
         subtitlesTitle.setAlignment(Pos.CENTER_LEFT);
-        VBox.setMargin(subtitlesTitle, new Insets(0, 0, 10, 0));
+        VBox.setMargin(subtitlesTitle, new Insets(0, 0, 5, 0));
         subtitlesTitle.getStyleClass().add("settingsPaneTitle");
 
         subtitlesTitleLabel.setPrefSize(165, 40);
@@ -118,6 +118,7 @@ public class SubtitlesHome {
         subtitlesChooserTab.setId("captionsChooserTab");
         subtitlesChooserTab.getChildren().addAll(chooseSubtitlesIconPane, chooseSubtitlesLabel);
         subtitlesChooserTab.setOnMouseClicked(e -> openCaptionsChooser());
+        VBox.setMargin(subtitlesChooserTab, new Insets(5, 0, 0, 0));
 
         chooseSubtitlesIconPane.setMinSize(30, 35);
         chooseSubtitlesIconPane.setPrefSize(30, 35);

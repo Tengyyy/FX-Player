@@ -1,5 +1,6 @@
 package hans.Menu.MediaInformation;
 
+import hans.AnimationsClass;
 import hans.App;
 import hans.MediaItems.MediaItem;
 import hans.SVG;
@@ -102,7 +103,13 @@ public class EditImagePopUp extends ContextMenu {
         hideTransition = new FadeTransition(Duration.millis(150), this.getStyleableNode());
         hideTransition.setFromValue(1);
         hideTransition.setToValue(0);
-        hideTransition.setOnFinished(e -> super.hide());
+        hideTransition.setOnFinished(e -> {
+            if(!mediaInformationPage.imageHover){
+                AnimationsClass.fadeAnimation(200, mediaInformationPage.imageFilter, mediaInformationPage.imageFilter.getOpacity(), 0, false, 1, true);
+                AnimationsClass.fadeAnimation(200, mediaInformationPage.editImageIcon, mediaInformationPage.editImageIcon.getOpacity(), 0, false, 1, true);
+            }
+            super.hide();
+        });
         hideTransition.playFromStart();
     }
 

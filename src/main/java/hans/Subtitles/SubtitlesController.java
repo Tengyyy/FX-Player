@@ -180,7 +180,6 @@ public class SubtitlesController {
 
 
     public void loadSubtitles(File file){
-        System.out.println("test3");
 
         subtitlesBox.subtitlesContainer.getChildren().clear();
 

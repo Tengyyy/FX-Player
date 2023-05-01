@@ -1,13 +1,14 @@
 package hans.Menu.Settings;
 
 
-import hans.App;
-import hans.Subtitles.SubtitlesState;
-import hans.SVG;
 import hans.PlaybackSettings.PlaybackSettingsState;
+import hans.SVG;
+import hans.Subtitles.SubtitlesState;
 import hans.Utilities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -20,10 +21,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 
-import java.awt.*;
+import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.prefs.Preferences;
 
 public class SubtitleSection extends VBox {
 
@@ -33,9 +37,9 @@ public class SubtitleSection extends VBox {
 
     VBox toggleContainer = new VBox();
     Toggle extrationToggle;
-    BooleanProperty extractionOn = new SimpleBooleanProperty();
+    BooleanProperty extractionOn = new SimpleBooleanProperty(false);
     Toggle searchToggle;
-    BooleanProperty searchOn = new SimpleBooleanProperty();
+    BooleanProperty searchOn = new SimpleBooleanProperty(false);
 
     StackPane openSubtitlesSectionWrapper = new StackPane();
     VBox openSubtitlesSection = new VBox();
@@ -50,15 +54,23 @@ public class SubtitleSection extends VBox {
 
     HBox usernameBox = new HBox();
     Label usernameLabel = new Label("Username:");
-    TextField usernameField = new TextField();
+    public TextField usernameField = new TextField();
 
     HBox passwordBox = new HBox();
     Label passwordLabel = new Label("Password:");
-    PasswordField passwordField = new PasswordField();
+    public PasswordField passwordField = new PasswordField();
 
     StackPane openSubtitlesFooterPane = new StackPane();
     Button createAccountButton = new Button("Create account");
-    Button testConnectionButton = new Button("Test connection");
+    public Button saveButton = new Button("Save credentials");
+
+    BooleanProperty credentialsChanged = new SimpleBooleanProperty(false);
+    public String username = "";
+    public String password = "";
+
+    public static final String SUBTITLE_EXTRACTION_ON = "subtitle_extraction_on";
+    public static final String SUBTITLE_PARENT_FOLDER_SCAN_ON = "subtitle_parent_folder_scan_on";
+
 
     SubtitleSection(SettingsPage settingsPage){
         this.settingsPage = settingsPage;
@@ -71,6 +83,14 @@ public class SubtitleSection extends VBox {
 
         extrationToggle = new Toggle(settingsPage, "Extract subtitles embedded into media file containers", extractionOn);
         searchToggle = new Toggle(settingsPage, "Scan parent folder for subtitle file with matching name", searchOn);
+
+        extractionOn.addListener((observableValue, oldValue, newValue) -> {
+            settingsPage.menuController.mainController.pref.preferences.putBoolean(SUBTITLE_EXTRACTION_ON, newValue);
+        });
+
+        searchOn.addListener((observableValue, oldValue, newValue) -> {
+            settingsPage.menuController.mainController.pref.preferences.putBoolean(SUBTITLE_PARENT_FOLDER_SCAN_ON, newValue);
+        });
 
         toggleContainer.getChildren().addAll(extrationToggle, searchToggle);
 
@@ -142,6 +162,8 @@ public class SubtitleSection extends VBox {
             }
         });
 
+        usernameField.textProperty().addListener((observableValue, oldValue, newValue) -> credentialsChanged.set(true));
+
         passwordBox.getChildren().addAll(passwordLabel, passwordField);
 
         passwordLabel.setPrefWidth(150);
@@ -165,7 +187,9 @@ public class SubtitleSection extends VBox {
             }
         });
 
-        openSubtitlesFooterPane.getChildren().addAll(createAccountButton, testConnectionButton);
+        passwordField.textProperty().addListener((observableValue, oldValue, newValue) -> credentialsChanged.set(true));
+
+        openSubtitlesFooterPane.getChildren().addAll(createAccountButton, saveButton);
         openSubtitlesFooterPane.setAlignment(Pos.CENTER_LEFT);
 
         createAccountButton.setTranslateX(-11);
@@ -179,13 +203,61 @@ public class SubtitleSection extends VBox {
         });
 
 
-        StackPane.setAlignment(testConnectionButton, Pos.CENTER_RIGHT);
-        testConnectionButton.getStyleClass().add("mainButton");
-        testConnectionButton.disableProperty().bind(usernameField.textProperty().isEmpty().or(passwordField.textProperty().isEmpty()));
-        testConnectionButton.setOnAction(e -> {
+        StackPane.setAlignment(saveButton, Pos.CENTER_RIGHT);
+        saveButton.getStyleClass().add("mainButton");
+        saveButton.disableProperty().bind(credentialsChanged.not());
+        saveButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
+
+            try {
+                saveCredentials();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
 
+    }
+
+    private void saveCredentials() throws IOException {
+
+        this.username = usernameField.getText();
+        this.password = passwordField.getText();
+
+        File file = new File(new File(System.getProperty("user.home"), "FXPlayer"), "OpenSubtitles.txt");
+
+        Files.writeString(file.toPath(), username + "\n" + password, StandardCharsets.UTF_8);
+
+        credentialsChanged.set(false);
+
+        if(!this.username.isEmpty() && !this.password.isEmpty() && !settingsPage.menuController.subtitlesController.openSubtitlesPane.defaultViewInitialized) settingsPage.menuController.subtitlesController.openSubtitlesPane.initializeDefaultView();
+    }
+
+
+    public void readCredentials(){
+        File file = new File(new File(System.getProperty("user.home"), "FXPlayer"), "OpenSubtitles.txt");
+        if(file.exists() && file.canRead()){
+            try {
+                List<String> lines = Files.readAllLines(Path.of(file.toURI()), StandardCharsets.UTF_8);
+                if(lines.size() >= 2){
+                    usernameField.setText(lines.get(0));
+                    passwordField.setText(lines.get(1));
+
+                    this.username = lines.get(0);
+                    this.password = lines.get(1);
+
+                    credentialsChanged.set(false);
+
+                    if(!username.isEmpty() && !password.isEmpty()) settingsPage.menuController.subtitlesController.openSubtitlesPane.initializeDefaultView();
+                }
+
+            } catch (IOException ignored){}
+        }
+    }
+
+    public void loadPreferences(){
+        Preferences preferences = settingsPage.menuController.mainController.pref.preferences;
+        extractionOn.set(preferences.getBoolean(SUBTITLE_EXTRACTION_ON, true));
+        searchOn.set(preferences.getBoolean(SUBTITLE_PARENT_FOLDER_SCAN_ON, false));
     }
 }

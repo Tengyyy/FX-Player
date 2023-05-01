@@ -3,12 +3,16 @@ package hans.Menu.Settings;
 import hans.Subtitles.SubtitlesState;
 import hans.PlaybackSettings.PlaybackSettingsState;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
+import java.util.prefs.Preferences;
 
 public class PreferencesSection extends VBox {
 
@@ -29,6 +33,12 @@ public class PreferencesSection extends VBox {
     ComboBox<Integer> recentMediaSizeBox = new ComboBox<>();
     IntegerProperty recentMediaSizeProperty = new SimpleIntegerProperty();
 
+    public static final String SEEKBAR_FRAME_PREVIEW_ON = "seekbar_frame_preview_on";
+    public static final String HISTORY_SIZE = "history_size";
+    public static final String AUDIO_SUBTITLES_LANGUAGE = "audio_subtitles_language";
+
+
+
     PreferencesSection(SettingsPage settingsPage){
         this.settingsPage = settingsPage;
 
@@ -36,6 +46,9 @@ public class PreferencesSection extends VBox {
 
         seekPreviewToggle = new Toggle(settingsPage, "Show frame preview above seekbar", seekPreviewOn);
 
+        seekPreviewOn.addListener((observableValue, oldValue, newValue) -> {
+            settingsPage.menuController.mainController.pref.preferences.putBoolean(SEEKBAR_FRAME_PREVIEW_ON, newValue);
+        });
 
         languagePane.getChildren().addAll(languageLabel, languageBox);
         languagePane.setPadding(new Insets(8, 10, 8, 10));
@@ -52,6 +65,7 @@ public class PreferencesSection extends VBox {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
         });
+        languageBox.setFocusTraversable(false);
 
         languageBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
@@ -61,6 +75,9 @@ public class PreferencesSection extends VBox {
         });
 
         languageProperty.bind(languageBox.getSelectionModel().selectedItemProperty());
+        languageProperty.addListener((observableValue, oldValue, newValue) -> {
+            settingsPage.menuController.mainController.pref.preferences.put(AUDIO_SUBTITLES_LANGUAGE, newValue);
+        });
 
         recentMediaSizePane.getChildren().addAll(recentMediaSizeLabel, recentMediaSizeBox);
         recentMediaSizePane.setPadding(new Insets(8, 10, 8, 10));
@@ -76,6 +93,7 @@ public class PreferencesSection extends VBox {
         recentMediaSizeBox.getItems().add(100);
         recentMediaSizeBox.setPrefWidth(150);
         recentMediaSizeBox.setMaxWidth(150);
+        recentMediaSizeBox.setFocusTraversable(false);
 
         recentMediaSizeBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
@@ -91,6 +109,9 @@ public class PreferencesSection extends VBox {
 
 
         recentMediaSizeProperty.bind(recentMediaSizeBox.getSelectionModel().selectedItemProperty());
+        recentMediaSizeProperty.addListener((observableValue, oldValue, newValue) -> {
+            settingsPage.menuController.mainController.pref.preferences.putInt(HISTORY_SIZE, newValue.intValue());
+        });
 
         this.getChildren().addAll(preferencesSectionTitle, seekPreviewToggle, languagePane, recentMediaSizePane);
         this.setSpacing(25);
@@ -100,5 +121,12 @@ public class PreferencesSection extends VBox {
         for(String string : settingsPage.menuController.subtitlesController.openSubtitlesPane.supportedLanguages){
             languageBox.getItems().add(string);
         }
+    }
+
+    public void loadPreferences(){
+        Preferences preferences = settingsPage.menuController.mainController.pref.preferences;
+        seekPreviewOn.set(preferences.getBoolean(SEEKBAR_FRAME_PREVIEW_ON, true));
+        languageBox.getSelectionModel().select(preferences.get(AUDIO_SUBTITLES_LANGUAGE, "English"));
+        recentMediaSizeBox.getSelectionModel().select((Integer) preferences.getInt(HISTORY_SIZE, 25));
     }
 }

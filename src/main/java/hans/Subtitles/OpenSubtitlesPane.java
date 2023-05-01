@@ -5,6 +5,8 @@ import com.github.wtekiela.opensub4j.impl.OpenSubtitlesClientImpl;
 import com.github.wtekiela.opensub4j.response.SubtitleInfo;
 import com.jfoenix.controls.JFXButton;
 import hans.App;
+import hans.Menu.MenuState;
+import hans.Menu.Settings.Section;
 import hans.Subtitles.Tasks.LoginTask;
 import hans.Subtitles.Tasks.SearchTask;
 import hans.SVG;
@@ -97,14 +99,14 @@ public class OpenSubtitlesPane {
     SubtitlesHome subtitlesHome;
     SubtitlesController subtitlesController;
 
-    public String username = null;
-    public String password = null;
     public OpenSubtitlesClient osClient = null;
 
     public int searchState = 0; // 0 - query search (default), 1 - imdb search, 2 - file search
 
     public BooleanProperty searchInProgress = new SimpleBooleanProperty(false);
     ExecutorService executorService = null;
+
+    public boolean defaultViewInitialized;
 
     OpenSubtitlesPane(SubtitlesHome subtitlesHome, SubtitlesController subtitlesController){
         this.subtitlesHome = subtitlesHome;
@@ -210,7 +212,18 @@ public class OpenSubtitlesPane {
         connectButton.setCursor(Cursor.HAND);
         connectButton.setText("Connect");
         connectButton.setPrefWidth(120);
-        connectButton.setOnAction(e -> initializeDefaultView());
+        connectButton.setOnAction(e -> {
+            subtitlesController.closeSubtitles();
+
+            if(subtitlesController.menuController.menuState == MenuState.SETTINGS_OPEN){
+                subtitlesController.menuController.settingsPage.animateScroll(Section.SUBTITLES);
+            }
+            else {
+                subtitlesController.menuController.settingsPage.enter();
+                subtitlesController.menuController.settingsPage.settingsScroll.setVvalue(subtitlesController.menuController.settingsPage.getTargetScrollValue(Section.SUBTITLES));
+            }
+        });
+        connectButton.setFocusTraversable(false);
 
         fieldContainer.setPrefHeight(132);
         fieldContainer.setMaxHeight(132);
@@ -387,8 +400,6 @@ public class OpenSubtitlesPane {
         });
 
 
-        readCredentials();
-
         Platform.runLater(() -> searchOptionsContextMenu = new SearchOptionsContextMenu(this));
     }
 
@@ -482,7 +493,10 @@ public class OpenSubtitlesPane {
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
 
-        LoginTask loginTask = new LoginTask(subtitlesController, this);
+        LoginTask loginTask = new LoginTask(subtitlesController, this,
+                subtitlesController.menuController.settingsPage.subtitleSection.username,
+                subtitlesController.menuController.settingsPage.subtitleSection.password);
+
         loginTask.setOnSucceeded(e -> {
             Integer result = loginTask.getValue();
             if(result == -1) searchFail("Unable to connect to OpenSubtitles service.");
@@ -611,6 +625,11 @@ public class OpenSubtitlesPane {
     }
 
     public void initializeDefaultView(){
+
+        if(defaultViewInitialized) return;
+
+        defaultViewInitialized = true;
+
         container.getChildren().clear();
         if(!titleContainer.getChildren().contains(languageBox)) titleContainer.getChildren().add(languageBox);
 
@@ -623,22 +642,6 @@ public class OpenSubtitlesPane {
         if(subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN) subtitlesController.clip.setHeight(233);
 
         container.getChildren().addAll(titleContainer, fieldContainer, searchButtonContainer);
-    }
-
-    public void readCredentials(){
-        File file = new File(new File(System.getProperty("user.home"), "FXPlayer"), "OpenSubtitles.txt");
-        if(file.exists() && file.canRead()){
-            try {
-                List<String> lines = Files.readAllLines(Path.of(file.toURI()), StandardCharsets.UTF_8);
-                if(lines.size() >= 2){
-                    this.username = lines.get(0);
-                    this.password = lines.get(1);
-
-                    initializeDefaultView();
-                }
-
-            } catch (IOException ignored){}
-        }
     }
 
     private void searchFail(String text){

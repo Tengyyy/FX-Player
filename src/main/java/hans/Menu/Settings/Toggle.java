@@ -35,6 +35,7 @@ public class Toggle extends StackPane{
         toggleButton.selectedProperty().bindBidirectional(booleanProperty);
         toggleButton.setRadius(10);
         toggleButton.setCursor(Cursor.HAND);
+        toggleButton.setFocusTraversable(false);
         toggleButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();

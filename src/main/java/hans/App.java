@@ -7,11 +7,13 @@ import hans.PlaybackSettings.PlaybackSettingsController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -56,7 +58,9 @@ public class App extends Application {
         primaryStage.setScene(splashScreen.scene);
         primaryStage.setTitle("FXPlayer");
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("images/appIcon.png")).toExternalForm()));
-        primaryStage.setMaximized(true);
+
+
+
         primaryStage.show();
 
         Platform.runLater(() -> {
@@ -76,7 +80,7 @@ public class App extends Application {
 
                 initializeConfig();
 
-                Scene scene = new Scene(root, 705, 400);
+                Scene scene = new Scene(root, 705, 450);
 
                 scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/application.css")).toExternalForm());
 
@@ -106,7 +110,6 @@ public class App extends Application {
                 });
 
                 primaryStage.setScene(scene);
-                primaryStage.setMaximized(true);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -121,7 +124,11 @@ public class App extends Application {
 
     private void initializeConfig(){
 
+
         menuController.settingsPage.controlsSection.initializeControlsBox();
+        menuController.settingsPage.subtitleSection.readCredentials();
+
+        menuController.settingsPage.loadPreferences();
 
         controlBarController.loadTooltips();
         mainController.loadTooltips();

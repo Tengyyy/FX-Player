@@ -34,7 +34,7 @@ public class SettingsPage {
     StackPane settingsWrapper = new StackPane();
     VBox settingsContainer = new VBox();
     VBox settingsBar = new VBox();
-    ScrollPane settingsScroll = new ScrollPane();
+    public ScrollPane settingsScroll = new ScrollPane();
     VBox settingsContent = new VBox();
 
     StackPane titleContainer = new StackPane();
@@ -53,7 +53,7 @@ public class SettingsPage {
     Button aboutButton = new Button("About");
 
 
-    SubtitleSection subtitleSection;
+    public SubtitleSection subtitleSection;
     MetadataSection metadataSection;
     public PreferencesSection preferencesSection;
     LibrariesSection librariesSection;
@@ -146,6 +146,7 @@ public class SettingsPage {
             animateScroll(Section.SUBTITLES);
 
         });
+        subtitlesButton.setFocusTraversable(false);
 
         metadataButton.getStyleClass().addAll("linkButton", "settingsBarButton");
         metadataButton.setOnAction(e -> {
@@ -155,6 +156,8 @@ public class SettingsPage {
             animateScroll(Section.METADATA);
 
         });
+        metadataButton.setFocusTraversable(false);
+
 
         preferencesButton.getStyleClass().addAll("linkButton", "settingsBarButton");
         preferencesButton.setOnAction(e -> {
@@ -163,6 +166,7 @@ public class SettingsPage {
 
             animateScroll(Section.PREFERENCES);
         });
+        preferencesButton.setFocusTraversable(false);
 
         musicLibrariesButton.getStyleClass().addAll("linkButton", "settingsBarButton");
         musicLibrariesButton.setOnAction(e -> {
@@ -170,8 +174,9 @@ public class SettingsPage {
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
             animateScroll(Section.LIBRARIES);
-
         });
+        musicLibrariesButton.setFocusTraversable(false);
+
 
         controlsButton.getStyleClass().addAll("linkButton", "settingsBarButton");
         controlsButton.setOnAction(e -> {
@@ -181,6 +186,8 @@ public class SettingsPage {
             animateScroll(Section.CONTROLS);
 
         });
+        controlsButton.setFocusTraversable(false);
+
 
         aboutButton.getStyleClass().addAll("linkButton", "settingsBarButton");
         aboutButton.setOnAction(e -> {
@@ -189,6 +196,7 @@ public class SettingsPage {
 
             animateScroll(Section.ABOUT);
         });
+        aboutButton.setFocusTraversable(false);
 
 
         settingsScroll.setContent(settingsContent);
@@ -235,7 +243,7 @@ public class SettingsPage {
         }
     }
 
-    void animateScroll(Section section){
+    public void animateScroll(Section section){
         double scrollTo = getTargetScrollValue(section);
 
         Timeline scrollTimeline = new Timeline(new KeyFrame(Duration.millis(300),
@@ -244,7 +252,7 @@ public class SettingsPage {
         scrollTimeline.playFromStart();
     }
 
-    double getTargetScrollValue(Section section){
+    public double getTargetScrollValue(Section section){
 
         switch(section){
             case SUBTITLES -> {
@@ -278,5 +286,10 @@ public class SettingsPage {
 
             return (y/(heightScrollPane-heightViewPort));
 
+    }
+
+    public void loadPreferences(){
+        subtitleSection.loadPreferences();
+        preferencesSection.loadPreferences();
     }
 }

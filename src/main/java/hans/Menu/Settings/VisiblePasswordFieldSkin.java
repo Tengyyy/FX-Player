@@ -1,6 +1,5 @@
 package hans.Menu.Settings;
 
-import hans.App;
 import hans.SVG;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;

@@ -77,6 +77,7 @@ public class LibraryItem extends StackPane {
             if(librariesSection.settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) librariesSection.settingsPage.menuController.playbackSettingsController.closeSettings();
             librariesSection.refreshLibrary(file);
         });
+        refreshButton.setFocusTraversable(false);
 
         removeSVG.setContent(SVG.REMOVE.getContent());
         removeIcon.setShape(removeSVG);
@@ -94,6 +95,7 @@ public class LibraryItem extends StackPane {
             if(librariesSection.settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) librariesSection.settingsPage.menuController.playbackSettingsController.closeSettings();
             librariesSection.removeLibrary(this);
         });
+        refreshButton.setFocusTraversable(false);
 
         Platform.runLater(() -> {
             refreshTooltip = new ControlTooltip(librariesSection.settingsPage.menuController.mainController,"Refresh folder", "", refreshButton, 1000);

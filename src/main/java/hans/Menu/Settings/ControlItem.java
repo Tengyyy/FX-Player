@@ -63,6 +63,7 @@ public class ControlItem extends StackPane {
         editButton.getStyleClass().add("transparentButton");
         editButton.setGraphic(editIcon);
         editButton.setVisible(false);
+        editButton.setFocusTraversable(false);
         editButton.setOnAction(e -> {
             if(controlsSection.settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) controlsSection.settingsPage.menuController.subtitlesController.closeSubtitles();
             if(controlsSection.settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) controlsSection.settingsPage.menuController.playbackSettingsController.closeSettings();

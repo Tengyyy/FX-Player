@@ -856,6 +856,10 @@ public class MainController implements Initializable {
             if(event.isShiftDown()) subtitlesController.openSubtitlesPane.focusBackward();
             else subtitlesController.openSubtitlesPane.focusForward();
         }
+        else if(menuController.menuState == MenuState.SETTINGS_OPEN){
+            if(menuController.settingsPage.subtitleSection.passwordField.isFocused()) menuController.settingsPage.subtitleSection.usernameField.requestFocus();
+            else if(menuController.settingsPage.subtitleSection.usernameField.isFocused()) menuController.settingsPage.subtitleSection.passwordField.requestFocus();
+        }
 
         event.consume();
     }
@@ -886,9 +890,9 @@ public class MainController implements Initializable {
     }
 
     public void pressEnter(){
-        if(subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_OPEN) return;
-
-        subtitlesController.openSubtitlesPane.searchButton.fire();
+        if(subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_OPEN){
+            subtitlesController.openSubtitlesPane.searchButton.fire();
+        }
     }
 
     public void PLAY_PAUSEAction(){

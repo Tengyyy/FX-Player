@@ -85,6 +85,7 @@ public class LibrariesSection extends StackPane {
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             openLibraryChooser();
         });
+        addFolderButton.setFocusTraversable(false);
 
         librariesContainer.setSpacing(8);
 
@@ -123,6 +124,7 @@ public class LibrariesSection extends StackPane {
             refreshAll();
         });
         refreshAllButton.setDisable(true);
+        refreshAllButton.setFocusTraversable(false);
 
         infoSVG.setContent(SVG.INFORMATION_OUTLINE.getContent());
 

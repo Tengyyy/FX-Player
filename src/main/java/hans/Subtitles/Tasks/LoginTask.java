@@ -14,9 +14,15 @@ public class LoginTask extends Task<Integer> {
     SubtitlesController subtitlesController;
     OpenSubtitlesPane openSubtitlesPane;
 
-    public LoginTask(SubtitlesController subtitlesController, OpenSubtitlesPane openSubtitlesPane){
+    String username;
+    String password;
+
+    public LoginTask(SubtitlesController subtitlesController, OpenSubtitlesPane openSubtitlesPane, String username, String password){
         this.subtitlesController = subtitlesController;
         this.openSubtitlesPane = openSubtitlesPane;
+
+        this.username = username;
+        this.password = password;
     }
 
 
@@ -26,7 +32,7 @@ public class LoginTask extends Task<Integer> {
         if(openSubtitlesPane.osClient.isLoggedIn()) return 1;
 
         try {
-            LoginResponse response = (LoginResponse) openSubtitlesPane.osClient.login(openSubtitlesPane.username, openSubtitlesPane.password, "en", "TemporaryUserAgent");
+            LoginResponse response = (LoginResponse) openSubtitlesPane.osClient.login(username, password, "en", "TemporaryUserAgent");
 
             if(response.getStatus().equals(ResponseStatus.OK)){
                 return 1;

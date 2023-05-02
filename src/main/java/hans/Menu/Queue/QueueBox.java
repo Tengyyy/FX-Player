@@ -639,6 +639,15 @@ public class QueueBox extends VBox {
         dragBoardFiles.clear();
     }
 
+    public void updatePadding(boolean newValue){
+        if(!menuController.extended.get()) return;
+
+        Insets oldPadding = this.getPadding();
+
+        if(newValue) this.setPadding(new Insets(oldPadding.getTop(), 38, oldPadding.getBottom(), oldPadding.getLeft()));
+        else this.setPadding(new Insets(oldPadding.getTop(), 50, oldPadding.getBottom(), oldPadding.getLeft()));
+    }
+
     public void extend(){
         this.setPadding(new Insets(0, 50,20, 50));
 

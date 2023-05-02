@@ -343,12 +343,13 @@
 }
 
 #sliderHoverPreviewPane {
-    -fx-background-radius: 2;
+    -fx-background-radius: 12;
     -fx-border-color: white;
     -fx-border-style: solid;
     -fx-border-width: 2;
-    -fx-border-radius: 2;
+    -fx-border-radius: 8;
     -fx-background-color: black;
+    -fx-background-insets: 1;
 }
 
 .warningLabelTooltip {

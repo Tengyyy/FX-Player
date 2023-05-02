@@ -1,15 +1,14 @@
 package hans.Menu.Queue;
 
-import hans.App;
-import hans.Menu.Settings.Action;
-import hans.Subtitles.SubtitlesState;
 import hans.ControlTooltip;
 import hans.MediaItems.MediaUtilities;
 import hans.Menu.MenuController;
 import hans.Menu.MenuState;
 import hans.Menu.QueueItemContextMenu;
-import hans.SVG;
+import hans.Menu.Settings.Action;
 import hans.PlaybackSettings.PlaybackSettingsState;
+import hans.SVG;
+import hans.Subtitles.SubtitlesState;
 import hans.Utilities;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -17,8 +16,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -31,7 +28,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -51,7 +47,7 @@ public class QueuePage {
 
     VBox queueWrapper = new VBox();
     VBox queueBar = new VBox();
-    public ScrollPane queueScroll = new ScrollPane();
+    public ScrollPane queueScroll;
     VBox queueContent = new VBox();
 
     public QueueBox queueBox;
@@ -119,6 +115,19 @@ public class QueuePage {
 
     public QueuePage(MenuController menuController){
         this.menuController = menuController;
+
+        queueScroll = new ScrollPane() {
+            ScrollBar vertical;
+
+            @Override
+            protected void layoutChildren() {
+                super.layoutChildren();
+                if (vertical == null) {
+                    vertical = (ScrollBar) lookup(".scroll-bar:vertical");
+                    vertical.visibleProperty().addListener((obs, old, val) -> queueBox.updatePadding(val));
+                }
+            }
+        };
 
         queueBox = new QueueBox(menuController, this);
 
@@ -462,10 +471,7 @@ public class QueuePage {
 
         queueScroll.vvalueProperty().addListener((observableValue, oldValue, newValue) -> checkScroll());
 
-
         queueScroll.heightProperty().addListener((observableValue, number, t1) -> checkScroll());
-
-
 
 
         menuController.queueContainer.getChildren().addAll(queueWrapper, scrollUpButtonContainer, scrollDownButtonContainer);

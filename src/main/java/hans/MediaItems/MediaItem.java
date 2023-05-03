@@ -100,6 +100,7 @@ public class MediaItem {
         int firstAudioStreamIndex = -1;
 
         for(Stream stream : probeResult.getStreams()){
+
             if(stream.getCodecType() == StreamType.VIDEO && stream.getDisposition().getDefault() == 1 && stream.getDisposition().getAttachedPic() == 0){
                 videoStream = stream;
                 numberOfNonPictureVideoStreams++;

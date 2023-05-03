@@ -472,7 +472,8 @@ public class MediaInterface {
 
     public void updatePreviewFrame(double time, boolean forceUpdate) {
 
-        if(!forceUpdate && (fFmpegFrameGrabber == null || frameGrabberTask != null && frameGrabberTask.isRunning())) return;
+        if(!forceUpdate && (frameGrabberTask != null && frameGrabberTask.isRunning())) return;
+        if(fFmpegFrameGrabber == null) return;
 
         frameGrabberTask = new FrameGrabberTask(fFmpegFrameGrabber, time);
 
@@ -483,14 +484,13 @@ public class MediaInterface {
                 mainController.miniplayer.miniplayerController.seekImageView.setImage(image);
             }
             else {
-                mainController.sliderHoverBox.setImage(image);
+                if(menuController.settingsPage.preferencesSection.seekPreviewOn.get()) mainController.sliderHoverBox.setImage(image);
                 if(controlBarController.durationSlider.isValueChanging()){
                     if(mainController.miniplayerActive) mainController.miniplayer.miniplayerController.seekImageView.setImage(image);
                     else mainController.seekImageView.setImage(image);
                 }
             }
         });
-
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(frameGrabberTask);
@@ -503,7 +503,9 @@ public class MediaInterface {
 
         if(mediaItem.hasVideo()){
 
-            if(!mainController.sliderHoverBox.getChildren().contains(mainController.sliderHoverBox.imagePane)) mainController.sliderHoverBox.getChildren().add(0, mainController.sliderHoverBox.imagePane);
+            if(!mainController.sliderHoverBox.getChildren().contains(mainController.sliderHoverBox.imagePane)
+                    && menuController.settingsPage.preferencesSection.seekPreviewOn.get())
+                mainController.sliderHoverBox.getChildren().add(0, mainController.sliderHoverBox.imagePane);
 
             fFmpegFrameGrabber = new FFmpegFrameGrabber(mediaItem.getFile());
             fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
@@ -535,24 +537,38 @@ public class MediaInterface {
         mainController.mediaInformationButtonPane.setVisible(true);
         mainController.mediaInformationButtonPane.setMouseTransparent(false);
 
-        if(!mediaItem.subtitlesGenerationTime.isEmpty()){ // caption extraction has started for this mediaitem
-            if(!mediaItem.subtitlesExtractionInProgress.get()){ // caption extraction has already been completed, can simply add caption tabs
-                subtitlesController.createSubtitleTabs(mediaItem);
+        if(menuController.settingsPage.subtitleSection.extractionOn.get()) {
+            if (!mediaItem.subtitlesGenerationTime.isEmpty()) { // subtitle extraction has started for this mediaitem
+                if (!mediaItem.subtitlesExtractionInProgress.get()) { // subtitle extraction has already been completed, can simply add caption tabs
+                    subtitlesController.createSubtitleTabs(mediaItem);
+                    if(mediaItem.numberOfSubtitleStreams == 0 && menuController.settingsPage.subtitleSection.searchOn.get()) subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
+
+                } else { // subtitle extraction is ongoing, have to wait for it to finish before adding caption tabs
+                    mediaItem.subtitlesExtractionInProgress.addListener((observableValue, oldValue, newValue) -> {
+                        if (!newValue && menuController.queuePage.queueBox.activeItem.get() == queueItem) {
+                            subtitlesController.createSubtitleTabs(mediaItem);
+
+                            if(mediaItem.numberOfSubtitleStreams == 0 && menuController.settingsPage.subtitleSection.searchOn.get()) subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
+                        }
+                    });
+                }
             }
-            else { // caption extraction is ongoing, have to wait for it to finish before adding caption tabs
-                mediaItem.subtitlesExtractionInProgress.addListener((observableValue, oldValue, newValue) -> {
-                    if(!newValue && menuController.queuePage.queueBox.activeItem.get() == queueItem) subtitlesController.createSubtitleTabs(mediaItem);
+            else { // subtitle extraction has not started, will create subtitle extraction task and on completion add subtitles
+                executorService = Executors.newFixedThreadPool(1);
+                subtitleExtractionTask = new SubtitleExtractionTask(subtitlesController, mediaItem);
+                subtitleExtractionTask.setOnSucceeded(e -> {
+                    if (subtitleExtractionTask.getValue() != null && subtitleExtractionTask.getValue() && menuController.queuePage.queueBox.activeItem.get() == queueItem){
+                        subtitlesController.createSubtitleTabs(mediaItem);
+
+                        if(mediaItem.numberOfSubtitleStreams == 0 && menuController.settingsPage.subtitleSection.searchOn.get()) subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
+                    }
                 });
+                executorService.execute(subtitleExtractionTask);
+                executorService.shutdown();
             }
         }
-        else { // caption extraction has not started, will create subtitle extraction task and on completion add subtitles
-            executorService = Executors.newFixedThreadPool(1);
-            subtitleExtractionTask = new SubtitleExtractionTask(subtitlesController, mediaItem);
-            subtitleExtractionTask.setOnSucceeded(e -> {
-                if(subtitleExtractionTask.getValue() != null && subtitleExtractionTask.getValue() && menuController.queuePage.queueBox.activeItem.get() == queueItem) subtitlesController.createSubtitleTabs(mediaItem);
-            });
-            executorService.execute(subtitleExtractionTask);
-            executorService.shutdown();
+        else if(menuController.settingsPage.subtitleSection.searchOn.get()){
+            subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
         }
 
         if(mediaItem.hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
@@ -573,7 +589,7 @@ public class MediaInterface {
             executorService.shutdown();
         }
 
-        if(subtitlesController.subtitlesState == SubtitlesState.CLOSED){
+        if(subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_OPEN && subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_RESULTS_OPEN){
             Map<String, String> metadata = mediaItem.getMediaInformation();
             if(metadata.containsKey("title") && !metadata.get("title").isBlank()) subtitlesController.openSubtitlesPane.titleField.setText(metadata.get("title"));
             if(metadata.containsKey("season") && !metadata.get("season").isBlank()) subtitlesController.openSubtitlesPane.seasonField.setText(metadata.get("season"));

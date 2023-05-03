@@ -174,6 +174,18 @@ public class SubtitlesController {
         }
     }
 
+
+    public void scanParentFolderForMatchingSubtitles(MediaItem mediaItem){
+        File mediaFile = mediaItem.getFile();
+        String name = mediaFile.getName().substring(0, mediaFile.getName().lastIndexOf("." + Utilities.getFileExtension(mediaFile)));
+        File subtitleFile = new File(mediaFile.getParentFile(), name + ".srt");
+
+        if(subtitleFile.exists() && subtitleFile.canRead()){
+            subtitlesHome.createTab(subtitleFile);
+        }
+    }
+
+
     public void resetSubtitles() {
         Utilities.cleanDirectory(System.getProperty("user.home").concat("/FXPlayer/subtitles/"));
     }

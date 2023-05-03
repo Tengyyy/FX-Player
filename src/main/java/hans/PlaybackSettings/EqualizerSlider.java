@@ -47,17 +47,21 @@ public class EqualizerSlider {
         slider.setPrefHeight(170);
         slider.setMaxHeight(170);
 
+        slider.setOnMousePressed(e -> slider.setValueChanging(true));
+        slider.setOnMouseReleased(e -> slider.setValueChanging(false));
+
         slider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
             sliderTrack.getProgressBar().setProgress((newValue.doubleValue() + 20) / 40);
-            if(slider.isValueChanging() && (equalizerController.comboBox.getValue() == null || !equalizerController.comboBox.getValue().equals("Custom"))){
-                equalizerController.comboBox.setValue("Custom");
-            }
 
             if(slider.isValueChanging() && equalizerController.moveSlidersTogether) moveNearbySliders(equalizerController.sliders.indexOf(this), oldValue.doubleValue(), newValue.doubleValue());
         });
 
         slider.valueChangingProperty().addListener((observableValue, oldValue, newValue) -> {
             equalizerController.sliderActive = newValue;
+
+            if(equalizerController.comboBox.getValue() == null || !equalizerController.comboBox.getValue().equals("Custom")){
+                equalizerController.comboBox.setValue("Custom");
+            }
 
             if(!newValue){
                 float[] amps = new float[10];

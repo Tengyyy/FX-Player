@@ -1,6 +1,5 @@
 package hans.PlaybackSettings;
 
-import hans.App;
 import hans.SVG;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.animation.*;
@@ -18,7 +17,6 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class EqualizerController {
 
@@ -293,25 +291,24 @@ public class EqualizerController {
     public void loadEqualizer(){
         String preset = playbackSettingsController.mainController.pref.preferences.get(EQUALIZER_PRESET, FLAT);
 
-        if(!preset.equals(CUSTOM)){
-            switch(preset){
-                case FLAT -> comboBox.setValue("Flat");
-                case CLASSICAL -> comboBox.setValue("Classical");
-                case CLUB -> comboBox.setValue("Club");
-                case DANCE -> comboBox.setValue("Dance");
-                case FULL_BASS -> comboBox.setValue("Full bass");
-                case FULL_TREBLE -> comboBox.setValue("Full treble");
-                case HEADPHONES -> comboBox.setValue("Headphones");
-                case LARGE_HALL -> comboBox.setValue("Large hall");
-                case LIVE -> comboBox.setValue("Live");
-                case PARTY -> comboBox.setValue("Party");
-                case POP -> comboBox.setValue("Pop");
-                case ROCK -> comboBox.setValue("Rock");
-                case SOFT -> comboBox.setValue("Soft");
-                case TECHNO -> comboBox.setValue("Techno");
-            }
+        switch(preset){
+            case FLAT -> comboBox.setValue("Flat");
+            case CLASSICAL -> comboBox.setValue("Classical");
+            case CLUB -> comboBox.setValue("Club");
+            case DANCE -> comboBox.setValue("Dance");
+            case FULL_BASS -> comboBox.setValue("Full bass");
+            case FULL_TREBLE -> comboBox.setValue("Full treble");
+            case HEADPHONES -> comboBox.setValue("Headphones");
+            case LARGE_HALL -> comboBox.setValue("Large hall");
+            case LIVE -> comboBox.setValue("Live");
+            case PARTY -> comboBox.setValue("Party");
+            case POP -> comboBox.setValue("Pop");
+            case ROCK -> comboBox.setValue("Rock");
+            case SOFT -> comboBox.setValue("Soft");
+            case TECHNO -> comboBox.setValue("Techno");
+            case CUSTOM -> comboBox.setValue("Custom");
         }
-        else {
+        if(preset.equals(CUSTOM)) {
             double[] amps = {
                     playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND1, 0),
                     playbackSettingsController.mainController.pref.preferences.getDouble(EQUALIZER_BAND2, 0),

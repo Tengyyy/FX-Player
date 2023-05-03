@@ -258,11 +258,8 @@ public class SubtitlesHome {
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), subtitlesController.openSubtitlesPane.scrollPane.getHeight())));
 
-
         Timeline clipWidthTimeline = new Timeline();
         clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.widthProperty(), subtitlesController.openSubtitlesPane.scrollPane.getWidth())));
-
-
 
         TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), scrollPane);
         captionsTransition.setFromX(0);
@@ -271,7 +268,6 @@ public class SubtitlesHome {
         TranslateTransition openSubtitlesTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), subtitlesController.openSubtitlesPane.scrollPane);
         openSubtitlesTransition.setFromX(subtitlesController.openSubtitlesPane.scrollPane.getWidth());
         openSubtitlesTransition.setToX(0);
-
 
         ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, captionsTransition, openSubtitlesTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -299,11 +295,8 @@ public class SubtitlesHome {
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), subtitlesController.timingPane.container.getHeight())));
 
-
         Timeline clipWidthTimeline = new Timeline();
         clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.widthProperty(), subtitlesController.timingPane.container.getWidth())));
-
-
 
         TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), scrollPane);
         captionsTransition.setFromX(0);
@@ -312,7 +305,6 @@ public class SubtitlesHome {
         TranslateTransition timingTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), subtitlesController.timingPane.container);
         timingTransition.setFromX(subtitlesController.timingPane.container.getWidth());
         timingTransition.setToX(0);
-
 
         ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, captionsTransition, timingTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);

@@ -21,17 +21,17 @@ public class PreferencesSection extends VBox {
     Label preferencesSectionTitle = new Label("Preferences");
 
     Toggle seekPreviewToggle;
-    BooleanProperty seekPreviewOn = new SimpleBooleanProperty();
+    public BooleanProperty seekPreviewOn = new SimpleBooleanProperty();
 
     StackPane languagePane = new StackPane();
     Label languageLabel = new Label("Preferred language for subtitles and audio");
     ComboBox<String> languageBox = new ComboBox<>();
-    StringProperty languageProperty = new SimpleStringProperty();
+    public StringProperty languageProperty = new SimpleStringProperty();
 
     StackPane recentMediaSizePane = new StackPane();
     Label recentMediaSizeLabel = new Label("Recent media size");
     ComboBox<Integer> recentMediaSizeBox = new ComboBox<>();
-    IntegerProperty recentMediaSizeProperty = new SimpleIntegerProperty();
+    public IntegerProperty recentMediaSizeProperty = new SimpleIntegerProperty();
 
     public static final String SEEKBAR_FRAME_PREVIEW_ON = "seekbar_frame_preview_on";
     public static final String HISTORY_SIZE = "history_size";
@@ -48,6 +48,18 @@ public class PreferencesSection extends VBox {
 
         seekPreviewOn.addListener((observableValue, oldValue, newValue) -> {
             settingsPage.menuController.mainController.pref.preferences.putBoolean(SEEKBAR_FRAME_PREVIEW_ON, newValue);
+
+            if(!newValue){
+                settingsPage.menuController.mainController.sliderHoverBox.getChildren().remove(settingsPage.menuController.mainController.sliderHoverBox.imagePane);
+            }
+            else {
+                if(settingsPage.menuController.queuePage.queueBox.activeItem.get() != null
+                        && settingsPage.menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                        && settingsPage.menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()
+                        && !settingsPage.menuController.mainController.sliderHoverBox.getChildren().contains(settingsPage.menuController.mainController.sliderHoverBox.imagePane)){
+                    settingsPage.menuController.mainController.sliderHoverBox.getChildren().add(0, settingsPage.menuController.mainController.sliderHoverBox.imagePane);
+                }
+            }
         });
 
         languagePane.getChildren().addAll(languageLabel, languageBox);

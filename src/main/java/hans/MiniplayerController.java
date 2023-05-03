@@ -13,11 +13,8 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -491,21 +488,15 @@ public class MiniplayerController {
 
         closeButtonPane.setVisible(false);
 
-        closeButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-        closeButtonHoverOn();
-        });
+        closeButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> closeButtonHoverOn());
 
-        closeButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-            closeButtonHoverOff();
-        });
+        closeButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> closeButtonHoverOff());
 
         closeButtonPane.getChildren().addAll(closeButton, closeIcon);
         closeButton.setPrefSize(30, 30);
         closeButton.setCursor(Cursor.HAND);
         closeButton.setBackground(Background.EMPTY);
-        closeButton.setOnAction(e -> {
-            mainController.closeMiniplayer();
-        });
+        closeButton.setOnAction(e -> mainController.closeMiniplayer());
 
         closeSVG.setContent(SVG.CLOSE.getContent());
 
@@ -552,13 +543,9 @@ public class MiniplayerController {
         playButtonPane.setMaxSize(60, 60);
         playButtonPane.setVisible(false);
 
-        playButton.setOnMouseEntered( e -> {
-            playButtonHoverOn();
-        });
+        playButton.setOnMouseEntered( e -> playButtonHoverOn());
 
-        playButton.setOnMouseExited( e -> {
-            playButtonHoverOff();
-        });
+        playButton.setOnMouseExited( e -> playButtonHoverOff());
 
         playButton.setPrefSize(60, 60);
         playButton.setBackground(Background.EMPTY);

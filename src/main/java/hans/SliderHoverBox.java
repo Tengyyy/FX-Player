@@ -13,6 +13,7 @@ import javafx.scene.shape.Rectangle;
 public class SliderHoverBox extends VBox {
 
     public StackPane imagePane = new StackPane();
+    StackPane imageInnerContainer = new StackPane();
     ImageView imageView = new ImageView();
 
     public Label timeLabel = new Label();
@@ -42,21 +43,25 @@ public class SliderHoverBox extends VBox {
         imagePane.setId("sliderHoverPreviewPane");
         imagePane.setPrefSize(164, 94);
         imagePane.setMaxSize(164, 94);
-        imagePane.getChildren().add(imageView);
+        imagePane.getChildren().add(imageInnerContainer);
         imagePane.setTranslateY(-3);
+
+        imageInnerContainer.setPrefSize(160, 90);
+        imageInnerContainer.setMaxSize(160, 90);
+
+        Rectangle clip = new Rectangle();
+        clip.setWidth(160);
+        clip.setHeight(90);
+        clip.setArcHeight(14);
+        clip.setArcWidth(14);
+
+        imageInnerContainer.setClip(clip);
+        imageInnerContainer.getChildren().add(imageView);
 
         imageView.setMouseTransparent(true);
         imageView.setFitHeight(90);
         imageView.setFitWidth(160);
         imageView.setPreserveRatio(true);
-
-        Rectangle clip = new Rectangle();
-        clip.setWidth(160);
-        clip.setHeight(90);
-        clip.setArcHeight(12);
-        clip.setArcWidth(12);
-
-        imageView.setClip(clip);
 
         timeLabel.setTextFill(Color.WHITE);
         timeLabel.setEffect(dropShadow);

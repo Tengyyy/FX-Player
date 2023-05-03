@@ -7,8 +7,6 @@ import hans.Subtitles.SubtitlesState;
 import hans.Utilities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -37,9 +35,9 @@ public class SubtitleSection extends VBox {
 
     VBox toggleContainer = new VBox();
     Toggle extrationToggle;
-    BooleanProperty extractionOn = new SimpleBooleanProperty(false);
+    public BooleanProperty extractionOn = new SimpleBooleanProperty(false);
     Toggle searchToggle;
-    BooleanProperty searchOn = new SimpleBooleanProperty(false);
+    public BooleanProperty searchOn = new SimpleBooleanProperty(false);
 
     StackPane openSubtitlesSectionWrapper = new StackPane();
     VBox openSubtitlesSection = new VBox();
@@ -84,13 +82,9 @@ public class SubtitleSection extends VBox {
         extrationToggle = new Toggle(settingsPage, "Extract subtitles embedded into media file containers", extractionOn);
         searchToggle = new Toggle(settingsPage, "Scan parent folder for subtitle file with matching name", searchOn);
 
-        extractionOn.addListener((observableValue, oldValue, newValue) -> {
-            settingsPage.menuController.mainController.pref.preferences.putBoolean(SUBTITLE_EXTRACTION_ON, newValue);
-        });
+        extractionOn.addListener((observableValue, oldValue, newValue) -> settingsPage.menuController.mainController.pref.preferences.putBoolean(SUBTITLE_EXTRACTION_ON, newValue));
 
-        searchOn.addListener((observableValue, oldValue, newValue) -> {
-            settingsPage.menuController.mainController.pref.preferences.putBoolean(SUBTITLE_PARENT_FOLDER_SCAN_ON, newValue);
-        });
+        searchOn.addListener((observableValue, oldValue, newValue) -> settingsPage.menuController.mainController.pref.preferences.putBoolean(SUBTITLE_PARENT_FOLDER_SCAN_ON, newValue));
 
         toggleContainer.getChildren().addAll(extrationToggle, searchToggle);
 

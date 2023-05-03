@@ -288,30 +288,18 @@ public class ControlBarController implements Initializable {
         fullScreenButton.setOnAction(e -> fullScreenButtonClick());
         
         
-        previousVideoButton.setOnMouseEntered(e -> {
-            previousVideoButtonHoverOn();
-        });
+        previousVideoButton.setOnMouseEntered(e -> previousVideoButtonHoverOn());
 
-        previousVideoButton.setOnMouseExited(e -> {
-            previousVideoButtonHoverOff();
-        });
+        previousVideoButton.setOnMouseExited(e -> previousVideoButtonHoverOff());
 
 
-        playButton.setOnMouseEntered(e -> {
-            playButtonHoverOn();
-        });
+        playButton.setOnMouseEntered(e -> playButtonHoverOn());
 
-        playButton.setOnMouseExited(e -> {
-            playButtonHoverOff();
-        });
+        playButton.setOnMouseExited(e -> playButtonHoverOff());
 
-        nextVideoButton.setOnMouseEntered(e -> {
-            nextVideoButtonHoverOn();
-        });
+        nextVideoButton.setOnMouseEntered(e -> nextVideoButtonHoverOn());
 
-        nextVideoButton.setOnMouseExited(e -> {
-            nextVideoButtonHoverOff();
-        });
+        nextVideoButton.setOnMouseExited(e -> nextVideoButtonHoverOff());
 
         volumeButton.setOnMouseEntered(e -> {
             controlButtonHoverOn(volumeButtonPane);
@@ -412,10 +400,8 @@ public class ControlBarController implements Initializable {
 
             if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) pauseTransition.stop();
 
-            if(mainController.sliderHoverBox.isVisible() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.seekImageView.isVisible())){
-                if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging()) mediaInterface.updatePreviewFrame(mainController.miniplayer.miniplayerController.slider.getValue()/mainController.miniplayer.miniplayerController.slider.getMax(), true);
-                else mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, true);
-            }
+            if(mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging()) mediaInterface.updatePreviewFrame(mainController.miniplayer.miniplayerController.slider.getValue()/mainController.miniplayer.miniplayerController.slider.getMax(), true);
+            else if(durationSlider.isValueChanging() || (mainController.sliderHoverBox.isVisible() && menuController.settingsPage.preferencesSection.seekPreviewOn.get())) mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, true);
         });
 
         durationSlider.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -475,7 +461,10 @@ public class ControlBarController implements Initializable {
                 }
 
 
-                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if ( menuController.settingsPage.preferencesSection.seekPreviewOn.get()
+                        && menuController.queuePage.queueBox.activeItem.get() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
 
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
@@ -492,7 +481,7 @@ public class ControlBarController implements Initializable {
                 previewTimer.playFromStart();
 
                 durationSliderHover = true;
-                durationSliderHoverOn(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getMaxX());
+                durationSliderHoverOn(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getWidth());
 
                 String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverBox.timeLabel.setText(newTime);
@@ -510,7 +499,10 @@ public class ControlBarController implements Initializable {
                 }
 
 
-                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.settingsPage.preferencesSection.seekPreviewOn.get()
+                        && menuController.queuePage.queueBox.activeItem.get() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, false);
@@ -559,7 +551,11 @@ public class ControlBarController implements Initializable {
                 mainController.sliderHoverBox.setTranslateX(newTranslation);
 
 
-                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.settingsPage.preferencesSection.seekPreviewOn.get()
+                        && menuController.queuePage.queueBox.activeItem.get() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));

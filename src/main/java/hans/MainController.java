@@ -128,6 +128,7 @@ public class MainController implements Initializable {
     public HotkeyChangeWindow hotkeyChangeWindow;
     public LicenseWindow licenseWindow;
     public ThirdPartySoftwareWindow thirdPartySoftwareWindow;
+    public TechnicalDetailsWindow technicalDetailsWindow;
 
 
     public Pref pref;
@@ -160,6 +161,7 @@ public class MainController implements Initializable {
         hotkeyChangeWindow = new HotkeyChangeWindow(this);
         licenseWindow = new LicenseWindow(this);
         thirdPartySoftwareWindow = new ThirdPartySoftwareWindow(this);
+        technicalDetailsWindow = new TechnicalDetailsWindow(this);
 
         sliderHoverBox = new SliderHoverBox(videoImageViewWrapper, false);
 

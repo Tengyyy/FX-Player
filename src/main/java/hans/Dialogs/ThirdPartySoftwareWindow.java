@@ -176,9 +176,6 @@ public class ThirdPartySoftwareWindow {
 
         title.getStyleClass().addAll("popupWindowTitle", "licenseWindowTitle");
 
-
-
-
         StackPane.setAlignment(buttonContainer, Pos.BOTTOM_CENTER);
         buttonContainer.getChildren().add(mainButton);
         buttonContainer.getStyleClass().add("buttonContainer");
@@ -211,11 +208,20 @@ public class ThirdPartySoftwareWindow {
         if(mainController.hotkeyChangeWindow.showing){
             mainController.hotkeyChangeWindow.window.setVisible(false);
             mainController.hotkeyChangeWindow.showing = false;
+
+            mainController.hotkeyChangeWindow.hide();
         }
 
         if(mainController.licenseWindow.showing){
             mainController.licenseWindow.window.setVisible(false);
             mainController.licenseWindow.showing = false;
+        }
+
+        if(mainController.technicalDetailsWindow.showing){
+            mainController.technicalDetailsWindow.window.setVisible(false);
+            mainController.technicalDetailsWindow.showing = false;
+
+            mainController.technicalDetailsWindow.hide();
         }
 
 

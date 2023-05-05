@@ -38,7 +38,7 @@ public class MenuController implements Initializable {
 
     @FXML
     public
-    StackPane menu, menuWrapper, menuContent, sideBar, dragPane, queueContainer, settingsContainer, recentMediaContainer, musicLibraryContainer, playlistsContainer, mediaInformationContainer, technicalDetailsContainer, chapterContainer;
+    StackPane menu, menuWrapper, menuContent, sideBar, dragPane, queueContainer, settingsContainer, recentMediaContainer, musicLibraryContainer, playlistsContainer, mediaInformationContainer, chapterContainer;
 
     public MainController mainController;
     public ControlBarController controlBarController;
@@ -49,7 +49,6 @@ public class MenuController implements Initializable {
     public ChapterController chapterController;
 
     public MediaInformationPage mediaInformationPage;
-    public TechnicalDetailsPage technicalDetailsPage;
     public QueuePage queuePage;
     public SettingsPage settingsPage;
     public RecentMediaPage recentMediaPage;
@@ -91,7 +90,6 @@ public class MenuController implements Initializable {
         musicLibraryPage = new MusicLibraryPage(this);
         playlistsPage = new PlaylistsPage(this);
         mediaInformationPage = new MediaInformationPage(this);
-        technicalDetailsPage = new TechnicalDetailsPage(this);
         menuBar = new MenuBar(this, sideBar);
 
 
@@ -195,9 +193,6 @@ public class MenuController implements Initializable {
 
         mediaInformationContainer.setVisible(false);
         mediaInformationContainer.setBackground(Background.EMPTY);
-
-        technicalDetailsContainer.setVisible(false);
-        technicalDetailsContainer.setBackground(Background.EMPTY);
 
         chapterContainer.setVisible(false);
         chapterContainer.setBackground(Background.EMPTY);
@@ -608,7 +603,6 @@ public class MenuController implements Initializable {
             case RECENT_MEDIA_OPEN -> recentMediaPage.closeRecentMediaPage();
             case MEDIA_INFORMATION_OPEN -> mediaInformationPage.closeMediaInformationPage();
             case MUSIC_LIBRARY_OPEN -> musicLibraryPage.closeMusicLibraryPage();
-            case TECHNICAL_DETAILS_OPEN -> technicalDetailsPage.closeTechnicalDetailsPage();
         }
 
         switch (newState){
@@ -619,7 +613,6 @@ public class MenuController implements Initializable {
             case RECENT_MEDIA_OPEN -> recentMediaPage.openRecentMediaPage();
             case MEDIA_INFORMATION_OPEN -> mediaInformationPage.openMediaInformationPage();
             case MUSIC_LIBRARY_OPEN -> musicLibraryPage.openMusicLibraryPage();
-            case TECHNICAL_DETAILS_OPEN -> technicalDetailsPage.openTechnicalDetailsPage();
         }
     }
 

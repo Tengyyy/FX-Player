@@ -3,6 +3,7 @@ package hans.Subtitles;
 import com.github.kokorin.jaffree.ffmpeg.FFmpeg;
 import com.github.kokorin.jaffree.ffmpeg.UrlInput;
 import com.github.kokorin.jaffree.ffmpeg.UrlOutput;
+import com.github.kokorin.jaffree.ffprobe.Stream;
 import hans.*;
 import hans.MediaItems.MediaItem;
 import hans.Menu.*;
@@ -28,6 +29,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import static hans.AnimationsClass.ANIMATION_SPEED;
 import static hans.MediaItems.MediaUtilities.FFMPEG_PATH;
@@ -126,7 +128,7 @@ public class SubtitlesController {
     }
 
     public Boolean extractSubtitles(MediaItem mediaItem){
-        if(mediaItem == null || mediaItem.numberOfSubtitleStreams == 0 || !mediaItem.subtitlesGenerationTime.isEmpty() && !mediaItem.subtitlesExtractionInProgress.get()) return false;
+        if(mediaItem == null || mediaItem.subtitleStreams.isEmpty() || !mediaItem.subtitlesGenerationTime.isEmpty() && !mediaItem.subtitlesExtractionInProgress.get()) return false;
 
         String subtitlesDirectory = System.getProperty("user.home").concat("/FXPlayer/subtitles/");
         mediaItem.subtitlesGenerationTime = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss-SSS").format(new Date()) + "-";
@@ -139,7 +141,7 @@ public class SubtitlesController {
         FFmpeg fFmpeg = FFmpeg.atPath(Paths.get(FFMPEG_PATH))
                 .addInput(UrlInput.fromUrl(mediaItem.getFile().getAbsolutePath()));
 
-        for(int i =0; i < mediaItem.numberOfSubtitleStreams; i++){
+        for(int i =0; i < mediaItem.subtitleStreams.size(); i++){
             fFmpeg.addArguments("-map", "0:s:" + i);
             fFmpeg.addOutput(UrlOutput.toUrl(subtitlesDirectory.concat(mediaItem.subtitlesGenerationTime + i + ".srt")));
         }
@@ -152,24 +154,49 @@ public class SubtitlesController {
 
     public void createSubtitleTabs(MediaItem mediaItem){
 
-        if(mediaItem != null && mediaItem.numberOfSubtitleStreams > 0 && mediaItem.subtitleStreamLanguages.size() == mediaItem.numberOfSubtitleStreams){
+        if(mediaItem != null && !mediaItem.subtitleStreams.isEmpty()){
 
             subtitlesHome.subtitlesChooserTab.setStyle("-fx-border-width: 1 0 0 0;");
 
-            for(int i = 0 ; i < mediaItem.numberOfSubtitleStreams; i++){
+            String preferredLanguage = menuController.settingsPage.preferencesSection.languageProperty.get();
+            String preferredLanguageCode = OpenSubtitlesPane.languageMap.get(preferredLanguage);
+
+            boolean selected = false;
+
+            SubtitlesTab defaultSubtitlesTab = null;
+            SubtitlesTab preferredLanguageSubtitlesTab = null;
+
+            for(int i = 0 ; i < mediaItem.subtitleStreams.size(); i++){
                 // add subtitle tab to captions home
 
-                SubtitlesTab subtitlesTab;
-                if(i == mediaItem.defaultSubtitleStream){
-                    subtitlesTab = new SubtitlesTab(this, subtitlesHome, mediaItem.subtitleStreamLanguages.get(i) + " (Default)", new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(mediaItem.subtitlesGenerationTime + i + ".srt")), false);
-                    subtitlesTab.selectSubtitles(true);
+                Stream stream = mediaItem.subtitleStreams.get(i);
+                String languageCode = stream.getTag("language");
+                String tabTitle;
+                if(languageCode == null || languageCode.equals("und")) tabTitle = "Undefined";
+                else tabTitle = Locale.forLanguageTag(languageCode).getDisplayLanguage();
+
+                if(stream.getDisposition().getDefault() == 1) tabTitle += " (Default)";
+
+                SubtitlesTab subtitlesTab = new SubtitlesTab(this, subtitlesHome, tabTitle, new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(mediaItem.subtitlesGenerationTime + i + ".srt")), false);
+
+                if(stream.getDisposition().getDefault() == 1){
+                    defaultSubtitlesTab = subtitlesTab;
+                    if(preferredLanguageCode.equals(languageCode)) {
+                        subtitlesTab.selectSubtitles(true);
+                        preferredLanguageSubtitlesTab = subtitlesTab;
+                        selected = true;
+                    }
                 }
-                else {
-                    subtitlesTab = new SubtitlesTab(this, subtitlesHome, mediaItem.subtitleStreamLanguages.get(i), new File(System.getProperty("user.home").concat("/FXPlayer/subtitles/").concat(mediaItem.subtitlesGenerationTime + i + ".srt")), false);
-                }
+
+                if(preferredLanguageCode.equals(languageCode)) preferredLanguageSubtitlesTab = subtitlesTab;
 
                 subtitlesHome.subtitlesWrapper.getChildren().add(i + 1, subtitlesTab);
                 subtitlesHome.subtitlesTabs.add(subtitlesTab);
+            }
+
+            if(!selected){
+                if(preferredLanguageSubtitlesTab != null) preferredLanguageSubtitlesTab.selectSubtitles(true);
+                else if(defaultSubtitlesTab != null) defaultSubtitlesTab.selectSubtitles(true);
             }
         }
     }

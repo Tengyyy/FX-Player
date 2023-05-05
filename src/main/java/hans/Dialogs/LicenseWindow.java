@@ -155,11 +155,20 @@ public class LicenseWindow {
         if(mainController.hotkeyChangeWindow.showing){
             mainController.hotkeyChangeWindow.window.setVisible(false);
             mainController.hotkeyChangeWindow.showing = false;
+
+            mainController.hotkeyChangeWindow.hide();
         }
 
         if(mainController.thirdPartySoftwareWindow.showing){
             mainController.thirdPartySoftwareWindow.window.setVisible(false);
             mainController.thirdPartySoftwareWindow.showing = false;
+        }
+
+        if(mainController.technicalDetailsWindow.showing){
+            mainController.technicalDetailsWindow.window.setVisible(false);
+            mainController.technicalDetailsWindow.showing = false;
+
+            mainController.technicalDetailsWindow.hide();
         }
 
         this.showing = true;

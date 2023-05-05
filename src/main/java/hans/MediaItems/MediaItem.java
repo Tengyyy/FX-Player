@@ -40,34 +40,29 @@ public class MediaItem {
 
 
     Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    Map<String, String> mediaDetails = new HashMap<>();
 
     Image cover;
     Image placeholderCover;
 
-    public double width = 0;
-    public double height = 0;
-    int audioChannels = 0;
-
     FFprobeResult probeResult;
-
-    int numberOfNonPictureVideoStreams = 0;
-    int numberOfAttachmentStreams = 0;
-    public int numberOfSubtitleStreams = 0;
-    public ArrayList<String> subtitleStreamLanguages = new ArrayList<>();
-    public int defaultSubtitleStream = -1;
 
     File file;
 
-    public Stream videoStream = null;
-    Stream audioStream = null;
+    public List<Stream> videoStreams = new ArrayList<>();
+    public List<Stream> audioStreams = new ArrayList<>();
+    public List<Stream> subtitleStreams = new ArrayList<>();
+    public List<Stream> attachmentStreams = new ArrayList<>();
 
+    public Stream defaultVideoStream = null;
+    public Stream defaultAudioStream = null;
+    public Stream defaultSubtitleStream = null;
+
+    //subtitle extraction//
     public String subtitlesGenerationTime = "";
     public BooleanProperty subtitlesExtractionInProgress = new SimpleBooleanProperty(false);
+    ///////////////////////
 
-
-    //Metadata edit variables
-
+    //Metadata edit variables//
     public BooleanProperty changesMade = new SimpleBooleanProperty(false);
     public BooleanProperty metadataEditActive = new SimpleBooleanProperty(false);
     public DoubleProperty metadataEditProgress = new SimpleDoubleProperty(0); // 0 - 0%, 1 - 100%
@@ -76,8 +71,7 @@ public class MediaItem {
     public Image newCoverImage = null;
     public File newCoverFile = null;
     public Color newColor = null;
-
-    ////////////////////////////
+    ///////////////////////////
 
     public MediaItem(File file, MainController mainController) {
         this.file = file;
@@ -96,122 +90,69 @@ public class MediaItem {
         this.cover = pair.getValue();
         this.hasCover = pair.getKey();
 
-        int firstVideoStreamIndex = -1;
-        int firstAudioStreamIndex = -1;
-
         for(Stream stream : probeResult.getStreams()){
 
-            if(stream.getCodecType() == StreamType.VIDEO && stream.getDisposition().getDefault() == 1 && stream.getDisposition().getAttachedPic() == 0){
-                videoStream = stream;
-                numberOfNonPictureVideoStreams++;
-            }
-            else if(stream.getCodecType() == StreamType.AUDIO && stream.getDisposition().getDefault() == 1){
-                audioStream = stream;
-            }
-            else if(stream.getCodecType() == StreamType.VIDEO && stream.getDisposition().getAttachedPic() == 0){
-                if(firstVideoStreamIndex == -1) firstVideoStreamIndex  = stream.getIndex();
-                numberOfNonPictureVideoStreams++;
+            if(stream.getCodecType() == StreamType.VIDEO){
+                videoStreams.add(stream);
+
+                if(stream.getDisposition().getDefault() == 1 && stream.getDisposition().getAttachedPic() == 0) defaultVideoStream = stream;
             }
             else if(stream.getCodecType() == StreamType.AUDIO){
-                if(firstAudioStreamIndex == -1) firstAudioStreamIndex  = stream.getIndex();
+                audioStreams.add(stream);
+
+                if(stream.getDisposition().getDefault() == 1) defaultAudioStream = stream;
             }
             else if(stream.getCodecType() == StreamType.ATTACHMENT){
-                numberOfAttachmentStreams++;
+                attachmentStreams.add(stream);
             }
             else if(stream.getCodecType() == StreamType.SUBTITLE){
-                if(stream.getDisposition().getDefault() == 1) defaultSubtitleStream = numberOfSubtitleStreams;
-                numberOfSubtitleStreams++;
-                String languageCode = stream.getTag("language");
-                if(languageCode == null || languageCode.equals("und")) subtitleStreamLanguages.add("Undefined");
-                else {
-                    Locale locale = Locale.forLanguageTag(languageCode.toUpperCase(Locale.ROOT));
-                    subtitleStreamLanguages.add(locale.getDisplayLanguage());
+
+                subtitleStreams.add(stream);
+
+                if(stream.getDisposition().getDefault() == 1) defaultSubtitleStream = stream;
+            }
+        }
+
+        if(defaultVideoStream == null && !videoStreams.isEmpty()){
+            for(Stream stream: videoStreams){
+                if(stream.getDisposition().getAttachedPic() == 0){
+                    defaultVideoStream = stream;
+                    break;
                 }
             }
         }
 
-        if(videoStream == null && firstVideoStreamIndex != -1) videoStream = probeResult.getStreams().get(firstVideoStreamIndex);
-        if(audioStream == null && firstAudioStreamIndex != -1) audioStream = probeResult.getStreams().get(firstAudioStreamIndex);
+        if(defaultAudioStream == null && !audioStreams.isEmpty()){
+            defaultAudioStream = audioStreams.get(0);
+        }
 
-        hasVideo = videoStream != null;
-        hasAudio = audioStream != null;
+        if(defaultSubtitleStream == null && !subtitleStreams.isEmpty()){
+            defaultSubtitleStream = subtitleStreams.get(0);
+        }
+
+        hasVideo = defaultVideoStream != null;
+        hasAudio = defaultAudioStream != null;
 
         if(cover != null) backgroundColor = MediaUtilities.findDominantColor(cover);
 
-        if(videoStream != null){
-            this.width = videoStream.getWidth();
-            this.height = videoStream.getHeight();
-
-            Long durationLong = videoStream.getDuration(TimeUnit.SECONDS);
-            if(durationLong != null){
+        if(defaultVideoStream != null){
+            Long durationLong = defaultVideoStream.getDuration(TimeUnit.SECONDS);
+            if(durationLong != null)
                 duration = Duration.seconds(durationLong);
-                mediaDetails.put("videoDuration", Utilities.getTime(duration));
-            }
-
-            Rational rational = videoStream.getAvgFrameRate();
-            if(rational != null) mediaDetails.put("frameRate", rational.intValue() + " fps");
-            Long bitrate = videoStream.getBitRate();
-            if(bitrate != null) mediaDetails.put("videoBitrate", Utilities.formatBitrate(bitrate));
-            if(videoStream.getWidth() != null && videoStream.getHeight() != null) mediaDetails.put("resolution", videoStream.getWidth() + "x" + videoStream.getHeight());
-            String videoCodec = videoStream.getCodecName();
-            if(videoCodec != null) mediaDetails.put("videoCodec", videoCodec);
-            String formatName = probeResult.getFormat().getFormatName();
-            if(formatName != null) mediaDetails.put("format", formatName);
         }
 
-        if(audioStream != null){
-            Long durationLong = audioStream.getDuration(TimeUnit.SECONDS);
+        if(defaultAudioStream != null){
+            Long durationLong = defaultAudioStream.getDuration(TimeUnit.SECONDS);
             if(durationLong != null){
-                Duration audioDuration = Duration.seconds(durationLong);
-                if(duration == null || durationLong > duration.toSeconds()) duration = audioDuration;
-                mediaDetails.put("audioDuration", Utilities.getTime(audioDuration));
+                if(duration == null || durationLong > duration.toSeconds())
+                    duration = Duration.seconds(durationLong);
             }
-
-            Integer channels = audioStream.getChannels();
-            if(channels != null){
-                audioChannels = channels;
-                String channelLayout = audioStream.getChannelLayout();
-                if(channelLayout != null){
-                    if(Character.isDigit(channelLayout.charAt(0))) mediaDetails.put("audioChannels", channelLayout);
-                    else mediaDetails.put("audioChannels", audioChannels + " (" + channelLayout + ")");
-                }
-                else mediaDetails.put("audioChannels", String.valueOf(audioChannels));
-            }
-
-
-            String audioCodec = audioStream.getCodecName();
-            if(audioCodec != null) mediaDetails.put("audioCodec", audioCodec);
-
-            Long bitrate = audioStream.getBitRate();
-            Long fileBitrate = probeResult.getFormat().getBitRate();
-            if(fileBitrate != null && videoStream == null && (bitrate == null || bitrate > fileBitrate)) {
-                mediaDetails.put("audioBitrate", Utilities.formatBitrate(fileBitrate));
-            }
-            else if(bitrate != null) mediaDetails.put("audioBitrate", Utilities.formatBitrate(bitrate));
-
-            Integer sampleRate = audioStream.getSampleRate();
-            if(sampleRate != null) mediaDetails.put("sampleRate", NumberFormat.getInstance().format(sampleRate) + " Hz");
-
-            if(videoStream == null){
-                String formatName = probeResult.getFormat().getFormatName();
-                if(formatName != null) mediaDetails.put("format", formatName);
-            }
-
         }
 
         if(duration == null){
             Float durationFloat = probeResult.getFormat().getDuration();
             if(durationFloat != null) this.duration = Duration.seconds(durationFloat);
         }
-
-
-        mediaDetails.put("size", Utilities.formatFileSize(file.length()));
-        mediaDetails.put("name", file.getName());
-        mediaDetails.put("path", file.getAbsolutePath());
-        mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
-        mediaDetails.put("hasVideo", String.valueOf(videoStream != null));
-        mediaDetails.put("hasAudio", String.valueOf(audioStream != null));
-        if(duration != null) mediaDetails.put("duration", Utilities.getTime(duration));
 
         //mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
 
@@ -273,13 +214,10 @@ public class MediaItem {
 
         boolean metadataEditSuccess = false;
 
-        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration, null);
+        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, duration, null);
 
         if(success){
             //overwrite curr file with new file
-
-            mediaDetails.put("size", Utilities.formatFileSize(file.length()));
-            mediaDetails.put("modified", DateFormat.getDateInstance().format(new Date(file.lastModified())));
 
             if(newCoverImage != null){
                 cover = newCoverImage;
@@ -290,9 +228,9 @@ public class MediaItem {
                 hasCover = false;
                 cover = null;
                 if(hasVideo){
-                    int videoStreamIndex = probeResult.getStreams().indexOf(this.videoStream);
+                    int videoStreamIndex = probeResult.getStreams().indexOf(defaultVideoStream);
                     if(videoStreamIndex != -1){
-                        Long durationLong = videoStream.getDuration(TimeUnit.MILLISECONDS);
+                        Long durationLong = defaultVideoStream.getDuration(TimeUnit.MILLISECONDS);
                         if(durationLong == null && this.duration != null) durationLong = (long) this.duration.toMillis() ;
                         if(durationLong != null) cover = MediaUtilities.getVideoFrame(file, videoStreamIndex, durationLong/2);
                     }
@@ -337,7 +275,7 @@ public class MediaItem {
 
         mainController.getMenuController().ongoingMetadataEditProcesses.add(this);
 
-        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, numberOfNonPictureVideoStreams, numberOfAttachmentStreams, duration, outputFile);
+        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, duration, outputFile);
 
 
         metadataEditActive.set(false);
@@ -353,14 +291,6 @@ public class MediaItem {
 
         return success;
     }
-
-
-
-
-    public Map<String, String> getMediaDetails() {
-        return mediaDetails;
-    }
-
 
     public File getFile() {
         return this.file;

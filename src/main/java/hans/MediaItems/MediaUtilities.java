@@ -150,9 +150,16 @@ public class MediaUtilities {
         return cover;
     }
 
-    public static boolean updateMetadata(MediaItem mediaItem, File file, Map<String, String> metadata, boolean hasCover, Image oldCover, File newCover, boolean coverRemoved, int videoStreams, int attachmentStreams, Duration duration, File outputFile){
+    public static boolean updateMetadata(MediaItem mediaItem, File file, Map<String, String> metadata, boolean hasCover, Image oldCover, File newCover, boolean coverRemoved, Duration duration, File outputFile){
 
         boolean success = false;
+
+        int numberOfAttachmentStreams = mediaItem.attachmentStreams.size();
+        int numberOfVideoStreams = 0;
+
+        for(Stream stream : mediaItem.videoStreams){
+            if(stream.getDisposition().getAttachedPic() == 0) numberOfVideoStreams++;
+        }
 
         String extension = Utilities.getFileExtension(file);
         File currentImageFile = null;
@@ -185,8 +192,8 @@ public class MediaUtilities {
                     currentImageFile = pictureFile;
 
                     fFmpeg.addArguments("-attach", picturePath);
-                    fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "mimetype=image/png");
-                    fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "filename=cover.png");
+                    fFmpeg.addArguments("-metadata:s:t:" + numberOfAttachmentStreams, "mimetype=image/png");
+                    fFmpeg.addArguments("-metadata:s:t:" + numberOfAttachmentStreams, "filename=cover.png");
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -239,19 +246,19 @@ public class MediaUtilities {
 
         if(newCover != null){
             if(extension.equals("mp4") || extension.equals("mov") || extension.equals("flac") || extension.equals("mp3") || extension.equals("m4a") || extension.equals("aiff") || extension.equals("wma")){
-                fFmpeg.addArguments("-metadata:s:v:"+videoStreams, "title=Album cover");
-                fFmpeg.addArguments("-metadata:s:v:"+videoStreams, "comment=Cover (front)");
-                fFmpeg.addArguments("-disposition:v:"+videoStreams, "attached_pic");
+                fFmpeg.addArguments("-metadata:s:v:"+numberOfVideoStreams, "title=Album cover");
+                fFmpeg.addArguments("-metadata:s:v:"+numberOfVideoStreams, "comment=Cover (front)");
+                fFmpeg.addArguments("-disposition:v:"+numberOfVideoStreams, "attached_pic");
             }
 
             else if(extension.equals("mkv")){
                 if(Utilities.getFileExtension(newCover).equals("png")){
-                    fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "mimetype=image/png");
-                    fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "filename=cover.png");
+                    fFmpeg.addArguments("-metadata:s:t:" + numberOfAttachmentStreams, "mimetype=image/png");
+                    fFmpeg.addArguments("-metadata:s:t:" + numberOfAttachmentStreams, "filename=cover.png");
                 }
                 else {
-                    fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "mimetype=image/jpeg");
-                    fFmpeg.addArguments("-metadata:s:t:" + attachmentStreams, "filename=cover.jpg");
+                    fFmpeg.addArguments("-metadata:s:t:" + numberOfAttachmentStreams, "mimetype=image/jpeg");
+                    fFmpeg.addArguments("-metadata:s:t:" + numberOfAttachmentStreams, "filename=cover.jpg");
                 }
             }
         }

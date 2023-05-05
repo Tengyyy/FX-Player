@@ -583,7 +583,7 @@ public class QueueItem extends GridPane {
 
         if(mediaItem.getDuration() != null) duration.setText(formattedDuration);
 
-        if(mediaItem.numberOfSubtitleStreams > 0){
+        if(!mediaItem.subtitleStreams.isEmpty()){
             artist.maxWidthProperty().bind(textWrapper.widthProperty().subtract(duration.widthProperty()).subtract(captionsPane.widthProperty()));
             if (!subTextWrapper.getChildren().contains(captionsPane)) subTextWrapper.getChildren().add(0, captionsPane);
         }
@@ -625,7 +625,7 @@ public class QueueItem extends GridPane {
 
         if(menuController.menuInTransition) return;
 
-        menuController.technicalDetailsPage.enter(this);
+        menuController.mainController.technicalDetailsWindow.show(this.getMediaItem());
     }
 
 

@@ -24,7 +24,7 @@ public class PreferencesSection extends VBox {
     public BooleanProperty seekPreviewOn = new SimpleBooleanProperty();
 
     StackPane languagePane = new StackPane();
-    Label languageLabel = new Label("Preferred language for subtitles and audio");
+    Label languageLabel = new Label("Preferred language for subtitles");
     ComboBox<String> languageBox = new ComboBox<>();
     public StringProperty languageProperty = new SimpleStringProperty();
 
@@ -35,7 +35,7 @@ public class PreferencesSection extends VBox {
 
     public static final String SEEKBAR_FRAME_PREVIEW_ON = "seekbar_frame_preview_on";
     public static final String HISTORY_SIZE = "history_size";
-    public static final String AUDIO_SUBTITLES_LANGUAGE = "audio_subtitles_language";
+    public static final String SUBTITLES_LANGUAGE = "subtitles_language";
 
 
 
@@ -88,7 +88,7 @@ public class PreferencesSection extends VBox {
 
         languageProperty.bind(languageBox.getSelectionModel().selectedItemProperty());
         languageProperty.addListener((observableValue, oldValue, newValue) -> {
-            settingsPage.menuController.mainController.pref.preferences.put(AUDIO_SUBTITLES_LANGUAGE, newValue);
+            settingsPage.menuController.mainController.pref.preferences.put(SUBTITLES_LANGUAGE, newValue);
         });
 
         recentMediaSizePane.getChildren().addAll(recentMediaSizeLabel, recentMediaSizeBox);
@@ -138,7 +138,10 @@ public class PreferencesSection extends VBox {
     public void loadPreferences(){
         Preferences preferences = settingsPage.menuController.mainController.pref.preferences;
         seekPreviewOn.set(preferences.getBoolean(SEEKBAR_FRAME_PREVIEW_ON, true));
-        languageBox.getSelectionModel().select(preferences.get(AUDIO_SUBTITLES_LANGUAGE, "English"));
+        String language = preferences.get(SUBTITLES_LANGUAGE, "English");
+        languageBox.getSelectionModel().select(language);
         recentMediaSizeBox.getSelectionModel().select((Integer) preferences.getInt(HISTORY_SIZE, 25));
+
+        settingsPage.menuController.subtitlesController.openSubtitlesPane.languageBox.getCheckModel().check(settingsPage.menuController.subtitlesController.openSubtitlesPane.languageBox.getCheckModel().getItemIndex(language));
     }
 }

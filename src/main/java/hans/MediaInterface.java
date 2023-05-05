@@ -158,10 +158,6 @@ public class MediaInterface {
                 }
 
                 if(image != null && menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null){
-                    MediaItem mediaItem = menuController.queuePage.queueBox.activeItem.get().getMediaItem();
-                    mediaItem.width = image.getWidth();
-                    mediaItem.height = image.getHeight();
-
 
                     double ratio = image.getWidth()/image.getHeight();
 
@@ -511,8 +507,8 @@ public class MediaInterface {
             fFmpegFrameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
             fFmpegFrameGrabber.setVideoOption("vcodec", "copy");
 
-            double width = mediaItem.width;
-            double height = mediaItem.height;
+            double width = mediaItem.defaultVideoStream.getWidth();
+            double height = mediaItem.defaultVideoStream.getHeight();
             double ratio = width /height;
 
             int newWidth = (int) Math.min(160, 90 * ratio);
@@ -541,14 +537,14 @@ public class MediaInterface {
             if (!mediaItem.subtitlesGenerationTime.isEmpty()) { // subtitle extraction has started for this mediaitem
                 if (!mediaItem.subtitlesExtractionInProgress.get()) { // subtitle extraction has already been completed, can simply add caption tabs
                     subtitlesController.createSubtitleTabs(mediaItem);
-                    if(mediaItem.numberOfSubtitleStreams == 0 && menuController.settingsPage.subtitleSection.searchOn.get()) subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
+                    if(mediaItem.subtitleStreams.size() == 0 && menuController.settingsPage.subtitleSection.searchOn.get()) subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
 
                 } else { // subtitle extraction is ongoing, have to wait for it to finish before adding caption tabs
                     mediaItem.subtitlesExtractionInProgress.addListener((observableValue, oldValue, newValue) -> {
                         if (!newValue && menuController.queuePage.queueBox.activeItem.get() == queueItem) {
                             subtitlesController.createSubtitleTabs(mediaItem);
 
-                            if(mediaItem.numberOfSubtitleStreams == 0 && menuController.settingsPage.subtitleSection.searchOn.get()) subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
+                            if(mediaItem.subtitleStreams.size() == 0 && menuController.settingsPage.subtitleSection.searchOn.get()) subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
                         }
                     });
                 }
@@ -560,7 +556,7 @@ public class MediaInterface {
                     if (subtitleExtractionTask.getValue() != null && subtitleExtractionTask.getValue() && menuController.queuePage.queueBox.activeItem.get() == queueItem){
                         subtitlesController.createSubtitleTabs(mediaItem);
 
-                        if(mediaItem.numberOfSubtitleStreams == 0 && menuController.settingsPage.subtitleSection.searchOn.get()) subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
+                        if(mediaItem.subtitleStreams.size() == 0 && menuController.settingsPage.subtitleSection.searchOn.get()) subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
                     }
                 });
                 executorService.execute(subtitleExtractionTask);

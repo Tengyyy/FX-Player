@@ -375,6 +375,12 @@
     -fx-text-fill: white;
 }
 
+.metadataSubheader {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 23;
+    -fx-text-fill: white;
+}
+
 .chapterTitle {
     -fx-font-family: "Roboto Medium";
     -fx-font-size: 24;

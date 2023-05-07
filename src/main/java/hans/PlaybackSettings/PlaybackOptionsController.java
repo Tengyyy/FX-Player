@@ -182,19 +182,19 @@ public class PlaybackOptionsController {
 
         playbackSettingsController.playbackSettingsState = PlaybackSettingsState.HOME_OPEN;
 
-        playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.setVisible(true);
-        playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.setMouseTransparent(false);
+        playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.setVisible(true);
+        playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.setMouseTransparent(false);
 
         Timeline clipTimeline = new Timeline();
-        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.heightProperty(), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.getHeight())));
+        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.heightProperty(), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight())));
 
-        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome);
-        homeTransition.setFromX(-playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.getWidth());
+        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll);
+        homeTransition.setFromX(-playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
         homeTransition.setToX(0);
 
         TranslateTransition optionsTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSettingsController.playbackOptionsController.playbackOptionsBox);
         optionsTransition.setFromX(0);
-        optionsTransition.setToX(playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.getWidth());
+        optionsTransition.setToX(playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
 
 
         ParallelTransition parallelTransition = new ParallelTransition(clipTimeline, homeTransition, optionsTransition);

@@ -423,6 +423,10 @@
     -fx-font-size: 23;
 }
 
+.technicalDetailsWindowTitle {
+    -fx-font-size: 25;
+}
+
 .popupWindowText {
     -fx-text-fill: rgb(220,220,220);
     -fx-font-family: "Roboto Medium";

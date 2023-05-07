@@ -317,7 +317,10 @@ public class MiniplayerController {
 
                 sliderHoverBox.setTranslateX(newTranslation);
 
-                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()
+                        && !mediaInterface.videoDisabled){
                     if(controlBarController.pauseTransition != null && controlBarController.pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     controlBarController.pauseTransition = new PauseTransition(Duration.millis(50));
@@ -338,7 +341,10 @@ public class MiniplayerController {
 
                 showControls();
 
-                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()
+                        && !mediaInterface.videoDisabled){
                     if(mediaInterface.playing.get()) seekImageView.setImage(videoImageView.getImage());
                     seekImageView.setVisible(true);
                     videoImageView.setVisible(false);
@@ -377,7 +383,7 @@ public class MiniplayerController {
                 }
                 else {
                     mediaInterface.seek(Duration.seconds(slider.getValue())); // seeks to exact position when user finishes dragging
-                    if (mediaInterface.wasPlaying) mediaInterface.play();
+                    if (mediaInterface.wasPlaying) mediaInterface.play(false);
                 }
             }
         });
@@ -556,7 +562,7 @@ public class MiniplayerController {
                 mediaInterface.wasPlaying = false;
                 mediaInterface.pause();
             }
-            else mediaInterface.play();
+            else mediaInterface.play(false);
         });
 
 

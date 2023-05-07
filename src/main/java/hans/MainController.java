@@ -520,7 +520,7 @@ public class MainController implements Initializable {
                     mediaInterface.pause();
                     actionIndicator.setIcon(PAUSE);
                 } else {
-                    mediaInterface.play();
+                    mediaInterface.play(false);
                     actionIndicator.setIcon(PLAY);
                 }
             }
@@ -627,13 +627,27 @@ public class MainController implements Initializable {
 
 
         if(mediaInterface.mediaActive.get()) {
+
+            int videoTrack = Integer.MIN_VALUE;
+            int audioTrack = Integer.MIN_VALUE;
+
+            if(playbackSettingsController.videoTrackChooserController.selectedTab != null)
+                videoTrack = playbackSettingsController.videoTrackChooserController.selectedTab.id;
+
+            if(playbackSettingsController.audioTrackChooserController.selectedTab != null)
+                audioTrack = playbackSettingsController.audioTrackChooserController.selectedTab.id;
+
             boolean playValue = mediaInterface.playing.get();
-            if(!playValue){
+            if(!playValue && videoTrack != -1){
                 miniplayer.miniplayerController.seekImageView.setImage(videoImageView.getImage());
                 miniplayer.miniplayerController.seekImageView.setVisible(true);
             }
+
             mediaInterface.embeddedMediaPlayer.controls().stop();
             mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.queuePage.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath());
+            if(videoTrack != Integer.MIN_VALUE) mediaInterface.embeddedMediaPlayer.video().setTrack(videoTrack);
+            if(audioTrack != Integer.MIN_VALUE) mediaInterface.embeddedMediaPlayer.audio().setTrack(audioTrack);
+
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
             if (playValue) {
@@ -642,7 +656,8 @@ public class MainController implements Initializable {
 
             controlBarController.updateProgress(controlBarController.durationSlider.getValue()/controlBarController.durationSlider.getMax());
 
-            if(menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && !menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+            if(menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                    && !menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
                 setCoverImageView(menuController.queuePage.queueBox.activeItem.get());
             }
         }
@@ -655,7 +670,8 @@ public class MainController implements Initializable {
         miniplayer.miniplayerController.moveIndicators();
         subtitlesController.subtitlesBox.moveToMiniplayer();
 
-        if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+        if(menuController.queuePage.queueBox.activeItem.get() != null
+                && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
             miniplayerActiveText.setVisible(true);
         }
 
@@ -670,7 +686,7 @@ public class MainController implements Initializable {
         miniplayer.miniplayerController.videoImageViewInnerWrapper.heightProperty().removeListener(miniplayer.miniplayerController.heightListener);
 
         Image image = null;
-        if(mediaInterface.mediaActive.get() && !mediaInterface.playing.get()) image = miniplayer.miniplayerController.videoImageView.getImage();
+        if(mediaInterface.mediaActive.get() && !mediaInterface.playing.get() && !mediaInterface.videoDisabled) image = miniplayer.miniplayerController.videoImageView.getImage();
 
         if(miniplayerActive && miniplayer != null && miniplayer.stage != null){
             miniplayer.stage.close();
@@ -700,9 +716,23 @@ public class MainController implements Initializable {
 
         mediaInterface.embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(videoImageView));
         if(mediaInterface.mediaActive.get()) {
+
+            int videoTrack = Integer.MIN_VALUE;
+            int audioTrack = Integer.MIN_VALUE;
+
+            if(playbackSettingsController.videoTrackChooserController.selectedTab != null)
+                videoTrack = playbackSettingsController.videoTrackChooserController.selectedTab.id;
+
+            if(playbackSettingsController.audioTrackChooserController.selectedTab != null)
+                audioTrack = playbackSettingsController.audioTrackChooserController.selectedTab.id;
+
             boolean playValue = mediaInterface.playing.get();
             mediaInterface.embeddedMediaPlayer.controls().stop();
             mediaInterface.embeddedMediaPlayer.media().startPaused(menuController.queuePage.queueBox.activeItem.get().getMediaItem().getFile().getAbsolutePath());
+
+            if(videoTrack != Integer.MIN_VALUE) mediaInterface.embeddedMediaPlayer.video().setTrack(videoTrack);
+            if(audioTrack != Integer.MIN_VALUE) mediaInterface.embeddedMediaPlayer.audio().setTrack(audioTrack);
+
             mediaInterface.seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
             if (playValue) mediaInterface.embeddedMediaPlayer.controls().play();
@@ -906,7 +936,7 @@ public class MainController implements Initializable {
                     mediaInterface.pause();
                     actionIndicator.setIcon(PAUSE);
                 } else {
-                    mediaInterface.play();
+                    mediaInterface.play(false);
                     actionIndicator.setIcon(PLAY);
                 }
             }

@@ -17,6 +17,9 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import uk.co.caprica.vlcj.player.base.TrackDescription;
+
+import java.util.List;
 
 public class PlaybackSettingsController {
 
@@ -30,6 +33,8 @@ public class PlaybackSettingsController {
     public PlaybackOptionsController playbackOptionsController;
     public PlaybackSpeedController playbackSpeedController;
     public EqualizerController equalizerController;
+    public VideoTrackChooserController videoTrackChooserController;
+    public AudioTrackChooserController audioTrackChooserController;
     SubtitlesController subtitlesController;
 
     public StackPane playbackSettingsBuffer = new StackPane();
@@ -69,11 +74,11 @@ public class PlaybackSettingsController {
 
         Platform.runLater(() -> {
             playbackSettingsBuffer.maxHeightProperty().bind(Bindings.min(Bindings.subtract(mainController.videoImageView.fitHeightProperty(), 120), 400));
-            clip.setHeight(playbackSettingsHomeController.playbackSettingsHome.getHeight());
+            clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
             clip.translateYProperty().bind(Bindings.subtract(playbackSettingsBuffer.heightProperty(), clip.heightProperty()));
             playbackSettingsBackground.maxHeightProperty().bind(clip.heightProperty());
 
-            clip.setWidth(playbackSettingsHomeController.playbackSettingsHome.getWidth());
+            clip.setWidth(playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
             clip.translateXProperty().bind(Bindings.subtract(playbackSettingsBuffer.widthProperty(), clip.widthProperty()));
             playbackSettingsBackground.maxWidthProperty().bind(clip.widthProperty());
         });
@@ -88,6 +93,8 @@ public class PlaybackSettingsController {
         playbackOptionsController = new PlaybackOptionsController(this);
         playbackSpeedController = new PlaybackSpeedController(this);
         equalizerController = new EqualizerController(this);
+        videoTrackChooserController = new VideoTrackChooserController(this);
+        audioTrackChooserController = new AudioTrackChooserController(this);
     }
 
 
@@ -118,14 +125,14 @@ public class PlaybackSettingsController {
         playbackSettingsBuffer.setMouseTransparent(false);
         playbackSettingsBackground.setVisible(true);
         playbackSettingsBackground.setMouseTransparent(false);
-        playbackSettingsHomeController.playbackSettingsHome.setVisible(true);
-        playbackSettingsHomeController.playbackSettingsHome.setMouseTransparent(false);
+        playbackSettingsHomeController.playbackSettingsHomeScroll.setVisible(true);
+        playbackSettingsHomeController.playbackSettingsHomeScroll.setMouseTransparent(false);
 
         FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSettingsBackground);
         backgroundTranslate.setFromValue(0);
         backgroundTranslate.setToValue(1);
 
-        FadeTransition homeTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSettingsHomeController.playbackSettingsHome);
+        FadeTransition homeTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSettingsHomeController.playbackSettingsHomeScroll);
         homeTranslate.setFromValue(0);
         homeTranslate.setToValue(1);
 
@@ -160,8 +167,8 @@ public class PlaybackSettingsController {
             case PLAYBACK_OPTIONS_OPEN -> closeSettingsFromPlaybackOptions();
             case CUSTOM_SPEED_OPEN -> closeSettingsFromCustomSpeed();
             case EQUALIZER_OPEN -> closeSettingsFromEqualizer();
-            default -> {
-            }
+            case VIDEO_TRACK_CHOOSER_OPEN -> closeSettingsFromVideoTrackChooser();
+            case AUDIO_TRACK_CHOOSER_OPEN -> closeSettingsFromAudioTrackChooser();
         }
 
         playbackSettingsState = PlaybackSettingsState.CLOSED;
@@ -177,7 +184,7 @@ public class PlaybackSettingsController {
         backgroundTranslate.setFromValue(1);
         backgroundTranslate.setToValue(0);
 
-        FadeTransition homeTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSettingsHomeController.playbackSettingsHome);
+        FadeTransition homeTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSettingsHomeController.playbackSettingsHomeScroll);
         homeTransition.setFromValue(1);
         homeTransition.setToValue(0);
 
@@ -188,9 +195,10 @@ public class PlaybackSettingsController {
             playbackSettingsBuffer.setMouseTransparent(true);
             playbackSettingsBackground.setVisible(false);
             playbackSettingsBackground.setMouseTransparent(true);
-            playbackSettingsHomeController.playbackSettingsHome.setVisible(false);
-            playbackSettingsHomeController.playbackSettingsHome.setOpacity(1);
-            playbackSettingsHomeController.playbackSettingsHome.setMouseTransparent(true);
+            playbackSettingsHomeController.playbackSettingsHomeScroll.setVisible(false);
+            playbackSettingsHomeController.playbackSettingsHomeScroll.setOpacity(1);
+            playbackSettingsHomeController.playbackSettingsHomeScroll.setMouseTransparent(true);
+            playbackSettingsHomeController.playbackSettingsHomeScroll.setVvalue(0);
         });
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.play();
@@ -216,7 +224,7 @@ public class PlaybackSettingsController {
             playbackOptionsController.playbackOptionsBox.setVisible(false);
              playbackOptionsController.playbackOptionsBox.setOpacity(1);
             playbackOptionsController.playbackOptionsBox.setMouseTransparent(true);
-            clip.setHeight(playbackSettingsHomeController.playbackSettingsHome.getHeight());
+            clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -243,7 +251,7 @@ public class PlaybackSettingsController {
             playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(false);
             playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(true);
             playbackSpeedController.playbackSpeedPane.scrollPane.setOpacity(1);
-            clip.setHeight(playbackSettingsHomeController.playbackSettingsHome.getHeight());
+            clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -270,7 +278,7 @@ public class PlaybackSettingsController {
             playbackSpeedController.customSpeedPane.customSpeedBox.setVisible(false);
             playbackSpeedController.customSpeedPane.customSpeedBox.setMouseTransparent(true);
             playbackSpeedController.customSpeedPane.customSpeedBox.setOpacity(1);
-            clip.setHeight(playbackSettingsHomeController.playbackSettingsHome.getHeight());
+            clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -297,8 +305,8 @@ public class PlaybackSettingsController {
             equalizerController.scrollPane.setVisible(false);
             equalizerController.scrollPane.setMouseTransparent(true);
             equalizerController.scrollPane.setOpacity(1);
-            clip.setHeight(playbackSettingsHomeController.playbackSettingsHome.getHeight());
-            clip.setWidth(playbackSettingsHomeController.playbackSettingsHome.getWidth());
+            clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
+            clip.setWidth(playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -306,4 +314,81 @@ public class PlaybackSettingsController {
         animating.set(true);
     }
 
+    public void closeSettingsFromVideoTrackChooser(){
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSettingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
+
+        FadeTransition videoTrackChooserTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), videoTrackChooserController.scrollPane);
+        videoTrackChooserTransition.setFromValue(1);
+        videoTrackChooserTransition.setToValue(0);
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, videoTrackChooserTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            playbackSettingsBuffer.setMouseTransparent(true);
+            playbackSettingsBackground.setVisible(false);
+            playbackSettingsBackground.setMouseTransparent(true);
+            videoTrackChooserController.scrollPane.setVisible(false);
+            videoTrackChooserController.scrollPane.setMouseTransparent(true);
+            videoTrackChooserController.scrollPane.setOpacity(1);
+            clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
+            clip.setWidth(playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+    //todo: implement
+    public void closeSettingsFromAudioTrackChooser(){
+        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSettingsBackground);
+        backgroundTranslate.setFromValue(1);
+        backgroundTranslate.setToValue(0);
+
+        FadeTransition audioTrackChooserTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), audioTrackChooserController.scrollPane);
+        audioTrackChooserTransition.setFromValue(1);
+        audioTrackChooserTransition.setToValue(0);
+
+        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, audioTrackChooserTransition);
+        parallelTransition.setOnFinished((e) -> {
+            animating.set(false);
+
+            playbackSettingsBuffer.setMouseTransparent(true);
+            playbackSettingsBackground.setVisible(false);
+            playbackSettingsBackground.setMouseTransparent(true);
+            audioTrackChooserController.scrollPane.setVisible(false);
+            audioTrackChooserController.scrollPane.setMouseTransparent(true);
+            audioTrackChooserController.scrollPane.setOpacity(1);
+            clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
+            clip.setWidth(playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
+        });
+
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
+        animating.set(true);
+    }
+
+
+    public void initializeVideoTrackPage(List<TrackDescription> trackDescriptions, int activeTrack){
+        playbackSettingsHomeController.addVideoTrackTab();
+
+        videoTrackChooserController.initializeTracks(trackDescriptions, activeTrack);
+    }
+
+
+    public void initializeAudioTrackPage(List<TrackDescription> trackDescriptions, int activeTrack){
+        playbackSettingsHomeController.addAudioTrackTab();
+
+        audioTrackChooserController.initializeTracks(trackDescriptions, activeTrack);
+    }
+
+    public void resetTrackPages(){
+        playbackSettingsHomeController.removeVideoAudioTrackTabs();
+
+        videoTrackChooserController.clearTracks();
+        audioTrackChooserController.clearTracks();
+    }
 }

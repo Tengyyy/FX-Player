@@ -109,14 +109,14 @@ public class PlaybackSpeedPane{
 
         playbackSpeedController.playbackSettingsController.playbackSettingsState = PlaybackSettingsState.HOME_OPEN;
 
-        playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.setVisible(true);
-        playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.setMouseTransparent(false);
+        playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.setVisible(true);
+        playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.setMouseTransparent(false);
 
         Timeline clipTimeline = new Timeline();
-        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.heightProperty(), playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.getHeight())));
+        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.heightProperty(), playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight())));
 
-        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome);
-        homeTransition.setFromX(-playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.getWidth());
+        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll);
+        homeTransition.setFromX(-playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
         homeTransition.setToX(0);
 
         TranslateTransition speedTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), scrollPane);
@@ -131,7 +131,7 @@ public class PlaybackSpeedPane{
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
-            playbackSpeedController.playbackSettingsController.clip.setHeight(playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.getPrefHeight());
+            playbackSpeedController.playbackSettingsController.clip.setHeight(playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getPrefHeight());
 
         });
 

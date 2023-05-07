@@ -148,7 +148,11 @@ public class CloseConfirmationWindow {
             mainController.hotkeyChangeWindow.window.setVisible(false);
             mainController.hotkeyChangeWindow.showing = false;
 
-            mainController.hotkeyChangeWindow.hide();
+            mainController.hotkeyChangeWindow.controlItem = null;
+            mainController.hotkeyChangeWindow.action = null;
+            mainController.hotkeyChangeWindow.hotkey = null;
+
+            mainController.hotkeyController.setKeybindChangeActive(false);
         }
 
         if(mainController.licenseWindow.showing){
@@ -165,7 +169,13 @@ public class CloseConfirmationWindow {
             mainController.technicalDetailsWindow.window.setVisible(false);
             mainController.technicalDetailsWindow.showing = false;
 
-            mainController.technicalDetailsWindow.hide();
+            mainController.technicalDetailsWindow.fileBox.getChildren().clear();
+            mainController.technicalDetailsWindow.videoBox.getChildren().clear();
+            mainController.technicalDetailsWindow.audioBox.getChildren().clear();
+            mainController.technicalDetailsWindow.subtitlesBox.getChildren().clear();
+            mainController.technicalDetailsWindow.attachmentsBox.getChildren().clear();
+
+            mainController.technicalDetailsWindow.technicalDetailsScroll.setVvalue(0);
         }
 
         this.showing = true;

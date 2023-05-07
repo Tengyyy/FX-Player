@@ -136,7 +136,7 @@ public class WindowsTaskBarController {
             mediaInterface.wasPlaying = false;
             mediaInterface.pause();
         }
-        else mediaInterface.play();
+        else mediaInterface.play(false);
 
     }
 

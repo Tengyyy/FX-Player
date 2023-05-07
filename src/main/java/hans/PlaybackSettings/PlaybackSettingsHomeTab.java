@@ -1,6 +1,5 @@
 package hans.PlaybackSettings;
 
-import hans.App;
 import hans.SVG;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -79,7 +78,5 @@ public class PlaybackSettingsHomeTab extends HBox {
         arrowIcon.setMaxSize(8, 13);
         arrowIcon.setShape(arrowSVG);
         arrowIcon.getStyleClass().add("settingsPaneIcon");
-
-        playbackSettingsHomeController.playbackSettingsHome.getChildren().add(this);
     }
 }

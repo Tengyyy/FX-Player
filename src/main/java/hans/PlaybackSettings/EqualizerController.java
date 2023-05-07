@@ -255,17 +255,17 @@ public class EqualizerController {
 
         playbackSettingsController.playbackSettingsState = PlaybackSettingsState.HOME_OPEN;
 
-        playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.setVisible(true);
-        playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.setMouseTransparent(false);
+        playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.setVisible(true);
+        playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.setMouseTransparent(false);
 
         Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.heightProperty(), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.getHeight())));
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.heightProperty(), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight())));
 
         Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.widthProperty(), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome.getWidth())));
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.widthProperty(), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth())));
 
 
-        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHome);
+        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll);
         homeTransition.setFromX(-scrollPane.getWidth());
         homeTransition.setToX(0);
 

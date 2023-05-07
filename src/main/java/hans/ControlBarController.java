@@ -464,7 +464,8 @@ public class ControlBarController implements Initializable {
                 if ( menuController.settingsPage.preferencesSection.seekPreviewOn.get()
                         && menuController.queuePage.queueBox.activeItem.get() != null
                         && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
-                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()
+                        && !mediaInterface.videoDisabled){
 
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
@@ -502,7 +503,8 @@ public class ControlBarController implements Initializable {
                 if(menuController.settingsPage.preferencesSection.seekPreviewOn.get()
                         && menuController.queuePage.queueBox.activeItem.get() != null
                         && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
-                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()
+                        && !mediaInterface.videoDisabled){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     mediaInterface.updatePreviewFrame(lastKnownSliderHoverPosition, false);
@@ -554,7 +556,8 @@ public class ControlBarController implements Initializable {
                 if(menuController.settingsPage.preferencesSection.seekPreviewOn.get()
                         && menuController.queuePage.queueBox.activeItem.get() != null
                         && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
-                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()
+                        && !mediaInterface.videoDisabled){
 
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
@@ -622,7 +625,10 @@ public class ControlBarController implements Initializable {
 
                 mainController.sliderHoverBox.setTranslateX(newTranslation);
 
-                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()
+                        && !mediaInterface.videoDisabled){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
@@ -640,7 +646,10 @@ public class ControlBarController implements Initializable {
 
             if (newValue) { // pause video when user starts seeking
 
-                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()
+                        && !mediaInterface.videoDisabled){
                     if(mainController.miniplayerActive){
                         if(mediaInterface.playing.get()) mainController.miniplayer.miniplayerController.seekImageView.setImage(mainController.miniplayer.miniplayerController.videoImageView.getImage());
                         mainController.miniplayer.miniplayerController.seekImageView.setVisible(true);
@@ -674,7 +683,10 @@ public class ControlBarController implements Initializable {
                 }
 
 
-                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()){
+                if(menuController.queuePage.queueBox.activeItem.get() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null
+                        && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo()
+                        && !mediaInterface.videoDisabled){
                     if(pauseTransition != null && pauseTransition.getStatus() == Animation.Status.RUNNING) return;
 
                     pauseTransition = new PauseTransition(Duration.millis(50));
@@ -714,7 +726,7 @@ public class ControlBarController implements Initializable {
                 }
                 else {
                     mediaInterface.seek(Duration.seconds(durationSlider.getValue())); // seeks to exact position when user finishes dragging
-                    if (mediaInterface.wasPlaying) mediaInterface.play();
+                    if (mediaInterface.wasPlaying) mediaInterface.play(false);
                 }
             }
         });
@@ -763,7 +775,7 @@ public class ControlBarController implements Initializable {
         else if (mediaInterface.playing.get()) {
             mediaInterface.wasPlaying = false;
             mediaInterface.pause();
-        } else mediaInterface.play();
+        } else mediaInterface.play(false);
     }
 
 

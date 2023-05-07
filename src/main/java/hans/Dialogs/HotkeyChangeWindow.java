@@ -185,7 +185,13 @@ public class HotkeyChangeWindow {
             mainController.technicalDetailsWindow.window.setVisible(false);
             mainController.technicalDetailsWindow.showing = false;
 
-            mainController.technicalDetailsWindow.hide();
+            mainController.technicalDetailsWindow.fileBox.getChildren().clear();
+            mainController.technicalDetailsWindow.videoBox.getChildren().clear();
+            mainController.technicalDetailsWindow.audioBox.getChildren().clear();
+            mainController.technicalDetailsWindow.subtitlesBox.getChildren().clear();
+            mainController.technicalDetailsWindow.attachmentsBox.getChildren().clear();
+
+            mainController.technicalDetailsWindow.technicalDetailsScroll.setVvalue(0);
         }
 
         this.showing = true;

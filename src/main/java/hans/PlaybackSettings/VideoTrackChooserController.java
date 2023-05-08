@@ -23,7 +23,7 @@ public class VideoTrackChooserController {
 
     ScrollPane scrollPane = new ScrollPane();
 
-    VBox videoTrackChooserBox = new VBox();
+    public VBox videoTrackChooserBox = new VBox();
     HBox titleBox = new HBox();
 
     StackPane backPane = new StackPane();

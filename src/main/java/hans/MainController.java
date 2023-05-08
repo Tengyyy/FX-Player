@@ -210,17 +210,15 @@ public class MainController implements Initializable {
         miniplayerActiveText.setVisible(false);
         StackPane.setAlignment(miniplayerActiveText, Pos.CENTER);
 
-        videoImageViewInnerWrapper.getChildren().addAll(controlBarController.controlBarBackground, videoTitleBackground, miniplayerActiveText, videoTitleBox);
+        videoImageViewInnerWrapper.getChildren().addAll(controlBarController.controlBarBackground, videoTitleBackground, miniplayerActiveText, videoTitleBox, subtitlesController.subtitlesBox.subtitlesContainer);
 
-        Platform.runLater(() -> {
-            videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
-                double newWidth = Math.max(menuController.MIN_WIDTH, (newValue.doubleValue() + 30)/2);
-                if(!menuController.extended.get() && newWidth < menuController.menu.getMaxWidth()){
-                    menuController.menu.setMaxWidth(newWidth);
-                    menuController.menu.setPrefWidth(newWidth);
-                }
-            });
-        });
+        Platform.runLater(() -> videoImageViewWrapper.sceneProperty().get().widthProperty().addListener((observableValue, oldValue, newValue) -> {
+            double newWidth = Math.max(menuController.MIN_WIDTH, (newValue.doubleValue() + 30)/2);
+            if(!menuController.extended.get() && newWidth < menuController.menu.getMaxWidth()){
+                menuController.menu.setMaxWidth(newWidth);
+                menuController.menu.setPrefWidth(newWidth);
+            }
+        }));
 
         widthListener = (observableValue, oldValue, newValue) -> {
 

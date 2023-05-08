@@ -52,6 +52,8 @@ public class AnimationsClass {
 
     public static void hideControlsAndTitle(ControlBarController controlBarController, SubtitlesController subtitlesController, MainController mainController) {
 
+        controlBarController.controlBarOpen = false;
+
         if(subtitlesController.subtitlesBox.subtitlesTransition != null && subtitlesController.subtitlesBox.subtitlesTransition.getStatus() == Animation.Status.RUNNING) subtitlesController.subtitlesBox.subtitlesTransition.stop();
 
         TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), subtitlesController.subtitlesBox.subtitlesContainer);
@@ -91,7 +93,6 @@ public class AnimationsClass {
         ParallelTransition parallelTransition = new ParallelTransition(captionsTransition, controlBarFade, controlBarBackgroundFade, videoTitleTransition, videoTitleBackgroundTransition);
         parallelTransition.setInterpolator(Interpolator.LINEAR);
         parallelTransition.setOnFinished((e) -> {
-            controlBarController.controlBarOpen = false;
             controlBarController.mouseEventTracker.mouseMoving.set(false);
             mainController.videoTitleBox.setVisible(false);
             mainController.videoTitleBackground.setVisible(false);

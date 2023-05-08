@@ -23,7 +23,7 @@ public class AudioTrackChooserController {
 
     ScrollPane scrollPane = new ScrollPane();
 
-    VBox audioTrackChooserBox = new VBox();
+    public VBox audioTrackChooserBox = new VBox();
     HBox titleBox = new HBox();
 
     StackPane backPane = new StackPane();

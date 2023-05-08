@@ -23,7 +23,7 @@ public class ValueIndicator {
         this.mainController = mainController;
 
         wrapper = new StackPane();
-        wrapper.setBackground(new Background(new BackgroundFill(Color.rgb(30,30,30,0.6), new CornerRadii(5), Insets.EMPTY)));
+        wrapper.setBackground(new Background(new BackgroundFill(Color.rgb(20,20,20,0.75), new CornerRadii(10), Insets.EMPTY)));
         wrapper.setMouseTransparent(true);
         wrapper.setVisible(false);
         wrapper.setTranslateY(100 * mainController.heightMultiplier.doubleValue());

@@ -204,7 +204,6 @@ public class SubtitlesBox {
             subtitlesContainer.startFullDrag();
         });
 
-        mainController.videoImageViewInnerWrapper.getChildren().add(subtitlesContainer);
     }
 
     public void toggleVisibility(boolean newValue){

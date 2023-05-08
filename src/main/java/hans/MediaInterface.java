@@ -2,6 +2,8 @@ package hans;
 
 
 import com.github.kokorin.jaffree.ffprobe.Stream;
+import hans.PlaybackSettings.AudioTrackTab;
+import hans.PlaybackSettings.VideoTrackTab;
 import hans.Subtitles.SubtitlesController;
 import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
@@ -133,7 +135,6 @@ public class MediaInterface {
                         && ((menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.queue.size() > menuController.queuePage.queueBox.activeIndex.get() + 1) || menuController.queuePage.queueBox.activeItem.get() == null && ! menuController.queuePage.queueBox.queue.isEmpty())))
                             return;
 
-                    System.out.println("finish test");
 
                     embeddedMediaPlayer.controls().stop();
 
@@ -153,14 +154,14 @@ public class MediaInterface {
                     }
 
                     embeddedMediaPlayer.media().startPaused(menuController.queuePage.queueBox.activeItem.get().file.getAbsolutePath());
-                    seek(Duration.seconds(controlBarController.durationSlider.getValue()));
+                    //seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
                     if(playbackSettingsController.videoTrackChooserController.selectedTab != null){
                         embeddedMediaPlayer.video().setTrack(playbackSettingsController.videoTrackChooserController.selectedTab.id);
                     }
 
-                    if(playbackSettingsController.videoTrackChooserController.selectedTab != null){
-                        embeddedMediaPlayer.video().setTrack(playbackSettingsController.videoTrackChooserController.selectedTab.id);
+                    if(playbackSettingsController.audioTrackChooserController.selectedTab != null){
+                        embeddedMediaPlayer.audio().setTrack(playbackSettingsController.audioTrackChooserController.selectedTab.id);
                     }
 
                 });
@@ -189,11 +190,62 @@ public class MediaInterface {
             @Override
             public void mediaPlayerReady(MediaPlayer mediaPlayer) {
 
-                System.out.println("ready test");
 
                 Platform.runLater(() -> {
 
                     if(controlBarController.durationSlider.getValue() != 0) seek(Duration.seconds(controlBarController.durationSlider.getValue()));
+
+                    if(mediaActive.get() && menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItemGenerated().get()){
+                        if(mediaPlayer.audio().trackCount() > 0 && playbackSettingsController.audioTrackChooserController.selectedTab.id != mediaPlayer.audio().track()){
+                            playbackSettingsController.audioTrackChooserController.selectedTab.unselect();
+
+                            for(int i=1; i < playbackSettingsController.audioTrackChooserController.audioTrackChooserBox.getChildren().size(); i++){
+                                AudioTrackTab audioTrackTab = (AudioTrackTab) playbackSettingsController.audioTrackChooserController.audioTrackChooserBox.getChildren().get(i);
+
+                                if(audioTrackTab.id == mediaPlayer.audio().track()){
+                                    playbackSettingsController.audioTrackChooserController.selectedTab = audioTrackTab;
+                                    audioTrackTab.checkIcon.setVisible(true);
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        if(mediaPlayer.video().trackCount() > 0 && playbackSettingsController.videoTrackChooserController.selectedTab.id != mediaPlayer.video().track()){
+                            playbackSettingsController.videoTrackChooserController.selectedTab.unselect();
+
+                            if(fFmpegFrameGrabber != null) {
+                                try {
+                                    fFmpegFrameGrabber.stop();
+                                } catch (FFmpegFrameGrabber.Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            if(mediaPlayer.video().track() == -1){
+
+                                videoDisabled = true;
+                                mainController.sliderHoverBox.getChildren().remove(mainController.sliderHoverBox.imagePane);
+                            }
+                            else {
+                                videoDisabled = false;
+                                if(!mainController.sliderHoverBox.getChildren().contains(mainController.sliderHoverBox.imagePane)) mainController.sliderHoverBox.getChildren().add(0, mainController.sliderHoverBox.imagePane);
+
+                                initializeFrameGrabber(menuController.queuePage.queueBox.activeItem.get().getMediaItem(), mediaPlayer.video().track());
+                            }
+
+                            for(int i=1; i < playbackSettingsController.videoTrackChooserController.videoTrackChooserBox.getChildren().size(); i++){
+                                VideoTrackTab videoTrackTab = (VideoTrackTab) playbackSettingsController.videoTrackChooserController.videoTrackChooserBox.getChildren().get(i);
+
+                                if(videoTrackTab.id == mediaPlayer.video().track()){
+                                    playbackSettingsController.videoTrackChooserController.selectedTab = videoTrackTab;
+                                    videoTrackTab.checkIcon.setVisible(true);
+
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
                     Image image = null;
                     if(mainController.videoImageView.getImage() != null){
@@ -269,7 +321,6 @@ public class MediaInterface {
 
     public void updateMedia(double newValue) {
 
-        System.out.println("update test");
 
         if (!controlBarController.showingTimeLeft)
             Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.seconds(controlBarController.durationSlider.getValue()), Duration.seconds(controlBarController.durationSlider.getMax()));
@@ -278,7 +329,6 @@ public class MediaInterface {
 
         if (newValue >= controlBarController.durationSlider.getMax()) {
 
-            System.out.println("update media reached end test");
             if (controlBarController.durationSlider.isValueChanging() || (mainController.miniplayerActive && mainController.miniplayer.miniplayerController.slider.isValueChanging())) seekedToEnd = true;
             else if(seekedToEnd) defaultEnd();
             else if(playbackSettingsController.playbackOptionsController.loopOn){
@@ -296,7 +346,7 @@ public class MediaInterface {
             SleepSuppressor.allowSleep();
 
             if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())){
-                seek(Duration.seconds(newValue));
+                //seek(Duration.seconds(newValue));
 
                 if(!seekedToEnd && !playbackSettingsController.playbackOptionsController.loopOn) endMedia();
             }
@@ -325,9 +375,6 @@ public class MediaInterface {
 
     public void endMedia() {
 
-        System.out.println("end media test");
-
-
         if ((!playbackSettingsController.playbackOptionsController.shuffleOn && !playbackSettingsController.playbackOptionsController.loopOn && !playbackSettingsController.playbackOptionsController.autoplayOn) || (playbackSettingsController.playbackOptionsController.loopOn && seekedToEnd)) {
             defaultEnd();
 
@@ -338,8 +385,6 @@ public class MediaInterface {
         }
         else {
 
-            System.out.println("end media play next test");
-
             if(menuController.queuePage.queueBox.queue.isEmpty() || menuController.queuePage.queueBox.activeIndex.get() >= menuController.queuePage.queueBox.queue.size() - 1) defaultEnd();
             else playNext();
 
@@ -347,8 +392,6 @@ public class MediaInterface {
     }
 
     public void createMedia(QueueItem queueItem) {
-
-        System.out.println("Playing: " + queueItem.file.getName());
 
         mainController.coverImageContainer.setVisible(false);
         mainController.miniplayerActiveText.setVisible(false);
@@ -377,8 +420,6 @@ public class MediaInterface {
 
 
     public void resetMediaPlayer(){
-
-        System.out.println("Resetting media");
 
         mainController.videoImageView.setImage(null);
         mainController.videoImageView.setVisible(true);
@@ -449,8 +490,6 @@ public class MediaInterface {
 
     public void playNext(){
 
-        System.out.println("play next test");
-
         controlBarController.mouseEventTracker.move();
 
         if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.queue.size() > menuController.queuePage.queueBox.activeIndex.get() + 1){
@@ -466,6 +505,7 @@ public class MediaInterface {
     }
 
     public void defaultEnd(){
+
         controlBarController.durationSlider.setValue(controlBarController.durationSlider.getMax());
 
         if(controlBarController.showingTimeLeft) Utilities.setTimeLeftLabel(controlBarController.durationLabel, Duration.seconds(controlBarController.durationSlider.getMax()), Duration.seconds(controlBarController.durationSlider.getMax()));

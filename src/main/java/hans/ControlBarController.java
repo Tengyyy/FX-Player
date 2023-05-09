@@ -11,6 +11,7 @@ import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
@@ -21,10 +22,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.*;
 import javafx.util.Duration;
+import uk.co.caprica.vlcj.player.base.TeletextKey;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -111,7 +111,7 @@ public class ControlBarController implements Initializable {
     public DurationTrack hoverTrack = null;
     public DurationTrack activeTrack = null;
 
-    SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, highVolumeSVG, lowVolumeSVG, volumeMutedSVG, subtitlesSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
+    SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, lowVolumeSVG, subtitlesSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
 
     MainController mainController;
     PlaybackSettingsController playbackSettingsController;
@@ -182,6 +182,12 @@ public class ControlBarController implements Initializable {
     ParallelTransition showTitleTransition = null;
     ParallelTransition hideTitleTransition = null;
 
+
+
+    Arc volumeHighArc = new Arc();
+    Line volumeMuteLine = new Line();
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -205,14 +211,8 @@ public class ControlBarController implements Initializable {
         nextVideoSVG = new SVGPath();
         nextVideoSVG.setContent(SVG.NEXT_VIDEO.getContent());
 
-        highVolumeSVG = new SVGPath();
-        highVolumeSVG.setContent(SVG.VOLUME_HIGH.getContent());
-
         lowVolumeSVG = new SVGPath();
         lowVolumeSVG.setContent(SVG.VOLUME_LOW.getContent());
-
-        volumeMutedSVG = new SVGPath();
-        volumeMutedSVG.setContent(SVG.VOLUME_MUTED.getContent());
 
         subtitlesSVG = new SVGPath();
         subtitlesSVG.setContent(SVG.SUBTITLES.getContent());
@@ -267,7 +267,7 @@ public class ControlBarController implements Initializable {
         nextVideoIcon.setShape(nextVideoSVG);
         volumeIcon.setShape(lowVolumeSVG);
 
-        volumeIcon.setPrefSize(15, 18);
+        volumeIcon.setPrefSize(15, 19);
         volumeIcon.setTranslateX(-3);
 
         subtitlesIcon.setShape(subtitlesSVG);
@@ -308,13 +308,115 @@ public class ControlBarController implements Initializable {
 
         nextVideoButton.setOnMouseExited(e -> nextVideoButtonHoverOff());
 
+        volumeButtonPane.getChildren().addAll(volumeHighArc, volumeMuteLine);
+
+        volumeHighArc.setRadiusX(5);
+        volumeHighArc.setRadiusY(6);
+        volumeHighArc.setFill(Color.rgb(200, 200, 200));
+        volumeHighArc.setStartAngle(270);
+        volumeHighArc.setLength(180);
+        volumeHighArc.setTranslateX(6);
+        volumeHighArc.setTranslateY(0.5);
+        volumeHighArc.setStroke(Color.TRANSPARENT);
+        volumeHighArc.setMouseTransparent(true);
+
+        Arc volumeHighArcOuterClip = new Arc();
+        volumeHighArcOuterClip.setRadiusX(9);
+        volumeHighArcOuterClip.setRadiusY(10);
+        volumeHighArcOuterClip.setStartAngle(270);
+        volumeHighArcOuterClip.setLength(180);
+
+        Arc volumeHighInnerClip = new Arc();
+        volumeHighInnerClip.setRadiusX(6);
+        volumeHighInnerClip.setRadiusY(7);
+        volumeHighInnerClip.setStartAngle(270);
+        volumeHighInnerClip.setLength(180);
+
+        Shape volumeHighClip = Shape.subtract(volumeHighArcOuterClip, volumeHighInnerClip);
+
+        volumeHighArc.setClip(volumeHighClip);
+
+
+        volumeMuteLine.setFill(Color.rgb(200, 200, 200));
+        volumeMuteLine.setMouseTransparent(true);
+        volumeMuteLine.setStroke(Color.rgb(200,200,200));
+        volumeMuteLine.setStrokeWidth(0);
+        volumeMuteLine.setStartX(0);
+        volumeMuteLine.setStartY(0);
+        volumeMuteLine.setTranslateX(15);
+        volumeMuteLine.setTranslateY(3);
+        volumeMuteLine.setEndX(0);
+        volumeMuteLine.setEndY(0);
+        StackPane.setAlignment(volumeMuteLine, Pos.TOP_LEFT);
+
+
         volumeButton.setOnMouseEntered(e -> {
-            controlButtonHoverOn(volumeButtonPane);
+
+            Rectangle rect = new Rectangle();
+            rect.setFill(Color.rgb(200, 200, 200));
+
+            FillTransition volumeIconTransition = new FillTransition();
+            volumeIconTransition.setShape(rect);
+            volumeIconTransition.setDuration(Duration.millis(200));
+            volumeIconTransition.setFromValue(Color.rgb(200, 200, 200));
+            volumeIconTransition.setToValue(Color.rgb(255, 255, 255));
+
+            volumeIconTransition.setInterpolator(new Interpolator() {
+                @Override
+                protected double curve(double t) {
+                    volumeIcon.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, Insets.EMPTY)));
+                    return t;
+                }
+            });
+
+
+            FillTransition volumeHighArcTransition = new FillTransition(Duration.millis(200), volumeHighArc);
+            volumeHighArcTransition.setFromValue(Color.rgb(200, 200, 200));
+            volumeHighArcTransition.setToValue(Color.rgb(255, 255, 255));
+
+            StrokeTransition volumeMuteLineTransition = new StrokeTransition(Duration.millis(200), volumeMuteLine);
+            volumeMuteLineTransition.setFromValue(Color.rgb(200, 200, 200));
+            volumeMuteLineTransition.setToValue(Color.rgb(255, 255, 255));
+
+            ParallelTransition parallelTransition = new ParallelTransition();
+            parallelTransition.getChildren().addAll(volumeIconTransition, volumeHighArcTransition, volumeMuteLineTransition);
+            parallelTransition.play();
+
             volumeButtonHover = true;
         });
 
         volumeButton.setOnMouseExited(e -> {
-            controlButtonHoverOff(volumeButtonPane);
+
+            Rectangle rect = new Rectangle();
+            rect.setFill(Color.rgb(255, 255, 255));
+
+            FillTransition volumeIconTransition = new FillTransition();
+            volumeIconTransition.setShape(rect);
+            volumeIconTransition.setDuration(Duration.millis(200));
+            volumeIconTransition.setFromValue(Color.rgb(255, 255, 255));
+            volumeIconTransition.setToValue(Color.rgb(200, 200, 200));
+
+            volumeIconTransition.setInterpolator(new Interpolator() {
+                @Override
+                protected double curve(double t) {
+                    volumeIcon.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, Insets.EMPTY)));
+                    return t;
+                }
+            });
+
+
+            FillTransition volumeHighArcTransition = new FillTransition(Duration.millis(200), volumeHighArc);
+            volumeHighArcTransition.setFromValue(Color.rgb(255, 255, 255));
+            volumeHighArcTransition.setToValue(Color.rgb(200, 200, 200));
+
+            StrokeTransition volumeMuteLineTransition = new StrokeTransition(Duration.millis(200), volumeMuteLine);
+            volumeMuteLineTransition.setFromValue(Color.rgb(255, 255, 255));
+            volumeMuteLineTransition.setToValue(Color.rgb(200, 200, 200));
+
+            ParallelTransition parallelTransition = new ParallelTransition();
+            parallelTransition.getChildren().addAll(volumeIconTransition, volumeHighArcTransition, volumeMuteLineTransition);
+            parallelTransition.play();
+
             volumeButtonHover = false;
         });
 
@@ -383,23 +485,106 @@ public class ControlBarController implements Initializable {
             volumeTrack.setProgress(volumeSlider.getValue() / 100);
 
             if (newValue.doubleValue() == 0) {
-                volumeIcon.setShape(volumeMutedSVG);
-                volumeIcon.setPrefSize(20, 20);
-                volumeIcon.setTranslateX(0);
                 muted = true;
                 mute.updateActionText("Unmute");
-            } else if (newValue.doubleValue() < 50) {
-                volumeIcon.setShape(lowVolumeSVG);
-                volumeIcon.setPrefSize(15, 18);
-                volumeIcon.setTranslateX(-3);
+
+                if(oldValue.doubleValue() <= 50){
+                    Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeHighArc.radiusXProperty(), 9, Interpolator.LINEAR)));
+
+                    Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeHighArc.radiusYProperty(), 10, Interpolator.LINEAR)));
+
+                    Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeMuteLine.endXProperty(), 19, Interpolator.LINEAR)));
+
+                    Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeMuteLine.endYProperty(), 22, Interpolator.LINEAR)));
+
+                    volumeMuteLine.setStrokeWidth(3);
+
+                    ParallelTransition parallelTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline, muteXTimeline, muteYTimeline);
+                    parallelTransition.play();
+                }
+                else {
+
+                    Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeMuteLine.endXProperty(), 19, Interpolator.LINEAR)));
+
+                    Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeMuteLine.endYProperty(), 22, Interpolator.LINEAR)));
+
+                    volumeMuteLine.setStrokeWidth(3);
+
+                    ParallelTransition parallelTransition = new ParallelTransition(muteXTimeline, muteYTimeline);
+                    parallelTransition.play();
+                }
+
+            }
+            else if (newValue.doubleValue() <= 50 && (oldValue.doubleValue() == 0 || oldValue.doubleValue() > 50)) {
                 muted = false;
                 mute.updateActionText("Mute");
-            } else {
-                volumeIcon.setShape(highVolumeSVG);
-                volumeIcon.setPrefSize(20, 20);
-                volumeIcon.setTranslateX(0);
+
+                if(oldValue.doubleValue() == 0){
+                    Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeHighArc.radiusXProperty(), 5, Interpolator.LINEAR)));
+
+                    Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeHighArc.radiusYProperty(), 6, Interpolator.LINEAR)));
+
+                    Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeMuteLine.endXProperty(), 0, Interpolator.LINEAR)));
+
+                    Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeMuteLine.endYProperty(), 0, Interpolator.LINEAR)));
+
+
+                    ParallelTransition parallelTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline, muteXTimeline, muteYTimeline);
+                    parallelTransition.setOnFinished(e -> {
+                        volumeMuteLine.setStrokeWidth(0);
+                    });
+                    parallelTransition.play();
+                }
+                else {
+                    Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeHighArc.radiusXProperty(), 5, Interpolator.LINEAR)));
+
+                    Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeHighArc.radiusYProperty(), 6, Interpolator.LINEAR)));
+
+                    ParallelTransition parallelTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline);
+                    parallelTransition.play();
+                }
+            }
+            else if(newValue.doubleValue() > 50 && oldValue.doubleValue() <= 50){
                 muted = false;
                 mute.updateActionText("Mute");
+
+                if(oldValue.doubleValue() == 0){
+
+                    Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeMuteLine.endXProperty(), 0, Interpolator.LINEAR)));
+
+                    Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeMuteLine.endYProperty(), 0, Interpolator.LINEAR)));
+
+
+                    ParallelTransition parallelTransition = new ParallelTransition(muteXTimeline, muteYTimeline);
+                    parallelTransition.setOnFinished(e -> {
+                        volumeMuteLine.setStrokeWidth(0);
+                    });
+                    parallelTransition.play();
+                }
+                else {
+                    Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeHighArc.radiusXProperty(), 9, Interpolator.LINEAR)));
+
+                    Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                            new KeyValue(volumeHighArc.radiusYProperty(), 10, Interpolator.LINEAR)));
+
+                    ParallelTransition parallelTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline);
+                    parallelTransition.play();
+                }
             }
         });
 

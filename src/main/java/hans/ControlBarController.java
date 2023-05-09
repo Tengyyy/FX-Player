@@ -187,6 +187,7 @@ public class ControlBarController implements Initializable {
     Arc volumeHighArc = new Arc();
     Line volumeMuteLine = new Line();
 
+    ParallelTransition volumeIconShapeTransition = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -488,103 +489,75 @@ public class ControlBarController implements Initializable {
                 muted = true;
                 mute.updateActionText("Unmute");
 
-                if(oldValue.doubleValue() <= 50){
-                    Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeHighArc.radiusXProperty(), 9, Interpolator.LINEAR)));
+                if(volumeIconShapeTransition != null && volumeIconShapeTransition.getStatus() == Animation.Status.RUNNING) volumeIconShapeTransition.stop();
 
-                    Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeHighArc.radiusYProperty(), 10, Interpolator.LINEAR)));
+                Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeHighArc.radiusXProperty(), 9, Interpolator.EASE_BOTH)));
 
-                    Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeMuteLine.endXProperty(), 19, Interpolator.LINEAR)));
+                Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeHighArc.radiusYProperty(), 10, Interpolator.EASE_BOTH)));
 
-                    Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeMuteLine.endYProperty(), 22, Interpolator.LINEAR)));
+                Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeMuteLine.endXProperty(), 19, Interpolator.EASE_BOTH)));
 
-                    volumeMuteLine.setStrokeWidth(3);
+                Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeMuteLine.endYProperty(), 22, Interpolator.EASE_BOTH)));
 
-                    ParallelTransition parallelTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline, muteXTimeline, muteYTimeline);
-                    parallelTransition.play();
-                }
-                else {
+                volumeMuteLine.setStrokeWidth(3);
 
-                    Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeMuteLine.endXProperty(), 19, Interpolator.LINEAR)));
-
-                    Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeMuteLine.endYProperty(), 22, Interpolator.LINEAR)));
-
-                    volumeMuteLine.setStrokeWidth(3);
-
-                    ParallelTransition parallelTransition = new ParallelTransition(muteXTimeline, muteYTimeline);
-                    parallelTransition.play();
-                }
-
+                volumeIconShapeTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline, muteXTimeline, muteYTimeline);
+                volumeIconShapeTransition.play();
             }
             else if (newValue.doubleValue() <= 50 && (oldValue.doubleValue() == 0 || oldValue.doubleValue() > 50)) {
                 muted = false;
                 mute.updateActionText("Mute");
 
-                if(oldValue.doubleValue() == 0){
-                    Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeHighArc.radiusXProperty(), 5, Interpolator.LINEAR)));
+                if(volumeIconShapeTransition != null && volumeIconShapeTransition.getStatus() == Animation.Status.RUNNING) volumeIconShapeTransition.stop();
 
-                    Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeHighArc.radiusYProperty(), 6, Interpolator.LINEAR)));
+                Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeHighArc.radiusXProperty(), 5, Interpolator.EASE_BOTH)));
 
-                    Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeMuteLine.endXProperty(), 0, Interpolator.LINEAR)));
+                Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeHighArc.radiusYProperty(), 6, Interpolator.EASE_BOTH)));
 
-                    Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeMuteLine.endYProperty(), 0, Interpolator.LINEAR)));
+                Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeMuteLine.endXProperty(), 0, Interpolator.EASE_BOTH)));
+
+                Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeMuteLine.endYProperty(), 0, Interpolator.EASE_BOTH)));
 
 
-                    ParallelTransition parallelTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline, muteXTimeline, muteYTimeline);
-                    parallelTransition.setOnFinished(e -> {
-                        volumeMuteLine.setStrokeWidth(0);
-                    });
-                    parallelTransition.play();
-                }
-                else {
-                    Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeHighArc.radiusXProperty(), 5, Interpolator.LINEAR)));
+                volumeIconShapeTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline, muteXTimeline, muteYTimeline);
+                volumeIconShapeTransition.setOnFinished(e -> {
+                    volumeMuteLine.setStrokeWidth(0);
+                });
+                volumeIconShapeTransition.play();
 
-                    Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeHighArc.radiusYProperty(), 6, Interpolator.LINEAR)));
-
-                    ParallelTransition parallelTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline);
-                    parallelTransition.play();
-                }
             }
             else if(newValue.doubleValue() > 50 && oldValue.doubleValue() <= 50){
                 muted = false;
                 mute.updateActionText("Mute");
 
-                if(oldValue.doubleValue() == 0){
+                if(volumeIconShapeTransition != null && volumeIconShapeTransition.getStatus() == Animation.Status.RUNNING) volumeIconShapeTransition.stop();
 
-                    Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeMuteLine.endXProperty(), 0, Interpolator.LINEAR)));
+                Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeHighArc.radiusXProperty(), 9, Interpolator.EASE_BOTH)));
 
-                    Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeMuteLine.endYProperty(), 0, Interpolator.LINEAR)));
+                Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeHighArc.radiusYProperty(), 10, Interpolator.EASE_BOTH)));
+
+                Timeline muteXTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeMuteLine.endXProperty(), 0, Interpolator.EASE_BOTH)));
+
+                Timeline muteYTimeline = new Timeline(new KeyFrame(Duration.millis(200),
+                        new KeyValue(volumeMuteLine.endYProperty(), 0, Interpolator.EASE_BOTH)));
 
 
-                    ParallelTransition parallelTransition = new ParallelTransition(muteXTimeline, muteYTimeline);
-                    parallelTransition.setOnFinished(e -> {
-                        volumeMuteLine.setStrokeWidth(0);
-                    });
-                    parallelTransition.play();
-                }
-                else {
-                    Timeline arcWidthTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeHighArc.radiusXProperty(), 9, Interpolator.LINEAR)));
-
-                    Timeline arcHeightTimeline = new Timeline(new KeyFrame(Duration.millis(200),
-                            new KeyValue(volumeHighArc.radiusYProperty(), 10, Interpolator.LINEAR)));
-
-                    ParallelTransition parallelTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline);
-                    parallelTransition.play();
-                }
+                volumeIconShapeTransition = new ParallelTransition(arcWidthTimeline, arcHeightTimeline, muteXTimeline, muteYTimeline);
+                volumeIconShapeTransition.setOnFinished(e -> {
+                    volumeMuteLine.setStrokeWidth(0);
+                });
+                volumeIconShapeTransition.play();
             }
         });
 

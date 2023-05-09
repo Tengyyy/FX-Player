@@ -48,6 +48,9 @@
                                   <opaqueInsets>
                                       <Insets />
                                   </opaqueInsets>
+                           <StackPane.margin>
+                              <Insets left="3.0" right="3.0" />
+                           </StackPane.margin>
                               </Slider>
                           </children>
                       </StackPane>

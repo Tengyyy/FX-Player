@@ -211,24 +211,21 @@ public class MenuController implements Initializable {
 
         menuInTransition = true;
 
-        mainController.videoImageViewWrapper.getScene().setCursor(Cursor.DEFAULT);
-
-        subtitlesController.subtitlesBox.subtitlesContainer.setMouseTransparent(true);
 
         if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
         if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
-        if(extended.get()){
-            controlBarController.controlBarWrapper.setMouseTransparent(false);
+        if(controlBarController.titleShowing)
+            controlBarController.hideTitle();
 
-            if(controlBarController.controlBarOpen) AnimationsClass.hideTitle(mainController);
-            else AnimationsClass.displayControls(controlBarController, subtitlesController, mainController);
+        mainController.videoImageView.getScene().setCursor(Cursor.DEFAULT);
+
+        if(extended.get()){
+            if(!controlBarController.controlBarShowing) controlBarController.showControls();
             openExtendedMenu();
         }
         else {
-            controlBarController.controlBarWrapper.setMouseTransparent(true);
-            if(controlBarController.controlBarOpen) AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
-
+            if(controlBarController.controlBarShowing) controlBarController.hideControls();
             openShrinkedMenu();
         }
     }
@@ -248,10 +245,6 @@ public class MenuController implements Initializable {
 
         if(extended.get()) closeExtendedMenu();
         else closeShrinkedMenu();
-
-        mainController.videoTitleLabel.getScene().setCursor(Cursor.DEFAULT);
-        mainController.videoTitleBox.setMouseTransparent(false);
-        if(subtitlesController.subtitlesSelected.get()) subtitlesController.subtitlesBox.subtitlesContainer.setMouseTransparent(false);
     }
 
 
@@ -384,8 +377,8 @@ public class MenuController implements Initializable {
         });
 
         menuContentFade.playFromStart();
-        AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
-        controlBarController.controlBarWrapper.setMouseTransparent(true);
+        if(controlBarController.titleShowing) controlBarController.hideTitle();
+        if(controlBarController.controlBarShowing) controlBarController.hideControls();
     }
 
     public void setMenuExtended(MenuState newState){
@@ -428,7 +421,6 @@ public class MenuController implements Initializable {
         queuePage.extend();
         chapterController.chapterPage.extend();
 
-        controlBarController.controlBarWrapper.setMouseTransparent(false);
         controlBarController.controlBarWrapper.setViewOrder(1);
         menu.setViewOrder(2);
 
@@ -438,8 +430,7 @@ public class MenuController implements Initializable {
 
 
         if(menuState != MenuState.CLOSED){
-            controlBarController.controlBarWrapper.setMouseTransparent(false);
-            AnimationsClass.displayControls(controlBarController, subtitlesController, mainController);
+            if(!controlBarController.controlBarShowing) controlBarController.showControls();
         }
     }
 
@@ -483,9 +474,8 @@ public class MenuController implements Initializable {
 
         StackPane.setMargin(queuePage.scrollUpButtonContainer, new Insets(130, 0, 0, 0));
 
-        if(controlBarController.controlBarOpen){
-            controlBarController.controlBarWrapper.setMouseTransparent(true);
-            AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, mainController);
+        if(controlBarController.controlBarShowing){
+            controlBarController.hideControls();
         }
     }
 
@@ -501,7 +491,6 @@ public class MenuController implements Initializable {
             menuInTransition = false;
 
             mainController.sliderHoverBox.setBackground(true);
-
         });
 
         menuFade.play();
@@ -537,11 +526,11 @@ public class MenuController implements Initializable {
             updateState(MenuState.CLOSED);
 
             controlBarController.mouseEventTracker.move();
+            if(!controlBarController.controlBarShowing) controlBarController.showControls();
+            if(!controlBarController.titleShowing) controlBarController.showTitle();
         });
 
         menuFade.play();
-
-        AnimationsClass.displayTitle(mainController);
     }
 
     private void closeShrinkedMenu(){
@@ -555,7 +544,10 @@ public class MenuController implements Initializable {
             updateState(MenuState.CLOSED);
 
             controlBarController.mouseEventTracker.move();
+            if(!controlBarController.controlBarShowing) controlBarController.showControls();
+            if(!controlBarController.titleShowing) controlBarController.showTitle();
         });
+
         closeMenu.play();
     }
 

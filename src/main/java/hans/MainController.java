@@ -544,7 +544,8 @@ public class MainController implements Initializable {
         if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
         if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
-        AnimationsClass.hideControlsAndTitle(controlBarController, subtitlesController, this);
+        if(controlBarController.controlBarShowing) controlBarController.hideControls();
+        if(controlBarController.titleShowing) controlBarController.hideTitle();
 
     }
 
@@ -1086,6 +1087,7 @@ public class MainController implements Initializable {
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
+            if(controlBarController.durationSlider.getValue() == 0) mediaInterface.updateMedia(0);
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 5);
 
             if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
@@ -1173,6 +1175,8 @@ public class MainController implements Initializable {
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
+
+            if(controlBarController.durationSlider.getValue() == 0) mediaInterface.updateMedia(0);
             controlBarController.durationSlider.setValue(controlBarController.durationSlider.getValue() - 10.0);
 
             if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
@@ -1252,6 +1256,8 @@ public class MainController implements Initializable {
 
                 miniplayer.miniplayerController.progressBarTimer.playFromStart();
             }
+
+            if(controlBarController.durationSlider.getValue() == 0) mediaInterface.updateMedia(0);
             controlBarController.durationSlider.setValue(0);
 
             if(!controlBarController.durationSlider.isValueChanging() && (!miniplayerActive || !miniplayer.miniplayerController.slider.isValueChanging())){
@@ -1665,7 +1671,11 @@ public class MainController implements Initializable {
 
     public void FULLSCREENAction(){
 
-        controlBarController.mouseEventTracker.move();
+        if(App.fullScreen)
+            controlBarController.mouseEventTracker.move();
+        else
+            controlBarController.mouseEventTracker.mouseMoving.set(false);
+
         controlBarController.toggleFullScreen();
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
@@ -1794,8 +1804,6 @@ public class MainController implements Initializable {
 
         if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.QUEUE_OPEN) return;
 
-        controlBarController.mouseEventTracker.move();
-
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
@@ -1805,8 +1813,6 @@ public class MainController implements Initializable {
 
     public void OPEN_RECENT_MEDIAAction(){
         if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.RECENT_MEDIA_OPEN) return;
-
-        controlBarController.mouseEventTracker.move();
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
@@ -1819,8 +1825,6 @@ public class MainController implements Initializable {
 
         if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.MUSIC_LIBRARY_OPEN) return;
 
-        controlBarController.mouseEventTracker.move();
-
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
@@ -1832,8 +1836,6 @@ public class MainController implements Initializable {
 
         if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.PLAYLISTS_OPEN) return;
 
-        controlBarController.mouseEventTracker.move();
-
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
@@ -1844,8 +1846,6 @@ public class MainController implements Initializable {
     public void OPEN_SETTINGSAction(){
 
         if(addYoutubeVideoWindow.showing || hotkeyChangeWindow.showing || menuController.queuePage.queueBox.itemDragActive.get() || menuController.menuState == MenuState.SETTINGS_OPEN) return;
-
-        controlBarController.mouseEventTracker.move();
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();

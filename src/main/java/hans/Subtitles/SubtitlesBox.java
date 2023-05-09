@@ -475,21 +475,21 @@ public class SubtitlesBox {
             case BOTTOM_RIGHT: {
                 subtitlesContainer.setTranslateX(-30);
 
-                if(subtitlesController.controlBarController.controlBarOpen) subtitlesContainer.setTranslateY(-90);
+                if(subtitlesController.controlBarController.controlBarShowing) subtitlesContainer.setTranslateY(-90);
                 else subtitlesContainer.setTranslateY(-30);
             }
             break;
             case BOTTOM_CENTER: {
                 subtitlesContainer.setTranslateX(0);
 
-                if(subtitlesController.controlBarController.controlBarOpen) subtitlesContainer.setTranslateY(-90);
+                if(subtitlesController.controlBarController.controlBarShowing) subtitlesContainer.setTranslateY(-90);
                 else subtitlesContainer.setTranslateY(-30);
             }
             break;
             case BOTTOM_LEFT: {
                 subtitlesContainer.setTranslateX(30);
 
-                if(subtitlesController.controlBarController.controlBarOpen) subtitlesContainer.setTranslateY(-90);
+                if(subtitlesController.controlBarController.controlBarShowing) subtitlesContainer.setTranslateY(-90);
                 else subtitlesContainer.setTranslateY(-30);
             }
             break;

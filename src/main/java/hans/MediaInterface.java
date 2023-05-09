@@ -183,7 +183,7 @@ public class MediaInterface {
                         mainController.miniplayer.miniplayerController.seekImageView.setImage(null);
                     }
 
-                    if(!controlBarController.durationSlider.isValueChanging() && !mainController.seekingWithKeys && ((Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.2 && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) < 2.0)) && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) controlBarController.durationSlider.setValue((double)newTime/1000);
+                    if(!controlBarController.durationSlider.isValueChanging() && !mainController.seekingWithKeys && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) > 0.2 && Math.abs(currentTime/1000 - controlBarController.durationSlider.getValue()) < 2.0 && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) controlBarController.durationSlider.setValue((double)newTime/1000);
                 });
             }
 
@@ -255,17 +255,18 @@ public class MediaInterface {
                         image = mainController.miniplayer.miniplayerController.videoImageView.getImage();
                     }
 
-                    double ratio;
+                    Double ratio = null;
                     if(image != null) ratio = image.getWidth()/image.getHeight();
-                    else ratio = mediaPlayer.video().videoDimension().getWidth()/mediaPlayer.video().videoDimension().getHeight();
+                    else if(mediaPlayer.video().videoDimension() != null) ratio = mediaPlayer.video().videoDimension().getWidth()/mediaPlayer.video().videoDimension().getHeight();
 
+                    if(ratio != null) {
+                        int newWidth = (int) Math.min(160, 90 * ratio);
+                        int newHeight = (int) Math.min(90, 160 / ratio);
 
-                    int newWidth = (int) Math.min(160, 90 * ratio);
-                    int newHeight = (int) Math.min(90, 160/ratio);
-
-                    if(fFmpegFrameGrabber != null){
-                        fFmpegFrameGrabber.setImageWidth(newWidth);
-                        fFmpegFrameGrabber.setImageHeight(newHeight);
+                        if (fFmpegFrameGrabber != null) {
+                            fFmpegFrameGrabber.setImageWidth(newWidth);
+                            fFmpegFrameGrabber.setImageHeight(newHeight);
+                        }
                     }
 
                     mediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
@@ -274,7 +275,6 @@ public class MediaInterface {
 
                     if(controlBarController.showingTimeLeft) Utilities.setTimeLeftLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
                     else Utilities.setCurrentTimeLabel(controlBarController.durationLabel, Duration.ZERO, Duration.seconds(controlBarController.durationSlider.getMax()));
-
 
                     if(!mediaActive.get()) {
                         mediaActive.set(true);
@@ -290,7 +290,6 @@ public class MediaInterface {
                         List<TrackDescription> videoTrackDescriptions = embeddedMediaPlayer.video().trackDescriptions();
                         if (!videoTrackDescriptions.isEmpty())
                             playbackSettingsController.initializeVideoTrackPage(videoTrackDescriptions, activeVideoTrack);
-
 
                         if (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()) {
                             ExecutorService executorService = Executors.newFixedThreadPool(1);
@@ -354,8 +353,12 @@ public class MediaInterface {
 
         else {
             if(newValue == 0){
+                System.out.println("test1");
                 currentTime = 0;
-                if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())) seek(Duration.ZERO);
+                if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())){
+                    System.out.println("test2");
+                    seek(Duration.ZERO);
+                }
             }
             else if(Math.abs(currentTime/1000 - newValue) > 0.5 || (!playing.get() && Math.abs(currentTime/1000 - newValue) >= 0.1)) {
                 currentTime = newValue;
@@ -490,18 +493,22 @@ public class MediaInterface {
 
     public void playNext(){
 
-        controlBarController.mouseEventTracker.move();
-
         if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.queue.size() > menuController.queuePage.queueBox.activeIndex.get() + 1){
+            controlBarController.mouseEventTracker.move();
             menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() + 1)).play();
         }
-        else if(menuController.queuePage.queueBox.activeItem.get() == null && !menuController.queuePage.queueBox.queue.isEmpty()) menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(0)).play();
+        else if(menuController.queuePage.queueBox.activeItem.get() == null && !menuController.queuePage.queueBox.queue.isEmpty()){        controlBarController.mouseEventTracker.move();
+            controlBarController.mouseEventTracker.move();
+            menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(0)).play();
+        }
     }
 
     public void playPrevious(){
-        controlBarController.mouseEventTracker.move();
 
-        if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeIndex.get() > 0) menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() -1)).play();
+        if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeIndex.get() > 0){
+            controlBarController.mouseEventTracker.move();
+            menuController.queuePage.queueBox.queue.get(menuController.queuePage.queueBox.queueOrder.get(menuController.queuePage.queueBox.activeIndex.get() -1)).play();
+        }
     }
 
     public void defaultEnd(){

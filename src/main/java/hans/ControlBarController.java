@@ -126,7 +126,9 @@ public class ControlBarController implements Initializable {
     boolean isExited = true;
     boolean showingTimeLeft = false;
     public boolean durationSliderHover = false;
-    public boolean controlBarOpen = true;
+
+    public boolean titleShowing = true;
+    public boolean controlBarShowing = true;
 
 
     // variables to keep track of whether mouse is hovering any control button
@@ -174,6 +176,11 @@ public class ControlBarController implements Initializable {
     double thumbScale = 0;
 
     Timeline volumeSliderAnimation = null;
+
+    ParallelTransition showControlsTransition = null;
+    ParallelTransition hideControlsTransition = null;
+    ParallelTransition showTitleTransition = null;
+    ParallelTransition hideTitleTransition = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -744,7 +751,7 @@ public class ControlBarController implements Initializable {
         this.subtitlesController = subtitlesController;
         this.chapterController = chapterController;
 
-        mouseEventTracker = new MouseEventTracker(4, mainController, this, playbackSettingsController); // creates instance of the MouseEventTracker class which keeps track of when to hide and show the control-bar
+        mouseEventTracker = new MouseEventTracker(mainController, this, playbackSettingsController); // creates instance of the MouseEventTracker class which keeps track of when to hide and show the control-bar
     }
 
     public void toggleDurationLabel() {
@@ -1330,5 +1337,153 @@ public class ControlBarController implements Initializable {
         disablePreviousVideoButton();
         disablePlayButton();
         disableNextVideoButton();
+    }
+
+
+    public void showControls() {
+
+        if(hideControlsTransition != null && hideControlsTransition.getStatus() == Animation.Status.RUNNING) hideControlsTransition.stop();
+        if(showControlsTransition != null && showControlsTransition.getStatus() == Animation.Status.RUNNING) showControlsTransition.stop();
+
+        controlBarShowing = true;
+        controlBarWrapper.setMouseTransparent(false);
+
+        if(subtitlesController.subtitlesBox.subtitlesTransition != null && subtitlesController.subtitlesBox.subtitlesTransition.getStatus() == Animation.Status.RUNNING) subtitlesController.subtitlesBox.subtitlesTransition.stop();
+
+        subtitlesController.subtitlesBox.subtitlesContainer.setMouseTransparent(false);
+
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), subtitlesController.subtitlesBox.subtitlesContainer);
+        captionsTransition.setCycleCount(1);
+        captionsTransition.setFromY(subtitlesController.subtitlesBox.subtitlesContainer.getTranslateY());
+
+        if((subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT) && !mainController.miniplayerActive)
+            captionsTransition.setToY(-90);
+        else if((subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_RIGHT) && !mainController.miniplayerActive)
+            captionsTransition.setToY(70);
+        else
+            captionsTransition.setToY(subtitlesController.subtitlesBox.subtitlesContainer.getTranslateY());
+
+        FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBar);
+        controlBarFade.setFromValue(controlBar.getOpacity());
+        controlBarFade.setToValue(1);
+        controlBarFade.setCycleCount(1);
+
+        FadeTransition controlBarBackgroundFade = new FadeTransition(Duration.millis(100), controlBarBackground);
+        controlBarBackgroundFade.setFromValue(controlBarBackground.getOpacity());
+        controlBarBackgroundFade.setToValue(1);
+        controlBarBackgroundFade.setCycleCount(1);
+
+        showControlsTransition = new ParallelTransition(captionsTransition, controlBarFade, controlBarBackgroundFade);
+        showControlsTransition.setInterpolator(Interpolator.LINEAR);
+
+        showControlsTransition.play();
+    }
+
+    public void hideControls() {
+
+        if(hideControlsTransition != null && hideControlsTransition.getStatus() == Animation.Status.RUNNING) hideControlsTransition.stop();
+        if(showControlsTransition != null && showControlsTransition.getStatus() == Animation.Status.RUNNING) showControlsTransition.stop();
+
+        controlBarShowing = false;
+        controlBarWrapper.setMouseTransparent(true);
+
+        if(subtitlesController.subtitlesBox.subtitlesTransition != null && subtitlesController.subtitlesBox.subtitlesTransition.getStatus() == Animation.Status.RUNNING) subtitlesController.subtitlesBox.subtitlesTransition.stop();
+
+        subtitlesController.subtitlesBox.subtitlesContainer.setMouseTransparent(true);
+
+        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), subtitlesController.subtitlesBox.subtitlesContainer);
+        captionsTransition.setCycleCount(1);
+        captionsTransition.setFromY(subtitlesController.subtitlesBox.subtitlesContainer.getTranslateY());
+
+        if((subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.BOTTOM_RIGHT) && !mainController.miniplayerActive){
+            captionsTransition.setToY(-30);
+        }
+        else if((subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_CENTER || subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_LEFT || subtitlesController.subtitlesBox.subtitlesLocation == Pos.TOP_RIGHT) && !mainController.miniplayerActive){
+            captionsTransition.setToY(30);
+        }
+        else {
+            captionsTransition.setToY(subtitlesController.subtitlesBox.subtitlesContainer.getTranslateY());
+        }
+
+        FadeTransition controlBarFade = new FadeTransition(Duration.millis(100), controlBar);
+        controlBarFade.setFromValue(controlBar.getOpacity());
+        controlBarFade.setToValue(0);
+        controlBarFade.setCycleCount(1);
+
+        FadeTransition controlBarBackgroundFade = new FadeTransition(Duration.millis(100), controlBarBackground);
+        controlBarBackgroundFade.setFromValue(controlBarBackground.getOpacity());
+        controlBarBackgroundFade.setToValue(0);
+        controlBarBackgroundFade.setCycleCount(1);
+
+
+        hideControlsTransition = new ParallelTransition(captionsTransition, controlBarFade, controlBarBackgroundFade);
+        hideControlsTransition.setInterpolator(Interpolator.LINEAR);
+        hideControlsTransition.setOnFinished((e) -> {
+            subtitlesController.subtitlesBox.subtitlesAnimating = false;
+            subtitlesController.subtitlesBox.subtitlesContainer.setStyle("-fx-background-color: transparent;");
+        });
+
+        hideControlsTransition.play();
+    }
+
+    public void showTitle(){
+
+        if(hideTitleTransition != null && hideTitleTransition.getStatus() == Animation.Status.RUNNING) hideTitleTransition.stop();
+        if(showTitleTransition != null && showTitleTransition.getStatus() == Animation.Status.RUNNING) showTitleTransition.stop();
+        
+        titleShowing = true;
+
+        mainController.videoTitleBox.setVisible(true);
+        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBox);
+        videoTitleTransition.setFromValue(mainController.videoTitleBox.getOpacity());
+        videoTitleTransition.setToValue(1);
+
+        mainController.videoTitleBackground.setVisible(true);
+        FadeTransition videoTitleBackgroundTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBackground);
+        videoTitleBackgroundTransition.setFromValue(mainController.videoTitleBackground.getOpacity());
+        videoTitleBackgroundTransition.setToValue(1);
+
+        mainController.menuButtonPane.setVisible(true);
+        FadeTransition menuButtonTransition = new FadeTransition(Duration.millis(100), mainController.menuButtonPane);
+        menuButtonTransition.setFromValue(mainController.menuButtonPane.getOpacity());
+        menuButtonTransition.setToValue(1);
+
+
+        showTitleTransition = new ParallelTransition(videoTitleTransition, videoTitleBackgroundTransition, menuButtonTransition);
+        showTitleTransition.setInterpolator(Interpolator.LINEAR);
+
+        showTitleTransition.play();
+
+    }
+
+    public void hideTitle(){
+
+        if(hideTitleTransition != null && hideTitleTransition.getStatus() == Animation.Status.RUNNING) hideTitleTransition.stop();
+        if(showTitleTransition != null && showTitleTransition.getStatus() == Animation.Status.RUNNING) showTitleTransition.stop();
+
+        titleShowing = false;
+
+        FadeTransition videoTitleTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBox);
+        videoTitleTransition.setFromValue(mainController.videoTitleBox.getOpacity());
+        videoTitleTransition.setToValue(0);
+
+        FadeTransition videoTitleBackgroundTransition = new FadeTransition(Duration.millis(100), mainController.videoTitleBackground);
+        videoTitleBackgroundTransition.setFromValue(mainController.videoTitleBackground.getOpacity());
+        videoTitleBackgroundTransition.setToValue(0);
+
+        FadeTransition menuButtonTransition = new FadeTransition(Duration.millis(100), mainController.menuButtonPane);
+        menuButtonTransition.setFromValue(mainController.menuButtonPane.getOpacity());
+        menuButtonTransition.setToValue(0);
+
+
+        hideTitleTransition = new ParallelTransition(videoTitleTransition, videoTitleBackgroundTransition, menuButtonTransition);
+        hideTitleTransition.setInterpolator(Interpolator.LINEAR);
+        hideTitleTransition.setOnFinished((e) -> {
+            mainController.videoTitleBox.setVisible(false);
+            mainController.videoTitleBackground.setVisible(false);
+            mainController.menuButtonPane.setVisible(false);
+        });
+
+        hideTitleTransition.play();
     }
 }

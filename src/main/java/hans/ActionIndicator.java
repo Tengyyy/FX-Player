@@ -40,8 +40,7 @@ public class ActionIndicator {
         background.setMinSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
         background.setPrefSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
         background.setMaxSize(100 * mainController.sizeMultiplier.doubleValue(),100 * mainController.sizeMultiplier.doubleValue());
-        background.setEffect(new DropShadow());
-        background.setOpacity(0.6);
+        background.setOpacity(0.5);
         background.setStyle("-fx-background-color: black; -fx-background-radius: 500;");
         StackPane.setAlignment(background, Pos.CENTER);
 

@@ -221,6 +221,7 @@ public class SubtitlesController {
     public void loadSubtitles(File file){
 
         subtitlesBox.subtitlesContainer.getChildren().clear();
+        subtitlesBox.subtitlesContainer.setMouseTransparent(false);
 
         subtitlesPosition = 0;
         showedCurrentSubtitle = false;

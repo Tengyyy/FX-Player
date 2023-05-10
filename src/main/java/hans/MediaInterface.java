@@ -353,10 +353,8 @@ public class MediaInterface {
 
         else {
             if(newValue == 0){
-                System.out.println("test1");
                 currentTime = 0;
                 if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())){
-                    System.out.println("test2");
                     seek(Duration.ZERO);
                 }
             }

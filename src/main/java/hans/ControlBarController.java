@@ -325,6 +325,7 @@ public class ControlBarController implements Initializable {
         playPauseLeftPath.setFill(Color.rgb(100, 100, 100));
         playPauseLeftPath.setStroke(Color.TRANSPARENT);
         playPauseLeftPath.setStrokeWidth(0);
+
         playPauseRightPath.setStroke(Color.TRANSPARENT);
         playPauseRightPath.setStrokeWidth(0);
         playPauseRightPath.setFill(Color.rgb(100, 100, 100));
@@ -1748,8 +1749,7 @@ public class ControlBarController implements Initializable {
             playPauseCorner8.setX(18);
             playPauseCorner8.setY(0);
 
-            playPauseLeftPath.setVisible(true);
-            playPauseRightPath.setVisible(true);
+            playPausePane.setVisible(true);
         }
         else {
             playToPauseMorph();
@@ -1793,8 +1793,7 @@ public class ControlBarController implements Initializable {
             playPauseCorner8.setX(18);
             playPauseCorner8.setY(11);
 
-            playPauseLeftPath.setVisible(true);
-            playPauseRightPath.setVisible(true);
+            playPausePane.setVisible(true);
         }
         else {
             pauseToPlayMorph();
@@ -1810,8 +1809,7 @@ public class ControlBarController implements Initializable {
         if(playPauseTransition != null && playPauseTransition.getStatus() == Animation.Status.RUNNING)
             playPauseTransition.stop();
 
-        playPauseLeftPath.setVisible(false);
-        playPauseRightPath.setVisible(false);
+        playPausePane.setVisible(false);
 
         replayIcon.setVisible(true);
 
@@ -1823,8 +1821,7 @@ public class ControlBarController implements Initializable {
     private void playToPauseMorph(){
 
         replayIcon.setVisible(false);
-        playPauseLeftPath.setVisible(true);
-        playPauseRightPath.setVisible(true);
+        playPausePane.setVisible(true);
 
         playPauseTransition = new Timeline(
             new KeyFrame(Duration.millis(250),
@@ -1859,8 +1856,7 @@ public class ControlBarController implements Initializable {
     private void pauseToPlayMorph(){
 
         replayIcon.setVisible(false);
-        playPauseLeftPath.setVisible(true);
-        playPauseRightPath.setVisible(true);
+        playPausePane.setVisible(true);
 
         playPauseTransition = new Timeline(
                 new KeyFrame(Duration.millis(250),

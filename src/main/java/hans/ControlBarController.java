@@ -1,12 +1,12 @@
 package hans;
 
-import hans.Menu.Settings.Action;
-import hans.Subtitles.SubtitlesState;
 import hans.Chapters.ChapterController;
 import hans.Menu.MenuController;
+import hans.Menu.Settings.Action;
 import hans.PlaybackSettings.PlaybackSettingsController;
 import hans.PlaybackSettings.PlaybackSettingsState;
 import hans.Subtitles.SubtitlesController;
+import hans.Subtitles.SubtitlesState;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -24,7 +24,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
-import uk.co.caprica.vlcj.player.base.TeletextKey;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class ControlBarController implements Initializable {
+
 
     @FXML
     VBox controlBar;
@@ -98,7 +98,7 @@ public class ControlBarController implements Initializable {
     Line subtitlesButtonLine;
 
     @FXML
-    public Region previousVideoIcon, playIcon, nextVideoIcon, volumeIcon, subtitlesIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
+    public Region previousVideoIcon, replayIcon, nextVideoIcon, volumeIcon, subtitlesIcon, settingsIcon, fullScreenIcon, miniplayerIcon;
 
     @FXML
     public
@@ -111,7 +111,7 @@ public class ControlBarController implements Initializable {
     public DurationTrack hoverTrack = null;
     public DurationTrack activeTrack = null;
 
-    SVGPath previousVideoSVG, playSVG, pauseSVG, replaySVG, nextVideoSVG, lowVolumeSVG, subtitlesSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
+    SVGPath previousVideoSVG, replaySVG, nextVideoSVG, lowVolumeSVG, subtitlesSVG, settingsSVG, maximizeSVG, minimizeSVG, miniplayerSVG;
 
     MainController mainController;
     PlaybackSettingsController playbackSettingsController;
@@ -182,7 +182,21 @@ public class ControlBarController implements Initializable {
     ParallelTransition showTitleTransition = null;
     ParallelTransition hideTitleTransition = null;
 
+    MoveTo playPauseCorner1 = new MoveTo(0, 0);
+    LineTo playPauseCorner2 = new LineTo(0, 22);
+    LineTo playPauseCorner3 = new LineTo(9.5, 16.5);
+    LineTo playPauseCorner4 = new LineTo(9.5, 5.5);
+    MoveTo playPauseCorner5 = new MoveTo(9, 5.25);
+    LineTo playPauseCorner6 = new LineTo(9, 16.75);
+    LineTo playPauseCorner7 = new LineTo(18, 11);
+    LineTo playPauseCorner8 = new LineTo(18, 11);
 
+    Path playPauseLeftPath = new Path(playPauseCorner1, playPauseCorner2, playPauseCorner3, playPauseCorner4, new ClosePath());
+    Path playPauseRightPath = new Path(playPauseCorner5, playPauseCorner6, playPauseCorner7, playPauseCorner8, new ClosePath());
+
+    Pane playPausePane = new Pane();
+
+    Timeline playPauseTransition = null;
 
     Arc volumeHighArc = new Arc();
     Line volumeMuteLine = new Line();
@@ -199,12 +213,6 @@ public class ControlBarController implements Initializable {
 
         previousVideoSVG = new SVGPath();
         previousVideoSVG.setContent(SVG.PREVIOUS_VIDEO.getContent());
-
-        playSVG = new SVGPath();
-        playSVG.setContent(SVG.PLAY.getContent());
-
-        pauseSVG = new SVGPath();
-        pauseSVG.setContent(SVG.PAUSE.getContent());
 
         replaySVG = new SVGPath();
         replaySVG.setContent(SVG.REPLAY.getContent());
@@ -264,7 +272,9 @@ public class ControlBarController implements Initializable {
         });
 
         previousVideoIcon.setShape(previousVideoSVG);
-        playIcon.setShape(playSVG);
+        replayIcon.setShape(replaySVG);
+        replayIcon.setVisible(false);
+        replayIcon.setPrefSize(24, 24);
         nextVideoIcon.setShape(nextVideoSVG);
         volumeIcon.setShape(lowVolumeSVG);
 
@@ -304,6 +314,21 @@ public class ControlBarController implements Initializable {
         playButton.setOnMouseEntered(e -> playButtonHoverOn());
 
         playButton.setOnMouseExited(e -> playButtonHoverOff());
+
+        playButtonPane.getChildren().add(playPausePane);
+
+        playPausePane.getChildren().addAll(playPauseLeftPath, playPauseRightPath);
+        playPausePane.setMouseTransparent(true);
+        playPausePane.setPrefSize(18,22);
+        playPausePane.setMaxSize(18, 22);
+
+        playPauseLeftPath.setFill(Color.rgb(100, 100, 100));
+        playPauseLeftPath.setStroke(Color.TRANSPARENT);
+        playPauseLeftPath.setStrokeWidth(0);
+        playPauseRightPath.setStroke(Color.TRANSPARENT);
+        playPauseRightPath.setStrokeWidth(0);
+        playPauseRightPath.setFill(Color.rgb(100, 100, 100));
+
 
         nextVideoButton.setOnMouseEntered(e -> nextVideoButtonHoverOn());
 
@@ -584,9 +609,6 @@ public class ControlBarController implements Initializable {
 
         // this part has to be run later because the slider thumb loads in later than the slider itself
         Platform.runLater(() -> {
-
-            durationSlider.lookup(".thumb").setScaleX(0);
-            durationSlider.lookup(".thumb").setScaleY(0);
 
             durationSlider.lookup(".thumb").setMouseTransparent(true);
 
@@ -943,36 +965,6 @@ public class ControlBarController implements Initializable {
         } else mediaInterface.play(false);
     }
 
-
-    public void play() {
-
-        playIcon.setShape(pauseSVG);
-        playIcon.setPrefSize(20, 20);
-
-        play.updateActionText("Pause");
-
-        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.play();
-    }
-
-    public void pause() {
-
-        playIcon.setShape(playSVG);
-        playIcon.setPrefSize(20, 20);
-
-        play.updateActionText("Play");
-
-        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.pause();
-    }
-
-    public void end() {
-        playIcon.setShape(replaySVG);
-        playIcon.setPrefSize(24, 24);
-
-        play.updateActionText("Replay");
-
-        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.end();
-    }
-
     public void enterArea() {
         if (isExited && !volumeSlider.isValueChanging()) {
             volumeSliderEnter();
@@ -1243,22 +1235,93 @@ public class ControlBarController implements Initializable {
     public void playButtonHoverOn() {
         playButtonHover = true;
 
+        Color fromColor;
+        Color toColor;
+
         if (playButtonEnabled) {
-            AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(200, 200, 200), Color.rgb(255, 255, 255), 200);
+            fromColor = Color.rgb(200, 200, 200);
+            toColor = Color.rgb(255, 255, 255);
+
             play.mouseHover.set(true);
-        } else {
-            AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(120, 120, 120), Color.rgb(150, 150, 150), 200);
         }
+        else {
+            fromColor = Color.rgb(120, 120, 120);
+            toColor = Color.rgb(150, 150, 150);
+        }
+
+        Rectangle rect = new Rectangle();
+        rect.setFill(fromColor);
+
+        FillTransition playIconTransition = new FillTransition();
+        playIconTransition.setShape(rect);
+        playIconTransition.setDuration(Duration.millis(200));
+        playIconTransition.setFromValue(fromColor);
+        playIconTransition.setToValue(toColor);
+
+        playIconTransition.setInterpolator(new Interpolator() {
+            @Override
+            protected double curve(double t) {
+                replayIcon.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, Insets.EMPTY)));
+                return t;
+            }
+        });
+
+        FillTransition playPauseLeftTransition = new FillTransition(Duration.millis(200), playPauseLeftPath);
+        playPauseLeftTransition.setFromValue(fromColor);
+        playPauseLeftTransition.setToValue(toColor);
+
+        FillTransition playPauseRightTransition = new FillTransition(Duration.millis(200), playPauseRightPath);
+        playPauseRightTransition.setFromValue(fromColor);
+        playPauseRightTransition.setToValue(toColor);
+
+        ParallelTransition parallelTransition = new ParallelTransition();
+        parallelTransition.getChildren().addAll(playIconTransition, playPauseLeftTransition, playPauseRightTransition);
+        parallelTransition.play();
     }
 
     public void playButtonHoverOff() {
         playButtonHover = false;
 
+        Color fromColor;
+        Color toColor;
+
         if (playButtonEnabled) {
-            AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(255, 255, 255), Color.rgb(200, 200, 200), 200);
-        } else {
-            AnimationsClass.animateBackgroundColor(playIcon, Color.rgb(150, 150, 150), Color.rgb(120, 120, 120), 200);
+            fromColor = Color.rgb(255, 255, 255);
+            toColor = Color.rgb(200, 200, 200);
         }
+        else {
+            fromColor = Color.rgb(150, 150, 150);
+            toColor = Color.rgb(120, 120, 120);
+        }
+
+        Rectangle rect = new Rectangle();
+        rect.setFill(fromColor);
+
+        FillTransition playIconTransition = new FillTransition();
+        playIconTransition.setShape(rect);
+        playIconTransition.setDuration(Duration.millis(200));
+        playIconTransition.setFromValue(fromColor);
+        playIconTransition.setToValue(toColor);
+
+        playIconTransition.setInterpolator(new Interpolator() {
+            @Override
+            protected double curve(double t) {
+                replayIcon.setBackground(new Background(new BackgroundFill(rect.getFill(), CornerRadii.EMPTY, Insets.EMPTY)));
+                return t;
+            }
+        });
+
+        FillTransition playPauseLeftTransition = new FillTransition(Duration.millis(200), playPauseLeftPath);
+        playPauseLeftTransition.setFromValue(fromColor);
+        playPauseLeftTransition.setToValue(toColor);
+
+        FillTransition playPauseRightTransition = new FillTransition(Duration.millis(200), playPauseRightPath);
+        playPauseRightTransition.setFromValue(fromColor);
+        playPauseRightTransition.setToValue(toColor);
+
+        ParallelTransition parallelTransition = new ParallelTransition();
+        parallelTransition.getChildren().addAll(playIconTransition, playPauseLeftTransition, playPauseRightTransition);
+        parallelTransition.play();
 
         play.mouseHover.set(false);
     }
@@ -1330,9 +1393,14 @@ public class ControlBarController implements Initializable {
         playButtonEnabled = true;
 
         if (playButtonHover) {
-            playIcon.setStyle("-fx-background-color: rgb(255, 255, 255);");
-        } else {
-            playIcon.setStyle("-fx-background-color: rgb(200, 200, 200);");
+            replayIcon.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
+            playPauseLeftPath.setFill(Color.rgb(255, 255, 255));
+            playPauseRightPath.setFill(Color.rgb(255, 255, 255));
+        }
+        else {
+            replayIcon.setBackground(new Background(new BackgroundFill(Color.rgb(200, 200, 200), CornerRadii.EMPTY, Insets.EMPTY)));
+            playPauseLeftPath.setFill(Color.rgb(200, 200, 200));
+            playPauseRightPath.setFill(Color.rgb(200, 200, 200));
         }
 
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.enablePlayButton();
@@ -1350,14 +1418,17 @@ public class ControlBarController implements Initializable {
         playButtonEnabled = false;
 
         if (playButtonHover) {
-            playIcon.setStyle("-fx-background-color: rgb(150, 150, 150);");
-        } else {
-            playIcon.setStyle("-fx-background-color: rgb(120, 120, 120);");
+            replayIcon.setBackground(new Background(new BackgroundFill(Color.rgb(150, 150, 150), CornerRadii.EMPTY, Insets.EMPTY)));
+            playPauseLeftPath.setFill(Color.rgb(150, 150, 150));
+            playPauseRightPath.setFill(Color.rgb(150, 150, 150));
+        }
+        else {
+            replayIcon.setBackground(new Background(new BackgroundFill(Color.rgb(120, 120, 120), CornerRadii.EMPTY, Insets.EMPTY)));
+            playPauseLeftPath.setFill(Color.rgb(120, 120, 120));
+            playPauseRightPath.setFill(Color.rgb(120, 120, 120));
         }
 
-
         if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.disablePlayButton();
-
 
         play.disableTooltip();
     }
@@ -1643,5 +1714,181 @@ public class ControlBarController implements Initializable {
         });
 
         hideTitleTransition.play();
+    }
+
+    public void play() {
+
+        if(playPauseTransition != null && playPauseTransition.getStatus() == Animation.Status.RUNNING)
+            playPauseTransition.stop();
+
+        if(replayIcon.isVisible()){
+            replayIcon.setVisible(false);
+
+            playPauseCorner1.setX(0);
+            playPauseCorner1.setY(0);
+
+            playPauseCorner2.setX(0);
+            playPauseCorner2.setY(22);
+
+            playPauseCorner3.setX(6);
+            playPauseCorner3.setY(22);
+
+            playPauseCorner4.setX(6);
+            playPauseCorner4.setY(0);
+
+            playPauseCorner5.setX(12);
+            playPauseCorner5.setY(0);
+
+            playPauseCorner6.setX(12);
+            playPauseCorner6.setY(22);
+
+            playPauseCorner7.setX(18);
+            playPauseCorner7.setY(22);
+
+            playPauseCorner8.setX(18);
+            playPauseCorner8.setY(0);
+
+            playPauseLeftPath.setVisible(true);
+            playPauseRightPath.setVisible(true);
+        }
+        else {
+            playToPauseMorph();
+        }
+
+        play.updateActionText("Pause");
+
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.play();
+    }
+
+    public void pause() {
+
+        if(playPauseTransition != null && playPauseTransition.getStatus() == Animation.Status.RUNNING)
+            playPauseTransition.stop();
+
+
+        if(replayIcon.isVisible()){
+            replayIcon.setVisible(false);
+
+            playPauseCorner1.setX(0);
+            playPauseCorner1.setY(0);
+
+            playPauseCorner2.setX(0);
+            playPauseCorner2.setY(22);
+
+            playPauseCorner3.setX(9.5);
+            playPauseCorner3.setY(16.5);
+
+            playPauseCorner4.setX(9.5);
+            playPauseCorner4.setY(5.5);
+
+            playPauseCorner5.setX(9);
+            playPauseCorner5.setY(5.25);
+
+            playPauseCorner6.setX(9);
+            playPauseCorner6.setY(16.75);
+
+            playPauseCorner7.setX(18);
+            playPauseCorner7.setY(11);
+
+            playPauseCorner8.setX(18);
+            playPauseCorner8.setY(11);
+
+            playPauseLeftPath.setVisible(true);
+            playPauseRightPath.setVisible(true);
+        }
+        else {
+            pauseToPlayMorph();
+        }
+
+        play.updateActionText("Play");
+
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.pause();
+    }
+
+    public void end() {
+
+        if(playPauseTransition != null && playPauseTransition.getStatus() == Animation.Status.RUNNING)
+            playPauseTransition.stop();
+
+        playPauseLeftPath.setVisible(false);
+        playPauseRightPath.setVisible(false);
+
+        replayIcon.setVisible(true);
+
+        play.updateActionText("Replay");
+
+        if(mainController.windowsTaskBarController != null) mainController.windowsTaskBarController.end();
+    }
+
+    private void playToPauseMorph(){
+
+        replayIcon.setVisible(false);
+        playPauseLeftPath.setVisible(true);
+        playPauseRightPath.setVisible(true);
+
+        playPauseTransition = new Timeline(
+            new KeyFrame(Duration.millis(250),
+                new KeyValue(playPauseCorner1.xProperty(), 0),
+                new KeyValue(playPauseCorner1.yProperty(), 0),
+
+                new KeyValue(playPauseCorner2.xProperty(), 0),
+                new KeyValue(playPauseCorner2.yProperty(), 22),
+
+                new KeyValue(playPauseCorner3.xProperty(), 6),
+                new KeyValue(playPauseCorner3.yProperty(), 22),
+
+                new KeyValue(playPauseCorner4.xProperty(), 6),
+                new KeyValue(playPauseCorner4.yProperty(), 0),
+
+                new KeyValue(playPauseCorner5.xProperty(), 12),
+                new KeyValue(playPauseCorner5.yProperty(), 0),
+
+                new KeyValue(playPauseCorner6.xProperty(), 12),
+                new KeyValue(playPauseCorner6.yProperty(), 22),
+
+                new KeyValue(playPauseCorner7.xProperty(), 18),
+                new KeyValue(playPauseCorner7.yProperty(), 22),
+
+                new KeyValue(playPauseCorner8.xProperty(), 18),
+                new KeyValue(playPauseCorner8.yProperty(), 0))
+        );
+
+        playPauseTransition.play();
+    }
+
+    private void pauseToPlayMorph(){
+
+        replayIcon.setVisible(false);
+        playPauseLeftPath.setVisible(true);
+        playPauseRightPath.setVisible(true);
+
+        playPauseTransition = new Timeline(
+                new KeyFrame(Duration.millis(250),
+                        new KeyValue(playPauseCorner1.xProperty(), 0),
+                        new KeyValue(playPauseCorner1.yProperty(), 0),
+
+                        new KeyValue(playPauseCorner2.xProperty(), 0),
+                        new KeyValue(playPauseCorner2.yProperty(), 22),
+
+                        new KeyValue(playPauseCorner3.xProperty(), 9.5),
+                        new KeyValue(playPauseCorner3.yProperty(), 16.5),
+
+                        new KeyValue(playPauseCorner4.xProperty(), 9.5),
+                        new KeyValue(playPauseCorner4.yProperty(), 5.5),
+
+                        new KeyValue(playPauseCorner5.xProperty(), 9),
+                        new KeyValue(playPauseCorner5.yProperty(), 5.25),
+
+                        new KeyValue(playPauseCorner6.xProperty(), 9),
+                        new KeyValue(playPauseCorner6.yProperty(), 16.75),
+
+                        new KeyValue(playPauseCorner7.xProperty(), 18),
+                        new KeyValue(playPauseCorner7.yProperty(), 11),
+
+                        new KeyValue(playPauseCorner8.xProperty(), 18),
+                        new KeyValue(playPauseCorner8.yProperty(), 11))
+        );
+
+        playPauseTransition.play();
     }
 }

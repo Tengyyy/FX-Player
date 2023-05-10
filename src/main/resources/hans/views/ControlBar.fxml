@@ -91,7 +91,7 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </Button>
-                        <Region fx:id="playIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon" />
+                        <Region fx:id="replayIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon" />
                      </children>
                   </StackPane>
                   <StackPane fx:id="nextVideoPane" minWidth="52.0" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="3">

@@ -61,11 +61,6 @@ public class ChapterController {
         chapterLabelWrapper.setPrefHeight(30);
         chapterLabelWrapper.setMinWidth(0);
         chapterLabelWrapper.getChildren().addAll(separatorLabel, chapterLabelBox);
-        HBox.setHgrow(chapterLabelBox, Priority.NEVER);
-        HBox.setHgrow(separatorLabel, Priority.NEVER);
-
-        chapterLabelWrapper.maxWidthProperty().bind(controlBarController.labelBox.widthProperty().subtract(controlBarController.volumeSliderPane.widthProperty()).subtract(controlBarController.durationLabel.widthProperty()).subtract(10));
-
 
         separatorLabel.getStyleClass().add("controlBarLabel");
         separatorLabel.setPadding(new Insets(0, 3, 0, 5));
@@ -79,9 +74,6 @@ public class ChapterController {
         chapterLabelBox.getChildren().addAll(chapterLabel, chevronPane);
         chapterLabelBox.setCursor(Cursor.HAND);
         chapterLabelBox.setAlignment(Pos.CENTER_LEFT);
-
-        HBox.setHgrow(chevronPane, Priority.NEVER);
-        HBox.setHgrow(chapterLabel, Priority.NEVER);
 
         chapterLabelBox.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
             AnimationsClass.animateTextColor(chapterLabel, Color.WHITE, 200);

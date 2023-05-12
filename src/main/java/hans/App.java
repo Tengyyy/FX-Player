@@ -23,7 +23,6 @@ import java.util.Objects;
 import static hans.SVG.*;
 
 
-
 public class App extends Application {
 
     public static Stage stage;
@@ -58,10 +57,8 @@ public class App extends Application {
         primaryStage.setScene(splashScreen.scene);
         primaryStage.setTitle("FXPlayer");
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("images/appIcon.png")).toExternalForm()));
-
-
-
         primaryStage.show();
+
 
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("views/Main.fxml"));

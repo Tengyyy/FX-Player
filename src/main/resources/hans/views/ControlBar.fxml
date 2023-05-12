@@ -4,8 +4,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -56,7 +54,7 @@
                       </StackPane>
                   </children>
               </GridPane>
-              <GridPane minWidth="601.0" prefWidth="601.0">
+              <GridPane fx:id="buttonGrid" minWidth="601.0" prefWidth="601.0">
                   <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="20.0" />
                       <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="52.0" prefWidth="52.0" />
@@ -114,39 +112,7 @@
                         <Region fx:id="volumeIcon" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="20.0" prefWidth="20.0" styleClass="controlIcon" StackPane.alignment="CENTER" />
                      </children>
                   </StackPane>
-                  <HBox fx:id="labelBox" alignment="CENTER_LEFT" minWidth="150.0" GridPane.columnIndex="5">
-                     <children>
-                              <StackPane fx:id="volumeSliderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseEntered="#enterArea" prefHeight="30.0" prefWidth="0.0" stylesheets="@../styles/application.css">
-                                  <children>
-                                      <ProgressBar fx:id="volumeTrack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="4.0" prefWidth="48.0" progress="0.5" styleClass="volumeTrack" />
-                                      <Slider fx:id="volumeSlider" blockIncrement="5.0" maxHeight="-Infinity" maxWidth="60.0" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="8.0" prefWidth="60.0" value="50.0">
-                                          <cursor>
-                                              <Cursor fx:constant="HAND" />
-                                          </cursor>
-                                          <styleClass>
-                                              <String fx:value="focusableProperty" />
-                                              <String fx:value="volumeSlider" />
-                                          </styleClass>
-                                      </Slider>
-                                  </children>
-                           <padding>
-                              <Insets right="8.0" />
-                           </padding>
-                              </StackPane>
-                              <Label fx:id="durationLabel" maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="30.0" text="00:00/00:00" textFill="#c8c8c8">
-                                  <cursor>
-                                      <Cursor fx:constant="HAND" />
-                                  </cursor>
-                           <styleClass>
-                              <String fx:value="focusableProperty" />
-                              <String fx:value="controlBarLabel" />
-                           </styleClass>
-                              </Label>
-                     </children>
-                     <padding>
-                        <Insets right="10.0" />
-                     </padding>
-                  </HBox>
+                  <StackPane fx:id="labelBoxContainer" minWidth="150.0" GridPane.columnIndex="5" />
                   <StackPane fx:id="subtitlesButtonPane" minWidth="52.0" prefHeight="30.0" prefWidth="52.0" GridPane.columnIndex="6">
                      <children>
                         <Button fx:id="subtitlesButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="52.0">

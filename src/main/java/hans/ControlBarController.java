@@ -62,14 +62,8 @@ public class ControlBarController implements Initializable {
     Button miniplayerButton;
 
     @FXML
-    public Slider volumeSlider, durationSlider;
+    public Slider durationSlider;
 
-    @FXML
-    public ProgressBar volumeTrack;
-
-    @FXML
-    public
-    StackPane volumeSliderPane;
     @FXML
     StackPane previousVideoPane;
     @FXML
@@ -88,10 +82,8 @@ public class ControlBarController implements Initializable {
     StackPane fullScreenButtonPane;
     @FXML
     StackPane durationPane;
-
     @FXML
-    public
-    Label durationLabel;
+    StackPane labelBoxContainer;
 
     @FXML
     public
@@ -103,8 +95,9 @@ public class ControlBarController implements Initializable {
     @FXML
     public
     HBox trackContainer;
+
     @FXML
-    public HBox labelBox;
+    public GridPane buttonGrid;
 
     public ArrayList<DurationTrack> durationTracks = new ArrayList<>();
     public DurationTrack defaultTrack = new DurationTrack(0 , 1);
@@ -175,7 +168,7 @@ public class ControlBarController implements Initializable {
 
     double thumbScale = 0;
 
-    Timeline volumeSliderAnimation = null;
+    TranslateTransition volumeSliderAnimation = null;
 
     ParallelTransition showControlsTransition = null;
     ParallelTransition hideControlsTransition = null;
@@ -202,6 +195,15 @@ public class ControlBarController implements Initializable {
     Line volumeMuteLine = new Line();
 
     ParallelTransition volumeIconShapeTransition = null;
+    
+    ClippedNode labelBoxWrapper;
+
+    public HBox labelBox = new HBox();
+    StackPane volumeSliderPane = new StackPane();
+
+    Label durationLabel = new Label();
+    public ProgressBar volumeTrack = new ProgressBar();
+    public Slider volumeSlider = new Slider();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -238,23 +240,55 @@ public class ControlBarController implements Initializable {
         miniplayerSVG = new SVGPath();
         miniplayerSVG.setContent(SVG.MINIPLAYER.getContent());
 
-        volumeSliderPane.setClip(new Rectangle(0, 30));
+        labelBox.setMinWidth(150);
+        labelBox.setPadding(new Insets(0, 10, 0, 0));
+        labelBox.setTranslateX(-68);
+        labelBox.setFillHeight(true);
+        labelBox.setAlignment(Pos.CENTER_LEFT);
+        labelBox.getChildren().addAll(volumeSliderPane, durationLabel);
 
-        Rectangle clip = new Rectangle();
-        clip.widthProperty().bind(volumeSliderPane.widthProperty());
-        clip.heightProperty().bind(volumeSliderPane.heightProperty());
 
-        volumeSliderPane.setClip(clip);
+        volumeSliderPane.setPrefSize(68, 30);
+        volumeSliderPane.setMaxSize(68, 30);
+        volumeSliderPane.getChildren().addAll(volumeTrack, volumeSlider);
+        volumeSliderPane.setAlignment(Pos.CENTER);
 
-        Rectangle labelClip = new Rectangle();
-        labelClip.widthProperty().bind(labelBox.widthProperty().subtract(10));
-        labelClip.heightProperty().bind(labelBox.heightProperty());
-        labelBox.setClip(labelClip);
+        volumeTrack.setProgress(0.5);
+        volumeTrack.getStyleClass().add("volumeTrack");
+        volumeTrack.setMinSize(48, 4);
+        volumeTrack.setPrefSize(48, 4);
+        volumeTrack.setMaxSize(48, 4);
 
+        volumeSlider.setMin(0);
+        volumeSlider.setMax(100);
+        volumeSlider.setValue(50);
+        volumeSlider.setBlockIncrement(5);
+        volumeSlider.setCursor(Cursor.HAND);
+        volumeSlider.getStyleClass().add("volumeSlider");
+        volumeSlider.setMinSize(60, 8);
+        volumeSlider.setPrefSize(60, 8);
+        volumeSlider.setMaxSize(60, 8);
+
+
+        durationLabel.setPrefHeight(30);
+        durationLabel.setMaxHeight(30);
+        durationLabel.setAlignment(Pos.CENTER_LEFT);
+        durationLabel.getStyleClass().add("controlBarLabel");
+        durationLabel.setText("00:00/00:00");
 
         durationLabel.setOnMouseClicked((e) -> toggleDurationLabel());
         durationLabel.setOnMouseEntered(e -> AnimationsClass.animateTextColor(durationLabel, Color.rgb(255, 255, 255), 200));
         durationLabel.setOnMouseExited(e -> AnimationsClass.animateTextColor(durationLabel, Color.rgb(200, 200, 200), 200));
+
+        labelBoxWrapper = new ClippedNode(labelBox);
+
+        labelBoxContainer.getChildren().add(labelBoxWrapper);
+
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(labelBoxContainer.widthProperty());
+        clip.heightProperty().bind(labelBoxContainer.heightProperty());
+
+        labelBoxContainer.setClip(clip);
 
         durationPane.setMouseTransparent(true);
 
@@ -983,11 +1017,9 @@ public class ControlBarController implements Initializable {
     public void volumeSliderEnter() {
         if(volumeSliderAnimation != null && volumeSliderAnimation.getStatus() == Animation.Status.RUNNING) volumeSliderAnimation.stop();
 
-        volumeSliderAnimation = new Timeline(
-                new KeyFrame(Duration.millis(100),
-                        new KeyValue(volumeSliderPane.prefWidthProperty(), 68, Interpolator.EASE_BOTH))
-        );
-
+        volumeSliderAnimation = new TranslateTransition(Duration.millis(100), labelBox);
+        volumeSliderAnimation.setFromX(labelBox.getTranslateX());
+        volumeSliderAnimation.setToX(0);
 
         volumeSliderAnimation.play();
     }
@@ -995,10 +1027,9 @@ public class ControlBarController implements Initializable {
     public void volumeSliderExit() {
         if(volumeSliderAnimation != null && volumeSliderAnimation.getStatus() == Animation.Status.RUNNING) volumeSliderAnimation.stop();
 
-        volumeSliderAnimation = new Timeline(
-                new KeyFrame(Duration.millis(100),
-                        new KeyValue(volumeSliderPane.prefWidthProperty(), 0, Interpolator.EASE_BOTH))
-        );
+        volumeSliderAnimation = new TranslateTransition(Duration.millis(100), labelBox);
+        volumeSliderAnimation.setFromX(labelBox.getTranslateX());
+        volumeSliderAnimation.setToX(-68);
 
         volumeSliderAnimation.play();
     }

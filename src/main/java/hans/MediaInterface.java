@@ -154,7 +154,6 @@ public class MediaInterface {
                     }
 
                     embeddedMediaPlayer.media().startPaused(menuController.queuePage.queueBox.activeItem.get().file.getAbsolutePath());
-                    //seek(Duration.seconds(controlBarController.durationSlider.getValue()));
 
                     if(playbackSettingsController.videoTrackChooserController.selectedTab != null){
                         embeddedMediaPlayer.video().setTrack(playbackSettingsController.videoTrackChooserController.selectedTab.id);
@@ -229,7 +228,7 @@ public class MediaInterface {
                             }
                             else {
                                 videoDisabled = false;
-                                if(!mainController.sliderHoverBox.getChildren().contains(mainController.sliderHoverBox.imagePane)) mainController.sliderHoverBox.getChildren().add(0, mainController.sliderHoverBox.imagePane);
+                                if(menuController.settingsPage.preferencesSection.seekPreviewOn.get() && !mainController.sliderHoverBox.getChildren().contains(mainController.sliderHoverBox.imagePane)) mainController.sliderHoverBox.getChildren().add(0, mainController.sliderHoverBox.imagePane);
 
                                 initializeFrameGrabber(menuController.queuePage.queueBox.activeItem.get().getMediaItem(), mediaPlayer.video().track());
                             }
@@ -345,7 +344,6 @@ public class MediaInterface {
             SleepSuppressor.allowSleep();
 
             if(!controlBarController.durationSlider.isValueChanging() && (!mainController.miniplayerActive || !mainController.miniplayer.miniplayerController.slider.isValueChanging())){
-                //seek(Duration.seconds(newValue));
 
                 if(!seekedToEnd && !playbackSettingsController.playbackOptionsController.loopOn) endMedia();
             }
@@ -592,7 +590,7 @@ public class MediaInterface {
         }
         else {
             videoDisabled = false;
-            if(!mainController.sliderHoverBox.getChildren().contains(mainController.sliderHoverBox.imagePane)) mainController.sliderHoverBox.getChildren().add(0, mainController.sliderHoverBox.imagePane);
+            if(menuController.settingsPage.preferencesSection.seekPreviewOn.get() && !mainController.sliderHoverBox.getChildren().contains(mainController.sliderHoverBox.imagePane)) mainController.sliderHoverBox.getChildren().add(0, mainController.sliderHoverBox.imagePane);
             initializeFrameGrabber(menuController.queuePage.queueBox.activeItem.get().getMediaItem(), id);
         }
 

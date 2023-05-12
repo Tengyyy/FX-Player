@@ -37,7 +37,7 @@ public class ChapterPage {
         StackPane.setAlignment(title, Pos.CENTER_LEFT);
 
         titlePane.getChildren().add(title);
-        titlePane.setPadding(new Insets(20, 30, 100, 30));
+        titlePane.setPadding(new Insets(20, 30, 20, 30));
 
         chapterScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         chapterScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);

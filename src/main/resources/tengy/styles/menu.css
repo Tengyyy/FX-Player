@@ -1,0 +1,674 @@
+
+@font-face {
+    src: url('../fonts/Roboto-Bold.ttf');
+}
+
+@font-face {
+    src: url('../fonts/Roboto-Medium.ttf');
+}
+
+@font-face {
+    src: url('../fonts/Roboto-Regular.ttf');
+}
+
+.root {
+    -fx-background-color: transparent;
+	-fx-font-family: "Roboto Medium";
+	-fx-font-size: 15;
+}
+
+#queueLine {
+    -fx-background-color: red;
+}
+
+#sideBar {
+    -fx-background-color: rgba(5, 5, 5, 0.9);
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: rgb(50, 50,50);
+}
+
+#menu {
+    -fx-background-color: transparent;
+}
+
+#menuContent {
+    -fx-background-color: transparent;
+}
+
+#menuWrapper {
+    -fx-background-color: rgba(0,0,0,0.8);
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: #909090;
+    -fx-border-style: none solid none none;
+}
+
+.menuBoxHeader {
+    -fx-padding: 10 10 10 10;
+    -fx-background-color: transparent;
+}
+
+
+.menuBoxTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Bold";
+    -fx-font-size: 16;
+}
+
+.menuTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 36;
+}
+
+#clearQueueButton {
+    -fx-text-fill: rgb(150,150,150);
+    -fx-background-radius: 5;
+    -fx-border-radius: 2;
+    -fx-border-color: rgb(150,150,150);
+    -fx-border-width: 1;
+    -fx-font-family: "Roboto Medium";
+}
+
+
+#menuPane {
+    -fx-background-color: transparent;
+}
+
+.menuItemPane{
+    -fx-background-color: transparent;
+}
+
+
+.queueItem, .chapterItem{
+    -fx-background-color: transparent;
+}
+
+.queueItemRound, .chapterItemRound{
+    -fx-background-insets: 5 0 5 0;
+    -fx-background-radius: 15;
+}
+
+
+.videoTitle, .chapterName {
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto Bold";
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+
+.subText, #historySizeText {
+    -fx-font-size: 14;
+    -fx-font-family: "Roboto";
+    -fx-background-color: transparent;
+    -fx-text-fill: #cfcfcf;
+}
+
+#historySizeText {
+    -fx-font-size: 12;
+}
+
+#captionsSelectedIcon {
+    -fx-background-color: #cfcfcf;
+}
+
+.roundButton, .copyButton, .editButton, #editImageButton {
+    -fx-background-radius: 100;
+    -fx-padding: 0;
+    -fx-background-color: #656565;
+}
+
+.menuButton {
+    -fx-background-radius: 5;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
+    -fx-background-color: rgba(30,30,30, 0.6);
+    -fx-padding: 7 11 7 9;
+    -fx-graphic-text-gap: 7;
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}
+
+#timingSaveButton {
+    -fx-padding: 5 12 5 12;
+}
+
+.menuButton:hover {
+    -fx-background-color: rgba(38, 38, 38, 0.6);
+    -fx-border-color: rgb(45,45,45);
+}
+
+.menuButton:pressed {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.menuButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+.menuActionButton{
+    -fx-background-color: #ff5447;
+}
+
+.menuBarButton {
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
+}
+
+.menuBarButton:hover {
+    -fx-background-color: rgba(60,60,60,0.85);
+}
+
+.menuBarButton:pressed {
+    -fx-background-color: rgba(45,45,45,0.8);
+    -fx-background-insets: 1;
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.menuBarButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+.activeMenuBarButton {
+    -fx-background-color: rgba(60,60,60,0.85);
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
+}
+
+.activeMenuBarButton:hover {
+    -fx-background-color: rgba(45,45,45,0.8);
+}
+
+.activeMenuBarButton:pressed {
+    -fx-background-color: rgba(60,60,60,0.85);
+    -fx-background-insets: 1;
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.activeMenuBarButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+
+.mainButton {
+    -fx-background-color: rgb(237, 64, 64);
+    -fx-background-radius: 5;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
+    -fx-padding: 7 11 7 9;
+    -fx-graphic-text-gap: 7;
+    -fx-cursor: hand;
+}
+
+.mainButton:hover {
+    -fx-background-color: rgb(200, 55, 55);
+}
+
+.mainButton:pressed {
+    -fx-background-color: rgb(180, 40, 40);
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.mainButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+#addButton, #searchButton {
+    -fx-border-radius: 5 0 0 5;
+    -fx-background-radius: 5 0 0 5;
+    -fx-border-width: 1 0 1 1;
+}
+
+#saveButton {
+    -fx-border-radius: 5 0 0 5;
+    -fx-background-radius: 5 0 0 5;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: white;
+    -fx-background-insets: 0;
+    -fx-insets: 0;
+}
+
+#saveOptionsButton {
+    -fx-background-radius: 0 5 5 0;
+    -fx-padding: 8 9 8 9;
+    -fx-background-insets: 0;
+    -fx-insets: 0;
+}
+
+#saveButton:hover, #saveOptionsButton:hover {
+    -fx-background-color: rgb(200, 55, 55);
+}
+
+#saveButton:pressed, #saveOptionsButton:pressed {
+    -fx-background-color: rgb(180, 40, 40);
+    -fx-text-fill: rgb(180,180,180);
+}
+
+#saveButton:pressed > .graphic, #saveOptionsButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+#addOptionsButton, #searchOptionsButton {
+    -fx-border-radius: 0 5 5 0;
+    -fx-background-radius: 0 5 5 0;
+    -fx-padding: 8 9 8 9;
+}
+
+.iconBackground {
+    -fx-background-color: black;
+    -fx-opacity: 0.5;
+}
+
+#historyButton {
+    -fx-background-radius: 100;
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+#historyIcon {
+    -fx-background-color: rgb(100,100,100);
+}
+
+#closeIcon, #playIcon, #backIcon {
+    -fx-background-color: rgb(200, 200, 200);
+}
+
+#chevronDownIcon {
+    -fx-background-color: rgb(150, 150, 150);
+}
+
+#saveOptionsIcon {
+    -fx-background-color: white;
+}
+
+.menuIcon {
+    -fx-background-color: white;
+}
+
+.copyIcon, .menuIcon2 {
+    -fx-background-color: rgb(200,200,200);
+}
+
+
+.indexLabel {
+    -fx-font-size: 20;
+    -fx-font-family: "Roboto";
+    -fx-text-fill: rgb(200,200,200);
+}
+
+.column {
+    -fx-background-color: red;
+}
+
+#dragLabel {
+    -fx-background-color: rgb(50,50,50);
+    -fx-background-radius: 10;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 18;
+    -fx-text-fill: white;
+    -fx-padding: 15 20 15 20;
+}
+
+
+.imageBorder {
+    -fx-border-style: solid;
+    -fx-border-insets: 0;
+    -fx-border-color: red;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+
+.playButton {
+    -fx-padding: 0;
+    -fx-background-radius: 100;
+    -fx-background-color: transparent;
+}
+
+
+#imageViewContainer {
+    -fx-border-width: 2;
+    -fx-border-color: rgb(100,100,100)
+}
+
+
+.metadataKey {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 18;
+    -fx-text-fill: white;
+    -fx-padding: 5 0 0 0;
+}
+
+.metadataValue {
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 15;
+    -fx-text-fill: rgb(200,200,200);
+}
+
+.keyText {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 16;
+    -fx-text-fill: white;
+}
+
+.valueText {
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 16;
+    -fx-fill: rgb(200,200,200);
+}
+
+.metadataTitle {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 27;
+    -fx-text-fill: white;
+}
+
+.metadataSubheader {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 23;
+    -fx-text-fill: white;
+}
+
+.chapterTitle {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 24;
+    -fx-text-fill: rgb(200, 200, 200);
+}
+
+.chapterText {
+    -fx-font-family: "Roboto";
+    -fx-font-size: 15;
+    -fx-text-fill: white;
+}
+
+.metadataEpisode {
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 15;
+    -fx-text-fill: white;
+}
+
+.expandButton {
+    -fx-text-fill: rgb(150,150,150);
+}
+
+.expandButton:hover {
+    -fx-text-fill: rgb(200,200,200);
+}
+
+.confirmButton:hover {
+    -fx-background-color: rgb(255, 90, 90);
+}
+
+#folderIcon {
+    -fx-background-color: rgb(160,160,160);
+}
+
+#fImageButton {
+    -fx-background-radius: 100;
+    -fx-background-color: rgb(50,50,50);
+}
+
+.warningLabel {
+    -fx-text-fill: rgb(255,0,0);
+    -fx-font-family: "Roboto Bold";
+    -fx-font-size: 14;
+}
+
+.savedLabel {
+    -fx-background-color: transparent;
+    -fx-text-fill: red;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 16;
+}
+
+.mfx-progress-bar .bar1,
+.mfx-progress-bar .bar2{
+    -fx-fill: red;
+}
+
+.mfx-progress-bar .track {
+    -fx-fill: rgb(30,30,30);
+}
+
+.mfx-checkbox .ripple-container .box, .check-box .box {
+    -fx-border-radius: 5;
+    -fx-border-color: rgb(150,150,150);
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.check-box {
+    -fx-background-color: transparent;
+}
+.check-box .box {
+    -fx-background-color: transparent;
+    -fx-border-width: 2;
+}
+
+.check-box:selected > .box > .mark,
+.check-box:indeterminate  > .box > .mark {
+    /* modify mark color */
+    -fx-background-color: white;
+}
+
+.mfx-checkbox:hover .ripple-container .box, .check-box:hover .box {
+    -fx-background-color: rgba(80,80,80, 0.7);
+}
+
+.mfx-checkbox:pressed .ripple-container .box, .check-box:pressed .box {
+    -fx-border-color: transparent;
+}
+
+.mfx-checkbox:selected .ripple-container .box, .check-box:selected .box {
+    -fx-background-color: red;
+    -fx-border-color: transparent;
+}
+
+#multiselectPane {
+    -fx-background-color: rgb(20, 20, 20, 0.6);
+    -fx-background-radius: 8;
+}
+
+.multiselectText {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 15;
+    -fx-text-fill: white;
+}
+
+.bulletin {
+    -fx-font-size: 18;
+}
+
+.clearSelection {
+    -fx-text-fill: red;
+    -fx-cursor: hand;
+}
+
+.settingsSectionTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 22;
+}
+
+.highlightedSection {
+    -fx-background-color: rgba(25,25,25,0.85);
+    -fx-background-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+    -fx-border-radius: 5;
+}
+
+.borderedSection {
+    -fx-background-color: rgba(15,15,15,0.75);
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.settingsSubsectionTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 20;
+}
+
+.settingsText {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 17;
+}
+
+.toggleText {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 16;
+    -fx-graphic-text-gap: 15;
+}
+
+.keycap {
+    -fx-text-fill: rgb(200,200,200);
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 16;
+    -fx-background-color: rgb(75,75,75);
+    -fx-background-radius: 5;
+    -fx-padding: 4 6 4 6;
+    -fx-min-width: 40px;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.infoIcon {
+    -fx-background-color: rgb(200,200,200);
+}
+
+.infoLabel:hover > .infoIcon {
+    -fx-background-color: rgb(255,255,255);
+}
+
+
+.settingsInfoWindow {
+    -fx-background-color: rgba(20,20,20,0.9);
+    -fx-background-radius: 5;
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 15;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+}
+
+#mediaInfoWindow {
+    -fx-background-color: rgba(20,20,20,0.9);
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+}
+
+#mediaInfoWindowTitle {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 18;
+}
+
+.mediaInfoWindowText {
+    -fx-text-fill: rgb(200,200,200);
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 17;
+}
+
+
+
+
+
+.controlItemOdd {
+    -fx-background-color: rgb(30,30,30);
+}
+
+.aboutSectionText {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto Regular";
+    -fx-font-size: 15;
+}
+
+.linkButton {
+    -fx-background-radius: 5;
+    -fx-text-fill: rgb(237, 64, 64);
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
+    -fx-background-color: transparent;
+    -fx-padding: 7 11 7 11;
+    -fx-cursor: hand;
+}
+
+.linkButton:hover {
+    -fx-background-color: rgba(38,38,38, 0.6);
+}
+
+.linkButton:pressed {
+   -fx-background-color: rgba(25, 25, 25, 0.6);
+}
+
+
+.settingsBarButton {
+    -fx-text-fill: white;
+}
+
+
+.settingsMenu {
+    -fx-background-color: rgba(15,15,15,0.95);
+    -fx-background-radius: 10;
+    -fx-padding: 6 3 6 3;
+}
+
+.settingsMenu > .item {
+    -fx-background-color: transparent;
+    -fx-padding: 6 11 6 11;
+    -fx-background-radius: 5;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
+    -fx-text-fill: white;
+}
+
+.settingsMenu > .item:hover {
+    -fx-background-color: rgba(40,40,40,0.9);
+}
+
+
+.scrollToActiveButton {
+    -fx-background-radius: 5;
+    -fx-background-color: rgba(30,30,30, 0.85);
+    -fx-border-width: 1;
+    -fx-border-color: rgb(40,40,40);
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}
+
+.scrollToActiveButton:hover {
+    -fx-background-color: rgba(38, 38, 38, 0.85);
+    -fx-border-color: rgb(45,45,45);
+}
+
+.scrollToActiveButton:pressed {
+    -fx-background-color: rgba(20,20,20,0.85);
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.scrollToActiveButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+
+

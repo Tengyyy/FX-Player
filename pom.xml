@@ -152,7 +152,7 @@
                         <option>--add-exports</option>
                         <option>javafx.base/com.sun.javafx.event=com.jfoenix</option>
                     </options>
-                    <mainClass>hans.App</mainClass>
+                    <mainClass>tengy.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>

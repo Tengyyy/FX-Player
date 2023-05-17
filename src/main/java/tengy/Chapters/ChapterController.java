@@ -211,7 +211,7 @@ public class ChapterController {
                 chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, startTime.toSeconds() / controlBarController.durationSlider.getMax());
             else {
                 Duration endTime = chapterItem.endTime;
-                chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, (Math.min(endTime.toSeconds() / 10, 5)) / controlBarController.durationSlider.getMax());
+                chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, (Math.min(endTime.toSeconds() / 10, 1)) / controlBarController.durationSlider.getMax());
             }
 
             chapterFrameGrabberTask.setOnSucceeded((event) -> {

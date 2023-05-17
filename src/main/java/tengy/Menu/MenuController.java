@@ -525,9 +525,9 @@ public class MenuController implements Initializable {
 
             updateState(MenuState.CLOSED);
 
-            controlBarController.mouseEventTracker.move();
             if(!controlBarController.controlBarShowing) controlBarController.showControls();
             if(!controlBarController.titleShowing) controlBarController.showTitle();
+            controlBarController.mouseEventTracker.move();
         });
 
         menuFade.play();
@@ -543,9 +543,9 @@ public class MenuController implements Initializable {
 
             updateState(MenuState.CLOSED);
 
-            controlBarController.mouseEventTracker.move();
             if(!controlBarController.controlBarShowing) controlBarController.showControls();
             if(!controlBarController.titleShowing) controlBarController.showTitle();
+            controlBarController.mouseEventTracker.move();
         });
 
         closeMenu.play();

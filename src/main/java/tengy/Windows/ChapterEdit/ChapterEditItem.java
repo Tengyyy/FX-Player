@@ -17,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 import tengy.AnimationsClass;
+import tengy.Chapters.ChapterFrameGrabberTask;
 import tengy.ControlTooltip;
 import tengy.MediaItems.MediaItem;
 import tengy.SVG;
@@ -123,6 +124,7 @@ public class ChapterEditItem extends StackPane {
 
         titleSVG.setContent(SVG.TITLE.getContent());
         titleIcon.setShape(titleSVG);
+        titleIcon.setMinSize(15, 15);
         titleIcon.setPrefSize(15, 15);
         titleIcon.setMaxSize(15 , 15);
         titleIcon.getStyleClass().add("menuIcon");
@@ -151,11 +153,13 @@ public class ChapterEditItem extends StackPane {
         titleField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 titleFieldBorder.setVisible(false);
+                titleIcon.setStyle("-fx-background-color: white;");
                 this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
             }
             else {
                if(titleField.getText().isEmpty()){
                    titleFieldBorder.setVisible(true);
+                   titleIcon.setStyle("-fx-background-color: red;");
                    this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
                }
                else {
@@ -183,6 +187,7 @@ public class ChapterEditItem extends StackPane {
 
         timerSVG.setContent(SVG.TIMER.getContent());
         timerIcon.setShape(timerSVG);
+        timerIcon.setMinSize(17, 17);
         timerIcon.setPrefSize(17, 17);
         timerIcon.setMaxSize(17, 17);
         timerIcon.setTranslateY(-1);
@@ -197,6 +202,12 @@ public class ChapterEditItem extends StackPane {
         startTimeField.setMinHeight(30);
         startTimeField.setMaxHeight(30);
         startTimeField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -40%);");
+
+        if(index == 0){
+            startTimeField.setText("00:00");
+            startTimeField.setEditable(false);
+        }
+
         startTimeField.textProperty().addListener((observableValue, oldValue, newValue) -> {
             if(titleField.getText().isEmpty()) chapterEditWindow.saveAllowed.set(false);
             else {
@@ -213,12 +224,20 @@ public class ChapterEditItem extends StackPane {
         startTimeField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 startTimeFieldBorder.setVisible(false);
+                timerIcon.setStyle("-fx-background-color: white;");
+
                 this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
             }
             else {
                 boolean isTime = Utilities.isTime(startTimeField.getText());
                 if(!isTime){
                     startTimeFieldBorder.setVisible(true);
+                    timerIcon.setStyle("-fx-background-color: red;");
+
+                    coverImage.setImage(null);
+                    coverImage.setVisible(false);
+                    imageIcon.setVisible(true);
+
                     if(!mouseHover) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
                     return;
                 }
@@ -227,8 +246,16 @@ public class ChapterEditItem extends StackPane {
 
                     if(time.greaterThanOrEqualTo(mediaItem.getDuration())){
                         startTimeFieldBorder.setVisible(true);
+                        timerIcon.setStyle("-fx-background-color: red;");
 
                         if(!mouseHover) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+
+                        coverImage.setImage(null);
+                        coverImage.setVisible(false);
+                        imageIcon.setVisible(true);
+                    }
+                    else {
+                        updateFrame(time);
                     }
                 }
 
@@ -297,10 +324,42 @@ public class ChapterEditItem extends StackPane {
             ChapterEditItem chapterEditItem = chapterEditWindow.chapterEditItems.get(i);
             chapterEditItem.index--;
             chapterEditItem.indexLabel.setText(String.valueOf(chapterEditItem.index+1));
+            if(i == 1){
+                chapterEditItem.setUneditable();
+            }
         }
 
         chapterEditWindow.chapterEditItems.remove(this);
         chapterEditWindow.content.getChildren().remove(this);
         chapterEditWindow.saveAllowed.set(true);
+    }
+
+    private void setUneditable(){
+        startTimeField.setText("00:00");
+        startTimeField.setEditable(false);
+        startTimeFieldBorder.setVisible(false);
+        timerIcon.setStyle("-fx-background-color: white;");
+        updateFrame(Duration.ZERO);
+    }
+
+    private void updateFrame(Duration duration){
+        coverImage.setImage(null);
+        coverImage.setVisible(false);
+        imageIcon.setVisible(true);
+
+        ChapterFrameGrabberTask chapterFrameGrabberTask;
+        if (duration.greaterThan(Duration.ZERO))
+            chapterFrameGrabberTask = new ChapterFrameGrabberTask(chapterEditWindow.frameGrabber, duration.toSeconds() / mediaItem.getDuration().toSeconds());
+        else {
+            chapterFrameGrabberTask = new ChapterFrameGrabberTask(chapterEditWindow.frameGrabber, (Math.min(mediaItem.getDuration().toSeconds() / 10, 1)) / mediaItem.getDuration().toSeconds());
+        }
+
+        chapterFrameGrabberTask.setOnSucceeded(e -> {
+            coverImage.setImage(chapterFrameGrabberTask.getValue());
+            coverImage.setVisible(true);
+            imageIcon.setVisible(false);
+        });
+
+        chapterEditWindow.executorService.execute(chapterFrameGrabberTask);
     }
 }

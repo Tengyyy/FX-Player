@@ -121,11 +121,11 @@
     -fx-text-fill: white;
     -fx-font-size: 15;
     -fx-font-family: "Roboto";
-    -fx-background-color: rgba(30,30,30, 0.6);
+    -fx-background-color: rgb(30,30,30);
     -fx-padding: 7 11 7 9;
     -fx-graphic-text-gap: 7;
     -fx-border-width: 1;
-    -fx-border-color: rgb(40,40,40);
+    -fx-border-color: rgb(100,100,100);
     -fx-border-radius: 5;
     -fx-cursor: hand;
 }
@@ -135,30 +135,45 @@
 }
 
 .menuButton:hover {
-    -fx-background-color: rgba(38, 38, 38, 0.6);
-    -fx-border-color: rgb(45,45,45);
+    -fx-background-color: rgb(40, 40, 40);
+    -fx-border-color: rgb(150,150,150);
 }
 
 .menuButton:pressed {
-    -fx-background-color: transparent;
+    -fx-background-color: rgb(30,30,30);
     -fx-text-fill: rgb(180,180,180);
+    -fx-border-color: rgb(150,150,150);
 }
 
 .menuButton:pressed > .graphic {
     -fx-background-color: rgb(180,180,180);
 }
 
-
-.addChapterButton {
-    -fx-border-color: rgb(200,200,200);
+.shuffleToggleActive {
+    -fx-text-filL: red;
+    -fx-border-color: red;
 }
 
-.addChapterButton:hover {
-    -fx-border-color: white;
+.shuffleToggleActive > .graphic {
+    -fx-background-color: red;
 }
 
-.addChapterButton:pressed {
-    -fx-border-color: rgb(200,200,200);
+.shuffleToggleActive:hover > .graphic {
+    -fx-background-color: red;
+}
+
+.shuffleToggleActive:pressed > .graphic {
+    -fx-background-color: red;
+}
+
+.shuffleToggleActive:hover {
+    -fx-text-fill: red;
+    -fx-border-color: red;
+}
+
+.shuffleToggleActive:pressed {
+    -fx-text-fill: red;
+    -fx-border-color: red;
 }
 
 .menuActionButton{
@@ -363,7 +378,7 @@
 }
 
 .metadataValue {
-    -fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
     -fx-font-size: 15;
     -fx-text-fill: rgb(200,200,200);
 }
@@ -375,7 +390,7 @@
 }
 
 .valueText {
-    -fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
     -fx-font-size: 16;
     -fx-fill: rgb(200,200,200);
 }
@@ -405,7 +420,7 @@
 }
 
 .metadataEpisode {
-    -fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
     -fx-font-size: 15;
     -fx-text-fill: white;
 }
@@ -531,19 +546,19 @@
 
 .settingsSubsectionTitle {
     -fx-text-fill: white;
-    -fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
     -fx-font-size: 20;
 }
 
 .settingsText {
     -fx-text-fill: white;
-    -fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
     -fx-font-size: 17;
 }
 
 .toggleText {
     -fx-text-fill: white;
-    -fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
     -fx-font-size: 16;
     -fx-graphic-text-gap: 15;
 }
@@ -573,7 +588,7 @@
     -fx-background-color: rgba(20,20,20,0.9);
     -fx-background-radius: 5;
     -fx-text-fill: white;
-    -fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
     -fx-font-size: 15;
     -fx-border-radius: 5;
     -fx-border-width: 1;
@@ -596,7 +611,7 @@
 
 .mediaInfoWindowText {
     -fx-text-fill: rgb(200,200,200);
-    -fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
     -fx-font-size: 17;
 }
 
@@ -610,7 +625,7 @@
 
 .aboutSectionText {
     -fx-text-fill: white;
-    -fx-font-family: "Roboto Regular";
+    -fx-font-family: "Roboto";
     -fx-font-size: 15;
 }
 
@@ -660,20 +675,21 @@
 
 .scrollToActiveButton {
     -fx-background-radius: 5;
-    -fx-background-color: rgba(30,30,30, 0.85);
+    -fx-background-color: rgb(30,30,30);
     -fx-border-width: 1;
-    -fx-border-color: rgb(40,40,40);
+    -fx-border-color: rgb(60,60,60);
     -fx-border-radius: 5;
     -fx-cursor: hand;
 }
 
 .scrollToActiveButton:hover {
-    -fx-background-color: rgba(38, 38, 38, 0.85);
-    -fx-border-color: rgb(45,45,45);
+    -fx-background-color: rgb(40, 40, 40);
+    -fx-border-color: rgb(80,80,80);
 }
 
 .scrollToActiveButton:pressed {
-    -fx-background-color: rgba(20,20,20,0.85);
+    -fx-border-color: rgb(80,80,80);
+    -fx-background-color: rgb(20,20,20);
     -fx-text-fill: rgb(180,180,180);
 }
 

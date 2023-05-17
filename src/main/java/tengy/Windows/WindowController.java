@@ -1,5 +1,6 @@
 package tengy.Windows;
 
+import org.bytedeco.javacv.FFmpegFrameGrabber;
 import tengy.MainController;
 import tengy.Windows.ChapterEdit.ChapterEditWindow;
 
@@ -78,6 +79,19 @@ public class WindowController {
                 chapterEditWindow.saveAllowed.set(false);
                 chapterEditWindow.mediaItem = null;
                 chapterEditWindow.content.getChildren().clear();
+
+                if(chapterEditWindow.frameGrabber != null) {
+                    try {
+                        chapterEditWindow.frameGrabber.stop();
+                    } catch (FFmpegFrameGrabber.Exception e) {
+                        e.printStackTrace();
+                    }
+                    chapterEditWindow.frameGrabber = null;
+                }
+
+                if(chapterEditWindow.executorService != null && !chapterEditWindow.executorService.isShutdown()) chapterEditWindow.executorService.shutdown();
+                chapterEditWindow.executorService = null;
+
             }
         }
 

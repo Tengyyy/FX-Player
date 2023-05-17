@@ -205,6 +205,8 @@ public class ControlBarController implements Initializable {
     public ProgressBar volumeTrack = new ProgressBar();
     public Slider volumeSlider = new Slider();
 
+    ScaleTransition thumbTransition = null;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -641,11 +643,14 @@ public class ControlBarController implements Initializable {
 
         });
 
-
         // this part has to be run later because the slider thumb loads in later than the slider itself
         Platform.runLater(() -> {
 
             durationSlider.lookup(".thumb").setMouseTransparent(true);
+
+            durationSlider.lookup(".thumb").setScaleX(0);
+            durationSlider.lookup(".thumb").setScaleY(0);
+            durationSlider.lookup(".thumb").setStyle("-fx-background-color: red;");
 
             durationSlider.lookup(".track").setCursor(Cursor.HAND);
 
@@ -1124,8 +1129,6 @@ public class ControlBarController implements Initializable {
     }
 
     public void subtitlesButtonClick() {
-
-
         if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
         else subtitlesController.openSubtitles();
     }
@@ -1133,14 +1136,21 @@ public class ControlBarController implements Initializable {
     public void durationSliderHoverOn(double value) {
         lastKnownSliderHoverPosition = value;
 
+
         if(durationSlider.isValueChanging()) return;
-        ScaleTransition sliderThumbHoverOn = null;
+
         ScaleTransition sliderTrackHoverOn = null;
+
+        if(thumbTransition != null && thumbTransition.getStatus() == Animation.Status.RUNNING) thumbTransition.stop();
+        thumbTransition = null;
+
+
         if(durationTracks.isEmpty()){
             if(thumbScale != 1.1) {
-                sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.1, durationSlider.lookup(".thumb").getScaleY(), 1.1, false, 1, false);
+                thumbTransition = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.1, durationSlider.lookup(".thumb").getScaleY(), 1.1, false, 1, false);
                 thumbScale = 1.1;
             }
+
             sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, defaultTrack.progressBar, 1, 1, defaultTrack.progressBar.getScaleY(), 1.8, false, 1, false);
         }
         else {
@@ -1149,7 +1159,7 @@ public class ControlBarController implements Initializable {
                     hoverTrack = durationTrack;
                     mainController.sliderHoverBox.chapterlabel.setText(chapterController.chapterDescriptions.get(durationTracks.indexOf(durationTrack)).name());
                     if(durationSlider.getValue()/durationSlider.getMax() >= durationTrack.startTime && durationSlider.getValue()/durationSlider.getMax() <= durationTrack.endTime && !durationSlider.isValueChanging() && thumbScale != 1.25) {
-                        sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.25, durationSlider.lookup(".thumb").getScaleY(), 1.25, false, 1, false);
+                        thumbTransition = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.25, durationSlider.lookup(".thumb").getScaleY(), 1.25, false, 1, false);
                         thumbScale = 1.25;
                     }
                     sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, durationTrack.progressBar, 1, 1, durationTrack.progressBar.getScaleY(), 3, false, 1 , false);
@@ -1157,13 +1167,14 @@ public class ControlBarController implements Initializable {
                 }
             }
 
-            if(sliderThumbHoverOn == null && thumbScale != 0.9){
-                sliderThumbHoverOn = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0.9, durationSlider.lookup(".thumb").getScaleY(), 0.9, false, 1, false);
+            if(thumbTransition == null && thumbScale != 0.9){
+                thumbTransition = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0.9, durationSlider.lookup(".thumb").getScaleY(), 0.9, false, 1, false);
                 thumbScale = 0.9;
             }
 
         }
-        AnimationsClass.parallelAnimation(true, sliderThumbHoverOn, sliderTrackHoverOn);
+        if(thumbTransition != null) thumbTransition.play();
+        if(sliderTrackHoverOn != null) sliderTrackHoverOn.play();
     }
 
 
@@ -1173,9 +1184,14 @@ public class ControlBarController implements Initializable {
             return;
         }
 
-        List<Transition> sliderHoverTransitions = new ArrayList<>();
-        sliderHoverTransitions.add(AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0, durationSlider.lookup(".thumb").getScaleY(), 0, false, 1, false));
+        if(thumbTransition != null && thumbTransition.getStatus() == Animation.Status.RUNNING) thumbTransition.stop();
+        thumbTransition = null;
+
+
+        thumbTransition = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0, durationSlider.lookup(".thumb").getScaleY(), 0, false, 1, false);
         thumbScale = 0;
+
+        List<Transition> sliderHoverTransitions = new ArrayList<>();
 
         if(durationTracks.isEmpty()){
             sliderHoverTransitions.add(AnimationsClass.scaleAnimation(100, defaultTrack.progressBar, 1, 1, defaultTrack.progressBar.getScaleY(), 1, false, 1, false));
@@ -1187,6 +1203,7 @@ public class ControlBarController implements Initializable {
         }
 
         AnimationsClass.parallelAnimation(true, sliderHoverTransitions);
+        if(thumbTransition != null) thumbTransition.play();
 
         hoverTrack = null;
         lastKnownSliderHoverPosition = value;
@@ -1197,7 +1214,9 @@ public class ControlBarController implements Initializable {
         if(!durationTracks.isEmpty()){
             if(hoverTrack == null || (hoverTrack.startTime > value || hoverTrack.endTime < value)){
 
-                ScaleTransition sliderThumbHover = null;
+                if(thumbTransition != null && thumbTransition.getStatus() == Animation.Status.RUNNING) thumbTransition.stop();
+                thumbTransition = null;
+
                 ScaleTransition sliderTrackHoverOff = null;
                 if(hoverTrack != null) sliderTrackHoverOff = AnimationsClass.scaleAnimation(100, hoverTrack.progressBar, 1, 1, hoverTrack.progressBar.getScaleY(), 1, false, 1 , false);
                 ScaleTransition sliderTrackHoverOn = null;
@@ -1207,7 +1226,7 @@ public class ControlBarController implements Initializable {
                         hoverTrack = durationTrack;
                         mainController.sliderHoverBox.chapterlabel.setText(chapterController.chapterDescriptions.get(durationTracks.indexOf(durationTrack)).name());
                         if(durationSlider.getValue()/durationSlider.getMax() >= durationTrack.startTime && durationSlider.getValue()/durationSlider.getMax() <= durationTrack.endTime && !durationSlider.isValueChanging() && thumbScale != 1.25){
-                            sliderThumbHover = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.25, durationSlider.lookup(".thumb").getScaleY(), 1.25, false, 1, false);
+                            thumbTransition = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 1.25, durationSlider.lookup(".thumb").getScaleY(), 1.25, false, 1, false);
                             thumbScale = 1.25;
                         }
                         sliderTrackHoverOn = AnimationsClass.scaleAnimation(100, durationTrack.progressBar, 1, 1, durationTrack.progressBar.getScaleY(), 3, false, 1 , false);
@@ -1215,13 +1234,14 @@ public class ControlBarController implements Initializable {
                     }
                 }
 
-                if(sliderThumbHover == null && !durationSlider.isValueChanging() && thumbScale != 0.9){
-                    sliderThumbHover = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0.9, durationSlider.lookup(".thumb").getScaleY(), 0.9, false, 1, false);
+                if(thumbTransition == null && !durationSlider.isValueChanging() && thumbScale != 0.9){
+                    thumbTransition = AnimationsClass.scaleAnimation(100, durationSlider.lookup(".thumb"), durationSlider.lookup(".thumb").getScaleX(), 0.9, durationSlider.lookup(".thumb").getScaleY(), 0.9, false, 1, false);
                     thumbScale = 0.9;
                 }
 
 
-                AnimationsClass.parallelAnimation(true, sliderTrackHoverOn, sliderTrackHoverOff, sliderThumbHover);
+                AnimationsClass.parallelAnimation(true, sliderTrackHoverOn, sliderTrackHoverOff);
+                if(thumbTransition != null) thumbTransition.play();
             }
         }
 
@@ -1540,6 +1560,10 @@ public class ControlBarController implements Initializable {
                         durationTrack.progressBar.setProgress(1);
                         if(durationSliderHover && !durationSlider.isValueChanging() && hoverTrack == durationTrack){
                             if(thumbScale != 0.9){
+
+                                if(thumbTransition != null && thumbTransition.getStatus() == Animation.Status.RUNNING) thumbTransition.stop();
+                                thumbTransition = null;
+
                                 durationSlider.lookup(".thumb").setScaleX(0.9);
                                 durationSlider.lookup(".thumb").setScaleY(0.9);
 
@@ -1555,6 +1579,10 @@ public class ControlBarController implements Initializable {
                         if(durationSliderHover && hoverTrack == durationTrack){
 
                             if(thumbScale != 1.25){
+
+                                if(thumbTransition != null && thumbTransition.getStatus() == Animation.Status.RUNNING) thumbTransition.stop();
+                                thumbTransition = null;
+
                                 durationSlider.lookup(".thumb").setScaleX(1.25);
                                 durationSlider.lookup(".thumb").setScaleY(1.25);
 
@@ -1571,6 +1599,10 @@ public class ControlBarController implements Initializable {
                         if(durationSliderHover && !durationSlider.isValueChanging() && hoverTrack == durationTrack){
 
                             if(thumbScale != 0.9){
+
+                                if(thumbTransition != null && thumbTransition.getStatus() == Animation.Status.RUNNING) thumbTransition.stop();
+                                thumbTransition = null;
+
                                 durationSlider.lookup(".thumb").setScaleX(0.9);
                                 durationSlider.lookup(".thumb").setScaleY(0.9);
 
@@ -1611,7 +1643,7 @@ public class ControlBarController implements Initializable {
 
         if(subtitlesController.subtitlesBox.subtitlesTransition != null && subtitlesController.subtitlesBox.subtitlesTransition.getStatus() == Animation.Status.RUNNING) subtitlesController.subtitlesBox.subtitlesTransition.stop();
 
-        subtitlesController.subtitlesBox.subtitlesContainer.setMouseTransparent(false);
+        if(subtitlesController.subtitlesSelected.get()) subtitlesController.subtitlesBox.subtitlesContainer.setMouseTransparent(false);
 
         TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(100), subtitlesController.subtitlesBox.subtitlesContainer);
         captionsTransition.setCycleCount(1);

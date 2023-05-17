@@ -2,32 +2,33 @@ package tengy;
 
 
 import com.github.kokorin.jaffree.ffprobe.Stream;
-import tengy.PlaybackSettings.AudioTrackTab;
-import tengy.PlaybackSettings.VideoTrackTab;
-import tengy.Subtitles.SubtitlesController;
-import tengy.Subtitles.SubtitlesState;
-import tengy.Chapters.ChapterController;
-import tengy.Chapters.ChapterFrameGrabberTask;
-import tengy.Chapters.ChapterItem;
-import tengy.MediaItems.MediaItem;
-import tengy.Menu.MenuController;
-import tengy.Menu.Queue.QueueItem;
-import tengy.PlaybackSettings.PlaybackSettingsController;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
+import tengy.Chapters.ChapterController;
+import tengy.MediaItems.MediaItem;
+import tengy.Menu.MenuController;
+import tengy.Menu.Queue.QueueItem;
+import tengy.PlaybackSettings.AudioTrackTab;
+import tengy.PlaybackSettings.PlaybackSettingsController;
+import tengy.PlaybackSettings.VideoTrackTab;
+import tengy.Subtitles.SubtitlesController;
+import tengy.Subtitles.SubtitlesState;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
-import uk.co.caprica.vlcj.player.base.*;
+import uk.co.caprica.vlcj.player.base.Equalizer;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
+import uk.co.caprica.vlcj.player.base.TrackDescription;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

@@ -8,6 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.*;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
 import tengy.*;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
@@ -21,12 +22,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import tengy.Chapters.ChapterFrameGrabberTask;
 import tengy.MediaItems.MediaItem;
 import tengy.Windows.WindowController;
 import tengy.Windows.WindowState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_DEFAULT;
 
 public class ChapterEditWindow {
 
@@ -70,6 +76,9 @@ public class ChapterEditWindow {
     public MediaItem mediaItem = null;
 
     SavePopUp savePopUp;
+
+    public FFmpegFrameGrabber frameGrabber = null;
+    public ExecutorService executorService = null;
 
     public ChapterEditWindow(WindowController windowController){
         this.windowController = windowController;
@@ -135,7 +144,7 @@ public class ChapterEditWindow {
         addIcon.getStyleClass().addAll("menuIcon", "graphic");
 
         addButton.setGraphic(addIcon);
-        addButton.getStyleClass().addAll("menuButton", "addChapterButton");
+        addButton.getStyleClass().add("menuButton");
         addButton.setText("Add chapter");
         addButton.setOnAction(e -> createChapter());
 
@@ -224,6 +233,19 @@ public class ChapterEditWindow {
 
         mainController.popupWindowContainer.setMouseTransparent(true);
 
+        if(frameGrabber != null) {
+            try {
+                frameGrabber.stop();
+            } catch (FFmpegFrameGrabber.Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        frameGrabber = null;
+
+        if(executorService != null && !executorService.isShutdown()) executorService.shutdown();
+        executorService = null;
+
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(100), mainController.popupWindowContainer);
         fadeTransition.setFromValue(mainController.popupWindowContainer.getOpacity());
         fadeTransition.setToValue(0);
@@ -250,6 +272,8 @@ public class ChapterEditWindow {
         }
 
         content.getChildren().add(addButtonContainer);
+
+        initializeFrames();
     }
 
     private void createChapter(){
@@ -279,12 +303,14 @@ public class ChapterEditWindow {
             if(chapterEditItem.titleField.getText().isEmpty()){
                 fieldsValid = false;
                 chapterEditItem.titleFieldBorder.setVisible(true);
+                chapterEditItem.titleIcon.setStyle("-fx-background-color: red;");
 
                 if(!chapterEditItem.mouseHover) chapterEditItem.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
             }
             if(!Utilities.isTime(chapterEditItem.startTimeField.getText())){
                 fieldsValid = false;
                 chapterEditItem.startTimeFieldBorder.setVisible(true);
+                chapterEditItem.timerIcon.setStyle("-fx-background-color: red;");
 
                 if(!chapterEditItem.mouseHover) chapterEditItem.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
             }
@@ -292,6 +318,7 @@ public class ChapterEditWindow {
             if(Utilities.stringToDuration(chapterEditItem.startTimeField.getText()).greaterThanOrEqualTo(mediaItem.getDuration())){
                 fieldsValid = false;
                 chapterEditItem.startTimeFieldBorder.setVisible(true);
+                chapterEditItem.timerIcon.setStyle("-fx-background-color: red;");
 
                 if(!chapterEditItem.mouseHover) chapterEditItem.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
             }
@@ -301,6 +328,7 @@ public class ChapterEditWindow {
                 if(Utilities.isTime(previousItem.startTimeField.getText()) && Utilities.stringToDuration(previousItem.startTimeField.getText()).greaterThanOrEqualTo(Utilities.stringToDuration(chapterEditItem.startTimeField.getText()))){
                     fieldsValid = false;
                     chapterEditItem.startTimeFieldBorder.setVisible(true);
+                    chapterEditItem.timerIcon.setStyle("-fx-background-color: red;");
 
                     if(!chapterEditItem.mouseHover) chapterEditItem.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
                 }
@@ -309,5 +337,56 @@ public class ChapterEditWindow {
 
 
         return fieldsValid;
+    }
+
+    public void initializeFrames(){
+        if(mediaItem.hasVideo()){
+            frameGrabber = new FFmpegFrameGrabber(mediaItem.getFile());
+            frameGrabber.setVideoDisposition(AV_DISPOSITION_DEFAULT);
+            frameGrabber.setVideoOption("vcodec", "copy");
+
+            Integer width = mediaItem.defaultVideoStream.getWidth();
+            Integer height = mediaItem.defaultVideoStream.getHeight();
+
+            if(width != null && height != null){
+                double ratio = (double) width / height;
+
+                int newWidth = (int) Math.min(160, 90 * ratio);
+                int newHeight = (int) Math.min(90, 160 / ratio);
+
+                frameGrabber.setImageWidth(newWidth);
+                frameGrabber.setImageHeight(newHeight);
+            }
+
+            try {
+                frameGrabber.start();
+            } catch (FFmpegFrameGrabber.Exception e) {
+                e.printStackTrace();
+            }
+
+            executorService = Executors.newFixedThreadPool(1);
+
+            for(ChapterEditItem chapterEditItem : chapterEditItems){
+                if(Utilities.isTime(chapterEditItem.startTimeField.getText())){
+                    Duration startTime = Utilities.stringToDuration(chapterEditItem.startTimeField.getText());
+                    if(startTime.lessThan(mediaItem.getDuration())){
+                        ChapterFrameGrabberTask chapterFrameGrabberTask;
+                        if (startTime.greaterThan(Duration.ZERO))
+                            chapterFrameGrabberTask = new ChapterFrameGrabberTask(frameGrabber, startTime.toSeconds() / mediaItem.getDuration().toSeconds());
+                        else {
+                            chapterFrameGrabberTask = new ChapterFrameGrabberTask(frameGrabber, (Math.min(mediaItem.getDuration().toSeconds() / 10, 1)) / mediaItem.getDuration().toSeconds());
+                        }
+
+                        chapterFrameGrabberTask.setOnSucceeded(e -> {
+                            chapterEditItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
+                            chapterEditItem.coverImage.setVisible(true);
+                            chapterEditItem.imageIcon.setVisible(false);
+                        });
+
+                        executorService.execute(chapterFrameGrabberTask);
+                    }
+                }
+            }
+        }
     }
 }

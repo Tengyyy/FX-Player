@@ -109,8 +109,7 @@ public class PlaybackOptionsController {
 
                 if(!playbackSettingsController.menuController.queuePage.queueBox.queue.isEmpty()) playbackSettingsController.menuController.queuePage.queueBox.shuffleOff();
 
-                playbackSettingsController.menuController.queuePage.shuffleToggle.setStyle("-fx-border-color: rgb(30,30,30); -fx-text-fill: white;");
-                playbackSettingsController.menuController.queuePage.shuffleToggle.getGraphic().setStyle("-fx-background-color: white;");
+                playbackSettingsController.menuController.queuePage.shuffleToggle.getStyleClass().remove("shuffleToggleActive");
 
             } else { // ON
                 shuffleOn = true;
@@ -125,8 +124,7 @@ public class PlaybackOptionsController {
 
                 if(!playbackSettingsController.menuController.queuePage.queueBox.queue.isEmpty()) playbackSettingsController.menuController.queuePage.queueBox.shuffleOn();
 
-                playbackSettingsController.menuController.queuePage.shuffleToggle.setStyle("-fx-border-color: red; -fx-text-fill: red;");
-                playbackSettingsController.menuController.queuePage.shuffleToggle.getGraphic().setStyle("-fx-background-color: red;");
+                if(!playbackSettingsController.menuController.queuePage.shuffleToggle.getStyleClass().contains("shuffleToggleActive")) playbackSettingsController.menuController.queuePage.shuffleToggle.getStyleClass().add("shuffleToggleActive");
             }
 
         });

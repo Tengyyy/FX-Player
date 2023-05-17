@@ -445,7 +445,7 @@ public class QueuePage {
         StackPane.setMargin(scrollUpButtonContainer, new Insets(130, 0, 0, 0));
         scrollUpButtonContainer.setMaxHeight(20);
         scrollUpButtonContainer.getChildren().add(scrollUpButton);
-        StackPane.setMargin(scrollUpButton, new Insets(5, 10, 0, 5));
+        StackPane.setMargin(scrollUpButton, new Insets(5, 10, 0, 10));
         scrollUpButton.prefWidthProperty().bind(queueWrapper.widthProperty());
         scrollUpButton.setPrefHeight(15);
         scrollUpButton.getStyleClass().add("scrollToActiveButton");
@@ -461,7 +461,7 @@ public class QueuePage {
         StackPane.setAlignment(scrollDownButtonContainer, Pos.BOTTOM_CENTER);
         scrollDownButtonContainer.getChildren().add(scrollDownButton);
         scrollDownButtonContainer.setMaxHeight(20);
-        StackPane.setMargin(scrollDownButton, new Insets(0, 10, 5, 5));
+        StackPane.setMargin(scrollDownButton, new Insets(0, 10, 5, 10));
         scrollDownButton.prefWidthProperty().bind(queueWrapper.widthProperty());
         scrollDownButton.setPrefHeight(15);
         scrollDownButton.getStyleClass().add("scrollToActiveButton");
@@ -553,6 +553,9 @@ public class QueuePage {
         queueBarButtonWrapper.setMinHeight(100);
         queueBarButtonWrapper.setPrefHeight(100);
 
+        StackPane.setMargin(scrollUpButton, new Insets(5, 50, 0, 50));
+        StackPane.setMargin(scrollDownButton, new Insets(0, 50, 5, 50));
+
         queueBox.extend();
     }
 
@@ -562,6 +565,9 @@ public class QueuePage {
         queueBarButtonWrapper.setPadding(new Insets(0, 0, 0, 0));
         queueBarButtonWrapper.setMinHeight(80);
         queueBarButtonWrapper.setPrefHeight(80);
+
+        StackPane.setMargin(scrollUpButton, new Insets(5, 10, 0, 10));
+        StackPane.setMargin(scrollDownButton, new Insets(0, 10, 5, 10));
 
         queueBox.shrink();
     }
@@ -606,7 +612,7 @@ public class QueuePage {
     public void checkScroll(){
         if(queueBox.activeItem.get() == null) return;
 
-        if(queueBox.itemDragActive.get() && (queueBox.draggedNode == queueBox.activeItem.get() || selectionActive.get() && selectedItems.contains(queueBox.activeItem.get()))){
+        if(queueBox.itemDragActive.get() && (queueBox.draggedNode == queueBox.activeItem.get() || selectionActive.get() && selectedItems.contains(queueBox.activeItem.get()) && selectedItems.contains(queueBox.draggedNode))){
             scrollDownButtonContainer.setVisible(false);
             scrollUpButtonContainer.setVisible(false);
             return;

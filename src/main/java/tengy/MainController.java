@@ -1539,6 +1539,8 @@ public class MainController implements Initializable {
     public void PLAYBACK_SPEED_UP25Action(){
 
         playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.25);
+        playbackSettingsController.playbackSpeedController.setSpeed(playbackSettingsController.playbackSpeedController.customSpeedPane.formattedSliderValue); // updates mediaplayer playback speed
+        playbackSettingsController.playbackSpeedController.updateTabs(playbackSettingsController.playbackSpeedController.customSpeedPane.formattedSliderValue);
 
         valueIndicator.setValue(playbackSettingsController.playbackSpeedController.df.format(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
         valueIndicator.play();
@@ -1551,6 +1553,8 @@ public class MainController implements Initializable {
     public void PLAYBACK_SPEED_DOWN25Action(){
 
         playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.25);
+        playbackSettingsController.playbackSpeedController.setSpeed(playbackSettingsController.playbackSpeedController.customSpeedPane.formattedSliderValue); // updates mediaplayer playback speed
+        playbackSettingsController.playbackSpeedController.updateTabs(playbackSettingsController.playbackSpeedController.customSpeedPane.formattedSliderValue);
 
         valueIndicator.setValue(playbackSettingsController.playbackSpeedController.df.format(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
         valueIndicator.play();
@@ -1563,6 +1567,8 @@ public class MainController implements Initializable {
     public void PLAYBACK_SPEED_UP5Action(){
 
         playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
+        playbackSettingsController.playbackSpeedController.setSpeed(playbackSettingsController.playbackSpeedController.customSpeedPane.formattedSliderValue); // updates mediaplayer playback speed
+        playbackSettingsController.playbackSpeedController.updateTabs(playbackSettingsController.playbackSpeedController.customSpeedPane.formattedSliderValue);
 
         valueIndicator.setValue(playbackSettingsController.playbackSpeedController.df.format(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
         valueIndicator.play();
@@ -1575,6 +1581,8 @@ public class MainController implements Initializable {
     public void PLAYBACK_SPEED_DOWN5Action(){
 
         playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
+        playbackSettingsController.playbackSpeedController.setSpeed(playbackSettingsController.playbackSpeedController.customSpeedPane.formattedSliderValue); // updates mediaplayer playback speed
+        playbackSettingsController.playbackSpeedController.updateTabs(playbackSettingsController.playbackSpeedController.customSpeedPane.formattedSliderValue);
 
         valueIndicator.setValue(playbackSettingsController.playbackSpeedController.df.format(playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue()) + "x");
         valueIndicator.play();

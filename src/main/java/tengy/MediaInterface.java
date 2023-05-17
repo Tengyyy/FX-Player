@@ -290,22 +290,7 @@ public class MediaInterface {
                             playbackSettingsController.initializeVideoTrackPage(videoTrackDescriptions, activeVideoTrack);
 
                         if (menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem().hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()) {
-                            ExecutorService executorService = Executors.newFixedThreadPool(1);
-                            for (Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()) {
-                                ChapterItem chapterItem = (ChapterItem) node;
-                                Duration startTime = chapterItem.startTime;
-                                ChapterFrameGrabberTask chapterFrameGrabberTask;
-                                if (startTime.greaterThan(Duration.ZERO))
-                                    chapterFrameGrabberTask = new ChapterFrameGrabberTask(fFmpegFrameGrabber, startTime.toSeconds() / menuController.controlBarController.durationSlider.getMax());
-                                else {
-                                    Duration endTime = chapterItem.endTime;
-                                    chapterFrameGrabberTask = new ChapterFrameGrabberTask(fFmpegFrameGrabber, (Math.min(endTime.toSeconds() / 10, 5)) / menuController.controlBarController.durationSlider.getMax());
-                                }
-                                chapterFrameGrabberTask.setOnSucceeded((event) -> chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue()));
-
-                                executorService.execute(chapterFrameGrabberTask);
-                            }
-                            executorService.shutdown();
+                            chapterController.loadFrames();
                         }
                     }
 
@@ -712,21 +697,7 @@ public class MediaInterface {
         }
 
         if(mediaItem.hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
-            ExecutorService executorService = Executors.newFixedThreadPool(1);
-            for(Node node : menuController.chapterController.chapterPage.chapterBox.getChildren()){
-                ChapterItem chapterItem = (ChapterItem) node;
-                Duration startTime = chapterItem.startTime;
-                ChapterFrameGrabberTask chapterFrameGrabberTask;
-                if(startTime.greaterThan(Duration.ZERO)) chapterFrameGrabberTask = new ChapterFrameGrabberTask(fFmpegFrameGrabber, startTime.toSeconds()/menuController.controlBarController.durationSlider.getMax());
-                else {
-                    Duration endTime = chapterItem.endTime;
-                    chapterFrameGrabberTask = new ChapterFrameGrabberTask(fFmpegFrameGrabber, (Math.min(endTime.toSeconds()/10, 5))/menuController.controlBarController.durationSlider.getMax());
-                }
-                chapterFrameGrabberTask.setOnSucceeded((event) -> chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue()));
-
-                executorService.execute(chapterFrameGrabberTask);
-            }
-            executorService.shutdown();
+            chapterController.loadFrames();
         }
 
         if(subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_OPEN && subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_RESULTS_OPEN){

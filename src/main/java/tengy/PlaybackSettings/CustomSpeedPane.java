@@ -18,7 +18,7 @@ import javafx.util.Duration;
 public class CustomSpeedPane {
 
 
-    double formattedSliderValue = 1;
+    public double formattedSliderValue = 1;
     double lastCustomValue = 1;
 
     PlaybackSpeedController playbackSpeedController;

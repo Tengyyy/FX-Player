@@ -100,10 +100,10 @@ public class CloseConfirmationWindow {
         warningIcon.setPrefSize(30, 30);
         warningIcon.setMaxSize(30, 30);
 
-        title.setText("Metadata edit active");
+        title.setText("Media edit active");
         title.getStyleClass().add("popupWindowTitle");
 
-        text.setText("Please wait for ongoing metadata edit processes to finish before closing FXPlayer.");
+        text.setText("Please wait for ongoing media edit processes to finish before closing FXPlayer.");
         text.setWrapText(true);
         text.getStyleClass().add("popupWindowText");
         VBox.setMargin(text, new Insets(0, 15, 10, 15));

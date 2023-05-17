@@ -2,7 +2,6 @@ package tengy.MediaItems;
 
 import com.github.kokorin.jaffree.LogLevel;
 import com.github.kokorin.jaffree.StreamType;
-import com.github.kokorin.jaffree.ffmpeg.FFmpeg;
 import com.github.kokorin.jaffree.ffprobe.Chapter;
 import com.github.kokorin.jaffree.ffprobe.FFprobe;
 import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
@@ -215,7 +214,7 @@ public class MediaItem {
         this.metadataEditActive.set(true);
         this.changesMade.set(false);
 
-        mainController.getMenuController().ongoingMetadataEditProcesses.add(this);
+        mainController.getMenuController().ongoingMediaEditProcesses.add(this);
 
         boolean metadataEditSuccess = false;
 
@@ -267,7 +266,7 @@ public class MediaItem {
         newColor = null;
         newCoverFile = null;
 
-        mainController.getMenuController().ongoingMetadataEditProcesses.remove(this);
+        mainController.getMenuController().ongoingMediaEditProcesses.remove(this);
 
         return metadataEditSuccess;
     }
@@ -278,7 +277,7 @@ public class MediaItem {
         this.metadataEditActive.set(true);
         this.changesMade.set(false);
 
-        mainController.getMenuController().ongoingMetadataEditProcesses.add(this);
+        mainController.getMenuController().ongoingMediaEditProcesses.add(this);
 
         boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, duration, outputFile);
 
@@ -291,7 +290,7 @@ public class MediaItem {
         newColor = null;
         newCoverFile = null;
 
-        mainController.getMenuController().ongoingMetadataEditProcesses.remove(this);
+        mainController.getMenuController().ongoingMediaEditProcesses.remove(this);
 
 
         return success;

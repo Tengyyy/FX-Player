@@ -4,6 +4,7 @@ import com.github.kokorin.jaffree.Rational;
 import com.github.kokorin.jaffree.ffprobe.Format;
 import com.github.kokorin.jaffree.ffprobe.Stream;
 import com.github.kokorin.jaffree.ffprobe.StreamDisposition;
+import javafx.scene.control.ScrollBar;
 import tengy.*;
 import tengy.MediaItems.MediaItem;
 import tengy.Menu.MenuController;
@@ -55,7 +56,7 @@ public class TechnicalDetailsWindow {
 
     Label title = new Label("Technical details");
 
-    ScrollPane technicalDetailsScroll = new ScrollPane();
+    ScrollPane technicalDetailsScroll;
 
     public VBox content = new VBox();
 
@@ -115,7 +116,7 @@ public class TechnicalDetailsWindow {
         closeButtonIcon.setMouseTransparent(true);
         closeButtonIcon.getStyleClass().add("menuIcon");
 
-        content.setPadding(new Insets(0, 0, 15, 0));
+        content.setPadding(new Insets(15, 30, 15, 15));
         content.setSpacing(15);
         content.getChildren().addAll(fileBox, videoBox, audioBox, subtitlesBox, attachmentsBox);
 
@@ -124,6 +125,19 @@ public class TechnicalDetailsWindow {
         audioBox.setSpacing(10);
         subtitlesBox.setSpacing(10);
         attachmentsBox.setSpacing(10);
+
+        technicalDetailsScroll = new ScrollPane() {
+            ScrollBar vertical;
+
+            @Override
+            protected void layoutChildren() {
+                super.layoutChildren();
+                if (vertical == null) {
+                    vertical = (ScrollBar) lookup(".scroll-bar:vertical");
+                    vertical.visibleProperty().addListener((obs, old, val) -> updatePadding(val));
+                }
+            }
+        };
 
         technicalDetailsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         technicalDetailsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -135,10 +149,10 @@ public class TechnicalDetailsWindow {
         technicalDetailsScroll.setContent(content);
 
 
-        windowContainer.setPadding(new Insets(15, 15, 15, 15));
+        windowContainer.setPadding(new Insets(15, 0, 0, 15));
         windowContainer.getChildren().addAll(titleContainer, technicalDetailsScroll);
         windowContainer.setSpacing(5);
-        StackPane.setMargin(windowContainer, new Insets(0, 0, 80, 0));
+        StackPane.setMargin(windowContainer, new Insets(0, 0, 70, 0));
 
         titleContainer.getChildren().addAll(title);
         titleContainer.setPadding(new Insets(5, 0, 5, 0));
@@ -298,14 +312,14 @@ public class TechnicalDetailsWindow {
         Format format = mediaItem.getProbeResult().getFormat();
 
 
-        createItem("Format", format.getFormatName(), fileInnerContainer);
+        createItem("Format", format.getFormatLongName(), fileInnerContainer);
 
         Long bitrate = format.getBitRate();
 
         if(bitrate != null) createItem("Bitrate", Utilities.formatBitrate(bitrate), fileInnerContainer);
 
         Float durationLong = format.getDuration();
-        if(durationLong != null) createItem("Duration", Utilities.getTime(Duration.seconds(durationLong)), fileInnerContainer);
+        if(durationLong != null) createItem("Duration", Utilities.durationToString(Duration.seconds(durationLong)), fileInnerContainer);
 
     }
 
@@ -344,9 +358,9 @@ public class TechnicalDetailsWindow {
         }
 
         Long durationLong = videoStream.getDuration(TimeUnit.SECONDS);
-        if(durationLong != null) createItem("Duration", Utilities.getTime(Duration.seconds(durationLong)), trackContainer);
+        if(durationLong != null) createItem("Duration", Utilities.durationToString(Duration.seconds(durationLong)), trackContainer);
 
-        String videoCodec = videoStream.getCodecName();
+        String videoCodec = videoStream.getCodecLongName();
         if(videoCodec != null) createItem("Codec", videoCodec,trackContainer);
 
         Rational rational = videoStream.getAvgFrameRate();
@@ -434,9 +448,9 @@ public class TechnicalDetailsWindow {
         createItem("Language", language, trackContainer);
 
         Long durationLong = audioStream.getDuration(TimeUnit.SECONDS);
-        if(durationLong != null) createItem("Duration", Utilities.getTime(Duration.seconds(durationLong)), trackContainer);
+        if(durationLong != null) createItem("Duration", Utilities.durationToString(Duration.seconds(durationLong)), trackContainer);
 
-        String audioCodec = audioStream.getCodecName();
+        String audioCodec = audioStream.getCodecLongName();
         if(audioCodec != null) createItem("Codec", audioCodec,trackContainer);
 
         Long bitrate = audioStream.getBitRate();
@@ -524,9 +538,9 @@ public class TechnicalDetailsWindow {
         if(title != null) createItem("Title", title, trackContainer);
 
         Long durationLong = subtitleStream.getDuration(TimeUnit.SECONDS);
-        if(durationLong != null) createItem("Duration", Utilities.getTime(Duration.seconds(durationLong)), trackContainer);
+        if(durationLong != null) createItem("Duration", Utilities.durationToString(Duration.seconds(durationLong)), trackContainer);
 
-        String subtitleCodec = subtitleStream.getCodecName();
+        String subtitleCodec = subtitleStream.getCodecLongName();
         if(subtitleCodec != null) createItem("Codec", subtitleCodec, trackContainer);
 
         Long bitrate = subtitleStream.getBitRate();
@@ -576,12 +590,17 @@ public class TechnicalDetailsWindow {
         if(description != null) createItem("Description", description, trackContainer);
 
         Long durationLong = attachmentStream.getDuration(TimeUnit.SECONDS);
-        if(durationLong != null) createItem("Duration", Utilities.getTime(Duration.seconds(durationLong)), trackContainer);
+        if(durationLong != null) createItem("Duration", Utilities.durationToString(Duration.seconds(durationLong)), trackContainer);
 
-        String codec = attachmentStream.getCodecName();
+        String codec = attachmentStream.getCodecLongName();
         if(codec != null) createItem("Codec", codec, trackContainer);
 
         Long bitrate = attachmentStream.getBitRate();
         if(bitrate != null) createItem("Bitrate", Utilities.formatBitrate(bitrate), trackContainer);
+    }
+
+    private void updatePadding(boolean value){
+        if(value) content.setPadding(new Insets(15, 18, 15, 15));
+        else      content.setPadding(new Insets(15, 30, 15, 15));
     }
 }

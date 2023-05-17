@@ -187,7 +187,7 @@ public class VideoTooltip extends Tooltip {
 
     private void loadTooltip(){
         titleLabel.setText(queueItem.getTitle());
-        durationLabel.setText(Utilities.getTime(queueItem.getMediaItem().getDuration()));
+        durationLabel.setText(Utilities.durationToString(queueItem.getMediaItem().getDuration()));
         if(queueItem.getMediaItem().getCover() != null){
             imageView.setImage(queueItem.getMediaItem().getCover());
             Color color = queueItem.getMediaItem().getCoverBackgroundColor();

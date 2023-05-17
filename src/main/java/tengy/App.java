@@ -94,7 +94,7 @@ public class App extends Application {
                 }
 
                 primaryStage.setOnCloseRequest(event -> {
-                    if(!menuController.ongoingMetadataEditProcesses.isEmpty()){
+                    if(!menuController.ongoingMediaEditProcesses.isEmpty()){
                         if(!mainController.windowController.closeConfirmationWindow.showing) mainController.windowController.closeConfirmationWindow.show();
                         event.consume();
                     }

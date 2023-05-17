@@ -1,5 +1,6 @@
 package tengy.Chapters;
 
+import javafx.scene.Node;
 import tengy.*;
 import tengy.Subtitles.SubtitlesState;
 import tengy.Menu.MenuController;
@@ -21,6 +22,8 @@ import uk.co.caprica.vlcj.player.base.ChapterDescription;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ChapterController {
 
@@ -92,9 +95,7 @@ public class ChapterController {
             chapterPage.enter();
         });
 
-        Platform.runLater(() -> {
-            chapterTooltip = new ControlTooltip(mainController,"View chapter", "", chapterLabelBox, 0, TooltipType.CONTROLBAR_TOOLTIP);
-        });
+        Platform.runLater(() -> chapterTooltip = new ControlTooltip(mainController,"View chapter", "", chapterLabelBox, 0, TooltipType.CONTROLBAR_TOOLTIP));
 
         chapterLabel.setPrefHeight(30);
         chapterLabel.getStyleClass().add("controlBarLabel");
@@ -197,5 +198,30 @@ public class ChapterController {
             this.activeChapter = newChapter;
 
         }
+    }
+
+    public void loadFrames(){
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        for (Node node : chapterPage.chapterBox.getChildren()) {
+            ChapterItem chapterItem = (ChapterItem) node;
+            Duration startTime = chapterItem.startTime;
+            ChapterFrameGrabberTask chapterFrameGrabberTask;
+
+            if (startTime.greaterThan(Duration.ZERO))
+                chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, startTime.toSeconds() / controlBarController.durationSlider.getMax());
+            else {
+                Duration endTime = chapterItem.endTime;
+                chapterFrameGrabberTask = new ChapterFrameGrabberTask(mediaInterface.fFmpegFrameGrabber, (Math.min(endTime.toSeconds() / 10, 5)) / controlBarController.durationSlider.getMax());
+            }
+
+            chapterFrameGrabberTask.setOnSucceeded((event) -> {
+                chapterItem.imageIcon.setVisible(false);
+                chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
+                chapterItem.coverImage.setVisible(true);
+            });
+
+            executorService.execute(chapterFrameGrabberTask);
+        }
+        executorService.shutdown();
     }
 }

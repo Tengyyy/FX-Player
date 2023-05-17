@@ -29,7 +29,7 @@ public class SplashScreen {
 
 
         background.getChildren().add(imageView);
-        background.setBackground(new Background(new BackgroundFill(Color.rgb(20, 20, 20), CornerRadii.EMPTY, Insets.EMPTY)));
+        background.setBackground(new Background(new BackgroundFill(Color.rgb(5, 5, 5), CornerRadii.EMPTY, Insets.EMPTY)));
 
         scene = new Scene(background, 705 ,450);
     }

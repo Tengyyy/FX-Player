@@ -104,7 +104,7 @@ public class ThirdPartySoftwareWindow {
         descriptionLabel.setMinHeight(60);
         descriptionLabel.getStyleClass().add("thirdPartyText");
 
-        textContainer.setPadding(new Insets(15, 0, 15, 0));
+        textContainer.setPadding(new Insets(15, 20, 15, 0));
         textContainer.setSpacing(15);
         textContainer.getChildren().addAll(descriptionLabel, uiBox, mediaBox, subtitlesBox, mediaInfoBox, loggingBox);
 
@@ -168,10 +168,10 @@ public class ThirdPartySoftwareWindow {
         textScroll.setContent(textContainer);
 
 
-        windowContainer.setPadding(new Insets(15, 15, 15, 15));
+        windowContainer.setPadding(new Insets(15, 0, 0, 15));
         windowContainer.getChildren().addAll(titleContainer, textScroll);
         windowContainer.setSpacing(20);
-        StackPane.setMargin(windowContainer, new Insets(0, 0, 80, 0));
+        StackPane.setMargin(windowContainer, new Insets(0, 0, 70, 0));
 
         titleContainer.getChildren().addAll(title);
         titleContainer.setPadding(new Insets(5, 0, 5, 0));

@@ -23,7 +23,7 @@ public class Utilities {
 
 
     // Create neatly formatted video duration string
-    public static String getTime(Duration time) {
+    public static String durationToString(Duration time) {
 
         int hours = (int) time.toHours();
         int minutes = (int) time.toMinutes();
@@ -46,11 +46,11 @@ public class Utilities {
 
 
     public static void setCurrentTimeLabel(Label durationLabel, Duration currentTime, Duration duration) {
-        durationLabel.setText(getTime(currentTime) + "/" + getTime(duration));
+        durationLabel.setText(durationToString(currentTime) + "/" + durationToString(duration));
     }
 
     public static void setTimeLeftLabel(Label durationLabel, Duration currentTime, Duration duration) {
-        durationLabel.setText("−" + getTime(duration.subtract(currentTime)) + "/" + getTime(duration));
+        durationLabel.setText("−" + durationToString(duration.subtract(currentTime)) + "/" + durationToString(duration));
     }
 
 
@@ -210,5 +210,78 @@ public class Utilities {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public static boolean isTime(String string){
+        if(string.isEmpty()) return false;
+
+        String[] args = string.split(":");
+
+        if(args.length > 3 ) return false;
+
+        String hourString = null;
+        String minuteString = null;
+        String secondString = null;
+
+        if(args.length == 3){
+            hourString = args[0];
+            minuteString = args[1];
+            secondString = args[2];
+        }
+        else if(args.length == 2){
+            minuteString = args[0];
+            secondString = args[1];
+        }
+        else if(args.length == 1){
+            secondString = args[0];
+        }
+
+        try {
+            if(hourString != null) Integer.parseInt(hourString);
+            if(minuteString != null) Integer.parseInt(minuteString);
+            if(secondString != null) Double.parseDouble(secondString);
+
+            return true;
+        }
+        catch(NumberFormatException e){
+            return false;
+        }
+    }
+
+    public static Duration stringToDuration(String string){
+
+        String[] args = string.split(":");
+
+        String hourString = null;
+        String minuteString = null;
+        String secondString;
+
+        int hours = 0;
+        int minutes = 0;
+        double seconds = 0;
+
+        if(args.length == 3){
+            hourString = args[0];
+            minuteString = args[1];
+            secondString = args[2];
+        }
+        else if(args.length == 2){
+            minuteString = args[0];
+            secondString = args[1];
+        }
+        else {
+            secondString = args[0];
+        }
+        try {
+            if(hourString != null) hours = Integer.parseInt(hourString);
+            if(minuteString != null) minutes = Integer.parseInt(minuteString);
+            seconds = Double.parseDouble(secondString);
+
+            return Duration.seconds(hours * 3600 + minutes * 60 + seconds);
+        }
+        catch(NumberFormatException e){
+            return Duration.ZERO;
+        }
+
     }
 }

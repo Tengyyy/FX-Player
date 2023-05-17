@@ -1,9 +1,5 @@
 package tengy.Chapters;
 
-import tengy.Subtitles.SubtitlesState;
-import tengy.SVG;
-import tengy.PlaybackSettings.PlaybackSettingsState;
-import tengy.Utilities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
@@ -16,6 +12,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import tengy.PlaybackSettings.PlaybackSettingsState;
+import tengy.SVG;
+import tengy.Subtitles.SubtitlesState;
+import tengy.Utilities;
 
 import java.io.File;
 
@@ -41,6 +41,8 @@ public class ChapterItem extends HBox {
     StackPane imageContainer = new StackPane();
     StackPane imageWrapper = new StackPane();
     Region imageBorder = new Region();
+    SVGPath imageSVG = new SVGPath();
+    Region imageIcon = new Region();
 
     BooleanProperty isActive = new SimpleBooleanProperty(false);
     boolean mouseHover = false;
@@ -99,12 +101,13 @@ public class ChapterItem extends HBox {
         coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
         coverImage.setPreserveRatio(true);
+        coverImage.setVisible(false);
 
 
-        imageWrapper.setStyle("-fx-background-color: rgb(0,0,0);");
+        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
         imageWrapper.setPrefSize(125, 70);
         imageWrapper.setMaxSize(125, 70);
-        imageWrapper.getChildren().add(coverImage);
+        imageWrapper.getChildren().addAll(coverImage, imageIcon);
         imageWrapper.getStyleClass().add("imageWrapper");
 
         Rectangle imageWrapperClip = new Rectangle();
@@ -113,6 +116,12 @@ public class ChapterItem extends HBox {
         imageWrapperClip.setArcWidth(20);
         imageWrapperClip.setArcHeight(20);
         imageWrapper.setClip(imageWrapperClip);
+
+        imageSVG.setContent(SVG.IMAGE_WIDE.getContent());
+        imageIcon.setShape(imageSVG);
+        imageIcon.setPrefSize(50, 40);
+        imageIcon.setMaxSize(50, 40);
+        imageIcon.getStyleClass().add("imageIcon");
 
         imageContainer.setPrefSize(127, 72);
         imageContainer.setMaxSize(127, 72);
@@ -131,10 +140,14 @@ public class ChapterItem extends HBox {
         titleLabel.setMaxHeight(40);
         titleLabel.setText(title);
         titleLabel.setTextAlignment(TextAlignment.LEFT);
+        titleLabel.setAlignment(Pos.CENTER_LEFT);
+        titleLabel.setPadding(Insets.EMPTY);
 
         timeLabel.getStyleClass().add("subText");
-        timeLabel.setText(Utilities.getTime(startTime) + " - " + Utilities.getTime(endTime));
+        timeLabel.setText(Utilities.durationToString(startTime) + " - " + Utilities.durationToString(endTime));
         timeLabel.setTextAlignment(TextAlignment.LEFT);
+        timeLabel.setAlignment(Pos.CENTER_LEFT);
+
 
         textWrapper.setAlignment(Pos.CENTER_LEFT);
         textWrapper.setPrefHeight(70);

@@ -75,11 +75,13 @@ public class WindowController {
                 chapterEditWindow.window.setVisible(false);
                 chapterEditWindow.showing = false;
                 chapterEditWindow.chapterEditItems.clear();
-                chapterEditWindow.changesMade.set(false);
+                chapterEditWindow.saveAllowed.set(false);
+                chapterEditWindow.mediaItem = null;
                 chapterEditWindow.content.getChildren().clear();
             }
         }
 
+        windowState = newState;
 
     }
 }

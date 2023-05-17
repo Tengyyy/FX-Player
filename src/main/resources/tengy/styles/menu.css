@@ -92,7 +92,6 @@
 .videoTitle, .chapterName {
     -fx-font-size: 15;
     -fx-font-family: "Roboto Bold";
-    -fx-background-color: transparent;
     -fx-text-fill: white;
 }
 
@@ -100,7 +99,6 @@
 .subText, #historySizeText {
     -fx-font-size: 14;
     -fx-font-family: "Roboto";
-    -fx-background-color: transparent;
     -fx-text-fill: #cfcfcf;
 }
 
@@ -148,6 +146,19 @@
 
 .menuButton:pressed > .graphic {
     -fx-background-color: rgb(180,180,180);
+}
+
+
+.addChapterButton {
+    -fx-border-color: rgb(200,200,200);
+}
+
+.addChapterButton:hover {
+    -fx-border-color: white;
+}
+
+.addChapterButton:pressed {
+    -fx-border-color: rgb(200,200,200);
 }
 
 .menuActionButton{

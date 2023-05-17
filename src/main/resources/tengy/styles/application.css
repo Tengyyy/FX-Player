@@ -403,8 +403,21 @@
     -fx-background-color: rgba(0,0,0,0.8);
 }
 
+#chapterPopupBackground {
+    -fx-background-color: rgba(0,0,0,0.8);
+    -fx-background-radius: 10;
+}
+
 .popupWindow {
     -fx-background-color: rgb(30,30,30);
+    -fx-background-radius: 10;
+    -fx-border-color: rgb(50,50,50);
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+.chapterWindow {
+    -fx-background-color: rgb(20,20,20);
     -fx-background-radius: 10;
     -fx-border-color: rgb(50,50,50);
     -fx-border-radius: 10;
@@ -497,31 +510,47 @@
 }
 
 .chapterContainer {
-    -fx-background-color: rgb(25, 25, 25);
-    -fx-background-radius: 4;
-    -fx-border-color: rgb(100,100,100);
-    -fx-border-radius: 4;
-    -fx-padding: 12 12 12 0;
+    -fx-background-color: transparent;
+    -fx-background-radius: 15;
+    -fx-padding: 0 10 0 0;
 }
 
 .removeButton{
-    -fx-background-color: rgb(20,20,20);
+    -fx-background-color: rgb(30,30,30);
     -fx-background-radius: 100;
+    -fx-border-color: rgb(100,100,100);
+    -fx-border-radius: 100;
     -fx-cursor: hand;
     -fx-padding: 0;
     -fx-insets: 0;
 }
 
 .removeButton:hover {
-    -fx-background-color: rgba(25,25,25);
+    -fx-background-color: rgba(60,60,60);
 }
 
 .removeButton:pressed {
-    -fx-background-color: rgba(20,20,20);
+    -fx-background-color: rgba(45,45,45);
 }
 
 .removeButton:pressed > .graphic {
     -fx-background-color: rgb(200,200,200);
+}
+
+.chapterPopupTitle {
+    -fx-font-size: 18;
+    -fx-font-family: "Roboto Regular";
+    -fx-text-fill: white;
+}
+
+.chapterPopupLabel {
+    -fx-font-size: 16;
+    -fx-font-family: "Roboto Regular";
+    -fx-text-fill: white;
+}
+
+.imageIcon {
+    -fx-background-color: rgb(60,60,60);
 }
 
 

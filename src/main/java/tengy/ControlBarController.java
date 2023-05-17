@@ -668,7 +668,7 @@ public class ControlBarController implements Initializable {
 
                 updateSliderHover(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getWidth());
 
-                String newTime = Utilities.getTime(Duration.seconds((e.getX()) / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                String newTime = Utilities.durationToString(Duration.seconds((e.getX()) / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverBox.timeLabel.setText(newTime);
 
                 double minTranslation = (mainController.sliderHoverBox.localToScene(mainController.sliderHoverBox.getBoundsInLocal()).getMinX() - mainController.sliderHoverBox.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
@@ -706,7 +706,7 @@ public class ControlBarController implements Initializable {
                 durationSliderHover = true;
                 durationSliderHoverOn(e.getX()/durationSlider.lookup(".track").getBoundsInLocal().getWidth());
 
-                String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                String newTime = Utilities.durationToString(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverBox.timeLabel.setText(newTime);
 
                 double minTranslation = (mainController.sliderHoverBox.localToScene(mainController.sliderHoverBox.getBoundsInLocal()).getMinX() - mainController.sliderHoverBox.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
@@ -764,7 +764,7 @@ public class ControlBarController implements Initializable {
 
                 e.consume();
 
-                String newTime = Utilities.getTime(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
+                String newTime = Utilities.durationToString(Duration.seconds(e.getX() / (durationSlider.lookup(".track").getBoundsInLocal().getMaxX()) * durationSlider.getMax()));
                 mainController.sliderHoverBox.timeLabel.setText(newTime);
 
                 double minTranslation = (mainController.sliderHoverBox.localToScene(mainController.sliderHoverBox.getBoundsInLocal()).getMinX() - mainController.sliderHoverBox.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
@@ -838,7 +838,7 @@ public class ControlBarController implements Initializable {
 
                 updateSliderHover(Math.min(1, Math.max(0, newValue.doubleValue() / durationSlider.getMax())));
 
-                mainController.sliderHoverBox.timeLabel.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
+                mainController.sliderHoverBox.timeLabel.setText(Utilities.durationToString(Duration.seconds(durationSlider.getValue())));
 
                 double minTranslation = (mainController.sliderHoverBox.localToScene(mainController.sliderHoverBox.getBoundsInLocal()).getMinX() - mainController.sliderHoverBox.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMaxX() - mainController.sliderHoverBox.localToScene(mainController.sliderHoverBox.getBoundsInLocal()).getMaxX() + mainController.sliderHoverBox.getTranslateX();
@@ -889,7 +889,7 @@ public class ControlBarController implements Initializable {
 
                 updateProgress(Math.min(1, Math.max(0, durationSlider.getValue() / durationSlider.getMax())));
 
-                mainController.sliderHoverBox.timeLabel.setText(Utilities.getTime(Duration.seconds(durationSlider.getValue())));
+                mainController.sliderHoverBox.timeLabel.setText(Utilities.durationToString(Duration.seconds(durationSlider.getValue())));
 
 
                 double minTranslation = (mainController.sliderHoverBox.localToScene(mainController.sliderHoverBox.getBoundsInLocal()).getMinX() - mainController.sliderHoverBox.getTranslateX() - durationSlider.lookup(".track").localToScene(durationSlider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;

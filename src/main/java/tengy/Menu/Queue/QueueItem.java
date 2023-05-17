@@ -69,6 +69,8 @@ public class QueueItem extends GridPane {
     StackPane optionsButtonWrapper = new StackPane();
     StackPane imageContainer = new StackPane();
     StackPane imageWrapper = new StackPane();
+    SVGPath imageSVG = new SVGPath();
+    Region imageIcon = new Region();
     Region imageBorder = new Region();
 
 
@@ -178,13 +180,13 @@ public class QueueItem extends GridPane {
         this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
 
         GridPane.setValignment(indexPane, VPos.CENTER);
-        GridPane.setValignment(imageWrapper, VPos.CENTER);
+        GridPane.setValignment(imageContainer, VPos.CENTER);
         GridPane.setValignment(textWrapper, VPos.CENTER);
         GridPane.setValignment(removeButtonWrapper, VPos.CENTER);
         GridPane.setValignment(optionsButtonWrapper, VPos.CENTER);
 
         GridPane.setHalignment(indexPane, HPos.CENTER);
-        GridPane.setHalignment(imageWrapper, HPos.CENTER);
+        GridPane.setHalignment(imageContainer, HPos.CENTER);
         GridPane.setHalignment(textWrapper, HPos.LEFT);
         GridPane.setHalignment(optionsButtonWrapper, HPos.CENTER);
         GridPane.setHalignment(removeButtonWrapper, HPos.CENTER);
@@ -210,6 +212,7 @@ public class QueueItem extends GridPane {
         coverImage.setFitWidth(125);
         coverImage.setSmooth(true);
         coverImage.setPreserveRatio(true);
+        coverImage.setVisible(false);
 
         indexLabel.getStyleClass().add("indexLabel");
         indexLabel.setMouseTransparent(true);
@@ -243,14 +246,21 @@ public class QueueItem extends GridPane {
         imageWrapper.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
         imageWrapper.setPrefSize(125, 70);
         imageWrapper.setMaxSize(125, 70);
-        imageWrapper.getChildren().add(coverImage);
+        imageWrapper.getChildren().addAll(coverImage, imageIcon);
         imageWrapper.getStyleClass().add("imageWrapper");
+
+        imageSVG.setContent(SVG.IMAGE_WIDE.getContent());
+        imageIcon.setShape(imageSVG);
+        imageIcon.setPrefSize(50, 40);
+        imageIcon.setMaxSize(50, 40);
+        imageIcon.getStyleClass().add("imageIcon");
 
         Rectangle imageWrapperClip = new Rectangle();
         imageWrapperClip.setWidth(125);
         imageWrapperClip.setHeight(70);
         imageWrapperClip.setArcWidth(20);
         imageWrapperClip.setArcHeight(20);
+
         imageWrapper.setClip(imageWrapperClip);
 
         imageContainer.setPrefSize(127, 72);
@@ -549,6 +559,9 @@ public class QueueItem extends GridPane {
             imageWrapper.setStyle("-fx-background-color: red;");
         }
 
+        coverImage.setVisible(true);
+        imageIcon.setVisible(false);
+
         Map<String, String> mediaInformation = mediaItem.getMediaInformation();
 
         if(mediaInformation != null){
@@ -575,7 +588,7 @@ public class QueueItem extends GridPane {
             }
         }
 
-        String formattedDuration = Utilities.getTime(mediaItem.getDuration());
+        String formattedDuration = Utilities.durationToString(mediaItem.getDuration());
 
         if(!artist.getText().isEmpty()){
             formattedDuration = formattedDuration + " • ";

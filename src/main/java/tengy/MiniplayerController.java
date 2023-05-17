@@ -304,7 +304,7 @@ public class MiniplayerController {
 
                 controlBarController.previewTimer.playFromStart();
 
-                String newTime = Utilities.getTime(Duration.seconds((e.getX())/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
+                String newTime = Utilities.durationToString(Duration.seconds((e.getX())/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
                 sliderHoverBox.timeLabel.setText(newTime);
 
                 double minTranslation = (sliderHoverBox.localToScene(sliderHoverBox.getBoundsInLocal()).getMinX() - sliderHoverBox.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
@@ -325,7 +325,7 @@ public class MiniplayerController {
                 sliderHover = true;
                 sliderHoverOn();
 
-                String newTime = Utilities.getTime(Duration.seconds(e.getX()/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
+                String newTime = Utilities.durationToString(Duration.seconds(e.getX()/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
                 sliderHoverBox.timeLabel.setText(newTime);
 
                 double minTranslation = (sliderHoverBox.localToScene(sliderHoverBox.getBoundsInLocal()).getMinX() - sliderHoverBox.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
@@ -354,7 +354,7 @@ public class MiniplayerController {
 
                     controlBarController.previewTimer.playFromStart();
 
-                    String newTime = Utilities.getTime(Duration.seconds(e.getX()/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
+                    String newTime = Utilities.durationToString(Duration.seconds(e.getX()/(slider.lookup(".track").getBoundsInLocal().getMaxX()) * slider.getMax()));
                     sliderHoverBox.timeLabel.setText(newTime);
 
                     double minTranslation = (sliderHoverBox.localToScene(sliderHoverBox.getBoundsInLocal()).getMinX() - sliderHoverBox.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
@@ -376,7 +376,7 @@ public class MiniplayerController {
 
                 controlBarController.previewTimer.playFromStart();
 
-                sliderHoverBox.timeLabel.setText(Utilities.getTime(Duration.seconds(slider.getValue())));
+                sliderHoverBox.timeLabel.setText(Utilities.durationToString(Duration.seconds(slider.getValue())));
 
                 double minTranslation = (sliderHoverBox.localToScene(sliderHoverBox.getBoundsInLocal()).getMinX() - sliderHoverBox.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverBox.localToScene(sliderHoverBox.getBoundsInLocal()).getMaxX() + sliderHoverBox.getTranslateX();
@@ -421,7 +421,7 @@ public class MiniplayerController {
                 if(mediaInterface.playing.get()) mediaInterface.embeddedMediaPlayer.controls().pause();
                 mediaInterface.playing.set(false);
 
-                sliderHoverBox.timeLabel.setText(Utilities.getTime(Duration.seconds(slider.getValue())));
+                sliderHoverBox.timeLabel.setText(Utilities.durationToString(Duration.seconds(slider.getValue())));
 
                 double minTranslation = (sliderHoverBox.localToScene(sliderHoverBox.getBoundsInLocal()).getMinX() - sliderHoverBox.getTranslateX() - slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMinX()) * -1;
                 double maxTranslation = slider.lookup(".track").localToScene(slider.lookup(".track").getBoundsInLocal()).getMaxX() - sliderHoverBox.localToScene(sliderHoverBox.getBoundsInLocal()).getMaxX() + sliderHoverBox.getTranslateX();

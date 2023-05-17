@@ -111,10 +111,10 @@ public class LicenseWindow {
         markdownScroll.setContent(markdownView);
 
 
-        windowContainer.setPadding(new Insets(15, 15, 15, 15));
+        windowContainer.setPadding(new Insets(15, 0, 0, 15));
         windowContainer.getChildren().addAll(titleContainer, markdownScroll);
         windowContainer.setSpacing(20);
-        StackPane.setMargin(windowContainer, new Insets(0, 0, 80, 0));
+        StackPane.setMargin(windowContainer, new Insets(0, 0, 70, 0));
 
         titleContainer.getChildren().addAll(title);
         titleContainer.setPadding(new Insets(5, 0, 5, 0));
@@ -182,6 +182,6 @@ public class LicenseWindow {
         markdownView.getStylesheets().clear();
         markdownView.getStylesheets().add(Objects.requireNonNull(mainController.getClass().getResource("styles/mdfx-custom.css")).toExternalForm());
         markdownView.getStylesheets().add(Objects.requireNonNull(mainController.getClass().getResource("styles/mdfx-style.css")).toExternalForm());
-        markdownView.setPadding(new Insets(15, 0, 15, 0));
+        markdownView.setPadding(new Insets(15, 20, 15, 0));
     }
 }

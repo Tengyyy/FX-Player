@@ -169,4 +169,10 @@ public class VideoTrackChooserController {
         if(playbackSettingsController.playbackSettingsState == PlaybackSettingsState.VIDEO_TRACK_CHOOSER_OPEN)
             playbackSettingsController.clip.setHeight(DEFAULT_HEIGHT + 3);
     }
+
+    public void focusForward() {
+    }
+
+    public void focusBackward() {
+    }
 }

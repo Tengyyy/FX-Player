@@ -175,4 +175,10 @@ public class PlaybackSpeedPane{
         playbackSpeedController.playbackSettingsController.animating.set(true);
         parallelTransition.play();
     }
+
+    public void focusForward() {
+    }
+
+    public void focusBackward() {
+    }
 }

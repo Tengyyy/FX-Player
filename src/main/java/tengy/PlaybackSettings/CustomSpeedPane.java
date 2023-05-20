@@ -180,4 +180,10 @@ public class CustomSpeedPane {
         playbackSpeedController.playbackSettingsController.animating.set(true);
 
     }
+
+    public void focusForward() {
+    }
+
+    public void focusBackward() {
+    }
 }

@@ -868,29 +868,32 @@ public class MainController implements Initializable {
     public void pressTAB(KeyEvent event){
         controlBarController.mouseEventTracker.move();
 
-        if(subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN){
-            if(event.isShiftDown()) subtitlesController.openSubtitlesPane.focusBackward();
-            else subtitlesController.openSubtitlesPane.focusForward();
+        if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED){
+            if(event.isShiftDown()) playbackSettingsController.handleFocusBackward();
+            else playbackSettingsController.handleFocusForward();
         }
-        else if(menuController.menuState == MenuState.SETTINGS_OPEN){
-            if(menuController.settingsPage.subtitleSection.passwordField.isFocused()) menuController.settingsPage.subtitleSection.usernameField.requestFocus();
-            else if(menuController.settingsPage.subtitleSection.usernameField.isFocused()) menuController.settingsPage.subtitleSection.passwordField.requestFocus();
+        else if(subtitlesController.subtitlesState != SubtitlesState.CLOSED){
+            if(event.isShiftDown()) subtitlesController.handleFocusBackward();
+            else subtitlesController.handleFocusForward();
         }
 
         event.consume();
     }
 
     public void pressESCAPE(){
+
         subtitlesController.subtitlesBox.cancelDrag();
 
         controlBarController.mouseEventTracker.move();
-        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED && !App.fullScreen) {
+
+        if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) {
             playbackSettingsController.closeSettings();
+            return;
         }
-        else if (subtitlesController.subtitlesState != SubtitlesState.CLOSED && !App.fullScreen) {
+        else if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) {
             subtitlesController.closeSubtitles();
+            return;
         }
-        else if(!App.fullScreen && menuController.settingsPage.settingsMenu.showing) menuController.settingsPage.settingsMenu.hide();
 
         App.fullScreen = false;
 
@@ -906,7 +909,7 @@ public class MainController implements Initializable {
     }
 
     public void pressEnter(){
-        if(subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_OPEN){
+        if(subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN){
             subtitlesController.openSubtitlesPane.searchButton.fire();
         }
     }

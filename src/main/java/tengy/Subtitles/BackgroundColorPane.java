@@ -1,5 +1,12 @@
 package tengy.Subtitles;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import tengy.PlaybackSettings.CheckTab;
 import tengy.PlaybackSettings.PlaybackSettingsController;
@@ -15,6 +22,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class BackgroundColorPane {
 
@@ -26,13 +37,17 @@ public class BackgroundColorPane {
     VBox backgroundColorBox = new VBox();
     HBox backgroundColorTitle = new HBox();
 
-    StackPane backgroundColorBackPane = new StackPane();
+    Button backButton = new Button();
     Region backgroundColorBackIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
     Label backgroundColorTitleLabel = new Label();
 
     CheckTab whiteTab, yellowTab, greenTab, cyanTab, blueTab, magentaTab, redTab, blackTab;
+
+    List<Node> focusNodes = new ArrayList<>();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     ArrayList<CheckTab> checkTabs = new ArrayList<>();
 
@@ -68,19 +83,37 @@ public class BackgroundColorPane {
         VBox.setMargin(backgroundColorTitle, new Insets(0, 0, 10, 0));
 
         backgroundColorTitle.getStyleClass().add("settingsPaneTitle");
-        backgroundColorTitle.getChildren().addAll(backgroundColorBackPane, backgroundColorTitleLabel);
+        backgroundColorTitle.getChildren().addAll(backButton, backgroundColorTitleLabel);
 
-        backgroundColorBackPane.setMinSize(24, 40);
-        backgroundColorBackPane.setPrefSize(24, 40);
-        backgroundColorBackPane.setMaxSize(24, 40);
-        backgroundColorBackPane.getChildren().add(backgroundColorBackIcon);
-        backgroundColorBackPane.setCursor(Cursor.HAND);
-        backgroundColorBackPane.setOnMouseClicked((e) -> closeBackgroundColorPane());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(backgroundColorBackIcon);
+        backButton.setOnAction((e) -> closeBackgroundColorPane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         backgroundColorBackIcon.setMinSize(8, 13);
         backgroundColorBackIcon.setPrefSize(8, 13);
         backgroundColorBackIcon.setMaxSize(8, 13);
-        backgroundColorBackIcon.getStyleClass().add("settingsPaneIcon");
+        backgroundColorBackIcon.getStyleClass().add("graphic");
         backgroundColorBackIcon.setShape(backSVG);
 
         backgroundColorTitleLabel.setMinHeight(40);
@@ -88,17 +121,28 @@ public class BackgroundColorPane {
         backgroundColorTitleLabel.setMaxHeight(40);
         backgroundColorTitleLabel.setText("Background color");
         backgroundColorTitleLabel.setCursor(Cursor.HAND);
+        backgroundColorTitleLabel.setPadding(new Insets(0, 0, 0, 4));
         backgroundColorTitleLabel.getStyleClass().add("settingsPaneText");
         backgroundColorTitleLabel.setOnMouseClicked((e) -> closeBackgroundColorPane());
 
-        whiteTab = new CheckTab(false, "White");
-        yellowTab = new CheckTab(false, "Yellow");
-        greenTab = new CheckTab(false, "Green");
-        cyanTab = new CheckTab(false, "Cyan");
-        blueTab = new CheckTab(false, "Blue");
-        magentaTab = new CheckTab(false, "Magenta");
-        redTab = new CheckTab(false, "Red");
-        blackTab = new CheckTab(false, "Black");
+        whiteTab = new CheckTab(false, "White", focus, 1, () -> this.pressWhiteTab(false));
+        yellowTab = new CheckTab(false, "Yellow", focus, 2, () -> this.pressYellowTab(false));
+        greenTab = new CheckTab(false, "Green", focus, 3, () -> this.pressGreenTab(false));
+        cyanTab = new CheckTab(false, "Cyan", focus, 4, () -> this.pressCyanTab(false));
+        blueTab = new CheckTab(false, "Blue", focus, 5, () -> this.pressBlueTab(false));
+        magentaTab = new CheckTab(false, "Magenta", focus, 6, () -> this.pressMagentaTab(false));
+        redTab = new CheckTab(false, "Red", focus, 7, () -> this.pressRedTab(false));
+        blackTab = new CheckTab(false, "Black", focus, 8, () -> this.pressBlackTab(false));
+
+        focusNodes.add(backButton);
+        focusNodes.add(whiteTab);
+        focusNodes.add(yellowTab);
+        focusNodes.add(greenTab);
+        focusNodes.add(cyanTab);
+        focusNodes.add(blueTab);
+        focusNodes.add(magentaTab);
+        focusNodes.add(redTab);
+        focusNodes.add(blackTab);
 
         backgroundColorBox.getChildren().addAll(whiteTab, yellowTab, greenTab, cyanTab, blueTab, magentaTab, redTab, blackTab);
         checkTabs.add(whiteTab);
@@ -110,15 +154,6 @@ public class BackgroundColorPane {
         checkTabs.add(redTab);
         checkTabs.add(blackTab);
 
-
-        whiteTab.setOnMouseClicked(e -> pressWhiteTab(false));
-        yellowTab.setOnMouseClicked(e -> pressYellowTab(false));
-        greenTab.setOnMouseClicked(e -> pressGreenTab(false));
-        cyanTab.setOnMouseClicked(e -> pressCyanTab(false));
-        blueTab.setOnMouseClicked(e -> pressBlueTab(false));
-        magentaTab.setOnMouseClicked(e -> pressMagentaTab(false));
-        redTab.setOnMouseClicked(e -> pressRedTab(false));
-        blackTab.setOnMouseClicked(e -> pressBlackTab(false));
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
 
@@ -130,7 +165,6 @@ public class BackgroundColorPane {
 
         subtitlesController.subtitlesOptionsPane.scrollPane.setVisible(true);
         subtitlesController.subtitlesOptionsPane.scrollPane.setMouseTransparent(false);
-
 
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), subtitlesController.subtitlesOptionsPane.scrollPane.getHeight())));
@@ -253,6 +287,30 @@ public class BackgroundColorPane {
 
         blackTab.checkIcon.setVisible(true);
     }
+
+    public void focusForward() {
+        int newFocus;
+
+        if(focus.get() == 8 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
+    public void focusBackward() {
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 8;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
 }
 
 

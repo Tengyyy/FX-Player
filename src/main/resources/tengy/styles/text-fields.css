@@ -14,6 +14,10 @@
     -fx-border-color : rgb(200,200,200);
 }
 
+.expandable-text-area:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
+}
+
 .expandable-text-area {
     -fx-background-color : 0;
     -fx-background-insets: 0;
@@ -49,10 +53,19 @@
     -fx-border-radius    : 5;
 }
 
+#timingTextField {
+    -fx-min-width: 60;
+    -fx-padding: 5 10 5 10
+}
+
 
 
 .customTextField:focused {
     -fx-border-color: rgb(200,200,200);
+}
+
+.customTextField:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
 }
 
 .chapterField {
@@ -125,6 +138,10 @@
     -fx-border-color: rgb(200,200,200);
 }
 
+.combo-box:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
+}
+
 .combo-box:focused .arrow {
     -fx-background-color: white;
 }
@@ -172,6 +189,19 @@
 /* doesnt work, gets set back to default height when selecting any item. Might have to create my own custom implementation */
 #languageBox > .combo-box .combo-box-popup .list-view {
     -fx-max-height: 200;
+}
+
+
+#languageBox:focused > .combo-box, #languageBox:hover > .combo-box {
+    -fx-border-color: rgb(200,200,200);
+}
+
+#languageBox:keyboardFocused > .combo-box {
+    -fx-border-color: rgb(173, 216, 230);
+}
+
+#languageBox:focused > .combo-box .arrow, #languageBox:hover > .combo-box .arrow {
+    -fx-background-color: rgb(200,200,200);
 }
 
 .spinner, .date-picker {

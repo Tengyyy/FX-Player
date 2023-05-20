@@ -1,5 +1,6 @@
 package tengy.Menu.Settings;
 
+import javafx.application.Platform;
 import tengy.Menu.MenuController;
 import tengy.Menu.MenuState;
 import tengy.PlaybackSettings.PlaybackSettingsState;
@@ -109,12 +110,9 @@ public class SettingsPage {
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
-            if(!settingsMenu.showing) settingsMenu.show();
+            if(settingsMenu.showing) settingsMenu.hide();
+            else settingsMenu.showOptions(true);
         });
-
-        settingsMenu = new SettingsMenu(this);
-        StackPane.setAlignment(settingsMenu, Pos.TOP_RIGHT);
-        StackPane.setMargin(settingsMenu, new Insets(100, 20, 0, 0));
 
         settingsBar.widthProperty().addListener((observableValue, oldValue, newValue) -> {
             if(oldValue.doubleValue() <= 800 && newValue.doubleValue() > 800){
@@ -203,13 +201,15 @@ public class SettingsPage {
 
 
         settingsContainer.getChildren().addAll(settingsBar, settingsScroll);
-        settingsWrapper.getChildren().addAll(settingsContainer, settingsMenu);
+        settingsWrapper.getChildren().add(settingsContainer);
         menuController.settingsContainer.getChildren().add(settingsWrapper);
 
 
         settingsContent.getChildren().addAll(subtitleSection, metadataSection, preferencesSection, librariesSection, controlsSection, aboutSection);
         settingsContent.setSpacing(30);
 
+
+        Platform.runLater(() -> settingsMenu = new SettingsMenu(this));
     }
 
 

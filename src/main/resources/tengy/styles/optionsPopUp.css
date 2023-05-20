@@ -28,7 +28,11 @@
     -fx-background-radius: 5;
 }
 
-.popUpItem:hover {
+.settingsMenuItem {
+    -fx-pref-width: 200;
+}
+
+.popUpItem:hover, .popUpItem:focused {
   -fx-background-color: rgba(40,40,40,0.9);
 }
 

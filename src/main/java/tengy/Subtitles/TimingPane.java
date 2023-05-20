@@ -1,39 +1,47 @@
 package tengy.Subtitles;
 
-import com.jfoenix.controls.JFXButton;
-import tengy.Subtitles.Tasks.SubtitleTimingTask;
-import tengy.ControlTooltip;
-import tengy.SVG;
-import tengy.PlaybackSettings.PlaybackSettingsController;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import tengy.ControlTooltip;
+import tengy.PlaybackSettings.PlaybackSettingsController;
+import tengy.SVG;
+import tengy.Subtitles.Tasks.SubtitleTimingTask;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class TimingPane {
 
     VBox container = new VBox();
 
     HBox titlePane = new HBox();
-    StackPane backIconPane = new StackPane();
+
+    Button backButton = new Button();
     Region backIcon = new Region();
     Label titleLabel = new Label();
     SVGPath backSVG = new SVGPath();
@@ -47,13 +55,16 @@ public class TimingPane {
     Label label = new Label("s");
 
     HBox saveButtonContainer = new HBox();
-    public JFXButton saveButton = new JFXButton("Save");
+    public Button saveButton = new Button("Save");
     ControlTooltip saveButtonTooltip = null;
 
     SubtitlesHome subtitlesHome;
     SubtitlesController subtitlesController;
 
     int MAX_WIDTH = 150;
+
+    List<Node> focusNodes = new ArrayList<>();
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
 
     TimingPane(SubtitlesHome subtitlesHome, SubtitlesController subtitlesController){
@@ -62,14 +73,15 @@ public class TimingPane {
 
         backSVG.setContent(SVG.CHEVRON_LEFT.getContent());
 
-        container.setPrefSize(235, 175);
-        container.setMaxSize(235, 175);
+        container.setPrefSize(235, 185);
+        container.setMaxSize(235, 185);
         container.getChildren().addAll(titlePane, sliderPane, textFieldContainer, saveButtonContainer);
         container.setAlignment(Pos.BOTTOM_CENTER);
         StackPane.setAlignment(container, Pos.BOTTOM_RIGHT);
 
         container.setVisible(false);
         container.setMouseTransparent(true);
+        container.setOnMouseClicked(e -> container.requestFocus());
 
         titlePane.setMinSize(235, 48);
         titlePane.setPrefSize(235, 48);
@@ -78,26 +90,45 @@ public class TimingPane {
         VBox.setMargin(titlePane, new Insets(0, 0, 15, 0));
 
         titlePane.getStyleClass().add("settingsPaneTitle");
-        titlePane.getChildren().addAll(backIconPane, titleLabel);
+        titlePane.getChildren().addAll(backButton, titleLabel);
         titlePane.setAlignment(Pos.CENTER_LEFT);
 
-        backIconPane.setMinSize(24, 40);
-        backIconPane.setPrefSize(24, 40);
-        backIconPane.setMaxSize(24, 40);
-        backIconPane.setCursor(Cursor.HAND);
-        backIconPane.getChildren().add(backIcon);
-        backIconPane.setOnMouseClicked((e) -> closeSubtitleTiming());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(backIcon);
+        backButton.setOnAction((e) -> closeSubtitleTiming());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+        backButton.setFocusTraversable(false);
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         backIcon.setMinSize(8, 13);
         backIcon.setPrefSize(8, 13);
         backIcon.setMaxSize(8, 13);
-        backIcon.getStyleClass().add("settingsPaneIcon");
+        backIcon.getStyleClass().add("graphic");
         backIcon.setShape(backSVG);
 
         titleLabel.setMinHeight(40);
         titleLabel.setPrefHeight(40);
         titleLabel.setMaxHeight(40);
         titleLabel.setText("Subtitle timing");
+        titleLabel.setPadding(new Insets(0, 0, 0, 4));
         titleLabel.setCursor(Cursor.HAND);
         titleLabel.getStyleClass().add("settingsPaneText");
         titleLabel.setOnMouseClicked((e) -> closeSubtitleTiming());
@@ -117,10 +148,11 @@ public class TimingPane {
         slider.setMin(-10);
         slider.setMax(10);
         slider.setValue(0);
-        slider.setBlockIncrement(0.05);
+        slider.setBlockIncrement(0.25);
         slider.setMinWidth(150);
         slider.setPrefWidth(150);
         slider.setMaxWidth(150);
+        slider.setFocusTraversable(false);
 
         slider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
 
@@ -148,6 +180,22 @@ public class TimingPane {
 
         slider.setOnMousePressed((e) -> slider.setValueChanging(true));
         slider.setOnMouseReleased((e) -> slider.setValueChanging(false));
+        slider.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                sliderTrack.pseudoClassStateChanged(PseudoClass.getPseudoClass("focused"), true);
+                focus.set(1);
+            }
+            else {
+                sliderTrack.pseudoClassStateChanged(PseudoClass.getPseudoClass("focused"), false);
+                focus.set(-1);
+                keyboardFocusOff(slider);
+                slider.setValueChanging(false);
+            }
+        });
+
+        slider.setOnMouseEntered(e -> sliderTrack.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), true));
+        slider.setOnMouseExited(e -> sliderTrack.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), false));
+
 
         textFieldContainer.getChildren().addAll(textField, label);
         textFieldContainer.setAlignment(Pos.CENTER);
@@ -157,6 +205,8 @@ public class TimingPane {
         textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
             if(!newValue.matches("-?\\d*\\.?\\d*")) textField.setText(oldValue);
         });
+
+        textField.setFocusTraversable(false);
 
         textField.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ENTER){
@@ -178,7 +228,12 @@ public class TimingPane {
 
         textField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
 
-            if(!newValue){
+            if(newValue){
+                focus.set(2);
+            }
+            else {
+                keyboardFocusOff(textField);
+                focus.set(-1);
                 try{
                     double number = Double.parseDouble(textField.getText());
                     slider.setValue(number);
@@ -211,7 +266,8 @@ public class TimingPane {
         textField.setText("0.00");
 
         textField.setMaxWidth(MAX_WIDTH);
-        textField.getStyleClass().add("key-text-field");
+        textField.getStyleClass().add("customTextField");
+        textField.setId("timingTextField");
         label.getStyleClass().add("settingsPaneText");
         label.setId("subtitleDelayLabel");
 
@@ -219,16 +275,48 @@ public class TimingPane {
         saveButtonContainer.setAlignment(Pos.CENTER_RIGHT);
         saveButtonContainer.setPadding(new Insets(5, 20, 10, 0));
 
-        saveButton.setRipplerFill(Color.TRANSPARENT);
         saveButton.getStyleClass().add("menuButton");
         saveButton.setId("timingSaveButton");
         saveButton.setCursor(Cursor.HAND);
         saveButton.setOnAction(e -> saveToFile());
         saveButton.setDisable(true);
+        saveButton.setFocusTraversable(false);
+        saveButton.disableProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focusNodes.remove(saveButton);
+            else {
+                if(!focusNodes.contains(saveButton)) focusNodes.add(saveButton);
+            }
+        });
+
+        saveButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            saveButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        saveButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            saveButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        saveButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(3);
+            }
+            else {
+                keyboardFocusOff(saveButton);
+                focus.set(-1);
+            }
+        });
+
 
         subtitlesController.subtitlesPane.getChildren().add(container);
 
         Platform.runLater(() -> saveButtonTooltip = new ControlTooltip(subtitlesController.mainController, "Save changes to active subtitle file", "", saveButton, 1000));
+
+
+        focusNodes.add(backButton);
+        focusNodes.add(slider);
+        focusNodes.add(textField);
 
     }
 
@@ -284,5 +372,24 @@ public class TimingPane {
         slider.setValue(0);
         textField.setText("0.00");
         saveButton.setDisable(true);
+    }
+
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+    }
+
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 }

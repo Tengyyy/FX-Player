@@ -1,5 +1,12 @@
 package tengy.Subtitles;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import tengy.PlaybackSettings.CheckTab;
 import tengy.PlaybackSettings.PlaybackSettingsController;
@@ -17,6 +24,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class FontOpacityPane {
 
@@ -28,13 +39,17 @@ public class FontOpacityPane {
     VBox opacityBox = new VBox();
     HBox opacityTitle = new HBox();
 
-    StackPane opacityBackPane = new StackPane();
+    Button backButton = new Button();
     Region opacityBackIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
     Label opacityTitleLabel = new Label();
 
     CheckTab _25Tab, _50Tab, _75Tab, _100Tab;
+
+    List<Node> focusNodes = new ArrayList<>();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     ArrayList<CheckTab> checkTabs = new ArrayList<>();
 
@@ -70,33 +85,52 @@ public class FontOpacityPane {
         VBox.setMargin(opacityTitle, new Insets(0, 0, 10, 0));
 
         opacityTitle.getStyleClass().add("settingsPaneTitle");
-        opacityTitle.getChildren().addAll(opacityBackPane, opacityTitleLabel);
+        opacityTitle.getChildren().addAll(backButton, opacityTitleLabel);
 
-        opacityBackPane.setMinSize(24, 40);
-        opacityBackPane.setPrefSize(24, 40);
-        opacityBackPane.setMaxSize(24, 40);
-        opacityBackPane.getChildren().add(opacityBackIcon);
-        opacityBackPane.setCursor(Cursor.HAND);
-        opacityBackPane.setOnMouseClicked((e) -> closeOpacityPane());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(opacityBackIcon);
+        backButton.setOnAction((e) -> closeOpacityPane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         opacityBackIcon.setMinSize(8, 13);
         opacityBackIcon.setPrefSize(8, 13);
         opacityBackIcon.setMaxSize(8, 13);
-        opacityBackIcon.getStyleClass().add("settingsPaneIcon");
+        opacityBackIcon.getStyleClass().add("graphic");
         opacityBackIcon.setShape(backSVG);
 
         opacityTitleLabel.setMinHeight(40);
         opacityTitleLabel.setPrefHeight(40);
         opacityTitleLabel.setMaxHeight(40);
         opacityTitleLabel.setText("Opacity");
+        opacityTitleLabel.setPadding(new Insets(0, 0, 0, 4));
         opacityTitleLabel.setCursor(Cursor.HAND);
         opacityTitleLabel.getStyleClass().add("settingsPaneText");
         opacityTitleLabel.setOnMouseClicked((e) -> closeOpacityPane());
 
-        _25Tab = new CheckTab(false, "25%");
-        _50Tab = new CheckTab(false, "50%");
-        _75Tab = new CheckTab(false, "75%");
-        _100Tab = new CheckTab(false, "100%");
+        _25Tab = new CheckTab(false, "25%", focus, 1, () -> this.press_25Tab(false));
+        _50Tab = new CheckTab(false, "50%", focus, 2, () -> this.press_50Tab(false));
+        _75Tab = new CheckTab(false, "75%", focus, 3, () -> this.press_75Tab(false));
+        _100Tab = new CheckTab(false, "100%", focus, 4, () -> this.press_100Tab(false));
 
         opacityBox.getChildren().addAll(_25Tab, _50Tab, _75Tab, _100Tab);
         checkTabs.add(_25Tab);
@@ -104,10 +138,11 @@ public class FontOpacityPane {
         checkTabs.add(_75Tab);
         checkTabs.add(_100Tab);
 
-        _25Tab.setOnMouseClicked(e -> press_25Tab(false));
-        _50Tab.setOnMouseClicked(e -> press_50Tab(false));
-        _75Tab.setOnMouseClicked(e -> press_75Tab(false));
-        _100Tab.setOnMouseClicked(e -> press_100Tab(false));
+        focusNodes.add(backButton);
+        focusNodes.add(_25Tab);
+        focusNodes.add(_50Tab);
+        focusNodes.add(_75Tab);
+        focusNodes.add(_100Tab);
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -120,7 +155,6 @@ public class FontOpacityPane {
 
         subtitlesController.subtitlesOptionsPane.scrollPane.setVisible(true);
         subtitlesController.subtitlesOptionsPane.scrollPane.setMouseTransparent(false);
-
 
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), subtitlesController.subtitlesOptionsPane.scrollPane.getHeight())));
@@ -206,6 +240,29 @@ public class FontOpacityPane {
         else updateValue(1.0, "100%");
 
         _100Tab.checkIcon.setVisible(true);
+    }
+
+    public void focusForward() {
+        int newFocus;
+
+        if(focus.get() == 4 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
+    public void focusBackward() {
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 4;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
     }
 }
 

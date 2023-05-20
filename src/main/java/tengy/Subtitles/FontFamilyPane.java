@@ -1,5 +1,12 @@
 package tengy.Subtitles;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import tengy.PlaybackSettings.CheckTab;
 import tengy.PlaybackSettings.PlaybackSettingsController;
@@ -17,6 +24,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class FontFamilyPane {
 
@@ -28,13 +39,17 @@ public class FontFamilyPane {
     VBox fontFamilyBox = new VBox();
     HBox fontFamilyTitle = new HBox();
 
-    StackPane fontFamilyBackPane = new StackPane();
+    Button backButton = new Button();
     Region fontFamilyBackIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
     Label fontFamilyTitleLabel = new Label();
 
     CheckTab sansSerifRegularTab, sansSerifMediumTab, sansSerifBoldTab, serifTab, casualTab, cursiveTab, smallCapitalsTab;
+
+    List<Node> focusNodes = new ArrayList<>();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     ArrayList<CheckTab> checkTabs = new ArrayList<>();
 
@@ -69,19 +84,37 @@ public class FontFamilyPane {
         VBox.setMargin(fontFamilyTitle, new Insets(0, 0, 10, 0));
 
         fontFamilyTitle.getStyleClass().add("settingsPaneTitle");
-        fontFamilyTitle.getChildren().addAll(fontFamilyBackPane, fontFamilyTitleLabel);
+        fontFamilyTitle.getChildren().addAll(backButton, fontFamilyTitleLabel);
 
-        fontFamilyBackPane.setMinSize(24, 40);
-        fontFamilyBackPane.setPrefSize(24, 40);
-        fontFamilyBackPane.setMaxSize(24, 40);
-        fontFamilyBackPane.getChildren().add(fontFamilyBackIcon);
-        fontFamilyBackPane.setCursor(Cursor.HAND);
-        fontFamilyBackPane.setOnMouseClicked((e) -> closeFontFamilyPane());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(fontFamilyBackIcon);
+        backButton.setOnAction((e) -> closeFontFamilyPane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         fontFamilyBackIcon.setMinSize(8, 13);
         fontFamilyBackIcon.setPrefSize(8, 13);
         fontFamilyBackIcon.setMaxSize(8, 13);
-        fontFamilyBackIcon.getStyleClass().add("settingsPaneIcon");
+        fontFamilyBackIcon.getStyleClass().add("graphic");
         fontFamilyBackIcon.setShape(backSVG);
 
         fontFamilyTitleLabel.setMinHeight(40);
@@ -89,18 +122,20 @@ public class FontFamilyPane {
         fontFamilyTitleLabel.setMaxHeight(40);
         fontFamilyTitleLabel.setText("Font family");
         fontFamilyTitleLabel.setCursor(Cursor.HAND);
+        fontFamilyTitleLabel.setPadding(new Insets(0, 0, 0, 4));
         fontFamilyTitleLabel.getStyleClass().add("settingsPaneText");
         fontFamilyTitleLabel.setOnMouseClicked((e) -> closeFontFamilyPane());
 
-        sansSerifRegularTab = new CheckTab(false, "Sans-Serif Regular");
-        sansSerifMediumTab = new CheckTab(false, "Sans-Serif Medium");
-        sansSerifBoldTab = new CheckTab(false, "Sans-Serif Bold");
-        serifTab = new CheckTab(false, "Serif");
-        casualTab = new CheckTab(false, "Casual");
-        cursiveTab = new CheckTab(false, "Cursive");
-        smallCapitalsTab = new CheckTab(false, "Small Capitals");
+        sansSerifRegularTab = new CheckTab(false, "Sans-Serif Regular", focus, 1, () -> this.pressSansSerifRegularTab(false));
+        sansSerifMediumTab = new CheckTab(false, "Sans-Serif Medium", focus, 2, () -> this.pressSansSerifMediumTab(false));
+        sansSerifBoldTab = new CheckTab(false, "Sans-Serif Bold", focus, 3, () -> this.pressSansSerifBoldTab(false));
+        serifTab = new CheckTab(false, "Serif", focus, 4, () -> this.pressSerifTab(false));
+        casualTab = new CheckTab(false, "Casual", focus, 5, () -> this.pressCasualTab(false));
+        cursiveTab = new CheckTab(false, "Cursive", focus, 6, () -> this.pressCursiveTab(false));
+        smallCapitalsTab = new CheckTab(false, "Small Capitals", focus, 7, () -> this.pressSmallCapitalsTab(false));
 
         fontFamilyBox.getChildren().addAll(sansSerifRegularTab, sansSerifMediumTab, sansSerifBoldTab, serifTab, casualTab, cursiveTab, smallCapitalsTab);
+
         checkTabs.add(sansSerifRegularTab);
         checkTabs.add(sansSerifMediumTab);
         checkTabs.add(sansSerifBoldTab);
@@ -109,13 +144,14 @@ public class FontFamilyPane {
         checkTabs.add(cursiveTab);
         checkTabs.add(smallCapitalsTab);
 
-        sansSerifRegularTab.setOnMouseClicked(e -> pressSansSerifRegularTab(false));
-        sansSerifMediumTab.setOnMouseClicked(e -> pressSansSerifMediumTab(false));
-        sansSerifBoldTab.setOnMouseClicked(e -> pressSansSerifBoldTab(false));
-        serifTab.setOnMouseClicked(e -> pressSerifTab(false));
-        casualTab.setOnMouseClicked(e -> pressCasualTab(false));
-        cursiveTab.setOnMouseClicked(e -> pressCursiveTab(false));
-        smallCapitalsTab.setOnMouseClicked(e -> pressSmallCapitalsTab(false));
+        focusNodes.add(backButton);
+        focusNodes.add(sansSerifRegularTab);
+        focusNodes.add(sansSerifMediumTab);
+        focusNodes.add(sansSerifBoldTab);
+        focusNodes.add(serifTab);
+        focusNodes.add(casualTab);
+        focusNodes.add(cursiveTab);
+        focusNodes.add(smallCapitalsTab);
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -244,4 +280,26 @@ public class FontFamilyPane {
         smallCapitalsTab.checkIcon.setVisible(true);
     }
 
+    public void focusForward() {
+        int newFocus;
+
+        if(focus.get() == 7 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
+    public void focusBackward() {
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 7;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
 }

@@ -2,110 +2,98 @@ package tengy.Menu.Settings;
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
+import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-public class SettingsMenu extends VBox {
+public class SettingsMenu extends ContextMenu {
 
-
-    Label subtitlesItem = new Label("Subtitles");
-    Label metadataItem = new Label("Metadata editing");
-    Label preferencesItem = new Label("Preferences");
-    Label musicLibrariesItem = new Label("Music libraries");
-    Label controlsItem = new Label("Controls");
-    Label aboutItem = new Label("About");
-
-    public boolean showing = false;
+    MenuItem subtitlesItem = new MenuItem("Subtitles");
+    MenuItem metadataItem = new MenuItem("Metadata editing");
+    MenuItem preferencesItem = new MenuItem("Preferences");
+    MenuItem musicLibrariesItem = new MenuItem("Music libraries");
+    MenuItem controlsItem = new MenuItem("Controls");
+    MenuItem aboutItem = new MenuItem("About");
 
     SettingsPage settingsPage;
 
-    FadeTransition showTransition;
-    FadeTransition hideTransition;
+    FadeTransition showTransition, hideTransition;
+
+    double buttonWidth;
+
+    final double popUpWidth = 200;
+
+    public boolean showing = false;
+
 
     public SettingsMenu(SettingsPage settingsPage){
 
         this.settingsPage = settingsPage;
 
-        this.getStyleClass().add("settingsMenu");
-        this.getChildren().addAll(subtitlesItem, metadataItem, preferencesItem, musicLibrariesItem, controlsItem, aboutItem);
-        this.setSpacing(3);
-        this.setMaxHeight(150);
-        this.setMaxWidth(170);
-        this.setFillWidth(true);
+        this.getStyleClass().add("menu-context-menu");
+        this.getItems().addAll(subtitlesItem, metadataItem, preferencesItem, musicLibrariesItem, controlsItem, aboutItem);
 
-        subtitlesItem.getStyleClass().add("item");
-        subtitlesItem.setMinWidth(170);
-        subtitlesItem.setOnMouseClicked(e -> {
-            settingsPage.animateScroll(Section.SUBTITLES);
-        });
+        this.getStyleableNode().setOpacity(0);
 
-        metadataItem.getStyleClass().add("item");
-        metadataItem.setMinWidth(170);
-        metadataItem.setOnMouseClicked(e -> {
-            settingsPage.animateScroll(Section.METADATA);
-        });
+        buttonWidth = settingsPage.linksButton.getWidth();
 
-        preferencesItem.getStyleClass().add("item");
-        preferencesItem.setMinWidth(170);
-        preferencesItem.setOnMouseClicked(e -> {
-            settingsPage.animateScroll(Section.PREFERENCES);
-        });
+        subtitlesItem.getStyleClass().addAll("popUpItem", "settingsMenuItem");
+        subtitlesItem.setOnAction(e -> settingsPage.animateScroll(Section.SUBTITLES));
 
-        musicLibrariesItem.getStyleClass().add("item");
-        musicLibrariesItem.setMinWidth(170);
-        musicLibrariesItem.setOnMouseClicked(e -> {
-            settingsPage.animateScroll(Section.LIBRARIES);
-        });
+        metadataItem.getStyleClass().addAll("popUpItem", "settingsMenuItem");
+        metadataItem.setOnAction(e -> settingsPage.animateScroll(Section.METADATA));
 
-        controlsItem.getStyleClass().add("item");
-        controlsItem.setMinWidth(170);
-        controlsItem.setOnMouseClicked(e -> {
-            settingsPage.animateScroll(Section.CONTROLS);
-        });
+        preferencesItem.getStyleClass().addAll("popUpItem", "settingsMenuItem");
+        preferencesItem.setOnAction(e -> settingsPage.animateScroll(Section.PREFERENCES));
 
-        aboutItem.getStyleClass().add("item");
-        aboutItem.setMinWidth(170);
-        aboutItem.setOnMouseClicked(e -> {
-            settingsPage.animateScroll(Section.ABOUT);
-        });
+        musicLibrariesItem.getStyleClass().addAll("popUpItem", "settingsMenuItem");
+        musicLibrariesItem.setOnAction(e -> settingsPage.animateScroll(Section.LIBRARIES));
 
-        this.setOpacity(0);
-        this.setMouseTransparent(true);
+        controlsItem.getStyleClass().addAll("popUpItem", "settingsMenuItem");
+        controlsItem.setOnAction(e -> settingsPage.animateScroll(Section.CONTROLS));
 
-        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(!newValue && showing) this.hide();
-        });
+        aboutItem.getStyleClass().addAll("popUpItem", "settingsMenuItem");
+        aboutItem.setOnAction(e -> settingsPage.animateScroll(Section.ABOUT));
+    }
+
+    public void showOptions(boolean animate){
+        this.show(settingsPage.linksButton, // might not work
+                settingsPage.linksButton.localToScreen(settingsPage.linksButton.getBoundsInLocal()).getMinX() + buttonWidth/2 - popUpWidth/2,
+                settingsPage.linksButton.localToScreen(settingsPage.linksButton.getBoundsInLocal()).getMaxY() + 5, animate);
     }
 
 
-
-    public void show() {
+    public void show(Node node, double v, double v1, boolean animate) {
 
         if(hideTransition != null && hideTransition.getStatus() == Animation.Status.RUNNING) hideTransition.stop();
+
+        if(animate) this.getStyleableNode().setOpacity(0);
+        else this.getStyleableNode().setOpacity(1);
+
+        super.show(node, v, v1);
         showing = true;
 
-        showTransition = new FadeTransition(Duration.millis(150), this);
-        showTransition.setFromValue(this.getOpacity());
-        showTransition.setToValue(1);
-        showTransition.setOnFinished(e -> {
-            this.setMouseTransparent(false);
-            this.requestFocus();
-        });
-        showTransition.playFromStart();
+        if(animate){
+            showTransition = new FadeTransition(Duration.millis(150), this.getStyleableNode());
+            showTransition.setFromValue(0);
+            showTransition.setToValue(1);
+            showTransition.playFromStart();
+        }
     }
 
+    @Override
     public void hide() {
+        showing = false;
 
         if(showTransition != null && showTransition.getStatus() == Animation.Status.RUNNING) showTransition.stop();
 
-        showing = false;
-
-        this.setMouseTransparent(true);
-
-        FadeTransition hideTransition = new FadeTransition(Duration.millis(150), this);
-        hideTransition.setFromValue(this.getOpacity());
+        hideTransition = new FadeTransition(Duration.millis(150), this.getStyleableNode());
+        hideTransition.setFromValue(1);
         hideTransition.setToValue(0);
+        hideTransition.setOnFinished(e -> super.hide());
         hideTransition.playFromStart();
     }
 }

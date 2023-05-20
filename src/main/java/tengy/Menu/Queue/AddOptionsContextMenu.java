@@ -1,5 +1,7 @@
 package tengy.Menu.Queue;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.SVG;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;

@@ -1,5 +1,9 @@
 package tengy.PlaybackSettings;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.SVG;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -18,8 +22,9 @@ public class CheckTab extends HBox {
 
     Label valueLabel = new Label();
 
+    boolean pressed = false;
 
-    public CheckTab(boolean selected, String value){
+    public CheckTab(boolean selected, String value, IntegerProperty focusProperty, int focusValue, Runnable action){
 
         checkSVG.setContent(SVG.CHECK.getContent());
 
@@ -27,10 +32,38 @@ public class CheckTab extends HBox {
         this.setMaxSize(200, 35);
 
         this.setPadding(new Insets(0, 10, 0, 10));
-
         this.getStyleClass().add("settingsPaneTab");
-
         this.setCursor(Cursor.HAND);
+        this.setFocusTraversable(false);
+
+        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focusProperty.set(focusValue);
+            else {
+                focusProperty.set(-1);
+                pressed = false;
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+            }
+        });
+
+        this.setOnMouseClicked(e -> action.run());
+
+        this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            pressed = true;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            if(pressed){
+                action.run();
+            }
+
+            pressed = false;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
 
         checkIconPane.setMinSize(30, 35);

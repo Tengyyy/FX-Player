@@ -1,5 +1,8 @@
 package tengy.Subtitles;
 
+import javafx.css.PseudoClass;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.AnimationsClass;
 import tengy.SVG;
 
@@ -20,6 +23,8 @@ import javafx.util.Duration;
 
 import java.io.File;
 
+import static tengy.Utilities.keyboardFocusOff;
+
 public class SubtitlesTab extends HBox {
 
     SubtitlesController subtitlesController;
@@ -29,17 +34,18 @@ public class SubtitlesTab extends HBox {
 
     StackPane checkIconPane = new StackPane();
     public Region checkIcon = new Region();
-    SVGPath checkSVG = new SVGPath();
-    SVGPath removeSVG = new SVGPath();
+
+    SVGPath checkSVG = new SVGPath(), removeSVG = new SVGPath();
 
     Region removeIcon = new Region();
-    StackPane removePane = new StackPane();
     Button removeButton = new Button();
     public Label valueLabel = new Label();
 
     public boolean selected = false;
 
     public boolean removable;
+
+    boolean pressed = false;
 
     SubtitlesTab(SubtitlesController subtitlesController, SubtitlesHome subtitlesHome, String value, File file, boolean removable){
 
@@ -51,25 +57,60 @@ public class SubtitlesTab extends HBox {
         checkSVG.setContent(SVG.CHECK.getContent());
         removeSVG.setContent(SVG.CLOSE.getContent());
 
-        this.setPrefSize(245, 35);
-        this.setMaxSize(245, 35);
+        this.setPrefSize(295, 35);
+        this.setMaxSize(295, 35);
 
         this.setPadding(new Insets(0, 10, 0, 10));
-
+        this.setFocusTraversable(false);
         this.getStyleClass().add("settingsPaneTab");
+
+        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                subtitlesHome.focus.set(subtitlesHome.focusNodes.indexOf(this));
+            }
+            else {
+                subtitlesHome.focus.set(-1);
+                pressed = false;
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+            }
+        });
+
+        this.setOnMousePressed(e -> {
+            if(e.getTarget().equals(removeButton)){
+                System.out.println("test");
+            }
+        });
+
+
+        this.setOnMouseClicked(e -> {
+            selectSubtitles(true);
+        });
+        this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            pressed = true;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            if(pressed) selectSubtitles(true);
+
+            pressed = false;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         checkIconPane.setMinSize(30, 35);
         checkIconPane.setPrefSize(30, 35);
         checkIconPane.setMaxSize(30, 35);
-
         checkIconPane.setPadding(new Insets(0, 5, 0, 0));
         checkIconPane.getChildren().add(checkIcon);
-        checkIconPane.setOnMouseClicked(e -> selectSubtitles(true));
+        checkIconPane.setMouseTransparent(true);
 
         checkIcon.setMinSize(14, 11);
         checkIcon.setPrefSize(14, 11);
         checkIcon.setMaxSize(14, 11);
-
         checkIcon.setShape(checkSVG);
         checkIcon.getStyleClass().add("settingsPaneIcon");
         checkIcon.setVisible(false);
@@ -80,38 +121,51 @@ public class SubtitlesTab extends HBox {
         valueLabel.setMaxHeight(35);
         valueLabel.setText(value);
         valueLabel.getStyleClass().add("settingsPaneText");
-        valueLabel.setOnMouseClicked(e -> selectSubtitles(true));
+        valueLabel.setMouseTransparent(true);
+
         if(removable){
-            valueLabel.setPrefWidth(160);
-            valueLabel.setMaxWidth(160);
+            valueLabel.setPrefWidth(210);
+            valueLabel.setMaxWidth(210);
 
-            removePane.setMinSize(35, 35);
-            removePane.setPrefSize(35, 35);
-            removePane.setMaxSize(35, 35);
+            removeButton.setMinSize(35, 35);
+            removeButton.setPrefSize(35, 35);
+            removeButton.setMaxSize(35, 35);
+            removeButton.setGraphic(removeIcon);
+            removeButton.setOnAction(e -> {
+                removeItem();
+            });
+            removeButton.setFocusTraversable(false);
+            removeButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+            removeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+                if(newValue) subtitlesHome.focus.set(subtitlesHome.focusNodes.indexOf(removeButton));
+                else {
+                    keyboardFocusOff(removeButton);
+                    subtitlesHome.focus.set(-1);
+                }
+            });
 
-            removePane.getChildren().addAll(removeButton, removeIcon);
+            removeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+                if(e.getCode() != KeyCode.SPACE) return;
+                removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+            });
 
-            removeButton.setMinSize(25, 25);
-            removeButton.setPrefSize(25, 25);
-            removeButton.setMaxSize(25, 25);
-            removeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> AnimationsClass.animateBackgroundColor(removeIcon, (Color) removeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(255, 255, 255), 200));
-            removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> AnimationsClass.animateBackgroundColor(removeIcon, (Color) removeIcon.getBackground().getFills().get(0).getFill(), Color.rgb(200, 200, 200), 200));
-            removeButton.setCursor(Cursor.HAND);
-            removeButton.setBackground(Background.EMPTY);
-            removeButton.setOnAction(e -> removeItem());
+            removeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+                if(e.getCode() != KeyCode.SPACE) return;
+                removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+            });
 
             removeIcon.setMinSize(16, 16);
             removeIcon.setPrefSize(16, 16);
             removeIcon.setMaxSize(16, 16);
             removeIcon.setShape(removeSVG);
-            removeIcon.getStyleClass().add("settingsPaneIcon");
+            removeIcon.getStyleClass().add("graphic");
             removeIcon.setMouseTransparent(true);
 
-            this.getChildren().addAll(checkIconPane, valueLabel, removePane);
+            this.getChildren().addAll(checkIconPane, valueLabel, removeButton);
         }
         else {
-            valueLabel.setPrefWidth(195);
-            valueLabel.setMaxWidth(195);
+            valueLabel.setPrefWidth(245);
+            valueLabel.setMaxWidth(245);
 
             this.getChildren().addAll(checkIconPane, valueLabel);
         }
@@ -120,20 +174,12 @@ public class SubtitlesTab extends HBox {
         subtitlesHome.subtitlesWrapper.setPrefHeight(height + 35);
         subtitlesHome.subtitlesWrapper.setMaxHeight(height + 35);
 
-        subtitlesHome.scrollPane.setPrefHeight(height + 38);
-        subtitlesHome.scrollPane.setMaxHeight(height + 38);
+        subtitlesHome.scrollPane.setPrefHeight(Math.min(height + 38, 300));
+        subtitlesHome.scrollPane.setMaxHeight(Math.min(height + 38, 300));
 
         if(subtitlesController.subtitlesState == SubtitlesState.HOME_OPEN || subtitlesController.subtitlesState == SubtitlesState.CLOSED){
-            subtitlesController.clip.setHeight(height + 38);
+            subtitlesController.clip.setHeight(Math.min(height + 38, 300));
         }
-
-
-        Tooltip tooltip = new Tooltip(value);
-        tooltip.setShowDelay(Duration.millis(1000));
-        tooltip.setHideDelay(Duration.ZERO);
-        tooltip.setShowDuration(Duration.seconds(4));
-        Tooltip.install(this, tooltip);
-
     }
 
     public void selectSubtitles(boolean checkSelected){
@@ -166,6 +212,9 @@ public class SubtitlesTab extends HBox {
             subtitlesHome.subtitlesChooserTab.setStyle("-fx-border-width: 0;");
         }
 
+        subtitlesHome.focusNodes.remove(this);
+        if(removable) subtitlesHome.focusNodes.remove(removeButton);
+
         boolean removed = subtitlesHome.subtitlesWrapper.getChildren().remove(this);
         if(removed){
             double height = subtitlesHome.subtitlesWrapper.getPrefHeight();
@@ -173,10 +222,12 @@ public class SubtitlesTab extends HBox {
             subtitlesHome.subtitlesWrapper.setPrefHeight(height - 35);
             subtitlesHome.subtitlesWrapper.setMaxHeight(height - 35);
 
-            subtitlesHome.scrollPane.setPrefHeight(height - 32);
-            subtitlesHome.scrollPane.setMaxHeight(height - 32);
+            subtitlesHome.scrollPane.setPrefHeight(Math.min(300,height - 32));
+            subtitlesHome.scrollPane.setMaxHeight(Math.min(300, height - 32));
 
-            if(subtitlesController.subtitlesState == SubtitlesState.CLOSED || subtitlesController.subtitlesState == SubtitlesState.HOME_OPEN) subtitlesController.clip.setHeight(height - 32);
+            if(subtitlesController.subtitlesState == SubtitlesState.CLOSED || subtitlesController.subtitlesState == SubtitlesState.HOME_OPEN){
+                subtitlesController.clip.setHeight(Math.min(300,height - 32));
+            }
         }
     }
 }

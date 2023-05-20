@@ -207,4 +207,10 @@ public class PlaybackOptionsController {
         playbackSettingsController.animating.set(true);
 
     }
+
+    public void focusForward() {
+    }
+
+    public void focusBackward() {
+    }
 }

@@ -342,4 +342,10 @@ public class EqualizerController {
 
         playbackSettingsController.mediaInterface.embeddedMediaPlayer.audio().equalizer().setAmps(floatArray);
     }
+
+    public void focusForward() {
+    }
+
+    public void focusBackward() {
+    }
 }

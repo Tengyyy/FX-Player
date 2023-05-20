@@ -4,6 +4,15 @@ import com.github.wtekiela.opensub4j.api.OpenSubtitlesClient;
 import com.github.wtekiela.opensub4j.impl.OpenSubtitlesClientImpl;
 import com.github.wtekiela.opensub4j.response.SubtitleInfo;
 import com.jfoenix.controls.JFXButton;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.Menu.MenuState;
 import tengy.Menu.Settings.Section;
 import tengy.Subtitles.Tasks.LoginTask;
@@ -32,12 +41,16 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import org.controlsfx.control.CheckComboBox;
+import tengy.Utilities;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class OpenSubtitlesPane {
 
@@ -46,7 +59,7 @@ public class OpenSubtitlesPane {
 
     StackPane titleContainer = new StackPane();
     HBox titlePane = new HBox();
-    StackPane backIconPane = new StackPane();
+    Button backButton = new Button();
     Region backIcon = new Region();
     Label titleLabel = new Label();
 
@@ -59,7 +72,7 @@ public class OpenSubtitlesPane {
     VBox fieldContainer = new VBox();
 
     Label connectLabel = new Label();
-    JFXButton connectButton = new JFXButton();
+    Button connectButton = new Button();
 
     HBox titleFieldContainer = new HBox();
     public TextField titleField = new TextField();
@@ -81,12 +94,12 @@ public class OpenSubtitlesPane {
     StackPane searchButtonContainer = new StackPane();
     MFXProgressSpinner searchSpinner = new MFXProgressSpinner();
     HBox searchButtonWrapper = new HBox();
-    public JFXButton searchButton = new JFXButton();
+    public Button searchButton = new Button();
     Region searchIcon = new Region();
     SVGPath searchSVG = new SVGPath();
 
     public SearchOptionsContextMenu searchOptionsContextMenu;
-    JFXButton searchOptionsButton = new JFXButton();
+    Button searchOptionsButton = new Button();
     SVGPath chevronUpSVG = new SVGPath();
     Region chevronUpIcon = new Region();
 
@@ -101,6 +114,12 @@ public class OpenSubtitlesPane {
     ExecutorService executorService = null;
 
     public boolean defaultViewInitialized;
+
+    boolean searchOptionsPressed = false;
+
+    List<Node> focusNodes = new ArrayList<>();
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+
 
     OpenSubtitlesPane(SubtitlesHome subtitlesHome, SubtitlesController subtitlesController){
         this.subtitlesHome = subtitlesHome;
@@ -134,19 +153,39 @@ public class OpenSubtitlesPane {
         titlePane.setMaxHeight(50);
         titlePane.setPrefWidth(Region.USE_COMPUTED_SIZE);
         StackPane.setAlignment(titlePane, Pos.CENTER_LEFT);
-        titlePane.getChildren().addAll(backIconPane, titleLabel);
+        titlePane.getChildren().addAll(backButton, titleLabel);
 
-        backIconPane.setMinSize(24, 50);
-        backIconPane.setPrefSize(24, 50);
-        backIconPane.setMaxSize(24, 50);
-        backIconPane.setCursor(Cursor.HAND);
-        backIconPane.getChildren().add(backIcon);
-        backIconPane.setOnMouseClicked((e) -> closeOpenSubtitlesPane());
+        backButton.setMinSize(30, 50);
+        backButton.setPrefSize(30, 50);
+        backButton.setMaxSize(30, 50);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(backIcon);
+        backButton.setFocusTraversable(false);
+        backButton.setOnAction((e) -> closeOpenSubtitlesPane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+            }
+            else{
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         backIcon.setMinSize(8, 13);
         backIcon.setPrefSize(8, 13);
         backIcon.setMaxSize(8, 13);
-        backIcon.getStyleClass().add("settingsPaneIcon");
+        backIcon.getStyleClass().add("graphic");
         backIcon.setShape(backSVG);
 
         titleLabel.setMinHeight(50);
@@ -155,14 +194,25 @@ public class OpenSubtitlesPane {
         titleLabel.setText("OpenSubtitles");
         titleLabel.setCursor(Cursor.HAND);
         titleLabel.getStyleClass().add("settingsPaneText");
+        titleLabel.setPadding(new Insets(0, 0, 0, 4));
         titleLabel.setOnMouseClicked((e) -> closeOpenSubtitlesPane());
 
         StackPane.setAlignment(languageBox, Pos.CENTER_RIGHT);
 
         languageBox.setPrefWidth(200);
         languageBox.setMaxWidth(200);
+        languageBox.setFocusTraversable(false);
         languageBox.setTitle("Languages");
         languageBox.setId("languageBox");
+        languageBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(1);
+            }
+            else {
+                keyboardFocusOff(languageBox);
+                focus.set(-1);
+            }
+        });
 
         ObservableList<Integer> observableList = languageBox.getCheckModel().getCheckedIndices();
         observableList.addListener((ListChangeListener<Integer>) change -> {
@@ -206,6 +256,31 @@ public class OpenSubtitlesPane {
         connectButton.setCursor(Cursor.HAND);
         connectButton.setText("Connect");
         connectButton.setPrefWidth(120);
+        connectButton.setFocusTraversable(false);
+
+        connectButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            connectButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        connectButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            connectButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        connectButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+               focus.set(1);
+            }
+            else {
+                keyboardFocusOff(connectButton);
+                focus.set(-1);
+            }
+        });
+
+        focusNodes.add(backButton);
+        focusNodes.add(connectButton);
+
         connectButton.setOnAction(e -> {
             subtitlesController.closeSubtitles();
 
@@ -242,11 +317,20 @@ public class OpenSubtitlesPane {
         titleField.setPrefHeight(36);
         titleField.setMinHeight(36);
         titleField.setMaxHeight(36);
+        titleField.setFocusTraversable(false);
         titleField.setPrefWidth(380);
         titleField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
-        titleField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(!newValue.isEmpty()) titleFieldBorder.setVisible(false);
+        titleField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                titleFieldBorder.setVisible(false);
+                focus.set(2);
+            }
+            else {
+                keyboardFocusOff(titleField);
+                focus.set(-1);
+            }
         });
+
 
         seasonEpisodeContainer.getChildren().addAll(seasonField, episodeField);
         seasonEpisodeContainer.setAlignment(Pos.CENTER_LEFT);
@@ -257,11 +341,21 @@ public class OpenSubtitlesPane {
         seasonField.setPromptText("Season");
         seasonField.setPrefHeight(36);
         seasonField.setMinHeight(36);
+        seasonField.setFocusTraversable(false);
         seasonField.setMaxHeight(36);
         seasonField.setPrefWidth(190);
         seasonField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
         seasonField.textProperty().addListener((observableValue, oldValue, newValue) -> {
             if(!newValue.matches("\\d*")) seasonField.setText(oldValue);
+        });
+        seasonField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+               focus.set(3);
+            }
+            else {
+                keyboardFocusOff(seasonField);
+                focus.set(-1);
+            }
         });
 
         episodeField.getStyleClass().add("customTextField");
@@ -269,10 +363,20 @@ public class OpenSubtitlesPane {
         episodeField.setPrefHeight(36);
         episodeField.setMinHeight(36);
         episodeField.setMaxHeight(36);
+        episodeField.setFocusTraversable(false);
         episodeField.setPrefWidth(190);
         episodeField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
         episodeField.textProperty().addListener((observableValue, oldValue, newValue) -> {
             if(!newValue.matches("\\d*")) episodeField.setText(oldValue);
+        });
+        episodeField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+               focus.set(4);
+            }
+            else {
+                keyboardFocusOff(episodeField);
+                focus.set(-1);
+            }
         });
 
 
@@ -291,12 +395,24 @@ public class OpenSubtitlesPane {
         imdbField.setPrefHeight(36);
         imdbField.setMinHeight(36);
         imdbField.setMaxHeight(36);
+        imdbField.setFocusTraversable(false);
         imdbField.setPrefWidth(300);
         imdbField.setMaxWidth(300);
         imdbField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
+
         imdbField.textProperty().addListener((observableValue, oldValue, newValue) -> {
             if(!newValue.matches("\\d*")) imdbField.setText(oldValue);
-            else if(!newValue.isEmpty()) imdbFieldBorder.setVisible(false);
+        });
+
+        imdbField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                imdbFieldBorder.setVisible(false);
+                focus.set(2);
+            }
+            else {
+                keyboardFocusOff(imdbField);
+                focus.set(-1);
+            }
         });
 
         fileSearchLabelContainer.setPadding(new Insets(0, 20, 0, 20));
@@ -341,8 +457,42 @@ public class OpenSubtitlesPane {
         searchButton.getStyleClass().add("menuButton");
         searchButton.setId("searchButton");
         searchButton.setText("Search");
-        searchButton.setRipplerFill(Color.TRANSPARENT);
         searchButton.setGraphic(searchIcon);
+        searchButton.setFocusTraversable(false);
+
+        searchButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            searchButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        searchButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            searchButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        searchButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.size() - 2);
+            }
+            else {
+                keyboardFocusOff(searchButton);
+                focus.set(-1);
+            }
+        });
+
+        searchButton.disableProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focusNodes.remove(searchButton);
+                focus.set(Math.min(focus.get(), focusNodes.size() - 1));
+            }
+            else {
+                if(defaultViewInitialized){
+                    if(!focusNodes.contains(searchButton)) focusNodes.add(focusNodes.size()-1, searchButton);
+                    if(searchOptionsButton.isFocused()) focus.set(focusNodes.size()-1);
+                }
+            }
+        });
+
         searchButton.setOnAction(e -> attemptSearch());
 
         chevronUpSVG.setContent(SVG.CHEVRON_UP.getContent());
@@ -355,8 +505,8 @@ public class OpenSubtitlesPane {
         searchOptionsButton.setCursor(Cursor.HAND);
         searchOptionsButton.getStyleClass().add("menuButton");
         searchOptionsButton.setId("searchOptionsButton");
-        searchOptionsButton.setRipplerFill(Color.TRANSPARENT);
         searchOptionsButton.setGraphic(chevronUpIcon);
+        searchOptionsButton.setFocusTraversable(false);
 
         TranslateTransition chevronDownAnimation = new TranslateTransition(Duration.millis(100), chevronUpIcon);
         chevronDownAnimation.setFromY(chevronUpIcon.getTranslateY());
@@ -365,6 +515,49 @@ public class OpenSubtitlesPane {
         TranslateTransition chevronUpAnimation = new TranslateTransition(Duration.millis(100), chevronUpIcon);
         chevronUpAnimation.setFromY(3);
         chevronUpAnimation.setToY(0);
+
+        searchOptionsButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            if(searchOptionsPressed) return;
+            searchOptionsPressed = true;
+            searchOptionsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+
+            chevronDownAnimation.play();
+        });
+
+        searchOptionsButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            searchOptionsPressed = false;
+
+            searchOptionsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+
+            if(chevronDownAnimation.statusProperty().get() == Animation.Status.RUNNING){
+                chevronDownAnimation.setOnFinished(ev -> {
+                    chevronUpAnimation.playFromStart();
+                    chevronDownAnimation.setOnFinished(null);
+                });
+            }
+            else chevronUpAnimation.playFromStart();
+        });
+
+        searchOptionsButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.size() - 1);
+            }
+            else {
+                keyboardFocusOff(searchOptionsButton);
+                focus.set(-1);
+
+                if(chevronDownAnimation.statusProperty().get() == Animation.Status.RUNNING){
+                    chevronDownAnimation.setOnFinished(ev -> {
+                        chevronUpAnimation.playFromStart();
+                        chevronDownAnimation.setOnFinished(null);
+                    });
+                }
+                else if(chevronUpIcon.getTranslateY() != 0) chevronUpAnimation.playFromStart();
+            }
+        });
 
         searchOptionsButton.setOnMousePressed(e -> chevronDownAnimation.play());
         searchOptionsButton.setOnMouseReleased(e -> {
@@ -454,14 +647,12 @@ public class OpenSubtitlesPane {
             if(!titleField.getText().isEmpty()) search();
             else {
                 titleFieldBorder.setVisible(true);
-                titleField.requestFocus();
             }
         }
         else if(searchState == 1){
             if(!imdbField.getText().isEmpty()) search();
             else {
                 imdbFieldBorder.setVisible(true);
-                imdbField.requestFocus();
             }
         }
         else if(searchState == 2){
@@ -582,10 +773,20 @@ public class OpenSubtitlesPane {
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().add(fileSearchLabelContainer);
 
+        focusNodes.clear();
+        focusNodes.add(backButton);
+        focusNodes.add(languageBox);
+        focusNodes.add(searchButton);
+        focusNodes.add(searchOptionsButton);
+
+        focus.set(3);
+
         imdbFieldBorder.setVisible(false);
         titleFieldBorder.setVisible(false);
 
-        if(subtitlesController.menuController.queuePage.queueBox.activeItem.get() == null) searchButton.setDisable(true);
+        if(subtitlesController.menuController.queuePage.queueBox.activeItem.get() == null){
+            searchButton.setDisable(true);
+        }
     }
 
     public void setImdbSearch(){
@@ -598,10 +799,20 @@ public class OpenSubtitlesPane {
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().add(imdbFieldContainer);
 
+        focusNodes.clear();
+        focusNodes.add(backButton);
+        focusNodes.add(languageBox);
+        focusNodes.add(imdbField);
+        focusNodes.add(searchButton);
+        focusNodes.add(searchOptionsButton);
+
+        focus.set(4);
+
         titleFieldBorder.setVisible(false);
 
         if(!searchInProgress.get()) searchButton.setDisable(false);
     }
+
 
     public void setQuerySearch(){
         searchOptionsContextMenu.queryCheck.setVisible(true);
@@ -612,6 +823,17 @@ public class OpenSubtitlesPane {
 
         fieldContainer.getChildren().clear();
         fieldContainer.getChildren().addAll(titleFieldContainer, seasonEpisodeContainer);
+
+        focusNodes.clear();
+        focusNodes.add(backButton);
+        focusNodes.add(languageBox);
+        focusNodes.add(titleField);
+        focusNodes.add(seasonField);
+        focusNodes.add(episodeField);
+        focusNodes.add(searchButton);
+        focusNodes.add(searchOptionsButton);
+
+        focus.set(6);
 
         imdbFieldBorder.setVisible(false);
 
@@ -636,6 +858,17 @@ public class OpenSubtitlesPane {
         if(subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN) subtitlesController.clip.setHeight(233);
 
         container.getChildren().addAll(titleContainer, fieldContainer, searchButtonContainer);
+
+        focusNodes.clear();
+        focusNodes.add(backButton);
+        focusNodes.add(languageBox);
+        focusNodes.add(titleField);
+        focusNodes.add(seasonField);
+        focusNodes.add(episodeField);
+        focusNodes.add(searchButton);
+        focusNodes.add(searchOptionsButton);
+
+        focus.set(-1);
     }
 
     private void searchFail(String text){
@@ -650,30 +883,21 @@ public class OpenSubtitlesPane {
     }
 
     public void focusForward(){
-        if(searchState == 2) languageBox.requestFocus();
-        else if(searchState == 1){
-            if(languageBox.focusedProperty().get()) imdbField.requestFocus();
-            else languageBox.requestFocus();
-        }
-        else {
-            if(languageBox.focusedProperty().get()) titleField.requestFocus();
-            else if(titleField.focusedProperty().get()) seasonField.requestFocus();
-            else if(seasonField.focusedProperty().get()) episodeField.requestFocus();
-            else languageBox.requestFocus();
-        }
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 
     public void focusBackward(){
-        if(searchState == 2) languageBox.requestFocus();
-        else if(searchState == 1){
-            if(languageBox.focusedProperty().get()) imdbField.requestFocus();
-            else languageBox.requestFocus();
-        }
-        else {
-            if(languageBox.focusedProperty().get()) episodeField.requestFocus();
-            else if(titleField.focusedProperty().get()) languageBox.requestFocus();
-            else if(seasonField.focusedProperty().get()) titleField.requestFocus();
-            else seasonField.requestFocus();
-        }
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 }

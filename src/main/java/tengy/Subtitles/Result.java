@@ -2,16 +2,16 @@ package tengy.Subtitles;
 
 import com.github.wtekiela.opensub4j.api.OpenSubtitlesClient;
 import com.github.wtekiela.opensub4j.response.SubtitleInfo;
-import com.jfoenix.controls.JFXButton;
-import tengy.*;
-import tengy.Subtitles.Tasks.DownloadTask;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -19,13 +19,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Duration;
+import tengy.*;
+import tengy.Subtitles.Tasks.DownloadTask;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static tengy.Utilities.keyboardFocusOff;
 
 public class Result extends HBox {
 
@@ -37,7 +40,7 @@ public class Result extends HBox {
     Label languageLabel = new Label();
     Label downloadsLabel = new Label();
     StackPane downloadButtonPane = new StackPane();
-    JFXButton downloadButton = new JFXButton();
+    Button downloadButton = new Button();
     Region downloadIcon = new Region();
     SVGPath downloadSVG = new SVGPath();
 
@@ -55,6 +58,7 @@ public class Result extends HBox {
     String fileName;
     String encoding;
 
+
     Result(SubtitlesController subtitlesController, OpenSubtitlesResultsPane openSubtitlesResultsPane, SubtitleInfo subtitleInfo, OpenSubtitlesClient osClient){
         this.subtitlesController = subtitlesController;
         this.openSubtitlesResultsPane = openSubtitlesResultsPane;
@@ -66,33 +70,15 @@ public class Result extends HBox {
         this.setPadding(new Insets(5, 10, 5, 10));
         this.setAlignment(Pos.CENTER_LEFT);
         this.getChildren().addAll(indexLabel, nameLabel, languageLabel, downloadsLabel, downloadButtonPane);
-        this.setPrefSize( 550, 50);
-        this.setMaxSize(550, 50);
-        if(openSubtitlesResultsPane.results.size() % 2 == 0)
-            this.setStyle("-fx-background-color: rgba(40,40,40,0.8);");
-
-        indexLabel.setPrefSize(25, 40);
-        indexLabel.setMaxSize(25, 40);
-        indexLabel.getStyleClass().add("resultTitle");
-        indexLabel.setMouseTransparent(true);
-        indexLabel.setTextAlignment(TextAlignment.LEFT);
-        indexLabel.setAlignment(Pos.CENTER_LEFT);
-        indexLabel.setText(String.valueOf(openSubtitlesResultsPane.results.size() + 1));
+        this.setPrefSize( 525, 54);
+        this.setMaxSize(525, 54);
+        this.getStyleClass().add("settingsPaneTab");
 
         nameLabel.getStyleClass().add("resultTitle");
         nameLabel.setMinSize(270, 40);
         nameLabel.setPrefSize(270, 40);
         nameLabel.setMaxSize(270, 40);
         nameLabel.setText(fileName);
-
-        nameLabel.setOnMouseEntered(e -> nameLabel.setUnderline(true));
-        nameLabel.setOnMouseExited(e -> nameLabel.setUnderline(false));
-
-        Tooltip tooltip = new Tooltip(fileName);
-        tooltip.setShowDelay(Duration.millis(1000));
-        tooltip.setHideDelay(Duration.ZERO);
-        tooltip.setShowDuration(Duration.seconds(4));
-        Tooltip.install(nameLabel, tooltip);
 
         languageLabel.getStyleClass().add("resultTitle");
         languageLabel.setMinSize(75, 40);
@@ -112,17 +98,32 @@ public class Result extends HBox {
         downloadsLabel.setTextAlignment(TextAlignment.CENTER);
         HBox.setMargin(downloadsLabel, new Insets(0, 10, 0, 10));
 
-        downloadButtonPane.getChildren().addAll(downloadButton, downloadIcon, spinner, checkIcon, crossIcon);
+        downloadButtonPane.getChildren().addAll(downloadButton, spinner, checkIcon, crossIcon);
         downloadButtonPane.setPrefSize(40, 40);
         downloadButtonPane.setMaxSize(40, 40);
         downloadButton.setPrefWidth(30);
         downloadButton.setPrefHeight(30);
-        downloadButton.setRipplerFill(Color.WHITE);
-        downloadButton.getStyleClass().add("roundButton");
-        downloadButton.setCursor(Cursor.HAND);
-        downloadButton.setOpacity(0);
-        downloadButton.setText(null);
+        downloadButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
         downloadButton.setOnAction(e -> downloadFile());
+        downloadButton.setGraphic(downloadIcon);
+        downloadButton.setFocusTraversable(false);
+        downloadButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) openSubtitlesResultsPane.focus.set(openSubtitlesResultsPane.focusNodes.indexOf(downloadButton));
+            else {
+                keyboardFocusOff(downloadButton);
+                openSubtitlesResultsPane.focus.set(-1);
+            }
+        });
+
+        downloadButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            downloadButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        downloadButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            downloadButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         checkSVG.setContent(SVG.CHECK.getContent());
         crossSVG.setContent(SVG.CLOSE.getContent());
@@ -132,7 +133,7 @@ public class Result extends HBox {
         downloadIcon.setPrefSize(16, 16);
         downloadIcon.setMaxSize(16, 16);
         downloadIcon.setMouseTransparent(true);
-        downloadIcon.getStyleClass().add("menuIcon");
+        downloadIcon.getStyleClass().add("graphic");
 
         spinner.setRadius(8);
         spinner.setColor1(Color.WHITE);
@@ -160,16 +161,16 @@ public class Result extends HBox {
         crossIcon.setVisible(false);
         crossIcon.getStyleClass().add("menuIcon");
 
-        downloadButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, downloadButton, 0, 1, false, 1, true));
-
-        downloadButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, downloadButton, 1, 0, false, 1, true));
-
         Platform.runLater(() -> downloadTooltip = new ControlTooltip(subtitlesController.mainController, "Download subtitle file", "", downloadButton, 1000));
-
     }
 
     private void downloadFile(){
+        int focus = Math.max(-1, openSubtitlesResultsPane.focus.get() -1);
         downloadButton.setDisable(true);
+        openSubtitlesResultsPane.focusNodes.remove(downloadButton);
+        openSubtitlesResultsPane.focus.set(focus);
+
+
         downloadIcon.setVisible(false);
         spinner.setVisible(true);
         if(osClient != null && osClient.isLoggedIn()){

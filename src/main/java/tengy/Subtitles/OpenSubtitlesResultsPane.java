@@ -1,5 +1,12 @@
 package tengy.Subtitles;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.SVG;
 import tengy.PlaybackSettings.PlaybackSettingsController;
 import tengy.Utilities;
@@ -19,6 +26,10 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class OpenSubtitlesResultsPane {
 
@@ -27,7 +38,8 @@ public class OpenSubtitlesResultsPane {
 
     StackPane titleContainer = new StackPane();
     HBox titlePane = new HBox();
-    StackPane backIconPane = new StackPane();
+
+    Button backButton = new Button();
     Region backIcon = new Region();
     Label titleLabel = new Label();
     SVGPath backSVG = new SVGPath();
@@ -40,6 +52,10 @@ public class OpenSubtitlesResultsPane {
     Label downloadsHeader = new Label();
 
 
+    List<Node> focusNodes = new ArrayList<>();
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+
+
     VBox resultBox = new VBox();
     ArrayList<Result> results = new ArrayList<>();
 
@@ -47,6 +63,7 @@ public class OpenSubtitlesResultsPane {
     SubtitlesController subtitlesController;
 
     final int DEFAULT_HEIGHT = 170;
+
 
     OpenSubtitlesResultsPane(SubtitlesHome subtitlesHome, SubtitlesController subtitlesController){
         this.subtitlesHome = subtitlesHome;
@@ -56,8 +73,8 @@ public class OpenSubtitlesResultsPane {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(550, DEFAULT_HEIGHT + 3);
-        scrollPane.setMaxSize(550, DEFAULT_HEIGHT + 3);
+        scrollPane.setPrefSize(525, DEFAULT_HEIGHT + 3);
+        scrollPane.setMaxSize(525, DEFAULT_HEIGHT + 3);
         scrollPane.setContent(container);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
@@ -65,8 +82,8 @@ public class OpenSubtitlesResultsPane {
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
 
-        container.setPrefSize(550, DEFAULT_HEIGHT);
-        container.setMaxSize(550, DEFAULT_HEIGHT);
+        container.setPrefSize(525, DEFAULT_HEIGHT);
+        container.setMaxSize(525, DEFAULT_HEIGHT);
         container.getChildren().addAll(titleContainer, resultBox);
         container.setAlignment(Pos.TOP_CENTER);
 
@@ -80,19 +97,37 @@ public class OpenSubtitlesResultsPane {
         titlePane.setMaxHeight(50);
         titlePane.setPrefWidth(Region.USE_COMPUTED_SIZE);
         StackPane.setAlignment(titlePane, Pos.CENTER_LEFT);
-        titlePane.getChildren().addAll(backIconPane, titleLabel);
+        titlePane.getChildren().addAll(backButton, titleLabel);
 
-        backIconPane.setMinSize(24, 50);
-        backIconPane.setPrefSize(24, 50);
-        backIconPane.setMaxSize(24, 50);
-        backIconPane.setCursor(Cursor.HAND);
-        backIconPane.getChildren().add(backIcon);
-        backIconPane.setOnMouseClicked((e) -> closeOpenSubtitlesResultsPane());
+        backButton.setMinSize(30, 50);
+        backButton.setPrefSize(30, 50);
+        backButton.setMaxSize(30, 50);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(backIcon);
+        backButton.setFocusTraversable(false);
+        backButton.setOnAction((e) -> closeOpenSubtitlesResultsPane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         backIcon.setMinSize(8, 13);
         backIcon.setPrefSize(8, 13);
         backIcon.setMaxSize(8, 13);
-        backIcon.getStyleClass().add("settingsPaneIcon");
+        backIcon.getStyleClass().add("graphic");
         backIcon.setShape(backSVG);
 
         titleLabel.setMinHeight(50);
@@ -101,11 +136,12 @@ public class OpenSubtitlesResultsPane {
         titleLabel.setText("Search Results");
         titleLabel.setCursor(Cursor.HAND);
         titleLabel.getStyleClass().add("settingsPaneText");
+        titleLabel.setPadding(new Insets(0, 0, 0, 4));
         titleLabel.setOnMouseClicked((e) -> closeOpenSubtitlesResultsPane());
 
-        resultBox.setPrefWidth(550);
-        resultBox.setMinWidth(535);
-        resultBox.setMaxWidth(550);
+        resultBox.setPrefWidth(525);
+        resultBox.setMinWidth(510);
+        resultBox.setMaxWidth(525);
         resultBox.setMinHeight(100);
         resultBox.setAlignment(Pos.CENTER);
 
@@ -114,10 +150,10 @@ public class OpenSubtitlesResultsPane {
         errorLabel.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(errorLabel, new Insets(0, 20, 0, 20));
 
-        tableHeader.setPadding(new Insets(0, 0, 0, 35));
+        tableHeader.setPadding(new Insets(0, 0, 0, 10));
         tableHeader.setAlignment(Pos.CENTER_LEFT);
-        tableHeader.setPrefSize(550, 40);
-        tableHeader.setMaxSize(550, 40);
+        tableHeader.setPrefSize(525, 40);
+        tableHeader.setMaxSize(525, 40);
         tableHeader.getChildren().addAll(fileNameHeader, languageHeader, downloadsHeader);
 
         fileNameHeader.setText("File name");
@@ -148,7 +184,6 @@ public class OpenSubtitlesResultsPane {
     public void closeOpenSubtitlesResultsPane() {
         if (subtitlesController.animating.get()) return;
 
-        subtitlesController.openSubtitlesPane.languageBox.requestFocus();
 
         subtitlesController.subtitlesState = SubtitlesState.OPENSUBTITLES_OPEN;
 
@@ -196,6 +231,9 @@ public class OpenSubtitlesResultsPane {
 
         container.setPrefHeight(DEFAULT_HEIGHT);
         container.setMaxHeight(DEFAULT_HEIGHT);
+
+        focusNodes.clear();
+        focusNodes.add(backButton);
     }
 
     public void addResult(Result result){
@@ -208,15 +246,17 @@ public class OpenSubtitlesResultsPane {
         results.add(result);
         resultBox.getChildren().add(result);
 
-        scrollPane.setPrefHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 50));
-        scrollPane.setMaxHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 50));
+        focusNodes.add(result.downloadButton);
 
-        container.setPrefHeight(Math.max(DEFAULT_HEIGHT, 95 + results.size() * 50));
-        container.setMaxHeight(Math.max(DEFAULT_HEIGHT, 95 + results.size() * 50));
+        scrollPane.setPrefHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 54));
+        scrollPane.setMaxHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 54));
+
+        container.setPrefHeight(Math.max(DEFAULT_HEIGHT, 95 + results.size() * 54));
+        container.setMaxHeight(Math.max(DEFAULT_HEIGHT, 95 + results.size() * 54));
 
 
         if(subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_RESULTS_OPEN){
-            subtitlesController.clip.setHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 50));
+            subtitlesController.clip.setHeight(Math.max(DEFAULT_HEIGHT + 3, 98 + results.size() * 54));
         }
     }
 
@@ -246,5 +286,28 @@ public class OpenSubtitlesResultsPane {
         }
 
         return file;
+    }
+
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus < 3) scrollPane.setVvalue(0);
+        else scrollPane.setVvalue(1);
+    }
+
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus < 3) scrollPane.setVvalue(0);
+        else scrollPane.setVvalue(1);
     }
 }

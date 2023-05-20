@@ -132,7 +132,7 @@
 
 
 .customSliderTrack {
-	-fx-accent: white;
+	-fx-accent: rgb(200,200,200);
 }
 
 .customSliderTrack > .track {
@@ -140,7 +140,11 @@
     -fx-background-radius: 0;
     -fx-text-box-border: transparent;
     -fx-control-inner-background: transparent;
-    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-color: rgba(200, 200, 200, 0.2);
+}
+
+.customSliderTrack:hover, .customSliderTrack:focused {
+    -fx-accent: white;
 }
 
 .customSliderTrack > .bar {
@@ -150,10 +154,22 @@
 }
 
 .customSlider > .thumb {
-	-fx-background-color: white;
+	-fx-background-color: rgb(200,200,200);
 	-fx-padding: 10;
+	-fx-border-width: 0;
+	-fx-border-color: transparent;
 }
 
+.customSlider:hover > .thumb, .customSlider:focused > .thumb {
+    -fx-background-color: white;
+}
+
+.customSlider:keyboardFocused > .thumb {
+    -fx-border-color: rgb(173, 216, 230);
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-insets: -3;
+}
 
 
 .volumeSlider .track {
@@ -243,8 +259,12 @@
     -fx-background-color: transparent;
 }
 
-.settingsPaneTab:hover {
+.settingsPaneTab:hover, .settingsPaneTab:focused {
     -fx-background-color: rgba(73,73,73,0.8);
+}
+
+.settingsPaneTab:pressed {
+    -fx-background-color: rgba(60,60,60,0.8);
 }
 
 #captionsChooserTab {
@@ -462,19 +482,45 @@
 
 .transparentButton {
     -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: rgb(200,200,200);
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
 }
 
 .transparentButton > .graphic {
     -fx-background-color: rgb(200,200,200);
 }
 
-.transparentButton:hover > .graphic {
+.transparentButton:hover, .transparentButton:focused {
+    -fx-text-fill: white;
+}
+
+.transparentButton:pressed {
+    -fx-text-fill: rgb(200,200,200);
+}
+
+.transparentButton:hover > .graphic, .transparentButton:focused > .graphic {
     -fx-background-color: white;
 }
 
 .transparentButton:pressed > .graphic {
-    -fx-background-color: rgb(200,200,200);
+    -fx-background-color: rgb(150,150,150);
 }
+
+
+.transparentButton:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
+ }
+
+ .settingsMenuButton {
+    -fx-border-insets: 5 0 5 0;
+    -fx-border-radius: 5;
+ }
+
+ .settingsMenuButton:hover, .settingsMenuButton:focused {
+    -fx-underline: true;
+ }
 
 .controlBarWrapper {
     -fx-background-color: transparent;

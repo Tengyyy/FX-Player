@@ -350,4 +350,10 @@ public class PlaybackSettingsHomeController {
             if(playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED || playbackSettingsController.playbackSettingsState == PlaybackSettingsState.HOME_OPEN) playbackSettingsController.clip.setHeight(currHeight - 32);
         }
     }
+
+    public void focusForward() {
+    }
+
+    public void focusBackward() {
+    }
 }

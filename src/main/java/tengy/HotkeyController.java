@@ -1,5 +1,9 @@
 package tengy;
 
+import javafx.scene.control.Button;
+import tengy.PlaybackSettings.CheckTab;
+import tengy.PlaybackSettings.SettingsTab;
+import tengy.Subtitles.SubtitlesOptionsTab;
 import tengy.Subtitles.SubtitlesState;
 import tengy.Menu.ExpandableTextArea;
 import tengy.Menu.Settings.Action;
@@ -10,6 +14,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.controlsfx.control.CheckComboBox;
+import tengy.Subtitles.SubtitlesTab;
+import tengy.Windows.WindowState;
 
 import java.util.*;
 
@@ -184,32 +190,59 @@ public class HotkeyController {
                 && !(event.getTarget() instanceof DatePicker)
                 && !(event.getTarget() instanceof Spinner)){
 
-            if(event.getCode() == KeyCode.SPACE && event.getTarget() instanceof CheckComboBox<?> && mainController.subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN){
-                mainController.subtitlesController.openSubtitlesPane.languageBox.show();
-                event.consume();
-                return;
-            }
-
-            if(event.getCode() == KeyCode.RIGHT && mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CUSTOM_SPEED_OPEN){
-                // if custom speed pane is open, dont seek video with arrows
-                mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
-                mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
-                event.consume();
-                return;
-            }
-
-
-            if(event.getCode() == KeyCode.LEFT && mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CUSTOM_SPEED_OPEN){
-                // if custom speed pane is open, dont seek video with arrows
-                mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
-                mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
-                event.consume();
-                return;
+            if(event.getCode() == KeyCode.SPACE){
+                if(mainController.subtitlesController.subtitlesState != SubtitlesState.CLOSED || mainController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED){
+                    if(event.getTarget() instanceof CheckComboBox<?> && mainController.subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN){
+                        mainController.subtitlesController.openSubtitlesPane.languageBox.show();
+                        event.consume();
+                        return;
+                    }
+                    else if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab){
+                        return;
+                    }
+                }
+                else if(mainController.windowController.windowState == WindowState.CHAPTER_EDIT_WINDOW_OPEN){
+                    if(event.getTarget() instanceof Button)
+                        return;
+                }
             }
 
 
-            if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT){
+            if(event.getCode() == KeyCode.LEFT){
                 if(mainController.getControlBarController().volumeSlider.isFocused()) return;
+
+                if(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isFocused()){
+                    mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+                    mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() - 0.05);
+                    event.consume();
+                    return;
+                }
+                else if(mainController.subtitlesController.timingPane.slider.isFocused()){
+                    // if custom speed pane is open, dont seek video with arrows
+                    mainController.subtitlesController.timingPane.slider.setValueChanging(true);
+                    mainController.subtitlesController.timingPane.slider.setValue(mainController.subtitlesController.timingPane.slider.getValue() - 0.25);
+                    event.consume();
+                    return;
+                }
+            }
+            else if(event.getCode() == KeyCode.RIGHT){
+                if(mainController.getControlBarController().volumeSlider.isFocused()) return;
+
+                if(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isFocused()){
+                    // if custom speed pane is open, dont seek video with arrows
+                    mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
+                    mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
+                    event.consume();
+                    return;
+                }
+                else if(mainController.subtitlesController.timingPane.slider.isFocused()){
+                    // if custom speed pane is open, dont seek video with arrows
+                    mainController.subtitlesController.timingPane.slider.setValueChanging(true);
+                    mainController.subtitlesController.timingPane.slider.setValue(mainController.subtitlesController.timingPane.slider.getValue() + 0.25);
+                    event.consume();
+                    return;
+                }
+
             }
 
             KeyCode[] keyCodes = eventToKeyCodeArray(event);
@@ -369,6 +402,10 @@ public class HotkeyController {
             if(mainController.windowController.hotkeyChangeWindow.hotkey != null && mainController.windowController.hotkeyChangeWindow.hotkey.length > 0 && mainController.windowController.hotkeyChangeWindow.hotkey[mainController.windowController.hotkeyChangeWindow.hotkey.length - 1] == keyCodes[keyCodes.length -1])
                     mainController.windowController.hotkeyChangeWindow.checkHotkey();
             return;
+        }
+        else if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT){
+            if(mainController.subtitlesController.timingPane.slider.isFocused()) mainController.subtitlesController.timingPane.slider.setValueChanging(false);
+            else if(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isFocused()) mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(false);
         }
 
         if(mediaKeys.contains(event.getCode())) mainController.seekingWithKeys = false;

@@ -134,7 +134,7 @@
     -fx-padding: 5 12 5 12;
 }
 
-.menuButton:hover {
+.menuButton:hover, .menuButton:focused {
     -fx-background-color: rgb(40, 40, 40);
     -fx-border-color: rgb(150,150,150);
 }
@@ -147,6 +147,10 @@
 
 .menuButton:pressed > .graphic {
     -fx-background-color: rgb(180,180,180);
+}
+
+.menuButton:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
 }
 
 .shuffleToggleActive {
@@ -166,7 +170,7 @@
     -fx-background-color: red;
 }
 
-.shuffleToggleActive:hover {
+.shuffleToggleActive:hover, .shuffleToggleActive:focused {
     -fx-text-fill: red;
     -fx-border-color: red;
 }
@@ -238,8 +242,12 @@
     -fx-cursor: hand;
 }
 
-.mainButton:hover {
+.mainButton:hover, .mainButton:focused {
     -fx-background-color: rgb(200, 55, 55);
+}
+
+.mainButton:focused > .graphic {
+    -fx-background-color: white;
 }
 
 .mainButton:pressed {
@@ -251,10 +259,28 @@
     -fx-background-color: rgb(180,180,180);
 }
 
+.mainButton:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
+}
+
 #addButton, #searchButton {
     -fx-border-radius: 5 0 0 5;
     -fx-background-radius: 5 0 0 5;
-    -fx-border-width: 1 0 1 1;
+    -fx-border-width: 1;
+}
+
+#addOptionsButton, #searchOptionsButton {
+    -fx-border-radius: 0 5 5 0;
+    -fx-background-radius: 0 5 5 0;
+    -fx-padding: 8 9 8 9;
+}
+
+#searchOptionsButton:focused > #chevronDownIcon {
+    -fx-background-color: white;
+}
+
+#searchOptionsButton:pressed > #chevronDownIcon {
+    -fx-background-color: rgb(150,150,150);
 }
 
 #saveButton {
@@ -284,12 +310,6 @@
 
 #saveButton:pressed > .graphic, #saveOptionsButton:pressed > .graphic {
     -fx-background-color: rgb(180,180,180);
-}
-
-#addOptionsButton, #searchOptionsButton {
-    -fx-border-radius: 0 5 5 0;
-    -fx-background-radius: 0 5 5 0;
-    -fx-padding: 8 9 8 9;
 }
 
 .iconBackground {

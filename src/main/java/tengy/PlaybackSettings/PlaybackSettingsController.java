@@ -391,4 +391,28 @@ public class PlaybackSettingsController {
         videoTrackChooserController.clearTracks();
         audioTrackChooserController.clearTracks();
     }
+
+    public void handleFocusForward() {
+        switch (playbackSettingsState){
+            case VIDEO_TRACK_CHOOSER_OPEN -> videoTrackChooserController.focusForward();
+            case HOME_OPEN -> playbackSettingsHomeController.focusForward();
+            case CUSTOM_SPEED_OPEN -> playbackSpeedController.customSpeedPane.focusForward();
+            case AUDIO_TRACK_CHOOSER_OPEN -> audioTrackChooserController.focusForward();
+            case PLAYBACK_SPEED_OPEN -> playbackSpeedController.playbackSpeedPane.focusForward();
+            case EQUALIZER_OPEN -> equalizerController.focusForward();
+            case PLAYBACK_OPTIONS_OPEN -> playbackOptionsController.focusForward();
+        }
+    }
+
+    public void handleFocusBackward() {
+        switch (playbackSettingsState){
+            case VIDEO_TRACK_CHOOSER_OPEN -> videoTrackChooserController.focusBackward();
+            case HOME_OPEN -> playbackSettingsHomeController.focusBackward();
+            case CUSTOM_SPEED_OPEN -> playbackSpeedController.customSpeedPane.focusBackward();
+            case AUDIO_TRACK_CHOOSER_OPEN -> audioTrackChooserController.focusBackward();
+            case PLAYBACK_SPEED_OPEN -> playbackSpeedController.playbackSpeedPane.focusBackward();
+            case EQUALIZER_OPEN -> equalizerController.focusBackward();
+            case PLAYBACK_OPTIONS_OPEN -> playbackOptionsController.focusBackward();
+        }
+    }
 }

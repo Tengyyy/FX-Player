@@ -1,5 +1,12 @@
 package tengy.Subtitles;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import tengy.PlaybackSettings.CheckTab;
 import tengy.PlaybackSettings.PlaybackSettingsController;
@@ -17,6 +24,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class FontSizePane {
 
@@ -28,13 +39,17 @@ public class FontSizePane {
     VBox fontSizeBox = new VBox();
     HBox fontSizeTitle = new HBox();
 
-    StackPane fontSizeBackPane = new StackPane();
+    Button backButton = new Button();
     Region fontSizeBackIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
     Label fontSizeTitleLabel = new Label();
 
     CheckTab _50Tab, _75Tab, _100Tab, _150Tab, _200Tab, _300Tab, _400Tab;
+
+    List<Node> focusNodes = new ArrayList<>();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     ArrayList<CheckTab> checkTabs = new ArrayList<>();
 
@@ -71,36 +86,55 @@ public class FontSizePane {
         VBox.setMargin(fontSizeTitle, new Insets(0, 0, 10, 0));
 
         fontSizeTitle.getStyleClass().add("settingsPaneTitle");
-        fontSizeTitle.getChildren().addAll(fontSizeBackPane, fontSizeTitleLabel);
+        fontSizeTitle.getChildren().addAll(backButton, fontSizeTitleLabel);
 
-        fontSizeBackPane.setMinSize(24, 40);
-        fontSizeBackPane.setPrefSize(24, 40);
-        fontSizeBackPane.setMaxSize(24, 40);
-        fontSizeBackPane.getChildren().add(fontSizeBackIcon);
-        fontSizeBackPane.setCursor(Cursor.HAND);
-        fontSizeBackPane.setOnMouseClicked((e) -> closeFontSizePane());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(fontSizeBackIcon);
+        backButton.setOnAction((e) -> closeFontSizePane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         fontSizeBackIcon.setMinSize(8, 13);
         fontSizeBackIcon.setPrefSize(8, 13);
         fontSizeBackIcon.setMaxSize(8, 13);
-        fontSizeBackIcon.getStyleClass().add("settingsPaneIcon");
+        fontSizeBackIcon.getStyleClass().add("graphic");
         fontSizeBackIcon.setShape(backSVG);
 
         fontSizeTitleLabel.setMinHeight(40);
         fontSizeTitleLabel.setPrefHeight(40);
         fontSizeTitleLabel.setMaxHeight(40);
         fontSizeTitleLabel.setText("Font size");
+        fontSizeTitleLabel.setPadding(new Insets(0, 0, 0, 4));
         fontSizeTitleLabel.setCursor(Cursor.HAND);
         fontSizeTitleLabel.getStyleClass().add("settingsPaneText");
         fontSizeTitleLabel.setOnMouseClicked((e) -> closeFontSizePane());
 
-        _50Tab = new CheckTab(false, "50%");
-        _75Tab = new CheckTab(false, "75%");
-        _100Tab = new CheckTab(false, "100%");
-        _150Tab = new CheckTab(false, "150%");
-        _200Tab = new CheckTab(false, "200%");
-        _300Tab = new CheckTab(false, "300%");
-        _400Tab = new CheckTab(false, "400%");
+        _50Tab = new CheckTab(false, "50%", focus, 1, () -> this.press_50Tab(false));
+        _75Tab = new CheckTab(false, "75%", focus, 2, () -> this.press_75Tab(false));
+        _100Tab = new CheckTab(false, "100%", focus, 3, () -> this.press_100Tab(false));
+        _150Tab = new CheckTab(false, "150%", focus, 4, () -> this.press_150Tab(false));
+        _200Tab = new CheckTab(false, "200%", focus, 5, () -> this.press_200Tab(false));
+        _300Tab = new CheckTab(false, "300%", focus, 6, () -> this.press_300Tab(false));
+        _400Tab = new CheckTab(false, "400%", focus, 7, () -> this.press_400Tab(false));
 
         fontSizeBox.getChildren().addAll(_50Tab, _75Tab, _100Tab, _150Tab, _200Tab, _300Tab, _400Tab);
         checkTabs.add(_50Tab);
@@ -111,13 +145,14 @@ public class FontSizePane {
         checkTabs.add(_300Tab);
         checkTabs.add(_400Tab);
 
-        _50Tab.setOnMouseClicked(e -> press_50Tab(false));
-        _75Tab.setOnMouseClicked(e -> press_75Tab(false));
-        _100Tab.setOnMouseClicked(e -> press_100Tab(false));
-        _150Tab.setOnMouseClicked(e -> press_150Tab(false));
-        _200Tab.setOnMouseClicked(e -> press_200Tab(false));
-        _300Tab.setOnMouseClicked(e -> press_300Tab(false));
-        _400Tab.setOnMouseClicked(e -> press_400Tab(false));
+        focusNodes.add(backButton);
+        focusNodes.add(_50Tab);
+        focusNodes.add(_75Tab);
+        focusNodes.add(_100Tab);
+        focusNodes.add(_150Tab);
+        focusNodes.add(_200Tab);
+        focusNodes.add(_300Tab);
+        focusNodes.add(_400Tab);
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -130,7 +165,6 @@ public class FontSizePane {
 
         subtitlesController.subtitlesOptionsPane.scrollPane.setVisible(true);
         subtitlesController.subtitlesOptionsPane.scrollPane.setMouseTransparent(false);
-
 
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), subtitlesController.subtitlesOptionsPane.scrollPane.getHeight())));
@@ -242,6 +276,29 @@ public class FontSizePane {
         else updateValue(2.25, "400%");
 
         _400Tab.checkIcon.setVisible(true);
+    }
+
+    public void focusForward() {
+        int newFocus;
+
+        if(focus.get() == 7 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
+    public void focusBackward() {
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 7;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
     }
 }
 

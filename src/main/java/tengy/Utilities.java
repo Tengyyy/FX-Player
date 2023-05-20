@@ -2,6 +2,9 @@ package tengy;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import tengy.MediaItems.MediaItem;
 import tengy.Menu.MenuController;
 import tengy.Menu.Queue.QueueItem;
@@ -9,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
+
 
 import java.awt.*;
 import java.io.File;
@@ -283,5 +287,30 @@ public class Utilities {
             return Duration.ZERO;
         }
 
+    }
+
+    public static void keyboardFocusOn(Node node){
+        node.requestFocus();
+        node.pseudoClassStateChanged(PseudoClass.getPseudoClass("keyboardFocused"), true);
+    }
+
+    public static void keyboardFocusOff(Node node){
+        node.pseudoClassStateChanged(PseudoClass.getPseudoClass("keyboardFocused"), false);
+        node.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+    }
+
+    public static void setScroll(ScrollPane scrollPane, Node node){
+        double heightViewPort = scrollPane.getViewportBounds().getHeight();
+        double heightScrollPane = scrollPane.getContent().getBoundsInLocal().getHeight();
+        double y = node.getBoundsInParent().getMaxY();
+        if (y<(heightViewPort/2)){
+            scrollPane.setVvalue(0);
+        }
+        else if ((y>=(heightViewPort/2))&(y<=(heightScrollPane-heightViewPort/2))){
+            scrollPane.setVvalue((y-(heightViewPort/2))/(heightScrollPane-heightViewPort));
+        }
+        else if( y>= (heightScrollPane-(heightViewPort/2))){
+            scrollPane.setVvalue(1);
+        }
     }
 }

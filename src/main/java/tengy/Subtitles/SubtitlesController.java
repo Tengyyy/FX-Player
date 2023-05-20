@@ -192,12 +192,15 @@ public class SubtitlesController {
 
                 subtitlesHome.subtitlesWrapper.getChildren().add(i + 1, subtitlesTab);
                 subtitlesHome.subtitlesTabs.add(subtitlesTab);
+                subtitlesHome.focusNodes.add(i + 1, subtitlesTab);
             }
 
             if(!selected){
                 if(preferredLanguageSubtitlesTab != null) preferredLanguageSubtitlesTab.selectSubtitles(true);
                 else if(defaultSubtitlesTab != null) defaultSubtitlesTab.selectSubtitles(true);
             }
+
+            if(subtitlesState == SubtitlesState.HOME_OPEN) subtitlesHome.subtitlesWrapper.requestFocus();
         }
     }
 
@@ -241,6 +244,8 @@ public class SubtitlesController {
         subtitlesHome.subtitlesTabs.clear();
         subtitlesHome.subtitlesWrapper.setPrefHeight(178);
         subtitlesHome.subtitlesWrapper.setMaxHeight(178);
+
+        subtitlesHome.resetFocusNodes();
 
         subtitlesHome.scrollPane.setPrefHeight(181);
         subtitlesHome.scrollPane.setMaxHeight(181);
@@ -707,6 +712,8 @@ public class SubtitlesController {
         openSubtitlesTransition.setFromValue(1);
         openSubtitlesTransition.setToValue(0);
 
+        openSubtitlesPane.languageBox.hide();
+
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, openSubtitlesTransition);
         parallelTransition.setOnFinished((e) -> {
             animating.set(false);
@@ -789,5 +796,41 @@ public class SubtitlesController {
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.play();
         animating.set(true);
+    }
+
+    public void handleFocusForward() {
+        switch (subtitlesState){
+            case HOME_OPEN -> subtitlesHome.focusForward();
+            case OPENSUBTITLES_OPEN -> openSubtitlesPane.focusForward();
+            case CAPTIONS_OPTIONS_OPEN -> subtitlesOptionsPane.focusForward();
+            case OPENSUBTITLES_RESULTS_OPEN -> openSubtitlesResultsPane.focusForward();
+            case TIMING_OPEN -> timingPane.focusForward();
+            case OPACITY_OPEN -> subtitlesOptionsPane.fontOpacityPane.focusForward();
+            case FONT_SIZE_OPEN -> subtitlesOptionsPane.fontSizePane.focusForward();
+            case FONT_COLOR_OPEN -> subtitlesOptionsPane.fontColorPane.focusForward();
+            case FONT_FAMILY_OPEN -> subtitlesOptionsPane.fontFamilyPane.focusForward();
+            case LINE_SPACING_OPEN -> subtitlesOptionsPane.lineSpacingPane.focusForward();
+            case TEXT_ALIGNMENT_OPEN -> subtitlesOptionsPane.textAlignmentPane.focusForward();
+            case BACKGROUND_COLOR_OPEN -> subtitlesOptionsPane.backgroundColorPane.focusForward();
+            case BACKGROUND_OPACITY_OPEN -> subtitlesOptionsPane.backgroundOpacityPane.focusForward();
+        }
+    }
+
+    public void handleFocusBackward() {
+        switch (subtitlesState){
+            case HOME_OPEN -> subtitlesHome.focusBackward();
+            case OPENSUBTITLES_OPEN -> openSubtitlesPane.focusBackward();
+            case CAPTIONS_OPTIONS_OPEN -> subtitlesOptionsPane.focusBackward();
+            case OPENSUBTITLES_RESULTS_OPEN -> openSubtitlesResultsPane.focusBackward();
+            case TIMING_OPEN -> timingPane.focusBackward();
+            case OPACITY_OPEN -> subtitlesOptionsPane.fontOpacityPane.focusBackward();
+            case FONT_SIZE_OPEN -> subtitlesOptionsPane.fontSizePane.focusBackward();
+            case FONT_COLOR_OPEN -> subtitlesOptionsPane.fontColorPane.focusBackward();
+            case FONT_FAMILY_OPEN -> subtitlesOptionsPane.fontFamilyPane.focusBackward();
+            case LINE_SPACING_OPEN -> subtitlesOptionsPane.lineSpacingPane.focusBackward();
+            case TEXT_ALIGNMENT_OPEN -> subtitlesOptionsPane.textAlignmentPane.focusBackward();
+            case BACKGROUND_COLOR_OPEN -> subtitlesOptionsPane.backgroundColorPane.focusBackward();
+            case BACKGROUND_OPACITY_OPEN -> subtitlesOptionsPane.backgroundOpacityPane.focusBackward();
+        }
     }
 }

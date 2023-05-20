@@ -1,6 +1,7 @@
 package tengy;
 
 
+import javafx.scene.input.KeyCombination;
 import tengy.Subtitles.SubtitlesController;
 import tengy.Menu.MenuController;
 import tengy.PlaybackSettings.PlaybackSettingsController;
@@ -47,10 +48,9 @@ public class App extends Application {
 
         App.stage = primaryStage;
 
-        primaryStage.setFullScreenExitHint("Press Esc to exit fullscreen mode");
-
         primaryStage.setScene(splashScreen.scene);
         primaryStage.setTitle("FXPlayer");
+        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("images/appIcon.png")).toExternalForm()));
         primaryStage.show();
 

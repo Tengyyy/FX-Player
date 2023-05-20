@@ -75,6 +75,7 @@ public class PreferencesSection extends VBox {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
         });
+        languageBox.setId("languageBox");
         languageBox.setFocusTraversable(false);
 
         languageBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {

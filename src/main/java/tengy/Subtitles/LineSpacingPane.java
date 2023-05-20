@@ -1,5 +1,12 @@
 package tengy.Subtitles;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import tengy.PlaybackSettings.CheckTab;
 import tengy.PlaybackSettings.PlaybackSettingsController;
@@ -17,6 +24,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class LineSpacingPane {
 
@@ -28,13 +39,17 @@ public class LineSpacingPane {
     VBox lineSpacingBox = new VBox();
     HBox lineSpacingTitle = new HBox();
 
-    StackPane lineSpacingBackPane = new StackPane();
+    Button backButton = new Button();
     Region lineSpacingBackIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
     Label lineSpacingTitleLabel = new Label();
 
     CheckTab _0Tab, _50Tab, _75Tab, _100Tab, _125Tab, _150Tab, _200Tab;
+
+    List<Node> focusNodes = new ArrayList<>();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     ArrayList<CheckTab> checkTabs = new ArrayList<>();
 
@@ -70,20 +85,37 @@ public class LineSpacingPane {
         lineSpacingTitle.setAlignment(Pos.CENTER_LEFT);
 
         lineSpacingTitle.getStyleClass().add("settingsPaneTitle");
-        lineSpacingTitle.getChildren().addAll(lineSpacingBackPane, lineSpacingTitleLabel);
+        lineSpacingTitle.getChildren().addAll(backButton, lineSpacingTitleLabel);
 
-        lineSpacingBackPane.setMinSize(24, 40);
-        lineSpacingBackPane.setPrefSize(24, 40);
-        lineSpacingBackPane.setMaxSize(24, 40);
-        lineSpacingBackPane.getChildren().add(lineSpacingBackIcon);
-        lineSpacingBackPane.setCursor(Cursor.HAND);
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(lineSpacingBackIcon);
+        backButton.setOnAction((e) -> closeLineSpacingPane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
 
-        lineSpacingBackPane.setOnMouseClicked((e) -> closeLineSpacingPane());
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         lineSpacingBackIcon.setMinSize(8, 13);
         lineSpacingBackIcon.setPrefSize(8, 13);
         lineSpacingBackIcon.setMaxSize(8, 13);
-        lineSpacingBackIcon.getStyleClass().add("settingsPaneIcon");
+        lineSpacingBackIcon.getStyleClass().add("graphic");
         lineSpacingBackIcon.setShape(backSVG);
 
         lineSpacingTitleLabel.setMinHeight(40);
@@ -91,16 +123,17 @@ public class LineSpacingPane {
         lineSpacingTitleLabel.setMaxHeight(40);
         lineSpacingTitleLabel.setText("Line spacing");
         lineSpacingTitleLabel.setCursor(Cursor.HAND);
+        lineSpacingTitleLabel.setPadding(new Insets(0, 0, 0, 4));
         lineSpacingTitleLabel.getStyleClass().add("settingsPaneText");
         lineSpacingTitleLabel.setOnMouseClicked((e) -> closeLineSpacingPane());
 
-        _0Tab = new CheckTab(false, "0%");
-        _50Tab = new CheckTab(false, "50%");
-        _75Tab = new CheckTab(false, "75%");
-        _100Tab = new CheckTab(false, "100%");
-        _125Tab = new CheckTab(false, "125%");
-        _150Tab = new CheckTab(false, "150%");
-        _200Tab = new CheckTab(false, "200%");
+        _0Tab = new CheckTab(false, "0%", focus, 1, () -> this.press_0Tab(false));
+        _50Tab = new CheckTab(false, "50%", focus, 2, () -> this.press_50Tab(false));
+        _75Tab = new CheckTab(false, "75%", focus, 3, () -> this.press_75Tab(false));
+        _100Tab = new CheckTab(false, "100%", focus, 4, () -> this.press_100Tab(false));
+        _125Tab = new CheckTab(false, "125%", focus, 5, () -> this.press_125Tab(false));
+        _150Tab = new CheckTab(false, "150%", focus, 6, () -> this.press_150Tab(false));
+        _200Tab = new CheckTab(false, "200%", focus, 7, () -> this.press_200Tab(false));
 
         lineSpacingBox.getChildren().addAll(_0Tab, _50Tab, _75Tab, _100Tab, _125Tab, _150Tab, _200Tab);
         checkTabs.add(_0Tab);
@@ -111,13 +144,15 @@ public class LineSpacingPane {
         checkTabs.add(_150Tab);
         checkTabs.add(_200Tab);
 
-        _0Tab.setOnMouseClicked(e -> press_0Tab(false));
-        _50Tab.setOnMouseClicked(e -> press_50Tab(false));
-        _75Tab.setOnMouseClicked(e -> press_75Tab(false));
-        _100Tab.setOnMouseClicked(e -> press_100Tab(false));
-        _125Tab.setOnMouseClicked(e -> press_125Tab(false));
-        _150Tab.setOnMouseClicked(e -> press_150Tab(false));
-        _200Tab.setOnMouseClicked(e -> press_200Tab(false));
+        focusNodes.add(backButton);
+        focusNodes.add(_0Tab);
+        focusNodes.add(_50Tab);
+        focusNodes.add(_75Tab);
+        focusNodes.add(_100Tab);
+        focusNodes.add(_125Tab);
+        focusNodes.add(_150Tab);
+        focusNodes.add(_200Tab);
+
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -241,6 +276,30 @@ public class LineSpacingPane {
 
         _200Tab.checkIcon.setVisible(true);
     }
+
+    public void focusForward() {
+        int newFocus;
+
+        if(focus.get() == 7 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
+    public void focusBackward() {
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 7;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
 }
 
 

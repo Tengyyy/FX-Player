@@ -1,5 +1,8 @@
 package tengy.Subtitles;
 
+import javafx.css.PseudoClass;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.SVG;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -26,8 +29,10 @@ public class SubtitlesOptionsTab extends StackPane {
     Region arrowIcon = new Region();
     SVGPath arrowSVG = new SVGPath();
 
+    boolean pressed = false;
 
-    SubtitlesOptionsTab(SubtitlesOptionsPane subtitlesOptionsPane, SubtitlesController subtitlesController, boolean requiresSubText, boolean requiresArrow, String mainTextValue, String subTextValue){
+
+    SubtitlesOptionsTab(SubtitlesOptionsPane subtitlesOptionsPane, SubtitlesController subtitlesController, boolean requiresSubText, boolean requiresArrow, String mainTextValue, String subTextValue, int focusValue, Runnable action){
         this.subtitlesController = subtitlesController;
         this.subtitlesOptionsPane = subtitlesOptionsPane;
 
@@ -39,6 +44,34 @@ public class SubtitlesOptionsTab extends StackPane {
         this.getStyleClass().add("settingsPaneTab");
         this.setCursor(Cursor.HAND);
         this.getChildren().add(textContainer);
+        this.setFocusTraversable(false);
+        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                subtitlesOptionsPane.focus.set(focusValue);
+            }
+            else {
+                subtitlesOptionsPane.focus.set(-1);
+                pressed = false;
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+            }
+        });
+
+        this.setOnMouseClicked(e -> action.run());
+        this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            pressed = true;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            if(pressed) action.run();
+
+            pressed = false;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         StackPane.setAlignment(textContainer, Pos.CENTER_LEFT);
         textContainer.getChildren().add(mainText);

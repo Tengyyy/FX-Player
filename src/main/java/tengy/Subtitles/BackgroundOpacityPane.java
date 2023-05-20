@@ -1,5 +1,12 @@
 package tengy.Subtitles;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import tengy.PlaybackSettings.CheckTab;
 import tengy.PlaybackSettings.PlaybackSettingsController;
@@ -15,6 +22,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class BackgroundOpacityPane {
 
@@ -26,13 +37,18 @@ public class BackgroundOpacityPane {
     VBox backgroundOpacityBox = new VBox();
     HBox backgroundOpacityTitle = new HBox();
 
-    StackPane backgroundOpacityBackPane = new StackPane();
+    Button backButton = new Button();
     Region backgroundOpacityBackIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
     Label backgroundOpacityTitleLabel = new Label();
 
     CheckTab _0Tab, _25Tab, _50Tab, _75Tab, _100Tab;
+
+
+    List<Node> focusNodes = new ArrayList<>();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     ArrayList<CheckTab> checkTabs = new ArrayList<>();
 
@@ -68,19 +84,38 @@ public class BackgroundOpacityPane {
         VBox.setMargin(backgroundOpacityTitle, new Insets(0, 0, 10, 0));
 
         backgroundOpacityTitle.getStyleClass().add("settingsPaneTitle");
-        backgroundOpacityTitle.getChildren().addAll(backgroundOpacityBackPane, backgroundOpacityTitleLabel);
+        backgroundOpacityTitle.getChildren().addAll(backButton, backgroundOpacityTitleLabel);
 
-        backgroundOpacityBackPane.setMinSize(24, 40);
-        backgroundOpacityBackPane.setPrefSize(24, 40);
-        backgroundOpacityBackPane.setMaxSize(24, 40);
-        backgroundOpacityBackPane.getChildren().add(backgroundOpacityBackIcon);
-        backgroundOpacityBackPane.setCursor(Cursor.HAND);
-        backgroundOpacityBackPane.setOnMouseClicked((e) -> closeBackgroundOpacityPane());
+
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(backgroundOpacityBackIcon);
+        backButton.setFocusTraversable(false);
+        backButton.setOnAction((e) -> closeBackgroundOpacityPane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         backgroundOpacityBackIcon.setMinSize(8, 13);
         backgroundOpacityBackIcon.setPrefSize(8, 13);
         backgroundOpacityBackIcon.setMaxSize(8, 13);
-        backgroundOpacityBackIcon.getStyleClass().add("settingsPaneIcon");
+        backgroundOpacityBackIcon.getStyleClass().add("graphic");
         backgroundOpacityBackIcon.setShape(backSVG);
 
         backgroundOpacityTitleLabel.setMinHeight(40);
@@ -88,27 +123,31 @@ public class BackgroundOpacityPane {
         backgroundOpacityTitleLabel.setMaxHeight(40);
         backgroundOpacityTitleLabel.setText("Background opacity");
         backgroundOpacityTitleLabel.setCursor(Cursor.HAND);
+        backgroundOpacityTitleLabel.setPadding(new Insets(0, 0, 0, 4));
         backgroundOpacityTitleLabel.getStyleClass().add("settingsPaneText");
         backgroundOpacityTitleLabel.setOnMouseClicked((e) -> closeBackgroundOpacityPane());
 
-        _0Tab = new CheckTab(false, "0%");
-        _25Tab = new CheckTab(false, "25%");
-        _50Tab = new CheckTab(false, "50%");
-        _75Tab = new CheckTab(false, "75%");
-        _100Tab = new CheckTab(false, "100%");
+        _0Tab = new CheckTab(false, "0%", focus, 1, () -> this.press_0Tab(false));
+        _25Tab = new CheckTab(false, "25%", focus, 2, () -> this.press_25Tab(false));
+        _50Tab = new CheckTab(false, "50%", focus, 3, () -> this.press_50Tab(false));
+        _75Tab = new CheckTab(false, "75%", focus, 4, () -> this.press_75Tab(false));
+        _100Tab = new CheckTab(false, "100%", focus, 5, () -> this.press_100Tab(false));
 
         backgroundOpacityBox.getChildren().addAll(_0Tab, _25Tab, _50Tab, _75Tab, _100Tab);
+
         checkTabs.add(_0Tab);
         checkTabs.add(_25Tab);
         checkTabs.add(_50Tab);
         checkTabs.add(_75Tab);
         checkTabs.add(_100Tab);
 
-        _0Tab.setOnMouseClicked(e -> press_0Tab(false));
-        _25Tab.setOnMouseClicked(e -> press_25Tab(false));
-        _50Tab.setOnMouseClicked(e -> press_50Tab(false));
-        _75Tab.setOnMouseClicked(e -> press_75Tab(false));
-        _100Tab.setOnMouseClicked(e -> press_100Tab(false));
+        focusNodes.add(backButton);
+        focusNodes.add(_0Tab);
+        focusNodes.add(_25Tab);
+        focusNodes.add(_50Tab);
+        focusNodes.add(_75Tab);
+        focusNodes.add(_100Tab);
+
 
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
     }
@@ -121,7 +160,6 @@ public class BackgroundOpacityPane {
 
         subtitlesController.subtitlesOptionsPane.scrollPane.setVisible(true);
         subtitlesController.subtitlesOptionsPane.scrollPane.setMouseTransparent(false);
-
 
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), subtitlesController.subtitlesOptionsPane.scrollPane.getHeight())));
@@ -217,6 +255,29 @@ public class BackgroundOpacityPane {
         else updateValue(Color.rgb((int) (subtitlesController.subtitlesBox.currentBackgroundColor.get().getRed() * 255), (int) (subtitlesController.subtitlesBox.currentBackgroundColor.get().getGreen() * 255), (int) (subtitlesController.subtitlesBox.currentBackgroundColor.get().getBlue() * 255)), "100%");
 
         _100Tab.checkIcon.setVisible(true);
+    }
+
+    public void focusForward() {
+        int newFocus;
+
+        if(focus.get() == 5 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
+    public void focusBackward() {
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 5;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
     }
 }
 

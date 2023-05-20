@@ -1,22 +1,34 @@
 package tengy.Subtitles;
 
-import tengy.PlaybackSettings.CheckTab;
-import tengy.PlaybackSettings.PlaybackSettingsController;
-import tengy.SVG;
 import javafx.animation.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import tengy.PlaybackSettings.CheckTab;
+import tengy.PlaybackSettings.PlaybackSettingsController;
+import tengy.SVG;
+import tengy.Utilities;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class TextAlignmentPane {
 
@@ -28,13 +40,17 @@ public class TextAlignmentPane {
     VBox textAlignmentBox = new VBox();
     HBox textAlignmentTitle = new HBox();
 
-    StackPane textAlignmentBackPane = new StackPane();
+    Button backButton = new Button();
     Region textAlignmentBackIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
     Label textAlignmentTitleLabel = new Label();
 
     CheckTab leftTab, centerTab, rightTab;
+
+    List<Node> focusNodes = new ArrayList<>();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     ArrayList<CheckTab> checkTabs = new ArrayList<>();
 
@@ -70,19 +86,37 @@ public class TextAlignmentPane {
         VBox.setMargin(textAlignmentTitle, new Insets(0, 0, 10, 0));
 
         textAlignmentTitle.getStyleClass().add("settingsPaneTitle");
-        textAlignmentTitle.getChildren().addAll(textAlignmentBackPane, textAlignmentTitleLabel);
+        textAlignmentTitle.getChildren().addAll(backButton, textAlignmentTitleLabel);
 
-        textAlignmentBackPane.setMinSize(24, 40);
-        textAlignmentBackPane.setPrefSize(24, 40);
-        textAlignmentBackPane.setMaxSize(24, 40);
-        textAlignmentBackPane.getChildren().add(textAlignmentBackIcon);
-        textAlignmentBackPane.setCursor(Cursor.HAND);
-        textAlignmentBackPane.setOnMouseClicked((e) -> closeTextAlignmentPane());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(textAlignmentBackIcon);
+        backButton.setOnAction((e) -> closeTextAlignmentPane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         textAlignmentBackIcon.setMinSize(8, 13);
         textAlignmentBackIcon.setPrefSize(8, 13);
         textAlignmentBackIcon.setMaxSize(8, 13);
-        textAlignmentBackIcon.getStyleClass().add("settingsPaneIcon");
+        textAlignmentBackIcon.getStyleClass().add("graphic");
         textAlignmentBackIcon.setShape(backSVG);
 
         textAlignmentTitleLabel.setMinHeight(40);
@@ -90,17 +124,23 @@ public class TextAlignmentPane {
         textAlignmentTitleLabel.setMaxHeight(40);
         textAlignmentTitleLabel.setText("Text alignment");
         textAlignmentTitleLabel.setCursor(Cursor.HAND);
+        textAlignmentTitleLabel.setPadding(new Insets(0, 0, 0, 4));
         textAlignmentTitleLabel.getStyleClass().add("settingsPaneText");
         textAlignmentTitleLabel.setOnMouseClicked((e) -> closeTextAlignmentPane());
 
-        leftTab = new CheckTab(false, "Left");
-        centerTab = new CheckTab(false, "Center");
-        rightTab = new CheckTab(false, "Right");
+        leftTab = new CheckTab(false, "Left", focus, 1, () -> this.pressLeftTab(false));
+        centerTab = new CheckTab(false, "Center", focus, 2, () -> this.pressCenterTab(false));
+        rightTab = new CheckTab(false, "Right", focus, 3, () -> this.pressRightTab(false));
 
         textAlignmentBox.getChildren().addAll(leftTab, centerTab, rightTab);
         checkTabs.add(leftTab);
         checkTabs.add(centerTab);
         checkTabs.add(rightTab);
+
+        focusNodes.add(backButton);
+        focusNodes.add(leftTab);
+        focusNodes.add(centerTab);
+        focusNodes.add(rightTab);
 
         leftTab.setOnMouseClicked(e -> pressLeftTab(false));
         centerTab.setOnMouseClicked(e -> pressCenterTab(false));
@@ -196,6 +236,30 @@ public class TextAlignmentPane {
 
         rightTab.checkIcon.setVisible(true);
     }
+
+    public void focusForward() {
+        int newFocus;
+
+        if(focus.get() == 3 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
+    public void focusBackward() {
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 3;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
 }
 
 

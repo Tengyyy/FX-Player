@@ -1,16 +1,33 @@
 package tengy.Subtitles;
 
-import tengy.*;
-import tengy.PlaybackSettings.*;
 import javafx.animation.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import tengy.PlaybackSettings.PlaybackSettingsController;
+import tengy.SVG;
+import tengy.Utilities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 
 public class SubtitlesOptionsPane {
@@ -22,13 +39,16 @@ public class SubtitlesOptionsPane {
 
     HBox subtitlesOptionsTitle = new HBox();
 
-    StackPane subtitlesOptionsBackPane = new StackPane();
+    Button backButton = new Button();
     Region subtitlesOptionsBackIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
     Label subtitlesOptionsTitleLabel = new Label();
 
     SubtitlesOptionsTab fontFamilyTab, fontColorTab, fontSizeTab, textAlignmentTab, backgroundColorTab, backgroundOpacityTab, lineSpacingTab, fontOpacityTab, resetTab;
+    List<Node> focusNodes = new ArrayList<>();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
 
     FontFamilyPane fontFamilyPane;
@@ -71,20 +91,40 @@ public class SubtitlesOptionsPane {
         VBox.setMargin(subtitlesOptionsTitle, new Insets(0, 0, 10, 0));
 
         subtitlesOptionsTitle.getStyleClass().add("settingsPaneTitle");
-        subtitlesOptionsTitle.getChildren().addAll(subtitlesOptionsBackPane, subtitlesOptionsTitleLabel);
+        subtitlesOptionsTitle.getChildren().addAll(backButton, subtitlesOptionsTitleLabel);
 
 
-        subtitlesOptionsBackPane.setMinSize(24, 40);
-        subtitlesOptionsBackPane.setPrefSize(24, 40);
-        subtitlesOptionsBackPane.setMaxSize(24, 40);
-        subtitlesOptionsBackPane.getChildren().add(subtitlesOptionsBackIcon);
-        subtitlesOptionsBackPane.setCursor(Cursor.HAND);
-        subtitlesOptionsBackPane.setOnMouseClicked((e) -> closeCaptionsOptions());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(subtitlesOptionsBackIcon);
+        backButton.setOnAction((e) -> closeCaptionsOptions());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+            }
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         subtitlesOptionsBackIcon.setMinSize(8, 13);
         subtitlesOptionsBackIcon.setPrefSize(8, 13);
         subtitlesOptionsBackIcon.setMaxSize(8, 13);
-        subtitlesOptionsBackIcon.getStyleClass().add("settingsPaneIcon");
+        subtitlesOptionsBackIcon.getStyleClass().add("graphic");
         subtitlesOptionsBackIcon.setShape(backSVG);
 
         subtitlesOptionsTitleLabel.setMinHeight(40);
@@ -92,19 +132,31 @@ public class SubtitlesOptionsPane {
         subtitlesOptionsTitleLabel.setMaxHeight(40);
         subtitlesOptionsTitleLabel.setText("Options");
         subtitlesOptionsTitleLabel.setCursor(Cursor.HAND);
+        subtitlesOptionsTitleLabel.setPadding(new Insets(0, 0, 0, 4));
         subtitlesOptionsTitleLabel.getStyleClass().add("settingsPaneText");
         subtitlesOptionsTitleLabel.setOnMouseClicked((e) -> closeCaptionsOptions());
 
 
-        fontFamilyTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Font family", "Sans-Serif Medium");
-        fontColorTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Font color", "White");
-        fontSizeTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Font size", "100%");
-        textAlignmentTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Text alignment", "Center");
-        backgroundColorTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Background color", "Black");
-        backgroundOpacityTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Background opacity", "75%");
-        lineSpacingTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Line spacing", "100%");
-        fontOpacityTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Font opacity", "100%");
-        resetTab = new SubtitlesOptionsTab(this, subtitlesController, false, false, "Reset", null);
+        fontFamilyTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Font family", "Sans-Serif Medium", 1, this::openFontFamilyPane);
+        fontColorTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Font color", "White", 2, this::openFontColorPane);
+        fontSizeTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Font size", "100%", 3, this::openFontSizePane);
+        textAlignmentTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Text alignment", "Center", 4, this::openTextAlignmentPane);
+        backgroundColorTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Background color", "Black", 5, this::openBackgroundColorPane);
+        backgroundOpacityTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Background opacity", "75%", 6, this::openBackgroundOpacityPane);
+        lineSpacingTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Line spacing", "100%", 7, this::openLineSpacingPane);
+        fontOpacityTab = new SubtitlesOptionsTab(this, subtitlesController, true, true, "Font opacity", "100%", 8, this::openFontOpacityPane);
+        resetTab = new SubtitlesOptionsTab(this, subtitlesController, false, false, "Reset", null, 9, this::resetCaptions);
+
+        focusNodes.add(backButton);
+        focusNodes.add(fontFamilyTab);
+        focusNodes.add(fontColorTab);
+        focusNodes.add(fontSizeTab);
+        focusNodes.add(textAlignmentTab);
+        focusNodes.add(backgroundColorTab);
+        focusNodes.add(backgroundOpacityTab);
+        focusNodes.add(lineSpacingTab);
+        focusNodes.add(fontOpacityTab);
+        focusNodes.add(resetTab);
 
 
         fontFamilyPane = new FontFamilyPane(subtitlesController, this);
@@ -116,20 +168,7 @@ public class SubtitlesOptionsPane {
         lineSpacingPane = new LineSpacingPane(subtitlesController, this);
         fontOpacityPane = new FontOpacityPane(subtitlesController, this);
 
-
-        fontFamilyTab.setOnMouseClicked(e -> openFontFamilyPane());
-        fontColorTab.setOnMouseClicked(e -> openFontColorPane());
-        fontSizeTab.setOnMouseClicked(e -> openFontSizePane());
-        textAlignmentTab.setOnMouseClicked(e -> openTextAlignmentPane());
-        backgroundColorTab.setOnMouseClicked(e -> openBackgroundColorPane());
-        backgroundOpacityTab.setOnMouseClicked(e -> openBackgroundOpacityPane());
-        lineSpacingTab.setOnMouseClicked(e -> openLineSpacingPane());
-        fontOpacityTab.setOnMouseClicked(e -> openFontOpacityPane());
-        resetTab.setOnMouseClicked(e -> resetCaptions());
-
-
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
-
     }
 
 
@@ -183,6 +222,7 @@ public class SubtitlesOptionsPane {
 
         fontFamilyPane.scrollPane.setVisible(true);
         fontFamilyPane.scrollPane.setMouseTransparent(false);
+
 
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), fontFamilyPane.scrollPane.getHeight())));
@@ -264,14 +304,13 @@ public class SubtitlesOptionsPane {
         fontSizePane.scrollPane.setVisible(true);
         fontSizePane.scrollPane.setMouseTransparent(false);
 
+
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), fontSizePane.scrollPane.getHeight())));
 
 
         Timeline clipWidthTimeline = new Timeline();
         clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.widthProperty(), fontSizePane.scrollPane.getWidth())));
-
-
 
         TranslateTransition fontSizeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), fontSizePane.scrollPane);
         fontSizeTransition.setFromX(fontSizePane.scrollPane.getWidth());
@@ -343,6 +382,7 @@ public class SubtitlesOptionsPane {
 
         backgroundColorPane.scrollPane.setVisible(true);
         backgroundColorPane.scrollPane.setMouseTransparent(false);
+
 
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), backgroundColorPane.scrollPane.getHeight())));
@@ -510,4 +550,26 @@ public class SubtitlesOptionsPane {
     }
 
 
+    public void focusForward() {
+        int newFocus;
+
+        if(focus.get() == 9 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
+
+    public void focusBackward() {
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 9;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+    }
 }

@@ -1,5 +1,12 @@
 package tengy.Subtitles;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import tengy.PlaybackSettings.PlaybackSettingsController;
 import javafx.animation.*;
@@ -15,9 +22,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
+import tengy.PlaybackSettings.SettingsTab;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class SubtitlesHome {
 
@@ -29,25 +41,25 @@ public class SubtitlesHome {
     VBox subtitlesWrapper = new VBox();
 
     HBox subtitlesTitle = new HBox();
-    HBox subtitlesChooserTab = new HBox();
+
 
     Label subtitlesTitleLabel = new Label();
-    Label subtitlesOptionsLabel = new Label();
+    Button subtitlesOptionsButton = new Button();
 
-    Label chooseSubtitlesLabel = new Label();
-
-    HBox openSubtitlesTab = new HBox();
+    SettingsTab openSubtitlesTab;
     Label openSubtitlesLabel = new Label();
     SVGPath globeSVG = new SVGPath();
     Region globeIcon = new Region();
     StackPane globeIconPane = new StackPane();
 
-    HBox adjustDelayTab = new HBox();
+    SettingsTab adjustDelayTab;
     Label adjustDelayLabel = new Label();
     SVGPath timerSVG = new SVGPath();
     Region timerIcon = new Region();
     StackPane timerIconPane = new StackPane();
 
+    SettingsTab subtitlesChooserTab;
+    Label chooseSubtitlesLabel = new Label();
     StackPane chooseSubtitlesIconPane = new StackPane();
     Region chooseSubtitlesIcon = new Region();
     SVGPath folderSVG = new SVGPath();
@@ -55,6 +67,10 @@ public class SubtitlesHome {
     FileChooser fileChooser;
 
     ArrayList<SubtitlesTab> subtitlesTabs = new ArrayList<>();
+
+    List<Node> focusNodes = new ArrayList<>();
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+
 
     public SubtitlesHome(SubtitlesController subtitlesController){
         this.subtitlesController = subtitlesController;
@@ -70,8 +86,8 @@ public class SubtitlesHome {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(245, 181);
-        scrollPane.setMaxSize(245, 181);
+        scrollPane.setPrefSize(295, 181);
+        scrollPane.setMaxSize(295, 181);
         scrollPane.setContent(subtitlesWrapper);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
@@ -79,45 +95,59 @@ public class SubtitlesHome {
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
 
-        subtitlesWrapper.setPrefSize(245, 178);
-        subtitlesWrapper.setMaxSize(245, 178);
+        subtitlesWrapper.setPrefSize(295, 178);
+        subtitlesWrapper.setMaxSize(295, 178);
         subtitlesWrapper.setPadding(new Insets(0, 0, 8, 0));
         subtitlesWrapper.setAlignment(Pos.BOTTOM_LEFT);
 
-        subtitlesWrapper.getChildren().addAll(subtitlesTitle, subtitlesChooserTab, openSubtitlesTab, adjustDelayTab);
 
-        subtitlesTitle.getChildren().addAll(subtitlesTitleLabel, subtitlesOptionsLabel);
-        subtitlesTitle.setPrefSize(245, 48);
-        subtitlesTitle.setMaxSize(245, 48);
+        subtitlesTitle.getChildren().addAll(subtitlesTitleLabel, subtitlesOptionsButton);
+        subtitlesTitle.setPrefSize(295, 48);
+        subtitlesTitle.setMaxSize(295, 48);
         subtitlesTitle.setPadding(new Insets(0, 10, 0, 10));
         subtitlesTitle.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(subtitlesTitle, new Insets(0, 0, 5, 0));
         subtitlesTitle.getStyleClass().add("settingsPaneTitle");
 
-        subtitlesTitleLabel.setPrefSize(165, 40);
-        subtitlesTitleLabel.setMaxSize(165, 40);
+        subtitlesTitleLabel.setPrefSize(195, 40);
+        subtitlesTitleLabel.setMaxSize(195, 40);
         subtitlesTitleLabel.setText("Subtitles");
         subtitlesTitleLabel.getStyleClass().add("settingsPaneText");
 
 
-        subtitlesOptionsLabel.getStyleClass().addAll("settingsPaneText", "settingsPaneSubText");
-        subtitlesOptionsLabel.setText("Options");
-        subtitlesOptionsLabel.setUnderline(true);
-        subtitlesOptionsLabel.setMinSize(60, 40);
-        subtitlesOptionsLabel.setPrefSize(60, 40);
-        subtitlesOptionsLabel.setMaxSize(60, 40);
-        subtitlesOptionsLabel.setCursor(Cursor.HAND);
-        subtitlesOptionsLabel.setOnMouseClicked((e) -> openCaptionsOptions());
-        subtitlesOptionsLabel.setAlignment(Pos.CENTER_RIGHT);
+        subtitlesOptionsButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        subtitlesOptionsButton.setText("Options");
+        subtitlesOptionsButton.setMinSize(80, 40);
+        subtitlesOptionsButton.setPrefSize(80, 40);
+        subtitlesOptionsButton.setMaxSize(80, 40);
+        subtitlesOptionsButton.setOnAction((e) -> openCaptionsOptions());
+        subtitlesOptionsButton.setAlignment(Pos.CENTER);
+        subtitlesOptionsButton.setFocusTraversable(false);
+        subtitlesOptionsButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(subtitlesOptionsButton);
+                focus.set(-1);
+            }
+        });
+
+        subtitlesOptionsButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            subtitlesOptionsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        subtitlesOptionsButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            subtitlesOptionsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
 
-        subtitlesChooserTab.setPrefSize(245, 35);
-        subtitlesChooserTab.setMaxSize(245, 35);
+        subtitlesChooserTab = new SettingsTab(focus, focusNodes, this::openCaptionsChooser);
+        subtitlesChooserTab.setPrefSize(295, 35);
+        subtitlesChooserTab.setMaxSize(295, 35);
         subtitlesChooserTab.setPadding(new Insets(0, 10, 0, 10));
-        subtitlesChooserTab.getStyleClass().add("settingsPaneTab");
         subtitlesChooserTab.setId("captionsChooserTab");
         subtitlesChooserTab.getChildren().addAll(chooseSubtitlesIconPane, chooseSubtitlesLabel);
-        subtitlesChooserTab.setOnMouseClicked(e -> openCaptionsChooser());
         VBox.setMargin(subtitlesChooserTab, new Insets(5, 0, 0, 0));
 
         chooseSubtitlesIconPane.setMinSize(30, 35);
@@ -133,17 +163,16 @@ public class SubtitlesHome {
 
         chooseSubtitlesLabel.setText("Choose subtitle file");
         chooseSubtitlesLabel.getStyleClass().add("settingsPaneText");
-        chooseSubtitlesLabel.setPrefSize(195, 35);
-        chooseSubtitlesLabel.setMaxSize(195, 35);
+        chooseSubtitlesLabel.setPrefSize(245, 35);
+        chooseSubtitlesLabel.setMaxSize(245, 35);
 
 
-        openSubtitlesTab.setPrefSize(245, 35);
-        openSubtitlesTab.setMaxSize(245, 35);
+        openSubtitlesTab = new SettingsTab(focus, focusNodes, this::openOpenSubtitlesPane);
+        openSubtitlesTab.setPrefSize(295, 35);
+        openSubtitlesTab.setMaxSize(295, 35);
         openSubtitlesTab.setPadding(new Insets(0, 10, 0, 10));
-        openSubtitlesTab.getStyleClass().add("settingsPaneTab");
         openSubtitlesTab.setId("openSubtitlesTab");
         openSubtitlesTab.getChildren().addAll(globeIconPane, openSubtitlesLabel);
-        openSubtitlesTab.setOnMouseClicked(e -> openOpenSubtitlesPane());
 
         globeIconPane.setMinSize(30, 35);
         globeIconPane.setPrefSize(30, 35);
@@ -158,15 +187,14 @@ public class SubtitlesHome {
 
         openSubtitlesLabel.setText("Search OpenSubtitles");
         openSubtitlesLabel.getStyleClass().add("settingsPaneText");
-        openSubtitlesLabel.setPrefSize(195, 35);
-        openSubtitlesLabel.setMaxSize(195, 35);
+        openSubtitlesLabel.setPrefSize(245, 35);
+        openSubtitlesLabel.setMaxSize(245, 35);
 
-        adjustDelayTab.setPrefSize(245, 35);
-        adjustDelayTab.setMaxSize(245, 35);
+        adjustDelayTab = new SettingsTab(focus, focusNodes, this::openTimingPane);
+        adjustDelayTab.setPrefSize(295, 35);
+        adjustDelayTab.setMaxSize(295, 35);
         adjustDelayTab.setPadding(new Insets(0, 10, 0, 10));
-        adjustDelayTab.getStyleClass().add("settingsPaneTab");
         adjustDelayTab.getChildren().addAll(timerIconPane, adjustDelayLabel);
-        adjustDelayTab.setOnMouseClicked(e -> openTimingPane());
         VBox.setMargin(adjustDelayTab, new Insets(5, 0, 0, 0));
 
         timerIconPane.setMinSize(30, 35);
@@ -182,11 +210,16 @@ public class SubtitlesHome {
 
         adjustDelayLabel.setText("Adjust subtitle timing");
         adjustDelayLabel.getStyleClass().add("settingsPaneText");
-        adjustDelayLabel.setPrefSize(195, 35);
-        adjustDelayLabel.setMaxSize(195, 35);
+        adjustDelayLabel.setPrefSize(245, 35);
+        adjustDelayLabel.setMaxSize(245, 35);
 
-
+        subtitlesWrapper.getChildren().addAll(subtitlesTitle, subtitlesChooserTab, openSubtitlesTab, adjustDelayTab);
         subtitlesController.subtitlesPane.getChildren().add(scrollPane);
+
+        focusNodes.add(subtitlesOptionsButton);
+        focusNodes.add(subtitlesChooserTab);
+        focusNodes.add(openSubtitlesTab);
+        focusNodes.add(adjustDelayTab);
     }
 
     public void openCaptionsOptions(){
@@ -250,10 +283,12 @@ public class SubtitlesHome {
 
         subtitlesController.subtitlesState = SubtitlesState.OPENSUBTITLES_OPEN;
 
-        subtitlesController.openSubtitlesPane.languageBox.requestFocus();
 
         subtitlesController.openSubtitlesPane.scrollPane.setVisible(true);
         subtitlesController.openSubtitlesPane.scrollPane.setMouseTransparent(false);
+
+        subtitlesController.openSubtitlesPane.container.requestFocus();
+
 
         Timeline clipHeightTimeline = new Timeline();
         clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), subtitlesController.openSubtitlesPane.scrollPane.getHeight())));
@@ -332,10 +367,52 @@ public class SubtitlesHome {
 
         SubtitlesTab subtitlesTab = new SubtitlesTab(subtitlesController, this, selectedFile.getName(), selectedFile, true);
         subtitlesWrapper.getChildren().add(1, subtitlesTab);
+        focusNodes.add(1, subtitlesTab);
+        focusNodes.add(2, subtitlesTab.removeButton);
 
         if(subtitlesTabs.isEmpty()) subtitlesChooserTab.setStyle("-fx-border-width: 1 0 0 0;");
         subtitlesTabs.add(subtitlesTab);
         scrollPane.setVvalue(0);
         subtitlesTab.selectSubtitles(true);
+        subtitlesWrapper.requestFocus();
+    }
+
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else {
+            Node node = focusNodes.get(newFocus);
+            if(node instanceof Button) Utilities.setScroll(scrollPane, focusNodes.get(newFocus - 1));
+            else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+        }
+    }
+
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        if(newFocus == 0) scrollPane.setVvalue(0);
+        else {
+            Node node = focusNodes.get(newFocus);
+            if(node instanceof Button) Utilities.setScroll(scrollPane, focusNodes.get(newFocus - 1));
+            else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+        }
+    }
+
+    public void resetFocusNodes(){
+        focusNodes.clear();
+        focusNodes.add(subtitlesOptionsButton);
+        focusNodes.add(subtitlesChooserTab);
+        focusNodes.add(openSubtitlesTab);
+        focusNodes.add(adjustDelayTab);
     }
 }

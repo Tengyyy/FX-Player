@@ -1,5 +1,8 @@
 package tengy.PlaybackSettings;
 
+import javafx.css.PseudoClass;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.SVG;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -26,6 +29,10 @@ public class PlaybackSpeedTab extends HBox {
 
     double speedValue;
 
+    boolean pressed = false;
+
+    int focusValue;
+
 
     PlaybackSpeedTab(PlaybackSpeedController playbackSpeedController, PlaybackSpeedPane playbackSpeedPane, boolean isCustom){
         this.playbackSpeedController = playbackSpeedController;
@@ -33,14 +40,12 @@ public class PlaybackSpeedTab extends HBox {
 
         checkSVG.setContent(SVG.CHECK.getContent());
 
-        this.setPrefSize(235, 35);
-        this.setMaxSize(235, 35);
-
+        this.setPrefSize(250, 35);
+        this.setMaxSize(250, 35);
         this.setPadding(new Insets(0, 10, 0, 10));
-
         this.getStyleClass().add("settingsPaneTab");
-
         this.setCursor(Cursor.HAND);
+        this.setFocusTraversable(false);
 
 
         checkIconPane.setMinSize(30, 35);
@@ -57,7 +62,7 @@ public class PlaybackSpeedTab extends HBox {
 
         valueLabel.setFont(new Font(15));
         valueLabel.setPrefHeight(35);
-        valueLabel.setPrefWidth(185);
+        valueLabel.setPrefWidth(200);
 
         if(isCustom) speedValue = playbackSpeedController.customSpeedPane.lastCustomValue;
         else speedValue = (double) (playbackSpeedPane.speedTabs.size() + 1) / 4;
@@ -76,19 +81,41 @@ public class PlaybackSpeedTab extends HBox {
             checkIcon.setVisible(false);
         }
 
-        this.setOnMouseClicked((e) -> {
-
-            for(PlaybackSpeedTab playbackSpeedTab : playbackSpeedPane.speedTabs){
-                playbackSpeedTab.checkIcon.setVisible(false);
+        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) playbackSpeedPane.focus.set(focusValue);
+            else {
+                playbackSpeedPane.focus.set(-1);
+                pressed = false;
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
             }
-            if(playbackSpeedPane.customSpeedTab != null) playbackSpeedPane.customSpeedTab.checkIcon.setVisible(false);
+        });
 
-            this.checkIcon.setVisible(true);
+        this.setOnMouseClicked((e) -> action());
 
-            playbackSpeedController.setSpeed(this.speedValue);
+        this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            pressed = true;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            if(pressed){
+                action();
+            }
+
+            pressed = false;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
         });
 
         if(isCustom){
+            for(PlaybackSpeedTab playbackSpeedTab : playbackSpeedPane.speedTabs){
+                playbackSpeedTab.focusValue+=1;
+            }
+            this.focusValue = 2;
+            playbackSpeedPane.focusNodes.add(2, this);
             playbackSpeedPane.speedTabs.add(0, this);
             playbackSpeedPane.customSpeedTab = this;
             playbackSpeedPane.playbackSpeedBox.setPrefHeight(playbackSpeedPane.playbackSpeedBox.getPrefHeight() + 35);
@@ -98,6 +125,8 @@ public class PlaybackSpeedTab extends HBox {
             playbackSpeedPane.playbackSpeedBox.getChildren().add(1, this);
         }
         else {
+            this.focusValue = playbackSpeedPane.speedTabs.size() + 2;
+            playbackSpeedPane.focusNodes.add(this);
             playbackSpeedPane.speedTabs.add(this);
             playbackSpeedPane.playbackSpeedBox.getChildren().add(this);
         }
@@ -108,5 +137,15 @@ public class PlaybackSpeedTab extends HBox {
     public void updateValue(double newValue){
         speedValue = newValue;
         valueLabel.setText("Custom (" + playbackSpeedController.df.format(newValue) + ")");
+    }
+
+    private void action(){
+        for(PlaybackSpeedTab playbackSpeedTab : playbackSpeedPane.speedTabs){
+            playbackSpeedTab.checkIcon.setVisible(false);
+        }
+
+        this.checkIcon.setVisible(true);
+
+        playbackSpeedController.setSpeed(this.speedValue);
     }
 }

@@ -1,5 +1,12 @@
 package tengy.PlaybackSettings;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import javafx.animation.*;
 import javafx.geometry.Insets;
@@ -15,6 +22,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class PlaybackSpeedPane{
 
@@ -28,13 +39,16 @@ public class PlaybackSpeedPane{
     VBox playbackSpeedBox = new VBox();
     HBox playbackSpeedTitle = new HBox();
 
-    StackPane playbackSpeedBackPane = new StackPane();
+    Button backButton = new Button();
     Region playbackSpeedBackIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
     HBox titleLabelWrapper = new HBox();
     Label playbackSpeedTitleLabel = new Label();
-    Label playbackSpeedCustomLabel = new Label();
+    Button customButton = new Button();
+
+    List<Node> focusNodes = new ArrayList<>();
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     PlaybackSpeedPane(PlaybackSpeedController  playbackSpeedController){
         this.playbackSpeedController = playbackSpeedController;
@@ -43,8 +57,8 @@ public class PlaybackSpeedPane{
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.getStyleClass().add("settingsScroll");
-        scrollPane.setPrefSize(235, 349);
-        scrollPane.setMaxSize(235, 349);
+        scrollPane.setPrefSize(250, 349);
+        scrollPane.setMaxSize(250, 349);
         scrollPane.setContent(playbackSpeedBox);
         scrollPane.setVisible(false);
         scrollPane.setMouseTransparent(true);
@@ -52,50 +66,92 @@ public class PlaybackSpeedPane{
 
         StackPane.setAlignment(scrollPane, Pos.BOTTOM_RIGHT);
         playbackSpeedBox.setAlignment(Pos.TOP_LEFT);
-        playbackSpeedBox.setPrefSize(235, 346);
-        playbackSpeedBox.setMaxSize(235, 346);
+        playbackSpeedBox.setPrefSize(250, 346);
+        playbackSpeedBox.setMaxSize(250, 346);
         playbackSpeedBox.setPadding(new Insets(0, 0, 8, 0));
         playbackSpeedBox.getChildren().add(playbackSpeedTitle);
         playbackSpeedBox.setFillWidth(true);
 
-        playbackSpeedTitle.setPrefSize(235, 48);
-        playbackSpeedTitle.setMaxSize(235, 48);
+        playbackSpeedTitle.setPrefSize(250, 48);
+        playbackSpeedTitle.setMaxSize(250, 48);
         playbackSpeedTitle.setPadding(new Insets(0, 5, 0, 10));
         VBox.setMargin(playbackSpeedTitle, new Insets(0, 0, 10, 0));
         playbackSpeedTitle.setAlignment(Pos.CENTER_LEFT);
         playbackSpeedTitle.getStyleClass().add("settingsPaneTitle");
-        playbackSpeedTitle.getChildren().addAll(titleLabelWrapper, playbackSpeedCustomLabel);
+        playbackSpeedTitle.getChildren().addAll(titleLabelWrapper, customButton);
 
-        playbackSpeedBackPane.setMinSize(25, 40);
-        playbackSpeedBackPane.setPrefSize(25, 40);
-        playbackSpeedBackPane.setMaxSize(25, 40);
-        playbackSpeedBackPane.getChildren().add(playbackSpeedBackIcon);
-        playbackSpeedBackPane.setCursor(Cursor.HAND);
-        playbackSpeedBackPane.setOnMouseClicked((e) -> closePlaybackSpeedPane());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(playbackSpeedBackIcon);
+        backButton.setOnAction((e) -> closePlaybackSpeedPane());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         playbackSpeedBackIcon.setMinSize(8, 13);
         playbackSpeedBackIcon.setPrefSize(8, 13);
         playbackSpeedBackIcon.setMaxSize(8, 13);
-        playbackSpeedBackIcon.getStyleClass().add("settingsPaneIcon");
+        playbackSpeedBackIcon.getStyleClass().add("graphic");
         playbackSpeedBackIcon.setShape(backSVG);
 
-        titleLabelWrapper.getChildren().addAll(playbackSpeedBackPane, playbackSpeedTitleLabel);
+        titleLabelWrapper.getChildren().addAll(backButton, playbackSpeedTitleLabel);
         titleLabelWrapper.setAlignment(Pos.CENTER_LEFT);
-        titleLabelWrapper.setPrefWidth(155);
+        titleLabelWrapper.setPrefWidth(145);
 
         playbackSpeedTitleLabel.setText("Playback speed");
         playbackSpeedTitleLabel.setCursor(Cursor.HAND);
         playbackSpeedTitleLabel.getStyleClass().add("settingsPaneText");
         playbackSpeedTitleLabel.setOnMouseClicked((e) -> closePlaybackSpeedPane());
+        playbackSpeedTitleLabel.setPadding(new Insets(0, 0, 0, 4));
 
 
-        playbackSpeedCustomLabel.getStyleClass().addAll("settingsPaneText", "settingsPaneSubText");
-        playbackSpeedCustomLabel.setText("Custom");
-        playbackSpeedCustomLabel.setUnderline(true);
-        playbackSpeedCustomLabel.setPrefWidth(50);
-        playbackSpeedCustomLabel.setMaxWidth(50);
-        playbackSpeedCustomLabel.setCursor(Cursor.HAND);
-        playbackSpeedCustomLabel.setOnMouseClicked((e) -> openCustomSpeedPane());
+
+        customButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        customButton.setText("Custom");
+        customButton.setMinWidth(75);
+        customButton.setPrefWidth(75);
+        customButton.setMaxWidth(75);
+        customButton.setOnAction((e) -> openCustomSpeedPane());
+        customButton.setAlignment(Pos.CENTER);
+        customButton.setFocusTraversable(false);
+        customButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(1);
+            else {
+                keyboardFocusOff(customButton);
+                focus.set(-1);
+            }
+        });
+
+        customButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            customButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        customButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            customButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        focusNodes.add(backButton);
+        focusNodes.add(customButton);
+
 
         for(int i=0; i<8; i++){
             new PlaybackSpeedTab(playbackSpeedController, this, false);
@@ -112,8 +168,11 @@ public class PlaybackSpeedPane{
         playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.setVisible(true);
         playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.setMouseTransparent(false);
 
-        Timeline clipTimeline = new Timeline();
-        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.heightProperty(), playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight())));
+        Timeline clipHeightTimeline = new Timeline();
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.heightProperty(), playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight())));
+
+        Timeline clipWidthTimeline = new Timeline();
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.widthProperty(), playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth())));
 
         TranslateTransition homeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll);
         homeTransition.setFromX(-playbackSpeedController.playbackSettingsController.playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
@@ -124,7 +183,7 @@ public class PlaybackSpeedPane{
         speedTransition.setToX(scrollPane.getWidth());
 
 
-        ParallelTransition parallelTransition = new ParallelTransition(clipTimeline, homeTransition, speedTransition);
+        ParallelTransition parallelTransition = new ParallelTransition(clipWidthTimeline, clipHeightTimeline, homeTransition, speedTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
             playbackSpeedController.playbackSettingsController.animating.set(false);
@@ -151,8 +210,11 @@ public class PlaybackSpeedPane{
         playbackSpeedController.playbackSettingsController.clip.setHeight(scrollPane.getHeight());
 
 
-        Timeline clipTimeline = new Timeline();
-        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.heightProperty(), playbackSpeedController.customSpeedPane.customSpeedBox.getHeight())));
+        Timeline clipWidthTimeline = new Timeline();
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.widthProperty(), playbackSpeedController.customSpeedPane.customSpeedBox.getWidth())));
+
+        Timeline clipHeightTimeline = new Timeline();
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.heightProperty(), playbackSpeedController.customSpeedPane.customSpeedBox.getHeight())));
 
         TranslateTransition speedTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), scrollPane);
         speedTransition.setFromX(0);
@@ -163,7 +225,7 @@ public class PlaybackSpeedPane{
         customTransition.setToX(0);
 
 
-        ParallelTransition parallelTransition = new ParallelTransition(clipTimeline, speedTransition, customTransition);
+        ParallelTransition parallelTransition = new ParallelTransition(clipWidthTimeline, clipHeightTimeline, speedTransition, customTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
             playbackSpeedController.playbackSettingsController.animating.set(false);
@@ -176,9 +238,28 @@ public class PlaybackSpeedPane{
         parallelTransition.play();
     }
 
-    public void focusForward() {
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+
+        if(newFocus == 0 || newFocus == 1) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
     }
 
     public void focusBackward() {
+        int newFocus;
+
+        if (focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if (focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+
+        if(newFocus == 0 || newFocus == 1) scrollPane.setVvalue(0);
+        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
     }
 }

@@ -191,16 +191,15 @@
     -fx-max-height: 200;
 }
 
-
-#languageBox:focused > .combo-box, #languageBox:hover > .combo-box {
+#languageBox:focused > .combo-box, #languageBox:hover > .combo-box, #equalizerCombo:focused, #equalizerCombo:hover{
     -fx-border-color: rgb(200,200,200);
 }
 
-#languageBox:keyboardFocused > .combo-box {
+#languageBox:keyboardFocused > .combo-box, #equalizerCombo:keyboardFocused {
     -fx-border-color: rgb(173, 216, 230);
 }
 
-#languageBox:focused > .combo-box .arrow, #languageBox:hover > .combo-box .arrow {
+#languageBox:focused > .combo-box .arrow, #languageBox:hover > .combo-box .arrow, #equalizerCombo:focused .arrow, #equalizerCombo:hover .arrow {
     -fx-background-color: rgb(200,200,200);
 }
 
@@ -340,10 +339,9 @@
     -fx-effect: null;
 }
 
-.mfx-checkbox {
+.check-box {
     -fx-text-fill: white;
     -fx-font-family: "Roboto";
-    -mfx-main: rgb(255, 0, 0);
 }
 
 .field-border {

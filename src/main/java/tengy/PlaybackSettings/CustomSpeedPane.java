@@ -1,5 +1,12 @@
 package tengy.PlaybackSettings;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import javafx.animation.*;
 import javafx.geometry.Insets;
@@ -15,6 +22,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
+
 public class CustomSpeedPane {
 
 
@@ -26,7 +39,7 @@ public class CustomSpeedPane {
     VBox customSpeedBox = new VBox();
 
     HBox customSpeedTitle = new HBox();
-    StackPane customSpeedBackPane = new StackPane();
+    Button backButton = new Button();
     Region customSpeedBackIcon = new Region();
     Label customSpeedTitleLabel = new Label();
     SVGPath backSVG = new SVGPath();
@@ -37,6 +50,8 @@ public class CustomSpeedPane {
 
     Label customSpeedLabel = new Label();
 
+    List<Node> focusNodes = new ArrayList<>();
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     CustomSpeedPane(PlaybackSpeedController playbackSpeedController){
         this.playbackSpeedController = playbackSpeedController;
@@ -50,7 +65,7 @@ public class CustomSpeedPane {
         StackPane.setAlignment(customSpeedBox, Pos.BOTTOM_RIGHT);
 
         customSpeedBox.setVisible(false);
-        customSpeedBox.setMouseTransparent(true);
+        customSpeedBox.setOnMouseClicked(e -> customSpeedBox.requestFocus());
 
         customSpeedTitle.setMinSize(235, 48);
         customSpeedTitle.setPrefSize(235, 48);
@@ -60,19 +75,37 @@ public class CustomSpeedPane {
         VBox.setMargin(customSpeedTitle, new Insets(0, 0, 20, 0));
 
         customSpeedTitle.getStyleClass().add("settingsPaneTitle");
-        customSpeedTitle.getChildren().addAll(customSpeedBackPane, customSpeedTitleLabel);
+        customSpeedTitle.getChildren().addAll(backButton, customSpeedTitleLabel);
 
-        customSpeedBackPane.setMinSize(24, 40);
-        customSpeedBackPane.setPrefSize(24, 40);
-        customSpeedBackPane.setMaxSize(24, 40);
-        customSpeedBackPane.setCursor(Cursor.HAND);
-        customSpeedBackPane.getChildren().add(customSpeedBackIcon);
-        customSpeedBackPane.setOnMouseClicked((e) -> closeCustomSpeed());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(customSpeedBackIcon);
+        backButton.setOnAction((e) -> closeCustomSpeed());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         customSpeedBackIcon.setMinSize(8, 13);
         customSpeedBackIcon.setPrefSize(8, 13);
         customSpeedBackIcon.setMaxSize(8, 13);
-        customSpeedBackIcon.getStyleClass().add("settingsPaneIcon");
+        customSpeedBackIcon.getStyleClass().add("graphic");
         customSpeedBackIcon.setShape(backSVG);
 
         customSpeedTitleLabel.setMinHeight(40);
@@ -82,6 +115,8 @@ public class CustomSpeedPane {
         customSpeedTitleLabel.setCursor(Cursor.HAND);
         customSpeedTitleLabel.getStyleClass().add("settingsPaneText");
         customSpeedTitleLabel.setOnMouseClicked((e) -> closeCustomSpeed());
+        customSpeedTitleLabel.setPadding(new Insets(0, 0, 0, 4));
+
 
         sliderPane.setMinSize(235, 30);
         sliderPane.setPrefSize(235, 30);
@@ -102,6 +137,7 @@ public class CustomSpeedPane {
         customSpeedSlider.setMinWidth(150);
         customSpeedSlider.setPrefWidth(150);
         customSpeedSlider.setMaxWidth(150);
+        customSpeedSlider.setFocusTraversable(false);
 
         customSpeedSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
 
@@ -136,6 +172,23 @@ public class CustomSpeedPane {
         customSpeedSlider.setOnMousePressed((e) -> customSpeedSlider.setValueChanging(true));
         customSpeedSlider.setOnMouseReleased((e) -> customSpeedSlider.setValueChanging(false));
 
+        customSpeedSlider.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                sliderTrack.pseudoClassStateChanged(PseudoClass.getPseudoClass("focused"), true);
+                focus.set(1);
+            }
+            else {
+                sliderTrack.pseudoClassStateChanged(PseudoClass.getPseudoClass("focused"), false);
+                focus.set(-1);
+                keyboardFocusOff(customSpeedSlider);
+                customSpeedSlider.setValueChanging(false);
+            }
+        });
+
+        customSpeedSlider.setOnMouseEntered(e -> sliderTrack.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), true));
+        customSpeedSlider.setOnMouseExited(e -> sliderTrack.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), false));
+
+
         customSpeedLabel.setText("1x");
         customSpeedLabel.getStyleClass().add("settingsPaneText");
         customSpeedLabel.setId("customSpeedValue");
@@ -143,6 +196,8 @@ public class CustomSpeedPane {
 
         playbackSpeedController.playbackSettingsController.playbackSettingsPane.getChildren().add(customSpeedBox);
 
+        focusNodes.add(backButton);
+        focusNodes.add(customSpeedSlider);
 
     }
 
@@ -154,8 +209,11 @@ public class CustomSpeedPane {
         playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(true);
         playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(false);
 
-        Timeline clipTimeline = new Timeline();
-        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.heightProperty(), playbackSpeedController.playbackSpeedPane.scrollPane.getHeight())));
+        Timeline clipWidthTimeline = new Timeline();
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.widthProperty(), playbackSpeedController.playbackSpeedPane.scrollPane.getWidth())));
+
+        Timeline clipHeightTimeline = new Timeline();
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSpeedController.playbackSettingsController.clip.heightProperty(), playbackSpeedController.playbackSpeedPane.scrollPane.getHeight())));
 
         TranslateTransition customTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), customSpeedBox);
         customTransition.setFromX(0);
@@ -166,7 +224,7 @@ public class CustomSpeedPane {
         speedTransition.setToX(0);
 
 
-        ParallelTransition parallelTransition = new ParallelTransition(clipTimeline, customTransition, speedTransition);
+        ParallelTransition parallelTransition = new ParallelTransition(clipWidthTimeline, clipHeightTimeline, customTransition, speedTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
             playbackSpeedController.playbackSettingsController.animating.set(false);
@@ -181,9 +239,22 @@ public class CustomSpeedPane {
 
     }
 
-    public void focusForward() {
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 
-    public void focusBackward() {
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 }

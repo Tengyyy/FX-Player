@@ -1,5 +1,6 @@
 package tengy.PlaybackSettings;
 
+import javafx.css.PseudoClass;
 import tengy.VerticalProgressBar;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -9,17 +10,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import static tengy.Utilities.keyboardFocusOff;
+
 public class EqualizerSlider {
 
     EqualizerController equalizerController;
 
     VBox sliderWrapper = new VBox();
     StackPane sliderPane = new StackPane();
-    Slider slider = new Slider();
+    public Slider slider = new Slider();
     VerticalProgressBar sliderTrack = new VerticalProgressBar(5, 158);
 
     HBox labelWrapper = new HBox();
     Label label = new Label();
+
+    int focusValue;
 
     EqualizerSlider(EqualizerController equalizerController, String text){
         this.equalizerController = equalizerController;
@@ -46,6 +51,7 @@ public class EqualizerSlider {
         slider.setMinHeight(170);
         slider.setPrefHeight(170);
         slider.setMaxHeight(170);
+        slider.setFocusTraversable(false);
 
         slider.setOnMousePressed(e -> slider.setValueChanging(true));
         slider.setOnMouseReleased(e -> slider.setValueChanging(false));
@@ -85,6 +91,24 @@ public class EqualizerSlider {
             }
         });
 
+        focusValue = equalizerController.sliders.size() + 2;
+
+        slider.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                sliderTrack.getProgressBar().pseudoClassStateChanged(PseudoClass.getPseudoClass("focused"), true);
+                equalizerController.focus.set(focusValue);
+            }
+            else {
+                sliderTrack.getProgressBar().pseudoClassStateChanged(PseudoClass.getPseudoClass("focused"), false);
+                equalizerController.focus.set(-1);
+                keyboardFocusOff(slider);
+                slider.setValueChanging(false);
+            }
+        });
+
+        slider.setOnMouseEntered(e -> sliderTrack.getProgressBar().pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), true));
+        slider.setOnMouseExited(e -> sliderTrack.getProgressBar().pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), false));
+
         labelWrapper.getChildren().add(label);
         labelWrapper.setMinSize(45, 20);
         labelWrapper.setPrefSize(45, 20);
@@ -95,6 +119,7 @@ public class EqualizerSlider {
 
 
         equalizerController.sliderBox.getChildren().add(sliderWrapper);
+        equalizerController.focusNodes.add(slider);
     }
 
 

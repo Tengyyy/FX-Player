@@ -1,16 +1,11 @@
 package tengy;
 
-import javafx.scene.control.Button;
-import tengy.PlaybackSettings.CheckTab;
-import tengy.PlaybackSettings.SettingsTab;
+import javafx.scene.control.*;
+import tengy.PlaybackSettings.*;
 import tengy.Subtitles.SubtitlesOptionsTab;
 import tengy.Subtitles.SubtitlesState;
 import tengy.Menu.ExpandableTextArea;
 import tengy.Menu.Settings.Action;
-import tengy.PlaybackSettings.PlaybackSettingsState;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.controlsfx.control.CheckComboBox;
@@ -197,7 +192,12 @@ public class HotkeyController {
                         event.consume();
                         return;
                     }
-                    else if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab){
+                    else if(event.getTarget() instanceof ComboBox<?> && mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.EQUALIZER_OPEN){
+                        mainController.playbackSettingsController.equalizerController.comboBox.show();
+                        event.consume();
+                        return;
+                    }
+                    else if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox){
                         return;
                     }
                 }
@@ -206,9 +206,7 @@ public class HotkeyController {
                         return;
                 }
             }
-
-
-            if(event.getCode() == KeyCode.LEFT){
+            else if(event.getCode() == KeyCode.LEFT){
                 if(mainController.getControlBarController().volumeSlider.isFocused()) return;
 
                 if(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isFocused()){
@@ -218,7 +216,6 @@ public class HotkeyController {
                     return;
                 }
                 else if(mainController.subtitlesController.timingPane.slider.isFocused()){
-                    // if custom speed pane is open, dont seek video with arrows
                     mainController.subtitlesController.timingPane.slider.setValueChanging(true);
                     mainController.subtitlesController.timingPane.slider.setValue(mainController.subtitlesController.timingPane.slider.getValue() - 0.25);
                     event.consume();
@@ -229,20 +226,42 @@ public class HotkeyController {
                 if(mainController.getControlBarController().volumeSlider.isFocused()) return;
 
                 if(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isFocused()){
-                    // if custom speed pane is open, dont seek video with arrows
                     mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(true);
                     mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValue(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.getValue() + 0.05);
                     event.consume();
                     return;
                 }
                 else if(mainController.subtitlesController.timingPane.slider.isFocused()){
-                    // if custom speed pane is open, dont seek video with arrows
                     mainController.subtitlesController.timingPane.slider.setValueChanging(true);
                     mainController.subtitlesController.timingPane.slider.setValue(mainController.subtitlesController.timingPane.slider.getValue() + 0.25);
                     event.consume();
                     return;
                 }
 
+            }
+            else if(event.getCode() == KeyCode.UP){
+                if(mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.EQUALIZER_OPEN){
+                    for(EqualizerSlider equalizerSlider : mainController.playbackSettingsController.equalizerController.sliders){
+                        if(equalizerSlider.slider.isFocused()){
+                            equalizerSlider.slider.setValueChanging(true);
+                            equalizerSlider.slider.setValue(equalizerSlider.slider.getValue() + 1);
+                            event.consume();
+                            return;
+                        }
+                    }
+                }
+            }
+            else if(event.getCode() == KeyCode.DOWN){
+                if(mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.EQUALIZER_OPEN){
+                    for(EqualizerSlider equalizerSlider : mainController.playbackSettingsController.equalizerController.sliders){
+                        if(equalizerSlider.slider.isFocused()){
+                            equalizerSlider.slider.setValueChanging(true);
+                            equalizerSlider.slider.setValue(equalizerSlider.slider.getValue() - 1);
+                            event.consume();
+                            return;
+                        }
+                    }
+                }
             }
 
             KeyCode[] keyCodes = eventToKeyCodeArray(event);
@@ -406,6 +425,16 @@ public class HotkeyController {
         else if(event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT){
             if(mainController.subtitlesController.timingPane.slider.isFocused()) mainController.subtitlesController.timingPane.slider.setValueChanging(false);
             else if(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isFocused()) mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(false);
+        }
+        else if(event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN){
+            if(mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.EQUALIZER_OPEN){
+                for(EqualizerSlider equalizerSlider : mainController.playbackSettingsController.equalizerController.sliders){
+                    if(equalizerSlider.slider.isFocused()){
+                        equalizerSlider.slider.setValueChanging(false);
+                        break;
+                    }
+                }
+            }
         }
 
         if(mediaKeys.contains(event.getCode())) mainController.seekingWithKeys = false;

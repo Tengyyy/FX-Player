@@ -1,14 +1,19 @@
 package tengy.PlaybackSettings;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import tengy.SVG;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -17,6 +22,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class EqualizerController {
 
@@ -27,7 +36,7 @@ public class EqualizerController {
     VBox equalizerBox = new VBox();
 
     HBox titleBox = new HBox();
-    StackPane backIconPane = new StackPane();
+    Button backButton = new Button();
     Region backIcon = new Region();
     SVGPath backSVG = new SVGPath();
 
@@ -40,12 +49,13 @@ public class EqualizerController {
 
     VBox labelBox = new VBox();
 
-    ArrayList<EqualizerSlider> sliders = new ArrayList<>();
+    public ArrayList<EqualizerSlider> sliders = new ArrayList<>();
 
     public boolean sliderActive = false;
 
     HBox checkBoxContainer = new HBox();
-    MFXCheckbox checkbox = new MFXCheckbox("Move nearby sliders together");
+    CheckBox checkbox = new CheckBox();
+    Label checkboxLabel = new Label("Move nearby sliders together");
     boolean moveSlidersTogether = true;
 
     static final double[] flatEQ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -98,6 +108,10 @@ public class EqualizerController {
     public static final String EQUALIZER_MOVE_SLIDERS_TOGETHER = "eq_move_sliders_together";
 
 
+    List<Node> focusNodes = new ArrayList<>();
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+
+
     EqualizerController(PlaybackSettingsController playbackSettingsController){
         this.playbackSettingsController = playbackSettingsController;
 
@@ -131,21 +145,39 @@ public class EqualizerController {
         titleBox.getChildren().addAll(titleLabelWrapper, comboBox);
         titleBox.setAlignment(Pos.CENTER_LEFT);
 
-        backIconPane.setMinSize(25, 40);
-        backIconPane.setPrefSize(25, 40);
-        backIconPane.setMaxSize(25, 40);
-        backIconPane.getChildren().add(backIcon);
-        backIconPane.setCursor(Cursor.HAND);
-        backIconPane.setOnMouseClicked((e) -> closeEqualizer());
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(backIcon);
+        backButton.setOnAction((e) -> closeEqualizer());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         backIcon.setMinSize(8, 13);
         backIcon.setPrefSize(8, 13);
         backIcon.setMaxSize(8, 13);
-        backIcon.getStyleClass().add("settingsPaneIcon");
+        backIcon.getStyleClass().add("graphic");
         backIcon.setShape(backSVG);
 
         StackPane.setAlignment(titleLabelWrapper, Pos.CENTER_LEFT);
-        titleLabelWrapper.getChildren().addAll(backIconPane, titleLabel);
+        titleLabelWrapper.getChildren().addAll(backButton, titleLabel);
         titleLabelWrapper.setAlignment(Pos.CENTER_LEFT);
         titleLabelWrapper.setPrefWidth(365);
 
@@ -153,9 +185,65 @@ public class EqualizerController {
         titleLabel.setCursor(Cursor.HAND);
         titleLabel.getStyleClass().add("settingsPaneText");
         titleLabel.setOnMouseClicked((e) -> closeEqualizer());
+        titleLabel.setPadding(new Insets(0, 0, 0, 4));
+
+
+        StackPane.setAlignment(comboBox, Pos.CENTER_RIGHT);
+        comboBox.getItems().addAll("Flat", "Classical", "Club", "Dance", "Full bass", "Full treble", "Headphones", "Large hall", "Live", "Party", "Pop", "Rock", "Soft", "Techno", "Custom");
+        comboBox.setPrefSize(150, 35);
+        comboBox.setMaxSize(150, 35);
+        comboBox.setVisibleRowCount(5);
+        comboBox.setId("equalizerCombo");
+        comboBox.setFocusTraversable(false);
+        comboBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(1);
+            }
+            else {
+                keyboardFocusOff(comboBox);
+                focus.set(-1);
+            }
+        });
+
+        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            switch(newValue){
+                case "Flat" -> applyPreset(flatEQ, FLAT);
+                case "Classical" -> applyPreset(classicalEQ, CLASSICAL);
+                case "Club" -> applyPreset(clubEQ, CLUB);
+                case "Dance" -> applyPreset(danceEQ, DANCE);
+                case "Full bass" -> applyPreset(fullBassEQ, FULL_BASS);
+                case "Full treble" -> applyPreset(fullTrebleEQ, FULL_TREBLE);
+                case "Headphones" -> applyPreset(headphonesEQ, HEADPHONES);
+                case "Large hall" -> applyPreset(largeHallEQ, LARGE_HALL);
+                case "Live" -> applyPreset(liveEQ, LIVE);
+                case "Party" -> applyPreset(partyEQ, PARTY);
+                case "Pop" -> applyPreset(popEQ, POP);
+                case "Rock" -> applyPreset(rockEQ, ROCK);
+                case "Soft" -> applyPreset(softEQ, SOFT);
+                case "Techno" -> applyPreset(technoEQ, TECHNO);
+                case "Custom" -> playbackSettingsController.mainController.pref.preferences.put(EQUALIZER_PRESET, CUSTOM);
+            }
+        });
+
+        comboBox.setOnMouseEntered(e -> comboBox.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), true));
+        comboBox.setOnMouseExited(e -> comboBox.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), false));
+
+        comboBox.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            comboBox.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        comboBox.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            comboBox.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
 
 
+        focusNodes.add(backButton);
+        focusNodes.add(comboBox);
 
 
         sliderBox.setPrefSize(535, 200);
@@ -206,37 +294,9 @@ public class EqualizerController {
             }
         }
 
-
-
-        StackPane.setAlignment(comboBox, Pos.CENTER_RIGHT);
-        comboBox.getItems().addAll("Flat", "Classical", "Club", "Dance", "Full bass", "Full treble", "Headphones", "Large hall", "Live", "Party", "Pop", "Rock", "Soft", "Techno", "Custom");
-        comboBox.setPrefSize(150, 35);
-        comboBox.setMaxSize(150, 35);
-        comboBox.setVisibleRowCount(5);
-        comboBox.setId("equalizerCombo");
-
-        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            switch(newValue){
-                case "Flat" -> applyPreset(flatEQ, FLAT);
-                case "Classical" -> applyPreset(classicalEQ, CLASSICAL);
-                case "Club" -> applyPreset(clubEQ, CLUB);
-                case "Dance" -> applyPreset(danceEQ, DANCE);
-                case "Full bass" -> applyPreset(fullBassEQ, FULL_BASS);
-                case "Full treble" -> applyPreset(fullTrebleEQ, FULL_TREBLE);
-                case "Headphones" -> applyPreset(headphonesEQ, HEADPHONES);
-                case "Large hall" -> applyPreset(largeHallEQ, LARGE_HALL);
-                case "Live" -> applyPreset(liveEQ, LIVE);
-                case "Party" -> applyPreset(partyEQ, PARTY);
-                case "Pop" -> applyPreset(popEQ, POP);
-                case "Rock" -> applyPreset(rockEQ, ROCK);
-                case "Soft" -> applyPreset(softEQ, SOFT);
-                case "Techno" -> applyPreset(technoEQ, TECHNO);
-                case "Custom" -> playbackSettingsController.mainController.pref.preferences.put(EQUALIZER_PRESET, CUSTOM);
-            }
-        });
-
-        checkBoxContainer.getChildren().add(checkbox);
-        checkBoxContainer.setPadding(new Insets(20, 0, 0, 40));
+        checkBoxContainer.getChildren().addAll(checkbox, checkboxLabel);
+        checkBoxContainer.setSpacing(10);
+        checkBoxContainer.setPadding(new Insets(15, 0, 0, 40));
         moveSlidersTogether = playbackSettingsController.mainController.pref.preferences.getBoolean(EQUALIZER_MOVE_SLIDERS_TOGETHER, true);
         checkbox.setSelected(moveSlidersTogether);
 
@@ -245,6 +305,35 @@ public class EqualizerController {
             moveSlidersTogether = newValue;
             playbackSettingsController.mainController.pref.preferences.putBoolean(EQUALIZER_MOVE_SLIDERS_TOGETHER, moveSlidersTogether);
         });
+        checkbox.setFocusTraversable(false);
+        checkbox.setCursor(Cursor.HAND);
+
+        checkbox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(12);
+            else {
+                keyboardFocusOff(checkbox);
+                focus.set(-1);
+            }
+        });
+
+        checkbox.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            checkbox.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        checkbox.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            checkbox.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+
+        checkboxLabel.setFocusTraversable(false);
+        checkboxLabel.getStyleClass().add("settingsPaneText");
+        checkboxLabel.setTextFill(Color.WHITE);
+
+
+
+        focusNodes.add(checkbox);
 
 
         playbackSettingsController.playbackSettingsPane.getChildren().add(scrollPane);
@@ -343,9 +432,22 @@ public class EqualizerController {
         playbackSettingsController.mediaInterface.embeddedMediaPlayer.audio().equalizer().setAmps(floatArray);
     }
 
-    public void focusForward() {
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= 12 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 
-    public void focusBackward() {
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 12;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 }

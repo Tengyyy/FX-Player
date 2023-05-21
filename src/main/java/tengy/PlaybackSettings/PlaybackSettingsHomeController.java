@@ -1,5 +1,9 @@
 package tengy.PlaybackSettings;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import tengy.*;
 import tengy.Menu.Queue.QueueItem;
 import javafx.animation.*;
@@ -13,6 +17,10 @@ import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOn;
 
 public class PlaybackSettingsHomeController {
 
@@ -36,6 +44,9 @@ public class PlaybackSettingsHomeController {
 
 
     FileChooser fileChooser;
+
+    List<Node> focusNodes = new ArrayList<>();
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
 
     PlaybackSettingsHomeController(PlaybackSettingsController playbackSettingsController){
         this.playbackSettingsController = playbackSettingsController;
@@ -75,23 +86,20 @@ public class PlaybackSettingsHomeController {
         playbackSettingsHomeBox.setPadding(new Insets(8, 0, 8, 0));
         playbackSettingsHomeBox.setAlignment(Pos.BOTTOM_CENTER);
 
-        videoTrackTab = new PlaybackSettingsHomeTab(this, false, videoSVG, "Change video track", null);
-        audioTrackTab = new PlaybackSettingsHomeTab(this, false, audioSVG, "Change audio track", null);
-        playbackOptionsTab = new PlaybackSettingsHomeTab(this, false, tuneSVG, "Playback options", null);
-        playbackSpeedTab = new PlaybackSettingsHomeTab(this, true, speedSVG, "Playback Speed", "Normal");
-        equalizerTab = new PlaybackSettingsHomeTab(this, false, equalizerSVG, "Equalizer", null);
-        videoSelectionTab = new PlaybackSettingsHomeTab(this, false, magnifySVG, "Select a file to play", null);
+
+        videoTrackTab = new PlaybackSettingsHomeTab(this, false, videoSVG, "Change video track", null, this::openVideoTrackChooser);
+        audioTrackTab = new PlaybackSettingsHomeTab(this, false, audioSVG, "Change audio track", null, this::openAudioTrackChooser);
+        playbackOptionsTab = new PlaybackSettingsHomeTab(this, false, tuneSVG, "Playback options", null, this::openPlaybackOptionsPane);
+        playbackSpeedTab = new PlaybackSettingsHomeTab(this, true, speedSVG, "Playback Speed", "Normal", this::openPlaybackSpeedPane);
+        equalizerTab = new PlaybackSettingsHomeTab(this, false, equalizerSVG, "Equalizer", null, this::openEqualizer);
+        videoSelectionTab = new PlaybackSettingsHomeTab(this, false, magnifySVG, "Select a file to play", null, this::openVideoChooser);
 
         playbackSettingsHomeBox.getChildren().addAll(playbackOptionsTab, playbackSpeedTab, equalizerTab, videoSelectionTab);
 
-
-        videoTrackTab.setOnMouseClicked(e -> openVideoTrackChooser());
-        audioTrackTab.setOnMouseClicked(e -> openAudioTrackChooser());
-        playbackOptionsTab.setOnMouseClicked((e) -> openPlaybackOptionsPane());
-        playbackSpeedTab.setOnMouseClicked((e) -> openPlaybackSpeedPane());
-        equalizerTab.setOnMouseClicked((e) -> openEqualizer());
-        videoSelectionTab.setOnMouseClicked((e) -> openVideoChooser());
-
+        focusNodes.add(playbackOptionsTab);
+        focusNodes.add(playbackSpeedTab);
+        focusNodes.add(equalizerTab);
+        focusNodes.add(videoSelectionTab);
     }
 
 
@@ -209,8 +217,11 @@ public class PlaybackSettingsHomeController {
         playbackSettingsController.playbackSpeedController.playbackSpeedPane.scrollPane.setVisible(true);
         playbackSettingsController.playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(false);
 
-        Timeline clipTimeline = new Timeline();
-        clipTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.heightProperty(), playbackSettingsController.playbackSpeedController.playbackSpeedPane.scrollPane.getHeight())));
+        Timeline clipHeightTimeline = new Timeline();
+        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.heightProperty(), playbackSettingsController.playbackSpeedController.playbackSpeedPane.scrollPane.getHeight())));
+
+        Timeline clipWidthTimeline = new Timeline();
+        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.widthProperty(), playbackSettingsController.playbackSpeedController.playbackSpeedPane.scrollPane.getWidth())));
 
         TranslateTransition homeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSettingsHomeScroll);
         homeTransition.setFromX(0);
@@ -221,7 +232,7 @@ public class PlaybackSettingsHomeController {
         optionsTransition.setToX(0);
 
 
-        ParallelTransition parallelTransition = new ParallelTransition(clipTimeline, homeTransition, optionsTransition);
+        ParallelTransition parallelTransition = new ParallelTransition(clipWidthTimeline, clipHeightTimeline, homeTransition, optionsTransition);
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
         parallelTransition.setOnFinished((e) -> {
             playbackSettingsController.animating.set(false);
@@ -301,6 +312,11 @@ public class PlaybackSettingsHomeController {
         if(playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED || playbackSettingsController.playbackSettingsState == PlaybackSettingsState.HOME_OPEN) playbackSettingsController.clip.setHeight(currHeight + 38);
 
         playbackSettingsHomeBox.getChildren().add(0, videoTrackTab);
+
+        if(!focusNodes.contains(videoTrackTab)){
+            focusNodes.add(0, videoTrackTab);
+            updateFocus();
+        }
     }
 
     public void addAudioTrackTab(){
@@ -318,6 +334,11 @@ public class PlaybackSettingsHomeController {
         if(playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED || playbackSettingsController.playbackSettingsState == PlaybackSettingsState.HOME_OPEN) playbackSettingsController.clip.setHeight(currHeight + 38);
 
         playbackSettingsHomeBox.getChildren().add(0, audioTrackTab);
+
+        if(!focusNodes.contains(audioTrackTab)){
+            focusNodes.add(0, audioTrackTab);
+            updateFocus();
+        }
     }
 
     public void removeVideoAudioTrackTabs(){
@@ -349,11 +370,38 @@ public class PlaybackSettingsHomeController {
 
             if(playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED || playbackSettingsController.playbackSettingsState == PlaybackSettingsState.HOME_OPEN) playbackSettingsController.clip.setHeight(currHeight - 32);
         }
+
+        focusNodes.remove(videoTrackTab);
+        focusNodes.remove(audioTrackTab);
+
+        updateFocus();
     }
 
-    public void focusForward() {
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 
-    public void focusBackward() {
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+    }
+
+    private void updateFocus(){
+        for(int i=0; i < focusNodes.size(); i++){
+            if(focusNodes.get(i).isFocused()){
+                focus.set(i);
+                break;
+            }
+        }
     }
 }

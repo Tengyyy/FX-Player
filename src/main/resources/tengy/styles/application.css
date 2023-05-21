@@ -126,7 +126,7 @@
 }
 
 
-.customSlider .track {
+.customSlider .track, .equalizer-slider .track {
 	-fx-background-color: null;
 }
 
@@ -135,7 +135,7 @@
 	-fx-accent: rgb(200,200,200);
 }
 
-.customSliderTrack > .track {
+.customSliderTrack > .track, .equalizer-slider-track > .track {
 	-fx-border-radius: 0;
     -fx-background-radius: 0;
     -fx-text-box-border: transparent;
@@ -147,7 +147,7 @@
     -fx-accent: white;
 }
 
-.customSliderTrack > .bar {
+.customSliderTrack > .bar, .equalizer-slider-track > .bar {
 	-fx-padding: 1px;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
@@ -164,11 +164,35 @@
     -fx-background-color: white;
 }
 
-.customSlider:keyboardFocused > .thumb {
+.customSlider:keyboardFocused > .thumb, .equalizer-slider:keyboardFocused > .thumb {
     -fx-border-color: rgb(173, 216, 230);
     -fx-border-radius: 5;
     -fx-border-width: 1;
     -fx-border-insets: -3;
+}
+
+.equalizer-slider-track {
+	-fx-accent: rgb(216,0,0);
+}
+
+
+.equalizer-slider-track:hover, .equalizer-slider-track:focused {
+    -fx-accent: red;
+}
+
+.equalizer-slider > .thumb {
+	-fx-background-color: rgb(216,0,0);
+	-fx-padding: 7;
+}
+
+.equalizer-slider:hover > .thumb, .equalizer-slider:focused > .thumb {
+    -fx-background-color: red;
+}
+
+.equalizer-label {
+    -fx-text-fill: white;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 11;
 }
 
 
@@ -383,41 +407,6 @@
 
 .imageViewBackground {
     -fx-background-radius: 5;
-}
-
-
-.equalizer-slider .track {
-	-fx-background-color: null;
-}
-
-
-.equalizer-slider-track {
-	-fx-accent: red;
-}
-
-.equalizer-slider-track > .track {
-	-fx-border-radius: 0;
-    -fx-background-radius: 0;
-    -fx-text-box-border: transparent;
-    -fx-control-inner-background: transparent;
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-}
-
-.equalizer-slider-track > .bar {
-	-fx-padding: 1px;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-}
-
-.equalizer-slider > .thumb {
-	-fx-background-color: red;
-	-fx-padding: 7;
-}
-
-.equalizer-label {
-    -fx-text-fill: white;
-    -fx-font-family: "Roboto";
-    -fx-font-size: 11;
 }
 
 #popupWindowContainer {

@@ -1,5 +1,12 @@
 package tengy.PlaybackSettings;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import javafx.animation.*;
 import javafx.geometry.Insets;
@@ -12,6 +19,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class PlaybackOptionsController {
 
@@ -29,10 +42,14 @@ public class PlaybackOptionsController {
     VBox playbackOptionsBox = new VBox();
 
     HBox titleBox = new HBox();
-    StackPane backPane = new StackPane();
+    Button backButton = new Button();
     Region backIcon = new Region();
     Label titleLabel = new Label();
     SVGPath backSVG = new SVGPath();
+
+    List<Node> focusNodes = new ArrayList<>();
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+
 
     PlaybackOptionsController(PlaybackSettingsController playbackSettingsController){
         this.playbackSettingsController = playbackSettingsController;
@@ -43,6 +60,7 @@ public class PlaybackOptionsController {
         playbackOptionsBox.setMaxSize(235, 171);
         playbackOptionsBox.setPadding(new Insets(0, 0, 8, 0));
         playbackOptionsBox.getChildren().add(titleBox);
+        playbackOptionsBox.setOnMouseClicked(e -> playbackOptionsBox.requestFocus());
         StackPane.setAlignment(playbackOptionsBox, Pos.BOTTOM_RIGHT);
 
         playbackOptionsBox.setVisible(false);
@@ -54,20 +72,38 @@ public class PlaybackOptionsController {
         titleBox.getStyleClass().add("settingsPaneTitle");
         titleBox.setPadding(new Insets(0, 10, 0, 10));
         VBox.setMargin(titleBox, new Insets(0, 0, 10, 0));
-        titleBox.getChildren().addAll(backPane, titleLabel);
+        titleBox.getChildren().addAll(backButton, titleLabel);
         titleBox.setAlignment(Pos.CENTER_LEFT);
 
-        backPane.setMinSize(24, 35);
-        backPane.setPrefSize(24, 35);
-        backPane.setMaxSize(24, 35);
-        backPane.setCursor(Cursor.HAND);
-        backPane.setOnMouseClicked((e) -> closePlaybackOptions());
-        backPane.getChildren().add(backIcon);
+        backButton.setMinSize(30, 40);
+        backButton.setPrefSize(30, 40);
+        backButton.setMaxSize(30, 40);
+        backButton.setFocusTraversable(false);
+        backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
+        backButton.setGraphic(backIcon);
+        backButton.setOnAction((e) -> closePlaybackOptions());
+        backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(0);
+            else {
+                keyboardFocusOff(backButton);
+                focus.set(-1);
+            }
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        backButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            backButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         backIcon.setMinSize(8, 13);
         backIcon.setPrefSize(8, 13);
         backIcon.setMaxSize(8, 13);
-        backIcon.getStyleClass().add("settingsPaneIcon");
+        backIcon.getStyleClass().add("graphic");
         backIcon.setShape(backSVG);
 
 
@@ -79,21 +115,18 @@ public class PlaybackOptionsController {
         titleLabel.getStyleClass().add("settingsPaneText");
         titleLabel.setAlignment(Pos.CENTER_LEFT);
         titleLabel.setOnMouseClicked((e) -> closePlaybackOptions());
+        titleLabel.setPadding(new Insets(0, 0, 0, 4));
 
-        shuffleTab = new PlaybackOptionsTab(this, "Shuffle");
-        loopTab = new PlaybackOptionsTab(this, "Loop video");
-        autoplayTab = new PlaybackOptionsTab(this, "Autoplay");
+        shuffleTab = new PlaybackOptionsTab(this, "Shuffle", 1, () -> shuffleTab.toggle.fire());
+        loopTab = new PlaybackOptionsTab(this, "Loop video", 2, () -> loopTab.toggle.fire());
+        autoplayTab = new PlaybackOptionsTab(this, "Autoplay", 3, () -> autoplayTab.toggle.fire());
 
+        focusNodes.add(backButton);
+        focusNodes.add(shuffleTab);
+        focusNodes.add(loopTab);
+        focusNodes.add(autoplayTab);
 
         playbackSettingsController.playbackSettingsPane.getChildren().add(playbackOptionsBox);
-
-        shuffleTab.setOnMouseClicked((e) -> shuffleTab.toggle.fire());
-
-        loopTab.setOnMouseClicked((e) -> loopTab.toggle.fire());
-
-        autoplayTab.setOnMouseClicked((e) -> autoplayTab.toggle.fire());
-
-
 
 
         shuffleTab.toggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -208,9 +241,22 @@ public class PlaybackOptionsController {
 
     }
 
-    public void focusForward() {
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= 3 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 
     public void focusBackward() {
+        int newFocus;
+
+        if (focus.get() == 0) newFocus = 3;
+        else if (focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 }

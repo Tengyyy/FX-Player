@@ -1,5 +1,8 @@
 package tengy.PlaybackSettings;
 
+import javafx.css.PseudoClass;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.SVG;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -15,7 +18,6 @@ public class AudioTrackTab extends HBox {
 
     AudioTrackChooserController audioTrackChooserController;
 
-
     StackPane checkIconPane = new StackPane();
     public Region checkIcon = new Region();
     SVGPath checkSVG = new SVGPath();
@@ -23,32 +25,53 @@ public class AudioTrackTab extends HBox {
     Label valueLabel = new Label();
 
     public int id;
+    
+    boolean pressed = false;
 
-    public AudioTrackTab(AudioTrackChooserController audioTrackChooserController, TrackDescription trackDescription, boolean isActive){
+    TrackDescription trackDescription;
+
+    public AudioTrackTab(AudioTrackChooserController audioTrackChooserController, TrackDescription trackDescription, boolean isActive, int focusValue){
 
         this.audioTrackChooserController = audioTrackChooserController;
+        this.trackDescription = trackDescription;
 
         checkSVG.setContent(SVG.CHECK.getContent());
 
         this.setPrefSize(235, 35);
         this.setMaxSize(235, 35);
-
         this.setPadding(new Insets(0, 10, 0, 10));
-
         this.getStyleClass().add("settingsPaneTab");
-
         this.setCursor(Cursor.HAND);
-
         this.id = trackDescription.id();
+        this.setFocusTraversable(false);
 
-        this.setOnMouseClicked(e -> {
-            if(audioTrackChooserController.selectedTab == this || audioTrackChooserController.playbackSettingsController.menuController.queuePage.queueBox.activeItem.get() == null || !audioTrackChooserController.playbackSettingsController.menuController.queuePage.queueBox.activeItem.get().getMediaItemGenerated().get()) return;
+        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) audioTrackChooserController.focus.set(focusValue);
+            else {
+                audioTrackChooserController.focus.set(-1);
+                pressed = false;
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+            }
+        });
 
-            audioTrackChooserController.selectedTab.unselect();
+        this.setOnMouseClicked(e -> action());
 
-            audioTrackChooserController.selectedTab = this;
-            checkIcon.setVisible(true);
-            audioTrackChooserController.playbackSettingsController.mediaInterface.setAudioTrack(trackDescription.id());
+        this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            pressed = true;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            if(pressed){
+                action();
+            }
+
+            pressed = false;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
         });
 
         checkIconPane.setMinSize(30, 35);
@@ -73,9 +96,20 @@ public class AudioTrackTab extends HBox {
         this.getChildren().addAll(checkIconPane, valueLabel);
 
         audioTrackChooserController.audioTrackChooserBox.getChildren().add(this);
+        audioTrackChooserController.focusNodes.add(this);
     }
 
     public void unselect(){
         checkIcon.setVisible(false);
+    }
+
+    private void action(){
+        if(audioTrackChooserController.selectedTab == this || audioTrackChooserController.playbackSettingsController.menuController.queuePage.queueBox.activeItem.get() == null || !audioTrackChooserController.playbackSettingsController.menuController.queuePage.queueBox.activeItem.get().getMediaItemGenerated().get()) return;
+
+        audioTrackChooserController.selectedTab.unselect();
+
+        audioTrackChooserController.selectedTab = this;
+        checkIcon.setVisible(true);
+        audioTrackChooserController.playbackSettingsController.mediaInterface.setAudioTrack(trackDescription.id());
     }
 }

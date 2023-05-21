@@ -225,6 +225,7 @@ public class PlaybackSettingsController {
              playbackOptionsController.playbackOptionsBox.setOpacity(1);
             playbackOptionsController.playbackOptionsBox.setMouseTransparent(true);
             clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
+            clip.setWidth(playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -252,6 +253,7 @@ public class PlaybackSettingsController {
             playbackSpeedController.playbackSpeedPane.scrollPane.setMouseTransparent(true);
             playbackSpeedController.playbackSpeedPane.scrollPane.setOpacity(1);
             clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
+            clip.setWidth(playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -279,6 +281,7 @@ public class PlaybackSettingsController {
             playbackSpeedController.customSpeedPane.customSpeedBox.setMouseTransparent(true);
             playbackSpeedController.customSpeedPane.customSpeedBox.setOpacity(1);
             clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
+            clip.setWidth(playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -294,6 +297,8 @@ public class PlaybackSettingsController {
         FadeTransition equalizerTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), equalizerController.scrollPane);
         equalizerTransition.setFromValue(1);
         equalizerTransition.setToValue(0);
+
+        equalizerController.comboBox.hide();
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, equalizerTransition);
         parallelTransition.setOnFinished((e) -> {

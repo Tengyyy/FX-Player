@@ -509,7 +509,7 @@
     -fx-background-color: white;
 }
 
-.mfx-checkbox:hover .ripple-container .box, .check-box:hover .box {
+.mfx-checkbox:hover .ripple-container .box, .check-box:hover .box, .mfx-checkbox:focused .ripple-container .box, .check-box:focused .box {
     -fx-background-color: rgba(80,80,80, 0.7);
 }
 
@@ -520,6 +520,16 @@
 .mfx-checkbox:selected .ripple-container .box, .check-box:selected .box {
     -fx-background-color: red;
     -fx-border-color: transparent;
+}
+
+.check-box {
+    -fx-border-color: transparent;
+    -fx-border-radius: 5;
+    -fx-border-insets: -5;
+}
+
+.check-box:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
 }
 
 #multiselectPane {

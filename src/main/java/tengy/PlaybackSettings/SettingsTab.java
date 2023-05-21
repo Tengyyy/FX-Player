@@ -2,6 +2,7 @@ package tengy.PlaybackSettings;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.css.PseudoClass;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -16,6 +17,7 @@ public class SettingsTab extends HBox {
     public SettingsTab(IntegerProperty focusProperty, List<Node> focusNodes, Runnable action){
         this.getStyleClass().add("settingsPaneTab");
         this.setFocusTraversable(false);
+        this.setCursor(Cursor.HAND);
 
         this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){

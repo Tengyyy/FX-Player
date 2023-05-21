@@ -1,10 +1,13 @@
 package tengy.PlaybackSettings;
 
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 
 
@@ -15,8 +18,9 @@ public class PlaybackOptionsTab extends HBox {
     Label titleLabel = new Label();
     public MFXToggleButton toggle = new MFXToggleButton();
 
+    boolean pressed = false;
 
-    PlaybackOptionsTab(PlaybackOptionsController playbackOptionsController, String titleText){
+    PlaybackOptionsTab(PlaybackOptionsController playbackOptionsController, String titleText, int focusValue, Runnable action){
 
         this.playbackOptionsController = playbackOptionsController;
 
@@ -29,6 +33,37 @@ public class PlaybackOptionsTab extends HBox {
         this.getChildren().addAll(titleLabel, toggle);
         this.setCursor(Cursor.HAND);
 
+        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) playbackOptionsController.focus.set(focusValue);
+            else {
+                playbackOptionsController.focus.set(-1);
+                pressed = false;
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+            }
+        });
+
+        this.setOnMouseClicked(e -> {
+            action.run();
+        });
+
+        this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            pressed = true;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            if(pressed){
+                action.run();
+            }
+
+            pressed = false;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
         titleLabel.setMinSize(165, 35);
         titleLabel.setPrefSize(165, 35);
         titleLabel.setMaxSize(165, 35);
@@ -40,6 +75,8 @@ public class PlaybackOptionsTab extends HBox {
         toggle.setMaxSize(50, 35);
         toggle.setLength(38);
         toggle.setRadius(10);
+        toggle.setFocusTraversable(false);
+        toggle.setMouseTransparent(true);
 
         playbackOptionsController.playbackOptionsBox.getChildren().add(this);
 

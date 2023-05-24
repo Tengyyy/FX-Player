@@ -3,13 +3,21 @@ package tengy.Windows.ChapterEdit;
 import com.github.kokorin.jaffree.ffprobe.Chapter;
 import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -22,6 +30,12 @@ import tengy.ControlTooltip;
 import tengy.MediaItems.MediaItem;
 import tengy.SVG;
 import tengy.Utilities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class ChapterEditItem extends StackPane {
 
@@ -51,25 +65,34 @@ public class ChapterEditItem extends StackPane {
     StackPane startTimeFieldBorder = new StackPane();
     TextField startTimeField = new TextField();
 
-    StackPane removeButtonWrapper = new StackPane();
-    JFXButton removeButton = new JFXButton();
+    Button removeButton = new Button();
     Region removeIcon = new Region();
     SVGPath removeSVG = new SVGPath();
     public ControlTooltip removeButtonTooltip;
 
     MediaItem mediaItem;
 
-    boolean mouseHover = false;
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
+
+    boolean timeChanged = false;
 
     ChapterEditItem(ChapterEditWindow chapterEditWindow, Chapter chapter, MediaItem mediaItem){
         this.chapterEditWindow = chapterEditWindow;
         this.mediaItem = mediaItem;
 
-        this.getChildren().addAll(indexLabel, imageWrapper, textFieldContainer, removeButtonWrapper);
+        this.getChildren().addAll(indexLabel, imageWrapper, textFieldContainer, removeButton);
         this.getStyleClass().add("chapterContainer");
         this.setMinHeight(95);
         this.setPrefHeight(95);
         this.setMaxHeight(95);
+        this.setFocusTraversable(false);
+        this.setOnMouseClicked(e -> this.requestFocus());
+        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue)
+                chapterEditWindow.focus.set(index + 1);
+            else chapterEditWindow.focus.set(-1);
+        });
 
         StackPane.setAlignment(indexLabel, Pos.CENTER_LEFT);
         index = chapterEditWindow.chapterEditItems.size();
@@ -143,6 +166,7 @@ public class ChapterEditItem extends StackPane {
         titleField.setPrefHeight(30);
         titleField.setMinHeight(30);
         titleField.setMaxHeight(30);
+        titleField.setFocusTraversable(false);
         titleField.setPromptText("Title");
         titleField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -40%);");
         titleField.textProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -152,26 +176,33 @@ public class ChapterEditItem extends StackPane {
 
         titleField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
+                chapterEditWindow.focus.set(index + 1);
+                focus.set(0);
                 titleFieldBorder.setVisible(false);
                 titleIcon.setStyle("-fx-background-color: white;");
-                this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
+                focusOn();
+                highlightOff();
             }
             else {
+                chapterEditWindow.focus.set(-1);
+                focus.set(-1);
+                keyboardFocusOff(titleField);
+                focusOff();
                if(titleField.getText().isEmpty()){
                    titleFieldBorder.setVisible(true);
                    titleIcon.setStyle("-fx-background-color: red;");
-                   this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+                   highlightOn();
                }
                else {
-                   if(!mouseHover) {
-                       if (titleFieldBorder.isVisible() || startTimeFieldBorder.isVisible() || startTimeField.isFocused())
-                           this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-                       else
-                           this.setStyle("-fx-background-color: transparent;");
-                   }
+                   if (titleFieldBorder.isVisible() || startTimeFieldBorder.isVisible() || startTimeField.isFocused())
+                       highlightOn();
+                   else
+                       highlightOff();
                }
             }
         });
+
+        focusNodes.add(titleField);
 
         HBox.setHgrow(titleFieldWrapper, Priority.ALWAYS);
 
@@ -201,14 +232,22 @@ public class ChapterEditItem extends StackPane {
         startTimeField.setPrefHeight(30);
         startTimeField.setMinHeight(30);
         startTimeField.setMaxHeight(30);
+        startTimeField.setFocusTraversable(false);
         startTimeField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -40%);");
 
         if(index == 0){
             startTimeField.setText("00:00");
             startTimeField.setEditable(false);
         }
+        else focusNodes.add(startTimeField);
+
+        startTimeField.setOnKeyTyped(e -> {
+            if(e.getCode() == KeyCode.ENTER) this.requestFocus();
+        });
 
         startTimeField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            timeChanged = true;
+
             if(titleField.getText().isEmpty()) chapterEditWindow.saveAllowed.set(false);
             else {
                 boolean isTime = Utilities.isTime(newValue);
@@ -223,12 +262,19 @@ public class ChapterEditItem extends StackPane {
 
         startTimeField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
+                chapterEditWindow.focus.set(index + 1);
+                focus.set(1);
                 startTimeFieldBorder.setVisible(false);
                 timerIcon.setStyle("-fx-background-color: white;");
 
-                this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
+                focusOn();
+                highlightOff();
             }
             else {
+                chapterEditWindow.focus.set(-1);
+                focus.set(-1);
+                keyboardFocusOff(startTimeField);
+                focusOff();
                 boolean isTime = Utilities.isTime(startTimeField.getText());
                 if(!isTime){
                     startTimeFieldBorder.setVisible(true);
@@ -238,7 +284,7 @@ public class ChapterEditItem extends StackPane {
                     coverImage.setVisible(false);
                     imageIcon.setVisible(true);
 
-                    if(!mouseHover) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+                    highlightOn();
                     return;
                 }
                 else {
@@ -248,26 +294,26 @@ public class ChapterEditItem extends StackPane {
                         startTimeFieldBorder.setVisible(true);
                         timerIcon.setStyle("-fx-background-color: red;");
 
-                        if(!mouseHover) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+                        highlightOn();
 
                         coverImage.setImage(null);
                         coverImage.setVisible(false);
                         imageIcon.setVisible(true);
                     }
-                    else {
+                    else if(timeChanged){
                         updateFrame(time);
                     }
                 }
 
-                if(!mouseHover) {
-                    if (titleFieldBorder.isVisible() || startTimeFieldBorder.isVisible() || titleField.isFocused())
-                        this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-                    else
-                        this.setStyle("-fx-background-color: transparent;");
-                }
+                if (titleFieldBorder.isVisible() || startTimeFieldBorder.isVisible() || titleField.isFocused())
+                    highlightOn();
+                else
+                    highlightOff();
 
                 startTimeField.setText(Utilities.durationToString(Utilities.stringToDuration(startTimeField.getText())));
             }
+            
+            timeChanged = false;
         });
 
         HBox.setHgrow(startTimeFieldWrapper, Priority.ALWAYS);
@@ -279,41 +325,45 @@ public class ChapterEditItem extends StackPane {
         startTimeFieldBorder.prefWidthProperty().bind(startTimeFieldWrapper.widthProperty());
         startTimeFieldBorder.prefHeightProperty().bind(startTimeFieldWrapper.heightProperty());
 
-        removeButton.setPrefWidth(30);
-        removeButton.setPrefHeight(30);
-        removeButton.setRipplerFill(Color.WHITE);
+        StackPane.setAlignment(removeButton, Pos.CENTER_RIGHT);
+        removeButton.setPrefSize(30, 30);
+        removeButton.setMaxSize(30, 30);
         removeButton.getStyleClass().add("roundButton");
-        removeButton.setCursor(Cursor.HAND);
-        removeButton.setOpacity(0);
-        removeButton.setText(null);
         removeButton.setOnAction(e -> remove());
-        removeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 0, 1, false, 1, true));
-        removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
+        removeButton.setFocusTraversable(false);
+        removeButton.setGraphic(removeIcon);
+        removeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) {
+                chapterEditWindow.focus.set(index + 1);
+                focus.set(focusNodes.size() - 1);
+                focusOn();
+            }
+            else {
+                chapterEditWindow.focus.set(-1);
+                keyboardFocusOff(removeButton);
+                focus.set(-1);
+                focusOff();
+            }
+        });
+
+        removeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        removeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        focusNodes.add(removeButton);
 
         removeSVG.setContent(SVG.REMOVE.getContent());
         removeIcon.setShape(removeSVG);
         removeIcon.setMinSize(15, 15);
         removeIcon.setPrefSize(15, 15);
         removeIcon.setMaxSize(15, 15);
-        removeIcon.setMouseTransparent(true);
-        removeIcon.getStyleClass().add("menuIcon");
-
-        removeButtonWrapper.getChildren().addAll(removeButton, removeIcon);
-        removeButtonWrapper.setPrefSize(35, 35);
-        removeButtonWrapper.setMaxSize(35, 35);
-        StackPane.setAlignment(removeButtonWrapper, Pos.CENTER_RIGHT);
-
-        this.setOnMouseEntered((e) -> {
-            mouseHover = true;
-            this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
-        });
-        this.setOnMouseExited((e) -> {
-            mouseHover = false;
-            if(titleFieldBorder.isVisible() || startTimeFieldBorder.isVisible() || titleField.isFocused() || startTimeField.isFocused())
-                this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-            else
-                this.setStyle("-fx-background-color: transparent;");
-        });
+        removeIcon.getStyleClass().add("graphic");
 
         Platform.runLater(() -> removeButtonTooltip = new ControlTooltip(chapterEditWindow.mainController, "Remove chapter", "", removeButton, 1000));
     }
@@ -329,8 +379,16 @@ public class ChapterEditItem extends StackPane {
             }
         }
 
+
+
         chapterEditWindow.chapterEditItems.remove(this);
         chapterEditWindow.content.getChildren().remove(this);
+        chapterEditWindow.focusNodes.remove(this);
+
+        if(index > 0){
+            chapterEditWindow.focus.set(index);
+        }
+
         chapterEditWindow.saveAllowed.set(true);
     }
 
@@ -340,6 +398,8 @@ public class ChapterEditItem extends StackPane {
         startTimeFieldBorder.setVisible(false);
         timerIcon.setStyle("-fx-background-color: white;");
         updateFrame(Duration.ZERO);
+
+        focusNodes.remove(startTimeField);
     }
 
     private void updateFrame(Duration duration){
@@ -361,5 +421,48 @@ public class ChapterEditItem extends StackPane {
         });
 
         chapterEditWindow.executorService.execute(chapterFrameGrabberTask);
+    }
+
+    public void focusOn(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("focus"), true);
+    }
+
+    public void focusOff(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("focus"), false);
+    }
+    
+    public void highlightOn(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("highlighted"), true);
+    }
+    
+    public void highlightOff(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("highlighted"), false);
+    }
+
+    public boolean focusForward(){
+
+        if(focus.get() >= focusNodes.size() - 1)
+            return true;
+
+        int newFocus;
+
+        if(focus.get() < 0) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        return false;
+    }
+
+    public boolean focusBackward(){
+        if(focus.get() == 0)
+            return true;
+
+        int newFocus;
+
+        if(focus.get() < 0) newFocus = focusNodes.size() -1;
+        else newFocus = focus.get() -1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+        return false;
     }
 }

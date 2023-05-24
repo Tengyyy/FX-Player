@@ -1,6 +1,12 @@
 package tengy.Windows;
 
 import com.sandec.mdfx.MarkdownView;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.AnimationsClass;
 import tengy.MainController;
 import tengy.SVG;
@@ -25,7 +31,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class LicenseWindow {
 
@@ -46,12 +57,14 @@ public class LicenseWindow {
     StackPane buttonContainer = new StackPane();
     Button mainButton = new Button("Close");
 
-    StackPane closeButtonPane = new StackPane();
     Region closeButtonIcon = new Region();
     SVGPath closeButtonSVG = new SVGPath();
     Button closeButton = new Button();
 
     boolean showing = false;
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
     public LicenseWindow(WindowController windowController){
         this.windowController = windowController;
@@ -69,26 +82,35 @@ public class LicenseWindow {
 
         window.getStyleClass().add("popupWindow");
         window.setVisible(false);
-        window.getChildren().addAll(windowContainer, buttonContainer, closeButtonPane);
+        window.getChildren().addAll(windowContainer, buttonContainer, closeButton);
 
-        StackPane.setAlignment(closeButtonPane, Pos.TOP_RIGHT);
-        StackPane.setMargin(closeButtonPane, new Insets(15, 15, 0 ,0));
-        closeButtonPane.setPrefSize(25, 25);
-        closeButtonPane.setMaxSize(25, 25);
-        closeButtonPane.getChildren().addAll(closeButton, closeButtonIcon);
-        closeButtonPane.setTranslateX(5);
-
+        StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(closeButton, new Insets(10, 10, 0 ,0));
         closeButton.setPrefWidth(25);
         closeButton.setPrefHeight(25);
-        closeButton.getStyleClass().add("popupWindowCloseButton");
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setOpacity(0);
-        closeButton.setText(null);
+        closeButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         closeButton.setOnAction(e -> this.hide());
+        closeButton.setFocusTraversable(false);
+        closeButton.setGraphic(closeButtonIcon);
+        closeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+            }
+            else{
+                keyboardFocusOff(closeButton);
+                focus.set(-1);
+            }
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 0, 1, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
@@ -97,7 +119,7 @@ public class LicenseWindow {
         closeButtonIcon.setPrefSize(13, 13);
         closeButtonIcon.setMaxSize(13, 13);
         closeButtonIcon.setMouseTransparent(true);
-        closeButtonIcon.getStyleClass().add("menuIcon");
+        closeButtonIcon.getStyleClass().add("graphic");
 
         initializeMarkdownView();
 
@@ -131,12 +153,34 @@ public class LicenseWindow {
         buttonContainer.setPrefHeight(70);
         buttonContainer.setMaxHeight(70);
 
-        mainButton.getStyleClass().add("mainButton");
-        mainButton.setCursor(Cursor.HAND);
+        mainButton.getStyleClass().add("menuButton");
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(230);
         mainButton.setOnAction(e -> this.hide());
+        mainButton.setFocusTraversable(false);
+        mainButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(1);
+            }
+            else{
+                keyboardFocusOff(mainButton);
+                focus.set(-1);
+            }
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
         StackPane.setAlignment(mainButton, Pos.CENTER_RIGHT);
+
+        focusNodes.add(closeButton);
+        focusNodes.add(mainButton);
     }
 
     public void show(){
@@ -148,6 +192,8 @@ public class LicenseWindow {
         window.setVisible(true);
 
         mainController.popupWindowContainer.setMouseTransparent(false);
+
+        window.requestFocus();
         AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 0 , 1, false, 1, true);
     }
 
@@ -183,5 +229,24 @@ public class LicenseWindow {
         markdownView.getStylesheets().add(Objects.requireNonNull(mainController.getClass().getResource("styles/mdfx-custom.css")).toExternalForm());
         markdownView.getStylesheets().add(Objects.requireNonNull(mainController.getClass().getResource("styles/mdfx-style.css")).toExternalForm());
         markdownView.setPadding(new Insets(15, 20, 15, 0));
+    }
+
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+    }
+
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 }

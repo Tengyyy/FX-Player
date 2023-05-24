@@ -3,10 +3,16 @@ package tengy.Windows.ChapterEdit;
 import com.github.kokorin.jaffree.ffprobe.Chapter;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import tengy.*;
@@ -33,6 +39,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.bytedeco.ffmpeg.global.avformat.AV_DISPOSITION_DEFAULT;
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class ChapterEditWindow {
 
@@ -54,7 +62,6 @@ public class ChapterEditWindow {
     StackPane buttonContainer = new StackPane();
     Button mainButton = new Button("Save changes");
 
-    StackPane closeButtonPane = new StackPane();
     Region closeButtonIcon = new Region();
     SVGPath closeButtonSVG = new SVGPath();
     Button closeButton = new Button();
@@ -80,6 +87,9 @@ public class ChapterEditWindow {
     public FFmpegFrameGrabber frameGrabber = null;
     public ExecutorService executorService = null;
 
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    public List<Node> focusNodes = new ArrayList<>();
+
     public ChapterEditWindow(WindowController windowController){
         this.windowController = windowController;
         this.mainController = windowController.mainController;
@@ -98,26 +108,35 @@ public class ChapterEditWindow {
 
         window.getStyleClass().add("chapterWindow");
         window.setVisible(false);
-        window.getChildren().addAll(windowContainer, buttonContainer, closeButtonPane, popupContainer);
+        window.getChildren().addAll(windowContainer, buttonContainer, closeButton, popupContainer);
 
-        StackPane.setAlignment(closeButtonPane, Pos.TOP_RIGHT);
-        StackPane.setMargin(closeButtonPane, new Insets(15, 15, 0 ,0));
-        closeButtonPane.setPrefSize(25, 25);
-        closeButtonPane.setMaxSize(25, 25);
-        closeButtonPane.getChildren().addAll(closeButton, closeButtonIcon);
-        closeButtonPane.setTranslateX(5);
 
-        closeButton.setPrefWidth(25);
-        closeButton.setPrefHeight(25);
-        closeButton.getStyleClass().add("popupWindowCloseButton");
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setOpacity(0);
-        closeButton.setText(null);
+        StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(closeButton, new Insets(10, 10, 0 ,0));
+        closeButton.setPrefSize(25, 25);
+        closeButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         closeButton.setOnAction(e -> this.hide());
+        closeButton.setFocusTraversable(false);
+        closeButton.setGraphic(closeButtonIcon);
+        closeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+            }
+            else{
+                keyboardFocusOff(closeButton);
+                focus.set(-1);
+            }
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 0, 1, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
@@ -126,7 +145,7 @@ public class ChapterEditWindow {
         closeButtonIcon.setPrefSize(13, 13);
         closeButtonIcon.setMaxSize(13, 13);
         closeButtonIcon.setMouseTransparent(true);
-        closeButtonIcon.getStyleClass().add("menuIcon");
+        closeButtonIcon.getStyleClass().add("graphic");
 
 
         content.setSpacing(15);
@@ -146,7 +165,28 @@ public class ChapterEditWindow {
         addButton.setGraphic(addIcon);
         addButton.getStyleClass().add("menuButton");
         addButton.setText("Add chapter");
+        addButton.setFocusTraversable(false);
         addButton.setOnAction(e -> createChapter());
+        addButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) {
+                if(mainButton.isDisabled()) focus.set(focusNodes.size() - 1);
+                else focus.set(focusNodes.size() - 2);
+            }
+            else {
+                keyboardFocusOff(addButton);
+                focus.set(-1);
+            }
+        });
+
+        addButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            addButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        addButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            addButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         scrollPane = new ScrollPane() {
             ScrollBar vertical;
@@ -190,10 +230,10 @@ public class ChapterEditWindow {
         buttonContainer.setMaxHeight(70);
 
         mainButton.getStyleClass().add("mainButton");
-        mainButton.setCursor(Cursor.HAND);
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(230);
         mainButton.disableProperty().bind(saveAllowed.not());
+        mainButton.setFocusTraversable(false);
         mainButton.setOnAction(e -> {
             boolean timestampsCorrect = checkFields();
             if(timestampsCorrect) saveChanges();
@@ -201,6 +241,31 @@ public class ChapterEditWindow {
                 saveAllowed.set(false);
                 savePopUp.show();
             }
+        });
+
+        mainButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) {
+                focus.set(focusNodes.size() - 1);
+            }
+            else {
+                keyboardFocusOff(mainButton);
+                focus.set(-1);
+            }
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        mainButton.disabledProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focusNodes.remove(mainButton);
+            else if(!focusNodes.contains(mainButton)) focusNodes.add(mainButton);
         });
 
         StackPane.setAlignment(mainButton, Pos.CENTER_RIGHT);
@@ -229,6 +294,8 @@ public class ChapterEditWindow {
 
         this.mediaItem = null;
         windowController.windowState = WindowState.CLOSED;
+
+        focusNodes.clear();
 
 
         mainController.popupWindowContainer.setMouseTransparent(true);
@@ -264,14 +331,19 @@ public class ChapterEditWindow {
 
         this.mediaItem = mediaItem;
 
+        focusNodes.add(closeButton);
+
         for(Chapter chapter : mediaItem.chapters){
             ChapterEditItem chapterEditItem = new ChapterEditItem(this, chapter, mediaItem);
 
             chapterEditItems.add(chapterEditItem);
             content.getChildren().add(chapterEditItem);
+
+            focusNodes.add(chapterEditItem);
         }
 
         content.getChildren().add(addButtonContainer);
+        focusNodes.add(addButton);
 
         initializeFrames();
     }
@@ -281,6 +353,13 @@ public class ChapterEditWindow {
         chapterEditItems.add(chapterEditItem);
 
         content.getChildren().add(chapterEditItems.size() - 1, chapterEditItem);
+
+        if(mainButton.disabledProperty().get()){
+            focusNodes.add(focusNodes.size() - 1, chapterEditItem);
+        }
+        else focusNodes.add(focusNodes.size() - 2, chapterEditItem);
+
+        if(addButton.isFocused()) focus.set(focusNodes.indexOf(addButton));
 
         saveAllowed.set(false);
     }
@@ -305,14 +384,16 @@ public class ChapterEditWindow {
                 chapterEditItem.titleFieldBorder.setVisible(true);
                 chapterEditItem.titleIcon.setStyle("-fx-background-color: red;");
 
-                if(!chapterEditItem.mouseHover) chapterEditItem.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+                chapterEditItem.highlightOn();
             }
             if(!Utilities.isTime(chapterEditItem.startTimeField.getText())){
                 fieldsValid = false;
                 chapterEditItem.startTimeFieldBorder.setVisible(true);
                 chapterEditItem.timerIcon.setStyle("-fx-background-color: red;");
 
-                if(!chapterEditItem.mouseHover) chapterEditItem.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+
+
+                chapterEditItem.highlightOn();
             }
 
             if(Utilities.stringToDuration(chapterEditItem.startTimeField.getText()).greaterThanOrEqualTo(mediaItem.getDuration())){
@@ -320,7 +401,7 @@ public class ChapterEditWindow {
                 chapterEditItem.startTimeFieldBorder.setVisible(true);
                 chapterEditItem.timerIcon.setStyle("-fx-background-color: red;");
 
-                if(!chapterEditItem.mouseHover) chapterEditItem.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+                chapterEditItem.highlightOn();
             }
 
             if(i > 0){
@@ -330,7 +411,7 @@ public class ChapterEditWindow {
                     chapterEditItem.startTimeFieldBorder.setVisible(true);
                     chapterEditItem.timerIcon.setStyle("-fx-background-color: red;");
 
-                    if(!chapterEditItem.mouseHover) chapterEditItem.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
+                    chapterEditItem.highlightOn();
                 }
             }
         }
@@ -387,6 +468,69 @@ public class ChapterEditWindow {
                     }
                 }
             }
+        }
+    }
+
+
+    public void focusForward(){
+
+        if(savePopUp.showing){
+            savePopUp.changeFocus();
+            return;
+        }
+
+        if(focus.get() > 0 && focus.get() < focusNodes.size() - 1){
+            if(focusNodes.get(focus.get()) instanceof ChapterEditItem chapterEditItem){
+                boolean skipFocus = chapterEditItem.focusForward();
+                if(!skipFocus) return;
+            }
+        }
+
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+
+        if(focusNodes.get(newFocus) instanceof ChapterEditItem chapterEditItem){
+            keyboardFocusOn(chapterEditItem.titleField);
+            Utilities.setScrollToNodeMiddle(scrollPane, chapterEditItem);
+            focus.set(newFocus);
+        }
+        else{
+            keyboardFocusOn(focusNodes.get(newFocus));
+            if(focusNodes.get(newFocus) == addButton) scrollPane.setVvalue(1);
+        }
+    }
+
+    public void focusBackward(){
+
+        if(savePopUp.showing){
+            savePopUp.changeFocus();
+            return;
+        }
+
+        if(focus.get() > 0 && focus.get() < focusNodes.size() - 1){
+            if(focusNodes.get(focus.get()) instanceof ChapterEditItem chapterEditItem){
+                boolean skipFocus = chapterEditItem.focusBackward();
+                if(!skipFocus) return;
+            }
+        }
+
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        if(focusNodes.get(newFocus) instanceof ChapterEditItem chapterEditItem) {
+            keyboardFocusOn(chapterEditItem.removeButton);
+            Utilities.setScrollToNodeMiddle(scrollPane, chapterEditItem);
+            focus.set(newFocus);
+        }
+        else {
+            keyboardFocusOn(focusNodes.get(newFocus));
+            if(focusNodes.get(newFocus) == addButton) scrollPane.setVvalue(1);
         }
     }
 }

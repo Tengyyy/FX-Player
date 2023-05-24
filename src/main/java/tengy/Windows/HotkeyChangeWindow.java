@@ -1,6 +1,11 @@
 package tengy.Windows;
 
 import com.jfoenix.controls.JFXButton;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
 import tengy.*;
 import tengy.Menu.Settings.Action;
 import tengy.Menu.Settings.ControlItem;
@@ -23,7 +28,12 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class HotkeyChangeWindow {
 
@@ -48,10 +58,9 @@ public class HotkeyChangeWindow {
     StackPane buttonContainer = new StackPane();
     Button mainButton = new Button(), secondaryButton = new Button();
 
-    StackPane closeButtonPane = new StackPane();
     Region closeButtonIcon = new Region();
     SVGPath closeButtonSVG = new SVGPath();
-    JFXButton closeButton = new JFXButton();
+    Button closeButton = new Button();
 
     public boolean showing = false;
     BooleanProperty isValid = new SimpleBooleanProperty(true);
@@ -60,7 +69,8 @@ public class HotkeyChangeWindow {
     Action action;
     public KeyCode[] hotkey;
 
-
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
     public HotkeyChangeWindow(WindowController windowController){
         this.windowController = windowController;
@@ -76,28 +86,36 @@ public class HotkeyChangeWindow {
         window.setPrefHeight(Region.USE_COMPUTED_SIZE);
         window.setMaxHeight(Region.USE_PREF_SIZE);
         window.setVisible(false);
-        window.getChildren().addAll(windowContainer, buttonContainer, closeButtonPane);
+        window.getChildren().addAll(windowContainer, buttonContainer, closeButton);
+        window.setOnMouseClicked(e -> window.requestFocus());
 
-        StackPane.setAlignment(closeButtonPane, Pos.TOP_RIGHT);
-        StackPane.setMargin(closeButtonPane, new Insets(15, 15, 0 ,0));
-        closeButtonPane.setPrefSize(25, 25);
-        closeButtonPane.setMaxSize(25, 25);
-        closeButtonPane.getChildren().addAll(closeButton, closeButtonIcon);
-        closeButtonPane.setTranslateX(5);
-
+        StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(closeButton, new Insets(10, 10, 0 ,0));
         closeButton.setPrefWidth(25);
         closeButton.setPrefHeight(25);
-        closeButton.setRipplerFill(Color.WHITE);
-        closeButton.getStyleClass().add("popupWindowCloseButton");
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setOpacity(0);
-        closeButton.setText(null);
+        closeButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         closeButton.setOnAction(e -> this.hide());
-        closeButton.addEventFilter(KeyEvent.ANY, Event::consume);
+        closeButton.setFocusTraversable(false);
+        closeButton.setGraphic(closeButtonIcon);
+        closeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+            }
+            else{
+                keyboardFocusOff(closeButton);
+                focus.set(-1);
+            }
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 0, 1, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
@@ -106,7 +124,7 @@ public class HotkeyChangeWindow {
         closeButtonIcon.setPrefSize(13, 13);
         closeButtonIcon.setMaxSize(13, 13);
         closeButtonIcon.setMouseTransparent(true);
-        closeButtonIcon.getStyleClass().add("menuIcon");
+        closeButtonIcon.getStyleClass().add("graphic");
 
         windowContainer.setPadding(new Insets(15, 15, 15, 15));
         windowContainer.getChildren().addAll(titleContainer, hotkeyContainer, warningLabel);
@@ -127,12 +145,22 @@ public class HotkeyChangeWindow {
 
         hotkeyBox.setSpacing(5);
         hotkeyBox.setAlignment(Pos.CENTER_LEFT);
+        hotkeyBox.setId("hotkeyBox");
+        hotkeyBox.setMinHeight(50);
+        hotkeyBox.setPadding(new Insets(7, 15, 7, 15));
+        hotkeyBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(1);
+            else {
+                keyboardFocusOff(hotkeyBox);
+                focus.set(-1);
+            }
+        });
 
 
         warningLabel.getStyleClass().add("popupWindowText");
         warningLabel.setVisible(false);
         warningLabel.setWrapText(true);
-        warningLabel.setMinHeight(70);
+        warningLabel.setMinHeight(80);
 
         StackPane.setAlignment(buttonContainer, Pos.BOTTOM_CENTER);
         buttonContainer.getChildren().addAll(mainButton, secondaryButton);
@@ -143,21 +171,73 @@ public class HotkeyChangeWindow {
 
         secondaryButton.setText("Cancel");
         secondaryButton.getStyleClass().add("menuButton");
-        secondaryButton.setCursor(Cursor.HAND);
         secondaryButton.setOnAction(e -> this.hide());
         secondaryButton.setTextAlignment(TextAlignment.CENTER);
         secondaryButton.setPrefWidth(155);
-        secondaryButton.addEventFilter(KeyEvent.ANY, Event::consume);
+        secondaryButton.setFocusTraversable(false);
         StackPane.setAlignment(secondaryButton, Pos.CENTER_RIGHT);
+        secondaryButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            secondaryButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        secondaryButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            secondaryButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        secondaryButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.size() - 1);
+            }
+            else {
+                keyboardFocusOff(secondaryButton);
+                focus.set(-1);
+            }
+        });
 
         mainButton.setText("Unset");
         mainButton.getStyleClass().add("menuButton");
-        mainButton.setCursor(Cursor.HAND);
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(155);
         mainButton.disableProperty().bind(isValid.not());
-        mainButton.addEventFilter(KeyEvent.ANY, Event::consume);
+        mainButton.disabledProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focusNodes.remove(mainButton);
+                focus.set(Math.min(focus.get(), focusNodes.size() - 1));
+            }
+            else if(!focusNodes.contains(mainButton)){
+                focusNodes.add(2, mainButton);
+                if(secondaryButton.isFocused()) focus.set(3);
+            }
+        });
+        mainButton.setFocusTraversable(false);
+        mainButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        mainButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(2);
+            }
+            else {
+                keyboardFocusOff(mainButton);
+                focus.set(-1);
+            }
+        });
         StackPane.setAlignment(mainButton, Pos.CENTER_LEFT);
+
+
+        focusNodes.add(closeButton);
+        focusNodes.add(hotkeyBox);
+        focusNodes.add(mainButton);
+        focusNodes.add(secondaryButton);
     }
 
     public void show(ControlItem controlItem){
@@ -173,6 +253,9 @@ public class HotkeyChangeWindow {
         window.setVisible(true);
 
         mainController.popupWindowContainer.setMouseTransparent(false);
+
+        window.requestFocus();
+
         AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 0 , 1, false, 1, true);
     }
 
@@ -386,5 +469,24 @@ public class HotkeyChangeWindow {
             case OPEN_PLAYLISTS -> mainController.getMenuController().menuBar.playlistsButton.controlTooltip.updateHotkeyText(hotkeyController.getHotkeyString(action));
             case OPEN_SETTINGS -> mainController.getMenuController().menuBar.settingsButton.controlTooltip.updateHotkeyText(hotkeyController.getHotkeyString(action));
         }
+    }
+
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+    }
+
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 }

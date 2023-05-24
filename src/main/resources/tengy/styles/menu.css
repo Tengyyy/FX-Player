@@ -113,8 +113,30 @@
 .roundButton, .copyButton, .editButton, #editImageButton {
     -fx-background-radius: 100;
     -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.roundButton > .graphic {
+    -fx-background-color: rgb(200,200,200);
+}
+
+.roundButton:hover, .roundButton:focused {
     -fx-background-color: #656565;
 }
+
+.roundButton:hover > .graphic, .roundButton:focused > .graphic {
+        -fx-background-color: white;
+}
+
+.roundButton:pressed {
+    -fx-background-color: #404040;
+}
+
+.roundButton:pressed > .graphic{
+    -fx-background-color: rgb(180,180,180);
+}
+
 
 .menuButton {
     -fx-background-radius: 5;
@@ -240,6 +262,8 @@
     -fx-padding: 7 11 7 9;
     -fx-graphic-text-gap: 7;
     -fx-cursor: hand;
+    -fx-border-radius: 5;
+    -fx-border-color: transparent;
 }
 
 .mainButton:hover, .mainButton:focused {
@@ -647,8 +671,6 @@
 
 
 
-
-
 .controlItemOdd {
     -fx-background-color: rgb(30,30,30);
 }
@@ -667,14 +689,26 @@
     -fx-background-color: transparent;
     -fx-padding: 7 11 7 11;
     -fx-cursor: hand;
+    -fx-border-radius: 5;
+    -fx-border-color: transparent;
 }
 
 .linkButton:hover {
     -fx-background-color: rgba(38,38,38, 0.6);
+    -fx-text-fill: red;
+}
+
+.linkButton:focused {
+    -fx-text-fill: red;
 }
 
 .linkButton:pressed {
    -fx-background-color: rgba(25, 25, 25, 0.6);
+   -fx-text-fill: rgb(237, 64,64);
+}
+
+.linkButton:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
 }
 
 

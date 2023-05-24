@@ -4,7 +4,13 @@ import com.github.kokorin.jaffree.Rational;
 import com.github.kokorin.jaffree.ffprobe.Format;
 import com.github.kokorin.jaffree.ffprobe.Stream;
 import com.github.kokorin.jaffree.ffprobe.StreamDisposition;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import tengy.MediaItems.MediaItem;
 import tengy.Menu.MenuController;
@@ -29,9 +35,14 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class TechnicalDetailsWindow {
 
@@ -49,7 +60,6 @@ public class TechnicalDetailsWindow {
     StackPane buttonContainer = new StackPane();
     Button mainButton = new Button("Close");
 
-    StackPane closeButtonPane = new StackPane();
     Region closeButtonIcon = new Region();
     SVGPath closeButtonSVG = new SVGPath();
     Button closeButton = new Button();
@@ -69,6 +79,9 @@ public class TechnicalDetailsWindow {
 
     boolean showing = false;
 
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
+
     public TechnicalDetailsWindow(WindowController windowController){
         this.windowController = windowController;
         this.mainController = windowController.mainController;
@@ -86,26 +99,35 @@ public class TechnicalDetailsWindow {
 
         window.getStyleClass().add("popupWindow");
         window.setVisible(false);
-        window.getChildren().addAll(windowContainer, buttonContainer, closeButtonPane);
+        window.getChildren().addAll(windowContainer, buttonContainer, closeButton);
 
-        StackPane.setAlignment(closeButtonPane, Pos.TOP_RIGHT);
-        StackPane.setMargin(closeButtonPane, new Insets(15, 15, 0 ,0));
-        closeButtonPane.setPrefSize(25, 25);
-        closeButtonPane.setMaxSize(25, 25);
-        closeButtonPane.getChildren().addAll(closeButton, closeButtonIcon);
-        closeButtonPane.setTranslateX(5);
-
+        StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(closeButton, new Insets(10, 10, 0 ,0));
         closeButton.setPrefWidth(25);
         closeButton.setPrefHeight(25);
-        closeButton.getStyleClass().add("popupWindowCloseButton");
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setOpacity(0);
-        closeButton.setText(null);
+        closeButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         closeButton.setOnAction(e -> this.hide());
+        closeButton.setFocusTraversable(false);
+        closeButton.setGraphic(closeButtonIcon);
+        closeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+            }
+            else{
+                keyboardFocusOff(closeButton);
+                focus.set(-1);
+            }
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 0, 1, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
@@ -114,7 +136,7 @@ public class TechnicalDetailsWindow {
         closeButtonIcon.setPrefSize(13, 13);
         closeButtonIcon.setMaxSize(13, 13);
         closeButtonIcon.setMouseTransparent(true);
-        closeButtonIcon.getStyleClass().add("menuIcon");
+        closeButtonIcon.getStyleClass().add("graphic");
 
         content.setPadding(new Insets(15, 30, 15, 15));
         content.setSpacing(15);
@@ -167,12 +189,34 @@ public class TechnicalDetailsWindow {
         buttonContainer.setPrefHeight(70);
         buttonContainer.setMaxHeight(70);
 
-        mainButton.getStyleClass().add("mainButton");
-        mainButton.setCursor(Cursor.HAND);
+        mainButton.getStyleClass().add("menuButton");
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(230);
+        mainButton.setFocusTraversable(false);
         mainButton.setOnAction(e -> this.hide());
+        mainButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(1);
+            }
+            else{
+                keyboardFocusOff(mainButton);
+                focus.set(-1);
+            }
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
         StackPane.setAlignment(mainButton, Pos.CENTER_RIGHT);
+
+        focusNodes.add(closeButton);
+        focusNodes.add(mainButton);
     }
 
 
@@ -602,5 +646,24 @@ public class TechnicalDetailsWindow {
     private void updatePadding(boolean value){
         if(value) content.setPadding(new Insets(15, 18, 15, 15));
         else      content.setPadding(new Insets(15, 30, 15, 15));
+    }
+
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+    }
+
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
     }
 }

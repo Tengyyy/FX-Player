@@ -1,15 +1,20 @@
 package tengy.Windows;
 
-import com.jfoenix.controls.JFXButton;
-import tengy.AnimationsClass;
-import tengy.MainController;
-import tengy.SVG;
 import javafx.animation.FadeTransition;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -18,9 +23,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import tengy.AnimationsClass;
+import tengy.MainController;
+import tengy.SVG;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class AddYoutubeVideoWindow {
 
@@ -31,19 +44,21 @@ public class AddYoutubeVideoWindow {
     Label title = new Label();
     TextField textField = new TextField();
     StackPane buttonContainer = new StackPane();
-    JFXButton mainButton = new JFXButton(), secondaryButton = new JFXButton();
+    Button mainButton = new Button(), secondaryButton = new Button();
 
     StackPane closeButtonContainer = new StackPane();
-    StackPane closeButtonPane = new StackPane();
     Region closeButtonIcon = new Region();
     SVGPath closeButtonSVG = new SVGPath();
-    JFXButton closeButton = new JFXButton();
+    Button closeButton = new Button();
 
     public boolean showing = false;
 
 
     String pattern = "^(?:https?:)?(?:\\/\\/)?(?:youtu\\.be\\/|(?:www\\.|m\\.)?youtube\\.com\\/(?:watch|v|embed)(?:\\.php)?(?:\\?.*v=|\\/))([a-zA-Z0-9\\_-]{7,15})(?:[\\?&][a-zA-Z0-9\\_-]+=[a-zA-Z0-9\\_-]+)*(?:[&\\/\\#].*)?$";
     Pattern regexPatern = Pattern.compile(pattern);
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
     public AddYoutubeVideoWindow(WindowController windowController){
         this.windowController = windowController;
@@ -58,29 +73,40 @@ public class AddYoutubeVideoWindow {
         window.setPrefHeight(Region.USE_COMPUTED_SIZE);
         window.setMaxHeight(Region.USE_PREF_SIZE);
         window.setVisible(false);
+        window.setOnMouseClicked(e -> window.requestFocus());
 
         closeButtonContainer.setPrefHeight(30);
-        closeButtonContainer.getChildren().add(closeButtonPane);
-        VBox.setMargin(closeButtonContainer, new Insets(0, 15, 0, 15));
+        closeButtonContainer.getChildren().add(closeButton);
+        VBox.setMargin(closeButtonContainer, new Insets(0, 10, 0, 15));
 
-        StackPane.setAlignment(closeButtonPane, Pos.BOTTOM_RIGHT);
-        closeButtonPane.setPrefSize(25, 25);
-        closeButtonPane.setMaxSize(25, 25);
-        closeButtonPane.getChildren().addAll(closeButton, closeButtonIcon);
-        closeButtonPane.setTranslateX(5);
 
-        closeButton.setPrefWidth(25);
-        closeButton.setPrefHeight(25);
-        closeButton.setRipplerFill(Color.WHITE);
-        closeButton.getStyleClass().add("popupWindowCloseButton");
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setOpacity(0);
-        closeButton.setText(null);
+        StackPane.setAlignment(closeButton, Pos.BOTTOM_RIGHT);
+        closeButton.setPrefSize(25, 25);
+        closeButton.setMaxSize(25, 25);
+        closeButton.setTranslateY(5);
+        closeButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         closeButton.setOnAction(e -> this.hide());
+        closeButton.setGraphic(closeButtonIcon);
+        closeButton.setFocusTraversable(false);
+        closeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+            }
+            else{
+                keyboardFocusOff(closeButton);
+                focus.set(-1);
+            }
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 0, 1, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
@@ -89,9 +115,10 @@ public class AddYoutubeVideoWindow {
         closeButtonIcon.setPrefSize(13, 13);
         closeButtonIcon.setMaxSize(13, 13);
         closeButtonIcon.setMouseTransparent(true);
-        closeButtonIcon.getStyleClass().add("menuIcon");
+        closeButtonIcon.getStyleClass().add("graphic");
 
         title.setText("Add YouTube video(s)");
+        title.setFocusTraversable(false);
         title.getStyleClass().add("popupWindowTitle");
         VBox.setMargin(title, new Insets(0, 15, 25, 15));
 
@@ -109,6 +136,15 @@ public class AddYoutubeVideoWindow {
         textField.setMinHeight(36);
         textField.setMaxHeight(36);
         textField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
+        textField.setFocusTraversable(false);
+        textField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(1);
+            else {
+                keyboardFocusOff(textField);
+                focus.set(-1);
+            }
+        });
+
         VBox.setMargin(textField, new Insets(0, 15, 0, 15));
 
 
@@ -119,23 +155,52 @@ public class AddYoutubeVideoWindow {
 
         secondaryButton.setText("Cancel");
         secondaryButton.getStyleClass().add("menuButton");
-        secondaryButton.setCursor(Cursor.HAND);
         secondaryButton.setOnAction(e -> this.hide());
         secondaryButton.setTextAlignment(TextAlignment.CENTER);
         secondaryButton.setPrefWidth(155);
-        secondaryButton.setRipplerFill(Color.TRANSPARENT);
+        secondaryButton.setFocusTraversable(false);
+
         StackPane.setAlignment(secondaryButton, Pos.CENTER_RIGHT);
 
         mainButton.setText("Add");
         mainButton.getStyleClass().add("mainButton");
-        mainButton.setCursor(Cursor.HAND);
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(155);
-        mainButton.setRipplerFill(Color.TRANSPARENT);
         mainButton.setDisable(true);
+        mainButton.disabledProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focusNodes.remove(mainButton);
+            else if(!focusNodes.contains(mainButton)) focusNodes.add(focusNodes.size() - 1, mainButton);
+        });
+        mainButton.setFocusTraversable(false);
         StackPane.setAlignment(mainButton, Pos.CENTER_LEFT);
 
+        mainButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        mainButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.size() - 2);
+            }
+            else {
+                keyboardFocusOff(mainButton);
+                focus.set(-1);
+            }
+        });
+
+
+
+
         window.getChildren().addAll(closeButtonContainer, title, textField, buttonContainer);
+        focusNodes.add(closeButton);
+        focusNodes.add(textField);
+        focusNodes.add(secondaryButton);
     }
 
     public void show(){
@@ -161,5 +226,25 @@ public class AddYoutubeVideoWindow {
         fadeTransition.setFromValue(mainController.popupWindowContainer.getOpacity());
         fadeTransition.setToValue(0);
         fadeTransition.setOnFinished(e -> window.setVisible(false));
-        fadeTransition.play();    }
+        fadeTransition.play();
+    }
+
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+    }
+
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+    }
 }

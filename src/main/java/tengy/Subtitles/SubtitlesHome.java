@@ -12,7 +12,6 @@ import tengy.PlaybackSettings.PlaybackSettingsController;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
@@ -387,8 +386,8 @@ public class SubtitlesHome {
         if(newFocus == 0) scrollPane.setVvalue(0);
         else {
             Node node = focusNodes.get(newFocus);
-            if(node instanceof Button) Utilities.setScroll(scrollPane, focusNodes.get(newFocus - 1));
-            else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+            if(node instanceof Button) Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus - 1));
+            else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
         }
     }
 
@@ -403,8 +402,8 @@ public class SubtitlesHome {
         if(newFocus == 0) scrollPane.setVvalue(0);
         else {
             Node node = focusNodes.get(newFocus);
-            if(node instanceof Button) Utilities.setScroll(scrollPane, focusNodes.get(newFocus - 1));
-            else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+            if(node instanceof Button) Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus - 1));
+            else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
         }
     }
 

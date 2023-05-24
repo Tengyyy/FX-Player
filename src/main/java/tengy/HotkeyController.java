@@ -96,7 +96,7 @@ public class HotkeyController {
 
     private static final List<KeyCode> mediaKeys = List.of(KeyCode.LEFT, KeyCode.RIGHT, KeyCode.J, KeyCode.L, KeyCode.REWIND, KeyCode.FAST_FWD, KeyCode.DIGIT0, KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4, KeyCode.DIGIT5, KeyCode.DIGIT6, KeyCode.DIGIT7, KeyCode.DIGIT8, KeyCode.DIGIT9, KeyCode.HOME, KeyCode.END);
 
-    public static final List<KeyCode> invalidKeys = List.of(KeyCode.CONTROL, KeyCode.ALT, KeyCode.SHIFT, KeyCode.TAB, KeyCode.FAST_FWD, KeyCode.REWIND, KeyCode.MUTE, KeyCode.PLAY, KeyCode.PAUSE, KeyCode.TRACK_PREV, KeyCode.TRACK_NEXT, KeyCode.F11, KeyCode.ESCAPE, KeyCode.ENTER);
+    public static final List<KeyCode> invalidKeys = List.of(KeyCode.CONTROL, KeyCode.ALT, KeyCode.SHIFT, KeyCode.TAB, KeyCode.FAST_FWD, KeyCode.REWIND, KeyCode.MUTE, KeyCode.PLAY, KeyCode.PAUSE, KeyCode.TRACK_PREV, KeyCode.TRACK_NEXT, KeyCode.F11, KeyCode.ESCAPE, KeyCode.ENTER, KeyCode.WINDOWS, KeyCode.UNDEFINED);
 
     MainController mainController;
 
@@ -136,11 +136,6 @@ public class HotkeyController {
             return;
         }
 
-        if(keybindChangeActive) {
-            mainController.windowController.hotkeyChangeWindow.updateHotkey(eventToKeyCodeArray(event));
-            event.consume();
-            return;
-        }
 
         // universal keybinds that the user cant change
         switch (event.getCode()){
@@ -179,6 +174,15 @@ public class HotkeyController {
         }
 
 
+        if(keybindChangeActive) {
+            if(event.getTarget() instanceof Button) return;
+
+            mainController.windowController.hotkeyChangeWindow.updateHotkey(eventToKeyCodeArray(event));
+            event.consume();
+            return;
+        }
+
+
 
         if(        !(event.getTarget() instanceof ExpandableTextArea)
                 && !(event.getTarget() instanceof TextField)
@@ -186,7 +190,7 @@ public class HotkeyController {
                 && !(event.getTarget() instanceof Spinner)){
 
             if(event.getCode() == KeyCode.SPACE){
-                if(mainController.subtitlesController.subtitlesState != SubtitlesState.CLOSED || mainController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED){
+                if(mainController.subtitlesController.subtitlesState != SubtitlesState.CLOSED || mainController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED || mainController.windowController.windowState != WindowState.CLOSED){
                     if(event.getTarget() instanceof CheckComboBox<?> && mainController.subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN){
                         mainController.subtitlesController.openSubtitlesPane.languageBox.show();
                         event.consume();
@@ -200,10 +204,6 @@ public class HotkeyController {
                     else if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox){
                         return;
                     }
-                }
-                else if(mainController.windowController.windowState == WindowState.CHAPTER_EDIT_WINDOW_OPEN){
-                    if(event.getTarget() instanceof Button)
-                        return;
                 }
             }
             else if(event.getCode() == KeyCode.LEFT){

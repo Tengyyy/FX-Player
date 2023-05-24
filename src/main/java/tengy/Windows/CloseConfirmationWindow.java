@@ -1,5 +1,11 @@
 package tengy.Windows;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.AnimationsClass;
 import tengy.MainController;
 import tengy.SVG;
@@ -18,6 +24,12 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
+
 public class CloseConfirmationWindow {
 
     WindowController windowController;
@@ -25,21 +37,21 @@ public class CloseConfirmationWindow {
 
     VBox window = new VBox();
     HBox titleContainer = new HBox();
-    Region warningIcon = new Region();
-    SVGPath warningSVG = new SVGPath();
     Label title = new Label();
     Label text = new Label();
+
     StackPane buttonContainer = new StackPane();
     Button mainButton = new Button(), secondaryButton = new Button();
 
     StackPane closeButtonContainer = new StackPane();
-    StackPane closeButtonPane = new StackPane();
     Region closeButtonIcon = new Region();
     SVGPath closeButtonSVG = new SVGPath();
     Button closeButton = new Button();
 
     public boolean showing = false;
 
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
 
     public CloseConfirmationWindow(WindowController windowController){
@@ -55,28 +67,40 @@ public class CloseConfirmationWindow {
         window.setPrefHeight(Region.USE_COMPUTED_SIZE);
         window.setMaxHeight(Region.USE_PREF_SIZE);
         window.setVisible(false);
+        window.setOnMouseClicked(e -> window.requestFocus());
 
         closeButtonContainer.setPrefHeight(30);
-        closeButtonContainer.getChildren().add(closeButtonPane);
-        VBox.setMargin(closeButtonContainer, new Insets(0, 15, 0, 15));
+        closeButtonContainer.getChildren().add(closeButton);
+        VBox.setMargin(closeButtonContainer, new Insets(0, 10, 0, 15));
 
-        StackPane.setAlignment(closeButtonPane, Pos.BOTTOM_RIGHT);
-        closeButtonPane.setPrefSize(25, 25);
-        closeButtonPane.setMaxSize(25, 25);
-        closeButtonPane.getChildren().addAll(closeButton, closeButtonIcon);
-        closeButtonPane.setTranslateX(5);
+        StackPane.setAlignment(closeButton, Pos.BOTTOM_RIGHT);
+        closeButton.setTranslateY(5);
 
         closeButton.setPrefWidth(25);
         closeButton.setPrefHeight(25);
-        closeButton.getStyleClass().add("popupWindowCloseButton");
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setOpacity(0);
-        closeButton.setText(null);
+        closeButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         closeButton.setOnAction(e -> this.hide());
+        closeButton.setFocusTraversable(false);
+        closeButton.setGraphic(closeButtonIcon);
+        closeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+            }
+            else{
+                keyboardFocusOff(closeButton);
+                focus.set(-1);
+            }
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 0, 1, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
@@ -85,20 +109,12 @@ public class CloseConfirmationWindow {
         closeButtonIcon.setPrefSize(13, 13);
         closeButtonIcon.setMaxSize(13, 13);
         closeButtonIcon.setMouseTransparent(true);
-        closeButtonIcon.getStyleClass().add("menuIcon");
+        closeButtonIcon.getStyleClass().add("graphic");
 
-        titleContainer.getChildren().addAll(warningIcon, title);
+        titleContainer.getChildren().add(title);
         titleContainer.setSpacing(5);
         titleContainer.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(titleContainer, new Insets(0, 15, 25, 15));
-
-        warningSVG.setContent(SVG.WARNING.getContent());
-        warningIcon.setMouseTransparent(true);
-        warningIcon.getStyleClass().add("menuIcon");
-        warningIcon.setShape(warningSVG);
-        warningIcon.setMinSize(30, 30);
-        warningIcon.setPrefSize(30, 30);
-        warningIcon.setMaxSize(30, 30);
 
         title.setText("Media edit active");
         title.getStyleClass().add("popupWindowTitle");
@@ -115,21 +131,65 @@ public class CloseConfirmationWindow {
 
         secondaryButton.setText("Cancel");
         secondaryButton.getStyleClass().add("menuButton");
-        secondaryButton.setCursor(Cursor.HAND);
         secondaryButton.setOnAction(e -> this.hide());
         secondaryButton.setTextAlignment(TextAlignment.CENTER);
         secondaryButton.setPrefWidth(155);
+        secondaryButton.setFocusTraversable(false);
         StackPane.setAlignment(secondaryButton, Pos.CENTER_RIGHT);
+        secondaryButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            secondaryButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        secondaryButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            secondaryButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        secondaryButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(2);
+            }
+            else {
+                keyboardFocusOff(secondaryButton);
+                focus.set(-1);
+            }
+        });
+
+
 
         mainButton.setText("Close app");
         mainButton.getStyleClass().add("mainButton");
-        mainButton.setCursor(Cursor.HAND);
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(155);
+        mainButton.setFocusTraversable(false);
         mainButton.setOnAction(e -> mainController.closeApp());
+        mainButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        mainButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(1);
+            }
+            else {
+                keyboardFocusOff(mainButton);
+                focus.set(-1);
+            }
+        });
         StackPane.setAlignment(mainButton, Pos.CENTER_LEFT);
 
         window.getChildren().addAll(closeButtonContainer, titleContainer, text, buttonContainer);
+
+        focusNodes.add(closeButton);
+        focusNodes.add(mainButton);
+        focusNodes.add(secondaryButton);
     }
 
     public void show(){
@@ -137,6 +197,8 @@ public class CloseConfirmationWindow {
         windowController.updateState(WindowState.CLOSE_CONFIRMATION_WINDOW_OPEN);
 
         this.showing = true;
+
+        window.setVisible(true);
 
         mainController.popupWindowContainer.setMouseTransparent(false);
         AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 0 , 1, false, 1, true);
@@ -154,5 +216,25 @@ public class CloseConfirmationWindow {
         fadeTransition.setFromValue(mainController.popupWindowContainer.getOpacity());
         fadeTransition.setToValue(0);
         fadeTransition.setOnFinished(e -> window.setVisible(false));
-        fadeTransition.play();    }
+        fadeTransition.play();
+    }
+
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+    }
+
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+    }
 }

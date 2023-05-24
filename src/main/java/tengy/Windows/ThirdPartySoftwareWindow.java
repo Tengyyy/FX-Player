@@ -1,5 +1,11 @@
 package tengy.Windows;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.*;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
@@ -17,6 +23,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class ThirdPartySoftwareWindow {
 
@@ -42,16 +54,17 @@ public class ThirdPartySoftwareWindow {
     VBox mediaInfoBox = new VBox();
     VBox loggingBox = new VBox();
 
-
     StackPane buttonContainer = new StackPane();
     Button mainButton = new Button("Close");
 
-    StackPane closeButtonPane = new StackPane();
     Region closeButtonIcon = new Region();
     SVGPath closeButtonSVG = new SVGPath();
     Button closeButton = new Button();
 
     boolean showing = false;
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
     public ThirdPartySoftwareWindow(WindowController windowController){
         this.windowController = windowController;
@@ -69,26 +82,36 @@ public class ThirdPartySoftwareWindow {
 
         window.getStyleClass().add("popupWindow");
         window.setVisible(false);
-        window.getChildren().addAll(windowContainer, buttonContainer, closeButtonPane);
+        window.getChildren().addAll(windowContainer, buttonContainer, closeButton);
 
-        StackPane.setAlignment(closeButtonPane, Pos.TOP_RIGHT);
-        StackPane.setMargin(closeButtonPane, new Insets(15, 15, 0 ,0));
-        closeButtonPane.setPrefSize(25, 25);
-        closeButtonPane.setMaxSize(25, 25);
-        closeButtonPane.getChildren().addAll(closeButton, closeButtonIcon);
-        closeButtonPane.setTranslateX(5);
-
-        closeButton.setPrefWidth(25);
-        closeButton.setPrefHeight(25);
-        closeButton.getStyleClass().add("popupWindowCloseButton");
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setOpacity(0);
-        closeButton.setText(null);
+        StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(closeButton, new Insets(10, 10, 0 ,0));
+        closeButton.setPrefSize(25, 25);
+        closeButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         closeButton.setOnAction(e -> this.hide());
+        closeButton.setFocusTraversable(false);
+        closeButton.setGraphic(closeButtonIcon);
+        closeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+            }
+            else{
+                keyboardFocusOff(closeButton);
+                focus.set(-1);
+            }
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 0, 1, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        focusNodes.add(closeButton);
 
         closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
@@ -97,7 +120,7 @@ public class ThirdPartySoftwareWindow {
         closeButtonIcon.setPrefSize(13, 13);
         closeButtonIcon.setMaxSize(13, 13);
         closeButtonIcon.setMouseTransparent(true);
-        closeButtonIcon.getStyleClass().add("menuIcon");
+        closeButtonIcon.getStyleClass().add("graphic");
 
         descriptionLabel.setWrapText(true);
         descriptionLabel.setPrefHeight(60);
@@ -111,50 +134,47 @@ public class ThirdPartySoftwareWindow {
         uiBox.setSpacing(10);
         uiBox.getChildren().addAll(
                 createTitleLabel("Application User Interface"),
-                createLinkLabel("JavaFX", "https://openjfx.io/"),
-                createLinkLabel("MaterialFX", "https://github.com/palexdev/MaterialFX"),
-                createLinkLabel("FX-BorderlessScene", "https://github.com/goxr3plus/FX-BorderlessScene"),
-                createLinkLabel("ControlsFX", "https://github.com/controlsfx/controlsfx"),
-                createLinkLabel("MDFX Markdown renderer for JavaFX", "https://github.com/JPro-one/markdown-javafx-renderer")
+                createLinkButton("JavaFX", "https://openjfx.io/", 1),
+                createLinkButton("MaterialFX", "https://github.com/palexdev/MaterialFX", 2),
+                createLinkButton("FX-BorderlessScene", "https://github.com/goxr3plus/FX-BorderlessScene", 3),
+                createLinkButton("ControlsFX", "https://github.com/controlsfx/controlsfx", 4),
+                createLinkButton("MDFX Markdown renderer for JavaFX", "https://github.com/JPro-one/markdown-javafx-renderer", 5)
         );
-
 
         mediaBox.setSpacing(10);
         mediaBox.getChildren().addAll(
                 createTitleLabel("Media playback and parsing"),
-                createLinkLabel("LibVLC", "https://www.videolan.org/vlc/libvlc.html"),
-                createLinkLabel("VLCJ Java framework for VLC Media Player", "https://github.com/caprica/vlcj"),
-                createLinkLabel("FFmpeg", "https://ffmpeg.org/"),
-                createLinkLabel("JavaCV", "https://github.com/bytedeco/javacv"),
-                createLinkLabel("Jaffree FFmpeg command line wrapper", "https://github.com/kokorin/Jaffree")
+                createLinkButton("LibVLC", "https://www.videolan.org/vlc/libvlc.html", 6),
+                createLinkButton("VLCJ Java framework for VLC Media Player", "https://github.com/caprica/vlcj", 7),
+                createLinkButton("FFmpeg", "https://ffmpeg.org/", 8),
+                createLinkButton("JavaCV", "https://github.com/bytedeco/javacv", 9),
+                createLinkButton("Jaffree FFmpeg command line wrapper", "https://github.com/kokorin/Jaffree", 10)
         );
-
 
         subtitlesBox.setSpacing(10);
         subtitlesBox.getChildren().addAll(
                 createTitleLabel("Subtitles"),
-                createLinkLabel("SRTParser", "https://github.com/gusthavosouza/SRTParser"),
-                createLinkLabel("OpenSubtitles", "https://www.opensubtitles.org/"),
-                createLinkLabel("Java library for OpenSubtitles", "https://github.com/wtekiela/opensub4j")
+                createLinkButton("SRTParser", "https://github.com/gusthavosouza/SRTParser", 11),
+                createLinkButton("OpenSubtitles", "https://www.opensubtitles.org/", 12),
+                createLinkButton("Java library for OpenSubtitles", "https://github.com/wtekiela/opensub4j", 13)
         );
-
 
         mediaInfoBox.setSpacing(10);
         mediaInfoBox.getChildren().addAll(
                 createTitleLabel("Media information"),
-                createLinkLabel("The Movie Database - TMDb", "https://www.themoviedb.org/"),
-                createLinkLabel("TMDb Java wrapper", "https://github.com/UweTrottmann/tmdb-java"),
-                createLinkLabel("Discogs music database", "https://www.discogs.com/"),
-                createLinkLabel("Discogs-client-4j", "https://bitbucket.org/kristof_debruyne/discogs-client-4j/src/master/")
+                createLinkButton("The Movie Database - TMDb", "https://www.themoviedb.org/", 14),
+                createLinkButton("TMDb Java wrapper", "https://github.com/UweTrottmann/tmdb-java", 15),
+                createLinkButton("Discogs music database", "https://www.discogs.com/", 16),
+                createLinkButton("Discogs-client-4j", "https://bitbucket.org/kristof_debruyne/discogs-client-4j/src/master/", 17)
         );
 
 
         loggingBox.setSpacing(10);
         loggingBox.getChildren().addAll(
                 createTitleLabel("Logging"),
-                createLinkLabel("Log4J", "https://logging.apache.org/log4j/2.x/"),
-                createLinkLabel("SLF4J", "https://www.slf4j.org/"),
-                createLinkLabel("Logback", "https://logback.qos.ch/")
+                createLinkButton("Log4J", "https://logging.apache.org/log4j/2.x/", 18),
+                createLinkButton("SLF4J", "https://www.slf4j.org/", 19),
+                createLinkButton("Logback", "https://logback.qos.ch/", 20)
         );
 
 
@@ -185,12 +205,33 @@ public class ThirdPartySoftwareWindow {
         buttonContainer.setPrefHeight(70);
         buttonContainer.setMaxHeight(70);
 
-        mainButton.getStyleClass().add("mainButton");
-        mainButton.setCursor(Cursor.HAND);
+        mainButton.getStyleClass().add("menuButton");
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(230);
         mainButton.setOnAction(e -> this.hide());
+        mainButton.setFocusTraversable(false);
+        mainButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.size() - 1);
+            }
+            else{
+                keyboardFocusOff(mainButton);
+                focus.set(-1);
+            }
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
         StackPane.setAlignment(mainButton, Pos.CENTER_RIGHT);
+
+        focusNodes.add(mainButton);
     }
 
     public void show(){
@@ -202,6 +243,8 @@ public class ThirdPartySoftwareWindow {
         window.setVisible(true);
 
         mainController.popupWindowContainer.setMouseTransparent(false);
+
+        window.requestFocus();
         AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 0 , 1, false, 1, true);
     }
 
@@ -228,14 +271,76 @@ public class ThirdPartySoftwareWindow {
         return label;
     }
 
+    private Button createLinkButton(String displayText, String url, int index){
+        Button button = new Button();
+        button.getStyleClass().addAll("linkButton");
+        button.setText(displayText);
+        button.setAlignment(Pos.CENTER_LEFT);
+        button.setFocusTraversable(false);
+        button.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focus.set(index);
+            else {
+                keyboardFocusOff(button);
+                focus.set(-1);
+            }
+        });
 
-    private Label createLinkLabel(String displayText, String url){
-        Label label = new Label(displayText);
-        label.getStyleClass().addAll("thirdPartyText", "thirdPartyLink");
-        label.setOnMouseClicked(e -> Utilities.openBrowser(url));
-        label.setOnMouseEntered(e -> label.setUnderline(true));
-        label.setOnMouseExited(e -> label.setUnderline(false));
+        button.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            button.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
 
-        return label;
+        button.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            button.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        button.setOnAction(e -> Utilities.openBrowser(url));
+
+        focusNodes.add(button);
+
+        return button;
+    }
+
+    public void focusForward(){
+        int newFocus;
+
+        if(focus.get() >= focusNodes.size() - 1 || focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+
+        updateScroll(newFocus);
+    }
+
+    public void focusBackward(){
+        int newFocus;
+
+        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
+        else if(focus.get() == -1) newFocus = 0;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+
+        updateScroll(newFocus);
+    }
+
+    private void updateScroll(int newFocus){
+        if(newFocus < 1 || newFocus > 20) return;
+
+        Node scrollTo;
+
+        if(newFocus <= 5)
+            scrollTo = uiBox;
+        else if(newFocus <= 10)
+            scrollTo = mediaBox;
+        else if(newFocus <= 13)
+            scrollTo = subtitlesBox;
+        else if(newFocus <= 17)
+            scrollTo = mediaInfoBox;
+        else
+            scrollTo = loggingBox;
+
+        Utilities.setScrollToNodeTop(textScroll, scrollTo);
     }
 }

@@ -299,7 +299,7 @@ public class Utilities {
         node.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
     }
 
-    public static void setScroll(ScrollPane scrollPane, Node node){
+    public static void setScrollToNodeMiddle(ScrollPane scrollPane, Node node){
         double heightViewPort = scrollPane.getViewportBounds().getHeight();
         double heightScrollPane = scrollPane.getContent().getBoundsInLocal().getHeight();
         double y = node.getBoundsInParent().getMaxY();
@@ -312,5 +312,13 @@ public class Utilities {
         else if( y>= (heightScrollPane-(heightViewPort/2))){
             scrollPane.setVvalue(1);
         }
+    }
+
+    public static void setScrollToNodeTop(ScrollPane scrollPane, Node node){
+        double heightViewPort = scrollPane.getViewportBounds().getHeight();
+        double heightScrollPane = scrollPane.getContent().getBoundsInLocal().getHeight();
+        double y = node.getBoundsInParent().getMinY();
+
+        scrollPane.setVvalue(y/(heightScrollPane-heightViewPort));
     }
 }

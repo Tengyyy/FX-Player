@@ -444,6 +444,15 @@
     -fx-font-size: 18;
 }
 
+#hotkeyBox {
+    -fx-border-radius: 5;
+    -fx-border-color: transparent;
+}
+
+#hotkeyBox:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
+}
+
 .licenseWindowTitle, .chapterWindowTitle {
     -fx-font-size: 23;
 }
@@ -459,10 +468,13 @@
 }
 
 .popupWindowCloseButton {
-    -fx-background-radius: 100;
     -fx-padding: 0;
-    -fx-background-color: #656565;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-radius: 5;
+    -fx-border-insets: -3;
 }
+
 
 .buttonContainer {
     -fx-background-color: rgb(15,15,15);
@@ -501,6 +513,7 @@
 .transparentButton:keyboardFocused {
     -fx-border-color: rgb(173, 216, 230);
  }
+
 
  .settingsMenuButton {
     -fx-border-insets: 5 0 5 0;
@@ -549,6 +562,18 @@
     -fx-background-color: transparent;
     -fx-background-radius: 15;
     -fx-padding: 0 10 0 0;
+}
+
+.chapterContainer:highlighted {
+    -fx-background-color: rgba(40,40,40,0.6);
+}
+
+.chapterContainer:focus {
+    -fx-background-color: rgba(55,55,55, 0.6);
+}
+
+.chapterContainer:hover {
+    -fx-background-color: rgba(70,70,70,0.6);
 }
 
 .removeButton{

@@ -17,6 +17,7 @@ public class WindowController {
     public ThirdPartySoftwareWindow thirdPartySoftwareWindow;
     public TechnicalDetailsWindow technicalDetailsWindow;
     public ChapterEditWindow chapterEditWindow;
+    public MediaInformationWindow mediaInformationWindow;
 
     public WindowController(MainController mainController){
         this.mainController = mainController;
@@ -79,6 +80,7 @@ public class WindowController {
                 chapterEditWindow.saveAllowed.set(false);
                 chapterEditWindow.mediaItem = null;
                 chapterEditWindow.content.getChildren().clear();
+                chapterEditWindow.focusNodes.clear();
 
                 if(chapterEditWindow.frameGrabber != null) {
                     try {
@@ -97,5 +99,31 @@ public class WindowController {
 
         windowState = newState;
 
+    }
+
+    public void handleFocusForward(){
+        switch(windowState){
+            case ADD_YOUTUBE_VIDEO_WINDOW_OPEN -> addYoutubeVideoWindow.focusForward();
+            case CHAPTER_EDIT_WINDOW_OPEN -> chapterEditWindow.focusForward();
+            case LICENSE_WINDOW_OPEN -> licenseWindow.focusForward();
+            case HOTKEY_CHANGE_WINDOW_OPEN -> hotkeyChangeWindow.focusForward();
+            case TECHNICAL_DETAILS_WINDOW_OPEN -> technicalDetailsWindow.focusForward();
+            case CLOSE_CONFIRMATION_WINDOW_OPEN -> closeConfirmationWindow.focusForward();
+            case THIRD_PARTY_SOFTWARE_WINDOW_OPEN -> thirdPartySoftwareWindow.focusForward();
+            case MEDIA_INFORMATION_WINDOW_OPEN -> mediaInformationWindow.focusForward();
+        }
+    }
+
+    public void handleFocusBackward(){
+        switch(windowState){
+            case ADD_YOUTUBE_VIDEO_WINDOW_OPEN -> addYoutubeVideoWindow.focusBackward();
+            case CHAPTER_EDIT_WINDOW_OPEN -> chapterEditWindow.focusBackward();
+            case LICENSE_WINDOW_OPEN -> licenseWindow.focusBackward();
+            case HOTKEY_CHANGE_WINDOW_OPEN -> hotkeyChangeWindow.focusBackward();
+            case TECHNICAL_DETAILS_WINDOW_OPEN -> technicalDetailsWindow.focusBackward();
+            case CLOSE_CONFIRMATION_WINDOW_OPEN -> closeConfirmationWindow.focusBackward();
+            case THIRD_PARTY_SOFTWARE_WINDOW_OPEN -> thirdPartySoftwareWindow.focusBackward();
+            case MEDIA_INFORMATION_WINDOW_OPEN -> mediaInformationWindow.focusBackward();
+        }
     }
 }

@@ -297,7 +297,7 @@ public class FontColorPane {
 
         keyboardFocusOn(focusNodes.get(newFocus));
         if(newFocus == 0) scrollPane.setVvalue(0);
-        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+        else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
     }
 
     public void focusBackward() {
@@ -309,6 +309,6 @@ public class FontColorPane {
 
         keyboardFocusOn(focusNodes.get(newFocus));
         if(newFocus == 0) scrollPane.setVvalue(0);
-        else Utilities.setScroll(scrollPane, focusNodes.get(newFocus));
+        else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
     }
 }

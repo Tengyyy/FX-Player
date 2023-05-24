@@ -876,6 +876,10 @@ public class MainController implements Initializable {
             if(event.isShiftDown()) subtitlesController.handleFocusBackward();
             else subtitlesController.handleFocusForward();
         }
+        else if(windowController.windowState != WindowState.CLOSED){
+            if(event.isShiftDown()) windowController.handleFocusBackward();
+            else windowController.handleFocusForward();
+        }
 
         event.consume();
     }

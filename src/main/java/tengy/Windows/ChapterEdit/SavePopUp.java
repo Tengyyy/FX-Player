@@ -1,13 +1,19 @@
 package tengy.Windows.ChapterEdit;
 
 import javafx.animation.FadeTransition;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
@@ -19,11 +25,16 @@ import javafx.util.Duration;
 import tengy.AnimationsClass;
 import tengy.SVG;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
+
 public class SavePopUp extends StackPane{
 
     ScrollPane scrollPane;
 
-    StackPane closeButtonPane = new StackPane();
     Region closeButtonIcon = new Region();
     SVGPath closeButtonSVG = new SVGPath();
     Button closeButton = new Button();
@@ -44,23 +55,28 @@ public class SavePopUp extends StackPane{
 
         chapterEditWindow.popupContainer.getChildren().add(this);
 
-        StackPane.setAlignment(closeButtonPane, Pos.TOP_RIGHT);
-        StackPane.setMargin(closeButtonPane, new Insets(15, 15, 0 ,0));
-        closeButtonPane.setPrefSize(25, 25);
-        closeButtonPane.setMaxSize(25, 25);
-        closeButtonPane.getChildren().addAll(closeButton, closeButtonIcon);
-        closeButtonPane.setTranslateX(5);
-
+        StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(closeButton, new Insets(10, 10, 0 ,0));
         closeButton.setPrefWidth(25);
         closeButton.setPrefHeight(25);
-        closeButton.getStyleClass().add("popupWindowCloseButton");
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.setOpacity(0);
-        closeButton.setText(null);
+        closeButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         closeButton.setOnAction(e -> this.hide());
+        closeButton.setFocusTraversable(false);
+        closeButton.setGraphic(closeButtonIcon);
+        closeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(!newValue)
+                keyboardFocusOff(closeButton);
+        });
 
-        closeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 0, 1, false, 1, true));
-        closeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, closeButton, 1, 0, false, 1, true));
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        closeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         closeButtonSVG.setContent(SVG.CLOSE.getContent());
 
@@ -69,7 +85,7 @@ public class SavePopUp extends StackPane{
         closeButtonIcon.setPrefSize(13, 13);
         closeButtonIcon.setMaxSize(13, 13);
         closeButtonIcon.setMouseTransparent(true);
-        closeButtonIcon.getStyleClass().add("menuIcon");
+        closeButtonIcon.getStyleClass().add("graphic");
 
         scrollPane = new ScrollPane() {
             ScrollBar vertical;
@@ -115,19 +131,34 @@ public class SavePopUp extends StackPane{
         buttonContainer.setPrefHeight(70);
         buttonContainer.setMaxHeight(70);
 
-        mainButton.getStyleClass().add("mainButton");
-        mainButton.setCursor(Cursor.HAND);
+        mainButton.getStyleClass().add("menuButton");
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(130);
         mainButton.setOnAction(e -> this.hide());
+        mainButton.setFocusTraversable(false);
+        mainButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(!newValue)
+                keyboardFocusOff(mainButton);
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mainButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         StackPane.setAlignment(mainButton, Pos.CENTER_RIGHT);
 
         this.getStyleClass().add("popupWindow");
         this.setVisible(false);
-        this.getChildren().addAll(scrollPane, buttonContainer, closeButtonPane);
+        this.getChildren().addAll(scrollPane, buttonContainer, closeButton);
         this.setPrefSize(300, 260);
         this.setMaxSize(300, 260);
+        this.setOnMouseClicked(e -> this.requestFocus());
     }
 
     public void show(){
@@ -154,6 +185,11 @@ public class SavePopUp extends StackPane{
     private void updatePadding(boolean value){
         if(value) content.setPadding(new Insets(15, 18, 15, 15));
         else      content.setPadding(new Insets(15, 30, 15, 15));
+    }
+
+    public void changeFocus(){
+        if(closeButton.isFocused()) keyboardFocusOn(mainButton);
+        else keyboardFocusOn(closeButton);
     }
 
 }

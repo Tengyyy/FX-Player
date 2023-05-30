@@ -108,7 +108,9 @@
 }
 
 .combo-box .combo-box-popup .scroll-bar .increment-arrow,
-.combo-box .combo-box-popup .scroll-bar .decrement-arrow {
+.combo-box .combo-box-popup .scroll-bar .decrement-arrow,
+.context-menu-scroll .scroll-bar .increment-arrow,
+.context-menu-scroll .scroll-bar .decrement-arrow {
     -fx-shape : " ";
     -fx-padding: 0 0.3em;
 }
@@ -120,9 +122,15 @@
     -fx-background-radius : 2.0em;
 }
 
-.scroll-bar:horizontal .thumb:hover, .scroll-bar:horizontal .thumb:pressed,
-.scroll-bar:vertical .thumb:hover, .scroll-bar:vertical .thumb:pressed {
+
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
     -fx-background-color : rgb(170,170,170);
+}
+
+.scroll-bar:horizontal .thumb:pressed, .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color : rgb(140,140,140);
+
 }
 
 
@@ -512,6 +520,10 @@
 
 .transparentButton:keyboardFocused {
     -fx-border-color: rgb(173, 216, 230);
+ }
+
+ .primaryMenuButton {
+    -fx-border-radius: 5;
  }
 
 

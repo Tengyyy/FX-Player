@@ -101,11 +101,6 @@
             <version>0.4.1</version>
         </dependency>
         <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
-            <version>11.1.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.sandec</groupId>
             <artifactId>mdfx</artifactId>
             <version>0.2.12</version>

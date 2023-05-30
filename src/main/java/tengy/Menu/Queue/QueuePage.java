@@ -1,10 +1,12 @@
 package tengy.Menu.Queue;
 
+import javafx.beans.property.*;
+import javafx.css.PseudoClass;
 import tengy.ControlTooltip;
 import tengy.MediaItems.MediaUtilities;
+import tengy.Menu.FocusableMenuButton;
 import tengy.Menu.MenuController;
 import tengy.Menu.MenuState;
-import tengy.Menu.QueueItemContextMenu;
 import tengy.Menu.Settings.Action;
 import tengy.PlaybackSettings.PlaybackSettingsState;
 import tengy.SVG;
@@ -12,19 +14,13 @@ import tengy.Subtitles.SubtitlesState;
 import tengy.Utilities;
 import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
@@ -36,9 +32,14 @@ import javafx.scene.shape.SVGPath;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
+import tengy.Windows.WindowState;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 
 public class QueuePage {
@@ -65,29 +66,29 @@ public class QueuePage {
     HBox selectionContainer = new HBox();
     Label multiselectLabel = new Label();
     Label bulletinLabel = new Label("•");
-    Label clearSelectionLabel = new Label("Clear");
-    Button removeButton = new Button("Remove");
+    FocusableMenuButton clearSelectionButton = new FocusableMenuButton();
+    FocusableMenuButton removeButton = new FocusableMenuButton();
     Region removeIcon = new Region();
     SVGPath removeSVG = new SVGPath();
 
     public ObservableList<QueueItem> selectedItems = FXCollections.observableArrayList();
     public BooleanProperty selectionActive = new SimpleBooleanProperty();
 
-    public Button clearQueueButton = new Button();
+    public FocusableMenuButton clearQueueButton = new FocusableMenuButton();
     SVGPath clearSVG = new SVGPath();
     Region clearIcon = new Region();
 
-    public Button shuffleToggle = new Button();
+    public FocusableMenuButton shuffleToggle = new FocusableMenuButton();
     SVGPath shuffleSVG = new SVGPath();
     public Region shuffleIcon = new Region();
 
     public HBox addButtonContainer = new HBox();
 
-    Button addButton = new Button();
+    FocusableMenuButton addButton = new FocusableMenuButton();
     SVGPath folderSVG = new SVGPath();
     Region folderIcon = new Region();
 
-    Button addOptionsButton = new Button();
+    FocusableMenuButton addOptionsButton = new FocusableMenuButton();
     SVGPath chevronDownSVG = new SVGPath();
     Region chevronDownIcon = new Region();
     public AddOptionsContextMenu addOptionsContextMenu;
@@ -104,14 +105,19 @@ public class QueuePage {
 
 
     public StackPane scrollUpButtonContainer = new StackPane();
-    Button scrollUpButton = new Button();
+    FocusableMenuButton scrollUpButton = new FocusableMenuButton();
     Region scrollUpIcon = new Region();
     SVGPath arrowDownSVG = new SVGPath();
     SVGPath arrowUpSVG = new SVGPath();
 
     StackPane scrollDownButtonContainer = new StackPane();
-    Button scrollDownButton = new Button();
+    FocusableMenuButton scrollDownButton = new FocusableMenuButton();
     Region scrollDownIcon = new Region();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
+
+    boolean addOptionsPressed = false;
 
     public QueuePage(MenuController menuController){
         this.menuController = menuController;
@@ -164,12 +170,33 @@ public class QueuePage {
         shuffleIcon.setMaxSize(14, 14);
         shuffleIcon.setMouseTransparent(true);
         shuffleIcon.getStyleClass().addAll("menuIcon", "graphic");
-        shuffleToggle.setCursor(Cursor.HAND);
         shuffleToggle.getStyleClass().add("menuButton");
         shuffleToggle.setText("Shuffle");
         shuffleToggle.setGraphic(shuffleIcon);
 
+        shuffleToggle.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.indexOf(shuffleToggle));
+            }
+            else{
+                keyboardFocusOff(shuffleToggle);
+                focus.set(-1);
+            }
+        });
+
+        shuffleToggle.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            shuffleToggle.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        shuffleToggle.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            shuffleToggle.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
         shuffleToggle.setOnAction(e -> {
+
+            shuffleToggle.requestFocus();
 
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
@@ -186,11 +213,29 @@ public class QueuePage {
         folderIcon.getStyleClass().addAll("menuIcon", "graphic");
         folderIcon.setMouseTransparent(true);
 
-        addButton.setCursor(Cursor.HAND);
         addButton.getStyleClass().add("menuButton");
         addButton.setId("addButton");
         addButton.setText("Add file(s)");
         addButton.setGraphic(folderIcon);
+        addButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.indexOf(addButton));
+            }
+            else{
+                keyboardFocusOff(addButton);
+                focus.set(-1);
+            }
+        });
+
+        addButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            addButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        addButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            addButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         chevronDownSVG.setContent(SVG.CHEVRON_DOWN.getContent());
 
@@ -200,10 +245,6 @@ public class QueuePage {
         chevronDownIcon.setId("chevronDownIcon");
         chevronDownIcon.setMouseTransparent(true);
 
-        addOptionsButton.setCursor(Cursor.HAND);
-        addOptionsButton.getStyleClass().add("menuButton");
-        addOptionsButton.setId("addOptionsButton");
-        addOptionsButton.setGraphic(chevronDownIcon);
 
         TranslateTransition chevronDownAnimation = new TranslateTransition(Duration.millis(100), chevronDownIcon);
         chevronDownAnimation.setFromY(chevronDownIcon.getTranslateY());
@@ -213,6 +254,33 @@ public class QueuePage {
         chevronUpAnimation.setFromY(3);
         chevronUpAnimation.setToY(0);
 
+        addOptionsButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            if(addOptionsPressed) return;
+            addOptionsPressed = true;
+            addOptionsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+
+            if(!addOptionsContextMenu.showing) chevronDownAnimation.play();
+        });
+
+        addOptionsButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+
+            if(!addOptionsPressed) return;
+
+            addOptionsPressed = false;
+
+            addOptionsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+
+            if(chevronDownAnimation.statusProperty().get() == Animation.Status.RUNNING){
+                chevronDownAnimation.setOnFinished(ev -> {
+                    chevronUpAnimation.playFromStart();
+                    chevronDownAnimation.setOnFinished(null);
+                });
+            }
+            else if(chevronDownIcon.getTranslateY() != 0) chevronUpAnimation.playFromStart();
+        });
+
         addOptionsButton.setOnMousePressed(e -> chevronDownAnimation.play());
         addOptionsButton.setOnMouseReleased(e -> {
             if(chevronDownAnimation.statusProperty().get() == Animation.Status.RUNNING){
@@ -221,17 +289,42 @@ public class QueuePage {
                     chevronDownAnimation.setOnFinished(null);
                 });
             }
-            else chevronUpAnimation.playFromStart();
+            else if(chevronDownIcon.getTranslateY() != 0) chevronUpAnimation.playFromStart();
+        });
+
+        addOptionsButton.getStyleClass().add("menuButton");
+        addOptionsButton.setId("addOptionsButton");
+        addOptionsButton.setGraphic(chevronDownIcon);
+        addOptionsButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.indexOf(addOptionsButton));
+            }
+            else{
+                keyboardFocusOff(addOptionsButton);
+                focus.set(-1);
+
+                addOptionsPressed = false;
+
+                if(chevronDownAnimation.statusProperty().get() == Animation.Status.RUNNING){
+                    chevronDownAnimation.setOnFinished(ev -> {
+                        chevronUpAnimation.playFromStart();
+                        chevronDownAnimation.setOnFinished(null);
+                    });
+                }
+                else if(chevronDownIcon.getTranslateY() != 0) chevronUpAnimation.playFromStart();
+            }
         });
 
         addOptionsButton.setOnAction(e -> {
+
+            addOptionsButton.requestFocus();
 
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
 
             if(addOptionsContextMenu.showing) addOptionsContextMenu.hide();
-            else addOptionsContextMenu.showOptions(true);
+            else if(menuController.mainController.windowController.windowState == WindowState.CLOSED) addOptionsContextMenu.showOptions(true);
         });
 
         addButtonContainer.getChildren().addAll(addButton, addOptionsButton);
@@ -242,6 +335,8 @@ public class QueuePage {
         StackPane.setMargin(addButtonContainer, new Insets(0, 30, 0, 0));
 
         addButton.setOnAction(e -> {
+            addButton.requestFocus();
+
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
@@ -255,15 +350,52 @@ public class QueuePage {
         clearIcon.setPrefSize(14, 14);
         clearIcon.setMaxSize(14,14);
         clearIcon.getStyleClass().addAll("menuIcon", "graphic");
-        clearIcon.setMouseTransparent(true);
 
         clearQueueButton.getStyleClass().add("menuButton");
-        clearQueueButton.setCursor(Cursor.HAND);
         clearQueueButton.setText("Clear");
         clearQueueButton.setGraphic(clearIcon);
         clearQueueButton.setDisable(true);
 
+        clearQueueButton.disabledProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                boolean removed = focusNodes.remove(clearQueueButton);
+                if(removed && focus.get() > 0) focus.set(focus.get() - 1);
+
+                focusNodes.remove(queueBox);
+            }
+            else {
+                if(!selectionActive.get()){
+                    if(!focusNodes.contains(clearQueueButton)) focusNodes.add(0, clearQueueButton);
+                    if(focus.get() >= 0) focus.set(Math.min(focus.get() + 1, focusNodes.size() - 1));
+                }
+
+                if(!focusNodes.contains(queueBox)) focusNodes.add(queueBox);
+            }
+        });
+
+        clearQueueButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.indexOf(clearQueueButton));
+            }
+            else{
+                keyboardFocusOff(clearQueueButton);
+                focus.set(-1);
+            }
+        });
+
+        clearQueueButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            clearQueueButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        clearQueueButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            clearQueueButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
         clearQueueButton.setOnAction((e) -> {
+            clearQueueButton.requestFocus();
+
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
@@ -293,24 +425,48 @@ public class QueuePage {
         StackPane.setMargin(multiselectPane, new Insets(20, 10, 20, 10));
 
         StackPane.setAlignment(selectionContainer, Pos.CENTER_LEFT);
-        selectionContainer.getChildren().addAll(multiselectLabel, bulletinLabel, clearSelectionLabel);
+        selectionContainer.getChildren().addAll(multiselectLabel, bulletinLabel, clearSelectionButton);
         selectionContainer.setAlignment(Pos.CENTER_LEFT);
-        selectionContainer.setSpacing(10);
 
         multiselectLabel.setText("0 items selected");
         multiselectLabel.getStyleClass().add("multiselectText");
 
         bulletinLabel.getStyleClass().addAll("multiselectText", "bulletin");
 
-        clearSelectionLabel.getStyleClass().addAll("multiselectText", "clearSelection");
-        clearSelectionLabel.setOnMouseEntered(e -> clearSelectionLabel.setUnderline(true));
-        clearSelectionLabel.setOnMouseExited(e -> clearSelectionLabel.setUnderline(false));
-        clearSelectionLabel.setOnMouseClicked(e -> {
+        clearSelectionButton.setText("Clear");
+        clearSelectionButton.setAlignment(Pos.CENTER_LEFT);
+        clearSelectionButton.getStyleClass().addAll("linkButton");
+        clearSelectionButton.setId("clearSelectionButton");
+        clearSelectionButton.setPadding(new Insets(3, 3, 3, 3));
+
+
+        clearSelectionButton.setOnAction(e -> {
+            clearSelectionButton.requestFocus();
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
             while(!selectedItems.isEmpty()){
                 selectedItems.get(0).checkbox.setSelected(false);
+            }
+        });
+
+        clearSelectionButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            clearSelectionButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        clearSelectionButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            clearSelectionButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        clearSelectionButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.indexOf(clearSelectionButton));
+            }
+            else{
+                keyboardFocusOff(clearSelectionButton);
+                focus.set(-1);
             }
         });
 
@@ -346,6 +502,23 @@ public class QueuePage {
                     queueItem.indexLabel.setVisible(false);
                     queueItem.columns.setVisible(false);
                 }
+
+                Node focusedNode = null;
+
+                if(focus.get() > -1 && focus.get() < focusNodes.size()){
+                    focusedNode = focusNodes.get(focus.get());
+                }
+
+                focusNodes.remove(clearQueueButton);
+                focusNodes.remove(shuffleToggle);
+                focusNodes.remove(addButton);
+                focusNodes.remove(addOptionsButton);
+
+                if(!focusNodes.contains(clearSelectionButton)) focusNodes.add(0, clearSelectionButton);
+                if(!focusNodes.contains(removeButton)) focusNodes.add(1, removeButton);
+
+                if(focusedNode instanceof QueueBox) focus.set(focusNodes.indexOf(queueBox));
+                else focus.set(-1);
             }
             else {
                 addButtonContainer.setOpacity(1);
@@ -353,34 +526,73 @@ public class QueuePage {
                 multiselectPane.setOpacity(0);
 
                 for(QueueItem queueItem : queueBox.queue){
-                    if(!queueItem.mouseHover){
+                    if(!queueItem.mouseHover && queueItem.focus.get() == -1){
                         queueItem.checkbox.setVisible(false);
                         if(queueItem.isActive.get()) queueItem.columns.setVisible(true);
                         else queueItem.indexLabel.setVisible(true);
                     }
                 }
+
+                Node focusedNode = null;
+
+                if(focus.get() > -1 && focus.get() < focusNodes.size()){
+                    focusedNode = focusNodes.get(focus.get());
+                }
+
+                focusNodes.remove(clearSelectionButton);
+                focusNodes.remove(removeButton);
+
+                if(!focusNodes.contains(addOptionsButton)) focusNodes.add(0, addOptionsButton);
+                if(!focusNodes.contains(addButton)) focusNodes.add(0, addButton);
+                if(!focusNodes.contains(shuffleToggle)) focusNodes.add(0, shuffleToggle);
+                if(!clearQueueButton.isDisabled() && !focusNodes.contains(clearQueueButton)) focusNodes.add(0, clearQueueButton);
+
+                if(focusedNode instanceof QueueBox) focus.set(focusNodes.indexOf(queueBox));
+                else focus.set(-1);
             }
         });
 
         StackPane.setAlignment(removeButton, Pos.CENTER_RIGHT);
 
-        removeSVG.setContent(SVG.CLOSE.getContent());
+        removeSVG.setContent(SVG.REMOVE.getContent());
 
         removeIcon.setShape(removeSVG);
         removeIcon.setPrefSize(14, 14);
         removeIcon.setMaxSize(14,14);
         removeIcon.getStyleClass().addAll("menuIcon", "graphic");
-        removeIcon.setMouseTransparent(true);
 
         removeButton.getStyleClass().add("menuButton");
-        removeButton.setCursor(Cursor.HAND);
         removeButton.setGraphic(removeIcon);
+        removeButton.setText("Remove");
         removeButton.setOnAction(e -> {
+
+            removeButton.requestFocus();
+
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
             while(!selectedItems.isEmpty()){
                 selectedItems.get(0).remove();
+            }
+        });
+
+        removeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        removeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        removeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.indexOf(removeButton));
+            }
+            else{
+                keyboardFocusOff(removeButton);
+                focus.set(-1);
             }
         });
 
@@ -445,13 +657,56 @@ public class QueuePage {
         StackPane.setMargin(scrollUpButtonContainer, new Insets(130, 0, 0, 0));
         scrollUpButtonContainer.setMaxHeight(20);
         scrollUpButtonContainer.getChildren().add(scrollUpButton);
+
         StackPane.setMargin(scrollUpButton, new Insets(5, 10, 0, 10));
         scrollUpButton.prefWidthProperty().bind(queueWrapper.widthProperty());
         scrollUpButton.setPrefHeight(15);
         scrollUpButton.getStyleClass().add("scrollToActiveButton");
         scrollUpButton.setGraphic(scrollUpIcon);
-        scrollUpButton.setOnAction(e -> animateScroll());
+        scrollUpButton.setOnAction(e -> {
+            scrollUpButton.requestFocus();
+            animateScroll();
+        });
         scrollUpButtonContainer.setVisible(false);
+        scrollUpButtonContainer.visibleProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                if(!focusNodes.contains(scrollUpButton)){
+                    if((focus.get() > -1 && focus.get() < focusNodes.size() && focusNodes.get(focus.get()) instanceof QueueBox) || scrollDownButton.isFocused()){
+                        focus.set(focus.get() + 1);
+                    }
+
+                    focusNodes.add(focusNodes.indexOf(queueBox), scrollUpButton);
+                }
+            }
+            else {
+                Node focusedNode = null;
+                if(focus.get() > -1 && focus.get() < focusNodes.size()) focusedNode = focusNodes.get(focus.get());
+                focusNodes.remove(scrollUpButton);
+                if(focusedNode instanceof QueueBox) focus.set(focusNodes.indexOf(queueBox));
+                else if(scrollDownButton.isFocused()) focus.set(focusNodes.size() - 1);
+            }
+        });
+
+        scrollUpButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            scrollUpButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        scrollUpButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            scrollUpButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        scrollUpButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.indexOf(scrollUpButton));
+            }
+            else{
+                keyboardFocusOff(scrollUpButton);
+                focus.set(-1);
+            }
+        });
+
 
         scrollDownIcon.setShape(arrowDownSVG);
         scrollDownIcon.getStyleClass().addAll("menuIcon", "graphic");
@@ -461,17 +716,48 @@ public class QueuePage {
         StackPane.setAlignment(scrollDownButtonContainer, Pos.BOTTOM_CENTER);
         scrollDownButtonContainer.getChildren().add(scrollDownButton);
         scrollDownButtonContainer.setMaxHeight(20);
+
         StackPane.setMargin(scrollDownButton, new Insets(0, 10, 5, 10));
         scrollDownButton.prefWidthProperty().bind(queueWrapper.widthProperty());
         scrollDownButton.setPrefHeight(15);
         scrollDownButton.getStyleClass().add("scrollToActiveButton");
         scrollDownButton.setGraphic(scrollDownIcon);
-        scrollDownButton.setOnAction(e -> animateScroll());
+        scrollDownButton.setOnAction(e -> {
+            scrollDownButton.requestFocus();
+            animateScroll();
+        });
+
+        scrollDownButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            scrollDownButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        scrollDownButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            scrollDownButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        scrollDownButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.indexOf(scrollDownButton));
+            }
+            else{
+                keyboardFocusOff(scrollDownButton);
+                focus.set(-1);
+            }
+        });
+
         scrollDownButtonContainer.setVisible(false);
+        scrollDownButtonContainer.visibleProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                if(!focusNodes.contains(scrollDownButton)) focusNodes.add(scrollDownButton);
+            }
+            else focusNodes.remove(scrollDownButton);
+        });
 
         queueScroll.vvalueProperty().addListener((observableValue, oldValue, newValue) -> checkScroll());
 
-        queueScroll.heightProperty().addListener((observableValue, number, t1) -> checkScroll());
+        queueScroll.heightProperty().addListener((observableValue, oldValue, newValue) -> checkScroll());
 
 
         menuController.queueContainer.getChildren().addAll(queueWrapper, scrollUpButtonContainer, scrollDownButtonContainer);
@@ -482,6 +768,11 @@ public class QueuePage {
             addTooltip = new ControlTooltip(menuController.mainController,"Browse for files to add to the play queue", "", addButton, 1000);
             addOptionsTooltip = new ControlTooltip(menuController.mainController,"More options for adding media to the play queue", "", addOptionsButton, 1000);
         });
+
+
+        focusNodes.add(shuffleToggle);
+        focusNodes.add(addButton);
+        focusNodes.add(addOptionsButton);
     }
 
     private void dragScroll() {
@@ -553,6 +844,10 @@ public class QueuePage {
         queueBarButtonWrapper.setMinHeight(100);
         queueBarButtonWrapper.setPrefHeight(100);
 
+        multiselectPane.setMinHeight(70);
+        multiselectPane.setPrefHeight(70);
+        multiselectPane.setMaxHeight(70);
+
         StackPane.setMargin(scrollUpButton, new Insets(5, 50, 0, 50));
         StackPane.setMargin(scrollDownButton, new Insets(0, 50, 5, 50));
 
@@ -565,6 +860,10 @@ public class QueuePage {
         queueBarButtonWrapper.setPadding(new Insets(0, 0, 0, 0));
         queueBarButtonWrapper.setMinHeight(80);
         queueBarButtonWrapper.setPrefHeight(80);
+
+        multiselectPane.setMinHeight(50);
+        multiselectPane.setPrefHeight(50);
+        multiselectPane.setMaxHeight(50);
 
         StackPane.setMargin(scrollUpButton, new Insets(5, 10, 0, 10));
         StackPane.setMargin(scrollDownButton, new Insets(0, 10, 5, 10));
@@ -672,5 +971,79 @@ public class QueuePage {
                 new KeyValue(queueScroll.vvalueProperty(), target, Interpolator.EASE_BOTH)));
 
         scrollTimeline.playFromStart();
+    }
+
+    public void focusForward() {
+
+        if(focus.get() < 0){
+            boolean skipFocus = menuController.menuBar.focusForward();
+            if(!skipFocus) return;
+
+            keyboardFocusOn(focusNodes.get(0));
+        }
+        else {
+            if(focus.get() > focusNodes.size() - 1) {
+                keyboardFocusOn(menuController.menuBar.focusNodes.get(0));
+            }
+            else {
+                if(focusNodes.get(focus.get()) instanceof QueueBox){
+                    boolean skipFocus = queueBox.focusForward();
+                    if(!skipFocus) return;
+
+                    if(focus.get() == focusNodes.size() - 1)
+                        keyboardFocusOn(menuController.menuBar.focusNodes.get(0));
+                    else
+                        keyboardFocusOn(focusNodes.get(focus.get() + 1));
+                }
+                else {
+                    if(focus.get() == focusNodes.size() - 1)
+                        keyboardFocusOn(menuController.menuBar.focusNodes.get(0));
+                    else {
+                        int newFocus = focus.get() + 1;
+                        if(focusNodes.get(newFocus) instanceof QueueBox) {
+                            queueBox.enterFocusStart();
+                            focus.set(newFocus);
+                        }
+                        else keyboardFocusOn(focusNodes.get(newFocus));
+                    }
+                }
+            }
+        }
+    }
+
+    public void focusBackward() {
+
+        if(focus.get() < 0){
+            if(menuController.menuBar.focus.get() > 0) {
+                menuController.menuBar.focusBackward();
+            }
+            else {
+                if (focusNodes.get(focusNodes.size() - 1) instanceof QueueBox) {
+                    queueBox.enterFocusEnd();
+                    focus.set(focusNodes.size() - 1);
+                }
+                else keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
+            }
+        }
+        else {
+            if(focus.get() == 0)
+                keyboardFocusOn(menuController.menuBar.focusNodes.get(menuController.menuBar.focusNodes.size() - 1));
+            else {
+                if(focusNodes.get(focus.get()) instanceof QueueBox){
+                    boolean skipFocus = queueBox.focusBackward();
+                    if(!skipFocus) return;
+
+                    keyboardFocusOn(focusNodes.get(focus.get() - 1));
+                }
+                else {
+                    int newFocus = focus.get() - 1;
+                    if(focusNodes.get(newFocus) instanceof QueueBox) {
+                        queueBox.enterFocusEnd();
+                        focus.set(newFocus);
+                    }
+                    else keyboardFocusOn(focusNodes.get(newFocus));
+                }
+            }
+        }
     }
 }

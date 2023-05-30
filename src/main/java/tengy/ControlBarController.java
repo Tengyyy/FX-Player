@@ -270,6 +270,7 @@ public class ControlBarController implements Initializable {
         volumeSlider.setMinSize(60, 8);
         volumeSlider.setPrefSize(60, 8);
         volumeSlider.setMaxSize(60, 8);
+        volumeSlider.setFocusTraversable(false);
 
 
         durationLabel.setPrefHeight(30);
@@ -330,25 +331,57 @@ public class ControlBarController implements Initializable {
         settingsButton.setBackground(Background.EMPTY);
         volumeButton.setBackground(Background.EMPTY);
         subtitlesButton.setBackground(Background.EMPTY);
-        
 
-        previousVideoButton.setOnAction(e -> previousVideoButtonClick());
-        playButton.setOnAction((e) -> playButtonClick());
-        nextVideoButton.setOnAction(e -> nextVideoButtonClick());
-        volumeButton.setOnAction(e -> volumeButtonClick());
-        subtitlesButton.setOnAction(e -> subtitlesButtonClick());
-        settingsButton.setOnAction(e -> settingsButtonClick());
-        miniplayerButton.setOnAction(e -> miniplayerButtonClick());
-        fullScreenButton.setOnAction(e -> fullScreenButtonClick());
+        previousVideoButton.setFocusTraversable(false);
+        playButton.setFocusTraversable(false);
+        nextVideoButton.setFocusTraversable(false);
+        miniplayerButton.setFocusTraversable(false);
+        fullScreenButton.setFocusTraversable(false);
+        settingsButton.setFocusTraversable(false);
+        volumeButton.setFocusTraversable(false);
+        subtitlesButton.setFocusTraversable(false);
+
+
+
+        previousVideoButton.setOnAction(e -> {
+            previousVideoButton.requestFocus();
+            previousVideoButtonClick();
+        });
+        playButton.setOnAction((e) -> {
+            playButton.requestFocus();
+            playButtonClick();
+        });
+        nextVideoButton.setOnAction(e -> {
+            nextVideoButton.requestFocus();
+            nextVideoButtonClick();
+        });
+        volumeButton.setOnAction(e -> {
+            volumeButton.requestFocus();
+            volumeButtonClick();
+        });
+        subtitlesButton.setOnAction(e -> {
+            subtitlesButton.requestFocus();
+            subtitlesButtonClick();
+        });
+        settingsButton.setOnAction(e -> {
+            settingsButton.requestFocus();
+            settingsButtonClick();
+        });
+        miniplayerButton.setOnAction(e -> {
+            miniplayerButton.requestFocus();
+            miniplayerButtonClick();
+        });
+        fullScreenButton.setOnAction(e -> {
+            fullScreenButton.requestFocus();
+            fullScreenButtonClick();
+        });
         
         
         previousVideoButton.setOnMouseEntered(e -> previousVideoButtonHoverOn());
-
         previousVideoButton.setOnMouseExited(e -> previousVideoButtonHoverOff());
 
 
         playButton.setOnMouseEntered(e -> playButtonHoverOn());
-
         playButton.setOnMouseExited(e -> playButtonHoverOff());
 
         playButtonPane.getChildren().add(playPausePane);

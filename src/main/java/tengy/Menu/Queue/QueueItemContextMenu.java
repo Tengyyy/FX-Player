@@ -1,12 +1,5 @@
-package tengy.Menu;
+package tengy.Menu.Queue;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import tengy.App;
-import tengy.MediaItems.MediaItem;
-import tengy.Menu.Queue.QueueItem;
-import tengy.SVG;
-import tengy.Shell32Util;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.scene.Node;
@@ -15,6 +8,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import tengy.App;
+import tengy.MediaItems.MediaItem;
+import tengy.SVG;
+import tengy.Shell32Util;
 import tengy.Utilities;
 
 import java.awt.*;
@@ -156,18 +153,12 @@ public class QueueItemContextMenu extends ContextMenu {
 
         showing = false;
 
-        if(!queueItem.getHover()){
+        if(!queueItem.mouseHover && queueItem.focus.get() == -1 && !queueItem.queuePage.selectionActive.get()){
 
             queueItem.checkbox.setVisible(false);
 
-            if(queueItem.isActive.get()) {
-                queueItem.setStyle("-fx-background-color: rgba(50, 50, 50, 0.6);");
-                queueItem.columns.setVisible(true);
-            }
-            else {
-                queueItem.setStyle("-fx-background-color: transparent;");
-                queueItem.indexLabel.setVisible(true);
-            }
+            if(queueItem.isActive.get()) queueItem.columns.setVisible(true);
+            else queueItem.indexLabel.setVisible(true);
         }
 
         if(showTransition != null && showTransition.getStatus() == Animation.Status.RUNNING) showTransition.stop();

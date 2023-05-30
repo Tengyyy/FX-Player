@@ -695,14 +695,14 @@ public class MediaInformationPage {
 
         loadMediaInformationPage(mediaItem);
 
-        if(menuController.menuState == MenuState.CLOSED){
+       /* if(menuController.menuState == MenuState.CLOSED){
             if(!menuController.extended.get()) menuController.setMenuExtended(MenuState.MEDIA_INFORMATION_OPEN);
             menuController.openMenu(MenuState.MEDIA_INFORMATION_OPEN);
         }
         else {
             if(!menuController.extended.get()) menuController.extendMenu(MenuState.MEDIA_INFORMATION_OPEN);
             else menuController.animateStateSwitch(MenuState.MEDIA_INFORMATION_OPEN);
-        }
+        }*/
     }
     
     public Label createTextLabel(String text){

@@ -1,6 +1,8 @@
 package tengy.Menu.Settings;
 
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import tengy.Menu.MenuController;
 import tengy.Menu.MenuState;
 import tengy.PlaybackSettings.PlaybackSettingsState;
@@ -22,6 +24,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingsPage {
 
@@ -57,6 +62,9 @@ public class SettingsPage {
     AboutSection aboutSection;
 
     public SettingsMenu settingsMenu;
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
     public SettingsPage(MenuController menuController){
 
@@ -286,5 +294,11 @@ public class SettingsPage {
     public void loadPreferences(){
         subtitleSection.loadPreferences();
         preferencesSection.loadPreferences();
+    }
+
+    public void focusForward() {
+    }
+
+    public void focusBackward() {
     }
 }

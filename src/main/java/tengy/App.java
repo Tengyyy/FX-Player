@@ -64,7 +64,7 @@ public class App extends Application {
                 mainController = loader.getController();
 
                 controlBarController = mainController.getControlBarController();
-                playbackSettingsController = mainController.getSettingsController();
+                playbackSettingsController = mainController.getPlaybackSettingsController();
                 menuController = mainController.getMenuController();
                 subtitlesController = mainController.getSubtitlesController();
                 mediaInterface = mainController.getMediaInterface();

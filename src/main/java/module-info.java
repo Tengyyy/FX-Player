@@ -17,7 +17,6 @@ module hans {
     requires org.bytedeco.javacpp;
     requires org.bytedeco.ffmpeg;
     requires opensub4j;
-    requires org.controlsfx.controls;
     requires xmlrpc.common;
     requires com.sandec.mdfx;
     requires java.prefs;

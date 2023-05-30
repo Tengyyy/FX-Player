@@ -126,6 +126,10 @@ public class MainController implements Initializable {
 
     public Pref pref;
 
+
+    FocusController focusController;
+
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
@@ -142,7 +146,6 @@ public class MainController implements Initializable {
         playbackSettingsController.init(mediaInterface, subtitlesController);
         subtitlesController.init(mediaInterface);
         mediaInterface.init(chapterController);
-
         playbackSettingsController.equalizerController.loadEqualizer();
 
         popupWindowContainer.setId("popupWindowContainer");
@@ -150,6 +153,8 @@ public class MainController implements Initializable {
         popupWindowContainer.setMouseTransparent(true);
 
         windowController = new WindowController(this);
+
+        focusController = new FocusController(this);
 
         sliderHoverBox = new SliderHoverBox(videoImageViewWrapper, false);
 
@@ -393,7 +398,9 @@ public class MainController implements Initializable {
         menuButton.setMaxSize(50, 50);
         menuButton.setBackground(Background.EMPTY);
         menuButton.setCursor(Cursor.HAND);
+        menuButton.setFocusTraversable(false);
         menuButton.setOnAction(e -> menuController.queuePage.enter());
+        menuButton.setDefaultButton(false);
 
 
         menuIcon.setShape(menuSVG);
@@ -440,6 +447,7 @@ public class MainController implements Initializable {
         mediaInformationButton.setMaxSize(50, 50);
         mediaInformationButton.setBackground(Background.EMPTY);
         mediaInformationButton.setCursor(Cursor.HAND);
+        mediaInformationButton.setFocusTraversable(false);
 
         mediaInformationPath.setContent(INFORMATION.getContent());
         mediaInformationIcon.setShape(mediaInformationPath);
@@ -868,18 +876,10 @@ public class MainController implements Initializable {
     public void pressTAB(KeyEvent event){
         controlBarController.mouseEventTracker.move();
 
-        if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED){
-            if(event.isShiftDown()) playbackSettingsController.handleFocusBackward();
-            else playbackSettingsController.handleFocusForward();
-        }
-        else if(subtitlesController.subtitlesState != SubtitlesState.CLOSED){
-            if(event.isShiftDown()) subtitlesController.handleFocusBackward();
-            else subtitlesController.handleFocusForward();
-        }
-        else if(windowController.windowState != WindowState.CLOSED){
-            if(event.isShiftDown()) windowController.handleFocusBackward();
-            else windowController.handleFocusForward();
-        }
+        if(event.isShiftDown())
+            focusController.focusBackward();
+        else
+            focusController.focusForward();
 
         event.consume();
     }
@@ -1857,7 +1857,7 @@ public class MainController implements Initializable {
         menuController.settingsPage.enter();
     }
 
-    public PlaybackSettingsController getSettingsController() {
+    public PlaybackSettingsController getPlaybackSettingsController() {
         return playbackSettingsController;
     }
 

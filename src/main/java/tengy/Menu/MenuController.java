@@ -1,36 +1,41 @@
 package tengy.Menu;
 
 
-import tengy.*;
-import tengy.Subtitles.SubtitlesController;
-import tengy.Subtitles.SubtitlesState;
-import tengy.Chapters.ChapterController;
-import tengy.MediaItems.MediaItem;
-import tengy.Menu.MediaInformation.MediaInformationPage;
-import tengy.Menu.Queue.QueuePage;
-import tengy.Menu.Settings.SettingsPage;
-import tengy.PlaybackSettings.PlaybackSettingsController;
-import tengy.PlaybackSettings.PlaybackSettingsState;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-import javafx.scene.layout.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import tengy.Chapters.ChapterController;
+import tengy.*;
+import tengy.MediaItems.MediaItem;
+import tengy.Menu.MediaInformation.MediaInformationPage;
+import tengy.Menu.Queue.QueuePage;
+import tengy.Menu.Settings.SettingsPage;
+import tengy.PlaybackSettings.PlaybackSettingsController;
+import tengy.PlaybackSettings.PlaybackSettingsState;
+import tengy.Subtitles.SubtitlesController;
+import tengy.Subtitles.SubtitlesState;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-
+import static tengy.Utilities.keyboardFocusOff;
 
 
 public class MenuController implements Initializable {
@@ -74,12 +79,12 @@ public class MenuController implements Initializable {
     SVGPath collapseSVG = new SVGPath();
     SVGPath extendSVG = new SVGPath();
     Region extendIcon = new Region();
-    public Button extendButton = new Button();
+    public FocusableMenuButton extendButton = new FocusableMenuButton();
     ControlTooltip extendTooltip;
 
     SVGPath closeSVG = new SVGPath();
     Region closeIcon = new Region();
-    public Button closeButton = new Button();
+    public FocusableMenuButton closeButton = new FocusableMenuButton();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -131,10 +136,12 @@ public class MenuController implements Initializable {
 
         closeButton.setPrefSize(40, 40);
         closeButton.setMaxSize(40, 40);
-        closeButton.setCursor(Cursor.HAND);
-        closeButton.getStyleClass().add("transparentButton");
+        closeButton.getStyleClass().addAll("transparentButton", "primaryMenuButton");
         closeButton.setGraphic(closeIcon);
         closeButton.setOnAction(e -> {
+
+            closeButton.requestFocus();
+
             if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
             if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
 
@@ -143,6 +150,48 @@ public class MenuController implements Initializable {
 
         closeButton.visibleProperty().bind(extended);
         closeButton.mouseTransparentProperty().bind(extended.not());
+        closeButton.visibleProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                if(!menuBar.focusNodes.contains(closeButton))
+                    if(menuBar.focusNodes.contains(extendButton)){
+                        menuBar.focusNodes.add(1, closeButton);
+                        if(menuBar.focus.get() >= 1) menuBar.focus.set(menuBar.focus.get() + 1);
+                    }
+                    else {
+                        menuBar.focusNodes.add(0, closeButton);
+                        if(menuBar.focus.get() >= 0) menuBar.focus.set(menuBar.focus.get() + 1);
+                    }
+            }
+            else {
+                boolean removed = menuBar.focusNodes.remove(closeButton);
+                if(menuBar.focusNodes.contains(extendButton)) {
+                    if(removed && menuBar.focus.get() > 1) menuBar.focus.set(menuBar.focus.get() - 1);
+                }
+                else {
+                    if(removed && menuBar.focus.get() > 0) menuBar.focus.set(menuBar.focus.get() - 1);
+                }
+            }
+        });
+
+        closeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                menuBar.focus.set(menuBar.focusNodes.indexOf(closeButton));
+            }
+            else{
+                keyboardFocusOff(closeButton);
+                menuBar.focus.set(-1);
+            }
+        });
+
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        closeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            closeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
         StackPane.setMargin(closeButton, new Insets(10, 10 , 0, 0));
@@ -156,11 +205,46 @@ public class MenuController implements Initializable {
 
         extendButton.setPrefSize(40, 40);
         extendButton.setMaxSize(40, 40);
-        extendButton.setCursor(Cursor.HAND);
-        extendButton.getStyleClass().add("transparentButton");
+        extendButton.getStyleClass().addAll("transparentButton", "primaryMenuButton");
         extendButton.setGraphic(extendIcon);
         extendButton.setVisible(false);
-        extendButton.setOnAction(e -> extendMenu(menuState));
+        extendButton.visibleProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                if(!menuBar.focusNodes.contains(extendButton))
+                    menuBar.focusNodes.add(0, extendButton);
+                    if(menuBar.focus.get() >= 0) menuBar.focus.set(menuBar.focus.get() + 1);
+            }
+            else {
+                boolean removed = menuBar.focusNodes.remove(extendButton);
+                if(removed && menuBar.focus.get() > 0) menuBar.focus.set(menuBar.focus.get() - 1);
+            }
+        });
+
+        extendButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                menuBar.focus.set(0);
+            }
+            else{
+                keyboardFocusOff(extendButton);
+                menuBar.focus.set(-1);
+            }
+        });
+
+        extendButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            extendButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        extendButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            extendButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        extendButton.setOnAction(e -> {
+            extendButton.requestFocus();
+
+            extendMenu(menuState);
+        });
 
 
         Platform.runLater(() -> extendTooltip = new ControlTooltip(mainController, "Extend menu", "", extendButton, 1000, TooltipType.MENU_TOOLTIP));
@@ -593,7 +677,6 @@ public class MenuController implements Initializable {
             case SETTINGS_OPEN -> settingsPage.closeSettingsPage();
             case PLAYLISTS_OPEN -> playlistsPage.closePlaylistsPage();
             case RECENT_MEDIA_OPEN -> recentMediaPage.closeRecentMediaPage();
-            case MEDIA_INFORMATION_OPEN -> mediaInformationPage.closeMediaInformationPage();
             case MUSIC_LIBRARY_OPEN -> musicLibraryPage.closeMusicLibraryPage();
         }
 
@@ -603,12 +686,34 @@ public class MenuController implements Initializable {
             case SETTINGS_OPEN -> settingsPage.openSettingsPage();
             case PLAYLISTS_OPEN -> playlistsPage.openPlaylistsPage();
             case RECENT_MEDIA_OPEN -> recentMediaPage.openRecentMediaPage();
-            case MEDIA_INFORMATION_OPEN -> mediaInformationPage.openMediaInformationPage();
             case MUSIC_LIBRARY_OPEN -> musicLibraryPage.openMusicLibraryPage();
         }
     }
 
 
+    public void handleFocusForward() {
+
+        switch(menuState){
+            case QUEUE_OPEN -> queuePage.focusForward();
+            case CHAPTERS_OPEN -> chapterController.chapterPage.focusForward();
+            case SETTINGS_OPEN -> settingsPage.focusForward();
+            case PLAYLISTS_OPEN -> playlistsPage.focusForward();
+            case RECENT_MEDIA_OPEN -> recentMediaPage.focusForward();
+            case MUSIC_LIBRARY_OPEN -> musicLibraryPage.focusForward();
+        }
+    }
+
+    public void handleFocusBackward() {
+
+        switch(menuState){
+            case QUEUE_OPEN -> queuePage.focusBackward();
+            case CHAPTERS_OPEN -> chapterController.chapterPage.focusBackward();
+            case SETTINGS_OPEN -> settingsPage.focusBackward();
+            case PLAYLISTS_OPEN -> playlistsPage.focusBackward();
+            case RECENT_MEDIA_OPEN -> recentMediaPage.focusBackward();
+            case MUSIC_LIBRARY_OPEN -> musicLibraryPage.focusBackward();
+        }
+    }
 }
 
 

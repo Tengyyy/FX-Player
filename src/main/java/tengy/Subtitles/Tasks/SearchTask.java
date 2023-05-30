@@ -27,15 +27,14 @@ public class SearchTask extends Task<List<SubtitleInfo>> {
 
     @Override
     protected List<SubtitleInfo> call() {
-        ObservableList<Integer> observableList = openSubtitlesPane.languageBox.getCheckModel().getCheckedIndices();
+        ObservableList<String> languages = openSubtitlesPane.languageBox.getSelectedItems();
         StringBuilder languageString = new StringBuilder();
-        if(observableList.isEmpty()) languageString.append("all");
+        if(languages.isEmpty()) languageString.append("all");
         else {
-            for (int i = 0; i < observableList.size(); i++) {
-                Integer index = observableList.get(i);
-                String languageName = openSubtitlesPane.languageBox.getItems().get(index);
-                String languageCode = openSubtitlesPane.languageMap.get(languageName);
-                if (i < observableList.size() - 1) {
+            for (int i = 0; i < languages.size(); i++) {
+                String languageName = languages.get(i);
+                String languageCode = OpenSubtitlesPane.languageMap.get(languageName);
+                if (i < languages.size() - 1) {
                     languageString.append(languageCode).append(", ");
                 } else {
                     languageString.append(languageCode);

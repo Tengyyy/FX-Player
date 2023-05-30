@@ -81,12 +81,38 @@
 
 .queueItem, .chapterItem{
     -fx-background-color: transparent;
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
 }
 
 .queueItemRound, .chapterItemRound{
     -fx-background-insets: 5 0 5 0;
     -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-insets: 5 0 5 0;
 }
+
+.queueItem:keyboardFocused{
+    -fx-border-color: rgb(173, 216, 230);
+}
+
+.queueItem:active {
+    -fx-background-color: rgba(45,45,45,0.6);
+}
+
+.queueItem:selected {
+    -fx-background-color: rgba(90,90,90,0.6);
+}
+
+.queueItem:focus, .queueItem:hover {
+    -fx-background-color: rgba(75,75,75,0.6);
+}
+
+.queueItem:pressed {
+    -fx-background-color: rgba(60,60,60,0.6);
+}
+
+
 
 
 .videoTitle, .chapterName {
@@ -202,6 +228,10 @@
     -fx-border-color: red;
 }
 
+.shuffleToggleActive:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
+}
+
 .menuActionButton{
     -fx-background-color: #ff5447;
 }
@@ -209,19 +239,29 @@
 .menuBarButton {
     -fx-background-color: transparent;
     -fx-background-radius: 5;
-    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "Roboto";
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-radius: 5;
+    -fx-border-insets: -1;
+}
+
+.activeMenuBarButton {
+    -fx-background-color: rgba(45,45,45,0.85);
+    -fx-background-radius: 5;
     -fx-text-fill: white;
     -fx-font-size: 15;
     -fx-font-family: "Roboto";
 }
 
-.menuBarButton:hover {
+.menuBarButton:hover, .menuBarButton:focused {
     -fx-background-color: rgba(60,60,60,0.85);
 }
 
 .menuBarButton:pressed {
     -fx-background-color: rgba(45,45,45,0.8);
-    -fx-background-insets: 1;
     -fx-text-fill: rgb(180,180,180);
 }
 
@@ -229,29 +269,9 @@
     -fx-background-color: rgb(180,180,180);
 }
 
-.activeMenuBarButton {
-    -fx-background-color: rgba(60,60,60,0.85);
-    -fx-background-radius: 5;
-    -fx-background-insets: 0;
-    -fx-text-fill: white;
-    -fx-font-size: 15;
-    -fx-font-family: "Roboto";
+.menuBarButton:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
 }
-
-.activeMenuBarButton:hover {
-    -fx-background-color: rgba(45,45,45,0.8);
-}
-
-.activeMenuBarButton:pressed {
-    -fx-background-color: rgba(60,60,60,0.85);
-    -fx-background-insets: 1;
-    -fx-text-fill: rgb(180,180,180);
-}
-
-.activeMenuBarButton:pressed > .graphic {
-    -fx-background-color: rgb(180,180,180);
-}
-
 
 .mainButton {
     -fx-background-color: rgb(237, 64, 64);
@@ -299,11 +319,11 @@
     -fx-padding: 8 9 8 9;
 }
 
-#searchOptionsButton:focused > #chevronDownIcon {
+#searchOptionsButton:focused > #chevronUpIcon, #searchOptionsButton:hover > #chevronUpIcon, #addOptionsButton:focused > #chevronDownIcon, #addOptionsButton:hover > #chevronDownIcon  {
     -fx-background-color: white;
 }
 
-#searchOptionsButton:pressed > #chevronDownIcon {
+#searchOptionsButton:pressed > #chevronUpIcon, #addOptionsButton:pressed > #chevronDownIcon {
     -fx-background-color: rgb(150,150,150);
 }
 
@@ -355,7 +375,7 @@
     -fx-background-color: rgb(200, 200, 200);
 }
 
-#chevronDownIcon {
+#chevronUpIcon, #chevronDownIcon {
     -fx-background-color: rgb(150, 150, 150);
 }
 
@@ -552,12 +572,16 @@
     -fx-border-insets: -5;
 }
 
+.queue-checkbox {
+    -fx-border-insets: -3;
+}
+
 .check-box:keyboardFocused {
     -fx-border-color: rgb(173, 216, 230);
 }
 
 #multiselectPane {
-    -fx-background-color: rgb(20, 20, 20, 0.6);
+    -fx-background-color: rgb(20, 20, 20, 0.9);
     -fx-background-radius: 8;
 }
 
@@ -569,6 +593,7 @@
 
 .bulletin {
     -fx-font-size: 18;
+    -fx-padding: 0 5 0 10
 }
 
 .clearSelection {
@@ -693,13 +718,18 @@
     -fx-border-color: transparent;
 }
 
-.linkButton:hover {
+.linkButton:hover, .linkButton:focused{
     -fx-background-color: rgba(38,38,38, 0.6);
     -fx-text-fill: red;
+    -fx-underline: true;
 }
 
-.linkButton:focused {
-    -fx-text-fill: red;
+#clearSelectionButton {
+    -fx-padding: 4 4 4 4;
+}
+
+#clearSelectionButton:hover, #clearSelectionButton:focused {
+    -fx-underline: false;
 }
 
 .linkButton:pressed {
@@ -746,7 +776,7 @@
     -fx-cursor: hand;
 }
 
-.scrollToActiveButton:hover {
+.scrollToActiveButton:hover, .scrollToActiveButton:focused {
     -fx-background-color: rgb(40, 40, 40);
     -fx-border-color: rgb(80,80,80);
 }
@@ -759,6 +789,10 @@
 
 .scrollToActiveButton:pressed > .graphic {
     -fx-background-color: rgb(180,180,180);
+}
+
+.scrollToActiveButton:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
 }
 
 

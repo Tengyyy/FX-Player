@@ -20,7 +20,7 @@ public class PlaybackOptionsTab extends HBox {
 
     boolean pressed = false;
 
-    PlaybackOptionsTab(PlaybackOptionsController playbackOptionsController, String titleText, int focusValue, Runnable action){
+    PlaybackOptionsTab(PlaybackOptionsController playbackOptionsController, String titleText, int focusValue){
 
         this.playbackOptionsController = playbackOptionsController;
 
@@ -43,7 +43,7 @@ public class PlaybackOptionsTab extends HBox {
         });
 
         this.setOnMouseClicked(e -> {
-            action.run();
+            toggle.fire();
         });
 
         this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
@@ -51,17 +51,21 @@ public class PlaybackOptionsTab extends HBox {
 
             pressed = true;
             this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+
+            e.consume();
         });
 
         this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             if(e.getCode() != KeyCode.SPACE) return;
 
             if(pressed){
-                action.run();
+                toggle.fire();
             }
 
             pressed = false;
             this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+
+            e.consume();
         });
 
         titleLabel.setMinSize(165, 35);

@@ -295,7 +295,10 @@ public class ThirdPartySoftwareWindow {
             button.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
         });
 
-        button.setOnAction(e -> Utilities.openBrowser(url));
+        button.setOnAction(e -> {
+            button.requestFocus();
+            Utilities.openBrowser(url);
+        });
 
         focusNodes.add(button);
 

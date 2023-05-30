@@ -141,6 +141,6 @@ public class PreferencesSection extends VBox {
         languageBox.getSelectionModel().select(language);
         recentMediaSizeBox.getSelectionModel().select((Integer) preferences.getInt(HISTORY_SIZE, 25));
 
-        settingsPage.menuController.subtitlesController.openSubtitlesPane.languageBox.getCheckModel().check(settingsPage.menuController.subtitlesController.openSubtitlesPane.languageBox.getCheckModel().getItemIndex(language));
+        settingsPage.menuController.subtitlesController.openSubtitlesPane.languageBox.select(language);
     }
 }

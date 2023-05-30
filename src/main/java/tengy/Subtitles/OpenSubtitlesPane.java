@@ -3,35 +3,25 @@ package tengy.Subtitles;
 import com.github.wtekiela.opensub4j.api.OpenSubtitlesClient;
 import com.github.wtekiela.opensub4j.impl.OpenSubtitlesClientImpl;
 import com.github.wtekiela.opensub4j.response.SubtitleInfo;
-import com.jfoenix.controls.JFXButton;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.css.PseudoClass;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import tengy.Menu.MenuState;
-import tengy.Menu.Settings.Section;
-import tengy.Subtitles.Tasks.LoginTask;
-import tengy.Subtitles.Tasks.SearchTask;
-import tengy.SVG;
-import tengy.PlaybackSettings.PlaybackSettingsController;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.ListChangeListener;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -40,12 +30,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
-import org.controlsfx.control.CheckComboBox;
-import tengy.Utilities;
+import tengy.Menu.MenuState;
+import tengy.Menu.Settings.Section;
+import tengy.MultiSelectButton;
+import tengy.PlaybackSettings.PlaybackSettingsController;
+import tengy.SVG;
+import tengy.Subtitles.Tasks.LoginTask;
+import tengy.Subtitles.Tasks.SearchTask;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -67,7 +64,7 @@ public class OpenSubtitlesPane {
 
     public static HashMap<String, String> languageMap = new Languages();
     public final String[] supportedLanguages = {"Abkhazian", "Afrikaans", "Albanian", "Arabic", "Aragonese", "Armenian", "Assamese", "Asturian", "Azerbaijani","Basque", "Belarusian", "Bengali", "Bosnian", "Breton", "Bulgarian", "Burmese", "Catalan", "Chinese (simplified)", "Chinese (traditional)", "Chinese bilingual", "Croatian", "Czech", "Danish", "Dari", "Dutch", "English", "Esperanto", "Estonian", "Extremaduran", "Finnish", "French", "Gaelic", "Galician", "Georgian", "German", "Greek", "Hebrew", "Hindi", "Hungarian", "Icelandic", "Igbo", "Indonesian", "Interlingua", "Irish", "Italian", "Japanese", "Kannada", "Kazakh", "Khmer", "Korean", "Kurdish", "Latvian", "Lithuanian", "Luxembourgish", "Macedonian", "Malay", "Malayalam", "Manipuri", "Marathi", "Mongolian", "Montenegrin", "Navajo", "Nepali", "Northern Sami", "Norwegian", "Occitan", "Odia", "Persian", "Polish", "Portuguese", "Portuguese (BR)", "Portuguese (MZ)", "Pushto", "Romanian", "Russian", "Santali", "Serbian", "Sindhi", "Sinhalese", "Slovak", "Slovenian", "Somali", "Spanish", "Spanish (EU)", "Spanish (LA)", "Swahili", "Swedish", "Syriac", "Tagalog", "Tamil", "Tatar", "Telugu", "Thai", "Toki Pona", "Turkish", "Turkmen", "Ukrainian", "Urdu", "Vietnamese", "Welsh"};
-    public CheckComboBox<String> languageBox = new CheckComboBox<>();
+    public MultiSelectButton languageBox;
 
     VBox fieldContainer = new VBox();
 
@@ -161,7 +158,10 @@ public class OpenSubtitlesPane {
         backButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
         backButton.setGraphic(backIcon);
         backButton.setFocusTraversable(false);
-        backButton.setOnAction((e) -> closeOpenSubtitlesPane());
+        backButton.setOnAction((e) -> {
+            backButton.requestFocus();
+            closeOpenSubtitlesPane();
+        });
         backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 focus.set(0);
@@ -197,13 +197,10 @@ public class OpenSubtitlesPane {
         titleLabel.setPadding(new Insets(0, 0, 0, 4));
         titleLabel.setOnMouseClicked((e) -> closeOpenSubtitlesPane());
 
+        languageBox = new MultiSelectButton(subtitlesController.mainController, "Languages");
+
         StackPane.setAlignment(languageBox, Pos.CENTER_RIGHT);
 
-        languageBox.setPrefWidth(200);
-        languageBox.setMaxWidth(200);
-        languageBox.setFocusTraversable(false);
-        languageBox.setTitle("Languages");
-        languageBox.setId("languageBox");
         languageBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 focus.set(1);
@@ -211,36 +208,6 @@ public class OpenSubtitlesPane {
             else {
                 keyboardFocusOff(languageBox);
                 focus.set(-1);
-            }
-        });
-
-        ObservableList<Integer> observableList = languageBox.getCheckModel().getCheckedIndices();
-        observableList.addListener((ListChangeListener<Integer>) change -> {
-
-
-            if(observableList.isEmpty()) languageBox.setTitle("Languages");
-            else {
-                if(observableList.size() >= 5){
-                    languageBox.setTitle(observableList.size() + " selected");
-                }
-                else if(observableList.size() == 1){
-                    languageBox.setTitle(languageBox.getItems().get(observableList.get(0)));
-                }
-                else {
-                    StringBuilder newTitle = new StringBuilder();
-                    for (int i = 0; i < observableList.size(); i++) {
-                        Integer index = observableList.get(i);
-                        String languageName = languageBox.getItems().get(index);
-                        String languageCode = languageMap.get(languageName);
-                        if (i < observableList.size() - 1) {
-                            newTitle.append(languageCode).append(", ");
-                        } else {
-                            newTitle.append(languageCode);
-                        }
-                    }
-
-                    languageBox.setTitle(newTitle.toString());
-                }
             }
         });
 
@@ -493,16 +460,17 @@ public class OpenSubtitlesPane {
             }
         });
 
-        searchButton.setOnAction(e -> attemptSearch());
+        searchButton.setOnAction(e -> {
+            searchButton.requestFocus();
+            attemptSearch();
+        });
 
         chevronUpSVG.setContent(SVG.CHEVRON_UP.getContent());
 
         chevronUpIcon.setShape(chevronUpSVG);
         chevronUpIcon.setPrefSize(14, 8);
         chevronUpIcon.setMaxSize(14,8);
-        chevronUpIcon.setId("chevronDownIcon");
-        chevronUpIcon.setMouseTransparent(true);
-        searchOptionsButton.setCursor(Cursor.HAND);
+        chevronUpIcon.setId("chevronUpIcon");
         searchOptionsButton.getStyleClass().add("menuButton");
         searchOptionsButton.setId("searchOptionsButton");
         searchOptionsButton.setGraphic(chevronUpIcon);
@@ -522,11 +490,13 @@ public class OpenSubtitlesPane {
             searchOptionsPressed = true;
             searchOptionsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
 
-            chevronDownAnimation.play();
+            if(!searchOptionsContextMenu.showing) chevronDownAnimation.play();
         });
 
         searchOptionsButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             if(e.getCode() != KeyCode.SPACE) return;
+
+            if(!searchOptionsPressed) return;
 
             searchOptionsPressed = false;
 
@@ -538,7 +508,7 @@ public class OpenSubtitlesPane {
                     chevronDownAnimation.setOnFinished(null);
                 });
             }
-            else chevronUpAnimation.playFromStart();
+            else if(chevronUpIcon.getTranslateY() != 0) chevronUpAnimation.playFromStart();
         });
 
         searchOptionsButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -548,6 +518,8 @@ public class OpenSubtitlesPane {
             else {
                 keyboardFocusOff(searchOptionsButton);
                 focus.set(-1);
+
+                searchOptionsPressed = false;
 
                 if(chevronDownAnimation.statusProperty().get() == Animation.Status.RUNNING){
                     chevronDownAnimation.setOnFinished(ev -> {
@@ -567,10 +539,12 @@ public class OpenSubtitlesPane {
                     chevronDownAnimation.setOnFinished(null);
                 });
             }
-            else chevronUpAnimation.playFromStart();
+            else if(chevronUpIcon.getTranslateY() != 0) chevronUpAnimation.playFromStart();
         });
 
         searchOptionsButton.setOnAction(e -> {
+            searchOptionsButton.requestFocus();
+
             if(searchOptionsContextMenu.showing) searchOptionsContextMenu.hide();
             else searchOptionsContextMenu.showOptions(true);
         });
@@ -625,6 +599,8 @@ public class OpenSubtitlesPane {
             scrollPane.setTranslateX(0);
             subtitlesController.clip.setHeight(subtitlesController.subtitlesHome.scrollPane.getPrefHeight());
 
+            languageBox.scrollPane.setVvalue(0);
+
             imdbFieldBorder.setVisible(false);
             titleFieldBorder.setVisible(false);
         });
@@ -635,7 +611,7 @@ public class OpenSubtitlesPane {
 
     private void initializeLanguageBox(){
         for(String string : supportedLanguages){
-            languageBox.getItems().add(string);
+            languageBox.addItem(string);
         }
     }
 
@@ -757,6 +733,8 @@ public class OpenSubtitlesPane {
             scrollPane.setTranslateX(0);
             scrollPane.setVvalue(0);
             subtitlesController.clip.setHeight(subtitlesController.openSubtitlesResultsPane.scrollPane.getPrefHeight());
+
+            languageBox.scrollPane.setVvalue(0);
         });
 
         parallelTransition.play();

@@ -88,6 +88,18 @@
     -fx-padding: 6 3 6 3;
 }
 
+.multi-select-button .context-menu, .custom-menu-button .context-menu {
+    -fx-background-color: rgba(15,15,15,0.95);
+    -fx-background-radius: 10;
+    -fx-padding: 0;
+    -fx-insets: 0;
+    -fx-background-insets: 0;
+}
+
+.multi-select-button .menu-item, .custom-menu-button .menu-item {
+    -fx-background-color: transparent;
+}
+
 .customTextField .menu-item, .expandable-text-area .menu-item, .spinner .text-field .menu-item, .date-picker .text-field .menu-item, .key-text-field .menu-item{
     -fx-background-color: transparent;
     -fx-background-radius: 5;
@@ -123,7 +135,7 @@
     -fx-border-insets: 0;
 }
 
-.combo-box {
+.combo-box, .multi-select-button, .custom-menu-button {
      -fx-background-color : rgba(30,30,30,0.4);
      -fx-background-radius: 5;
      -fx-border-style     : solid;
@@ -134,30 +146,55 @@
      -fx-font-size        : 15;
 }
 
-.combo-box:focused {
+.multi-select-button .label, .custom-menu-button .label {
+    -fx-font-family: "Roboto";
+    -fx-text-fill: rgb(200,200,200);
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.combo-box:focused, .multi-select-button:focused, .multi-select-button:hover, .custom-menu-button:focused, .custom-menu-button:hover {
     -fx-border-color: rgb(200,200,200);
 }
 
-.combo-box:keyboardFocused {
+.multi-select-button:focused .label, .multi-select-button:hover .label, .custom-menu-button:focused .label, .custom-menu-button:hover .label {
+    -fx-text-fill: white;
+}
+
+.multi-select-button:pressed, .custom-menu-button:pressed {
+    -fx-border-color: rgb(150,150,150);
+}
+
+.multi-select-button:pressed .label, .custom-menu-button:pressed .label {
+    -fx-text-fill: rgb(180,180,180);
+}
+
+
+.combo-box:keyboardFocused, .multi-select-button:keyboardFocused, .custom-menu-button:keyboardFocused {
     -fx-border-color: rgb(173, 216, 230);
 }
 
-.combo-box:focused .arrow {
+.combo-box .arrow, .multi-select-button .arrow, .custom-menu-button .arrow{
+    -fx-background-color  : rgb(100,100,100);
+}
+.combo-box .arrow-button, .multi-select-button .arrow-button, .custom-menu-button .arrow-button{
+    -fx-background-color  : transparent;
+    -fx-border-style      : none;
+}
+
+.combo-box:focused .arrow, .multi-select-button:hover .arrow, .multi-select-button:focused .arrow, .custom-menu-button:focused .arrow, .custom-menu-button:hover .arrow {
     -fx-background-color: white;
 }
 
-.combo-box .list-cell {
+.multi-select-button:pressed .arrow, .custom-menu-button:pressed .arrow {
+    -fx-background-color: rgb(180,180,180);
+}
+
+
+.combo-box .list-cell, . {
     -fx-text-fill        : rgb(200,200,200);
     -fx-font-family      : "Roboto";
     -fx-font-size        : 15;
-}
-
-.combo-box .arrow{
-    -fx-background-color  : rgb(100,100,100);
-}
-.combo-box .arrow-button{
-    -fx-background-color  : transparent;
-    -fx-border-style      : none;
 }
 
 .combo-box .combo-box-popup .list-view {
@@ -167,7 +204,7 @@
 }
 
 
-.combo-box .combo-box-popup .list-cell {
+.combo-box .combo-box-popup .list-cell, .multi-select-item, .custom-menu-item {
     -fx-text-fill         : rgb(200,200,200) ;
     -fx-font-family       : "Roboto";
     -fx-font-size         : 15;
@@ -175,33 +212,31 @@
     -fx-background-color  : transparent;
 }
 
-.combo-box .combo-box-popup .list-cell:selected {
+
+.multi-select-item, .custom-menu-item {
+    -fx-padding: 4;
+    -fx-background-insets: 1 0 1 0;
+}
+
+.combo-box .combo-box-popup .list-cell:selected, .multi-select-item:selected, .custom-menu-item:selected {
     -fx-text-fill         : white ;
     -fx-background-color  : rgba(50,50,50,0.9);
 }
 
-.combo-box .combo-box-popup .list-cell:hover {
+.combo-box .combo-box-popup .list-cell:hover, .multi-select-item:hover, .multi-select-item:focused, .custom-menu-item:hover, .custom-menu-item:focused {
     -fx-text-fill: white;
     -fx-background-color: rgba(60,60,60,1);
 }
 
-
-/* doesnt work, gets set back to default height when selecting any item. Might have to create my own custom implementation */
-#languageBox > .combo-box .combo-box-popup .list-view {
-    -fx-max-height: 200;
+.multi-select-item:pressed .check-box {
+    -fx-text-fill: white;
 }
 
-#languageBox:focused > .combo-box, #languageBox:hover > .combo-box, #equalizerCombo:focused, #equalizerCombo:hover{
-    -fx-border-color: rgb(200,200,200);
+.multi-select-item:pressed, .custom-menu-item:pressed {
+    -fx-background-color: rgb(40,40,40);
 }
 
-#languageBox:keyboardFocused > .combo-box, #equalizerCombo:keyboardFocused {
-    -fx-border-color: rgb(173, 216, 230);
-}
 
-#languageBox:focused > .combo-box .arrow, #languageBox:hover > .combo-box .arrow, #equalizerCombo:focused .arrow, #equalizerCombo:hover .arrow {
-    -fx-background-color: rgb(200,200,200);
-}
 
 .spinner, .date-picker {
     -fx-background-color : rgba(30,30,30,0.4);

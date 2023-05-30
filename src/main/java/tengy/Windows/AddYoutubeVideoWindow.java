@@ -159,6 +159,25 @@ public class AddYoutubeVideoWindow {
         secondaryButton.setTextAlignment(TextAlignment.CENTER);
         secondaryButton.setPrefWidth(155);
         secondaryButton.setFocusTraversable(false);
+        secondaryButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            secondaryButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        secondaryButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            secondaryButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        secondaryButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.size() - 1);
+            }
+            else {
+                keyboardFocusOff(secondaryButton);
+                focus.set(-1);
+            }
+        });
 
         StackPane.setAlignment(secondaryButton, Pos.CENTER_RIGHT);
 

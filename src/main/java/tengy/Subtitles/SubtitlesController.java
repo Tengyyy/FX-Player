@@ -730,6 +730,9 @@ public class SubtitlesController {
             openSubtitlesPane.imdbFieldBorder.setVisible(false);
             openSubtitlesPane.titleFieldBorder.setVisible(false);
 
+            openSubtitlesPane.languageBox.scrollPane.setVvalue(0);
+
+
             openSubtitlesResultsPane.clearResults();
         });
 

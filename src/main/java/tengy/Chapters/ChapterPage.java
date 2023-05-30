@@ -1,5 +1,8 @@
 package tengy.Chapters;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.Node;
 import tengy.Menu.MenuController;
 import tengy.Menu.MenuState;
 import javafx.geometry.Insets;
@@ -27,6 +30,9 @@ public class ChapterPage {
     public VBox chapterBox = new VBox();
 
     public List<ChapterItem> chapterItems = new ArrayList<>();
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
     ChapterPage(MenuController menuController, ChapterController chapterController){
         this.menuController = menuController;
@@ -114,5 +120,11 @@ public class ChapterPage {
     public void clear(){
         chapterItems.clear();
         chapterBox.getChildren().clear();
+    }
+
+    public void focusForward() {
+    }
+
+    public void focusBackward() {
     }
 }

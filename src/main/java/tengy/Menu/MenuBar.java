@@ -1,5 +1,8 @@
 package tengy.Menu;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.Node;
 import tengy.Menu.Settings.Action;
 import tengy.Subtitles.SubtitlesState;
 import tengy.SVG;
@@ -8,6 +11,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static tengy.Utilities.keyboardFocusOn;
 
 public class MenuBar {
 
@@ -25,19 +33,24 @@ public class MenuBar {
 
     MenuBarButton activeButton = null;
 
+    public IntegerProperty focus = new SimpleIntegerProperty(-1);
+    public List<Node> focusNodes = new ArrayList<>();
+
 
     MenuBar(MenuController menuController, StackPane sideBar){
         this.menuController = menuController;
         this.sideBar = sideBar;
 
-        queueButton = new MenuBarButton(menuController, SVG.QUEUE.getContent(), 19, 14, "Play queue");
-        historyButton = new MenuBarButton(menuController, SVG.HISTORY.getContent(), 19, 16, "Recent media");
-        musicLibraryButton = new MenuBarButton(menuController, SVG.MUSIC.getContent(), 19, 18, "Music library");
-        playlistsButton = new MenuBarButton(menuController, SVG.PLAYLIST.getContent(), 19, 21, "Playlists");
-        settingsButton = new MenuBarButton(menuController, SVG.SETTINGS.getContent(), 19, 19, "Settings");
+        queueButton = new MenuBarButton(menuController, this, SVG.QUEUE.getContent(), 19, 14, "Play queue");
+        historyButton = new MenuBarButton(menuController, this, SVG.HISTORY.getContent(), 19, 16, "Recent media");
+        musicLibraryButton = new MenuBarButton(menuController, this, SVG.MUSIC.getContent(), 19, 18, "Music library");
+        playlistsButton = new MenuBarButton(menuController, this, SVG.PLAYLIST.getContent(), 19, 21, "Playlists");
+        settingsButton = new MenuBarButton(menuController, this, SVG.SETTINGS.getContent(), 19, 19, "Settings");
 
 
         queueButton.button.setOnAction(e -> {
+            
+            queueButton.button.requestFocus();
 
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
@@ -51,6 +64,8 @@ public class MenuBar {
 
         historyButton.button.setOnAction(e -> {
 
+            historyButton.button.requestFocus();
+
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
                 if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
@@ -62,6 +77,8 @@ public class MenuBar {
         });
 
         musicLibraryButton.button.setOnAction(e -> {
+
+            musicLibraryButton.button.requestFocus();
 
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
@@ -75,6 +92,8 @@ public class MenuBar {
 
         playlistsButton.button.setOnAction(e -> {
 
+            playlistsButton.button.requestFocus();
+
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
                 if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
@@ -87,6 +106,8 @@ public class MenuBar {
 
         settingsButton.button.setOnAction(e -> {
 
+            settingsButton.button.requestFocus();
+
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
                 if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
@@ -97,9 +118,16 @@ public class MenuBar {
             menuController.settingsPage.enter();
         });
 
+        focusNodes.add(queueButton.button);
+        focusNodes.add(historyButton.button);
+        focusNodes.add(musicLibraryButton.button);
+        focusNodes.add(playlistsButton.button);
+        focusNodes.add(settingsButton.button);
+
 
         sideBar.getChildren().addAll(topBar, settingsButton);
         sideBar.setPadding(new Insets(40, 0, 20, 0));
+        sideBar.setOnMouseClicked(e -> sideBar.requestFocus());
 
         StackPane.setAlignment(topBar, Pos.TOP_LEFT);
         topBar.getChildren().addAll(queueButton, historyButton, musicLibraryButton, playlistsButton);
@@ -142,5 +170,35 @@ public class MenuBar {
         musicLibraryButton.loadTooltip("Music library", menuController.mainController.hotkeyController.getHotkeyString(Action.OPEN_MUSIC_LIBRARY));
         playlistsButton.loadTooltip("Playlists", menuController.mainController.hotkeyController.getHotkeyString(Action.OPEN_PLAYLISTS));
         settingsButton.loadTooltip("Settings", menuController.mainController.hotkeyController.getHotkeyString(Action.OPEN_SETTINGS));
+    }
+
+    public boolean focusForward() {
+
+        if(focus.get() >= focusNodes.size() - 1)
+            return true;
+
+
+        int newFocus;
+
+        if(focus.get() <= -1) newFocus = 0;
+        else newFocus = focus.get() + 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+
+        return false;
+    }
+
+    public boolean focusBackward() {
+        if(focus.get() == 0)
+            return true;
+
+        int newFocus;
+
+        if(focus.get() > focusNodes.size() - 1 || focus.get() == -1) newFocus = focusNodes.size() - 1;
+        else newFocus = focus.get() - 1;
+
+        keyboardFocusOn(focusNodes.get(newFocus));
+
+        return false;
     }
 }

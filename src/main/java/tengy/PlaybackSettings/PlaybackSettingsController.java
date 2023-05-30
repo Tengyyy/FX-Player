@@ -298,7 +298,7 @@ public class PlaybackSettingsController {
         equalizerTransition.setFromValue(1);
         equalizerTransition.setToValue(0);
 
-        equalizerController.comboBox.hide();
+        equalizerController.presetsButton.hide();
 
         ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, equalizerTransition);
         parallelTransition.setOnFinished((e) -> {
@@ -312,6 +312,8 @@ public class PlaybackSettingsController {
             equalizerController.scrollPane.setOpacity(1);
             clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
             clip.setWidth(playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
+
+            equalizerController.presetsButton.scrollPane.setVvalue(0);
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);

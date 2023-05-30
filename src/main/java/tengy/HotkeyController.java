@@ -1,14 +1,17 @@
 package tengy;
 
+import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import tengy.Menu.ExpandableTextArea;
+import tengy.Menu.FocusableMenuButton;
+import tengy.Menu.MenuState;
+import tengy.Menu.Queue.QueueItem;
+import tengy.Menu.Settings.Action;
 import tengy.PlaybackSettings.*;
 import tengy.Subtitles.SubtitlesOptionsTab;
 import tengy.Subtitles.SubtitlesState;
-import tengy.Menu.ExpandableTextArea;
-import tengy.Menu.Settings.Action;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import org.controlsfx.control.CheckComboBox;
 import tengy.Subtitles.SubtitlesTab;
 import tengy.Windows.WindowState;
 
@@ -127,18 +130,16 @@ public class HotkeyController {
 
     public void handleKeyPress(KeyEvent event){
 
-        if(event.getCode() == KeyCode.ESCAPE){
-            mainController.pressESCAPE();
-            return;
-        }
-        else if(event.getCode() == KeyCode.F11){
-            mainController.FULLSCREENAction();
-            return;
-        }
-
-
         // universal keybinds that the user cant change
         switch (event.getCode()){
+            case ESCAPE -> {
+                mainController.pressESCAPE();
+                return;
+            }
+            case F11 -> {
+                mainController.FULLSCREENAction();
+                return;
+            }
             case TAB -> {
                 mainController.pressTAB(event);
                 return;
@@ -183,7 +184,6 @@ public class HotkeyController {
         }
 
 
-
         if(        !(event.getTarget() instanceof ExpandableTextArea)
                 && !(event.getTarget() instanceof TextField)
                 && !(event.getTarget() instanceof DatePicker)
@@ -191,17 +191,12 @@ public class HotkeyController {
 
             if(event.getCode() == KeyCode.SPACE){
                 if(mainController.subtitlesController.subtitlesState != SubtitlesState.CLOSED || mainController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED || mainController.windowController.windowState != WindowState.CLOSED){
-                    if(event.getTarget() instanceof CheckComboBox<?> && mainController.subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN){
-                        mainController.subtitlesController.openSubtitlesPane.languageBox.show();
-                        event.consume();
+                    if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox || event.getTarget() instanceof MultiSelectButton || event.getTarget() instanceof PresetsButton || event.getTarget() instanceof PlaybackOptionsTab){
                         return;
                     }
-                    else if(event.getTarget() instanceof ComboBox<?> && mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.EQUALIZER_OPEN){
-                        mainController.playbackSettingsController.equalizerController.comboBox.show();
-                        event.consume();
-                        return;
-                    }
-                    else if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox){
+                }
+                else if(mainController.getMenuController().menuState != MenuState.CLOSED) {
+                    if (event.getTarget() instanceof FocusableMenuButton || event.getTarget() instanceof QueueItem || event.getTarget() instanceof CheckBox) {
                         return;
                     }
                 }

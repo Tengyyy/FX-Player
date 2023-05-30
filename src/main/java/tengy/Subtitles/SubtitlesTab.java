@@ -90,6 +90,8 @@ public class SubtitlesTab extends HBox {
 
             pressed = true;
             this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+
+            e.consume();
         });
 
         this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
@@ -99,6 +101,8 @@ public class SubtitlesTab extends HBox {
 
             pressed = false;
             this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+
+            e.consume();
         });
 
         checkIconPane.setMinSize(30, 35);
@@ -131,9 +135,7 @@ public class SubtitlesTab extends HBox {
             removeButton.setPrefSize(35, 35);
             removeButton.setMaxSize(35, 35);
             removeButton.setGraphic(removeIcon);
-            removeButton.setOnAction(e -> {
-                removeItem();
-            });
+            removeButton.setOnAction(e -> removeItem());
             removeButton.setFocusTraversable(false);
             removeButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
             removeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {

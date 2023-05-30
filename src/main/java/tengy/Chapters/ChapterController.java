@@ -89,7 +89,7 @@ public class ChapterController {
 
         chapterLabelBox.setOnMouseClicked(e -> {
 
-            if (mainController.getSettingsController().playbackSettingsState != PlaybackSettingsState.CLOSED) mainController.getSettingsController().closeSettings();
+            if (mainController.getPlaybackSettingsController().playbackSettingsState != PlaybackSettingsState.CLOSED) mainController.getPlaybackSettingsController().closeSettings();
             if (mainController.getSubtitlesController().subtitlesState != SubtitlesState.CLOSED) mainController.getSubtitlesController().closeSubtitles();
 
             chapterPage.enter();

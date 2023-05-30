@@ -3,6 +3,7 @@ package tengy;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
 import javafx.css.PseudoClass;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import tengy.MediaItems.MediaItem;
@@ -320,5 +321,29 @@ public class Utilities {
         double y = node.getBoundsInParent().getMinY();
 
         scrollPane.setVvalue(y/(heightScrollPane-heightViewPort));
+    }
+
+    public static void setScrollToNodeBottom(ScrollPane scrollPane, Node node){
+        double heightViewPort = scrollPane.getViewportBounds().getHeight();
+        double heightScrollPane = scrollPane.getContent().getBoundsInLocal().getHeight();
+        double y = node.getBoundsInParent().getMaxY();
+
+        scrollPane.setVvalue((y - (heightViewPort))/(heightScrollPane-heightViewPort));
+    }
+
+    public static void checkScrollDown(ScrollPane scrollPane, Node node){
+
+        Bounds scrollpaneBounds = scrollPane.localToScene(scrollPane.getBoundsInLocal());
+        Bounds nodeBounds = node.localToScene(node.getBoundsInLocal());
+
+        if(nodeBounds.getMaxY() > scrollpaneBounds.getMaxY() || nodeBounds.getMinY() < scrollpaneBounds.getMinY()) setScrollToNodeTop(scrollPane, node);
+    }
+
+    public static void checkScrollUp(ScrollPane scrollPane, Node node){
+
+        Bounds scrollpaneBounds = scrollPane.localToScene(scrollPane.getBoundsInLocal());
+        Bounds nodeBounds = node.localToScene(node.getBoundsInLocal());
+
+        if(nodeBounds.getMinY() < scrollpaneBounds.getMinY() || nodeBounds.getMaxY() > scrollpaneBounds.getMaxY()) setScrollToNodeBottom(scrollPane, node);
     }
 }

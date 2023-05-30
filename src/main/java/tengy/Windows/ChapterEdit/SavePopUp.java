@@ -166,6 +166,7 @@ public class SavePopUp extends StackPane{
         this.setVisible(true);
 
         chapterEditWindow.popupContainer.setMouseTransparent(false);
+        this.requestFocus();
         AnimationsClass.fadeAnimation(100, chapterEditWindow.popupContainer, 0 , 1, false, 1, true);
     }
 
@@ -173,6 +174,8 @@ public class SavePopUp extends StackPane{
         this.showing = false;
 
         chapterEditWindow.popupContainer.setMouseTransparent(true);
+
+        chapterEditWindow.window.requestFocus();
 
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(100),chapterEditWindow.popupContainer);
         fadeTransition.setFromValue(chapterEditWindow.popupContainer.getOpacity());

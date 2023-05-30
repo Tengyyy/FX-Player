@@ -1,7 +1,10 @@
 package tengy.Menu;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
@@ -9,6 +12,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MusicLibraryPage {
 
@@ -20,6 +26,9 @@ public class MusicLibraryPage {
     VBox musicLibraryContent = new VBox();
 
     public Label musicLibraryTitle = new Label("Music");
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
     MusicLibraryPage(MenuController menuController){
 
@@ -89,5 +98,11 @@ public class MusicLibraryPage {
             if(!menuController.extended.get()) menuController.extendMenu(MenuState.MUSIC_LIBRARY_OPEN);
             else menuController.animateStateSwitch(MenuState.MUSIC_LIBRARY_OPEN);
         }
+    }
+
+    public void focusForward() {
+    }
+
+    public void focusBackward() {
     }
 }

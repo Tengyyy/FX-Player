@@ -285,7 +285,7 @@ public class LineSpacingPane {
 
         keyboardFocusOn(focusNodes.get(newFocus));
         if(newFocus == 0) scrollPane.setVvalue(0);
-        else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
+        else Utilities.checkScrollDown(scrollPane, focusNodes.get(newFocus));
     }
 
     public void focusBackward() {
@@ -297,7 +297,7 @@ public class LineSpacingPane {
 
         keyboardFocusOn(focusNodes.get(newFocus));
         if(newFocus == 0) scrollPane.setVvalue(0);
-        else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
+        else Utilities.checkScrollUp(scrollPane, focusNodes.get(newFocus));
     }
 
 }

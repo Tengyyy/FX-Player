@@ -386,8 +386,8 @@ public class SubtitlesHome {
         if(newFocus == 0) scrollPane.setVvalue(0);
         else {
             Node node = focusNodes.get(newFocus);
-            if(node instanceof Button) Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus - 1));
-            else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
+            if(node instanceof Button) Utilities.checkScrollDown(scrollPane, focusNodes.get(newFocus - 1));
+            else Utilities.checkScrollDown(scrollPane, focusNodes.get(newFocus));
         }
     }
 
@@ -402,8 +402,8 @@ public class SubtitlesHome {
         if(newFocus == 0) scrollPane.setVvalue(0);
         else {
             Node node = focusNodes.get(newFocus);
-            if(node instanceof Button) Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus - 1));
-            else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
+            if(node instanceof Button) Utilities.checkScrollUp(scrollPane, focusNodes.get(newFocus - 1));
+            else Utilities.checkScrollUp(scrollPane, focusNodes.get(newFocus));
         }
     }
 

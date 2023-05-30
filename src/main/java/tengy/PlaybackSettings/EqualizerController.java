@@ -42,7 +42,7 @@ public class EqualizerController {
 
     HBox titleLabelWrapper = new HBox();
     Label titleLabel = new Label();
-    public ComboBox<String> comboBox = new ComboBox<>();
+    public PresetsButton presetsButton = new PresetsButton();
 
 
     HBox sliderBox = new HBox();
@@ -142,7 +142,7 @@ public class EqualizerController {
         VBox.setMargin(titleBox, new Insets(0, 0, 10, 0));
 
         titleBox.getStyleClass().add("settingsPaneTitle");
-        titleBox.getChildren().addAll(titleLabelWrapper, comboBox);
+        titleBox.getChildren().addAll(titleLabelWrapper, presetsButton);
         titleBox.setAlignment(Pos.CENTER_LEFT);
 
         backButton.setMinSize(30, 40);
@@ -188,24 +188,20 @@ public class EqualizerController {
         titleLabel.setPadding(new Insets(0, 0, 0, 4));
 
 
-        StackPane.setAlignment(comboBox, Pos.CENTER_RIGHT);
-        comboBox.getItems().addAll("Flat", "Classical", "Club", "Dance", "Full bass", "Full treble", "Headphones", "Large hall", "Live", "Party", "Pop", "Rock", "Soft", "Techno", "Custom");
-        comboBox.setPrefSize(150, 35);
-        comboBox.setMaxSize(150, 35);
-        comboBox.setVisibleRowCount(5);
-        comboBox.setId("equalizerCombo");
-        comboBox.setFocusTraversable(false);
-        comboBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+        StackPane.setAlignment(presetsButton, Pos.CENTER_RIGHT);
+        presetsButton.addAll("Flat", "Classical", "Club", "Dance", "Full bass", "Full treble", "Headphones", "Large hall", "Live", "Party", "Pop", "Rock", "Soft", "Techno", "Custom");
+
+        presetsButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 focus.set(1);
             }
             else {
-                keyboardFocusOff(comboBox);
+                keyboardFocusOff(presetsButton);
                 focus.set(-1);
             }
         });
 
-        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+        presetsButton.valueProperty().addListener((observableValue, oldValue, newValue) -> {
             switch(newValue){
                 case "Flat" -> applyPreset(flatEQ, FLAT);
                 case "Classical" -> applyPreset(classicalEQ, CLASSICAL);
@@ -225,25 +221,10 @@ public class EqualizerController {
             }
         });
 
-        comboBox.setOnMouseEntered(e -> comboBox.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), true));
-        comboBox.setOnMouseExited(e -> comboBox.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), false));
-
-        comboBox.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-            if(e.getCode() != KeyCode.SPACE) return;
-
-            comboBox.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
-        });
-
-        comboBox.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
-            if(e.getCode() != KeyCode.SPACE) return;
-
-            comboBox.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
-        });
-
 
 
         focusNodes.add(backButton);
-        focusNodes.add(comboBox);
+        focusNodes.add(presetsButton);
 
 
         sliderBox.setPrefSize(535, 200);
@@ -305,8 +286,11 @@ public class EqualizerController {
             moveSlidersTogether = newValue;
             playbackSettingsController.mainController.pref.preferences.putBoolean(EQUALIZER_MOVE_SLIDERS_TOGETHER, moveSlidersTogether);
         });
+
         checkbox.setFocusTraversable(false);
         checkbox.setCursor(Cursor.HAND);
+
+        checkbox.setOnMouseClicked(e -> checkbox.requestFocus());
 
         checkbox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue) focus.set(12);
@@ -370,6 +354,8 @@ public class EqualizerController {
             scrollPane.setVisible(false);
             scrollPane.setMouseTransparent(true);
             scrollPane.setTranslateX(0);
+
+            presetsButton.scrollPane.setVvalue(0);
         });
 
         parallelTransition.play();
@@ -381,21 +367,21 @@ public class EqualizerController {
         String preset = playbackSettingsController.mainController.pref.preferences.get(EQUALIZER_PRESET, FLAT);
 
         switch(preset){
-            case FLAT -> comboBox.setValue("Flat");
-            case CLASSICAL -> comboBox.setValue("Classical");
-            case CLUB -> comboBox.setValue("Club");
-            case DANCE -> comboBox.setValue("Dance");
-            case FULL_BASS -> comboBox.setValue("Full bass");
-            case FULL_TREBLE -> comboBox.setValue("Full treble");
-            case HEADPHONES -> comboBox.setValue("Headphones");
-            case LARGE_HALL -> comboBox.setValue("Large hall");
-            case LIVE -> comboBox.setValue("Live");
-            case PARTY -> comboBox.setValue("Party");
-            case POP -> comboBox.setValue("Pop");
-            case ROCK -> comboBox.setValue("Rock");
-            case SOFT -> comboBox.setValue("Soft");
-            case TECHNO -> comboBox.setValue("Techno");
-            case CUSTOM -> comboBox.setValue("Custom");
+            case FLAT -> presetsButton.setValue("Flat");
+            case CLASSICAL -> presetsButton.setValue("Classical");
+            case CLUB -> presetsButton.setValue("Club");
+            case DANCE -> presetsButton.setValue("Dance");
+            case FULL_BASS -> presetsButton.setValue("Full bass");
+            case FULL_TREBLE -> presetsButton.setValue("Full treble");
+            case HEADPHONES -> presetsButton.setValue("Headphones");
+            case LARGE_HALL -> presetsButton.setValue("Large hall");
+            case LIVE -> presetsButton.setValue("Live");
+            case PARTY -> presetsButton.setValue("Party");
+            case POP -> presetsButton.setValue("Pop");
+            case ROCK -> presetsButton.setValue("Rock");
+            case SOFT -> presetsButton.setValue("Soft");
+            case TECHNO -> presetsButton.setValue("Techno");
+            case CUSTOM -> presetsButton.setValue("Custom");
         }
         if(preset.equals(CUSTOM)) {
             double[] amps = {

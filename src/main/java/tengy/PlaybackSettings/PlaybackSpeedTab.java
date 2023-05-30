@@ -97,6 +97,8 @@ public class PlaybackSpeedTab extends HBox {
 
             pressed = true;
             this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+
+            e.consume();
         });
 
         this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
@@ -108,6 +110,8 @@ public class PlaybackSpeedTab extends HBox {
 
             pressed = false;
             this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+
+            e.consume();
         });
 
         if(isCustom){

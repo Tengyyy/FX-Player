@@ -247,7 +247,7 @@ public class PlaybackSpeedPane{
         keyboardFocusOn(focusNodes.get(newFocus));
 
         if(newFocus == 0 || newFocus == 1) scrollPane.setVvalue(0);
-        else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
+        else Utilities.checkScrollDown(scrollPane, focusNodes.get(newFocus));
     }
 
     public void focusBackward() {
@@ -260,6 +260,7 @@ public class PlaybackSpeedPane{
         keyboardFocusOn(focusNodes.get(newFocus));
 
         if(newFocus == 0 || newFocus == 1) scrollPane.setVvalue(0);
-        else Utilities.setScrollToNodeMiddle(scrollPane, focusNodes.get(newFocus));
+        else if(newFocus == focusNodes.size() - 1) scrollPane.setVvalue(1);
+        else Utilities.checkScrollUp(scrollPane, focusNodes.get(newFocus));
     }
 }

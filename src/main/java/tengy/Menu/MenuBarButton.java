@@ -1,5 +1,8 @@
 package tengy.Menu;
 
+import javafx.css.PseudoClass;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tengy.ControlTooltip;
 import tengy.TooltipType;
 import javafx.animation.Animation;
@@ -16,12 +19,14 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
 
+import static tengy.Utilities.keyboardFocusOff;
+
 
 public class MenuBarButton extends StackPane {
 
     MenuController menuController;
 
-    Button button = new Button();
+    Button button = new FocusableMenuButton();
     Line line = new Line();
 
     SVGPath svgPath = new SVGPath();
@@ -35,9 +40,12 @@ public class MenuBarButton extends StackPane {
 
     public ControlTooltip controlTooltip;
 
-    MenuBarButton(MenuController menuController, String svg, int iconWidth, int iconHeight, String text){
+    MenuBar menuBar;
+
+    MenuBarButton(MenuController menuController, MenuBar menuBar, String svg, int iconWidth, int iconHeight, String text){
 
         this.menuController = menuController;
+        this.menuBar = menuBar;
 
         this.text = text;
 
@@ -48,10 +56,28 @@ public class MenuBarButton extends StackPane {
 
         button.setPrefSize(40, 40);
         button.setMaxSize(40, 40);
-        button.setCursor(Cursor.HAND);
         button.getStyleClass().add("menuBarButton");
         button.setAlignment(Pos.CENTER_LEFT);
         button.setGraphicTextGap(20);
+        button.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                menuBar.focus.set(menuBar.focusNodes.indexOf(button));
+            }
+            else{
+                keyboardFocusOff(button);
+                menuBar.focus.set(-1);
+            }
+        });
+
+        button.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            button.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        button.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            button.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         svgPath.setContent(svg);
         region.setShape(svgPath);
@@ -69,6 +95,7 @@ public class MenuBarButton extends StackPane {
         line.setStartY(20);
         line.setEndY(30);
         line.setScaleY(0);
+        line.setTranslateX(1);
     }
 
 

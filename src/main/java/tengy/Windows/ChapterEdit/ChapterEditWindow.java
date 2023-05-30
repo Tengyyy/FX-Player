@@ -166,7 +166,10 @@ public class ChapterEditWindow {
         addButton.getStyleClass().add("menuButton");
         addButton.setText("Add chapter");
         addButton.setFocusTraversable(false);
-        addButton.setOnAction(e -> createChapter());
+        addButton.setOnAction(e -> {
+            addButton.requestFocus();
+            createChapter();
+        });
         addButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue) {
                 if(mainButton.isDisabled()) focus.set(focusNodes.size() - 1);
@@ -235,6 +238,7 @@ public class ChapterEditWindow {
         mainButton.disableProperty().bind(saveAllowed.not());
         mainButton.setFocusTraversable(false);
         mainButton.setOnAction(e -> {
+            mainButton.requestFocus();
             boolean timestampsCorrect = checkFields();
             if(timestampsCorrect) saveChanges();
             else {
@@ -494,7 +498,7 @@ public class ChapterEditWindow {
 
         if(focusNodes.get(newFocus) instanceof ChapterEditItem chapterEditItem){
             keyboardFocusOn(chapterEditItem.titleField);
-            Utilities.setScrollToNodeMiddle(scrollPane, chapterEditItem);
+            Utilities.checkScrollDown(scrollPane, chapterEditItem);
             focus.set(newFocus);
         }
         else{
@@ -525,7 +529,7 @@ public class ChapterEditWindow {
 
         if(focusNodes.get(newFocus) instanceof ChapterEditItem chapterEditItem) {
             keyboardFocusOn(chapterEditItem.removeButton);
-            Utilities.setScrollToNodeMiddle(scrollPane, chapterEditItem);
+            Utilities.checkScrollUp(scrollPane, chapterEditItem);
             focus.set(newFocus);
         }
         else {

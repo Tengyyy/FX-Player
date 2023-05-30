@@ -65,8 +65,8 @@ public class EqualizerSlider {
         slider.valueChangingProperty().addListener((observableValue, oldValue, newValue) -> {
             equalizerController.sliderActive = newValue;
 
-            if(equalizerController.comboBox.getValue() == null || !equalizerController.comboBox.getValue().equals("Custom")){
-                equalizerController.comboBox.setValue("Custom");
+            if(equalizerController.presetsButton.getValue() == null || !equalizerController.presetsButton.getValue().equals("Custom")){
+                equalizerController.presetsButton.setValue("Custom");
             }
 
             if(!newValue){

@@ -163,7 +163,10 @@ public class CloseConfirmationWindow {
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(155);
         mainButton.setFocusTraversable(false);
-        mainButton.setOnAction(e -> mainController.closeApp());
+        mainButton.setOnAction(e -> {
+            mainButton.requestFocus();
+            mainController.closeApp();
+        });
         mainButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             if(e.getCode() != KeyCode.SPACE) return;
             mainButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);

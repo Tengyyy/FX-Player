@@ -1,27 +1,22 @@
 package tengy.Menu.Queue;
 
 
-import com.jfoenix.controls.JFXButton;
-import tengy.*;
-import tengy.Subtitles.SubtitlesState;
-import tengy.MediaItems.MediaItem;
-import tengy.Menu.Columns;
-import tengy.Menu.MenuController;
-import tengy.Menu.QueueItemContextMenu;
-import tengy.PlaybackSettings.PlaybackSettingsState;
-import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.animation.Transition;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.css.PseudoClass;
+import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -30,11 +25,23 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import tengy.*;
+import tengy.MediaItems.MediaItem;
+import tengy.Menu.Columns;
+import tengy.Menu.FocusableMenuButton;
+import tengy.Menu.MenuController;
+import tengy.PlaybackSettings.PlaybackSettingsState;
+import tengy.Subtitles.SubtitlesState;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
 public class QueueItem extends GridPane {
 
@@ -53,20 +60,17 @@ public class QueueItem extends GridPane {
 
     VBox textWrapper = new VBox();
 
-    public JFXButton optionsButton = new JFXButton();
-
-    public JFXButton removeButton = new JFXButton();
+    public FocusableMenuButton optionsButton = new FocusableMenuButton();
+    public FocusableMenuButton removeButton = new FocusableMenuButton();
 
     MenuController menuController;
 
-    Region optionsIcon;
+    Region optionsIcon = new Region();
 
     ImageView coverImage = new ImageView();
 
-    Region removeIcon;
+    Region removeIcon = new Region();
 
-    StackPane removeButtonWrapper = new StackPane();
-    StackPane optionsButtonWrapper = new StackPane();
     StackPane imageContainer = new StackPane();
     StackPane imageWrapper = new StackPane();
     SVGPath imageSVG = new SVGPath();
@@ -76,7 +80,7 @@ public class QueueItem extends GridPane {
 
     StackPane indexPane = new StackPane();
     public Label indexLabel = new Label();
-    public MFXCheckbox checkbox = new MFXCheckbox();
+    public CheckBox checkbox = new CheckBox();
 
     public Columns columns = new Columns();
 
@@ -89,7 +93,6 @@ public class QueueItem extends GridPane {
 
     SVGPath playSVG = new SVGPath(), removeSVG = new SVGPath(), optionsSVG = new SVGPath(), pauseSVG = new SVGPath(), captionsSVG = new SVGPath();
 
-    //TODO: incorporate activeitemcontextmenu to this
     public QueueItemContextMenu menuItemContextMenu;
 
     MediaInterface mediaInterface;
@@ -107,6 +110,12 @@ public class QueueItem extends GridPane {
 
     QueueBox queueBox;
     public QueuePage queuePage;
+
+    public IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
+
+    boolean pressed = false;
+    boolean removePressed = false;
 
 
     public QueueItem(File file, QueuePage queuePage, MenuController menuController, MediaInterface mediaInterface, double initialHeight) {
@@ -182,25 +191,26 @@ public class QueueItem extends GridPane {
         GridPane.setValignment(indexPane, VPos.CENTER);
         GridPane.setValignment(imageContainer, VPos.CENTER);
         GridPane.setValignment(textWrapper, VPos.CENTER);
-        GridPane.setValignment(removeButtonWrapper, VPos.CENTER);
-        GridPane.setValignment(optionsButtonWrapper, VPos.CENTER);
+        GridPane.setValignment(removeButton, VPos.CENTER);
+        GridPane.setValignment(optionsButton, VPos.CENTER);
 
         GridPane.setHalignment(indexPane, HPos.CENTER);
         GridPane.setHalignment(imageContainer, HPos.CENTER);
         GridPane.setHalignment(textWrapper, HPos.LEFT);
-        GridPane.setHalignment(optionsButtonWrapper, HPos.CENTER);
-        GridPane.setHalignment(removeButtonWrapper, HPos.CENTER);
+        GridPane.setHalignment(removeButton, HPos.CENTER);
+        GridPane.setHalignment(optionsButton, HPos.CENTER);
 
         this.getStyleClass().add("queueItem");
         this.setOpacity(0);
         this.setMinHeight(initialHeight);
         this.setMaxHeight(initialHeight);
+        this.setFocusTraversable(false);
 
         Rectangle rectangle = new Rectangle();
-        this.setClip(rectangle);
         rectangle.widthProperty().bind(this.widthProperty());
         rectangle.heightProperty().bind(this.heightProperty());
 
+        this.setClip(rectangle);
 
         playSVG.setContent(SVG.PLAY.getContent());
         removeSVG.setContent(SVG.REMOVE.getContent());
@@ -218,12 +228,66 @@ public class QueueItem extends GridPane {
         indexLabel.setMouseTransparent(true);
         StackPane.setAlignment(indexLabel, Pos.CENTER);
 
+        focus.addListener((observableValue, oldValue, newValue) -> {
+            if(newValue.intValue() != -1){
+                checkbox.setVisible(true);
+                columns.setVisible(false);
+                indexLabel.setVisible(false);
+
+                focusOn();
+
+                queuePage.focus.set(queuePage.focusNodes.indexOf(queueBox));
+            }
+            else {
+                if(!mouseHover && !queuePage.selectionActive.get()){
+                    checkbox.setVisible(false);
+
+                    if(isActive.get()) columns.setVisible(true);
+                    else indexLabel.setVisible(true);
+                }
+
+                queuePage.focus.set(-1);
+
+                focusOff();
+            }
+        });
+
         checkbox.setPrefSize(23, 23);
         checkbox.setVisible(false);
-        checkbox.setText(null);
-        checkbox.setContentDisposition(ContentDisplay.CENTER);
-        checkbox.setTextExpand(false);
+        checkbox.setFocusTraversable(false);
+        checkbox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(1);
+                queueBox.focusedItem.set(this);
+            }
+            else {
+                keyboardFocusOff(checkbox);
+                focus.set(-1);
+                queueBox.focusedItem.set(null);
+            }
+        });
+
+
+        checkbox.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            checkbox.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        checkbox.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            checkbox.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        checkbox.setOnMousePressed(e -> {
+            checkbox.requestFocus();
+
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
         checkbox.setOnAction(e -> {
+
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
         });
@@ -320,31 +384,75 @@ public class QueueItem extends GridPane {
 
         removeButton.setPrefWidth(30);
         removeButton.setPrefHeight(30);
-        removeButton.setRipplerFill(Color.WHITE);
         removeButton.getStyleClass().add("roundButton");
-        removeButton.setCursor(Cursor.HAND);
-        removeButton.setOpacity(0);
-        removeButton.setText(null);
+        removeButton.setGraphic(removeIcon);
+        removeButton.setOnMousePressed(e -> {
+            removeButton.requestFocus();
 
-        removeIcon = new Region();
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        removeButton.setOnAction((e) -> removeAction());
+
+        removeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(2);
+                queueBox.focusedItem.set(this);
+            }
+            else{
+                keyboardFocusOff(removeButton);
+                focus.set(-1);
+                queueBox.focusedItem.set(null);
+                removePressed = false;
+            }
+        });
+
+        removeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+
+            removePressed = true;
+
+            e.consume();
+        });
+
+        removeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+
+            if(removePressed){
+
+                int index = videoIndex;
+
+                removeAction();
+
+                if(queueBox.queueOrder.size() > index)
+                    queueBox.queue.get(queueBox.queueOrder.get(index)).removeButton.requestFocus();
+                else if(index > 0)
+                    queueBox.queue.get(queueBox.queueOrder.get(index - 1)).removeButton.requestFocus();
+            }
+
+            e.consume();
+        });
+
         removeIcon.setShape(removeSVG);
         removeIcon.setMinSize(15, 15);
         removeIcon.setPrefSize(15, 15);
         removeIcon.setMaxSize(15, 15);
-        removeIcon.setMouseTransparent(true);
-        removeIcon.getStyleClass().add("menuIcon");
-
-        removeButtonWrapper.getChildren().addAll(removeButton, removeIcon);
+        removeIcon.getStyleClass().addAll("menuIcon", "graphic");
 
         optionsButton.setPrefWidth(30);
         optionsButton.setPrefHeight(30);
-        optionsButton.setRipplerFill(Color.WHITE);
         optionsButton.getStyleClass().add("roundButton");
-        optionsButton.setCursor(Cursor.HAND);
-        optionsButton.setOpacity(0);
-        optionsButton.setText(null);
+        optionsButton.setGraphic(optionsIcon);
+
+        optionsButton.setOnMousePressed(e -> {
+            optionsButton.requestFocus();
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
         optionsButton.setOnAction((e) -> {
+
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
@@ -354,7 +462,79 @@ public class QueueItem extends GridPane {
             else menuItemContextMenu.showOptions(true);
         });
 
+        optionsButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(3);
+                queueBox.focusedItem.set(this);
+            }
+            else{
+                keyboardFocusOff(optionsButton);
+                focus.set(-1);
+                queueBox.focusedItem.set(null);
+            }
+        });
+
+        optionsButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            optionsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        optionsButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            optionsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        optionsIcon.setShape(optionsSVG);
+        optionsIcon.setMinSize(4, 17);
+        optionsIcon.setPrefSize(4, 17);
+        optionsIcon.setMaxSize(4, 17);
+        optionsIcon.getStyleClass().addAll("menuIcon", "graphic");
+
+        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(0);
+                queueBox.focusedItem.set(this);
+            }
+            else {
+                keyboardFocusOff(this);
+                focus.set(-1);
+                queueBox.focusedItem.set(null);
+            }
+        });
+
+        this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+
+            pressed = true;
+
+            e.consume();
+        });
+
+        this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+
+            if(pressed){
+                if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+                if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
+
+                if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
+                else {
+                    if(!queuePage.selectionActive.get() && !isActive.get()) play();
+                    else if(queuePage.selectionActive.get()) checkbox.fire();
+                }
+            }
+
+            pressed = false;
+
+            e.consume();
+        });
+
+
         this.setOnMouseClicked(e -> {
+            this.requestFocus();
+
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
@@ -365,22 +545,11 @@ public class QueueItem extends GridPane {
             }
         });
 
-        optionsIcon = new Region();
-        optionsIcon.setShape(optionsSVG);
-        optionsIcon.setMinSize(4, 17);
-        optionsIcon.setPrefSize(4, 17);
-        optionsIcon.setMaxSize(4, 17);
-        optionsIcon.setMouseTransparent(true);
-        optionsIcon.getStyleClass().add("menuIcon");
-
-        optionsButtonWrapper.getChildren().addAll(optionsButton, optionsIcon);
-
-
         this.add(indexPane, 0, 0);
         this.add(imageContainer, 1, 0);
         this.add(textWrapper, 2, 0);
-        this.add(removeButtonWrapper, 3, 0);
-        this.add(optionsButtonWrapper, 4, 0);
+        this.add(removeButton, 3, 0);
+        this.add(optionsButton, 4, 0);
 
         if(!menuController.extended.get()) this.setPadding(new Insets(0, 10, 0, 0));
         else applyRoundStyling();
@@ -389,8 +558,6 @@ public class QueueItem extends GridPane {
 
         this.setOnMouseEntered((e) -> {
             mouseHover = true;
-
-            this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
 
             checkbox.setVisible(true);
             indexLabel.setVisible(false);
@@ -402,11 +569,7 @@ public class QueueItem extends GridPane {
 
             if(menuItemContextMenu != null && menuItemContextMenu.showing) return;
 
-            if(isSelected.get()) this.setStyle("-fx-background-color: rgba(90,90,90,0.6);");
-            else if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-            else this.setStyle("-fx-background-color: transparent;");
-
-            if(!queuePage.selectionActive.get()){
+            if(!queuePage.selectionActive.get() && focus.get() == -1){
                 checkbox.setVisible(false);
                 if(isActive.get()) columns.setVisible(true);
                 else indexLabel.setVisible(true);
@@ -424,6 +587,8 @@ public class QueueItem extends GridPane {
         });
 
         this.setOnDragDetected(e -> {
+
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
 
             queueBox.dropPositionController.updatePosition(this.videoIndex);
 
@@ -490,24 +655,11 @@ public class QueueItem extends GridPane {
             queueBox.itemDragActive.set(false);
             queueBox.dropPositionController.updatePosition(Integer.MAX_VALUE);
         });
-
-        optionsButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, optionsButton, 0, 1, false, 1, true));
-
-        optionsButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, optionsButton, 1, 0, false, 1, true));
-
-        removeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 0, 1, false, 1, true));
-
-        removeButton.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> AnimationsClass.fadeAnimation(200, removeButton, 1, 0, false, 1, true));
-
-        removeButton.setOnAction((e) -> {
-
-            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
-            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
-
-
-            if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
-            remove();
-        });
+        
+        focusNodes.add(this);
+        focusNodes.add(checkbox);
+        focusNodes.add(removeButton);
+        focusNodes.add(optionsButton);
     }
 
     public void remove() {
@@ -606,8 +758,6 @@ public class QueueItem extends GridPane {
 
 
 
-
-
     public void updateIndex(int i){
         videoIndex = i;
         indexLabel.setText(String.valueOf(videoIndex + 1));
@@ -649,11 +799,6 @@ public class QueueItem extends GridPane {
     public String getTitle() {
         return videoTitle.getText();
     }
-
-    public boolean getHover() {
-        return mouseHover;
-    }
-
 
     public void playNext(){
         QueueItem newItem;
@@ -725,38 +870,35 @@ public class QueueItem extends GridPane {
         indexLabel.setVisible(false);
         imageBorder.setVisible(true);
 
-        if(!mouseHover) {
-            this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-            if(!queuePage.selectionActive.get()) columns.setVisible(true);
-        }
+        activeOn();
+
+        if(!mouseHover && focus.get() == -1 && !queuePage.selectionActive.get())
+            columns.setVisible(true);
     }
 
     public void setInactive(){
         isActive.set(false);
 
-
         columns.setVisible(false);
         columns.pause();
         imageBorder.setVisible(false);
 
-        if(!mouseHover) {
-            if(!queuePage.selectionActive.get()) indexLabel.setVisible(true);
-            this.setStyle("-fx-background-color: transparent;");
-        }
+        activeOff();
+
+        if(!mouseHover && focus.get() == -1 && !queuePage.selectionActive.get())
+            indexLabel.setVisible(true);
     }
 
     public void select(){
         queuePage.selectedItems.add(this);
 
-        if(!mouseHover) this.setStyle("-fx-background-color: rgba(90,90,90,0.6);");
+        selectedOn();
     }
 
     public void unselect(){
         queuePage.selectedItems.remove(this);
 
-        if(mouseHover) this.setStyle("-fx-background-color: rgba(70,70,70,0.6);");
-        else if(isActive.get()) this.setStyle("-fx-background-color: rgba(50,50,50,0.6);");
-        else this.setStyle("-fx-background-color: transparent;");
+        selectedOff();
     }
 
     public void updateHeight(){
@@ -778,5 +920,69 @@ public class QueueItem extends GridPane {
         if(mediaItem == null) return;
 
         menuController.mainController.windowController.chapterEditWindow.show(mediaItem);
+    }
+
+    public boolean focusForward(){
+        if(focus.get() >= focusNodes.size() - 1)
+            return true;
+
+        if(focus.get() < 0){
+            keyboardFocusOn(this);
+            Utilities.checkScrollDown(queuePage.queueScroll, this);
+        }
+        else
+            keyboardFocusOn(focusNodes.get(focus.get() + 1));
+
+        return false;
+    }
+
+    public boolean focusBackward(){
+        if(focus.get() == 0)
+         return true;
+
+        if(focus.get() == -1 || focus.get() >= focusNodes.size()){
+            keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
+            Utilities.checkScrollUp(queuePage.queueScroll, this);
+        }
+        else
+            keyboardFocusOn(focusNodes.get(focus.get() - 1));
+
+        return false;
+    }
+
+
+    public void focusOn(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("focus"), true);
+    }
+
+    public void focusOff(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("focus"), false);
+    }
+
+    public void selectedOn(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), true);
+    }
+
+    public void selectedOff(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), false);
+    }
+
+    public void activeOn(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("active"), true);
+    }
+
+    public void activeOff(){
+        this.pseudoClassStateChanged(PseudoClass.getPseudoClass("active"), false);
+    }
+
+    private void removeAction(){
+
+        if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+        if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
+
+
+        if(queuePage.activeQueueItemContextMenu != null && queuePage.activeQueueItemContextMenu.showing) queuePage.activeQueueItemContextMenu.hide();
+
+        remove();
     }
 }

@@ -117,9 +117,9 @@ public class PlaybackOptionsController {
         titleLabel.setOnMouseClicked((e) -> closePlaybackOptions());
         titleLabel.setPadding(new Insets(0, 0, 0, 4));
 
-        shuffleTab = new PlaybackOptionsTab(this, "Shuffle", 1, () -> shuffleTab.toggle.fire());
-        loopTab = new PlaybackOptionsTab(this, "Loop video", 2, () -> loopTab.toggle.fire());
-        autoplayTab = new PlaybackOptionsTab(this, "Autoplay", 3, () -> autoplayTab.toggle.fire());
+        shuffleTab = new PlaybackOptionsTab(this, "Shuffle", 1);
+        loopTab = new PlaybackOptionsTab(this, "Loop video", 2);
+        autoplayTab = new PlaybackOptionsTab(this, "Autoplay", 3);
 
         focusNodes.add(backButton);
         focusNodes.add(shuffleTab);

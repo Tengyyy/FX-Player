@@ -4,7 +4,6 @@ import tengy.AnimationsClass;
 import tengy.ControlTooltip;
 import tengy.MediaItems.MediaUtilities;
 import tengy.Menu.MenuController;
-import tengy.Menu.QueueItemContextMenu;
 import tengy.Utilities;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -48,8 +47,9 @@ public class QueueBox extends VBox {
     public ArrayList<QueueItem> queue = new ArrayList<>();
     public ObservableList<Integer> queueOrder = FXCollections.observableArrayList();
 
-
     public DropPositionController dropPositionController;
+
+    ObjectProperty<QueueItem> focusedItem = new SimpleObjectProperty<>();
 
 
     public QueueBox(MenuController menuController, QueuePage queuePage){
@@ -63,7 +63,6 @@ public class QueueBox extends VBox {
         dropPositionController = new DropPositionController(this);
         VBox.setVgrow(this, Priority.ALWAYS);
         this.setPadding(new Insets(0, 0, 20, 0));
-
 
 
         this.setOnDragEntered(this::handleDragEntered);
@@ -324,9 +323,7 @@ public class QueueBox extends VBox {
         parallelFadeOut.playFromStart();
     }
 
-
     public void handleDragEntered(DragEvent e) {
-
 
         if(draggedNode != null){
             itemDragActive.set(true);
@@ -371,15 +368,12 @@ public class QueueBox extends VBox {
         cancelDragAndDrop();
     }
 
-
     public void cancelDragAndDrop(){
         dragAndDropActive.set(false);
         itemDragActive.set(false);
         dragBoardFiles.clear();
         dragBoardMedia.clear();
     }
-
-
 
     public void initialize(QueueItem queueItem){
         Platform.runLater(() -> {
@@ -413,7 +407,6 @@ public class QueueBox extends VBox {
         for(Node node : this.getChildren()){
             node.setTranslateY(0);
         }
-
 
         ParallelTransition parallelTransition = new ParallelTransition();
         for(QueueItem queueItem : queue){
@@ -525,7 +518,7 @@ public class QueueBox extends VBox {
 
             for (int i = dropPositionController.position; i >= 0; i--) {
 
-                if (queue.get(queueOrder.get(i)) == draggedNode || queuePage.selectedItems.contains(queue.get(queueOrder.get(i))))
+                if (queue.get(queueOrder.get(i)) == draggedNode || (queuePage.selectedItems.contains(queue.get(queueOrder.get(i))) && queuePage.selectedItems.contains(draggedNode)))
                     continue;
 
                 hoverItem = queue.get(queueOrder.get(i));
@@ -535,7 +528,7 @@ public class QueueBox extends VBox {
             }
             if (hoverItem == null) {
                 for (int i = dropPositionController.position; i < queue.size(); i++) {
-                    if (queue.get(queueOrder.get(i)) == draggedNode || queuePage.selectedItems.contains(queue.get(queueOrder.get(i))))
+                    if (queue.get(queueOrder.get(i)) == draggedNode || (queuePage.selectedItems.contains(queue.get(queueOrder.get(i))) && queuePage.selectedItems.contains(draggedNode)))
                         continue;
 
                     hoverItem = queue.get(queueOrder.get(i));
@@ -545,7 +538,6 @@ public class QueueBox extends VBox {
                 }
             }
         }
-
 
         if(queuePage.selectionActive.get() && queuePage.selectedItems.contains(draggedNode)){
             for(QueueItem queueItem : queuePage.selectedItems){
@@ -655,8 +647,6 @@ public class QueueBox extends VBox {
             queueItem.updateHeight();
             queueItem.applyRoundStyling();
         }
-
-
     }
 
     public void shrink(){
@@ -669,5 +659,45 @@ public class QueueBox extends VBox {
             queueItem.removeRoundStyling();
         }
     }
+
+    public boolean focusForward(){
+        if(focusedItem.get() == null)
+            enterFocusStart();
+
+        QueueItem queueItem = focusedItem.get();
+        boolean skipFocus = queueItem.focusForward();
+        if(skipFocus){
+            if(queueItem.videoIndex < queueOrder.size() - 1)
+                queue.get(queueOrder.get(queueItem.videoIndex + 1)).focusForward();
+            else return true;
+        }
+
+        return false;
+    }
+
+    public boolean focusBackward(){
+
+        if(focusedItem.get() == null)
+            enterFocusEnd();
+
+        QueueItem queueItem = focusedItem.get();
+        boolean skipFocus = queueItem.focusBackward();
+        if(skipFocus){
+            if(queueItem.videoIndex > 0)
+                queue.get(queueOrder.get(queueItem.videoIndex - 1)).focusBackward();
+            else return true;
+        }
+
+        return false;
+    }
+
+    public void enterFocusStart(){
+        queue.get(queueOrder.get(0)).focusForward();
+    }
+
+    public void enterFocusEnd(){
+        queue.get(queueOrder.get(queueOrder.size() - 1)).focusBackward();
+    }
+
 
 }

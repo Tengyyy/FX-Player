@@ -278,7 +278,10 @@ public class TimingPane {
         saveButton.getStyleClass().add("menuButton");
         saveButton.setId("timingSaveButton");
         saveButton.setCursor(Cursor.HAND);
-        saveButton.setOnAction(e -> saveToFile());
+        saveButton.setOnAction(e -> {
+            saveButton.requestFocus();
+            saveToFile();
+        });
         saveButton.setDisable(true);
         saveButton.setFocusTraversable(false);
         saveButton.disableProperty().addListener((observableValue, oldValue, newValue) -> {

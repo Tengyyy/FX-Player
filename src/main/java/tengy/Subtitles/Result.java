@@ -104,7 +104,10 @@ public class Result extends HBox {
         downloadButton.setPrefWidth(30);
         downloadButton.setPrefHeight(30);
         downloadButton.getStyleClass().addAll("transparentButton", "settingsMenuButton");
-        downloadButton.setOnAction(e -> downloadFile());
+        downloadButton.setOnAction(e -> {
+            downloadButton.requestFocus();
+            downloadFile();
+        });
         downloadButton.setGraphic(downloadIcon);
         downloadButton.setFocusTraversable(false);
         downloadButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {

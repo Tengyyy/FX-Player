@@ -329,7 +329,10 @@ public class ChapterEditItem extends StackPane {
         removeButton.setPrefSize(30, 30);
         removeButton.setMaxSize(30, 30);
         removeButton.getStyleClass().add("roundButton");
-        removeButton.setOnAction(e -> remove());
+        removeButton.setOnAction(e -> {
+            removeButton.requestFocus();
+            remove();
+        });
         removeButton.setFocusTraversable(false);
         removeButton.setGraphic(removeIcon);
         removeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -378,7 +381,6 @@ public class ChapterEditItem extends StackPane {
                 chapterEditItem.setUneditable();
             }
         }
-
 
 
         chapterEditWindow.chapterEditItems.remove(this);
@@ -449,6 +451,7 @@ public class ChapterEditItem extends StackPane {
         if(focus.get() < 0) newFocus = 0;
         else newFocus = focus.get() + 1;
 
+        Utilities.checkScrollDown(chapterEditWindow.scrollPane, this);
         keyboardFocusOn(focusNodes.get(newFocus));
         return false;
     }
@@ -462,6 +465,7 @@ public class ChapterEditItem extends StackPane {
         if(focus.get() < 0) newFocus = focusNodes.size() -1;
         else newFocus = focus.get() -1;
 
+        Utilities.checkScrollUp(chapterEditWindow.scrollPane, this);
         keyboardFocusOn(focusNodes.get(newFocus));
         return false;
     }

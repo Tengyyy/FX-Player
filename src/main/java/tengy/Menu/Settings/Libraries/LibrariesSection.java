@@ -22,6 +22,7 @@ import tengy.Menu.Settings.SettingsSection;
 import tengy.PlaybackSettings.PlaybackSettingsState;
 import tengy.SVG;
 import tengy.Subtitles.SubtitlesState;
+import tengy.Utilities;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class LibrariesSection extends StackPane implements SettingsSection {
         videoContainer = new LibraryContainer(this, "Video library locations", SVG.VIDEO.getContent(), 2);
 
         musicContainer.header.setStyle("-fx-border-radius: 10 10 3 3; -fx-background-radius: 10 10 3 3;");
-
+        musicContainer.setPadding(new Insets(10, 0, 0, 0));
 
         VBox.setMargin(refreshAllPane, new Insets(15, 0, 0, 0));
         refreshAllPane.getChildren().addAll(wrenchIcon, refreshAllLabel, refreshAllButton);
@@ -219,16 +220,20 @@ public class LibrariesSection extends StackPane implements SettingsSection {
         else if(focus.get() == 2){
             boolean skipFocus = videoContainer.focusForward();
             if(skipFocus){
-                if(focusNodes.size() == 4)
+                if(focusNodes.size() == 4) {
                     keyboardFocusOn(refreshAllButton);
+                    Utilities.checkScrollDown(settingsPage.settingsScroll, refreshAllPane);
+                }
                 else return true;
             }
         }
         else if(focus.get() == 0){
             musicContainer.focusForward();
         }
-        else if(focus.get() == -1)
+        else if(focus.get() == -1) {
             keyboardFocusOn(infoToggle);
+            Utilities.checkScrollDown(settingsPage.settingsScroll, titlePane);
+        }
         else
             return true;
 
@@ -240,7 +245,10 @@ public class LibrariesSection extends StackPane implements SettingsSection {
         if(focus.get() == 0) return true;
         else if(focus.get() == 1){
             boolean skipFocus = musicContainer.focusBackward();
-            if(skipFocus) keyboardFocusOn(infoToggle);
+            if(skipFocus){
+                keyboardFocusOn(infoToggle);
+                Utilities.checkScrollUp(settingsPage.settingsScroll, titlePane);
+            }
         }
         else if(focus.get() == 2){
             boolean skipFocus = videoContainer.focusBackward();
@@ -252,7 +260,10 @@ public class LibrariesSection extends StackPane implements SettingsSection {
         else {
             Node node = focusNodes.get(focusNodes.size() - 1);
             if(node instanceof LibraryContainer) videoContainer.focusBackward();
-            else keyboardFocusOn(refreshAllButton);
+            else {
+                keyboardFocusOn(refreshAllButton);
+                Utilities.checkScrollUp(settingsPage.settingsScroll, refreshAllPane);
+            }
         }
 
         return false;

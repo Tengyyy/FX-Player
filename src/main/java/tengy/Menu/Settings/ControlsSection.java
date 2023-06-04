@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import tengy.Utilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +60,7 @@ public class ControlsSection extends VBox  implements SettingsSection{
         this.getChildren().addAll(titlePane, controlsWrapper, resetBox);
 
         titlePane.getChildren().addAll(title);
-        VBox.setMargin(controlsWrapper, new Insets(10, 0, 0, 0));
+        VBox.setMargin(controlsWrapper, new Insets(20, 0, 0, 0));
         VBox.setMargin(resetBox, new Insets(15, 0, 0, 0));
 
         StackPane.setAlignment(title, Pos.CENTER_LEFT);
@@ -160,7 +161,9 @@ public class ControlsSection extends VBox  implements SettingsSection{
     public boolean focusForward(){
         if(focus.get() == focusNodes.size() - 1) return true;
 
-        keyboardFocusOn(focusNodes.get(focus.get() + 1));
+        Node node = focusNodes.get(focus.get() + 1);
+        keyboardFocusOn(node);
+        Utilities.checkScrollDown(settingsPage.settingsScroll, node);
 
         return false;
     }
@@ -169,8 +172,16 @@ public class ControlsSection extends VBox  implements SettingsSection{
     public boolean focusBackward(){
 
         if(focus.get() == 0) return true;
-        else if(focus.get() == -1) keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
-        else keyboardFocusOn(focusNodes.get(focus.get() - 1));
+        else if(focus.get() == -1){
+            Node node = focusNodes.get(focusNodes.size() - 1);
+            keyboardFocusOn(node);
+            Utilities.checkScrollUp(settingsPage.settingsScroll, node);
+        }
+        else {
+            Node node = focusNodes.get(focus.get() - 1);
+            keyboardFocusOn(node);
+            Utilities.checkScrollUp(settingsPage.settingsScroll, node);
+        }
 
         return false;
     }

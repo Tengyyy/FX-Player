@@ -19,12 +19,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.DirectoryChooser;
-import tengy.AnimationsClass;
-import tengy.ClippedNode;
+import tengy.*;
 import tengy.Menu.FocusableMenuButton;
 import tengy.PlaybackSettings.PlaybackSettingsState;
-import tengy.PressableNode;
-import tengy.SVG;
 import tengy.Subtitles.SubtitlesState;
 
 import java.io.File;
@@ -342,9 +339,11 @@ public class LibraryContainer extends VBox {
 
         if(focus.get() == -1){
             keyboardFocusOn(header);
+            Utilities.checkScrollDown(librariesSection.settingsPage.settingsScroll, header);
         }
         else if(focus.get() == 0){
             keyboardFocusOn(addButton);
+            Utilities.checkScrollDown(librariesSection.settingsPage.settingsScroll, header);
         }
         else if(focus.get() == 1 && focusNodes.size() > 2){
             LibraryItem libraryItem = (LibraryItem) focusNodes.get(2);
@@ -361,10 +360,8 @@ public class LibraryContainer extends VBox {
                 LibraryItem libraryItem = (LibraryItem) focusNodes.get(focus.get());
                 boolean skipFocus = libraryItem.focusForward();
                 if (skipFocus) {
-                    if (focusNodes.get(focus.get() + 1) instanceof LibraryItem libraryItem1) {
-                        libraryItem1.focusForward();
-                    }
-                    else keyboardFocusOn(focusNodes.get(focus.get() + 1));
+                    LibraryItem libraryItem1 = (LibraryItem) focusNodes.get(focus.get() + 1);
+                    libraryItem1.focusForward();
                 }
             }
         }
@@ -379,12 +376,16 @@ public class LibraryContainer extends VBox {
         }
         else if(focus.get() == 1){
             keyboardFocusOn(header);
+            Utilities.checkScrollUp(librariesSection.settingsPage.settingsScroll, header);
         }
         else if(focus.get() == -1){
             Node node = focusNodes.get(focusNodes.size() - 1);
             if(node instanceof LibraryItem libraryItem)
                 libraryItem.focusBackward();
-            else keyboardFocusOn(node);
+            else {
+                keyboardFocusOn(node);
+                Utilities.checkScrollUp(librariesSection.settingsPage.settingsScroll, header);
+            }
         }
         else {
             if(focusNodes.get(focus.get()) instanceof LibraryItem libraryItem){
@@ -394,11 +395,15 @@ public class LibraryContainer extends VBox {
                     if(node instanceof LibraryItem libraryItem1){
                         libraryItem1.focusBackward();
                     }
-                    else keyboardFocusOn(node);
+                    else {
+                        keyboardFocusOn(node);
+                        Utilities.checkScrollUp(librariesSection.settingsPage.settingsScroll, header);
+                    }
                 }
             }
             else{
                 keyboardFocusOn(focusNodes.get(focus.get() - 1));
+                Utilities.checkScrollUp(librariesSection.settingsPage.settingsScroll, header);
             }
         }
 

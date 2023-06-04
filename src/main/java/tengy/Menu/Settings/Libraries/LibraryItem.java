@@ -17,6 +17,7 @@ import tengy.Menu.FocusableMenuButton;
 import tengy.PlaybackSettings.PlaybackSettingsState;
 import tengy.SVG;
 import tengy.Subtitles.SubtitlesState;
+import tengy.Utilities;
 
 import java.io.File;
 
@@ -197,6 +198,9 @@ public class LibraryItem extends StackPane {
         if(refreshButton.isFocused()) keyboardFocusOn(removeButton);
         else keyboardFocusOn(refreshButton);
 
+        Utilities.checkScrollDown(libraryContainer.librariesSection.settingsPage.settingsScroll, this);
+
+
         return false;
     }
 
@@ -205,6 +209,8 @@ public class LibraryItem extends StackPane {
 
         if(removeButton.isFocused()) keyboardFocusOn(refreshButton);
         else keyboardFocusOn(removeButton);
+
+        Utilities.checkScrollUp(libraryContainer.librariesSection.settingsPage.settingsScroll, this);
 
         return false;
     }

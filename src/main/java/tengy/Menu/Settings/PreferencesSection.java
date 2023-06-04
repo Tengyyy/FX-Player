@@ -10,9 +10,11 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import tengy.CustomMenuButton;
 import tengy.PlaybackSettings.PlaybackSettingsState;
 import tengy.SVG;
 import tengy.Subtitles.SubtitlesState;
+import tengy.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,7 +151,11 @@ public class PreferencesSection extends VBox implements SettingsSection{
         if(focus.get() >= focusNodes.size() - 1)
             return true;
 
-        keyboardFocusOn(focusNodes.get(focus.get() + 1));
+        Node node = focusNodes.get(focus.get() + 1);
+        if(node instanceof CustomMenuButton) Utilities.checkScrollDown(settingsPage.settingsScroll, recentMediaSizeItem);
+        else Utilities.checkScrollDown(settingsPage.settingsScroll, node);
+
+        keyboardFocusOn(node);
 
         return false;
     }
@@ -160,8 +166,15 @@ public class PreferencesSection extends VBox implements SettingsSection{
         if(focus.get() == 0)
             return true;
 
-        if(focus.get() < 0) keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
-        else keyboardFocusOn(focusNodes.get(focus.get() - 1));
+        if(focus.get() < 0){
+            Utilities.checkScrollUp(settingsPage.settingsScroll, recentMediaSizeItem);
+            keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
+        }
+        else {
+            Node node = focusNodes.get(focus.get() - 1);
+            Utilities.checkScrollUp(settingsPage.settingsScroll, node);
+            keyboardFocusOn(node);
+        }
 
         return false;
     }

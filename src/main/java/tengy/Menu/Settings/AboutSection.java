@@ -208,7 +208,9 @@ public class AboutSection extends VBox implements SettingsSection {
 
         if(focus.get() == focusNodes.size() - 1) return true;
 
-        keyboardFocusOn(focusNodes.get(focus.get() + 1));
+        Node node = focusNodes.get(focus.get() + 1);
+        keyboardFocusOn(node);
+        Utilities.checkScrollDown(settingsPage.settingsScroll, node);
 
         return false;
     }
@@ -217,8 +219,16 @@ public class AboutSection extends VBox implements SettingsSection {
     public boolean focusBackward(){
 
         if(focus.get() == 0) return true;
-        else if(focus.get() == -1) keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
-        else keyboardFocusOn(focusNodes.get(focus.get() - 1));
+        else if(focus.get() == -1){
+            Node node = focusNodes.get(focusNodes.size() - 1);
+            keyboardFocusOn(node);
+            Utilities.checkScrollUp(settingsPage.settingsScroll, node);
+        }
+        else {
+            Node node = focusNodes.get(focus.get() - 1);
+            keyboardFocusOn(node);
+            Utilities.checkScrollUp(settingsPage.settingsScroll, node);
+        }
 
         return false;
     }

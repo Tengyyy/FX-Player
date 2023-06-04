@@ -115,7 +115,7 @@ public class QueueItemContextMenu extends ContextMenu {
         if(queueItem.mediaItemGenerated.get()) loadChapterItem(queueItem.getMediaItem());
         else {
             queueItem.mediaItemGenerated.addListener((observableValue, oldValue, newValue) -> {
-                if(newValue) loadChapterItem(queueItem.getMediaItem());
+                if(newValue && queueItem.getMediaItem() != null) loadChapterItem(queueItem.getMediaItem());
             });
         }
     }

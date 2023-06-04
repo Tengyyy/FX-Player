@@ -4,6 +4,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
 import javafx.css.PseudoClass;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import tengy.MediaItems.MediaItem;
@@ -316,19 +317,39 @@ public class Utilities {
     }
 
     public static void setScrollToNodeTop(ScrollPane scrollPane, Node node){
-        double heightViewPort = scrollPane.getViewportBounds().getHeight();
-        double heightScrollPane = scrollPane.getContent().getBoundsInLocal().getHeight();
-        double y = node.getBoundsInParent().getMinY();
 
-        scrollPane.setVvalue(y/(heightScrollPane-heightViewPort));
+        final Node content = scrollPane.getContent();
+        Bounds localBounds = node.getBoundsInLocal();
+        Point2D position = new Point2D(localBounds.getMinX(), localBounds.getMinY());
+
+        // transform to content coordinates
+        while (node != content) {
+            position = node.localToParent(position);
+            node = node.getParent();
+        }
+
+        final Bounds viewportBounds = scrollPane.getViewportBounds();
+        final Bounds contentBounds = content.getBoundsInLocal();
+
+        scrollPane.setVvalue(position.getY() / (contentBounds.getHeight() - viewportBounds.getHeight()));
     }
 
     public static void setScrollToNodeBottom(ScrollPane scrollPane, Node node){
-        double heightViewPort = scrollPane.getViewportBounds().getHeight();
-        double heightScrollPane = scrollPane.getContent().getBoundsInLocal().getHeight();
-        double y = node.getBoundsInParent().getMaxY();
 
-        scrollPane.setVvalue((y - (heightViewPort))/(heightScrollPane-heightViewPort));
+        final Node content = scrollPane.getContent();
+        Bounds localBounds = node.getBoundsInLocal();
+        Point2D position = new Point2D(localBounds.getMinX(), localBounds.getMaxY());
+
+        // transform to content coordinates
+        while (node != content) {
+            position = node.localToParent(position);
+            node = node.getParent();
+        }
+
+        final Bounds viewportBounds = scrollPane.getViewportBounds();
+        final Bounds contentBounds = content.getBoundsInLocal();
+
+        scrollPane.setVvalue((position.getY() - viewportBounds.getHeight()) / (contentBounds.getHeight() - viewportBounds.getHeight()));
     }
 
     public static void checkScrollDown(ScrollPane scrollPane, Node node){

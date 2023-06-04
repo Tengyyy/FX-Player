@@ -7,6 +7,7 @@ import javafx.css.PseudoClass;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import tengy.CustomMenuButton;
 import tengy.Menu.FocusableMenuButton;
 import tengy.PlaybackSettings.PlaybackSettingsState;
 import tengy.SVG;
@@ -99,7 +100,7 @@ public class SubtitleSection extends VBox implements SettingsSection{
         toggleContainer.setSpacing(10);
         VBox.setMargin(toggleContainer, new Insets(5, 0 , 0, 0));
 
-        VBox.setMargin(openSubtitlesSectionWrapper, new Insets(20, 0 , 0, 0));
+        VBox.setMargin(openSubtitlesSectionWrapper, new Insets(10, 0 , 0, 0));
 
 
         extrationToggle = new Toggle(settingsPage, SVG.SETTINGS.getContent(), "Extract subtitles embedded into media file containers", extractionOn, this, 0, 0);
@@ -423,7 +424,16 @@ public class SubtitleSection extends VBox implements SettingsSection{
         if(focus.get() >= focusNodes.size() - 1)
             return true;
 
-        keyboardFocusOn(focusNodes.get(focus.get() + 1));
+        Node node = focusNodes.get(focus.get() + 1);
+        if(node instanceof CustomMenuButton){
+            Utilities.checkScrollDown(settingsPage.settingsScroll, languageItem);
+        }
+        else if(focus.get() > 1){
+            Utilities.checkScrollDown(settingsPage.settingsScroll, openSubtitlesSectionWrapper);
+        }
+        else Utilities.checkScrollDown(settingsPage.settingsScroll, node);
+
+        keyboardFocusOn(node);
 
         return false;
     }
@@ -434,8 +444,23 @@ public class SubtitleSection extends VBox implements SettingsSection{
         if(focus.get() == 0)
             return true;
 
-        if(focus.get() < 0) keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
-        else keyboardFocusOn(focusNodes.get(focus.get() - 1));
+        if(focus.get() < 0){
+            keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
+            Utilities.checkScrollUp(settingsPage.settingsScroll, openSubtitlesSectionWrapper);
+        }
+        else {
+            Node node = focusNodes.get(focus.get() - 1);
+            if(node instanceof CustomMenuButton){
+                Utilities.checkScrollUp(settingsPage.settingsScroll, languageItem);
+            }
+            else if(focus.get() > 3){
+                Utilities.checkScrollUp(settingsPage.settingsScroll, openSubtitlesSectionWrapper);
+            }
+            else Utilities.checkScrollDown(settingsPage.settingsScroll, node);
+
+
+            keyboardFocusOn(node);
+        }
 
         return false;
     }

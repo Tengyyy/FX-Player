@@ -1684,7 +1684,6 @@ public class MainController implements Initializable {
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
-        if(menuController.settingsPage.settingsMenu.showing) menuController.settingsPage.settingsMenu.hide();
 
     }
 
@@ -1811,6 +1810,7 @@ public class MainController implements Initializable {
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
         if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
+        if(menuController.menuState == MenuState.CLOSED) menuController.setMenuShrinked();
         menuController.queuePage.enter();
     }
 

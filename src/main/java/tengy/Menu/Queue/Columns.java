@@ -1,4 +1,4 @@
-package tengy.Menu;
+package tengy.Menu.Queue;
 
 import javafx.animation.*;
 import javafx.geometry.Pos;

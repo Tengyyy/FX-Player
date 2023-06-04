@@ -204,7 +204,7 @@
 }
 
 
-.combo-box .combo-box-popup .list-cell, .multi-select-item, .custom-menu-item {
+.combo-box .combo-box-popup .list-cell, .multi-select-item, .custom-combo-menu-item {
     -fx-text-fill         : rgb(200,200,200) ;
     -fx-font-family       : "Roboto";
     -fx-font-size         : 15;
@@ -212,18 +212,22 @@
     -fx-background-color  : transparent;
 }
 
+.custom-combo-menu-item .label{
+    -fx-text-fill: white;
+}
 
-.multi-select-item, .custom-menu-item {
+
+.multi-select-item, .custom-combo-menu-item {
     -fx-padding: 4;
     -fx-background-insets: 1 0 1 0;
 }
 
-.combo-box .combo-box-popup .list-cell:selected, .multi-select-item:selected, .custom-menu-item:selected {
+.combo-box .combo-box-popup .list-cell:selected, .multi-select-item:selected, .custom-combo-menu-item:selected {
     -fx-text-fill         : white ;
     -fx-background-color  : rgba(50,50,50,0.9);
 }
 
-.combo-box .combo-box-popup .list-cell:hover, .multi-select-item:hover, .multi-select-item:focused, .custom-menu-item:hover, .custom-menu-item:focused {
+.combo-box .combo-box-popup .list-cell:hover, .multi-select-item:hover, .multi-select-item:focused, .custom-combo-menu-item:hover, .custom-combo-menu-item:focused {
     -fx-text-fill: white;
     -fx-background-color: rgba(60,60,60,1);
 }
@@ -232,7 +236,7 @@
     -fx-text-fill: white;
 }
 
-.multi-select-item:pressed, .custom-menu-item:pressed {
+.multi-select-item:pressed, .custom-combo-menu-item:pressed {
     -fx-background-color: rgb(40,40,40);
 }
 

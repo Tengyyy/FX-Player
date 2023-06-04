@@ -1,12 +1,17 @@
 package tengy.Menu.Settings;
 
-
+import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import tengy.Menu.FocusableMenuButton;
 import tengy.PlaybackSettings.PlaybackSettingsState;
 import tengy.SVG;
 import tengy.Subtitles.SubtitlesState;
 import tengy.Utilities;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -24,20 +29,29 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-public class SubtitleSection extends VBox {
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
+
+public class SubtitleSection extends VBox implements SettingsSection{
 
     SettingsPage settingsPage;
 
     Label subtitleSectionTitle = new Label("Subtitles");
 
     VBox toggleContainer = new VBox();
+    
     Toggle extrationToggle;
     public BooleanProperty extractionOn = new SimpleBooleanProperty(false);
+    
     Toggle searchToggle;
     public BooleanProperty searchOn = new SimpleBooleanProperty(false);
+
+    ComboItem languageItem;
+    public StringProperty languageProperty = new SimpleStringProperty();
 
     StackPane openSubtitlesSectionWrapper = new StackPane();
     VBox openSubtitlesSection = new VBox();
@@ -59,8 +73,8 @@ public class SubtitleSection extends VBox {
     public PasswordField passwordField = new PasswordField();
 
     StackPane openSubtitlesFooterPane = new StackPane();
-    Button createAccountButton = new Button("Create account");
-    public Button saveButton = new Button("Save credentials");
+    FocusableMenuButton createAccountButton = new FocusableMenuButton();
+    public FocusableMenuButton saveButton = new FocusableMenuButton();
 
     BooleanProperty credentialsChanged = new SimpleBooleanProperty(false);
     public String username = "";
@@ -68,25 +82,61 @@ public class SubtitleSection extends VBox {
 
     public static final String SUBTITLE_EXTRACTION_ON = "subtitle_extraction_on";
     public static final String SUBTITLE_PARENT_FOLDER_SCAN_ON = "subtitle_parent_folder_scan_on";
+    public static final String SUBTITLES_LANGUAGE = "subtitles_language";
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
+
+    boolean infoToggleHover = false;
 
 
     SubtitleSection(SettingsPage settingsPage){
         this.settingsPage = settingsPage;
 
         this.getChildren().addAll(subtitleSectionTitle, toggleContainer, openSubtitlesSectionWrapper);
-        this.setSpacing(25);
 
         toggleContainer.setPadding(new Insets(0, 0, 10, 0));
         toggleContainer.setSpacing(10);
+        VBox.setMargin(toggleContainer, new Insets(5, 0 , 0, 0));
 
-        extrationToggle = new Toggle(settingsPage, "Extract subtitles embedded into media file containers", extractionOn);
-        searchToggle = new Toggle(settingsPage, "Scan parent folder for subtitle file with matching name", searchOn);
+        VBox.setMargin(openSubtitlesSectionWrapper, new Insets(20, 0 , 0, 0));
+
+
+        extrationToggle = new Toggle(settingsPage, SVG.SETTINGS.getContent(), "Extract subtitles embedded into media file containers", extractionOn, this, 0, 0);
+        searchToggle = new Toggle(settingsPage, SVG.SETTINGS.getContent(), "Scan parent folder for subtitle file with matching name", searchOn, this, 0, 1);
 
         extractionOn.addListener((observableValue, oldValue, newValue) -> settingsPage.menuController.mainController.pref.preferences.putBoolean(SUBTITLE_EXTRACTION_ON, newValue));
-
         searchOn.addListener((observableValue, oldValue, newValue) -> settingsPage.menuController.mainController.pref.preferences.putBoolean(SUBTITLE_PARENT_FOLDER_SCAN_ON, newValue));
 
-        toggleContainer.getChildren().addAll(extrationToggle, searchToggle);
+        languageItem = new ComboItem(settingsPage, SVG.MESSAGE.getContent(), "Preferred language for subtitles", this, 0, 2);
+
+        languageItem.customMenuButton.setContextWidth(180);
+        languageItem.customMenuButton.setContextHeight(200);
+
+        languageItem.customMenuButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) {
+                if (settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED)
+                    settingsPage.menuController.subtitlesController.closeSubtitles();
+                if (settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED)
+                    settingsPage.menuController.playbackSettingsController.closeSettings();
+            }
+        });
+
+        languageItem.customMenuButton.setOnMouseClicked(e -> {
+            if (settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED)
+                settingsPage.menuController.subtitlesController.closeSubtitles();
+            if (settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED)
+                settingsPage.menuController.playbackSettingsController.closeSettings();
+        });
+
+        languageProperty.bind(languageItem.valueProperty());
+        languageProperty.addListener((observableValue, oldValue, newValue) -> {
+            settingsPage.menuController.mainController.pref.preferences.put(SUBTITLES_LANGUAGE, newValue);
+        });
+
+
+
+        toggleContainer.getChildren().addAll(extrationToggle, searchToggle, languageItem);
 
         openSubtitlesSectionWrapper.getChildren().addAll(openSubtitlesSection, infoLabel);
         openSubtitlesSectionWrapper.setPadding(new Insets(15, 20, 15, 20));
@@ -110,19 +160,42 @@ public class SubtitleSection extends VBox {
         infoIcon.setShape(infoSVG);
         infoIcon.setPrefSize(25, 25);
         infoIcon.setMaxSize(25, 25);
-        infoIcon.getStyleClass().add("infoIcon");
+        infoIcon.getStyleClass().add("graphic");
 
         infoToggle.setGraphic(infoIcon);
         infoToggle.getStyleClass().add("infoLabel");
-        infoToggle.setOnMouseEntered(e -> infoLabel.setVisible(true));
-        infoToggle.setOnMouseExited(e -> infoLabel.setVisible(false));
+
+        infoToggle.setOnMouseEntered(e -> {
+            infoToggleHover = true;
+            infoLabel.setVisible(true);
+        });
+        infoToggle.setOnMouseExited(e -> {
+            infoToggleHover = false;
+            if(!infoToggle.isFocused()) infoLabel.setVisible(false);
+        });
+
+        infoToggle.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(3);
+                settingsPage.focus.set(0);
+
+                infoLabel.setVisible(true);
+            }
+            else {
+                keyboardFocusOff(infoToggle);
+                focus.set(-1);
+                settingsPage.focus.set(-1);
+
+                if(!infoToggleHover) infoLabel.setVisible(false);
+            }
+        });
 
         infoLabel.setVisible(false);
         infoLabel.setMouseTransparent(true);
         infoLabel.getStyleClass().add("settingsInfoWindow");
         infoLabel.setWrapText(true);
-        infoLabel.setPrefSize(280, 80);
-        infoLabel.setMaxSize(280, 80);
+        infoLabel.setPrefSize(290, 80);
+        infoLabel.setMaxSize(290, 80);
         infoLabel.setPadding(new Insets(5, 10, 5, 10));
 
         StackPane.setAlignment(infoLabel, Pos.TOP_RIGHT);
@@ -144,6 +217,7 @@ public class SubtitleSection extends VBox {
         usernameField.setPrefHeight(36);
         usernameField.setMinHeight(36);
         usernameField.setMaxHeight(36);
+        usernameField.setFocusTraversable(false);
         usernameField.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
@@ -153,6 +227,14 @@ public class SubtitleSection extends VBox {
             if(newValue){
                 if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
                 if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
+
+                focus.set(4);
+                settingsPage.focus.set(0);
+            }
+            else {
+                focus.set(-1);
+                settingsPage.focus.set(-1);
+                keyboardFocusOff(usernameField);
             }
         });
 
@@ -169,6 +251,7 @@ public class SubtitleSection extends VBox {
         passwordField.setPrefHeight(36);
         passwordField.setMinHeight(36);
         passwordField.setMaxHeight(36);
+        passwordField.setFocusTraversable(false);
         passwordField.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
@@ -178,6 +261,14 @@ public class SubtitleSection extends VBox {
             if(newValue){
                 if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
                 if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
+
+                focus.set(5);
+                settingsPage.focus.set(0);
+            }
+            else {
+                focus.set(-1);
+                settingsPage.focus.set(-1);
+                keyboardFocusOff(passwordField);
             }
         });
 
@@ -186,9 +277,11 @@ public class SubtitleSection extends VBox {
         openSubtitlesFooterPane.getChildren().addAll(createAccountButton, saveButton);
         openSubtitlesFooterPane.setAlignment(Pos.CENTER_LEFT);
 
+        createAccountButton.setText("Create account");
         createAccountButton.setTranslateX(-11);
         createAccountButton.getStyleClass().add("linkButton");
         createAccountButton.setOnAction(e -> {
+            createAccountButton.requestFocus();
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 
@@ -196,11 +289,40 @@ public class SubtitleSection extends VBox {
             Utilities.openBrowser("https://www.opensubtitles.org/en/newuser");
         });
 
+        createAccountButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(6);
+                settingsPage.focus.set(0);
+            }
+            else{
+                keyboardFocusOff(createAccountButton);
+                focus.set(-1);
+                settingsPage.focus.set(-1);
+            }
+        });
+
+        createAccountButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            createAccountButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        createAccountButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            createAccountButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
 
         StackPane.setAlignment(saveButton, Pos.CENTER_RIGHT);
+        saveButton.setText("Save credentials");
         saveButton.getStyleClass().add("mainButton");
         saveButton.disableProperty().bind(credentialsChanged.not());
+        saveButton.disabledProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focusNodes.remove(saveButton);
+            else if(!focusNodes.contains(saveButton)) focusNodes.add(saveButton);
+        });
+
         saveButton.setOnAction(e -> {
+            saveButton.requestFocus();
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 
@@ -211,6 +333,35 @@ public class SubtitleSection extends VBox {
             }
         });
 
+        saveButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(7);
+                settingsPage.focus.set(0);
+            }
+            else{
+                keyboardFocusOff(saveButton);
+                focus.set(-1);
+                settingsPage.focus.set(-1);
+            }
+        });
+
+        saveButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            saveButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        saveButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            saveButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        focusNodes.add(extrationToggle);
+        focusNodes.add(searchToggle);
+        focusNodes.add(languageItem.customMenuButton);
+        focusNodes.add(infoToggle);
+        focusNodes.add(usernameField);
+        focusNodes.add(passwordField);
+        focusNodes.add(createAccountButton);
     }
 
     private void saveCredentials() throws IOException {
@@ -249,9 +400,48 @@ public class SubtitleSection extends VBox {
         }
     }
 
+    public void loadLanguageBox(){
+        for(String string : settingsPage.menuController.subtitlesController.openSubtitlesPane.supportedLanguages){
+            languageItem.add(string);
+        }
+    }
+
     public void loadPreferences(){
         Preferences preferences = settingsPage.menuController.mainController.pref.preferences;
         extractionOn.set(preferences.getBoolean(SUBTITLE_EXTRACTION_ON, true));
         searchOn.set(preferences.getBoolean(SUBTITLE_PARENT_FOLDER_SCAN_ON, false));
+
+        String language = preferences.get(SUBTITLES_LANGUAGE, "English");
+        languageItem.customMenuButton.setValue(language);
+
+        settingsPage.menuController.subtitlesController.openSubtitlesPane.languageBox.select(language);
+    }
+
+    @Override
+    public boolean focusForward(){
+
+        if(focus.get() >= focusNodes.size() - 1)
+            return true;
+
+        keyboardFocusOn(focusNodes.get(focus.get() + 1));
+
+        return false;
+    }
+
+    @Override
+    public boolean focusBackward(){
+
+        if(focus.get() == 0)
+            return true;
+
+        if(focus.get() < 0) keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
+        else keyboardFocusOn(focusNodes.get(focus.get() - 1));
+
+        return false;
+    }
+
+    @Override
+    public void setFocus(int value){
+        this.focus.set(value);
     }
 }

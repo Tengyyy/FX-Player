@@ -46,7 +46,7 @@ public class AnimationsClass {
         return scaleTransition;
     }
 
-    public static void rotateTransition(double duration, Node node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
+    public static RotateTransition rotateTransition(double duration, Node node, double fromValue, double toValue, boolean autoReverse, int cycleCount, boolean play){
         RotateTransition rotateTransition = new RotateTransition();
         rotateTransition.setDuration(Duration.millis(duration));
         rotateTransition.setNode(node);
@@ -56,6 +56,7 @@ public class AnimationsClass {
         rotateTransition.setCycleCount(cycleCount);
         if(play) rotateTransition.play();
 
+        return rotateTransition;
     }
 
     public static void parallelAnimation(boolean play, List<Transition> transitions){

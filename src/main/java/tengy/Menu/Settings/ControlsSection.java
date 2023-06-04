@@ -1,6 +1,13 @@
 package tengy.Menu.Settings;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
+import javafx.scene.input.KeyEvent;
 import tengy.HotkeyController;
+import tengy.Menu.FocusableMenuButton;
 import tengy.Subtitles.SubtitlesState;
 import tengy.PlaybackSettings.PlaybackSettingsState;
 import javafx.geometry.Insets;
@@ -13,12 +20,16 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static tengy.Utilities.keyboardFocusOff;
+import static tengy.Utilities.keyboardFocusOn;
 
-public class ControlsSection extends VBox {
+
+public class ControlsSection extends VBox  implements SettingsSection{
 
     SettingsPage settingsPage;
 
@@ -32,9 +43,13 @@ public class ControlsSection extends VBox {
     VBox controlsWrapper = new VBox();
     public VBox controlsBox = new VBox();
     StackPane resetBox = new StackPane();
-    public Button resetButton = new Button("Reset to default");
+    public FocusableMenuButton resetButton = new FocusableMenuButton();
 
     public static final List<Action> actionOrder = List.of(Action.PLAY_PAUSE1, Action.PLAY_PAUSE2, Action.MUTE, Action.VOLUME_UP5, Action.VOLUME_DOWN5, Action.VOLUME_UP1, Action.VOLUME_DOWN1, Action.FORWARD5, Action.REWIND5, Action.FORWARD10, Action.REWIND10, Action.FRAME_FORWARD, Action.FRAME_BACKWARD, Action.SEEK0, Action.SEEK10, Action.SEEK20, Action.SEEK30, Action.SEEK40, Action.SEEK50, Action.SEEK60, Action.SEEK70, Action.SEEK80, Action.SEEK90, Action.PLAYBACK_SPEED_UP25, Action.PLAYBACK_SPEED_DOWN25, Action.PLAYBACK_SPEED_UP5, Action.PLAYBACK_SPEED_DOWN5, Action.NEXT, Action.PREVIOUS, Action.END, Action.FULLSCREEN, Action.SNAPSHOT, Action.MINIPLAYER, Action.SUBTITLES, Action.PLAYBACK_SETTINGS, Action.MENU, Action.CLEAR_QUEUE, Action.SHUFFLE, Action.AUTOPLAY, Action.LOOP, Action.OPEN_QUEUE, Action.OPEN_RECENT_MEDIA, Action.OPEN_MUSIC_LIBRARY, Action.OPEN_PLAYLISTS, Action.OPEN_SETTINGS);
+
+
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
     ControlsSection(SettingsPage settingsPage){
 
@@ -42,44 +57,68 @@ public class ControlsSection extends VBox {
 
 
         this.getChildren().addAll(titlePane, controlsWrapper, resetBox);
-        this.setSpacing(20);
 
-        VBox.setMargin(titlePane, new Insets(20, 0, 0, 0));
         titlePane.getChildren().addAll(title);
+        VBox.setMargin(controlsWrapper, new Insets(10, 0, 0, 0));
+        VBox.setMargin(resetBox, new Insets(15, 0, 0, 0));
 
         StackPane.setAlignment(title, Pos.CENTER_LEFT);
         title.getStyleClass().add("settingsSectionTitle");
 
         controlsWrapper.getChildren().addAll(controlsHeader, controlsBox);
-        controlsWrapper.setSpacing(10);
+        controlsWrapper.setSpacing(5);
 
         controlsHeader.getChildren().addAll(actionHeader, hotkeyHeader);
         controlsHeader.setPadding(new Insets(0, 0, 0, 50));
 
         StackPane.setAlignment(actionHeader, Pos.CENTER_LEFT);
-        actionHeader.getStyleClass().add("settingsText");
+        actionHeader.getStyleClass().add("controlsHeaderText");
 
         hotkeyHeader.prefWidthProperty().bind(this.widthProperty().subtract(10).divide(2));
         hotkeyHeader.maxWidthProperty().bind(this.widthProperty().subtract(10).divide(2));
-        hotkeyHeader.getStyleClass().add("settingsText");
+        hotkeyHeader.getStyleClass().add("controlsHeaderText");
         StackPane.setAlignment(hotkeyHeader, Pos.CENTER_RIGHT);
 
-
-        controlsBox.getStyleClass().add("borderedSection");
+        controlsBox.setSpacing(10);
 
         resetBox.getChildren().add(resetButton);
         StackPane.setAlignment(resetButton, Pos.CENTER_RIGHT);
-        resetButton.setCursor(Cursor.HAND);
         resetButton.getStyleClass().add("menuButton");
+        resetButton.setText("Reset to default");
         resetButton.setOnAction(e -> {
             if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
             if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
 
-            if(settingsPage.settingsMenu.showing) settingsPage.settingsMenu.hide();
-
+            resetButton.requestFocus();
             resetToDefault();
         });
-        resetButton.setFocusTraversable(false);
+        resetButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(focusNodes.size() - 1);
+                settingsPage.focus.set(3);
+            }
+            else {
+                keyboardFocusOff(resetButton);
+                focus.set(-1);
+                settingsPage.focus.set(-1);
+            }
+        });
+
+        resetButton.disabledProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focusNodes.remove(resetButton);
+            else focusNodes.add(resetButton);
+        });
+
+        resetButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            resetButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        resetButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            resetButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
 
     }
 
@@ -104,9 +143,40 @@ public class ControlsSection extends VBox {
     }
 
     public void initializeControlsBox(){
-        resetButton.setDisable(settingsPage.menuController.mainController.hotkeyController.isDefault());
-        for(int i=0; i < actionOrder.size(); i++){
-            controlsBox.getChildren().add(new ControlItem(this, actionOrder.get(i), settingsPage.menuController.mainController.hotkeyController.actionKeybindMap.get(actionOrder.get(i)), i % 2 != 0));
+        for (int i = 0; i < actionOrder.size(); i++) {
+            ControlItem controlItem = new ControlItem(this, actionOrder.get(i), settingsPage.menuController.mainController.hotkeyController.actionKeybindMap.get(actionOrder.get(i)), i);
+            controlsBox.getChildren().add(controlItem);
+            focusNodes.add(controlItem);
         }
+
+        boolean disabled = settingsPage.menuController.mainController.hotkeyController.isDefault();
+        resetButton.setDisable(disabled);
+
+        if(!disabled) focusNodes.add(resetButton);
+    }
+
+
+    @Override
+    public boolean focusForward(){
+        if(focus.get() == focusNodes.size() - 1) return true;
+
+        keyboardFocusOn(focusNodes.get(focus.get() + 1));
+
+        return false;
+    }
+
+    @Override
+    public boolean focusBackward(){
+
+        if(focus.get() == 0) return true;
+        else if(focus.get() == -1) keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
+        else keyboardFocusOn(focusNodes.get(focus.get() - 1));
+
+        return false;
+    }
+
+    @Override
+    public void setFocus(int value){
+        this.focus.set(value);
     }
 }

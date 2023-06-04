@@ -44,7 +44,7 @@ public class App extends Application {
         SplashScreen splashScreen = new SplashScreen();
 
         primaryStage.setMinHeight(450);
-        primaryStage.setMinWidth(705);
+        primaryStage.setMinWidth(735);
 
         App.stage = primaryStage;
 

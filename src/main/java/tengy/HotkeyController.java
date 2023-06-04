@@ -1,6 +1,6 @@
 package tengy;
 
-import io.github.palexdev.materialfx.controls.MFXCheckbox;
+import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -9,6 +9,7 @@ import tengy.Menu.FocusableMenuButton;
 import tengy.Menu.MenuState;
 import tengy.Menu.Queue.QueueItem;
 import tengy.Menu.Settings.Action;
+import tengy.Menu.Settings.Toggle;
 import tengy.PlaybackSettings.*;
 import tengy.Subtitles.SubtitlesOptionsTab;
 import tengy.Subtitles.SubtitlesState;
@@ -57,7 +58,7 @@ public class HotkeyController {
             Map.entry(Action.MINIPLAYER, new KeyCode[]{KeyCode.I}),
             Map.entry(Action.SUBTITLES, new KeyCode[]{KeyCode.C}),
             Map.entry(Action.PLAYBACK_SETTINGS, new KeyCode[]{KeyCode.S}),
-            Map.entry(Action.MENU, new KeyCode[]{KeyCode.Q}),
+            Map.entry(Action.MENU, new KeyCode[]{KeyCode.E}),
             Map.entry(Action.CLEAR_QUEUE, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.C}),
             Map.entry(Action.SHUFFLE, new KeyCode[]{KeyCode.CONTROL, KeyCode.S}),
             Map.entry(Action.AUTOPLAY, new KeyCode[]{KeyCode.CONTROL, KeyCode.A}),
@@ -191,12 +192,12 @@ public class HotkeyController {
 
             if(event.getCode() == KeyCode.SPACE){
                 if(mainController.subtitlesController.subtitlesState != SubtitlesState.CLOSED || mainController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED || mainController.windowController.windowState != WindowState.CLOSED){
-                    if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox || event.getTarget() instanceof MultiSelectButton || event.getTarget() instanceof PresetsButton || event.getTarget() instanceof PlaybackOptionsTab){
+                    if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox || event.getTarget() instanceof MultiSelectButton || event.getTarget() instanceof CustomMenuButton || event.getTarget() instanceof PlaybackOptionsTab){
                         return;
                     }
                 }
                 else if(mainController.getMenuController().menuState != MenuState.CLOSED) {
-                    if (event.getTarget() instanceof FocusableMenuButton || event.getTarget() instanceof QueueItem || event.getTarget() instanceof CheckBox) {
+                    if (event.getTarget() instanceof FocusableMenuButton || event.getTarget() instanceof QueueItem || event.getTarget() instanceof CheckBox || event.getTarget() instanceof Toggle || event.getTarget() instanceof MFXToggleButton || event.getTarget() instanceof CustomMenuButton || event.getTarget() instanceof PressableNode) {
                         return;
                     }
                 }

@@ -8,8 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import tengy.CustomMenuButton;
 import tengy.SVG;
-import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -42,7 +42,7 @@ public class EqualizerController {
 
     HBox titleLabelWrapper = new HBox();
     Label titleLabel = new Label();
-    public PresetsButton presetsButton = new PresetsButton();
+    public CustomMenuButton presetsButton = new CustomMenuButton();
 
 
     HBox sliderBox = new HBox();

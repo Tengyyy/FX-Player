@@ -1,40 +1,50 @@
 package tengy.Menu.Settings;
 
-import tengy.Subtitles.SubtitlesState;
-import tengy.PlaybackSettings.PlaybackSettingsState;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.ComboBox;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import tengy.PlaybackSettings.PlaybackSettingsState;
+import tengy.SVG;
+import tengy.Subtitles.SubtitlesState;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.Preferences;
 
-public class PreferencesSection extends VBox {
+import static tengy.Utilities.keyboardFocusOn;
+
+public class PreferencesSection extends VBox implements SettingsSection{
 
     SettingsPage settingsPage;
 
     Label preferencesSectionTitle = new Label("Preferences");
 
+    Toggle darkModeToggle;
+    public BooleanProperty darkModeOn = new SimpleBooleanProperty();
+
+    Toggle preventSleepToggle;
+    public BooleanProperty preventSleepOn = new SimpleBooleanProperty();
+
     Toggle seekPreviewToggle;
     public BooleanProperty seekPreviewOn = new SimpleBooleanProperty();
 
-    StackPane languagePane = new StackPane();
-    Label languageLabel = new Label("Preferred language for subtitles");
-    ComboBox<String> languageBox = new ComboBox<>();
-    public StringProperty languageProperty = new SimpleStringProperty();
-
-    StackPane recentMediaSizePane = new StackPane();
-    Label recentMediaSizeLabel = new Label("Recent media size");
-    ComboBox<Integer> recentMediaSizeBox = new ComboBox<>();
+    ComboItem recentMediaSizeItem;
     public IntegerProperty recentMediaSizeProperty = new SimpleIntegerProperty();
 
+    public static final String DARK_MODE_ON = "dark_mode_on";
+    public static final String PREVENT_SLEEP_ON = "prevent_sleep_on";
     public static final String SEEKBAR_FRAME_PREVIEW_ON = "seekbar_frame_preview_on";
     public static final String HISTORY_SIZE = "history_size";
-    public static final String SUBTITLES_LANGUAGE = "subtitles_language";
 
+    IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<Node> focusNodes = new ArrayList<>();
 
 
     PreferencesSection(SettingsPage settingsPage){
@@ -42,7 +52,27 @@ public class PreferencesSection extends VBox {
 
         preferencesSectionTitle.getStyleClass().add("settingsSectionTitle");
 
-        seekPreviewToggle = new Toggle(settingsPage, "Show frame preview above seekbar", seekPreviewOn);
+        darkModeToggle = new Toggle(settingsPage, SVG.PALETTE.getContent(), "App theme", darkModeOn, this, 1, 0);
+        darkModeToggle.setText("Light", "Dark");
+        darkModeToggle.stateLabel.setPrefWidth(45);
+
+        darkModeOn.addListener((observableValue, oldValue, newValue) -> {
+            settingsPage.menuController.mainController.pref.preferences.putBoolean(DARK_MODE_ON, newValue);
+
+            if(newValue){
+                //TODO: switch to dark mode
+            }
+            else {
+                //TODO: switch to light mode
+            }
+        });
+
+        preventSleepToggle = new Toggle(settingsPage, SVG.SLEEP.getContent(), "Prevent sleep when media active", preventSleepOn, this, 1, 1);
+        preventSleepOn.addListener((observableValue, oldValue, newValue) -> {
+            settingsPage.menuController.mainController.pref.preferences.putBoolean(PREVENT_SLEEP_ON, newValue);
+        });
+
+        seekPreviewToggle = new Toggle(settingsPage, SVG.SETTINGS.getContent(), "Show frame preview above seekbar", seekPreviewOn, this, 1, 2);
 
         seekPreviewOn.addListener((observableValue, oldValue, newValue) -> {
             settingsPage.menuController.mainController.pref.preferences.putBoolean(SEEKBAR_FRAME_PREVIEW_ON, newValue);
@@ -60,87 +90,84 @@ public class PreferencesSection extends VBox {
             }
         });
 
-        languagePane.getChildren().addAll(languageLabel, languageBox);
-        languagePane.setPadding(new Insets(8, 10, 8, 10));
-        languagePane.getStyleClass().add("highlightedSection");
+        recentMediaSizeItem = new ComboItem(settingsPage, SVG.SETTINGS.getContent(), "Recent media size", this, 1, 3);
+        recentMediaSizeItem.customMenuButton.setContextWidth(150);
+        recentMediaSizeItem.customMenuButton.setContextHeight(115);
+        recentMediaSizeItem.customMenuButton.setScrollOff();
+        recentMediaSizeItem.add("10");
+        recentMediaSizeItem.add("25");
+        recentMediaSizeItem.add("50");
+        recentMediaSizeItem.add("100");
 
-        languageLabel.getStyleClass().add("toggleText");
-        StackPane.setAlignment(languageLabel, Pos.CENTER_LEFT);
 
-        StackPane.setAlignment(languageBox, Pos.CENTER_RIGHT);
-
-        languageBox.setPrefWidth(150);
-        languageBox.setMaxWidth(150);
-        languageBox.setOnAction(e -> {
-            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
-            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
-        });
-        languageBox.setId("languageBox");
-        languageBox.setFocusTraversable(false);
-
-        languageBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+        recentMediaSizeItem.customMenuButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
                 if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
             }
         });
 
-        languageProperty.bind(languageBox.getSelectionModel().selectedItemProperty());
-        languageProperty.addListener((observableValue, oldValue, newValue) -> {
-            settingsPage.menuController.mainController.pref.preferences.put(SUBTITLES_LANGUAGE, newValue);
+        recentMediaSizeItem.customMenuButton.setOnMouseClicked(e -> {
+            if (settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED)
+                settingsPage.menuController.subtitlesController.closeSubtitles();
+            if (settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED)
+                settingsPage.menuController.playbackSettingsController.closeSettings();
         });
 
-        recentMediaSizePane.getChildren().addAll(recentMediaSizeLabel, recentMediaSizeBox);
-        recentMediaSizePane.setPadding(new Insets(8, 10, 8, 10));
-        recentMediaSizePane.getStyleClass().add("highlightedSection");
-
-        recentMediaSizeLabel.getStyleClass().add("toggleText");
-        StackPane.setAlignment(recentMediaSizeLabel, Pos.CENTER_LEFT);
-
-        StackPane.setAlignment(recentMediaSizeBox, Pos.CENTER_RIGHT);
-        recentMediaSizeBox.getItems().add(10);
-        recentMediaSizeBox.getItems().add(25);
-        recentMediaSizeBox.getItems().add(50);
-        recentMediaSizeBox.getItems().add(100);
-        recentMediaSizeBox.setPrefWidth(150);
-        recentMediaSizeBox.setMaxWidth(150);
-        recentMediaSizeBox.setFocusTraversable(false);
-
-        recentMediaSizeBox.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(newValue){
-                if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
-                if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
-            }
+        recentMediaSizeItem.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            recentMediaSizeProperty.set(Integer.parseInt(newValue));
         });
 
-        recentMediaSizeBox.setOnAction(e -> {
-            if(settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) settingsPage.menuController.subtitlesController.closeSubtitles();
-            if(settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) settingsPage.menuController.playbackSettingsController.closeSettings();
-        });
-
-
-        recentMediaSizeProperty.bind(recentMediaSizeBox.getSelectionModel().selectedItemProperty());
         recentMediaSizeProperty.addListener((observableValue, oldValue, newValue) -> {
             settingsPage.menuController.mainController.pref.preferences.putInt(HISTORY_SIZE, newValue.intValue());
         });
 
-        this.getChildren().addAll(preferencesSectionTitle, seekPreviewToggle, languagePane, recentMediaSizePane);
-        this.setSpacing(25);
-    }
+        this.getChildren().addAll(preferencesSectionTitle, darkModeToggle, preventSleepToggle, seekPreviewToggle, recentMediaSizeItem);
 
-    public void loadLanguageBox(){
-        for(String string : settingsPage.menuController.subtitlesController.openSubtitlesPane.supportedLanguages){
-            languageBox.getItems().add(string);
-        }
+        VBox.setMargin(darkModeToggle, new Insets(5, 0, 0, 0));
+        VBox.setMargin(preventSleepToggle, new Insets(10, 0, 0, 0));
+        VBox.setMargin(seekPreviewToggle, new Insets(10, 0, 0, 0));
+        VBox.setMargin(recentMediaSizeItem, new Insets(10, 0, 0, 0));
+
+        focusNodes.add(darkModeToggle);
+        focusNodes.add(preventSleepToggle);
+        focusNodes.add(seekPreviewToggle);
+        focusNodes.add(recentMediaSizeItem.customMenuButton);
     }
 
     public void loadPreferences(){
         Preferences preferences = settingsPage.menuController.mainController.pref.preferences;
+        darkModeOn.set(preferences.getBoolean(DARK_MODE_ON, true));
+        preventSleepOn.set(preferences.getBoolean(PREVENT_SLEEP_ON, true));
         seekPreviewOn.set(preferences.getBoolean(SEEKBAR_FRAME_PREVIEW_ON, true));
-        String language = preferences.get(SUBTITLES_LANGUAGE, "English");
-        languageBox.getSelectionModel().select(language);
-        recentMediaSizeBox.getSelectionModel().select((Integer) preferences.getInt(HISTORY_SIZE, 25));
+        recentMediaSizeItem.customMenuButton.setValue(String.valueOf(preferences.getInt(HISTORY_SIZE, 25)));
+    }
 
-        settingsPage.menuController.subtitlesController.openSubtitlesPane.languageBox.select(language);
+    @Override
+    public boolean focusForward(){
+
+        if(focus.get() >= focusNodes.size() - 1)
+            return true;
+
+        keyboardFocusOn(focusNodes.get(focus.get() + 1));
+
+        return false;
+    }
+
+    @Override
+    public boolean focusBackward(){
+
+        if(focus.get() == 0)
+            return true;
+
+        if(focus.get() < 0) keyboardFocusOn(focusNodes.get(focusNodes.size() - 1));
+        else keyboardFocusOn(focusNodes.get(focus.get() - 1));
+
+        return false;
+    }
+
+    @Override
+    public void setFocus(int value){
+        this.focus.set(value);
     }
 }

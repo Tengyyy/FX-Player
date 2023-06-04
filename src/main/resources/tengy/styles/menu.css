@@ -113,8 +113,6 @@
 }
 
 
-
-
 .videoTitle, .chapterName {
     -fx-font-size: 15;
     -fx-font-family: "Roboto Bold";
@@ -608,19 +606,36 @@
 }
 
 .highlightedSection {
-    -fx-background-color: rgba(25,25,25,0.85);
-    -fx-background-radius: 5;
+    -fx-background-color: rgba(45,45,45,0.6);
+    -fx-background-radius: 3;
     -fx-border-width: 1;
-    -fx-border-color: rgb(40,40,40);
-    -fx-border-radius: 5;
+    -fx-border-color: rgba(20,20,20,0.75);
+    -fx-border-radius: 3;
 }
 
-.borderedSection {
-    -fx-background-color: rgba(15,15,15,0.75);
-    -fx-border-width: 1;
-    -fx-border-color: rgb(40,40,40);
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
+.settingsToggle:hover, .settingsToggle:focus {
+    -fx-background-color: rgba(75, 75, 75, 0.6);
+}
+
+.settingsToggle:pressed {
+    -fx-background-color: rgba(60,60,60,0.6);
+    -fx-border-color: rgba(90,90,90,0.75);
+}
+
+.settingsToggle:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
+}
+
+.libraryHeader > .graphic {
+    -fx-background-color: rgb(150,150,150);
+}
+
+.libraryHeader:hover > .graphic, .libraryHeader:focused > .graphic {
+    -fx-background-color: white;
+}
+
+.libraryHeader:pressed > .graphic {
+    -fx-background-color: rgb(200,200,200);
 }
 
 .settingsSubsectionTitle {
@@ -635,11 +650,15 @@
     -fx-font-size: 17;
 }
 
-.toggleText {
+.toggleText, .controlsHeaderText {
     -fx-text-fill: white;
     -fx-font-family: "Roboto";
     -fx-font-size: 16;
     -fx-graphic-text-gap: 15;
+}
+
+.controlsHeaderText {
+    -fx-font-size: 20;
 }
 
 .keycap {
@@ -654,12 +673,22 @@
     -fx-text-alignment: center;
 }
 
-.infoIcon {
+.infoLabel {
+    -fx-border-insets: -7;
+    -fx-border-color: transparent;
+    -fx-border-radius: 5;
+}
+
+.infoLabel > .graphic {
     -fx-background-color: rgb(200,200,200);
 }
 
-.infoLabel:hover > .infoIcon {
-    -fx-background-color: rgb(255,255,255);
+.infoLabel:hover > .graphic, .infoLabel:focused > .graphic {
+    -fx-background-color: white;
+}
+
+.infoLabel:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
 }
 
 

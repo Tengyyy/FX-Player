@@ -48,4 +48,6 @@ module hans {
     opens tengy.Windows to javafx.fxml, javafx.graphics;
     exports tengy.Windows.ChapterEdit;
     opens tengy.Windows.ChapterEdit to javafx.fxml, javafx.graphics;
+    exports tengy.Menu.Settings.Libraries;
+    opens tengy.Menu.Settings.Libraries to javafx.fxml, javafx.graphics;
 }

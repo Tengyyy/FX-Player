@@ -2,6 +2,7 @@ package tengy.Chapters;
 
 import javafx.scene.Node;
 import tengy.*;
+import tengy.Menu.MenuState;
 import tengy.Subtitles.SubtitlesState;
 import tengy.Menu.MenuController;
 import tengy.PlaybackSettings.PlaybackSettingsState;
@@ -59,7 +60,6 @@ public class ChapterController {
 
         chapterPage = new ChapterPage(menuController, this);
 
-
         chapterLabelWrapper.setPrefHeight(30);
         chapterLabelWrapper.setMinWidth(0);
         chapterLabelWrapper.getChildren().addAll(separatorLabel, chapterLabelBox);
@@ -92,6 +92,7 @@ public class ChapterController {
             if (mainController.getPlaybackSettingsController().playbackSettingsState != PlaybackSettingsState.CLOSED) mainController.getPlaybackSettingsController().closeSettings();
             if (mainController.getSubtitlesController().subtitlesState != SubtitlesState.CLOSED) mainController.getSubtitlesController().closeSubtitles();
 
+            if(menuController.menuState == MenuState.CLOSED) menuController.setMenuShrinked();
             chapterPage.enter();
         });
 
@@ -103,8 +104,8 @@ public class ChapterController {
 
         chevronSVG.setContent(SVG.CHEVRON_RIGHT.getContent());
 
-        chevronPane.setPrefSize(12, 30);
-        chevronPane.setMaxSize(12, 30);
+        chevronPane.setPrefSize(16, 30);
+        chevronPane.setMaxSize(16, 30);
         chevronPane.getChildren().add(chevronIcon);
         chevronPane.setMouseTransparent(true);
         chevronPane.setAlignment(Pos.CENTER_RIGHT);

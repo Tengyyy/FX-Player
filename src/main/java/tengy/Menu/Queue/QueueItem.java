@@ -7,7 +7,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.css.PseudoClass;
-import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,7 +26,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import tengy.*;
 import tengy.MediaItems.MediaItem;
-import tengy.Menu.Columns;
 import tengy.Menu.FocusableMenuButton;
 import tengy.Menu.MenuController;
 import tengy.PlaybackSettings.PlaybackSettingsState;
@@ -427,9 +425,9 @@ public class QueueItem extends GridPane {
                 removeAction();
 
                 if(queueBox.queueOrder.size() > index)
-                    queueBox.queue.get(queueBox.queueOrder.get(index)).removeButton.requestFocus();
+                    keyboardFocusOn(queueBox.queue.get(queueBox.queueOrder.get(index)).removeButton);
                 else if(index > 0)
-                    queueBox.queue.get(queueBox.queueOrder.get(index - 1)).removeButton.requestFocus();
+                    keyboardFocusOn(queueBox.queue.get(queueBox.queueOrder.get(index - 1)).removeButton);
             }
 
             e.consume();
@@ -543,6 +541,8 @@ public class QueueItem extends GridPane {
                 if(!queuePage.selectionActive.get() && !isActive.get()) play();
                 else if(queuePage.selectionActive.get()) checkbox.fire();
             }
+
+            e.consume();
         });
 
         this.add(indexPane, 0, 0);

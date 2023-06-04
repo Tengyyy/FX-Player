@@ -158,7 +158,7 @@ public class SubtitlesController {
 
             subtitlesHome.subtitlesChooserTab.setStyle("-fx-border-width: 1 0 0 0;");
 
-            String preferredLanguage = menuController.settingsPage.preferencesSection.languageProperty.get();
+            String preferredLanguage = menuController.settingsPage.subtitleSection.languageProperty.get();
             String preferredLanguageCode = OpenSubtitlesPane.languageMap.get(preferredLanguage);
 
             boolean selected = false;

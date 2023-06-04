@@ -244,7 +244,7 @@ public class ControlBarController implements Initializable {
 
         labelBox.setMinWidth(150);
         labelBox.setPadding(new Insets(0, 10, 0, 0));
-        labelBox.setTranslateX(-68);
+        labelBox.setTranslateX(-83);
         labelBox.setFillHeight(true);
         labelBox.setAlignment(Pos.CENTER_LEFT);
         labelBox.getChildren().addAll(volumeSliderPane, durationLabel);
@@ -254,6 +254,7 @@ public class ControlBarController implements Initializable {
         volumeSliderPane.setMaxSize(68, 30);
         volumeSliderPane.getChildren().addAll(volumeTrack, volumeSlider);
         volumeSliderPane.setAlignment(Pos.CENTER);
+        HBox.setMargin(volumeSliderPane, new Insets(0, 15, 0, 0));
 
         volumeTrack.setProgress(0.5);
         volumeTrack.getStyleClass().add("volumeTrack");
@@ -305,7 +306,6 @@ public class ControlBarController implements Initializable {
             if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
             if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
 
-            if(menuController.settingsPage.settingsMenu.showing) menuController.settingsPage.settingsMenu.hide();
         });
 
         previousVideoIcon.setShape(previousVideoSVG);
@@ -1011,7 +1011,6 @@ public class ControlBarController implements Initializable {
 
         if (playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
         if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
-        if(menuController.settingsPage.settingsMenu.showing) menuController.settingsPage.settingsMenu.hide();
 
 
         if(mediaInterface.mediaActive.get()){
@@ -1067,7 +1066,7 @@ public class ControlBarController implements Initializable {
 
         volumeSliderAnimation = new TranslateTransition(Duration.millis(100), labelBox);
         volumeSliderAnimation.setFromX(labelBox.getTranslateX());
-        volumeSliderAnimation.setToX(-68);
+        volumeSliderAnimation.setToX(-83);
 
         volumeSliderAnimation.play();
     }

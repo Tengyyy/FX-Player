@@ -1,30 +1,28 @@
-package tengy.PlaybackSettings;
+package tengy;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
 import javafx.scene.Node;
-import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
+import tengy.CustomMenuItem;
 
-import java.nio.charset.StandardCharsets;
-
-public class PresetsButton extends MenuButton {
+public class CustomMenuButton extends MenuButton {
 
     StringProperty valueProperty = new SimpleStringProperty();
 
-    CustomMenuItem customMenuItem = new CustomMenuItem();
-    ScrollPane scrollPane = new ScrollPane();
+    javafx.scene.control.CustomMenuItem customMenuItem = new javafx.scene.control.CustomMenuItem();
+    public ScrollPane scrollPane = new ScrollPane();
     VBox content = new VBox();
 
-    PresetsButton(){
+    int itemWidth = 130;
+
+    public CustomMenuButton(){
 
         this.setFocusTraversable(false);
         this.setPrefSize(150, 35);
@@ -49,8 +47,6 @@ public class PresetsButton extends MenuButton {
             this.setText(newValue);
         });
 
-
-
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setPrefSize(140, 200);
@@ -69,27 +65,48 @@ public class PresetsButton extends MenuButton {
     }
 
 
-    public void addAll(String... presets) {
-        for(String preset : presets){
-            PresetItem presetItem = new PresetItem(preset);
-            presetItem.selected.addListener((observableValue, oldValue, newValue) -> {
+    public void addAll(String... values) {
+        for(String value : values){
+            CustomMenuItem customMenuItem = new CustomMenuItem(value, itemWidth);
+            customMenuItem.selected.addListener((observableValue, oldValue, newValue) -> {
                 if(newValue){
                     if(valueProperty.getValue() != null){
                         for(Node node : content.getChildren()){
-                            PresetItem presetItem1 = (PresetItem) node;
-                            if(presetItem1.value.equals(valueProperty.getValue())) {
-                                presetItem1.unselect();
+                            CustomMenuItem customMenuItem1 = (CustomMenuItem) node;
+                            if(customMenuItem1.value.equals(valueProperty.getValue())) {
+                                customMenuItem1.unselect();
                                 break;
                             }
                         }
                     }
 
-                    valueProperty.set(presetItem.value);
+                    valueProperty.set(customMenuItem.value);
                 }
             });
 
-            content.getChildren().add(presetItem);
+            content.getChildren().add(customMenuItem);
         }
+    }
+    
+    public void add(String value){
+        CustomMenuItem customMenuItem = new CustomMenuItem(value, itemWidth);
+        customMenuItem.selected.addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                if(valueProperty.getValue() != null){
+                    for(Node node : content.getChildren()){
+                        CustomMenuItem customMenuItem1 = (CustomMenuItem) node;
+                        if(customMenuItem1.value.equals(valueProperty.getValue())) {
+                            customMenuItem1.unselect();
+                            break;
+                        }
+                    }
+                }
+
+                valueProperty.set(customMenuItem.value);
+            }
+        });
+
+        content.getChildren().add(customMenuItem);
     }
 
     public StringProperty valueProperty(){
@@ -99,10 +116,10 @@ public class PresetsButton extends MenuButton {
 
     public void setValue(String string){
         for(Node node : content.getChildren()){
-            PresetItem presetItem = (PresetItem) node;
+            CustomMenuItem customMenuItem = (CustomMenuItem) node;
 
-            if(presetItem.value.equals(string)){
-                presetItem.select();
+            if(customMenuItem.value.equals(string)){
+                customMenuItem.select();
                 break;
             }
         }
@@ -111,4 +128,24 @@ public class PresetsButton extends MenuButton {
     public String getValue(){
         return valueProperty.getValue();
     }
+
+    public void setContextWidth(int value){
+        this.setPrefWidth(value);
+        this.setMaxWidth(value);
+
+        scrollPane.setPrefWidth(value - 5);
+        scrollPane.setMaxWidth(value - 5);
+
+        itemWidth = value - 15;
+    }
+
+    public void setContextHeight(int value){
+        scrollPane.setPrefHeight(value);
+        scrollPane.setMaxHeight(value);
+    }
+
+    public void setScrollOff(){
+        itemWidth = itemWidth + 10;
+    }
+
 }

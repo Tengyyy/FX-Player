@@ -1,4 +1,4 @@
-package tengy.PlaybackSettings;
+package tengy;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -9,22 +9,22 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 
 
-public class PresetItem extends HBox {
+public class CustomMenuItem extends HBox {
 
     Label text = new Label();
 
     boolean pressed = false;
 
-    String value;
+    public String value;
 
-    BooleanProperty selected = new SimpleBooleanProperty(false);
+    public BooleanProperty selected = new SimpleBooleanProperty(false);
 
-    PresetItem(String value){
+    public CustomMenuItem(String value, int width){
         this.value = value;
-        this.getStyleClass().add("custom-menu-item");
+        this.getStyleClass().add("custom-combo-menu-item");
         this.setFocusTraversable(true);
 
-        this.setPrefWidth(130);
+        this.setPrefWidth(width);
 
 
         this.getChildren().add(text);

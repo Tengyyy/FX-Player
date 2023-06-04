@@ -30,7 +30,7 @@ public class MenuBarButton extends StackPane {
     Line line = new Line();
 
     SVGPath svgPath = new SVGPath();
-    Region region = new Region();
+    public Region region = new Region();
 
     String text;
 

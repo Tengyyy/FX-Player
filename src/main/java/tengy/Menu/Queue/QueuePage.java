@@ -196,13 +196,13 @@ public class QueuePage {
 
         shuffleToggle.setOnAction(e -> {
 
-            shuffleToggle.requestFocus();
-
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
             if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
             menuController.playbackSettingsController.playbackOptionsController.shuffleTab.toggle.setSelected(!menuController.playbackSettingsController.playbackOptionsController.shuffleTab.toggle.isSelected());
+
+            shuffleToggle.requestFocus();
         });
 
         folderSVG.setContent(SVG.FOLDER.getContent());
@@ -317,11 +317,10 @@ public class QueuePage {
 
         addOptionsButton.setOnAction(e -> {
 
-            addOptionsButton.requestFocus();
-
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
+            addOptionsButton.requestFocus();
 
             if(addOptionsContextMenu.showing) addOptionsContextMenu.hide();
             else if(menuController.mainController.windowController.windowState == WindowState.CLOSED) addOptionsContextMenu.showOptions(true);
@@ -335,10 +334,11 @@ public class QueuePage {
         StackPane.setMargin(addButtonContainer, new Insets(0, 30, 0, 0));
 
         addButton.setOnAction(e -> {
-            addButton.requestFocus();
 
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
+
+            addButton.requestFocus();
 
             if(activeQueueItemContextMenu != null && activeQueueItemContextMenu.showing) activeQueueItemContextMenu.hide();
             openVideoChooser();
@@ -394,10 +394,11 @@ public class QueuePage {
         });
 
         clearQueueButton.setOnAction((e) -> {
-            clearQueueButton.requestFocus();
 
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
+            
+            clearQueueButton.requestFocus();
 
             clearQueue();
         });
@@ -441,9 +442,10 @@ public class QueuePage {
 
 
         clearSelectionButton.setOnAction(e -> {
-            clearSelectionButton.requestFocus();
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
+
+            clearSelectionButton.requestFocus();
 
             while(!selectedItems.isEmpty()){
                 selectedItems.get(0).checkbox.setSelected(false);
@@ -566,10 +568,10 @@ public class QueuePage {
         removeButton.setText("Remove");
         removeButton.setOnAction(e -> {
 
-            removeButton.requestFocus();
-
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
+
+            removeButton.requestFocus();
 
             while(!selectedItems.isEmpty()){
                 selectedItems.get(0).remove();
@@ -664,6 +666,9 @@ public class QueuePage {
         scrollUpButton.getStyleClass().add("scrollToActiveButton");
         scrollUpButton.setGraphic(scrollUpIcon);
         scrollUpButton.setOnAction(e -> {
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
+
             scrollUpButton.requestFocus();
             animateScroll();
         });
@@ -723,6 +728,9 @@ public class QueuePage {
         scrollDownButton.getStyleClass().add("scrollToActiveButton");
         scrollDownButton.setGraphic(scrollDownIcon);
         scrollDownButton.setOnAction(e -> {
+            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
+            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
+
             scrollDownButton.requestFocus();
             animateScroll();
         });

@@ -147,7 +147,7 @@ public class PlaybackSettingsController {
 
         if(animating.get() || playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || equalizerController.sliderActive) return;
 
-        mainController.videoImageView.requestFocus();
+        if(mainController.getMenuController().menuState == MenuState.CLOSED) mainController.videoImageView.requestFocus();
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 45, 0, false, 1, true);
 
         controlBarController.settings.enableTooltip();

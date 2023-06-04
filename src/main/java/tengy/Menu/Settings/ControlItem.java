@@ -1,30 +1,29 @@
 package tengy.Menu.Settings;
 
-import tengy.HotkeyController;
-import tengy.Subtitles.SubtitlesState;
-import tengy.ControlTooltip;
-import tengy.Windows.HotkeyChangeWindow;
-import tengy.SVG;
-import tengy.PlaybackSettings.PlaybackSettingsState;
-import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import tengy.HotkeyController;
+import tengy.PlaybackSettings.PlaybackSettingsState;
+import tengy.PressableNode;
+import tengy.SVG;
+import tengy.Subtitles.SubtitlesState;
 
-public class ControlItem extends StackPane {
+import static tengy.Utilities.keyboardFocusOff;
+
+public class ControlItem extends PressableNode {
 
     public ControlsSection controlsSection;
 
     SVGPath editSVG = new SVGPath();
     Region editIcon = new Region();
-    Button editButton = new Button();
-    ControlTooltip editTooltip;
 
     public Action action;
     StackPane actionPane = new StackPane();
@@ -33,44 +32,89 @@ public class ControlItem extends StackPane {
     StackPane keybindPane = new StackPane();
     public HBox keybindBox = new HBox();
 
-    ControlItem(ControlsSection controlsSection, Action action, KeyCode[] keyCodes, boolean isOdd){
+    boolean hover = false;
+    boolean pressed = false;
+
+    ControlItem(ControlsSection controlsSection, Action action, KeyCode[] keyCodes, int focusValue){
 
         this.controlsSection = controlsSection;
 
         this.action = action;
-        this.getChildren().addAll(editButton, actionPane, keybindPane);
+        this.getChildren().addAll(editIcon, actionPane, keybindPane);
         this.setMinHeight(47);
+        this.getStyleClass().addAll("highlightedSection", "settingsToggle");
+        this.setCursor(Cursor.HAND);
 
+        this.setPadding(new Insets(10, 10, 10, 15));
 
-        this.setPadding(new Insets(7, 5, 7, 5));
-        if(isOdd) this.getStyleClass().add("controlItemOdd");
+        this.setOnMouseEntered(e -> {
+            hover = true;
+            editIcon.setVisible(true);
+        });
 
-        this.setOnMouseEntered(e -> editButton.setVisible(true));
-        this.setOnMouseExited(e -> editButton.setVisible(false));
+        this.setOnMouseExited(e -> {
+            hover = false;
+            if(!this.isFocused()) editIcon.setVisible(false);
+        });
+
+        this.setOnMouseClicked(e -> {
+            if(controlsSection.settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) controlsSection.settingsPage.menuController.subtitlesController.closeSubtitles();
+            if(controlsSection.settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) controlsSection.settingsPage.menuController.playbackSettingsController.closeSettings();
+
+            this.requestFocus();
+
+            openKeyBindEditScreen();
+
+            e.consume();
+        });
+
+        this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                controlsSection.focus.set(focusValue);
+                controlsSection.settingsPage.focus.set(3);
+                editIcon.setVisible(true);
+            }
+            else {
+                keyboardFocusOff(this);
+                controlsSection.focus.set(-1);
+                controlsSection.settingsPage.focus.set(-1);
+                if(!hover) editIcon.setVisible(false);
+                pressed = false;
+            }
+        });
+
+        this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+
+            pressed = true;
+
+            e.consume();
+        });
+
+        this.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            this.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+
+            if(pressed) openKeyBindEditScreen();
+
+            pressed = false;
+
+            e.consume();
+        });
 
         editSVG.setContent(SVG.EDIT.getContent());
         editIcon.setShape(editSVG);
         editIcon.setMouseTransparent(true);
         editIcon.setPrefSize(19, 19);
         editIcon.setMaxSize(19, 19);
-        editIcon.getStyleClass().add("graphic");
+        editIcon.getStyleClass().add("menuIcon");
+        editIcon.setVisible(false);
+        StackPane.setAlignment(editIcon, Pos.CENTER_LEFT);
 
-        editButton.setCursor(Cursor.HAND);
-        editButton.getStyleClass().add("transparentButton");
-        editButton.setGraphic(editIcon);
-        editButton.setVisible(false);
-        editButton.setFocusTraversable(false);
-        editButton.setOnAction(e -> {
-            if(controlsSection.settingsPage.menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) controlsSection.settingsPage.menuController.subtitlesController.closeSubtitles();
-            if(controlsSection.settingsPage.menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) controlsSection.settingsPage.menuController.playbackSettingsController.closeSettings();
-
-            openKeyBindEditScreen();
-        });
-
-        StackPane.setAlignment(editButton, Pos.CENTER_LEFT);
 
         StackPane.setAlignment(actionPane, Pos.CENTER_LEFT);
-        StackPane.setMargin(actionPane, new Insets(0, 0, 0, 40));
+        StackPane.setMargin(actionPane, new Insets(0, 0, 0, 35));
 
         actionPane.getChildren().add(actionLabel);
 
@@ -91,8 +135,6 @@ public class ControlItem extends StackPane {
         keybindBox.setAlignment(Pos.CENTER_LEFT);
 
         loadKeyLabel(keyCodes);
-
-        Platform.runLater(() -> editTooltip = new ControlTooltip(controlsSection.settingsPage.menuController.mainController,"Edit hotkey", "", editButton, 1000));
     }
 
     public void loadKeyLabel(KeyCode[] keyCodes){
@@ -108,9 +150,11 @@ public class ControlItem extends StackPane {
             keycapContainer.getChildren().add(keyLabel);
             keycapContainer.setPadding(new Insets(0, 0, 4, 0));
             keycapContainer.setBackground(new Background(new BackgroundFill(Color.rgb(55, 55, 55), new CornerRadii(6), Insets.EMPTY)));
+            keycapContainer.setAlignment(Pos.CENTER);
             HBox.setHgrow(keycapContainer, Priority.NEVER);
 
             Label plus = new Label("+");
+            plus.setAlignment(Pos.CENTER);
             plus.setMinWidth(15);
             HBox.setHgrow(plus, Priority.NEVER);
             plus.getStyleClass().add("toggleText");

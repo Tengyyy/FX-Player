@@ -1,36 +1,36 @@
 package tengy.Menu.Settings;
 
-import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import tengy.Menu.MenuController;
-import tengy.Menu.MenuState;
-import tengy.PlaybackSettings.PlaybackSettingsState;
-import tengy.SVG;
-import tengy.Subtitles.SubtitlesState;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
-import javafx.scene.shape.SVGPath;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import tengy.AnimationsClass;
+import tengy.Menu.MenuController;
+import tengy.Menu.MenuState;
+import tengy.Menu.Settings.Libraries.LibrariesSection;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static tengy.Utilities.keyboardFocusOn;
+
 public class SettingsPage {
 
-    MenuController menuController;
+    public MenuController menuController;
 
     StackPane settingsWrapper = new StackPane();
     VBox settingsContainer = new VBox();
@@ -39,43 +39,22 @@ public class SettingsPage {
     VBox settingsContent = new VBox();
 
     StackPane titleContainer = new StackPane();
-    Button linksButton = new Button();
-    Region linksIcon = new Region();
-    SVGPath linksSVG = new SVGPath();
 
     public Label settingsTitle = new Label("Settings");
 
-    HBox buttonBar = new HBox();
-    Button subtitlesButton = new Button("Subtitles");
-    Button metadataButton = new Button("Metadata editing");
-    Button preferencesButton = new Button("Preferences");
-    Button musicLibrariesButton = new Button("Music libraries");
-    Button controlsButton = new Button("Controls");
-    Button aboutButton = new Button("About");
-
-
     public SubtitleSection subtitleSection;
-    MetadataSection metadataSection;
     public PreferencesSection preferencesSection;
     LibrariesSection librariesSection;
     public ControlsSection controlsSection;
     AboutSection aboutSection;
 
-    public SettingsMenu settingsMenu;
-
-    IntegerProperty focus = new SimpleIntegerProperty(-1);
-    List<Node> focusNodes = new ArrayList<>();
+    public IntegerProperty focus = new SimpleIntegerProperty(-1);
+    List<SettingsSection> focusNodes = new ArrayList<>();
 
     public SettingsPage(MenuController menuController){
 
         this.menuController = menuController;
 
-        subtitleSection = new SubtitleSection(this);
-        metadataSection = new MetadataSection(this);
-        preferencesSection = new PreferencesSection(this);
-        librariesSection = new LibrariesSection(this);
-        controlsSection = new ControlsSection(this);
-        aboutSection = new AboutSection(this);
 
         settingsContainer.setBackground(Background.EMPTY);
 
@@ -94,111 +73,28 @@ public class SettingsPage {
 
         VBox.setVgrow(settingsScroll, Priority.ALWAYS);
 
-        titleContainer.getChildren().addAll(settingsTitle, linksButton);
-        titleContainer.setPadding(new Insets(0, 30, 0, 0));
+        titleContainer.getChildren().addAll(settingsTitle);
 
         StackPane.setAlignment(settingsTitle, Pos.CENTER_LEFT);
         settingsTitle.getStyleClass().add("menuTitle");
 
-        StackPane.setAlignment(linksButton, Pos.CENTER_RIGHT);
-        linksSVG.setContent(SVG.MENU.getContent());
-
-        linksIcon.setShape(linksSVG);
-        linksIcon.getStyleClass().add("graphic");
-        linksIcon.setPrefSize(20, 20);
-        linksIcon.setMaxSize(20, 20);
-        linksIcon.setMouseTransparent(true);
-
-        linksButton.setGraphic(linksIcon);
-        linksButton.setCursor(Cursor.HAND);
-        linksButton.getStyleClass().add("transparentButton");
-        linksButton.visibleProperty().bind(settingsBar.widthProperty().lessThanOrEqualTo(800));
-        linksButton.setOnAction(e -> {
-
-            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
-            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
-
-            if(settingsMenu.showing) settingsMenu.hide();
-            else settingsMenu.showOptions(true);
-        });
-
-        settingsBar.widthProperty().addListener((observableValue, oldValue, newValue) -> {
-            if(oldValue.doubleValue() <= 800 && newValue.doubleValue() > 800){
-                if(settingsMenu.showing) settingsMenu.hide();
-            }
-        });
-
         settingsBar.setPadding(new Insets(55, 50, 20, 50));
         settingsBar.setSpacing(10);
         settingsBar.setAlignment(Pos.CENTER_LEFT);
-        settingsBar.getChildren().addAll(titleContainer, buttonBar);
+        settingsBar.getChildren().add(titleContainer);
 
 
-        buttonBar.setTranslateX(-11);
-        buttonBar.setSpacing(15);
-        buttonBar.getChildren().addAll(subtitlesButton, metadataButton, preferencesButton, musicLibrariesButton, controlsButton, aboutButton);
-        buttonBar.visibleProperty().bind(settingsBar.widthProperty().greaterThan(800));
+        subtitleSection = new SubtitleSection(this);
+        preferencesSection = new PreferencesSection(this);
+        librariesSection = new LibrariesSection(this);
+        controlsSection = new ControlsSection(this);
+        aboutSection = new AboutSection(this);
 
-        subtitlesButton.getStyleClass().addAll("linkButton", "settingsBarButton");
-        subtitlesButton.setOnAction(e -> {
-            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
-            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
-
-            animateScroll(Section.SUBTITLES);
-
-        });
-        subtitlesButton.setFocusTraversable(false);
-
-        metadataButton.getStyleClass().addAll("linkButton", "settingsBarButton");
-        metadataButton.setOnAction(e -> {
-            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
-            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
-
-            animateScroll(Section.METADATA);
-
-        });
-        metadataButton.setFocusTraversable(false);
-
-
-        preferencesButton.getStyleClass().addAll("linkButton", "settingsBarButton");
-        preferencesButton.setOnAction(e -> {
-            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
-            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
-
-            animateScroll(Section.PREFERENCES);
-        });
-        preferencesButton.setFocusTraversable(false);
-
-        musicLibrariesButton.getStyleClass().addAll("linkButton", "settingsBarButton");
-        musicLibrariesButton.setOnAction(e -> {
-            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
-            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
-
-            animateScroll(Section.LIBRARIES);
-        });
-        musicLibrariesButton.setFocusTraversable(false);
-
-
-        controlsButton.getStyleClass().addAll("linkButton", "settingsBarButton");
-        controlsButton.setOnAction(e -> {
-            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
-            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
-
-            animateScroll(Section.CONTROLS);
-
-        });
-        controlsButton.setFocusTraversable(false);
-
-
-        aboutButton.getStyleClass().addAll("linkButton", "settingsBarButton");
-        aboutButton.setOnAction(e -> {
-            if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
-            if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
-
-            animateScroll(Section.ABOUT);
-        });
-        aboutButton.setFocusTraversable(false);
-
+        focusNodes.add(subtitleSection);
+        focusNodes.add(preferencesSection);
+        focusNodes.add(librariesSection);
+        focusNodes.add(controlsSection);
+        focusNodes.add(aboutSection);
 
         settingsScroll.setContent(settingsContent);
         settingsScroll.addEventFilter(KeyEvent.ANY, e -> {
@@ -213,11 +109,9 @@ public class SettingsPage {
         menuController.settingsContainer.getChildren().add(settingsWrapper);
 
 
-        settingsContent.getChildren().addAll(subtitleSection, metadataSection, preferencesSection, librariesSection, controlsSection, aboutSection);
+        settingsContent.getChildren().addAll(subtitleSection, preferencesSection, librariesSection, controlsSection, aboutSection);
         settingsContent.setSpacing(30);
 
-
-        Platform.runLater(() -> settingsMenu = new SettingsMenu(this));
     }
 
 
@@ -227,6 +121,8 @@ public class SettingsPage {
 
     public void closeSettingsPage(){
         menuController.settingsContainer.setVisible(false);
+        subtitleSection.languageItem.customMenuButton.scrollPane.setVvalue(0);
+        preferencesSection.recentMediaSizeItem.customMenuButton.scrollPane.setVvalue(0);
     }
 
     public void enter(){
@@ -241,6 +137,8 @@ public class SettingsPage {
             menuController.openMenu(MenuState.SETTINGS_OPEN);
         }
         else {
+            AnimationsClass.rotateTransition(200, menuController.menuBar.settingsButton.region, 0, 120, false, 1, true);
+
             if(!menuController.extended.get()) menuController.extendMenu(MenuState.SETTINGS_OPEN);
             else menuController.animateStateSwitch(MenuState.SETTINGS_OPEN);
         }
@@ -260,9 +158,6 @@ public class SettingsPage {
         switch(section){
             case SUBTITLES -> {
                 return 0;
-            }
-            case METADATA -> {
-                return calculateVvalue(metadataSection);
             }
             case PREFERENCES -> {
                 return calculateVvalue(preferencesSection);
@@ -297,8 +192,50 @@ public class SettingsPage {
     }
 
     public void focusForward() {
+        if(focus.get() < 0){
+            boolean skipFocus = menuController.menuBar.focusForward();
+            if(!skipFocus) return;
+
+            focusNodes.get(0).focusForward();
+        }
+        else {
+            if(focus.get() > focusNodes.size() - 1) {
+                keyboardFocusOn(menuController.menuBar.focusNodes.get(0));
+            }
+            else {
+                boolean skipFocus = focusNodes.get(focus.get()).focusForward();
+                if(!skipFocus) return;
+
+                if(focus.get() < focusNodes.size() - 1){
+                    focusNodes.get(focus.get() + 1).focusForward();
+                }
+                else keyboardFocusOn(menuController.menuBar.focusNodes.get(0));
+            }
+        }
     }
 
     public void focusBackward() {
+        if(focus.get() < 0){
+            if(menuController.menuBar.focus.get() > 0) {
+                menuController.menuBar.focusBackward();
+            }
+            else {
+                focusNodes.get(focusNodes.size() - 1).focusBackward();
+            }
+        }
+        else {
+            if(focus.get() > focusNodes.size() - 1){
+                focusNodes.get(focusNodes.size() - 1).focusBackward();
+            }
+            else {
+                boolean skipFocus = focusNodes.get(focus.get()).focusBackward();
+                if(!skipFocus) return;
+
+                if(focus.get() > 0){
+                    focusNodes.get(focus.get() - 1).focusBackward();
+                }
+                else keyboardFocusOn(menuController.menuBar.focusNodes.get(menuController.menuBar.focusNodes.size() - 1));
+            }
+        }
     }
 }

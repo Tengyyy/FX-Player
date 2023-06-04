@@ -140,10 +140,10 @@ public class MenuController implements Initializable {
         closeButton.setGraphic(closeIcon);
         closeButton.setOnAction(e -> {
 
-            closeButton.requestFocus();
-
             if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
             if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+
+            closeButton.requestFocus();
 
             closeMenu();
         });
@@ -241,6 +241,9 @@ public class MenuController implements Initializable {
         });
 
         extendButton.setOnAction(e -> {
+            if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+            if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+
             extendButton.requestFocus();
 
             extendMenu(menuState);
@@ -341,7 +344,7 @@ public class MenuController implements Initializable {
         this.chapterController = chapterController;
 
 
-        settingsPage.preferencesSection.loadLanguageBox();
+        settingsPage.subtitleSection.loadLanguageBox();
     }
 
     public void extendMenu(MenuState newState){
@@ -412,7 +415,12 @@ public class MenuController implements Initializable {
 
             StackPane.setMargin(extendButton, new Insets(5, 5, 0, 0));
 
-            extendButton.setOnAction(ev -> extendMenu(menuState));
+            extendButton.setOnAction(ev -> {
+                if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+                if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+                extendButton.requestFocus();
+                extendMenu(menuState);
+            });
             extendIcon.setShape(extendSVG);
             extendTooltip.updateActionText("Extend menu");
             extendButton.setVisible(true);
@@ -473,7 +481,13 @@ public class MenuController implements Initializable {
 
         StackPane.setMargin(extendButton, new Insets(10, 60, 0, 0));
 
-        extendButton.setOnAction(e -> shrinkMenu());
+        extendButton.setOnAction(e -> {
+            if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+            if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+
+            extendButton.requestFocus();
+            shrinkMenu();
+        });
         extendIcon.setShape(collapseSVG);
         extendTooltip.updateActionText("Collapse menu");
         if(newState == MenuState.QUEUE_OPEN || newState == MenuState.CHAPTERS_OPEN){
@@ -519,6 +533,8 @@ public class MenuController implements Initializable {
     }
 
     public void setMenuShrinked(){
+
+        if(!extended.get()) return;
 
         extended.set(false);
 

@@ -50,12 +50,12 @@ public class MenuBar {
 
         queueButton.button.setOnAction(e -> {
             
-            queueButton.button.requestFocus();
-
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
                 if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
+
+            queueButton.button.requestFocus();
 
             if(menuController.menuState == MenuState.QUEUE_OPEN) return;
 
@@ -64,12 +64,12 @@ public class MenuBar {
 
         historyButton.button.setOnAction(e -> {
 
-            historyButton.button.requestFocus();
-
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
                 if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
+
+            historyButton.button.requestFocus();
 
             if(menuController.menuState == MenuState.RECENT_MEDIA_OPEN) return;
 
@@ -78,12 +78,12 @@ public class MenuBar {
 
         musicLibraryButton.button.setOnAction(e -> {
 
-            musicLibraryButton.button.requestFocus();
-
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
                 if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
+
+            musicLibraryButton.button.requestFocus();
 
             if(menuController.menuState == MenuState.MUSIC_LIBRARY_OPEN) return;
 
@@ -92,12 +92,12 @@ public class MenuBar {
 
         playlistsButton.button.setOnAction(e -> {
 
-            playlistsButton.button.requestFocus();
-
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
                 if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
+
+            playlistsButton.button.requestFocus();
 
             if(menuController.menuState == MenuState.PLAYLISTS_OPEN) return;
 
@@ -106,12 +106,12 @@ public class MenuBar {
 
         settingsButton.button.setOnAction(e -> {
 
-            settingsButton.button.requestFocus();
-
             if(menuController.extended.get()){
                 if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
                 if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
             }
+
+            settingsButton.button.requestFocus();
 
             if(menuController.menuState == MenuState.SETTINGS_OPEN) return;
 

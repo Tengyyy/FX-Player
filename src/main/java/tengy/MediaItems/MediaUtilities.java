@@ -5,6 +5,10 @@ import com.github.kokorin.jaffree.StreamType;
 import com.github.kokorin.jaffree.ffmpeg.*;
 import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import com.github.kokorin.jaffree.ffprobe.Stream;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import tengy.Utilities;
 import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -17,12 +21,13 @@ import org.bytedeco.javacpp.Loader;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class MediaUtilities {
@@ -33,7 +38,7 @@ public class MediaUtilities {
     static String ffmpegPath = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
     public static final String FFMPEG_PATH = ffmpegPath.substring(0, ffmpegPath.length() - 11);
 
-    public static final Set<String> mediaFormats = Set.of("mp4", "avi", "mkv", "flv", "mov", "mp3", "flac", "wav", "ogg", "opus", "aiff", "m4a", "wma", "aac");
+    public static final Set<String> mediaFormats = Set.of("mp4", "avi", "mkv", "flv", "mov", "mp3", "flac", "wav", "ogg", "opus", "aiff", "m4a", "wma", "aac", "wmv", "mka", "webm");
 
 
 
@@ -148,9 +153,14 @@ public class MediaUtilities {
         return cover;
     }
 
-    public static boolean updateMetadata(MediaItem mediaItem, File file, Map<String, String> metadata, boolean hasCover, Image oldCover, File newCover, boolean coverRemoved, Duration duration, File outputFile){
-
-        boolean success = false;
+    public static boolean createFileWithUpdatedMetadata(MediaItem mediaItem, File outputFile, BooleanProperty editActiveProperty) {
+        File file = mediaItem.getFile();
+        Map<String, String> metadata = mediaItem.newMetadata;
+        boolean hasCover = mediaItem.hasCover;
+        Image oldCover = mediaItem.cover;
+        File newCover = mediaItem.newCoverFile;
+        boolean coverRemoved = mediaItem.coverRemoved;
+        Duration duration = mediaItem.duration;
 
         int numberOfAttachmentStreams = mediaItem.attachmentStreams.size();
         int numberOfVideoStreams = 0;
@@ -261,28 +271,125 @@ public class MediaUtilities {
             }
         }
 
-        if(duration != null){
-            fFmpeg.setProgressListener(progress -> {
-                double percentage = Math.min(1, Math.max(0, progress.getTimeMillis() / duration.toMillis()));
-                mediaItem.metadataEditProgress.set(percentage);
-            });
-        }
+        fFmpeg.addOutput(UrlOutput.toUrl(outputFile.getAbsolutePath()));
 
-
-        String outputPath;
-        File tempFile = null;
-
-        if(outputFile != null) outputPath = outputFile.getAbsolutePath();
-        else {
-            outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + "." + (extension.equals("mov") ? "mp4" : extension);
-            tempFile = new File(outputPath);
-        }
-
-        fFmpeg.addOutput(UrlOutput.toUrl(outputPath));
+        Platform.runLater(() -> editActiveProperty.set(true));
         FFmpegResult fFmpegResult = fFmpeg.execute();
 
-        if(outputFile == null){
-            if(fFmpegResult.getVideoSize() > 0 || fFmpegResult.getAudioSize() > 0){
+        Platform.runLater(() -> editActiveProperty.set(false));
+
+        if(currentImageFile != null && currentImageFile.exists()) currentImageFile.delete();
+
+        return fFmpegResult.getAudioSize() > 0 || fFmpegResult.getVideoSize() > 0;
+    }
+
+    public static boolean updateMetadata(MediaItem mediaItem){
+
+        File file = mediaItem.getFile();
+        String extension = Utilities.getFileExtension(file);
+
+        String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + "." + (extension.equals("mov") ? "mp4" : extension);
+        File tempFile = new File(outputPath);
+
+        boolean editSuccess = createFileWithUpdatedMetadata(mediaItem, tempFile, mediaItem.editActive);
+        boolean success = false;
+
+        if(editSuccess){
+            try {
+                boolean deleteSuccess = file.delete();
+                if(deleteSuccess){
+                    boolean renameSuccess = tempFile.renameTo(file);
+                    if(!renameSuccess) throw new IOException("Failed to rename new file");
+
+                    success = true;
+                }
+                else throw new IOException("Failed to delete old file");
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        else {
+            if(tempFile.exists()) tempFile.delete();
+        }
+
+        return success;
+    }
+
+    public static File extractMetadata(MediaItem mediaItem){
+
+        String outputPath = mediaItem.file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".txt";
+        File outputFile = new File(outputPath);
+
+        FFmpeg.atPath(Paths.get(FFMPEG_PATH))
+                .addInput(UrlInput.fromUrl(mediaItem.file.getAbsolutePath()))
+                .addArguments("-f", "ffmetadata")
+                .addOutput(UrlOutput.toUrl(outputPath))
+                .execute();
+
+        return outputFile;
+    }
+
+    public static boolean updateChapters(MediaItem mediaItem) throws IOException {
+        File file = mediaItem.getFile();
+        String extension = Utilities.getFileExtension(file);
+
+        boolean success = false;
+        File metadataFile = extractMetadata(mediaItem);
+
+
+        if(metadataFile.exists()){
+
+            Path path = metadataFile.toPath();
+
+            List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
+            List<String> linesWithoutChapters = new ArrayList<>();
+
+            boolean insideChapter = false;
+            for(String line : lines){
+                if(line.equals("[CHAPTER]")){
+                    insideChapter = true;
+                }
+                else if(!line.isEmpty() && line.charAt(0) == '['){
+                    insideChapter = false;
+                    linesWithoutChapters.add(line);
+                }
+                else if(!insideChapter){
+                    linesWithoutChapters.add(line);
+                }
+            }
+
+
+            Files.deleteIfExists(path);
+            Files.createFile(path);
+            for (String line : linesWithoutChapters) {
+                Files.writeString(path, line + System.lineSeparator(),
+                        StandardOpenOption.APPEND);
+            }
+
+            for(int i=0; i < mediaItem.newChapters.size(); i ++){
+
+                Chapter chapter = mediaItem.newChapters.get(i);
+
+                Files.writeString(path, "[CHAPTER]" + System.lineSeparator(), StandardOpenOption.APPEND);
+                Files.writeString(path, "TIMEBASE=1/1000000000" + System.lineSeparator(), StandardOpenOption.APPEND);
+                Files.writeString(path, "START=" + (long) chapter.startTime.toMillis() + "000000" + System.lineSeparator(), StandardOpenOption.APPEND);
+                Duration endTime;
+                if(i < mediaItem.newChapters.size() - 1){
+                    Chapter nextChapter = mediaItem.newChapters.get(i + 1);
+                    endTime = nextChapter.startTime.subtract(Duration.millis(1));
+                }
+                else endTime = mediaItem.duration;
+
+                Files.writeString(path, "END=" + (long) endTime.toMillis() + "000000" + System.lineSeparator(), StandardOpenOption.APPEND);
+                Files.writeString(path, "title=" + chapter.title + System.lineSeparator(), StandardOpenOption.APPEND);
+            }
+
+
+            String outputPath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + "." + (extension.equals("mov") ? "mp4" : extension);
+            File tempFile = new File(outputPath);
+
+            boolean ffMetadataSuccess = applyFFMetadataFile(mediaItem, metadataFile, tempFile);
+            if(ffMetadataSuccess){
                 try {
                     boolean deleteSuccess = file.delete();
                     if(deleteSuccess){
@@ -295,16 +402,65 @@ public class MediaUtilities {
                 } catch (IOException e){
                     e.printStackTrace();
                 }
-
             }
             else {
                 if(tempFile.exists()) tempFile.delete();
             }
         }
 
-        if(currentImageFile != null && currentImageFile.exists()) currentImageFile.delete();
-
         return success;
+    }
+
+    public static boolean applyFFMetadataFile(MediaItem mediaItem, File metadataFile, File outputFile) {
+        File file = mediaItem.getFile();
+        String extension = Utilities.getFileExtension(file);
+
+        boolean hasCover = mediaItem.hasCover;
+        Image cover = mediaItem.cover;
+
+        File currentImageFile = null;
+
+        FFmpeg fFmpeg = FFmpeg.atPath(Paths.get(FFMPEG_PATH))
+                .addInput(UrlInput.fromUrl(file.getAbsolutePath()))
+                .addInput(UrlInput.fromUrl(metadataFile.getAbsolutePath()));
+
+        if(hasCover && cover != null && extension.equals("mkv")){
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(cover, null);
+
+            String picturePath = file.getParent() + "/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new Date()) + ".png";
+            currentImageFile = new File(picturePath);
+
+            try {
+                ImageIO.write(bufferedImage, "png",  currentImageFile);
+
+                int numberOfAttachmentStreams = mediaItem.attachmentStreams.size();
+
+                fFmpeg.addArguments("-attach", picturePath);
+                fFmpeg.addArguments("-metadata:s:t:" + numberOfAttachmentStreams, "mimetype=image/png");
+                fFmpeg.addArguments("-metadata:s:t:" + numberOfAttachmentStreams, "filename=cover.png");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(extension.equals("mkv")) fFmpeg.addArguments("-map", "0:V?");
+        else fFmpeg.addArguments("-map", "0:v?");
+
+        fFmpeg.addArguments("-map", "0:a?")
+                .addArguments("-map", "0:s?")
+                .addArguments("-map", "0:t?")
+                .addArguments("-map_metadata", "1")
+                .addArguments("-map_chapters", "1")
+                .addArguments("-c", "copy")
+                .addOutput(UrlOutput.toUrl(outputFile.getAbsolutePath()));
+
+        FFmpegResult fFmpegResult = fFmpeg.execute();
+
+        if(currentImageFile != null && currentImageFile.exists()) currentImageFile.delete();
+        if(metadataFile.exists()) metadataFile.delete();
+
+        return fFmpegResult.getAudioSize() > 0 || fFmpegResult.getVideoSize() > 0;
     }
 
     public static Color findDominantColor(Image image){
@@ -394,7 +550,7 @@ public class MediaUtilities {
                 .execute();
     }
 
-    public static void grabScaledsFrame(File file, int streamIndex, long positionInMillis, OutputStream outputStream, double width, double height){
+    public static void grabScaledFrame(File file, int streamIndex, long positionInMillis, OutputStream outputStream, double width, double height){
         FFmpeg.atPath(Paths.get(FFMPEG_PATH))
                 .addInput(UrlInput.fromUrl(file.getAbsolutePath())
                         .setPosition(positionInMillis, TimeUnit.MILLISECONDS)

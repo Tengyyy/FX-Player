@@ -144,7 +144,7 @@ public class Mp4Item implements MediaInformationItem {
         switch (value) {
             case "TV Show" -> {
 
-                if(mediaInformationPage.mediaItem.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
+                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
                     mediaInformationPage.imageView.setImage(videoImage);
                 }
 
@@ -158,7 +158,7 @@ public class Mp4Item implements MediaInformationItem {
             }
             case "Movie" -> {
 
-                if(mediaInformationPage.mediaItem.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
+                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
                     mediaInformationPage.imageView.setImage(videoImage);
                 }
 
@@ -171,7 +171,7 @@ public class Mp4Item implements MediaInformationItem {
             }
             case "Music video" -> {
 
-                if(mediaInformationPage.mediaItem.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
+                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
                     mediaInformationPage.imageView.setImage(musicImage);
                 }
 
@@ -187,7 +187,7 @@ public class Mp4Item implements MediaInformationItem {
             }
             case "Home video" -> {
 
-                if(mediaInformationPage.mediaItem.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
+                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
                     mediaInformationPage.imageView.setImage(videoImage);
                 }
 
@@ -196,7 +196,7 @@ public class Mp4Item implements MediaInformationItem {
             }
             case "Podcast" -> {
 
-                if(mediaInformationPage.mediaItem.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
+                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
                     mediaInformationPage.imageView.setImage(podcastImage);
                 }
 

@@ -8,6 +8,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import tengy.MediaItems.MediaItem;
+import tengy.MediaItems.MediaUtilities;
 import tengy.Menu.MenuController;
 import tengy.Menu.Queue.QueueItem;
 import javafx.scene.control.Label;
@@ -73,12 +74,11 @@ public class Utilities {
 
     }
 
-
     public static MediaItem createMediaItem(File file, MainController mainController){
-        return switch (Utilities.getFileExtension(file)) {
-            case "mp4", "mov", "mkv", "avi", "flv", "mp3", "flac", "wav", "ogg", "opus", "aiff", "m4a", "wma", "aac" -> new MediaItem(file, mainController);
-            default -> null;
-        };
+        String extension = getFileExtension(file);
+
+        if(MediaUtilities.mediaFormats.contains(extension)) return new MediaItem(file, mainController);
+        else return null;
     }
 
     public static String[] splitLines(String str) {

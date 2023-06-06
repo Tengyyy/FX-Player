@@ -8,7 +8,6 @@ import java.util.*;
 public class WavItem implements MediaInformationItem {
 
     MediaInformationPage mediaInformationPage;
-    MediaItem mediaItem;
 
     TextAreaItem titleItem = null;
     TextAreaItem artistItem = null;

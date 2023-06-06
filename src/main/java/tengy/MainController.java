@@ -1,5 +1,6 @@
 package tengy;
 
+import tengy.MediaItems.MediaItem;
 import tengy.Windows.*;
 import tengy.Menu.Settings.Action;
 import tengy.Subtitles.SubtitlesController;
@@ -39,6 +40,7 @@ import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -123,12 +125,11 @@ public class MainController implements Initializable {
 
     public WindowController windowController;
 
-
     public Pref pref;
-
 
     FocusController focusController;
 
+    public ArrayList<MediaItem> ongoingMediaEditProcesses = new ArrayList<>();
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {

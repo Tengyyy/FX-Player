@@ -83,6 +83,7 @@ public class ChapterItem extends HBox {
         indexLabel.getStyleClass().add("indexLabel");
         indexLabel.setMouseTransparent(true);
 
+        playIconPane.setMinWidth(45);
         playIconPane.setPrefWidth(45);
         playIconPane.setMaxWidth(45);
         playIconPane.getChildren().addAll(indexLabel, playIcon);
@@ -105,6 +106,7 @@ public class ChapterItem extends HBox {
 
 
         imageWrapper.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
+        imageWrapper.setMinSize(125, 70);
         imageWrapper.setPrefSize(125, 70);
         imageWrapper.setMaxSize(125, 70);
         imageWrapper.getChildren().addAll(coverImage, imageIcon);
@@ -119,15 +121,18 @@ public class ChapterItem extends HBox {
 
         imageSVG.setContent(SVG.IMAGE_WIDE.getContent());
         imageIcon.setShape(imageSVG);
+        imageIcon.setMinSize(50, 40);
         imageIcon.setPrefSize(50, 40);
         imageIcon.setMaxSize(50, 40);
         imageIcon.getStyleClass().add("imageIcon");
 
+        imageContainer.setMinSize(127, 72);
         imageContainer.setPrefSize(127, 72);
         imageContainer.setMaxSize(127, 72);
         imageContainer.getChildren().addAll(imageWrapper, imageBorder);
         imageContainer.setBackground(Background.EMPTY);
 
+        imageBorder.setMinSize(127, 72);
         imageBorder.setPrefSize(127, 72);
         imageBorder.setMaxSize(127, 72);
         imageBorder.setBackground(Background.EMPTY);

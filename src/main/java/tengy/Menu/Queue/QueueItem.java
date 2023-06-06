@@ -26,6 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import tengy.*;
 import tengy.MediaItems.MediaItem;
+import tengy.MediaItems.MediaItemTask;
 import tengy.Menu.FocusableMenuButton;
 import tengy.Menu.MenuController;
 import tengy.PlaybackSettings.PlaybackSettingsState;

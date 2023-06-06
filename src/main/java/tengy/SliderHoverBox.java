@@ -79,6 +79,7 @@ public class SliderHoverBox extends VBox {
         chapterlabel.setBackground(Background.EMPTY);
         chapterlabel.setAlignment(Pos.CENTER);
         chapterlabel.setPadding(new Insets(2, 3, 2, 3));
+        chapterlabel.setMaxWidth(164);
 
         this.getChildren().add(timeLabel);
 

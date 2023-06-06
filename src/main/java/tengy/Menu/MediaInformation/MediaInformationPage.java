@@ -1,5 +1,7 @@
 package tengy.Menu.MediaInformation;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import tengy.*;
 import tengy.MediaItems.MediaItem;
 import tengy.MediaItems.MediaUtilities;
@@ -33,6 +35,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import javax.print.attribute.standard.Media;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -109,12 +112,9 @@ public class MediaInformationPage {
 
     RowConstraints row1 = new RowConstraints(90, 90, 90);
 
-    BooleanProperty fieldsDisabledProperty = new SimpleBooleanProperty(false);
-
     MediaItem mediaItem = null;
 
     PauseTransition saveLabelTimer = new PauseTransition(Duration.millis(1000));
-    Timeline progressAnimation = null;
 
     PauseTransition popupTimer = new PauseTransition(Duration.millis(5000));
     FadeTransition popupFadeOut;
@@ -122,39 +122,16 @@ public class MediaInformationPage {
 
     boolean savingToNewFile = false;
 
-    ChangeListener<Boolean> editActiveListener = (observableValue, oldValue, newValue) -> {
-        if(newValue){
-            if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
-            if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
-            savedLabel.setVisible(false);
-            progressBar.setVisible(true);
-        }
-        else {
-            if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
-            if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
-            progressAnimation = new Timeline(new KeyFrame(Duration.millis(300),
-                    new KeyValue(progressBar.progressProperty(), 1, Interpolator.LINEAR)));
-            progressAnimation.setOnFinished(e -> {
-                progressBar.setVisible(false);
-                progressBar.setProgress(0);
-                savedLabel.setVisible(true);
-                if(savingToNewFile) showPopup();
-                savingToNewFile = false;
-                saveLabelTimer.playFromStart();
-            });
-            progressAnimation.playFromStart();
-        }
-    };
+    BooleanProperty changesMade = new SimpleBooleanProperty(false);
 
-    ChangeListener<Number> progressListener = (observableValue, oldValue, newValue) -> {
-        if(newValue.doubleValue() <= 0  || !mediaItem.metadataEditActive.get()) return;
-        if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
-        progressAnimation = new Timeline(new KeyFrame(Duration.millis(300),
-                new KeyValue(progressBar.progressProperty(), newValue, Interpolator.LINEAR)));
-        progressAnimation.playFromStart();
-    };
+    BooleanProperty editActiveProperty = new SimpleBooleanProperty(false);
 
     SaveOptionsContextMenu saveOptionsContextMenu;
+
+    public boolean coverRemoved = false;
+    public Image newCover = null;
+    public File newCoverFile = null;
+    public Color newColor = null;
 
 
     public MediaInformationPage(MenuController menuController){
@@ -175,7 +152,6 @@ public class MediaInformationPage {
 
         StackPane.setAlignment(title, Pos.CENTER_LEFT);
         title.getStyleClass().add("menuTitle");
-
 
         mediaInformationScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         mediaInformationScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -245,7 +221,6 @@ public class MediaInformationPage {
         editImageButton.setId("editImageButton");
         editImageButton.setOpacity(0);
         editImageButton.setCursor(Cursor.HAND);
-        editImageButton.disableProperty().bind(fieldsDisabledProperty);
 
         editImageButton.setOnAction(e -> editImageButtonClick());
 
@@ -279,8 +254,7 @@ public class MediaInformationPage {
         saveButton.setText("Save changes");
         saveButton.getStyleClass().add("mainButton");
         saveButton.setId("saveButton");
-        saveButton.setCursor(Cursor.HAND);
-        saveButton.setDisable(true);
+        saveButton.disableProperty().bind(changesMade.not().or(editActiveProperty));
         saveButton.setOnAction(e -> {
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
@@ -302,11 +276,10 @@ public class MediaInformationPage {
         chevronUpIcon.setId("saveOptionsIcon");
         chevronUpIcon.setMouseTransparent(true);
 
-        saveOptionsButton.setCursor(Cursor.HAND);
         saveOptionsButton.getStyleClass().add("mainButton");
         saveOptionsButton.setId("saveOptionsButton");
         saveOptionsButton.setGraphic(chevronUpIcon);
-        saveOptionsButton.setDisable(true);
+        saveOptionsButton.disableProperty().bind(changesMade.not().or(editActiveProperty));
 
         TranslateTransition chevronDownAnimation = new TranslateTransition(Duration.millis(100), chevronUpIcon);
         chevronDownAnimation.setFromY(chevronUpIcon.getTranslateY());
@@ -344,10 +317,9 @@ public class MediaInformationPage {
         saveButtonContainer.setAlignment(Pos.CENTER);
 
 
-        discardButton.setCursor(Cursor.HAND);
         discardButton.setText("Discard changes");
         discardButton.getStyleClass().add("menuButton");
-        discardButton.setDisable(true);
+        discardButton.disableProperty().bind(changesMade.not().or(editActiveProperty));
         discardButton.setPrefWidth(170);
 
 
@@ -355,7 +327,7 @@ public class MediaInformationPage {
             if(menuController.subtitlesController.subtitlesState != SubtitlesState.CLOSED) menuController.subtitlesController.closeSubtitles();
             if(menuController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) menuController.playbackSettingsController.closeSettings();
 
-            if(mediaItem.metadataEditActive.get()) return;
+            if(mediaItem.editActive.get()) return;
             reloadMediaInformation();
         });
 
@@ -434,6 +406,18 @@ public class MediaInformationPage {
         closeButtonIcon.setMaxSize(13, 13);
         closeButtonIcon.setMouseTransparent(true);
         closeButtonIcon.getStyleClass().add("menuIcon");
+
+
+        editActiveProperty.addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
+                savedLabel.setVisible(false);
+                progressBar.setVisible(true);
+            }
+            else {
+                if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
+            }
+        });
     }
 
     public void loadMediaInformationPage(MediaItem mediaItem){
@@ -442,18 +426,13 @@ public class MediaInformationPage {
 
         this.mediaItem = mediaItem;
 
-        progressBar.setProgress(mediaItem.metadataEditProgress.get());
-        if(mediaItem.metadataEditActive.get()) progressBar.setVisible(true);
-        mediaItem.metadataEditProgress.addListener(progressListener);
-        mediaItem.metadataEditActive.addListener(editActiveListener);
-        saveButton.disableProperty().bind(mediaItem.changesMade.not());
-        saveOptionsButton.disableProperty().bind(mediaItem.changesMade.not());
-        discardButton.disableProperty().bind(mediaItem.changesMade.not());
-        fieldsDisabledProperty.bind(mediaItem.metadataEditActive);
+        if(mediaItem.editActive.get()) {
+            progressBar.setVisible(true);
+            editActiveProperty.bind(mediaItem.editActive);
+        }
 
-
-        if(mediaItem.newCoverImage != null){
-            imageView.setImage(mediaItem.newCoverImage);
+        if(mediaItem.newCover != null){
+            imageView.setImage(mediaItem.newCover);
             imageViewContainer.setStyle("-fx-background-color: rgba(" + mediaItem.newColor.getRed() * 256 +  "," + mediaItem.newColor.getGreen() * 256 + "," + mediaItem.newColor.getBlue() * 256 + ",0.7);");
         }
         else if(mediaItem.coverRemoved || mediaItem.getCover() == null){
@@ -470,43 +449,43 @@ public class MediaInformationPage {
 
         switch (extension) {
             case "mp4", "mov" -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new Mp4Item(this, mediaItem.newMetadata) : new Mp4Item(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new Mp4Item(this, mediaItem.newMetadata) : new Mp4Item(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
             case "m4a" -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new M4aItem(this, mediaItem.newMetadata) : new M4aItem(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new M4aItem(this, mediaItem.newMetadata) : new M4aItem(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
             case "mp3", "aiff" -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new Mp3Item(this, mediaItem.newMetadata) : new Mp3Item(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new Mp3Item(this, mediaItem.newMetadata) : new Mp3Item(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
             case "aac" -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new Mp3Item(this, mediaItem.newMetadata) : new Mp3Item(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new Mp3Item(this, mediaItem.newMetadata) : new Mp3Item(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             case "flac" -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new FlacItem(this, mediaItem.newMetadata) : new FlacItem(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new FlacItem(this, mediaItem.newMetadata) : new FlacItem(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
             case "ogg", "opus" -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new OggItem(this, mediaItem.newMetadata) : new OggItem(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new OggItem(this, mediaItem.newMetadata) : new OggItem(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             case "avi" -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new AviItem(this, mediaItem.newMetadata) : new AviItem(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new AviItem(this, mediaItem.newMetadata) : new AviItem(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             case "flv", "wma" -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new OtherItem(this, mediaItem.newMetadata) : new OtherItem(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new OtherItem(this, mediaItem.newMetadata) : new OtherItem(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             case "wav" -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new WavItem(this, mediaItem.newMetadata) : new WavItem(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new WavItem(this, mediaItem.newMetadata) : new WavItem(this, mediaItem.getMediaInformation());
                 disableImageEdit();
             }
             default -> {
-                mediaInformationItem = mediaItem.changesMade.get() ? new OtherItem(this, mediaItem.newMetadata) : new OtherItem(this, mediaItem.getMediaInformation());
+                mediaInformationItem = mediaItem.editActive.get() ? new OtherItem(this, mediaItem.newMetadata) : new OtherItem(this, mediaItem.getMediaInformation());
                 enableImageEdit();
             }
         }
@@ -538,8 +517,8 @@ public class MediaInformationPage {
 
     private void editImageButtonClick(){
 
-        if(mediaItem.metadataEditActive.get()) return;
-        if(mediaItem.newCoverImage != null || (mediaItem.getCover() != null && !mediaItem.coverRemoved)){
+        if(mediaItem.editActive.get()) return;
+        if(mediaItem.newCover != null || (mediaItem.getCover() != null && !mediaItem.coverRemoved)){
             if(editImagePopUp.isShowing()) editImagePopUp.hide();
             else editImagePopUp.showOptions(mediaItem);
         }
@@ -548,37 +527,45 @@ public class MediaInformationPage {
 
     public void editImage(){
         File selectedFile = fileChooser.showOpenDialog(imageView.getScene().getWindow());
-        if(selectedFile != null && !mediaItem.metadataEditActive.get()){
-            mediaItem.coverRemoved = false;
-            mediaItem.newCoverImage = new Image(String.valueOf(selectedFile));
-            mediaItem.newCoverFile = selectedFile;
-            imageView.setImage(mediaItem.newCoverImage);
+        if(selectedFile != null && !mediaItem.editActive.get()){
+            coverRemoved = false;
+            newCover = new Image(String.valueOf(selectedFile));
+            newCoverFile = selectedFile;
+            imageView.setImage(newCover);
 
-            mediaItem.newColor = MediaUtilities.findDominantColor(mediaItem.newCoverImage);
-            if(mediaItem.newColor != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + mediaItem.newColor.getRed() * 256 +  "," + mediaItem.newColor.getGreen() * 256 + "," + mediaItem.newColor.getBlue() * 256 + ",0.7);");
+            newColor = MediaUtilities.findDominantColor(newCover);
+            if(newColor != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + mediaItem.newColor.getRed() * 256 +  "," + mediaItem.newColor.getGreen() * 256 + "," + mediaItem.newColor.getBlue() * 256 + ",0.7);");
 
-            mediaItem.changesMade.set(true);
+            changesMade.set(true);
         }
     }
 
     public void removeImage(){
-        if(mediaItem.metadataEditActive.get()) return;
+        if(mediaItem.editActive.get()) return;
 
-        mediaItem.coverRemoved = true;
-        mediaItem.newCoverImage = null;
-        mediaItem.newColor = null;
-        mediaItem.newCoverFile = null;
+        coverRemoved = true;
+        newCover = null;
+        newColor = null;
+        newCoverFile = null;
         imageView.setImage(mediaItem.getPlaceholderCover());
         imageViewContainer.setStyle("-fx-background-color: red;");
 
-        mediaItem.changesMade.set(true);
+        changesMade.set(true);
     }
 
     public void saveChanges(){
 
-        if(mediaItem.metadataEditActive.get() || !mediaItem.changesMade.get()) return;
+        if(mediaItem.editActive.get() || !changesMade.get()) return;
 
         mediaItem.newMetadata = mediaInformationItem.createMetadataMap();
+        mediaItem.coverRemoved = coverRemoved;
+        mediaItem.newCover = newCover;
+        mediaItem.newCoverFile = newCoverFile;
+        mediaItem.newColor = newColor;
+
+        changesMade.set(false);
+
+        editActiveProperty.bind(mediaItem.editActive);
 
         if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() == mediaItem){
             menuController.mediaInterface.resetMediaPlayer();
@@ -588,33 +575,43 @@ public class MediaInformationPage {
         editTask.setOnSucceeded(e -> {
             if(editTask.getValue()){
                 for(QueueItem queueItem : menuController.queuePage.queueBox.queue){
-                    if(queueItem.getMediaItem() == mediaItem){
+                    if(queueItem.getMediaItem() == editTask.mediaItem){
                         queueItem.update();
                     }
                 }
 
                 menuController.mainController.getControlBarController().updateNextAndPreviousVideoButtons();
 
-                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() == mediaItem) menuController.mediaInterface.createMedia(menuController.queuePage.queueBox.activeItem.get());
+                if(menuController.queuePage.queueBox.activeItem.get() != null && menuController.queuePage.queueBox.activeItem.get().getMediaItem() == editTask.mediaItem)
+                    menuController.mediaInterface.createMedia(menuController.queuePage.queueBox.activeItem.get());
+
+                if(editTask.mediaItem == mediaItem){
+                    editActiveProperty.unbind();
+
+                    editActiveProperty.set(false);
+                }
             }
         });
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(editTask);
         executorService.shutdown();
-
     }
 
+
+    //TODO
     public void saveToNewFile(File file){
 
-
-        if(mediaItem.metadataEditActive.get() || !mediaItem.changesMade.get()) return;
-
-        mediaItem.newMetadata = mediaInformationItem.createMetadataMap();
+        if(mediaItem.editActive.get() || !changesMade.get()) return;
 
         savingToNewFile = true;
 
-        EditTask editTask = new EditTask(mediaItem, file);
+        changesMade.set(false);
+
+        MediaItem dummyItem = new MediaItem(true);
+        menuController.mainController.ongoingMediaEditProcesses.add(dummyItem);
+
+        EditTask editTask = new EditTask(mediaItem, file, editActiveProperty);
         editTask.setOnSucceeded(e -> {
             popup.setPrefSize(400, 130);
             popup.setMaxSize(400, 130);
@@ -622,6 +619,10 @@ public class MediaInformationPage {
             popupBody.getChildren().clear();
             popupBody.getChildren().add(createTextLabel("Created an output file with updated metadata at"));
             popupBody.getChildren().add(createLinkLabel(file.getAbsolutePath(), file));
+
+            editActiveProperty.set(false);
+
+            menuController.mainController.ongoingMediaEditProcesses.remove(dummyItem);
         });
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
@@ -631,17 +632,14 @@ public class MediaInformationPage {
 
     private void reloadMediaInformation(){
 
-        if(mediaItem.metadataEditActive.get()) return;
+        if(mediaItem.editActive.get()) return;
 
-        mediaItem.changesMade.set(false);
-        mediaItem.metadataEditActive.set(false);
-        mediaItem.metadataEditProgress.set(0);
-        mediaItem.newMetadata = null;
-        mediaItem.coverRemoved = false;
-        mediaItem.newCoverImage = null;
-        mediaItem.newColor = null;
-        mediaItem.newCoverFile = null;
+        mediaItem.resetEditVariables();
 
+        coverRemoved = false;
+        newCover = null;
+        newColor = null;
+        newCoverFile = null;
 
         textBox.getChildren().clear();
         imageView.setImage(null);
@@ -662,16 +660,12 @@ public class MediaInformationPage {
         imageView.setImage(null);
         imageViewContainer.setStyle("-fx-background-color: transparent;");
 
-        if(mediaItem != null) mediaItem.metadataEditProgress.removeListener(progressListener);
-        if(mediaItem != null) mediaItem.metadataEditActive.removeListener(editActiveListener);
-        if(progressAnimation != null && progressAnimation.getStatus() == Animation.Status.RUNNING) progressAnimation.stop();
+        editActiveProperty.unbind();
+
+        editActiveProperty.set(false);
+
         if(saveLabelTimer.getStatus() == Animation.Status.RUNNING) saveLabelTimer.stop();
         progressBar.setProgress(0);
-        saveButton.disableProperty().unbind();
-        saveOptionsButton.disableProperty().unbind();
-        editImageButton.disableProperty().unbind();
-        discardButton.disableProperty().unbind();
-        fieldsDisabledProperty.unbind();
 
         savedLabel.setVisible(false);
         progressBar.setVisible(false);
@@ -680,11 +674,13 @@ public class MediaInformationPage {
 
         popup.setVisible(false);
 
-        if(!mediaItem.metadataEditActive.get() && mediaItem.changesMade.get()){
-            mediaItem.newMetadata = mediaInformationItem.createMetadataMap();
-        }
-
         mediaInformationItem = null;
+        coverRemoved = false;
+        newCover = null;
+        newColor = null;
+        newCoverFile = null;
+
+        mediaItem = null;
     }
 
     public void enter(MediaItem mediaItem){

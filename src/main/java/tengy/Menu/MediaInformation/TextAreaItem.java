@@ -25,9 +25,8 @@ public class TextAreaItem extends VBox{
         textArea = new ExpandableTextArea();
         textArea.initializeText(value);
         textArea.textProperty().addListener((observableValue, s, t1) -> {
-            mediaInformationPage.mediaItem.changesMade.set(true);
+            mediaInformationPage.changesMade.set(true);
         });
-        textArea.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
         textArea.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
             if(newValue){

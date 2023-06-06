@@ -68,11 +68,10 @@ public class CustomTextAreaItem extends VBox{
         keyField.setTranslateY(2);
         keyField.getStyleClass().add("key-text-field");
         keyField.maxWidthProperty().bind(labelBox.widthProperty().subtract(35));
-        keyField.disableProperty().bind(otherItem.mediaInformationPage.fieldsDisabledProperty);
 
         keyField.textProperty().addListener((ov, prevText, currText) -> {
             // Do this in a Platform.runLater because of Textfield has no padding at first time and so on
-            otherItem.mediaInformationPage.mediaItem.changesMade.set(true);
+            otherItem.mediaInformationPage.changesMade.set(true);
             Platform.runLater(() -> {
                 Text text = new Text(currText);
                 text.setFont(new Font("Roboto Medium", 18)); // Set the same font, so the size is the same
@@ -153,8 +152,6 @@ public class CustomTextAreaItem extends VBox{
         editButton.setCursor(Cursor.HAND);
         editButton.setOpacity(0);
         editButton.setText(null);
-        editButton.disableProperty().bind(otherItem.mediaInformationPage.fieldsDisabledProperty);
-
 
         editIcon.setShape(editSVG);
         editIcon.setMinSize(15, 15);
@@ -167,8 +164,6 @@ public class CustomTextAreaItem extends VBox{
             removeEditButton();
             keyField.requestFocus();
         });
-
-        editButton.disableProperty().bind(otherItem.mediaInformationPage.fieldsDisabledProperty);
 
 
         editButton.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> AnimationsClass.fadeAnimation(200, editButton, 0, 1, false, 1, true));
@@ -185,7 +180,6 @@ public class CustomTextAreaItem extends VBox{
         removeButton.setCursor(Cursor.HAND);
         removeButton.setOpacity(0);
         removeButton.setText(null);
-        removeButton.disableProperty().bind(otherItem.mediaInformationPage.fieldsDisabledProperty);
 
         removeIcon.setShape(removeSVG);
         removeIcon.setMinSize(18, 18);
@@ -215,9 +209,8 @@ public class CustomTextAreaItem extends VBox{
         textArea = new ExpandableTextArea();
         textArea.initializeText(value);
         textArea.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            otherItem.mediaInformationPage.mediaItem.changesMade.set(true);
+            otherItem.mediaInformationPage.changesMade.set(true);
         });
-        textArea.disableProperty().bind(otherItem.mediaInformationPage.fieldsDisabledProperty);
 
         this.getChildren().addAll(labelContainer, textArea);
         otherItem.content.getChildren().add(otherItem.content.getChildren().indexOf(otherItem.addButton), this);
@@ -227,9 +220,9 @@ public class CustomTextAreaItem extends VBox{
             removeButtonTooltip = new ControlTooltip(otherItem.mediaInformationPage.menuController.mainController, "Remove key", "", removeButton, 1000);
             warningLabelTooltip = new ControlTooltip(otherItem.mediaInformationPage.menuController.mainController, "Key can not be empty", "", warningLabel, 0, TooltipType.MENU_TOOLTIP);
             warningLabelTooltip.getStyleClass().add("warningLabelTooltip");
-            boolean changesMade = otherItem.mediaInformationPage.mediaItem.changesMade.get();
+            boolean changesMade = otherItem.mediaInformationPage.changesMade.get();
             keyField.setText(key);
-            if(!changesMade) otherItem.mediaInformationPage.mediaItem.changesMade.set(false);
+            if(!changesMade) otherItem.mediaInformationPage.changesMade.set(false);
         });
 
 
@@ -285,7 +278,7 @@ public class CustomTextAreaItem extends VBox{
         otherItem.content.getChildren().remove(this);
         otherItem.items.remove(this);
 
-        otherItem.mediaInformationPage.mediaItem.changesMade.set(true);
+        otherItem.mediaInformationPage.changesMade.set(true);
 
     }
 

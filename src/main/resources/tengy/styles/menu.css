@@ -824,5 +824,10 @@
     -fx-border-color: rgb(173, 216, 230);
 }
 
+.savePopup {
+    -fx-background-color: rgba(30,30,30,0.85);
+    -fx-background-radius: 5;
+}
+
 
 

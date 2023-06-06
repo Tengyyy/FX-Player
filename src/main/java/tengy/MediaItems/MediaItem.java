@@ -2,10 +2,10 @@ package tengy.MediaItems;
 
 import com.github.kokorin.jaffree.LogLevel;
 import com.github.kokorin.jaffree.StreamType;
-import com.github.kokorin.jaffree.ffprobe.Chapter;
 import com.github.kokorin.jaffree.ffprobe.FFprobe;
 import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import com.github.kokorin.jaffree.ffprobe.Stream;
+import javafx.application.Platform;
 import tengy.MainController;
 import tengy.Utilities;
 import javafx.beans.property.BooleanProperty;
@@ -18,7 +18,12 @@ import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -46,7 +51,7 @@ public class MediaItem {
 
     File file;
 
-    public List<Chapter> chapters;
+    public List<Chapter> chapters = new ArrayList<>();
 
     public List<Stream> videoStreams = new ArrayList<>();
     public List<Stream> audioStreams = new ArrayList<>();
@@ -62,20 +67,24 @@ public class MediaItem {
     public BooleanProperty subtitlesExtractionInProgress = new SimpleBooleanProperty(false);
     ///////////////////////
 
-    //Metadata edit variables//
-    public BooleanProperty changesMade = new SimpleBooleanProperty(false);
-    public BooleanProperty metadataEditActive = new SimpleBooleanProperty(false);
-    public DoubleProperty metadataEditProgress = new SimpleDoubleProperty(0); // 0 - 0%, 1 - 100%
-    public Map<String, String> newMetadata = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+    //Media edit variables//
+    public BooleanProperty editActive = new SimpleBooleanProperty(false);
+    public List<Chapter> newChapters = null;
+    public Map<String, String> newMetadata = null;
     public boolean coverRemoved = false;
-    public Image newCoverImage = null;
+    public Image newCover = null;
     public File newCoverFile = null;
     public Color newColor = null;
     ///////////////////////////
 
+    // dummy mediaItem to populate ongoing metadata proccesses list when creating new output
+    public MediaItem(boolean isDummy){}
+
     public MediaItem(File file, MainController mainController) {
         this.file = file;
         this.mainController = mainController;
+
 
         probeResult = FFprobe.atPath(Paths.get(MediaUtilities.FFPROBE_PATH))
                 .setShowChapters(true)
@@ -91,7 +100,15 @@ public class MediaItem {
         this.cover = pair.getValue();
         this.hasCover = pair.getKey();
 
-        chapters = probeResult.getChapters();
+        for(com.github.kokorin.jaffree.ffprobe.Chapter chapter : probeResult.getChapters()){
+            String title = chapter.getTag("title");
+            Duration duration = Duration.ZERO;
+            Double startTime = chapter.getStartTime();
+            if(startTime != null) duration = Duration.seconds(startTime);
+            if(title == null) title = "";
+
+            chapters.add(new Chapter(title, duration));
+        }
 
 
         for(Stream stream : probeResult.getStreams()){
@@ -158,7 +175,6 @@ public class MediaItem {
             if(durationFloat != null) this.duration = Duration.seconds(durationFloat);
         }
 
-        //mediaInformation.putAll(fFmpegFrameGrabber.getMetadata());
 
         String extension = Utilities.getFileExtension(this.file);
 
@@ -211,20 +227,18 @@ public class MediaItem {
 
     public boolean updateMetadata() {
 
-        this.metadataEditActive.set(true);
-        this.changesMade.set(false);
-
-        mainController.getMenuController().ongoingMediaEditProcesses.add(this);
+        Platform.runLater(() -> editActive.set(true));
+        mainController.ongoingMediaEditProcesses.add(this);
 
         boolean metadataEditSuccess = false;
 
-        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, duration, null);
+        boolean success = MediaUtilities.updateMetadata(this);
 
         if(success){
             //overwrite curr file with new file
 
-            if(newCoverImage != null){
-                cover = newCoverImage;
+            if(newCover != null){
+                cover = newCover;
                 hasCover = true;
                 backgroundColor = newColor;
             }
@@ -257,41 +271,27 @@ public class MediaItem {
             metadataEditSuccess = true;
         }
 
+        resetEditVariables();
 
-        metadataEditActive.set(false);
-        metadataEditProgress.set(0);
-        newMetadata = null;
-        coverRemoved = false;
-        newCoverImage = null;
-        newColor = null;
-        newCoverFile = null;
-
-        mainController.getMenuController().ongoingMediaEditProcesses.remove(this);
+        mainController.ongoingMediaEditProcesses.remove(this);
 
         return metadataEditSuccess;
     }
 
+    public boolean updateChapters() throws IOException {
 
+        Platform.runLater(() -> editActive.set(true));
+        mainController.ongoingMediaEditProcesses.add(this);
 
-    public boolean createNewFile(File outputFile){
-        this.metadataEditActive.set(true);
-        this.changesMade.set(false);
+        boolean success = MediaUtilities.updateChapters(this);
 
-        mainController.getMenuController().ongoingMediaEditProcesses.add(this);
+        if(success){
+            chapters = newChapters;
+        }
 
-        boolean success = MediaUtilities.updateMetadata(this, file, newMetadata, hasCover, cover, newCoverFile, coverRemoved, duration, outputFile);
+        resetEditVariables();
 
-
-        metadataEditActive.set(false);
-        metadataEditProgress.set(0);
-        newMetadata = null;
-        coverRemoved = false;
-        newCoverImage = null;
-        newColor = null;
-        newCoverFile = null;
-
-        mainController.getMenuController().ongoingMediaEditProcesses.remove(this);
-
+        mainController.ongoingMediaEditProcesses.remove(this);
 
         return success;
     }
@@ -307,6 +307,16 @@ public class MediaItem {
 
     public Image getCover(){
         return this.cover;
+    }
+
+    public void resetEditVariables(){
+        Platform.runLater(() -> editActive.set(false));
+        newMetadata = null;
+        coverRemoved = false;
+        newCover = null;
+        newColor = null;
+        newCoverFile = null;
+        newChapters = null;
     }
 }
 

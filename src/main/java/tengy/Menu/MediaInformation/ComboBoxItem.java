@@ -31,7 +31,6 @@ public class ComboBoxItem extends VBox{
             comboBox.getItems().add(value);
         }
 
-        comboBox.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
         comboBox.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
             if(newValue){
@@ -41,7 +40,7 @@ public class ComboBoxItem extends VBox{
         });
 
         comboBox.setValue(initialValue);
-        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> mediaInformationPage.mediaItem.changesMade.set(true));
+        comboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> mediaInformationPage.changesMade.set(true));
 
         this.getChildren().addAll(label, comboBox);
         if(add) parent.getChildren().add(this);

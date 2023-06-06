@@ -57,9 +57,8 @@ public class OtherItem implements MediaInformationItem {
             items.add(item);
             item.keyField.requestFocus();
             mediaInformationPage.mediaInformationScroll.setVvalue(1.0);
-            mediaInformationPage.mediaItem.changesMade.set(true);
+            mediaInformationPage.changesMade.set(true);
         });
-        addButton.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
 
         content.getChildren().add(addButton);

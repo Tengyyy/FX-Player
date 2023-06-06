@@ -19,7 +19,6 @@ public class NumberSpinner{
         spinner.setMinHeight(36);
         spinner.setPrefHeight(36);
         spinner.setMaxHeight(36);
-        spinner.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
         spinner.focusedProperty().addListener((observableValue, aBoolean, newValue) -> {
             if(newValue){
@@ -55,7 +54,7 @@ public class NumberSpinner{
                 spinner.getValueFactory().setValue(0);
             }
 
-            mediaInformationPage.mediaItem.changesMade.set(true);
+            mediaInformationPage.changesMade.set(true);
         });
     }
 }

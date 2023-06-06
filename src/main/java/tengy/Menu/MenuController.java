@@ -68,8 +68,6 @@ public class MenuController implements Initializable {
 
     DragResizer dragResizer;
 
-    public ArrayList<MediaItem> ongoingMediaEditProcesses = new ArrayList<>();
-
     public MenuBar menuBar;
 
     public BooleanProperty extended = new SimpleBooleanProperty(false);

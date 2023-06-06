@@ -30,7 +30,6 @@ public class DatePickerItem extends VBox{
         datePicker.setMinHeight(36);
         datePicker.setPrefHeight(36);
         datePicker.setMaxHeight(36);
-        datePicker.disableProperty().bind(mediaInformationPage.fieldsDisabledProperty);
 
 
         dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
@@ -51,7 +50,7 @@ public class DatePickerItem extends VBox{
         });
 
         datePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            mediaInformationPage.mediaItem.changesMade.set(true);
+            mediaInformationPage.changesMade.set(true);
         });
 
 

@@ -1,35 +1,37 @@
 package tengy.Windows.ChapterEdit;
 
-import com.github.kokorin.jaffree.ffprobe.Chapter;
-import javafx.application.Platform;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import javafx.animation.*;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import tengy.*;
-import javafx.animation.FadeTransition;
-import javafx.beans.binding.Bindings;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import tengy.AnimationsClass;
 import tengy.Chapters.ChapterFrameGrabberTask;
+import tengy.MainController;
+import tengy.MediaItems.Chapter;
 import tengy.MediaItems.MediaItem;
+import tengy.SVG;
+import tengy.Utilities;
 import tengy.Windows.WindowController;
 import tengy.Windows.WindowState;
 
@@ -47,13 +49,21 @@ public class ChapterEditWindow {
     WindowController windowController;
     MainController mainController;
 
-
     public StackPane window = new StackPane();
 
     VBox windowContainer = new VBox();
 
     VBox titleContainer = new VBox();
     Label title = new Label("Chapters");
+
+    StackPane loadingContainer = new StackPane();
+    HBox loadingPane = new HBox();
+    StackPane spinnerWrapper = new StackPane();
+    MFXProgressSpinner progressSpinner = new MFXProgressSpinner();
+    SVGPath checkSVG = new SVGPath();
+    SVGPath crossSVG = new SVGPath();
+    Region statusIcon = new Region();
+    Label savingLabel = new Label("Saving chapters");
 
     ScrollPane scrollPane;
 
@@ -78,7 +88,12 @@ public class ChapterEditWindow {
 
     public List<ChapterEditItem> chapterEditItems = new ArrayList<>();
 
+    BooleanProperty editActiveProperty = new SimpleBooleanProperty(false);
     public BooleanProperty saveAllowed = new SimpleBooleanProperty(false);
+
+    PauseTransition showTimer = new PauseTransition(Duration.millis(2500));
+    ParallelTransition showTransition = null;
+    ParallelTransition hideTransition = null;
 
     public MediaItem mediaItem = null;
 
@@ -108,8 +123,8 @@ public class ChapterEditWindow {
 
         window.getStyleClass().add("chapterWindow");
         window.setVisible(false);
-        window.getChildren().addAll(windowContainer, buttonContainer, closeButton, popupContainer);
-
+        window.getChildren().addAll(windowContainer, buttonContainer, loadingContainer, closeButton, popupContainer);
+        window.setOnMouseClicked(e -> window.requestFocus());
 
         StackPane.setAlignment(closeButton, Pos.TOP_RIGHT);
         StackPane.setMargin(closeButton, new Insets(10, 10, 0 ,0));
@@ -235,12 +250,14 @@ public class ChapterEditWindow {
         mainButton.getStyleClass().add("mainButton");
         mainButton.setTextAlignment(TextAlignment.CENTER);
         mainButton.setPrefWidth(230);
-        mainButton.disableProperty().bind(saveAllowed.not());
+        mainButton.disableProperty().bind(saveAllowed.not().or(editActiveProperty));
         mainButton.setFocusTraversable(false);
         mainButton.setOnAction(e -> {
             mainButton.requestFocus();
             boolean timestampsCorrect = checkFields();
-            if(timestampsCorrect) saveChanges();
+            if(timestampsCorrect) {
+                saveChanges();
+            }
             else {
                 saveAllowed.set(false);
                 savePopUp.show();
@@ -274,10 +291,85 @@ public class ChapterEditWindow {
 
         StackPane.setAlignment(mainButton, Pos.CENTER_RIGHT);
 
+        StackPane.setAlignment(loadingContainer, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(loadingContainer, new Insets(0, 0, 80, 0));
+        loadingContainer.prefWidthProperty().bind(Bindings.max(350, Bindings.min(600, window.widthProperty().multiply(0.8))));
+        loadingContainer.maxWidthProperty().bind(Bindings.max(350, Bindings.min(600, window.widthProperty().multiply(0.8))));
+        loadingContainer.setPrefHeight(60);
+        loadingContainer.setMaxHeight(60);
+        loadingContainer.setVisible(false);
+
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(loadingContainer.widthProperty());
+        clip.setHeight(60);
+
+        loadingContainer.setClip(clip);
+        loadingContainer.getChildren().add(loadingPane);
+
+        loadingPane.prefWidthProperty().bind(loadingContainer.widthProperty());
+        loadingPane.maxWidthProperty().bind(loadingContainer.widthProperty());
+        loadingPane.setAlignment(Pos.CENTER_LEFT);
+        loadingPane.setSpacing(20);
+        loadingPane.setPadding(new Insets(10, 20, 10, 20));
+        loadingPane.getChildren().addAll(spinnerWrapper, savingLabel);
+        loadingPane.getStyleClass().add("savePopup");
+        loadingPane.setPrefHeight(60);
+        loadingPane.setMaxHeight(60);
+        loadingPane.setTranslateY(60);
+        loadingPane.setOpacity(0.3);
+
+
+        spinnerWrapper.getChildren().addAll(progressSpinner, statusIcon);
+
+        checkSVG.setContent(SVG.CHECK.getContent());
+        crossSVG.setContent(SVG.CLOSE.getContent());
+
+        statusIcon.setShape(checkSVG);
+        statusIcon.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        statusIcon.setPrefSize(20, 14);
+        statusIcon.setMaxSize(20, 14);
+        statusIcon.setVisible(false);
+
+        progressSpinner.setRadius(10);
+        progressSpinner.setColor1(Color.RED);
+        progressSpinner.setColor2(Color.RED);
+        progressSpinner.setColor3(Color.RED);
+        progressSpinner.setColor4(Color.RED);
+
+
+
+        savingLabel.getStyleClass().add("settingsText");
 
         popupContainer.setId("chapterPopupBackground");
         popupContainer.setOpacity(0);
         popupContainer.setMouseTransparent(true);
+
+        showTimer.setOnFinished(e -> {
+            if(showTransition != null && showTransition.getStatus() == Animation.Status.RUNNING) showTransition.stop();
+            if(hideTransition != null && hideTransition.getStatus() == Animation.Status.RUNNING) hideTransition.stop();
+            hideLoadingSpinner();
+        });
+
+        editActiveProperty.addListener((observableValue, oldValue, newValue) -> {
+
+            if(newValue){
+                setSpinnerToLoading();
+                if(showTimer.getStatus() == Animation.Status.RUNNING) showTimer.stop();
+                if(showTransition != null && showTransition.getStatus() == Animation.Status.RUNNING) showTransition.stop();
+                if(hideTransition != null && hideTransition.getStatus() == Animation.Status.RUNNING) hideTransition.stop();
+
+                showLoadingSpinner();
+            }
+            else {
+                if(showTimer.getStatus() == Animation.Status.RUNNING) showTimer.stop();
+                if(hideTransition != null && hideTransition.getStatus() == Animation.Status.RUNNING) hideTransition.stop();
+
+                if(mediaItem == null){
+                    if(showTransition != null && showTransition.getStatus() == Animation.Status.RUNNING) showTransition.stop();
+                    loadingContainer.setVisible(false);
+                }
+            }
+        });
     }
 
     public void show(MediaItem mediaItem){
@@ -290,6 +382,9 @@ public class ChapterEditWindow {
         window.setVisible(true);
 
         mainController.popupWindowContainer.setMouseTransparent(false);
+
+        window.requestFocus();
+
         AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 0 , 1, false, 1, true);
     }
 
@@ -326,6 +421,7 @@ public class ChapterEditWindow {
             chapterEditItems.clear();
             saveAllowed.set(false);
             content.getChildren().clear();
+            editActiveProperty.set(false);
         });
         fadeTransition.play();
     }
@@ -335,16 +431,32 @@ public class ChapterEditWindow {
 
         this.mediaItem = mediaItem;
 
+
         focusNodes.add(closeButton);
 
-        for(Chapter chapter : mediaItem.chapters){
-            ChapterEditItem chapterEditItem = new ChapterEditItem(this, chapter, mediaItem);
+        if(mediaItem.editActive.get()){
+            editActiveProperty.set(true);
 
-            chapterEditItems.add(chapterEditItem);
-            content.getChildren().add(chapterEditItem);
+            for(Chapter chapter : mediaItem.newChapters){
+                ChapterEditItem chapterEditItem = new ChapterEditItem(this, chapter, mediaItem);
 
-            focusNodes.add(chapterEditItem);
+                chapterEditItems.add(chapterEditItem);
+                content.getChildren().add(chapterEditItem);
+
+                focusNodes.add(chapterEditItem);
+            }
         }
+        else {
+            for(Chapter chapter : mediaItem.chapters){
+                ChapterEditItem chapterEditItem = new ChapterEditItem(this, chapter, mediaItem);
+
+                chapterEditItems.add(chapterEditItem);
+                content.getChildren().add(chapterEditItem);
+
+                focusNodes.add(chapterEditItem);
+            }
+        }
+
 
         content.getChildren().add(addButtonContainer);
         focusNodes.add(addButton);
@@ -354,6 +466,12 @@ public class ChapterEditWindow {
 
     private void createChapter(){
         ChapterEditItem chapterEditItem = new ChapterEditItem(this, null, mediaItem);
+        if(mediaItem.hasVideo() && chapterEditItems.isEmpty()){
+            chapterEditItem.updateFrame(Duration.ZERO);
+        }
+        else if(!mediaItem.hasVideo() && mediaItem.hasCover()){
+            chapterEditItem.setCover(mediaItem.getCover());
+        }
         chapterEditItems.add(chapterEditItem);
 
         content.getChildren().add(chapterEditItems.size() - 1, chapterEditItem);
@@ -368,8 +486,48 @@ public class ChapterEditWindow {
         saveAllowed.set(false);
     }
 
-    private void saveChanges(){
-        System.out.println("SAVING");
+    private void saveChanges() {
+
+        if(!saveAllowed.get() || editActiveProperty.get()) return;
+
+        mediaItem.newChapters = createChapters();
+        saveAllowed.set(false);
+        editActiveProperty.set(true);
+
+        if(mainController.getMenuController().queuePage.queueBox.activeItem.get() != null && mainController.getMenuController().queuePage.queueBox.activeItem.get().getMediaItem() == mediaItem){
+            mainController.getMediaInterface().resetMediaPlayer();
+        }
+
+        if(frameGrabber != null){
+            try {
+                frameGrabber.stop();
+            }
+            catch (FFmpegFrameGrabber.Exception ignored) {}
+        }
+
+        ChapterEditTask chapterEditTask = new ChapterEditTask(mediaItem);
+        chapterEditTask.setOnSucceeded(e -> {
+
+            if(chapterEditTask.mediaItem == mediaItem) {
+                editActiveProperty.set(false);
+                if (chapterEditTask.getValue()) setSpinnerToDone();
+                else setSpinnerToFailed();
+
+                showTimer.playFromStart();
+
+                if(frameGrabber != null && mediaItem.hasVideo()) {
+                    try {frameGrabber.start();}
+                    catch (FFmpegFrameGrabber.Exception ignored) {}
+                }
+            }
+
+            if(mainController.getMenuController().queuePage.queueBox.activeItem.get() != null && mainController.getMenuController().queuePage.queueBox.activeItem.get().getMediaItem() == chapterEditTask.mediaItem)
+                mainController.getMediaInterface().createMedia(mainController.getMenuController().queuePage.queueBox.activeItem.get());
+        });
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        executorService.execute(chapterEditTask);
+        executorService.shutdown();
     }
 
     private void updatePadding(boolean value){
@@ -466,11 +624,17 @@ public class ChapterEditWindow {
                             chapterEditItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
                             chapterEditItem.coverImage.setVisible(true);
                             chapterEditItem.imageIcon.setVisible(false);
+                            chapterEditItem.imageWrapper.setStyle("-fx-background-color: black; -fx-background-radius: 5;");
                         });
 
                         executorService.execute(chapterFrameGrabberTask);
                     }
                 }
+            }
+        }
+        else if(mediaItem.hasCover()){
+            for(ChapterEditItem chapterEditItem : chapterEditItems){
+                chapterEditItem.setCover(mediaItem.getCover());
             }
         }
     }
@@ -536,5 +700,73 @@ public class ChapterEditWindow {
             keyboardFocusOn(focusNodes.get(newFocus));
             if(focusNodes.get(newFocus) == addButton) scrollPane.setVvalue(1);
         }
+    }
+
+    private void setSpinnerToLoading(){
+        savingLabel.setText("Saving chapters");
+        statusIcon.setVisible(false);
+        progressSpinner.setVisible(true);
+    }
+
+    private void setSpinnerToDone(){
+        savingLabel.setText("Chapters saved");
+        progressSpinner.setVisible(false);
+        statusIcon.setPrefSize(20, 14);
+        statusIcon.setMaxSize(20, 14);
+        statusIcon.setShape(checkSVG);
+        statusIcon.setVisible(true);
+    }
+
+    private void setSpinnerToFailed(){
+        savingLabel.setText("Failed to save chapters");
+        progressSpinner.setVisible(false);
+        statusIcon.setPrefSize(19, 19);
+        statusIcon.setMaxSize(19, 19);
+        statusIcon.setShape(crossSVG);
+        statusIcon.setVisible(true);
+    }
+
+    private void showLoadingSpinner(){
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(400), loadingPane);
+        fadeTransition.setFromValue(0.3);
+        fadeTransition.setToValue(1);
+
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(400), loadingPane);
+        translateTransition.setFromY(60);
+        translateTransition.setToY(0);
+
+        showTransition = new ParallelTransition(fadeTransition, translateTransition);
+
+        loadingContainer.setVisible(true);
+        showTransition.play();
+    }
+
+
+    private void hideLoadingSpinner(){
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(400), loadingPane);
+        fadeTransition.setFromValue(1);
+        fadeTransition.setToValue(0.3);
+
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(400), loadingPane);
+        translateTransition.setFromY(0);
+        translateTransition.setToY(60);
+
+        hideTransition = new ParallelTransition(fadeTransition, translateTransition);
+        hideTransition.setOnFinished(e -> loadingContainer.setVisible(false));
+        hideTransition.play();
+    }
+
+    private List<Chapter> createChapters(){
+        List<Chapter> chapters = new ArrayList<>();
+
+        for(ChapterEditItem chapterEditItem : chapterEditItems){
+            String title = chapterEditItem.titleField.getText();
+            Duration startTime = Utilities.stringToDuration(chapterEditItem.startTimeField.getText());
+            chapters.add(new Chapter(title, startTime));
+        }
+
+        return chapters;
     }
 }

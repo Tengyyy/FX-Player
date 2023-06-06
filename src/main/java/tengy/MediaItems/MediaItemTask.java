@@ -1,8 +1,8 @@
-package tengy;
+package tengy.MediaItems;
 
-import tengy.MediaItems.MediaItem;
-import tengy.Menu.MenuController;
 import javafx.concurrent.Task;
+import tengy.Menu.MenuController;
+import tengy.Utilities;
 
 import java.io.File;
 

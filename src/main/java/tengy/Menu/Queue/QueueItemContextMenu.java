@@ -196,7 +196,16 @@ public class QueueItemContextMenu extends ContextMenu {
         if(this.getItems().contains(chapters)) return;
 
         String extension = Utilities.getFileExtension(mediaItem.getFile());
-        if(!extension.equals("mp4") && !extension.equals("mkv") && !extension.equals("ogg") && !extension.equals("mov") && !extension.equals("flv")) return;
+        if(!extension.equals("mp4")
+                && !extension.equals("mkv")
+                && !extension.equals("mov")
+                && !extension.equals("mp3")
+                && !extension.equals("opus")
+                && !extension.equals("m4a")
+                && !extension.equals("wma")
+                && !extension.equals("wmv")
+                && !extension.equals("mka")
+                && !extension.equals("webm")) return;
 
         this.getItems().add(3, chapters);
     }

@@ -53,9 +53,9 @@ public class PlaybackSettingsHomeController {
 
         fileChooser = new FileChooser();
         fileChooser.setTitle("Select media");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All supported formats", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac"),
-                new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov"),
-                new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All supported formats", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac", "*.wmv", "*.mka", "*webm"),
+                new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mkv", "*.flv", "*.mov", "*.wmv", "*.webm"),
+                new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.flac", "*.wav", "*.ogg", "*.opus", "*.aiff", "*.m4a", "*.wma", "*.aac", "*.mka"));
 
         videoSVG.setContent(SVG.VIDEO.getContent());
         audioSVG.setContent(SVG.AUDIO.getContent());

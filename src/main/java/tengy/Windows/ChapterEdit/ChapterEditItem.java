@@ -1,32 +1,26 @@
 package tengy.Windows.ChapterEdit;
 
-import com.github.kokorin.jaffree.ffprobe.Chapter;
-import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-import tengy.AnimationsClass;
 import tengy.Chapters.ChapterFrameGrabberTask;
 import tengy.ControlTooltip;
+import tengy.MediaItems.Chapter;
 import tengy.MediaItems.MediaItem;
 import tengy.SVG;
 import tengy.Utilities;
@@ -155,11 +149,10 @@ public class ChapterEditItem extends StackPane {
         titleFieldWrapper.getChildren().addAll(titleField, titleFieldBorder);
 
         if(chapter != null){
-            String title = chapter.getTag("title");
+            String title = chapter.getTitle();
             titleField.setText(title);
 
-            Double startTime = chapter.getStartTime();
-            if(startTime != null) startTimeField.setText(Utilities.durationToString(Duration.seconds(startTime)));
+            startTimeField.setText(Utilities.durationToString(chapter.getStartTime()));
         }
 
         titleField.getStyleClass().addAll("customTextField", "chapterField");
@@ -404,10 +397,21 @@ public class ChapterEditItem extends StackPane {
         focusNodes.remove(startTimeField);
     }
 
-    private void updateFrame(Duration duration){
+    public void setCover(Image image){
+        imageIcon.setVisible(false);
+        coverImage.setImage(image);
+        coverImage.setVisible(true);
+        imageWrapper.setStyle("-fx-background-color: black; -fx-background-radius: 5;");
+    }
+
+    public void updateFrame(Duration duration){
+
+        if(!mediaItem.hasVideo()) return;
+
         coverImage.setImage(null);
         coverImage.setVisible(false);
         imageIcon.setVisible(true);
+        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
 
         ChapterFrameGrabberTask chapterFrameGrabberTask;
         if (duration.greaterThan(Duration.ZERO))
@@ -420,6 +424,7 @@ public class ChapterEditItem extends StackPane {
             coverImage.setImage(chapterFrameGrabberTask.getValue());
             coverImage.setVisible(true);
             imageIcon.setVisible(false);
+            imageWrapper.setStyle("-fx-background-color: black; -fx-background-radius: 5;");
         });
 
         chapterEditWindow.executorService.execute(chapterFrameGrabberTask);

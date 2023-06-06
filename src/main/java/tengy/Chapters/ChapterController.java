@@ -101,6 +101,8 @@ public class ChapterController {
         chapterLabel.setPrefHeight(30);
         chapterLabel.getStyleClass().add("controlBarLabel");
         chapterLabel.setTextAlignment(TextAlignment.LEFT);
+        chapterLabel.setAlignment(Pos.CENTER_LEFT);
+        chapterLabel.setMaxWidth(250);
 
         chevronSVG.setContent(SVG.CHEVRON_RIGHT.getContent());
 
@@ -216,6 +218,7 @@ public class ChapterController {
             }
 
             chapterFrameGrabberTask.setOnSucceeded((event) -> {
+                chapterItem.imageWrapper.setStyle("-fx-background-color: black; -fx-background-radius: 5;");
                 chapterItem.imageIcon.setVisible(false);
                 chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
                 chapterItem.coverImage.setVisible(true);

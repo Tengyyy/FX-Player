@@ -36,19 +36,11 @@ public class Mp4Item implements MediaInformationItem {
     String mediaType;
     Map<String, String> metadata;
 
-    Image podcastImage;
-    Image musicImage;
-    Image videoImage;
-
 
 
     Mp4Item(MediaInformationPage mediaInformationPage, Map<String, String> metadata){
         this.mediaInformationPage = mediaInformationPage;
         this.metadata = metadata;
-
-        podcastImage = new Image(Objects.requireNonNull(mediaInformationPage.menuController.mainController.getClass().getResource("images/podcast.png")).toExternalForm());
-        musicImage = new Image(Objects.requireNonNull(mediaInformationPage.menuController.mainController.getClass().getResource("images/music.png")).toExternalForm());
-        videoImage = new Image(Objects.requireNonNull(mediaInformationPage.menuController.mainController.getClass().getResource("images/video.png")).toExternalForm());
 
         content.setSpacing(15);
 
@@ -144,10 +136,6 @@ public class Mp4Item implements MediaInformationItem {
         switch (value) {
             case "TV Show" -> {
 
-                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
-                    mediaInformationPage.imageView.setImage(videoImage);
-                }
-
                 content.getChildren().removeAll(trackItem, albumItem, lyricsItem);
                 content.getChildren().addAll(2, Arrays.asList(seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem));
                 artistItem.label.setText("Cast");
@@ -158,10 +146,6 @@ public class Mp4Item implements MediaInformationItem {
             }
             case "Movie" -> {
 
-                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
-                    mediaInformationPage.imageView.setImage(videoImage);
-                }
-
                 content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem);
                 artistItem.label.setText("Cast");
                 albumArtistItem.label.setText("Director");
@@ -170,10 +154,6 @@ public class Mp4Item implements MediaInformationItem {
                 if (!content.getChildren().contains(composerItem)) content.getChildren().add(4, composerItem);
             }
             case "Music video" -> {
-
-                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
-                    mediaInformationPage.imageView.setImage(musicImage);
-                }
 
                 content.getChildren().removeAll(seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem);
                 artistItem.label.setText("Artist");
@@ -185,21 +165,8 @@ public class Mp4Item implements MediaInformationItem {
                 if (!content.getChildren().contains(composerItem)) content.getChildren().add(6, composerItem);
                 if (!content.getChildren().contains(lyricsItem)) content.getChildren().add(10, lyricsItem);
             }
-            case "Home video" -> {
 
-                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
-                    mediaInformationPage.imageView.setImage(videoImage);
-                }
-
-                content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem, albumArtistItem, composerItem);
-                artistItem.label.setText("Artist");
-            }
-            case "Podcast" -> {
-
-                if(mediaInformationPage.coverRemoved || (!mediaInformationPage.mediaItem.hasVideo() && !mediaInformationPage.mediaItem.hasCover())){
-                    mediaInformationPage.imageView.setImage(podcastImage);
-                }
-
+            case "Home video", "Podcast" -> {
                 content.getChildren().removeAll(trackItem, albumItem, lyricsItem, seriesTitleItem, seasonNumberItem, episodeNumberItem, networkItem, albumArtistItem, composerItem);
                 artistItem.label.setText("Artist");
             }

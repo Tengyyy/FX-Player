@@ -71,15 +71,19 @@ public class ChapterEditItem extends StackPane {
 
     boolean timeChanged = false;
 
+    boolean removePressed = false;
+
+
+
     ChapterEditItem(ChapterEditWindow chapterEditWindow, Chapter chapter, MediaItem mediaItem){
         this.chapterEditWindow = chapterEditWindow;
         this.mediaItem = mediaItem;
 
         this.getChildren().addAll(indexLabel, imageWrapper, textFieldContainer, removeButton);
         this.getStyleClass().add("chapterContainer");
-        this.setMinHeight(95);
-        this.setPrefHeight(95);
-        this.setMaxHeight(95);
+        this.setMinHeight(0);
+        this.setMaxHeight(0);
+        this.setOpacity(0);
         this.setFocusTraversable(false);
         this.setOnMouseClicked(e -> this.requestFocus());
         this.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -98,7 +102,7 @@ public class ChapterEditItem extends StackPane {
         indexLabel.setMaxSize(45, 95);
         indexLabel.setAlignment(Pos.CENTER);
 
-        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
+        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30);");
         imageWrapper.setPrefSize(125, 72);
         imageWrapper.setMaxSize(125, 72);
         imageWrapper.getChildren().addAll(coverImage, imageIcon);
@@ -324,7 +328,7 @@ public class ChapterEditItem extends StackPane {
         removeButton.getStyleClass().add("roundButton");
         removeButton.setOnAction(e -> {
             removeButton.requestFocus();
-            remove();
+            chapterEditWindow.remove(this);
         });
         removeButton.setFocusTraversable(false);
         removeButton.setGraphic(removeIcon);
@@ -335,6 +339,7 @@ public class ChapterEditItem extends StackPane {
                 focusOn();
             }
             else {
+                removePressed = false;
                 chapterEditWindow.focus.set(-1);
                 keyboardFocusOff(removeButton);
                 focus.set(-1);
@@ -345,11 +350,33 @@ public class ChapterEditItem extends StackPane {
         removeButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             if(e.getCode() != KeyCode.SPACE) return;
             removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+            
+            removePressed = true;
+            
+
+            e.consume();
         });
 
         removeButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             if(e.getCode() != KeyCode.SPACE) return;
             removeButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+            
+            if(removePressed){
+                chapterEditWindow.remove(this);
+
+                if(chapterEditWindow.chapterEditItems.size() > index){
+                    ChapterEditItem chapterEditItem = chapterEditWindow.chapterEditItems.get(index);
+                    keyboardFocusOn(chapterEditItem.removeButton);
+                }
+                else if(index > 0){
+                    ChapterEditItem chapterEditItem = chapterEditWindow.chapterEditItems.get(index - 1);
+                    keyboardFocusOn(chapterEditItem.removeButton);
+                }
+            }
+            
+            removePressed = false;
+
+            e.consume();
         });
 
         focusNodes.add(removeButton);
@@ -364,30 +391,7 @@ public class ChapterEditItem extends StackPane {
         Platform.runLater(() -> removeButtonTooltip = new ControlTooltip(chapterEditWindow.mainController, "Remove chapter", "", removeButton, 1000));
     }
 
-
-    private void remove(){
-        for(int i = index+1; i < chapterEditWindow.chapterEditItems.size(); i++){
-            ChapterEditItem chapterEditItem = chapterEditWindow.chapterEditItems.get(i);
-            chapterEditItem.index--;
-            chapterEditItem.indexLabel.setText(String.valueOf(chapterEditItem.index+1));
-            if(i == 1){
-                chapterEditItem.setUneditable();
-            }
-        }
-
-
-        chapterEditWindow.chapterEditItems.remove(this);
-        chapterEditWindow.content.getChildren().remove(this);
-        chapterEditWindow.focusNodes.remove(this);
-
-        if(index > 0){
-            chapterEditWindow.focus.set(index);
-        }
-
-        chapterEditWindow.saveAllowed.set(true);
-    }
-
-    private void setUneditable(){
+    void setUneditable(){
         startTimeField.setText("00:00");
         startTimeField.setEditable(false);
         startTimeFieldBorder.setVisible(false);
@@ -401,7 +405,7 @@ public class ChapterEditItem extends StackPane {
         imageIcon.setVisible(false);
         coverImage.setImage(image);
         coverImage.setVisible(true);
-        imageWrapper.setStyle("-fx-background-color: black; -fx-background-radius: 5;");
+        imageWrapper.setStyle("-fx-background-color: black;");
     }
 
     public void updateFrame(Duration duration){
@@ -411,7 +415,7 @@ public class ChapterEditItem extends StackPane {
         coverImage.setImage(null);
         coverImage.setVisible(false);
         imageIcon.setVisible(true);
-        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
+        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30);");
 
         ChapterFrameGrabberTask chapterFrameGrabberTask;
         if (duration.greaterThan(Duration.ZERO))
@@ -424,7 +428,7 @@ public class ChapterEditItem extends StackPane {
             coverImage.setImage(chapterFrameGrabberTask.getValue());
             coverImage.setVisible(true);
             imageIcon.setVisible(false);
-            imageWrapper.setStyle("-fx-background-color: black; -fx-background-radius: 5;");
+            imageWrapper.setStyle("-fx-background-color: black;");
         });
 
         chapterEditWindow.executorService.execute(chapterFrameGrabberTask);

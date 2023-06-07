@@ -1,5 +1,6 @@
 package tengy;
 
+import javafx.scene.shape.SVGPath;
 import tengy.Menu.Queue.QueueItem;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -38,6 +39,8 @@ public class VideoTooltip extends Tooltip {
     StackPane imageViewBackground = new StackPane();
     Label durationLabel = new Label();
     ImageView imageView = new ImageView();
+    SVGPath imageSVG = new SVGPath();
+    Region imageIcon = new Region();
 
     VBox textContainer = new VBox();
     Label mainTextLabel = new Label();
@@ -76,13 +79,19 @@ public class VideoTooltip extends Tooltip {
         StackPane.setAlignment(imageViewBackground, Pos.CENTER_LEFT);
         imageViewBackground.setPrefSize(160, 90);
         imageViewBackground.setMaxSize(160, 90);
-        imageViewBackground.getChildren().addAll(imageView, durationLabel);
+        imageViewBackground.getChildren().addAll(imageIcon, imageView, durationLabel);
         imageViewBackground.getStyleClass().add("imageViewBackground");
 
+        imageSVG.setContent(SVG.IMAGE_WIDE.getContent());
+        imageIcon.setShape(imageSVG);
+        imageIcon.setPrefSize(50, 40);
+        imageIcon.setMaxSize(50, 40);
+        imageIcon.getStyleClass().add("imageIcon");
 
         imageView.setFitWidth(160);
         imageView.setFitHeight(90);
         imageView.setPreserveRatio(true);
+        imageView.setVisible(false);
 
         Rectangle imageClip = new Rectangle();
         imageClip.setWidth(160);
@@ -188,14 +197,19 @@ public class VideoTooltip extends Tooltip {
     private void loadTooltip(){
         titleLabel.setText(queueItem.getTitle());
         durationLabel.setText(Utilities.durationToString(queueItem.getMediaItem().getDuration()));
+
+        imageSVG.setContent(queueItem.getMediaItem().icon.getContent());
         if(queueItem.getMediaItem().getCover() != null){
             imageView.setImage(queueItem.getMediaItem().getCover());
             Color color = queueItem.getMediaItem().getCoverBackgroundColor();
-            imageViewBackground.setStyle("-fx-background-color: rgba(" +  color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ",0.7);");
+            imageViewBackground.setStyle("-fx-background-color: rgb(" +  color.getRed() * 255 + "," + color.getGreen() * 255 + "," + color.getBlue() * 255 + ");");
+            imageIcon.setVisible(false);
+            imageView.setVisible(true);
         }
         else {
-            imageView.setImage(queueItem.getMediaItem().getPlaceholderCover());
-            imageViewBackground.setStyle("-fx-background-color: rgba(255, 0, 0, 0.7);");
+            imageView.setVisible(false);
+            imageIcon.setVisible(true);
+            imageViewBackground.setStyle("-fx-background-color: rgb(30,30,30);");
         }
 
         this.setGraphic(graphicBackground);

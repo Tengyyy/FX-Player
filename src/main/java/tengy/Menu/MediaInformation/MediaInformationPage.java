@@ -1,22 +1,14 @@
 package tengy.Menu.MediaInformation;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import tengy.*;
-import tengy.MediaItems.MediaItem;
-import tengy.MediaItems.MediaUtilities;
-import tengy.Menu.MenuController;
-import tengy.Menu.MenuState;
-import tengy.Menu.Queue.QueueItem;
-import tengy.PlaybackSettings.PlaybackSettingsState;
-import tengy.Subtitles.SubtitlesState;
 import io.github.palexdev.materialfx.controls.MFXProgressBar;
-import javafx.animation.*;
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,8 +26,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
+import tengy.*;
+import tengy.MediaItems.MediaItem;
+import tengy.MediaItems.MediaUtilities;
+import tengy.Menu.MenuController;
+import tengy.Menu.Queue.QueueItem;
+import tengy.PlaybackSettings.PlaybackSettingsState;
+import tengy.Subtitles.SubtitlesState;
 
-import javax.print.attribute.standard.Media;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -75,6 +73,8 @@ public class MediaInformationPage {
 
     StackPane imageViewWrapper = new StackPane();
     public StackPane imageViewContainer = new StackPane();
+    SVGPath imageSVG = new SVGPath();
+    Region imageIcon = new Region();
     public ImageView imageView = new ImageView();
     StackPane imageFilter = new StackPane();
     StackPane editImageButtonWrapper = new StackPane();
@@ -171,9 +171,18 @@ public class MediaInformationPage {
         imageViewWrapper.setPadding(new Insets(20, 0, 50, 0));
         imageViewWrapper.setBackground(Background.EMPTY);
 
-        imageViewContainer.getChildren().addAll(imageView, imageFilter, editImageButtonWrapper);
+        imageViewContainer.getChildren().addAll(imageIcon, imageView, imageFilter, editImageButtonWrapper);
         imageViewContainer.setId("imageViewContainer");
         imageViewContainer.maxWidthProperty().bind(Bindings.min(400, menuController.menu.widthProperty().multiply(0.7)));
+        imageViewContainer.setStyle("-fx-background-color: rgb(30,30,30);");
+
+        imageSVG.setContent(SVG.IMAGE_WIDE.getContent());
+        imageIcon.setShape(imageSVG);
+        imageIcon.setPrefSize(100, 80);
+        imageIcon.setMaxSize(100, 80);
+        imageIcon.getStyleClass().add("imageIcon");
+        imageIcon.setMouseTransparent(true);
+
 
         imageFilter.setStyle("-fx-background-color: black;");
         imageFilter.setOpacity(0);
@@ -192,6 +201,7 @@ public class MediaInformationPage {
             }
         });
 
+        imageView.setVisible(false);
         imageView.setMouseTransparent(true);
         imageView.setPreserveRatio(true);
         imageView.fitWidthProperty().bind(Bindings.min(400, menuController.menu.widthProperty().multiply(0.7)));
@@ -433,16 +443,19 @@ public class MediaInformationPage {
 
         if(mediaItem.newCover != null){
             imageView.setImage(mediaItem.newCover);
-            imageViewContainer.setStyle("-fx-background-color: rgba(" + mediaItem.newColor.getRed() * 256 +  "," + mediaItem.newColor.getGreen() * 256 + "," + mediaItem.newColor.getBlue() * 256 + ",0.7);");
+            imageViewContainer.setStyle("-fx-background-color: rgb(" + mediaItem.newColor.getRed() * 256 +  "," + mediaItem.newColor.getGreen() * 256 + "," + mediaItem.newColor.getBlue() * 256 + ");");
         }
         else if(mediaItem.coverRemoved || mediaItem.getCover() == null){
-            imageView.setImage(mediaItem.getPlaceholderCover());
-            imageViewContainer.setStyle("-fx-background-color: red;");
+            imageView.setVisible(false);
+            imageIcon.setVisible(true);
+            imageViewContainer.setStyle("-fx-background-color: rgb(30,30,30);");
         }
         else {
+            imageView.setVisible(true);
+            imageIcon.setVisible(false);
             imageView.setImage(mediaItem.getCover());
             Color color = mediaItem.getCoverBackgroundColor();
-            imageViewContainer.setStyle("-fx-background-color: rgba(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ",0.7);");
+            imageViewContainer.setStyle("-fx-background-color: rgb(" + color.getRed() * 256 +  "," + color.getGreen() * 256 + "," + color.getBlue() * 256 + ");");
         }
 
         String extension = Utilities.getFileExtension(mediaItem.getFile());
@@ -534,7 +547,7 @@ public class MediaInformationPage {
             imageView.setImage(newCover);
 
             newColor = MediaUtilities.findDominantColor(newCover);
-            if(newColor != null) imageViewContainer.setStyle("-fx-background-color: rgba(" + mediaItem.newColor.getRed() * 256 +  "," + mediaItem.newColor.getGreen() * 256 + "," + mediaItem.newColor.getBlue() * 256 + ",0.7);");
+            if(newColor != null) imageViewContainer.setStyle("-fx-background-color: rgb(" + mediaItem.newColor.getRed() * 256 +  "," + mediaItem.newColor.getGreen() * 256 + "," + mediaItem.newColor.getBlue() * 256 + ");");
 
             changesMade.set(true);
         }
@@ -547,8 +560,10 @@ public class MediaInformationPage {
         newCover = null;
         newColor = null;
         newCoverFile = null;
-        imageView.setImage(mediaItem.getPlaceholderCover());
-        imageViewContainer.setStyle("-fx-background-color: red;");
+        imageView.setImage(null);
+        imageView.setVisible(false);
+        imageIcon.setVisible(true);
+        imageViewContainer.setStyle("-fx-background-color: rgb(30,30,30);");
 
         changesMade.set(true);
     }
@@ -643,7 +658,9 @@ public class MediaInformationPage {
 
         textBox.getChildren().clear();
         imageView.setImage(null);
-        imageViewContainer.setStyle("-fx-background-color: transparent;");
+        imageView.setVisible(false);
+        imageIcon.setVisible(true);
+        imageViewContainer.setStyle("-fx-background-color: rgb(30,30,30);");
         savingToNewFile = false;
 
         loadMediaInformationPage(mediaItem);
@@ -658,7 +675,10 @@ public class MediaInformationPage {
 
         textBox.getChildren().clear();
         imageView.setImage(null);
-        imageViewContainer.setStyle("-fx-background-color: transparent;");
+        imageView.setVisible(false);
+
+        imageIcon.setVisible(true);
+        imageViewContainer.setStyle("-fx-background-color: rgb(30,30,30);");
 
         editActiveProperty.unbind();
 

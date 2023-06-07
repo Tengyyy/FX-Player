@@ -6,24 +6,19 @@ import com.github.kokorin.jaffree.ffprobe.FFprobe;
 import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import com.github.kokorin.jaffree.ffprobe.Stream;
 import javafx.application.Platform;
-import tengy.MainController;
-import tengy.Utilities;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
+import tengy.MainController;
+import tengy.SVG;
+import tengy.Utilities;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -35,17 +30,18 @@ public class MediaItem {
 
     Duration duration = null;
 
-    boolean hasVideo;
-    boolean hasAudio;
-    boolean hasCover;
+    boolean hasVideo = false;
+    boolean hasAudio = false;
+    boolean hasCover = false;
 
     MainController mainController;
 
 
     Map<String, String> mediaInformation = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-    Image cover;
-    Image placeholderCover;
+    Image cover = null;
+
+    public SVG icon = null;
 
     FFprobeResult probeResult;
 
@@ -94,11 +90,6 @@ public class MediaItem {
                 .setInput(file.getAbsolutePath())
                 .setLogLevel(LogLevel.INFO)
                 .execute();
-
-
-        Pair<Boolean, Image> pair = MediaUtilities.getCover(probeResult, file);
-        this.cover = pair.getValue();
-        this.hasCover = pair.getKey();
 
         for(com.github.kokorin.jaffree.ffprobe.Chapter chapter : probeResult.getChapters()){
             String title = chapter.getTag("title");
@@ -154,8 +145,6 @@ public class MediaItem {
         hasVideo = defaultVideoStream != null;
         hasAudio = defaultAudioStream != null;
 
-        if(cover != null) backgroundColor = MediaUtilities.findDominantColor(cover);
-
         if(defaultVideoStream != null){
             Long durationLong = defaultVideoStream.getDuration(TimeUnit.SECONDS);
             if(durationLong != null)
@@ -179,18 +168,14 @@ public class MediaItem {
         String extension = Utilities.getFileExtension(this.file);
 
         if(extension.equals("mp4") || extension.equals("mov")){
-            if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6")) placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm());
-            else if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("21")) placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm());
-            else placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm());
+            if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("6")) icon = SVG.MUSIC;
+            else if(mediaInformation.containsKey("media_type") && mediaInformation.get("media_type").equals("21")) icon = SVG.PODCAST;
+            else icon = SVG.VIDEO;
         }
-        else if(extension.equals("mkv") || extension.equals("flv") || extension.equals("avi")){
-            placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm());
-        }
-        else {
-            placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm());
-        }
-    }
+        else if(extension.equals("mkv") || extension.equals("flv") || extension.equals("avi")) icon = SVG.VIDEO;
+        else icon = SVG.MUSIC;
 
+    }
 
     public Color getCoverBackgroundColor() {
         return backgroundColor;
@@ -208,13 +193,6 @@ public class MediaItem {
         return hasCover;
     }
 
-    public Image getPlaceholderCover() {
-        return placeholderCover;
-    }
-
-    public void setPlaceHolderCover(Image image) {
-        placeholderCover = image;
-    }
 
     public FFprobeResult getProbeResult() {
         return probeResult;
@@ -261,9 +239,9 @@ public class MediaItem {
             String extension = Utilities.getFileExtension(file);
             if(extension.equals("mp4") || extension.equals("mov")){
                 switch (newMetadata.getOrDefault("media_type", null)) {
-                    case "6" -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/music.png")).toExternalForm());
-                    case "21" -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/podcast.png")).toExternalForm());
-                    default -> placeholderCover = new Image(Objects.requireNonNull(mainController.getClass().getResource("images/video.png")).toExternalForm());
+                    case "6" -> icon = SVG.MUSIC;
+                    case "21" -> icon = SVG.PODCAST;
+                    default -> icon = SVG.VIDEO;
                 }
             }
 

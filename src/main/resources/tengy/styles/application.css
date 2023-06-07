@@ -571,9 +571,10 @@
 }
 
 .chapterContainer {
+    -fx-background-insets: 5 0 5 0;
     -fx-background-color: transparent;
     -fx-background-radius: 15;
-    -fx-padding: 0 10 0 0;
+    -fx-padding: 5 10 5 0;
 }
 
 .chapterContainer:highlighted {

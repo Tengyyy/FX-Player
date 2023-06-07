@@ -140,7 +140,6 @@ public class LibraryItem extends StackPane {
 
         removeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue) {
-                System.out.println("test");
                 libraryContainer.focus.set(index + 2);
                 libraryContainer.librariesSection.focus.set(containerIndex);
                 libraryContainer.librariesSection.settingsPage.focus.set(2);

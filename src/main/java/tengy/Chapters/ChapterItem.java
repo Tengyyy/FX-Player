@@ -105,7 +105,7 @@ public class ChapterItem extends HBox {
         coverImage.setVisible(false);
 
 
-        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
+        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30);");
         imageWrapper.setMinSize(125, 70);
         imageWrapper.setPrefSize(125, 70);
         imageWrapper.setMaxSize(125, 70);

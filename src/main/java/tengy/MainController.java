@@ -68,6 +68,9 @@ public class MainController implements Initializable {
     @FXML
     private MenuController menuController;
 
+    @FXML
+    public Region coverIcon;
+
     PlaybackSettingsController playbackSettingsController;
     SubtitlesController subtitlesController;
 
@@ -79,6 +82,8 @@ public class MainController implements Initializable {
 
     public ControlTooltip openMenuTooltip;
     ControlTooltip viewMediaInformationTooltip;
+
+    SVGPath coverSVG = new SVGPath();
 
     SVGPath menuSVG;
 
@@ -459,7 +464,7 @@ public class MainController implements Initializable {
 
         coverImageContainer.setVisible(false);
         coverImageContainer.setMouseTransparent(true);
-        coverImageContainer.setStyle("-fx-background-color: black;");
+        coverImageContainer.setStyle("-fx-background-color: rgb(30,30,30);");
         coverImageContainer.setMinHeight(0);
 
 
@@ -474,6 +479,14 @@ public class MainController implements Initializable {
         rectangle.setArcWidth(40);
         rectangle.setArcHeight(40);
         coverImage.setClip(rectangle);
+
+        coverSVG.setContent(IMAGE.getContent());
+        coverIcon.setShape(coverSVG);
+        coverIcon.prefWidthProperty().bind(coverImageWrapper.widthProperty().divide(2));
+        coverIcon.maxWidthProperty().bind(coverImageWrapper.widthProperty().divide(2));
+        coverIcon.prefHeightProperty().bind(coverImageWrapper.heightProperty().divide(2));
+        coverIcon.maxHeightProperty().bind(coverImageWrapper.heightProperty().divide(2));
+        coverIcon.getStyleClass().add("imageIcon");
 
         coverImageWrapper.maxWidthProperty().bind(coverImage.fitWidthProperty());
         coverImageWrapper.maxHeightProperty().bind(coverImage.fitHeightProperty());
@@ -829,43 +842,48 @@ public class MainController implements Initializable {
     public void setCoverImageView(QueueItem queueItem){
 
 
-        Image image;
-        if(queueItem.getMediaItem().hasCover()){
-            image = queueItem.getMediaItem().getCover();
-        }
-        else image = queueItem.getMediaItem().getPlaceholderCover();
+        double width = 10_000;
+        double height = 10_000;
+        double ratio = 1.0;
 
-        double width = image.getWidth();
-        double height = image.getHeight();
-        double ratio = width/height;
 
         if(queueItem.getMediaItem().hasCover()){
+            Image image = queueItem.getMediaItem().getCover();
+
+            width = image.getWidth();
+            height = image.getHeight();
+            ratio = width/height;
+
             coverBackground.setImage(image);
+            coverImage.setImage(image);
+            coverIcon.setVisible(false);
         }
         else {
             coverBackground.setImage(null);
+            coverImage.setImage(null);
+            coverSVG.setContent(queueItem.getMediaItem().icon.getContent());
+            coverIcon.setVisible(true);
         }
 
         coverImage.fitWidthProperty().bind(Bindings.min(width*2, Bindings.min(videoImageViewWrapper.widthProperty().multiply(0.6), videoImageViewWrapper.heightProperty().multiply(0.6).multiply(ratio))));
         coverImage.fitHeightProperty().bind(Bindings.min(height*2, coverImage.fitWidthProperty().divide(ratio)));
-        coverImage.setImage(image);
 
         coverImageContainer.setVisible(true);
 
         if(miniplayerActive){
 
             if(queueItem.getMediaItem().hasCover()){
+                Image image = queueItem.getMediaItem().getCover();
                 miniplayer.miniplayerController.coverBackground.setImage(image);
+                miniplayer.miniplayerController.coverImage.setImage(image);
             }
             else {
                 miniplayer.miniplayerController.coverBackground.setImage(null);
+                miniplayer.miniplayerController.coverImage.setImage(null);
             }
 
             miniplayer.miniplayerController.coverImage.fitWidthProperty().bind(Bindings.min(width*2, Bindings.min(miniplayer.miniplayerController.videoImageViewWrapper.widthProperty().multiply(0.7), miniplayer.miniplayerController.videoImageViewWrapper.heightProperty().multiply(0.7).multiply(ratio))));
             miniplayer.miniplayerController.coverImage.fitHeightProperty().bind(Bindings.min(height*2, miniplayer.miniplayerController.coverImage.fitWidthProperty().divide(ratio)));
-            miniplayer.miniplayerController.coverImage.setImage(image);
-
-            miniplayer.miniplayerController.coverImageContainer.setVisible(true);
         }
 
     }

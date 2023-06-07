@@ -6,6 +6,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -25,6 +27,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import tengy.*;
+import tengy.MediaItems.CoverTask;
 import tengy.MediaItems.MediaItem;
 import tengy.MediaItems.MediaItemTask;
 import tengy.Menu.FocusableMenuButton;
@@ -101,6 +104,8 @@ public class QueueItem extends GridPane {
     public File file;
     MediaItem mediaItem;
     public BooleanProperty mediaItemGenerated = new SimpleBooleanProperty(false);
+    public BooleanProperty coverGenerated = new SimpleBooleanProperty(false);
+
 
     public BooleanProperty isActive = new SimpleBooleanProperty(false);
     BooleanProperty isSelected = new SimpleBooleanProperty(false);
@@ -151,19 +156,43 @@ public class QueueItem extends GridPane {
                     }
                 });
             }
+
+            if(queueItem.coverGenerated.get()){
+                applyCover();
+                coverGenerated.set(true);
+            }
+            else {
+                queueItem.coverGenerated.addListener((observableValue, oldValue, newValue) -> {
+                    if(newValue){
+                        applyCover();
+                        coverGenerated.set(true);
+                    }
+                });
+
+            }
         }
         else {
+
+            ExecutorService executorService = Executors.newFixedThreadPool(1);
+
             MediaItemTask mediaItemTask = new MediaItemTask(this.file, menuController);
 
             mediaItemTask.setOnSucceeded((succeededEvent) -> {
                 this.mediaItem = mediaItemTask.getValue();
                 applyMediaItem();
                 mediaItemGenerated.set(true);
+
+                CoverTask coverTask = new CoverTask(mediaItem);
+                coverTask.setOnSucceeded(e -> {
+                    applyCover();
+                    coverGenerated.set(true);
+                });
+
+                executorService.execute(coverTask);
+                executorService.shutdown();
             });
 
-            ExecutorService executorService = Executors.newFixedThreadPool(1);
             executorService.execute(mediaItemTask);
-            executorService.shutdown();
         }
     }
 
@@ -306,7 +335,7 @@ public class QueueItem extends GridPane {
 
 
 
-        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30); -fx-background-radius: 5;");
+        imageWrapper.setStyle("-fx-background-color: rgb(30,30,30);");
         imageWrapper.setPrefSize(125, 70);
         imageWrapper.setMaxSize(125, 70);
         imageWrapper.getChildren().addAll(coverImage, imageIcon);
@@ -703,17 +732,10 @@ public class QueueItem extends GridPane {
 
         textWrapper.setSpacing(0);
 
-        if(mediaItem.getCover() != null) {
-            coverImage.setImage(mediaItem.getCover());
-            imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ", 0.7);");
-        }
-        else {
-            coverImage.setImage(mediaItem.getPlaceholderCover());
-            imageWrapper.setStyle("-fx-background-color: red;");
-        }
+        imageSVG.setContent(mediaItem.icon.getContent());
 
-        coverImage.setVisible(true);
-        imageIcon.setVisible(false);
+        imageIcon.setPrefSize(40, 40);
+        imageIcon.setMaxSize(40, 40);
 
         Map<String, String> mediaInformation = mediaItem.getMediaInformation();
 
@@ -755,6 +777,15 @@ public class QueueItem extends GridPane {
         }
 
         if(this.isActive.get()) mediaInterface.loadMediaItem(this);
+    }
+
+    private void applyCover(){
+        if(mediaItem.getCover() != null) {
+            coverImage.setImage(mediaItem.getCover());
+            imageWrapper.setStyle("-fx-background-color: rgb(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 256) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 256) + ");");
+            imageIcon.setVisible(false);
+            coverImage.setVisible(true);
+        }
     }
 
 
@@ -822,13 +853,18 @@ public class QueueItem extends GridPane {
 
         if(mediaItem == null) return;
 
+        imageSVG.setContent(mediaItem.icon.getContent());
+
         if(mediaItem.getCover() != null) {
             coverImage.setImage(mediaItem.getCover());
-            if(mediaItem.getCoverBackgroundColor() != null) imageWrapper.setStyle("-fx-background-color: rgba(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 255) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 255) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 255) + ", 0.7);");
+            if(mediaItem.getCoverBackgroundColor() != null) imageWrapper.setStyle("-fx-background-color: rgb(" + Math.round(mediaItem.getCoverBackgroundColor().getRed() * 255) + "," + Math.round(mediaItem.getCoverBackgroundColor().getGreen() * 255) + "," + Math.round(mediaItem.getCoverBackgroundColor().getBlue() * 255) + ");");
+            imageIcon.setVisible(false);
+            coverImage.setVisible(true);
         }
         else {
-            imageWrapper.setStyle("-fx-background-color: red;");
-            coverImage.setImage(mediaItem.getPlaceholderCover());
+            imageWrapper.setStyle("-fx-background-color: rgb(30,30,30);");
+            imageIcon.setVisible(true);
+            coverImage.setVisible(false);
         }
 
         Map<String, String> mediaInformation = mediaItem.getMediaInformation();

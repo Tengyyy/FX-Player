@@ -30,11 +30,13 @@ import tengy.Chapters.ChapterFrameGrabberTask;
 import tengy.MainController;
 import tengy.MediaItems.Chapter;
 import tengy.MediaItems.MediaItem;
+import tengy.Menu.Settings.Libraries.LibraryItem;
 import tengy.SVG;
 import tengy.Utilities;
 import tengy.Windows.WindowController;
 import tengy.Windows.WindowState;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -63,7 +65,7 @@ public class ChapterEditWindow {
     SVGPath checkSVG = new SVGPath();
     SVGPath crossSVG = new SVGPath();
     Region statusIcon = new Region();
-    Label savingLabel = new Label("Saving chapters");
+    Label savingLabel = new Label("Saving chapters...");
 
     ScrollPane scrollPane;
 
@@ -162,10 +164,7 @@ public class ChapterEditWindow {
         closeButtonIcon.setMouseTransparent(true);
         closeButtonIcon.getStyleClass().add("graphic");
 
-
-        content.setSpacing(15);
         content.setPadding(new Insets(15, 30, 15, 15));
-
 
         addButtonContainer.setAlignment(Pos.CENTER_LEFT);
         addButtonContainer.getChildren().add(addButton);
@@ -295,13 +294,13 @@ public class ChapterEditWindow {
         StackPane.setMargin(loadingContainer, new Insets(0, 0, 80, 0));
         loadingContainer.prefWidthProperty().bind(Bindings.max(350, Bindings.min(600, window.widthProperty().multiply(0.8))));
         loadingContainer.maxWidthProperty().bind(Bindings.max(350, Bindings.min(600, window.widthProperty().multiply(0.8))));
-        loadingContainer.setPrefHeight(60);
-        loadingContainer.setMaxHeight(60);
+        loadingContainer.setPrefHeight(50);
+        loadingContainer.setMaxHeight(50);
         loadingContainer.setVisible(false);
 
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(loadingContainer.widthProperty());
-        clip.setHeight(60);
+        clip.setHeight(50);
 
         loadingContainer.setClip(clip);
         loadingContainer.getChildren().add(loadingPane);
@@ -313,9 +312,9 @@ public class ChapterEditWindow {
         loadingPane.setPadding(new Insets(10, 20, 10, 20));
         loadingPane.getChildren().addAll(spinnerWrapper, savingLabel);
         loadingPane.getStyleClass().add("savePopup");
-        loadingPane.setPrefHeight(60);
-        loadingPane.setMaxHeight(60);
-        loadingPane.setTranslateY(60);
+        loadingPane.setPrefHeight(50);
+        loadingPane.setMaxHeight(50);
+        loadingPane.setTranslateY(50);
         loadingPane.setOpacity(0.3);
 
 
@@ -440,6 +439,10 @@ public class ChapterEditWindow {
             for(Chapter chapter : mediaItem.newChapters){
                 ChapterEditItem chapterEditItem = new ChapterEditItem(this, chapter, mediaItem);
 
+                chapterEditItem.setMinHeight(105);
+                chapterEditItem.setMaxHeight(105);
+                chapterEditItem.setOpacity(1);
+
                 chapterEditItems.add(chapterEditItem);
                 content.getChildren().add(chapterEditItem);
 
@@ -449,6 +452,10 @@ public class ChapterEditWindow {
         else {
             for(Chapter chapter : mediaItem.chapters){
                 ChapterEditItem chapterEditItem = new ChapterEditItem(this, chapter, mediaItem);
+
+                chapterEditItem.setMinHeight(105);
+                chapterEditItem.setMaxHeight(105);
+                chapterEditItem.setOpacity(1);
 
                 chapterEditItems.add(chapterEditItem);
                 content.getChildren().add(chapterEditItem);
@@ -474,17 +481,30 @@ public class ChapterEditWindow {
         }
         chapterEditItems.add(chapterEditItem);
 
-        content.getChildren().add(chapterEditItems.size() - 1, chapterEditItem);
-
         if(mainButton.disabledProperty().get()){
             focusNodes.add(focusNodes.size() - 1, chapterEditItem);
         }
         else focusNodes.add(focusNodes.size() - 2, chapterEditItem);
 
+        content.getChildren().add(chapterEditItems.size() - 1, chapterEditItem);
+
+        Timeline itemMin = AnimationsClass.animateMinHeight(105, chapterEditItem);
+        Timeline itemMax = AnimationsClass.animateMaxHeight(105, chapterEditItem);
+
+        ParallelTransition parallelTransition = new ParallelTransition(itemMin, itemMax);
+
+        parallelTransition.setOnFinished(e -> {
+            FadeTransition fadeTransition = AnimationsClass.fadeAnimation(300, chapterEditItem, chapterEditItem.getOpacity(), 1, false, 1, false);
+            fadeTransition.playFromStart();
+        });
+
+        parallelTransition.playFromStart();
+
         if(addButton.isFocused()) focus.set(focusNodes.indexOf(addButton));
 
         saveAllowed.set(false);
     }
+
 
     private void saveChanges() {
 
@@ -624,7 +644,7 @@ public class ChapterEditWindow {
                             chapterEditItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
                             chapterEditItem.coverImage.setVisible(true);
                             chapterEditItem.imageIcon.setVisible(false);
-                            chapterEditItem.imageWrapper.setStyle("-fx-background-color: black; -fx-background-radius: 5;");
+                            chapterEditItem.imageWrapper.setStyle("-fx-background-color: black;");
                         });
 
                         executorService.execute(chapterFrameGrabberTask);
@@ -703,7 +723,7 @@ public class ChapterEditWindow {
     }
 
     private void setSpinnerToLoading(){
-        savingLabel.setText("Saving chapters");
+        savingLabel.setText("Saving chapters...");
         statusIcon.setVisible(false);
         progressSpinner.setVisible(true);
     }
@@ -728,12 +748,12 @@ public class ChapterEditWindow {
 
     private void showLoadingSpinner(){
 
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(400), loadingPane);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(250), loadingPane);
         fadeTransition.setFromValue(0.3);
         fadeTransition.setToValue(1);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(400), loadingPane);
-        translateTransition.setFromY(60);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(250), loadingPane);
+        translateTransition.setFromY(50);
         translateTransition.setToY(0);
 
         showTransition = new ParallelTransition(fadeTransition, translateTransition);
@@ -745,13 +765,13 @@ public class ChapterEditWindow {
 
     private void hideLoadingSpinner(){
 
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(400), loadingPane);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(250), loadingPane);
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0.3);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(400), loadingPane);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(250), loadingPane);
         translateTransition.setFromY(0);
-        translateTransition.setToY(60);
+        translateTransition.setToY(50);
 
         hideTransition = new ParallelTransition(fadeTransition, translateTransition);
         hideTransition.setOnFinished(e -> loadingContainer.setVisible(false));
@@ -768,5 +788,40 @@ public class ChapterEditWindow {
         }
 
         return chapters;
+    }
+
+    public void remove(ChapterEditItem chapterEditItem){
+        for(int i = chapterEditItem.index + 1; i < chapterEditItems.size(); i++){
+            ChapterEditItem item = chapterEditItems.get(i);
+            item.index--;
+            item.indexLabel.setText(String.valueOf(item.index+1));
+            if(i == 1){
+                item.setUneditable();
+            }
+        }
+
+        chapterEditItems.remove(chapterEditItem);
+        focusNodes.remove(chapterEditItem);
+        chapterEditItem.setMouseTransparent(true);
+
+        saveAllowed.set(true);
+
+        FadeTransition fadeTransition = AnimationsClass.fadeAnimation(300, chapterEditItem, chapterEditItem.getOpacity(), 0, false, 1, false);
+        fadeTransition.setOnFinished(e -> {
+
+            Timeline itemMin = AnimationsClass.animateMinHeight(0, chapterEditItem);
+            Timeline itemMax = AnimationsClass.animateMaxHeight(0, chapterEditItem);
+
+            ParallelTransition parallelTransition = new ParallelTransition(itemMin, itemMax);
+            parallelTransition.setOnFinished(j -> {
+                content.getChildren().remove(chapterEditItem);
+
+            });
+            parallelTransition.playFromStart();
+        });
+
+        fadeTransition.playFromStart();
+
+
     }
 }

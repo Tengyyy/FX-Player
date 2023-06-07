@@ -218,7 +218,7 @@ public class ChapterController {
             }
 
             chapterFrameGrabberTask.setOnSucceeded((event) -> {
-                chapterItem.imageWrapper.setStyle("-fx-background-color: black; -fx-background-radius: 5;");
+                chapterItem.imageWrapper.setStyle("-fx-background-color: black;");
                 chapterItem.imageIcon.setVisible(false);
                 chapterItem.coverImage.setImage(chapterFrameGrabberTask.getValue());
                 chapterItem.coverImage.setVisible(true);

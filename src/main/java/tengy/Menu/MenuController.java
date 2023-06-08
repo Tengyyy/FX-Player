@@ -289,8 +289,8 @@ public class MenuController implements Initializable {
                 || controlBarController.durationSlider.isValueChanging()
                 || controlBarController.volumeSlider.isValueChanging()
                 || playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging()
-                || subtitlesController.subtitlesBox.subtitlesDragActive
-                || playbackSettingsController.equalizerController.sliderActive) return;
+                || subtitlesController.subtitlesBox.subtitlesDragActive)
+            return;
 
         if(newState != menuState) updateState(newState);
 

@@ -431,7 +431,7 @@ public class ChapterEditItem extends StackPane {
             imageWrapper.setStyle("-fx-background-color: black;");
         });
 
-        chapterEditWindow.executorService.execute(chapterFrameGrabberTask);
+        chapterEditWindow.frameService.execute(chapterFrameGrabberTask);
     }
 
     public void focusOn(){

@@ -18,6 +18,7 @@ public class WindowController {
     public TechnicalDetailsWindow technicalDetailsWindow;
     public ChapterEditWindow chapterEditWindow;
     public MediaInformationWindow mediaInformationWindow;
+    public EqualizerWindow equalizerWindow;
 
     public WindowController(MainController mainController){
         this.mainController = mainController;
@@ -30,6 +31,7 @@ public class WindowController {
         thirdPartySoftwareWindow = new ThirdPartySoftwareWindow(this);
         technicalDetailsWindow = new TechnicalDetailsWindow(this);
         chapterEditWindow = new ChapterEditWindow(this);
+        equalizerWindow = new EqualizerWindow(this);
     }
 
     public void updateState(WindowState newState){
@@ -91,9 +93,12 @@ public class WindowController {
                     chapterEditWindow.frameGrabber = null;
                 }
 
-                if(chapterEditWindow.executorService != null && !chapterEditWindow.executorService.isShutdown()) chapterEditWindow.executorService.shutdown();
-                chapterEditWindow.executorService = null;
-
+                if(chapterEditWindow.frameService != null && !chapterEditWindow.frameService.isShutdown()) chapterEditWindow.frameService.shutdown();
+                chapterEditWindow.frameService = null;
+            }
+            case EQUALIZER_OPEN -> {
+                equalizerWindow.window.setVisible(false);
+                equalizerWindow.showing = false;
             }
         }
 
@@ -111,6 +116,7 @@ public class WindowController {
             case CLOSE_CONFIRMATION_WINDOW_OPEN -> closeConfirmationWindow.focusForward();
             case THIRD_PARTY_SOFTWARE_WINDOW_OPEN -> thirdPartySoftwareWindow.focusForward();
             case MEDIA_INFORMATION_WINDOW_OPEN -> mediaInformationWindow.focusForward();
+            case EQUALIZER_OPEN -> equalizerWindow.focusForward();
         }
     }
 
@@ -124,6 +130,7 @@ public class WindowController {
             case CLOSE_CONFIRMATION_WINDOW_OPEN -> closeConfirmationWindow.focusBackward();
             case THIRD_PARTY_SOFTWARE_WINDOW_OPEN -> thirdPartySoftwareWindow.focusBackward();
             case MEDIA_INFORMATION_WINDOW_OPEN -> mediaInformationWindow.focusBackward();
+            case EQUALIZER_OPEN -> equalizerWindow.focusBackward();
         }
     }
 }

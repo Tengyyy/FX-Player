@@ -102,7 +102,7 @@ public class ChapterEditWindow {
     SavePopUp savePopUp;
 
     public FFmpegFrameGrabber frameGrabber = null;
-    public ExecutorService executorService = null;
+    public ExecutorService frameService = null;
 
     IntegerProperty focus = new SimpleIntegerProperty(-1);
     public List<Node> focusNodes = new ArrayList<>();
@@ -408,8 +408,8 @@ public class ChapterEditWindow {
 
         frameGrabber = null;
 
-        if(executorService != null && !executorService.isShutdown()) executorService.shutdown();
-        executorService = null;
+        if(frameService != null && !frameService.isShutdown()) frameService.shutdown();
+        frameService = null;
 
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(100), mainController.popupWindowContainer);
         fadeTransition.setFromValue(mainController.popupWindowContainer.getOpacity());
@@ -627,7 +627,7 @@ public class ChapterEditWindow {
                 e.printStackTrace();
             }
 
-            executorService = Executors.newFixedThreadPool(1);
+            frameService = Executors.newFixedThreadPool(1);
 
             for(ChapterEditItem chapterEditItem : chapterEditItems){
                 if(Utilities.isTime(chapterEditItem.startTimeField.getText())){
@@ -647,7 +647,7 @@ public class ChapterEditWindow {
                             chapterEditItem.imageWrapper.setStyle("-fx-background-color: black;");
                         });
 
-                        executorService.execute(chapterFrameGrabberTask);
+                        frameService.execute(chapterFrameGrabberTask);
                     }
                 }
             }

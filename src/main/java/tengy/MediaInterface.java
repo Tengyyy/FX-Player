@@ -116,7 +116,6 @@ public class MediaInterface {
 
         embeddedMediaPlayer.videoSurface().set(imageViewVideoSurface);
         embeddedMediaPlayer.audio().setEqualizer(new Equalizer(10));
-        embeddedMediaPlayer.audio().equalizer().setPreamp(0);
         embeddedMediaPlayer.audio().setVolume((int) controlBarController.volumeSlider.getValue());
 
 

@@ -45,7 +45,8 @@ public enum Action {
     OPEN_RECENT_MEDIA("Open recent media page"),
     OPEN_MUSIC_LIBRARY("Open music library"),
     OPEN_PLAYLISTS("Open playlists page"),
-    OPEN_SETTINGS("Open settings page");
+    OPEN_SETTINGS("Open settings page"),
+    OPEN_EQUALIZER("Open equalizer");
 
     private final String content;
 

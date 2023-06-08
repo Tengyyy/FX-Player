@@ -17,6 +17,8 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import tengy.Windows.EqualizerWindow;
+import tengy.Windows.WindowState;
 import uk.co.caprica.vlcj.player.base.TrackDescription;
 
 import java.util.List;
@@ -32,7 +34,6 @@ public class PlaybackSettingsController {
     PlaybackSettingsHomeController playbackSettingsHomeController;
     public PlaybackOptionsController playbackOptionsController;
     public PlaybackSpeedController playbackSpeedController;
-    public EqualizerController equalizerController;
     public VideoTrackChooserController videoTrackChooserController;
     public AudioTrackChooserController audioTrackChooserController;
     SubtitlesController subtitlesController;
@@ -92,7 +93,6 @@ public class PlaybackSettingsController {
         playbackSettingsHomeController = new PlaybackSettingsHomeController(this);
         playbackOptionsController = new PlaybackOptionsController(this);
         playbackSpeedController = new PlaybackSpeedController(this);
-        equalizerController = new EqualizerController(this);
         videoTrackChooserController = new VideoTrackChooserController(this);
         audioTrackChooserController = new AudioTrackChooserController(this);
     }
@@ -105,7 +105,7 @@ public class PlaybackSettingsController {
 
     public void openSettings(){
 
-        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || (menuController.menuState != MenuState.CLOSED && !menuController.extended.get())|| subtitlesController.subtitlesBox.subtitlesDragActive || subtitlesController.animating.get()) return;
+        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || (menuController.menuState != MenuState.CLOSED && !menuController.extended.get())|| subtitlesController.subtitlesBox.subtitlesDragActive || subtitlesController.animating.get() || mainController.windowController.windowState != WindowState.CLOSED) return;
 
         mainController.videoImageView.requestFocus();
         if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
@@ -145,7 +145,7 @@ public class PlaybackSettingsController {
 
     public void closeSettings(){
 
-        if(animating.get() || playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || equalizerController.sliderActive) return;
+        if(animating.get() || playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging()) return;
 
         if(mainController.getMenuController().menuState == MenuState.CLOSED) mainController.videoImageView.requestFocus();
         AnimationsClass.rotateTransition(200, controlBarController.settingsIcon, 45, 0, false, 1, true);
@@ -166,7 +166,6 @@ public class PlaybackSettingsController {
             case PLAYBACK_SPEED_OPEN -> closeSettingsFromPlaybackSpeed();
             case PLAYBACK_OPTIONS_OPEN -> closeSettingsFromPlaybackOptions();
             case CUSTOM_SPEED_OPEN -> closeSettingsFromCustomSpeed();
-            case EQUALIZER_OPEN -> closeSettingsFromEqualizer();
             case VIDEO_TRACK_CHOOSER_OPEN -> closeSettingsFromVideoTrackChooser();
             case AUDIO_TRACK_CHOOSER_OPEN -> closeSettingsFromAudioTrackChooser();
         }
@@ -289,38 +288,6 @@ public class PlaybackSettingsController {
         animating.set(true);
     }
 
-    public void closeSettingsFromEqualizer(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSettingsBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition equalizerTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), equalizerController.scrollPane);
-        equalizerTransition.setFromValue(1);
-        equalizerTransition.setToValue(0);
-
-        equalizerController.presetsButton.hide();
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, equalizerTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            playbackSettingsBuffer.setMouseTransparent(true);
-            playbackSettingsBackground.setVisible(false);
-            playbackSettingsBackground.setMouseTransparent(true);
-            equalizerController.scrollPane.setVisible(false);
-            equalizerController.scrollPane.setMouseTransparent(true);
-            equalizerController.scrollPane.setOpacity(1);
-            clip.setHeight(playbackSettingsHomeController.playbackSettingsHomeScroll.getHeight());
-            clip.setWidth(playbackSettingsHomeController.playbackSettingsHomeScroll.getWidth());
-
-            equalizerController.presetsButton.scrollPane.setVvalue(0);
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
     public void closeSettingsFromVideoTrackChooser(){
         FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), playbackSettingsBackground);
         backgroundTranslate.setFromValue(1);
@@ -406,7 +373,6 @@ public class PlaybackSettingsController {
             case CUSTOM_SPEED_OPEN -> playbackSpeedController.customSpeedPane.focusForward();
             case AUDIO_TRACK_CHOOSER_OPEN -> audioTrackChooserController.focusForward();
             case PLAYBACK_SPEED_OPEN -> playbackSpeedController.playbackSpeedPane.focusForward();
-            case EQUALIZER_OPEN -> equalizerController.focusForward();
             case PLAYBACK_OPTIONS_OPEN -> playbackOptionsController.focusForward();
         }
     }
@@ -418,7 +384,6 @@ public class PlaybackSettingsController {
             case CUSTOM_SPEED_OPEN -> playbackSpeedController.customSpeedPane.focusBackward();
             case AUDIO_TRACK_CHOOSER_OPEN -> audioTrackChooserController.focusBackward();
             case PLAYBACK_SPEED_OPEN -> playbackSpeedController.playbackSpeedPane.focusBackward();
-            case EQUALIZER_OPEN -> equalizerController.focusBackward();
             case PLAYBACK_OPTIONS_OPEN -> playbackOptionsController.focusBackward();
         }
     }

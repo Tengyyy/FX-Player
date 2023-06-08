@@ -68,6 +68,10 @@ public class PlaybackOptionsTab extends HBox {
             e.consume();
         });
 
+        this.setOnMouseEntered(e -> toggle.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), true));
+        this.setOnMouseExited(e -> toggle.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), false));
+
+
         titleLabel.setMinSize(165, 35);
         titleLabel.setPrefSize(165, 35);
         titleLabel.setMaxSize(165, 35);

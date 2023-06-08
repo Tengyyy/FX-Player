@@ -21,6 +21,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import tengy.Windows.WindowState;
 
 import java.io.File;
 import java.io.IOException;
@@ -325,7 +326,7 @@ public class SubtitlesController {
 
     public void openSubtitles(){
 
-        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || (menuController.menuState != MenuState.CLOSED && !menuController.extended.get()) || subtitlesBox.subtitlesDragActive || playbackSettingsController.animating.get() || playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || playbackSettingsController.equalizerController.sliderActive) return;
+        if(animating.get() || controlBarController.volumeSlider.isValueChanging() || controlBarController.durationSlider.isValueChanging() || (menuController.menuState != MenuState.CLOSED && !menuController.extended.get()) || subtitlesBox.subtitlesDragActive || playbackSettingsController.animating.get() || playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isValueChanging() || mainController.windowController.windowState != WindowState.CLOSED) return;
 
         mainController.videoImageView.requestFocus();
 

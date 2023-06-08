@@ -14,6 +14,7 @@ import tengy.PlaybackSettings.*;
 import tengy.Subtitles.SubtitlesOptionsTab;
 import tengy.Subtitles.SubtitlesState;
 import tengy.Subtitles.SubtitlesTab;
+import tengy.Windows.EqualizerSlider;
 import tengy.Windows.WindowState;
 
 import java.util.*;
@@ -67,7 +68,9 @@ public class HotkeyController {
             Map.entry(Action.OPEN_RECENT_MEDIA, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.R}),
             Map.entry(Action.OPEN_MUSIC_LIBRARY, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.M}),
             Map.entry(Action.OPEN_PLAYLISTS, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.P}),
-            Map.entry(Action.OPEN_SETTINGS, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.S})
+            Map.entry(Action.OPEN_SETTINGS, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.S}),
+            Map.entry(Action.OPEN_EQUALIZER, new KeyCode[]{KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.E})
+
     );
 
     public static final Map<KeyCode, String> symbols = Map.ofEntries(
@@ -192,7 +195,7 @@ public class HotkeyController {
 
             if(event.getCode() == KeyCode.SPACE){
                 if(mainController.subtitlesController.subtitlesState != SubtitlesState.CLOSED || mainController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED || mainController.windowController.windowState != WindowState.CLOSED){
-                    if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox || event.getTarget() instanceof MultiSelectButton || event.getTarget() instanceof CustomMenuButton || event.getTarget() instanceof PlaybackOptionsTab){
+                    if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox || event.getTarget() instanceof MultiSelectButton || event.getTarget() instanceof CustomMenuButton || event.getTarget() instanceof PlaybackOptionsTab || event.getTarget() instanceof MFXToggleButton){
                         return;
                     }
                 }
@@ -236,8 +239,8 @@ public class HotkeyController {
 
             }
             else if(event.getCode() == KeyCode.UP){
-                if(mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.EQUALIZER_OPEN){
-                    for(EqualizerSlider equalizerSlider : mainController.playbackSettingsController.equalizerController.sliders){
+                if(mainController.windowController.windowState == WindowState.EQUALIZER_OPEN){
+                    for(EqualizerSlider equalizerSlider : mainController.windowController.equalizerWindow.sliders){
                         if(equalizerSlider.slider.isFocused()){
                             equalizerSlider.slider.setValueChanging(true);
                             equalizerSlider.slider.setValue(equalizerSlider.slider.getValue() + 1);
@@ -248,8 +251,8 @@ public class HotkeyController {
                 }
             }
             else if(event.getCode() == KeyCode.DOWN){
-                if(mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.EQUALIZER_OPEN){
-                    for(EqualizerSlider equalizerSlider : mainController.playbackSettingsController.equalizerController.sliders){
+                if(mainController.windowController.windowState == WindowState.EQUALIZER_OPEN){
+                    for(EqualizerSlider equalizerSlider : mainController.windowController.equalizerWindow.sliders){
                         if(equalizerSlider.slider.isFocused()){
                             equalizerSlider.slider.setValueChanging(true);
                             equalizerSlider.slider.setValue(equalizerSlider.slider.getValue() - 1);
@@ -315,6 +318,7 @@ public class HotkeyController {
                     case OPEN_MUSIC_LIBRARY -> mainController.OPEN_MUSIC_LIBRARYAction();
                     case OPEN_PLAYLISTS -> mainController.OPEN_PLAYLISTSAction();
                     case OPEN_SETTINGS -> mainController.OPEN_SETTINGSAction();
+                    case OPEN_EQUALIZER -> mainController.OPEN_EQUALIZERAction();
                 }
             }
         }
@@ -423,8 +427,8 @@ public class HotkeyController {
             else if(mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.isFocused()) mainController.playbackSettingsController.playbackSpeedController.customSpeedPane.customSpeedSlider.setValueChanging(false);
         }
         else if(event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN){
-            if(mainController.playbackSettingsController.playbackSettingsState == PlaybackSettingsState.EQUALIZER_OPEN){
-                for(EqualizerSlider equalizerSlider : mainController.playbackSettingsController.equalizerController.sliders){
+            if(mainController.windowController.windowState == WindowState.EQUALIZER_OPEN){
+                for(EqualizerSlider equalizerSlider : mainController.windowController.equalizerWindow.sliders){
                     if(equalizerSlider.slider.isFocused()){
                         equalizerSlider.slider.setValueChanging(false);
                         break;

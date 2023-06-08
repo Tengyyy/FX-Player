@@ -345,7 +345,7 @@ public class QueueItem extends GridPane {
         imageIcon.setShape(imageSVG);
         imageIcon.setPrefSize(50, 40);
         imageIcon.setMaxSize(50, 40);
-        imageIcon.getStyleClass().add("imageIcon");
+        imageIcon.setStyle("-fx-background-color: rgb(60,60,60);");
 
         Rectangle imageWrapperClip = new Rectangle();
         imageWrapperClip.setWidth(125);
@@ -736,6 +736,7 @@ public class QueueItem extends GridPane {
 
         imageIcon.setPrefSize(40, 40);
         imageIcon.setMaxSize(40, 40);
+        imageIcon.setStyle("-fx-background-color: rgb(200,200,200);");
 
         Map<String, String> mediaInformation = mediaItem.getMediaInformation();
 
@@ -854,6 +855,7 @@ public class QueueItem extends GridPane {
         if(mediaItem == null) return;
 
         imageSVG.setContent(mediaItem.icon.getContent());
+        imageIcon.setStyle("-fx-background-color: rgb(200,200,200);");
 
         if(mediaItem.getCover() != null) {
             coverImage.setImage(mediaItem.getCover());

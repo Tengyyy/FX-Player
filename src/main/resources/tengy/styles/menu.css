@@ -549,6 +549,8 @@
 .check-box:indeterminate  > .box > .mark {
     /* modify mark color */
     -fx-background-color: white;
+    -fx-shape: "M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z";
+    -fx-scale-y: 0.8;
 }
 
 .mfx-checkbox:hover .ripple-container .box, .check-box:hover .box, .mfx-checkbox:focused .ripple-container .box, .check-box:focused .box {
@@ -564,10 +566,19 @@
     -fx-border-color: transparent;
 }
 
+
+.mfx-checkbox:disabled .ripple-container .box, .check-box:disabled .box {
+    -fx-background-color: rgb(80,80,80);
+}
+
 .check-box {
     -fx-border-color: transparent;
     -fx-border-radius: 5;
     -fx-border-insets: -5;
+}
+
+.check-box:disabled, .check-box:disabled > * {
+    -fx-opacity: 1.0;
 }
 
 .queue-checkbox {

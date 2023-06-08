@@ -152,13 +152,13 @@ public class MainController implements Initializable {
         playbackSettingsController.init(mediaInterface, subtitlesController);
         subtitlesController.init(mediaInterface);
         mediaInterface.init(chapterController);
-        playbackSettingsController.equalizerController.loadEqualizer();
 
         popupWindowContainer.setId("popupWindowContainer");
         popupWindowContainer.setOpacity(0);
         popupWindowContainer.setMouseTransparent(true);
 
         windowController = new WindowController(this);
+        windowController.equalizerWindow.loadEqualizer();
 
         focusController = new FocusController(this);
 
@@ -1874,6 +1874,17 @@ public class MainController implements Initializable {
         if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.settingsPage.enter();
+    }
+
+    public void OPEN_EQUALIZERAction(){
+        if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
+        if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
+
+        if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
+        if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
+        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
+        windowController.equalizerWindow.show();
     }
 
     public PlaybackSettingsController getPlaybackSettingsController() {

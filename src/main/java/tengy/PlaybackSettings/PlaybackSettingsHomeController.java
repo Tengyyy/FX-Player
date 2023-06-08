@@ -251,40 +251,10 @@ public class PlaybackSettingsHomeController {
     public void openEqualizer(){
         if(playbackSettingsController.animating.get()) return;
 
-        playbackSettingsController.playbackSettingsState = PlaybackSettingsState.EQUALIZER_OPEN;
+        playbackSettingsController.closeSettings();
 
-        playbackSettingsController.equalizerController.scrollPane.setVisible(true);
-        playbackSettingsController.equalizerController.scrollPane.setMouseTransparent(false);
-
-        Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.heightProperty(), playbackSettingsController.equalizerController.scrollPane.getHeight())));
-
-        Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(playbackSettingsController.clip.widthProperty(), playbackSettingsController.equalizerController.scrollPane.getWidth())));
-
-        TranslateTransition homeTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSettingsHomeScroll);
-        homeTransition.setFromX(0);
-        homeTransition.setToX(-playbackSettingsController.equalizerController.scrollPane.getWidth());
-
-        TranslateTransition optionsTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), playbackSettingsController.equalizerController.scrollPane);
-        optionsTransition.setFromX(playbackSettingsController.equalizerController.scrollPane.getWidth());
-        optionsTransition.setToX(0);
-
-
-        ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, homeTransition, optionsTransition);
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.setOnFinished((e) -> {
-            playbackSettingsController.animating.set(false);
-            playbackSettingsHomeScroll.setVisible(false);
-            playbackSettingsHomeScroll.setMouseTransparent(true);
-            playbackSettingsHomeScroll.setTranslateX(0);
-            playbackSettingsController.clip.setHeight(playbackSettingsController.equalizerController.scrollPane.getPrefHeight());
-        });
-
-        parallelTransition.play();
-        playbackSettingsController.animating.set(true);
+        playbackSettingsController.mainController.windowController.equalizerWindow.show();
     }
-
 
     public void openVideoChooser(){
         File selectedFile = fileChooser.showOpenDialog(App.stage);

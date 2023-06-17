@@ -29,9 +29,9 @@ The following is a list of third-party software that has enabled the creation of
 
 [SRTParser](https://github.com/gusthavosouza/SRTParser)
 
-[OpenSubtitles](https://www.opensubtitles.org/)
+[OpenSubtitles](https://www.opensubtitles.com/en)
 
-[Java library for OpenSubtitles](https://github.com/wtekiela/opensub4j)
+[Java library for OpenSubtitles REST API](https://github.com/deusdixit/Opensubtitles)
 
 
 #### Media information

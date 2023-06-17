@@ -155,8 +155,8 @@ public class ThirdPartySoftwareWindow {
         subtitlesBox.getChildren().addAll(
                 createTitleLabel("Subtitles"),
                 createLinkButton("SRTParser", "https://github.com/gusthavosouza/SRTParser", 11),
-                createLinkButton("OpenSubtitles", "https://www.opensubtitles.org/", 12),
-                createLinkButton("Java library for OpenSubtitles", "https://github.com/wtekiela/opensub4j", 13)
+                createLinkButton("OpenSubtitles", "https://www.opensubtitles.com/en", 12),
+                createLinkButton("Java library for OpenSubtitles REST API", "https://github.com/deusdixit/Opensubtitles", 13)
         );
 
         mediaInfoBox.setSpacing(10);

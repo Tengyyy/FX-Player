@@ -684,6 +684,10 @@
     -fx-graphic-text-gap: 15;
 }
 
+.searchErrorLabel {
+    -fx-text-fill: red;
+}
+
 .controlsHeaderText {
     -fx-font-size: 20;
 }

@@ -12,7 +12,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import tengy.SVG;
@@ -22,7 +21,6 @@ import java.util.List;
 
 import static tengy.Utilities.keyboardFocusOff;
 import static tengy.Utilities.keyboardFocusOn;
-
 
 public class HelpPage extends VBox implements Page{
 
@@ -38,7 +36,7 @@ public class HelpPage extends VBox implements Page{
 
     TextFlow textFlow = new TextFlow();
     Text text1 = new Text("Download subtitles from");
-    Hyperlink hyperlink = new Hyperlink("opensubtitles.org");
+    Hyperlink hyperlink = new Hyperlink("opensubtitles.com");
     Text text3 = new Text("and display them while watching a video");
     Text text4 = new Text("Usage:");
     Text text5 = new Text("Start your video. If you download subtitles without first playing a video then the subtitle file will be saved to your Downloads folder but it won't be applied automatically.\n" +
@@ -47,13 +45,12 @@ public class HelpPage extends VBox implements Page{
     Text text7 = new Text("It is recommended to try this method first, because it performs a search based on the video file print, so you are more likely to find high quality subtitles that are synchronized with your video. \n" +
             "Keep in mind that this method will only work if you have not modified/edited the video file.");
     Text text8 = new Text("Method 2: Search by title");
-    Text text9 = new Text("Use this method to manually search for subtitles by specifying the movie title if you have no luck with the first method. If you are searching for subtitles for a TV Show/Series, you can also provide a season and episode number.");
+    Text text9 = new Text("Use this method to manually search for subtitles by specifying the movie title if you have no luck with the first method. When searching for subtitles for a TV Show/Series, you can also provide a season and episode number.");
     Text text10 = new Text("Downloading subtitles");
     Text text11 = new Text("""
-            Select a subtitle file from the list of results and click on the download button.
+            Click on one of subtitle files to download it.
             The subtitle file will be saved to the same directory as the currently active video and with the same name (different extension) so FXPlayer will be able to load the subtitles automatically every time you play the video.
             Make sure the option 'Scan parent folder for subtitle file with matching name' is turned on in the settings menu for the subtitles to load automatically next time you play the video.\s""");
-
 
 
     HelpPage(OpenSubtitlesWindow openSubtitlesWindow){
@@ -160,7 +157,7 @@ public class HelpPage extends VBox implements Page{
         content.getChildren().addAll(textFlow, text4, text5, text6, text7, text8, text9, text10, text11);
 
         hyperlink.setOnAction(e -> {
-            Utilities.openBrowser("https://www.opensubtitles.org/");
+            Utilities.openBrowser("https://www.opensubtitles.com/en");
             hyperlink.setVisited(true);
         });
 

@@ -16,11 +16,10 @@ module hans {
     requires org.bytedeco.javacv;
     requires org.bytedeco.javacpp;
     requires org.bytedeco.ffmpeg;
-    requires opensub4j;
-    requires xmlrpc.common;
     requires com.sandec.mdfx;
     requires java.prefs;
-
+    requires com.google.gson;
+    requires java.net.http;
 
     opens tengy to javafx.graphics, javafx.fxml;
     exports tengy;
@@ -37,7 +36,16 @@ module hans {
     exports tengy.windowstoolbar;
     exports tengy.Chapters;
     opens tengy.Chapters to javafx.fxml, javafx.graphics;
-
+    exports tengy.OpenSubtitles;
+    exports tengy.OpenSubtitles.models;
+    exports tengy.OpenSubtitles.tools;
+    exports tengy.OpenSubtitles.models.subtitles;
+    exports tengy.OpenSubtitles.models.authentication;
+    exports tengy.OpenSubtitles.models.features;
+    exports tengy.OpenSubtitles.models.discover;
+    exports tengy.OpenSubtitles.models.utilities;
+    exports tengy.OpenSubtitles.models.download;
+    exports tengy.OpenSubtitles.models.infos;
     exports tengy.Menu.Queue;
     opens tengy.Menu.Queue to javafx.fxml, javafx.graphics;
     exports tengy.Menu.Settings;

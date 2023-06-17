@@ -1,15 +1,10 @@
 package tengy.Windows.OpenSubtitles;
 
-import com.github.wtekiela.opensub4j.api.OpenSubtitlesClient;
-import com.github.wtekiela.opensub4j.impl.OpenSubtitlesClientImpl;
-import com.github.wtekiela.opensub4j.response.SubtitleInfo;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,19 +12,22 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import tengy.ClearableTextFieldSkin;
 import tengy.MultiSelectButton;
+import tengy.OpenSubtitles.OpenSubtitles;
+import tengy.OpenSubtitles.models.features.Subtitle;
+import tengy.OpenSubtitles.models.subtitles.SubtitlesResult;
 import tengy.SVG;
-import tengy.VisiblePasswordFieldSkin;
 import tengy.Windows.OpenSubtitles.Tasks.LoginTask;
 import tengy.Windows.OpenSubtitles.Tasks.SearchTask;
 import tengy.Windows.WindowState;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +78,7 @@ public class SearchPage extends VBox implements Page{
     IntegerProperty focus = new SimpleIntegerProperty(-1);
     List<Node> focusNodes = new ArrayList<>();
 
-    public OpenSubtitlesClient osClient = null;
+    public OpenSubtitles os = null;
 
     public BooleanProperty searchInProgress = new SimpleBooleanProperty(false);
     ExecutorService executorService = null;
@@ -192,7 +190,6 @@ public class SearchPage extends VBox implements Page{
         titleSearchIcon.setMaxSize(14, 14);
         titleSearchIcon.setMouseTransparent(true);
         titleSearchIcon.getStyleClass().addAll("menuIcon", "graphic");
-
 
         StackPane.setAlignment(titleSearchButton, Pos.CENTER_RIGHT);
         titleSearchButton.setGraphic(titleSearchIcon);
@@ -358,8 +355,7 @@ public class SearchPage extends VBox implements Page{
         searchSpinner.visibleProperty().bind(searchInProgress);
 
         StackPane.setAlignment(errorLabel, Pos.CENTER_LEFT);
-        StackPane.setMargin(errorLabel, new Insets(0, 0, 0, 10));
-        errorLabel.getStyleClass().add("toggleText");
+        errorLabel.getStyleClass().addAll("toggleText", "searchErrorLabel");
 
         focusNodes.add(languageButton);
         focusNodes.add(titleField);
@@ -383,31 +379,24 @@ public class SearchPage extends VBox implements Page{
 
     private void search(boolean fileSearch) {
 
+        errorLabel.setVisible(false);
+
         if(searchInProgress.get()
         || (fileSearch && (openSubtitlesWindow.mainController.getMenuController().queuePage.queueBox.activeItem.get() == null || openSubtitlesWindow.mainController.getMenuController().queuePage.queueBox.activeItem.get().file == null))
         || (!fileSearch && titleField.getText().isEmpty())) return;
 
         searchInProgress.set(true);
 
-        if(osClient == null){
-            try {
-                URL serverUrl = new URL("https", "api.opensubtitles.org", 443, "/xml-rpc");
-                osClient = new OpenSubtitlesClientImpl(serverUrl);
-            } catch (MalformedURLException e) {
-                searchFail("OpenSubtitles server URL malformed.");
-                return;
-            }
-        }
+        if(os == null) os = new OpenSubtitles(openSubtitlesWindow.connectionPage.username, openSubtitlesWindow.connectionPage.password, openSubtitlesWindow.connectionPage.apiKey);
 
-
-        LoginTask loginTask = new LoginTask(this,
-                openSubtitlesWindow.connectionPage.username,
-                openSubtitlesWindow.connectionPage.password);
+        LoginTask loginTask = new LoginTask(this);
 
         loginTask.setOnSucceeded(e -> {
             Integer result = loginTask.getValue();
-            if(result == -1) searchFail("Unable to connect to OpenSubtitles service.");
-            else if(result == 0) searchFail("Failed to login to OpenSubtitles.");
+            if(result == -1) searchFail("Failed to login");
+            else if(result == 400) searchFail("Error 400: invalid username/password - remember to use your username and not your email to authenticate");
+            else if(result == 401) searchFail("Error 401: invalid username/password");
+            else if(result != 200) searchFail("Error " + result + ": failed to login");
             else {
                 SearchTask searchTask;
                 if(fileSearch) searchTask = new SearchTask(this, openSubtitlesWindow.mainController.getMenuController().queuePage.queueBox.activeItem.get().file);
@@ -417,17 +406,12 @@ public class SearchPage extends VBox implements Page{
 
                     if(openSubtitlesWindow.openSubtitlesState != OpenSubtitlesState.SEARCH_OPEN || openSubtitlesWindow.windowController.windowState != WindowState.OPEN_SUBTITLES_OPEN) return;
 
-                    List<SubtitleInfo> subtitleInfoList = searchTask.getValue();
-                    List<SubtitleInfo> filteredList = new ArrayList<>();
+                    SubtitlesResult subtitlesResult = searchTask.getValue();
 
-                    for(SubtitleInfo subtitleInfo : subtitleInfoList){
-                        if(subtitleInfo.getFormat().equals("srt")) filteredList.add(subtitleInfo);
-                    }
-
-                    if(!filteredList.isEmpty()) {
+                    if(subtitlesResult.data.length > 0) {
                         openSubtitlesWindow.resultsPage.setNotEmpty();
-                        for (SubtitleInfo subtitleInfo : filteredList) {
-                            openSubtitlesWindow.resultsPage.addResult(new Result(openSubtitlesWindow, subtitleInfo, osClient));
+                        for (Subtitle subtitle : subtitlesResult.data) {
+                            openSubtitlesWindow.resultsPage.addResult(new Result(openSubtitlesWindow, subtitle, os));
                         }
                     }
 

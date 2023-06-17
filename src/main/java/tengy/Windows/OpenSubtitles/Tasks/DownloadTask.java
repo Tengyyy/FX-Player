@@ -1,49 +1,46 @@
 package tengy.Windows.OpenSubtitles.Tasks;
 
-import com.github.wtekiela.opensub4j.api.OpenSubtitlesClient;
-import com.github.wtekiela.opensub4j.response.ListResponse;
-import com.github.wtekiela.opensub4j.response.SubtitleFile;
 import javafx.concurrent.Task;
-import org.apache.xmlrpc.XmlRpcException;
+import tengy.OpenSubtitles.OpenSubtitles;
+import tengy.OpenSubtitles.models.download.DownloadLinkResult;
+import tengy.OpenSubtitles.models.features.Subtitle;
 import tengy.Utilities;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Collections;
-import java.util.List;
 
 public class DownloadTask extends Task<File> {
 
     File parentFile;
-    int subtitleId;
     String fileName;
-    String encoding;
-    OpenSubtitlesClient osClient;
 
-    public DownloadTask(OpenSubtitlesClient osClient, File parentFile, String fileName, int subtitleId, String encoding){
+    OpenSubtitles os;
+
+    Subtitle sub;
+
+    public DownloadTask(OpenSubtitles os, File parentFile, String fileName, Subtitle sub){
         this.parentFile = parentFile;
         this.fileName = fileName;
-        this.subtitleId = subtitleId;
-        this.encoding = encoding;
-        this.osClient = osClient;
+        this.sub = sub;
+        this.os = os;
     }
 
 
     @Override
     public File call() {
+
         try {
-            ListResponse<SubtitleFile> downloadResponse = osClient.downloadSubtitles(subtitleId);
-            if(downloadResponse.getData().isPresent()){
-                List<SubtitleFile> subtitleFiles = downloadResponse.getData().get();
-                SubtitleFile subtitleFile = subtitleFiles.get(0);
+            if(sub.attributes.files.length > 0){
+                Subtitle.FileObject fileObject = sub.attributes.files[0];
+                DownloadLinkResult downloadLinkResult = os.getDownloadLink(fileObject);
+
                 File file = Utilities.findFreeFileName(parentFile, fileName);
-                Files.write(file.toPath(), Collections.singleton(subtitleFile.getContent(encoding).getContent()), StandardCharsets.UTF_8);
+                os.download(downloadLinkResult, file.toPath());
+
                 return file;
             }
         }
-        catch (XmlRpcException | IOException ignored){}
+        catch (IOException | InterruptedException ignored){}
         return null;
     }
 }

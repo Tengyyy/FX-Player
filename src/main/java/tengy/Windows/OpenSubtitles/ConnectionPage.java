@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import static tengy.Utilities.keyboardFocusOff;
 import static tengy.Utilities.keyboardFocusOn;
@@ -55,6 +56,11 @@ public class ConnectionPage extends VBox implements Page{
     BooleanProperty credentialsChanged = new SimpleBooleanProperty(false);
     public String username = "";
     public String password = "";
+    public String apiKey = "";
+
+    public static final String USERNAME_KEY = "open_subtitles_user";
+    public static final String PASSWORD_KEY = "open_subtitles_pass";
+
 
     OpenSubtitlesWindow openSubtitlesWindow;
 
@@ -296,31 +302,34 @@ public class ConnectionPage extends VBox implements Page{
         this.username = usernameField.getText();
         this.password = passwordField.getText();
 
-        File file = new File(new File(System.getProperty("user.home"), "FXPlayer"), "OpenSubtitles.txt");
+        Preferences preferences = openSubtitlesWindow.mainController.pref.preferences;
 
-        Files.writeString(file.toPath(), username + "\n" + password, StandardCharsets.UTF_8);
+        preferences.put(USERNAME_KEY, username);
+        preferences.put(PASSWORD_KEY, password);
 
         credentialsChanged.set(false);
     }
 
 
     public void readCredentials(){
-        File file = new File(new File(System.getProperty("user.home"), "FXPlayer"), "OpenSubtitles.txt");
+
+        File file = new File(new File(System.getProperty("user.home"), "FXPlayer"), "OpenSubtitlesKey.txt");
         if(file.exists() && file.canRead()){
             try {
                 List<String> lines = Files.readAllLines(Path.of(file.toURI()), StandardCharsets.UTF_8);
-                if(lines.size() >= 2){
-                    usernameField.setText(lines.get(0));
-                    passwordField.setText(lines.get(1));
-
-                    this.username = lines.get(0);
-                    this.password = lines.get(1);
-
-                    credentialsChanged.set(false);
-                }
-
+                if(lines.size() >= 1) apiKey = lines.get(0);
             } catch (IOException ignored){}
         }
+
+        Preferences preferences = openSubtitlesWindow.mainController.pref.preferences;
+
+        this.username = preferences.get(USERNAME_KEY, "");
+        this.password = preferences.get(PASSWORD_KEY, "");
+
+        usernameField.setText(username);
+        passwordField.setText(password);
+
+        credentialsChanged.set(false);
     }
 
     public void reset(){

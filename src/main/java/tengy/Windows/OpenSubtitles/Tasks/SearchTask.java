@@ -1,18 +1,16 @@
 package tengy.Windows.OpenSubtitles.Tasks;
 
-import com.github.wtekiela.opensub4j.response.ListResponse;
-import com.github.wtekiela.opensub4j.response.SubtitleInfo;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import org.apache.xmlrpc.XmlRpcException;
+import tengy.OpenSubtitles.models.subtitles.SubtitlesQuery;
+import tengy.OpenSubtitles.models.subtitles.SubtitlesResult;
+import tengy.OpenSubtitles.tools.OpenSubtitlesHasher;
 import tengy.Windows.OpenSubtitles.SearchPage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class SearchTask extends Task<List<SubtitleInfo>> {
+public class SearchTask extends Task<SubtitlesResult> {
 
     SearchPage searchPage;
 
@@ -36,34 +34,35 @@ public class SearchTask extends Task<List<SubtitleInfo>> {
 
 
     @Override
-    protected List<SubtitleInfo> call() {
+    protected SubtitlesResult call() {
         ObservableList<String> languages = searchPage.languageButton.getSelectedItems();
-        StringBuilder languageString = new StringBuilder();
-        if(languages.isEmpty()) languageString.append("all");
+
+        SubtitlesResult subtitlesResult = null;
+        SubtitlesQuery query = new SubtitlesQuery();
+
+        if(languages.isEmpty()) query.addLanguage("all");
         else {
-            for (int i = 0; i < languages.size(); i++) {
-                String languageName = languages.get(i);
+            for (String languageName : languages) {
+                System.out.println(languageName);
                 String languageCode = SearchPage.languageMap.get(languageName);
-                if (i < languages.size() - 1) {
-                    languageString.append(languageCode).append(", ");
-                } else {
-                    languageString.append(languageCode);
-                }
+                System.out.println(languageCode);
+                query.addLanguage(languageCode);
             }
         }
+
 
         try {
-            ListResponse<SubtitleInfo> response;
-            if(file == null) response = searchPage.osClient.searchSubtitles(languageString.toString(), title, season, episode);
-            else response = searchPage.osClient.searchSubtitles(languageString.toString(), file);
-
-            if(response.getData().isPresent()){
-                return response.getData().get();
+            if(file == null){
+                query.setQuery(title);
+                if(!season.isEmpty()) query.setSeasonNumber(Integer.parseInt(season));
+                if(!episode.isEmpty()) query.setEpisodeNumber(Integer.parseInt(episode));
             }
-            else return new ArrayList<>();
+            else query.setMovieHash(OpenSubtitlesHasher.computeHash(file));
 
-        } catch (XmlRpcException | IOException e) {
-            return new ArrayList<>();
+            subtitlesResult = searchPage.os.getSubtitles(query.build());
         }
+        catch (IOException | InterruptedException ignored) {}
+
+        return  subtitlesResult;
     }
 }

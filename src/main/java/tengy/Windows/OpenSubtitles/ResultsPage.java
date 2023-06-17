@@ -166,9 +166,15 @@ public class ResultsPage extends VBox implements Page{
 
         content.setPadding(new Insets(3, 20, 15, 15));
         content.setSpacing(5);
-        content.setAlignment(Pos.TOP_LEFT);
+        content.setAlignment(Pos.CENTER);
         content.setFillWidth(true);
         content.setBackground(Background.EMPTY);
+
+        content.getChildren().add(errorLabel);
+
+        errorLabel.getStyleClass().add("resultTitle");
+        errorLabel.setAlignment(Pos.BOTTOM_CENTER);
+        errorLabel.setMinHeight(80);
 
         column2.setHgrow(Priority.ALWAYS);
 
@@ -197,6 +203,7 @@ public class ResultsPage extends VBox implements Page{
         fileNameHeader.getStyleClass().add("resultsTableHeader");
         fileNameHeader.setPrefWidth(85);
         fileNameHeader.setMaxWidth(85);
+        fileNameHeader.setMouseTransparent(true);
         fileNameHeader.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 openSubtitlesWindow.focus.set(0);
@@ -260,6 +267,7 @@ public class ResultsPage extends VBox implements Page{
         languageHeader.setPrefWidth(85);
         languageHeader.setMaxWidth(85);
         languageHeader.setTranslateX(5);
+        languageHeader.setMouseTransparent(true);
 
         languageHeader.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
@@ -324,6 +332,7 @@ public class ResultsPage extends VBox implements Page{
         downloadsHeader.setPrefWidth(95);
         downloadsHeader.setMaxWidth(95);
         downloadsHeader.setTranslateX(10);
+        downloadsHeader.setMouseTransparent(true);
 
         downloadsHeader.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
@@ -395,6 +404,7 @@ public class ResultsPage extends VBox implements Page{
         content.setOpacity(1);
         content.getChildren().clear();
         content.getChildren().add(errorLabel);
+        content.setAlignment(Pos.CENTER);
 
         downloadsHeader.setMouseTransparent(true);
         languageHeader.setMouseTransparent(true);
@@ -428,6 +438,7 @@ public class ResultsPage extends VBox implements Page{
         focusNodes.add(downloadsHeader);
 
         content.getChildren().remove(errorLabel);
+        content.setAlignment(Pos.TOP_LEFT);
 
         fileNameHeader.setMouseTransparent(false);
         languageHeader.setMouseTransparent(false);

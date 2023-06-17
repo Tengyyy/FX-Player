@@ -1,10 +1,7 @@
 package tengy.Windows.OpenSubtitles;
 
-import com.github.wtekiela.opensub4j.api.OpenSubtitlesClient;
-import com.github.wtekiela.opensub4j.response.SubtitleInfo;
+
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.css.PseudoClass;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -15,7 +12,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import tengy.ControlTooltip;
+import tengy.OpenSubtitles.OpenSubtitles;
+import tengy.OpenSubtitles.models.features.Subtitle;
 import tengy.SVG;
 import tengy.Utilities;
 import tengy.Windows.OpenSubtitles.Tasks.DownloadTask;
@@ -53,11 +51,10 @@ public class Result extends GridPane {
     Region crossIcon = new Region();
     MFXProgressSpinner spinner = new MFXProgressSpinner();
 
-    OpenSubtitlesClient osClient;
+    OpenSubtitles os;
 
-    int subtitleId;
+    Subtitle subtitle;
     String fileName;
-    String encoding;
     String language;
     int downloads;
 
@@ -67,15 +64,13 @@ public class Result extends GridPane {
 
     boolean pressed = false;
 
-
-    Result(OpenSubtitlesWindow openSubtitlesWindow, SubtitleInfo subtitleInfo, OpenSubtitlesClient osClient) {
+    Result(OpenSubtitlesWindow openSubtitlesWindow, Subtitle subtitle, OpenSubtitles os) {
         this.openSubtitlesWindow = openSubtitlesWindow;
-        this.osClient = osClient;
-        this.subtitleId = subtitleInfo.getSubtitleFileId();
-        this.fileName = subtitleInfo.getFileName();
-        this.encoding = subtitleInfo.getEncoding();
-        this.downloads = subtitleInfo.getDownloadsNo();
-        this.language = subtitleInfo.getLanguage();
+        this.os = os;
+        this.subtitle = subtitle;
+        this.fileName = subtitle.attributes.files[0].file_name + ".srt";
+        this.downloads = subtitle.attributes.download_count;
+        this.language = subtitle.attributes.language;
 
         column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
@@ -153,11 +148,9 @@ public class Result extends GridPane {
         nameLabel.getStyleClass().add("resultTitle");
         nameLabel.setText(fileName);
 
-        this.language = SearchPage.languageMap.get(subtitleInfo.getLanguage());
         languageLabel.getStyleClass().add("resultTitle");
         languageLabel.setText(language);
 
-        this.downloads = subtitleInfo.getDownloadsNo();
         downloadsLabel.getStyleClass().add("resultTitle");
         downloadsLabel.setText(String.valueOf(downloads));
 
@@ -217,7 +210,7 @@ public class Result extends GridPane {
         openSubtitlesWindow.resultsPage.focus.set(-1);
 
         spinner.setVisible(true);
-        if (osClient != null && osClient.isLoggedIn()) {
+        if (os != null && os.isLoggedIn()) {
 
             File parentFile;
             String name;
@@ -232,7 +225,7 @@ public class Result extends GridPane {
                 name = this.fileName;
             }
 
-            DownloadTask downloadTask = new DownloadTask(osClient, parentFile, name, this.subtitleId, this.encoding);
+            DownloadTask downloadTask = new DownloadTask(os, parentFile, name, subtitle);
             downloadTask.setOnSucceeded(e -> {
                 File file = downloadTask.getValue();
                 if (file != null) {

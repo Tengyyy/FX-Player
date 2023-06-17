@@ -41,5 +41,10 @@
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="farmvivi" />
+      <option name="name" value="FarmVivi's Releases Repository" />
+      <option name="url" value="https://nexus.farmvivi.fr/repository/maven-releases/" />
+    </remote-repository>
   </component>
 </project>

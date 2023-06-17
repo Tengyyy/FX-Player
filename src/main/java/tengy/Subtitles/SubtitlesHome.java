@@ -280,42 +280,9 @@ public class SubtitlesHome {
     public void openOpenSubtitlesPane(){
         if(subtitlesController.animating.get()) return;
 
-        subtitlesController.subtitlesState = SubtitlesState.OPENSUBTITLES_OPEN;
+        subtitlesController.closeSubtitles();
 
-
-        subtitlesController.openSubtitlesPane.scrollPane.setVisible(true);
-        subtitlesController.openSubtitlesPane.scrollPane.setMouseTransparent(false);
-
-        subtitlesController.openSubtitlesPane.container.requestFocus();
-
-
-        Timeline clipHeightTimeline = new Timeline();
-        clipHeightTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.heightProperty(), subtitlesController.openSubtitlesPane.scrollPane.getHeight())));
-
-        Timeline clipWidthTimeline = new Timeline();
-        clipWidthTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), new KeyValue(subtitlesController.clip.widthProperty(), subtitlesController.openSubtitlesPane.scrollPane.getWidth())));
-
-        TranslateTransition captionsTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), scrollPane);
-        captionsTransition.setFromX(0);
-        captionsTransition.setToX(-subtitlesController.openSubtitlesPane.scrollPane.getWidth());
-
-        TranslateTransition openSubtitlesTransition = new TranslateTransition(Duration.millis(PlaybackSettingsController.ANIMATION_SPEED), subtitlesController.openSubtitlesPane.scrollPane);
-        openSubtitlesTransition.setFromX(subtitlesController.openSubtitlesPane.scrollPane.getWidth());
-        openSubtitlesTransition.setToX(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(clipHeightTimeline, clipWidthTimeline, captionsTransition, openSubtitlesTransition);
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.setOnFinished((e) -> {
-            subtitlesController.animating.set(false);
-            scrollPane.setVisible(false);
-            scrollPane.setMouseTransparent(true);
-            scrollPane.setTranslateX(0);
-            scrollPane.setVvalue(0);
-            subtitlesController.clip.setHeight(subtitlesController.openSubtitlesPane.scrollPane.getPrefHeight());
-        });
-
-        parallelTransition.play();
-        subtitlesController.animating.set(true);
+        subtitlesController.mainController.windowController.openSubtitlesWindow.show();
     }
 
     public void openTimingPane(){

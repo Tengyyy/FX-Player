@@ -17,7 +17,6 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import tengy.Windows.EqualizerWindow;
 import tengy.Windows.WindowState;
 import uk.co.caprica.vlcj.player.base.TrackDescription;
 

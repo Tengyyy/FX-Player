@@ -35,6 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import tengy.Windows.OpenSubtitles.OpenSubtitlesState;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
 import java.io.File;
@@ -383,15 +384,16 @@ public class MainController implements Initializable {
         videoTitleBackground.maxWidthProperty().bind(videoImageViewWrapper.widthProperty());
         videoTitleBackground.setMouseTransparent(true);
 
-        videoTitleBox.setMinHeight(60);
-        videoTitleBox.setMaxHeight(60);
+        videoTitleBox.setMinHeight(50);
+        videoTitleBox.setMaxHeight(50);
         videoTitleBox.setAlignment(Pos.CENTER_LEFT);
+        videoTitleBox.setPadding(new Insets(0, 5, 0, 5));
         StackPane.setAlignment(videoTitleBox, Pos.TOP_LEFT);
 
         videoTitleBox.getChildren().addAll(menuButtonPane, videoTitleLabel, mediaInformationButtonPane);
 
-        menuButtonPane.setPrefSize(50, 50);
-        menuButtonPane.setMaxSize(50, 50);
+        menuButtonPane.setPrefSize(40, 40);
+        menuButtonPane.setMaxSize(40, 40);
         menuButtonPane.setBackground(Background.EMPTY);
         menuButtonPane.getChildren().addAll(menuButton, menuIcon);
 
@@ -400,8 +402,8 @@ public class MainController implements Initializable {
         menuButtonPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> controlBarController.controlButtonHoverOff(menuButtonPane));
 
 
-        menuButton.setPrefSize(50, 50);
-        menuButton.setMaxSize(50, 50);
+        menuButton.setPrefSize(40, 40);
+        menuButton.setMaxSize(40, 40);
         menuButton.setBackground(Background.EMPTY);
         menuButton.setCursor(Cursor.HAND);
         menuButton.setFocusTraversable(false);
@@ -410,8 +412,8 @@ public class MainController implements Initializable {
 
 
         menuIcon.setShape(menuSVG);
-        menuIcon.setPrefSize(30, 25);
-        menuIcon.setMaxSize(30, 25);
+        menuIcon.setPrefSize(22, 19);
+        menuIcon.setMaxSize(22, 19);
         menuIcon.setMouseTransparent(true);
         menuIcon.getStyleClass().add("controlIcon");
 
@@ -434,12 +436,11 @@ public class MainController implements Initializable {
 
         videoTitleLabel.setOnMouseExited(e -> AnimationsClass.animateTextColor(videoTitleLabel, Color.rgb(200, 200,200), 200));
 
-        mediaInformationButtonPane.setPrefSize(50, 50);
-        mediaInformationButtonPane.setMaxSize(50, 50);
+        mediaInformationButtonPane.setPrefSize(40, 40);
+        mediaInformationButtonPane.setMaxSize(40, 40);
         mediaInformationButtonPane.setBackground(Background.EMPTY);
         mediaInformationButtonPane.getChildren().addAll(mediaInformationButton, mediaInformationIcon);
         StackPane.setAlignment(mediaInformationButtonPane, Pos.CENTER_RIGHT);
-        StackPane.setMargin(mediaInformationButtonPane, new Insets(0, 20, 0, 0));
 
         mediaInformationButtonPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> controlBarController.controlButtonHoverOn(mediaInformationButtonPane));
 
@@ -449,16 +450,16 @@ public class MainController implements Initializable {
         mediaInformationButtonPane.setMouseTransparent(true);
 
 
-        mediaInformationButton.setPrefSize(50, 50);
-        mediaInformationButton.setMaxSize(50, 50);
+        mediaInformationButton.setPrefSize(40, 40);
+        mediaInformationButton.setMaxSize(40, 40);
         mediaInformationButton.setBackground(Background.EMPTY);
         mediaInformationButton.setCursor(Cursor.HAND);
         mediaInformationButton.setFocusTraversable(false);
 
         mediaInformationPath.setContent(INFORMATION.getContent());
         mediaInformationIcon.setShape(mediaInformationPath);
-        mediaInformationIcon.setPrefSize(25, 25);
-        mediaInformationIcon.setMaxSize(25, 25);
+        mediaInformationIcon.setPrefSize(22, 22);
+        mediaInformationIcon.setMaxSize(22, 22);
         mediaInformationIcon.setMouseTransparent(true);
         mediaInformationIcon.getStyleClass().add("controlIcon");
 
@@ -922,7 +923,6 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         controlBarController.fullScreenIcon.setShape(controlBarController.maximizeSVG);
         App.stage.setFullScreen(false);
@@ -932,8 +932,11 @@ public class MainController implements Initializable {
     }
 
     public void pressEnter(){
-        if(subtitlesController.subtitlesState == SubtitlesState.OPENSUBTITLES_OPEN){
-            subtitlesController.openSubtitlesPane.searchButton.fire();
+        if(windowController.windowState == WindowState.OPEN_SUBTITLES_OPEN && windowController.openSubtitlesWindow.openSubtitlesState == OpenSubtitlesState.SEARCH_OPEN){
+            if(windowController.openSubtitlesWindow.searchPage.titleField.isFocused() || windowController.openSubtitlesWindow.searchPage.seasonField.isFocused() || windowController.openSubtitlesWindow.searchPage.episodeField.isFocused()){
+                windowController.openSubtitlesWindow.searchPage.titleSearchButton.fire();
+            }
+
         }
     }
 
@@ -1702,7 +1705,6 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
     }
 
@@ -1718,7 +1720,6 @@ public class MainController implements Initializable {
         if(miniplayerActive) closeMiniplayer();
         else openMiniplayer();
 
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
     }
@@ -1731,8 +1732,7 @@ public class MainController implements Initializable {
             menuController.queuePage.activeQueueItemContextMenu.hide();
         if (menuController.queuePage.addOptionsContextMenu.showing)
             menuController.queuePage.addOptionsContextMenu.hide();
-        if (subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing)
-            subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
+
 
         if (subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
         else subtitlesController.openSubtitles();
@@ -1748,7 +1748,6 @@ public class MainController implements Initializable {
             playbackSettingsController.openSettings();
         }
 
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
     }
 
 
@@ -1758,7 +1757,6 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         if(!menuController.menuInTransition){
             if(menuController.menuState != MenuState.CLOSED) menuController.closeMenu();
@@ -1827,7 +1825,6 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         if(menuController.menuState == MenuState.CLOSED) menuController.setMenuShrinked();
         menuController.queuePage.enter();
@@ -1838,7 +1835,6 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.recentMediaPage.enter();
     }
@@ -1849,7 +1845,6 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.musicLibraryPage.enter();
     }
@@ -1860,7 +1855,6 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.playlistsPage.enter();
     }
@@ -1871,18 +1865,17 @@ public class MainController implements Initializable {
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         menuController.settingsPage.enter();
     }
 
     public void OPEN_EQUALIZERAction(){
+        if(windowController.windowState == WindowState.EQUALIZER_OPEN) return;
         if(playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED) playbackSettingsController.closeSettings();
         if(subtitlesController.subtitlesState != SubtitlesState.CLOSED) subtitlesController.closeSubtitles();
 
         if(menuController.queuePage.activeQueueItemContextMenu != null && menuController.queuePage.activeQueueItemContextMenu.showing) menuController.queuePage.activeQueueItemContextMenu.hide();
         if(menuController.queuePage.addOptionsContextMenu.showing) menuController.queuePage.addOptionsContextMenu.hide();
-        if(subtitlesController.openSubtitlesPane.searchOptionsContextMenu.showing) subtitlesController.openSubtitlesPane.searchOptionsContextMenu.hide();
 
         windowController.equalizerWindow.show();
     }

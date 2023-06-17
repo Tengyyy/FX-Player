@@ -37,8 +37,7 @@ module hans {
     exports tengy.windowstoolbar;
     exports tengy.Chapters;
     opens tengy.Chapters to javafx.fxml, javafx.graphics;
-    exports tengy.Subtitles.Tasks;
-    opens tengy.Subtitles.Tasks to javafx.fxml, javafx.graphics;
+
     exports tengy.Menu.Queue;
     opens tengy.Menu.Queue to javafx.fxml, javafx.graphics;
     exports tengy.Menu.Settings;
@@ -50,4 +49,8 @@ module hans {
     opens tengy.Windows.ChapterEdit to javafx.fxml, javafx.graphics;
     exports tengy.Menu.Settings.Libraries;
     opens tengy.Menu.Settings.Libraries to javafx.fxml, javafx.graphics;
+    exports tengy.Windows.Equalizer;
+    opens tengy.Windows.Equalizer to javafx.fxml, javafx.graphics;
+    exports tengy.Windows.OpenSubtitles;
+    opens tengy.Windows.OpenSubtitles to javafx.fxml, javafx.graphics;
 }

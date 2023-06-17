@@ -367,4 +367,24 @@ public class Utilities {
 
         if(nodeBounds.getMinY() < scrollpaneBounds.getMinY() || nodeBounds.getMaxY() > scrollpaneBounds.getMaxY()) setScrollToNodeBottom(scrollPane, node);
     }
+
+    public static File findFreeFileName(File parentFile, String name){
+
+        File file = new File(parentFile, name);
+        String extension = Utilities.getFileExtension(file);
+
+        int index = 1;
+        while(file.exists()){
+            String newName;
+            if(index == 1)
+                newName = file.getName().substring(0, file.getName().lastIndexOf("." + extension)) + " (1)." + extension;
+            else
+                newName = file.getName().substring(0, file.getName().lastIndexOf(" (")) + " (" + index + ")." + extension;
+
+            file = new File(file.getParentFile(), newName);
+            index++;
+        }
+
+        return file;
+    }
 }

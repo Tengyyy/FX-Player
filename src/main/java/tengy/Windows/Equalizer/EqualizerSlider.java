@@ -1,4 +1,4 @@
-package tengy.Windows;
+package tengy.Windows.Equalizer;
 
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import tengy.VerticalProgressBar;
+import tengy.Windows.Equalizer.EqualizerWindow;
 
 import static tengy.Utilities.keyboardFocusOff;
 

@@ -14,7 +14,8 @@ import tengy.PlaybackSettings.*;
 import tengy.Subtitles.SubtitlesOptionsTab;
 import tengy.Subtitles.SubtitlesState;
 import tengy.Subtitles.SubtitlesTab;
-import tengy.Windows.EqualizerSlider;
+import tengy.Windows.Equalizer.EqualizerSlider;
+import tengy.Windows.OpenSubtitles.Result;
 import tengy.Windows.WindowState;
 
 import java.util.*;
@@ -95,7 +96,6 @@ public class HotkeyController {
             Map.entry(KeyCode.LEFT_PARENTHESIS, "("),
             Map.entry(KeyCode.RIGHT_PARENTHESIS, ")")
     );
-
 
     public Map<String, Action> keybindActionMap = new HashMap<>();
 
@@ -178,7 +178,6 @@ public class HotkeyController {
             }
         }
 
-
         if(keybindChangeActive) {
             if(event.getTarget() instanceof Button) return;
 
@@ -195,7 +194,7 @@ public class HotkeyController {
 
             if(event.getCode() == KeyCode.SPACE){
                 if(mainController.subtitlesController.subtitlesState != SubtitlesState.CLOSED || mainController.playbackSettingsController.playbackSettingsState != PlaybackSettingsState.CLOSED || mainController.windowController.windowState != WindowState.CLOSED){
-                    if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox || event.getTarget() instanceof MultiSelectButton || event.getTarget() instanceof CustomMenuButton || event.getTarget() instanceof PlaybackOptionsTab || event.getTarget() instanceof MFXToggleButton){
+                    if(event.getTarget() instanceof Button || event.getTarget() instanceof SubtitlesOptionsTab || event.getTarget() instanceof CheckTab || event.getTarget() instanceof SettingsTab || event.getTarget() instanceof SubtitlesTab || event.getTarget() instanceof PlaybackSettingsHomeTab || event.getTarget() instanceof PlaybackSpeedTab || event.getTarget() instanceof  VideoTrackTab || event.getTarget() instanceof  AudioTrackTab || event.getTarget() instanceof CheckBox || event.getTarget() instanceof MultiSelectButton || event.getTarget() instanceof CustomMenuButton || event.getTarget() instanceof PlaybackOptionsTab || event.getTarget() instanceof MFXToggleButton || event.getTarget() instanceof Result || event.getTarget() instanceof PressableNode){
                         return;
                     }
                 }

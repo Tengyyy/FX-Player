@@ -790,7 +790,6 @@ public class QueueItem extends GridPane {
     }
 
 
-
     public void updateIndex(int i){
         videoIndex = i;
         indexLabel.setText(String.valueOf(videoIndex + 1));

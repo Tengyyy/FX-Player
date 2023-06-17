@@ -78,8 +78,11 @@ public class QueueBox extends VBox {
             if(newItem == null){
                 queuePage.scrollUpButtonContainer.setVisible(false);
                 queuePage.scrollDownButtonContainer.setVisible(false);
+
+                menuController.mainController.windowController.openSubtitlesWindow.searchPage.hashSearchButton.setDisable(true);
             }
             else {
+                if(!menuController.mainController.windowController.openSubtitlesWindow.searchPage.searchInProgress.get()) menuController.mainController.windowController.openSubtitlesWindow.searchPage.hashSearchButton.setDisable(false);
                 queuePage.checkScroll();
             }
         });

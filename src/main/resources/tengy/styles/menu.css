@@ -305,6 +305,22 @@
     -fx-border-color: rgb(173, 216, 230);
 }
 
+.helpButton {
+    -fx-background-color: rgb(0, 128, 255);
+}
+
+.helpButton:hover, .helpButton:focused {
+    -fx-background-color: rgb(0, 60, 255);
+}
+
+.helpButton:pressed {
+    -fx-background-color: rgb(0, 90, 220);
+}
+
+.helpButton:keyboardFocused {
+    -fx-border-color: white;
+}
+
 #addButton, #searchButton {
     -fx-border-radius: 5 0 0 5;
     -fx-background-radius: 5 0 0 5;

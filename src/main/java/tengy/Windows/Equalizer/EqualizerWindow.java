@@ -1,12 +1,10 @@
-package tengy.Windows;
+package tengy.Windows.Equalizer;
 
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,11 +15,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import tengy.*;
 import tengy.PlaybackSettings.PlaybackSettingsController;
+import tengy.Windows.WindowController;
+import tengy.Windows.WindowState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +34,9 @@ public class EqualizerWindow {
     MainController mainController;
     PlaybackSettingsController playbackSettingsController;
 
-    StackPane window = new StackPane();
+    public StackPane window = new StackPane();
 
-    ScrollPane scrollPane;
+    public ScrollPane scrollPane;
     VBox content = new VBox();
 
     StackPane titleContainer = new StackPane();
@@ -160,7 +159,6 @@ public class EqualizerWindow {
         StackPane.setAlignment(toggleLabel, Pos.CENTER_RIGHT);
         StackPane.setMargin(toggleLabel, new Insets(0, 50, 0, 0));
         StackPane.setAlignment(toggle, Pos.CENTER_RIGHT);
-
 
         toggle.setRadius(10);
         toggle.setCursor(Cursor.HAND);
@@ -430,7 +428,10 @@ public class EqualizerWindow {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(100), mainController.popupWindowContainer);
         fadeTransition.setFromValue(mainController.popupWindowContainer.getOpacity());
         fadeTransition.setToValue(0);
-        fadeTransition.setOnFinished(e -> window.setVisible(false));
+        fadeTransition.setOnFinished(e -> {
+            window.setVisible(false);
+            scrollPane.setVvalue(0);
+        });
         fadeTransition.play();
     }
 

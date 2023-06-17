@@ -1,4 +1,4 @@
-package tengy.Subtitles;
+package tengy.Windows.OpenSubtitles;
 
 import java.util.HashMap;
 

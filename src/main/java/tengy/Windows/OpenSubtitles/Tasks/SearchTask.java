@@ -1,39 +1,49 @@
-package tengy.Subtitles.Tasks;
+package tengy.Windows.OpenSubtitles.Tasks;
 
 import com.github.wtekiela.opensub4j.response.ListResponse;
 import com.github.wtekiela.opensub4j.response.SubtitleInfo;
-import tengy.Subtitles.SubtitlesController;
-import tengy.Subtitles.OpenSubtitlesPane;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import org.apache.xmlrpc.XmlRpcException;
+import tengy.Windows.OpenSubtitles.SearchPage;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchTask extends Task<List<SubtitleInfo>> {
 
+    SearchPage searchPage;
 
-    SubtitlesController subtitlesController;
-    OpenSubtitlesPane openSubtitlesPane;
+    File file = null;
 
+    String title = null;
+    String season = null;
+    String episode = null;
 
-    public SearchTask(SubtitlesController subtitlesController, OpenSubtitlesPane openSubtitlesPane){
-        this.subtitlesController = subtitlesController;
-        this.openSubtitlesPane = openSubtitlesPane;
+    public SearchTask(SearchPage searchPage, File file){
+        this.searchPage = searchPage;
+        this.file = file;
+    }
+
+    public SearchTask(SearchPage searchPage, String title, String season, String episode){
+        this.searchPage = searchPage;
+        this.title = title;
+        this.season = season;
+        this.episode = episode;
     }
 
 
     @Override
     protected List<SubtitleInfo> call() {
-        ObservableList<String> languages = openSubtitlesPane.languageBox.getSelectedItems();
+        ObservableList<String> languages = searchPage.languageButton.getSelectedItems();
         StringBuilder languageString = new StringBuilder();
         if(languages.isEmpty()) languageString.append("all");
         else {
             for (int i = 0; i < languages.size(); i++) {
                 String languageName = languages.get(i);
-                String languageCode = OpenSubtitlesPane.languageMap.get(languageName);
+                String languageCode = SearchPage.languageMap.get(languageName);
                 if (i < languages.size() - 1) {
                     languageString.append(languageCode).append(", ");
                 } else {
@@ -44,9 +54,8 @@ public class SearchTask extends Task<List<SubtitleInfo>> {
 
         try {
             ListResponse<SubtitleInfo> response;
-            if(openSubtitlesPane.searchState == 0) response = openSubtitlesPane.osClient.searchSubtitles(languageString.toString(), openSubtitlesPane.titleField.getText(), openSubtitlesPane.seasonField.getText(), openSubtitlesPane.episodeField.getText());
-            else if(openSubtitlesPane.searchState == 1) response = openSubtitlesPane.osClient.searchSubtitles(languageString.toString(), openSubtitlesPane.imdbField.getText());
-            else response = openSubtitlesPane.osClient.searchSubtitles(languageString.toString(), subtitlesController.menuController.queuePage.queueBox.activeItem.get().file);
+            if(file == null) response = searchPage.osClient.searchSubtitles(languageString.toString(), title, season, episode);
+            else response = searchPage.osClient.searchSubtitles(languageString.toString(), file);
 
             if(response.getData().isPresent()){
                 return response.getData().get();

@@ -46,26 +46,20 @@
 }
 
 .customTextField {
-    -fx-background-color : rgba(30,30,30,0.4);
+    -fx-background-color : rgb(40,40,40);
     -fx-background-radius: 5;
     -fx-border-style     : solid;
-    -fx-border-color     : rgb(100,100,100);
+    -fx-border-color     : rgb(50,50,50) rgb(50,50,50) rgb(200,200,200) rgb(50,50,50);
     -fx-border-radius    : 5;
 }
 
-#timingTextField {
-    -fx-min-width: 60;
-    -fx-padding: 5 10 5 10
+.customTextField:hover {
+    -fx-background-color: rgb(50,50,50);
 }
-
-
 
 .customTextField:focused {
-    -fx-border-color: rgb(200,200,200);
-}
-
-.customTextField:keyboardFocused {
-    -fx-border-color: rgb(173, 216, 230);
+    -fx-background-color: rgb(20,20,20);
+    -fx-border-color: rgb(50,50,50) rgb(50,50,50) red rgb(50,50,50);
 }
 
 .chapterField {
@@ -88,6 +82,38 @@
     -fx-padding: 6 3 6 3;
 }
 
+
+.defaultTextField {
+    -fx-background-color : rgba(30,30,30,0.4);
+    -fx-background-radius: 5;
+    -fx-border-style     : solid;
+    -fx-border-color     : rgb(100,100,100);
+    -fx-border-radius    : 5;
+}
+
+#timingTextField {
+    -fx-min-width: 60;
+    -fx-padding: 5 10 5 10
+}
+
+
+.defaultTextField:focused {
+    -fx-border-color: rgb(200,200,200);
+    -fx-background-color : rgba(45,45,45,0.4);
+}
+
+.defaultTextField:hover {
+    -fx-background-color : rgba(45,45,45,0.4);
+}
+
+.defaultTextField:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
+}
+
+
+
+
+
 .multi-select-button .context-menu, .custom-menu-button .context-menu {
     -fx-background-color: rgba(15,15,15,0.95);
     -fx-background-radius: 10;
@@ -100,16 +126,16 @@
     -fx-background-color: transparent;
 }
 
-.customTextField .menu-item, .expandable-text-area .menu-item, .spinner .text-field .menu-item, .date-picker .text-field .menu-item, .key-text-field .menu-item{
+.customTextField .menu-item, .defaultTextField .menu-item, .expandable-text-area .menu-item, .spinner .text-field .menu-item, .date-picker .text-field .menu-item, .key-text-field .menu-item{
     -fx-background-color: transparent;
     -fx-background-radius: 5;
 }
 
-.customTextField .menu-item:hover, .expandable-text-area .menu-item:hover, .spinner .text-field .menu-item:hover, .date-picker .text-field .menu-item:hover, .key-text-field .menu-item:hover{
+.customTextField .menu-item:hover, .defaultTextField .menu-item:hover, .expandable-text-area .menu-item:hover, .spinner .text-field .menu-item:hover, .date-picker .text-field .menu-item:hover, .key-text-field .menu-item:hover{
     -fx-background-color: rgba(40,40,40, 0.9);
 }
 
-.customTextField .menu-item:disabled, .expandable-text-area .menu-item:disabled, .spinner .text-field .menu-item:disabled, .date-picker .text-field .menu-item:disabled, .key-text-field .menu-item:disabled{
+.customTextField .menu-item:disabled, .defaultTextField .menu-item:disabled, .expandable-text-area .menu-item:disabled, .spinner .text-field .menu-item:disabled, .date-picker .text-field .menu-item:disabled, .key-text-field .menu-item:disabled{
     -fx-background-color: transparent;
 }
 
@@ -394,6 +420,33 @@
     -fx-border-radius: 0;
     -fx-border-width: 0 0 2 0;
 }
+
+.textFieldButton {
+    -fx-cursor: hand;
+    -fx-background-color: rgb(20,20,20);
+    -fx-background-radius: 5;
+}
+
+.textFieldButton > .graphic {
+    -fx-background-color: rgb(200,200,200);
+}
+
+.textFieldButton:hover > .graphic {
+    -fx-background-color: white;
+}
+
+.textFieldButton:hover {
+    -fx-background-color: rgba(60,60,60,0.85);
+}
+
+.textFieldButton:pressed {
+    -fx-background-color: rgba(45,45,45,0.8);
+}
+
+.textFieldButton:pressed > .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
 
 
 

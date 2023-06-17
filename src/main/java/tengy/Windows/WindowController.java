@@ -3,6 +3,9 @@ package tengy.Windows;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import tengy.MainController;
 import tengy.Windows.ChapterEdit.ChapterEditWindow;
+import tengy.Windows.Equalizer.EqualizerWindow;
+import tengy.Windows.OpenSubtitles.OpenSubtitlesState;
+import tengy.Windows.OpenSubtitles.OpenSubtitlesWindow;
 
 public class WindowController {
 
@@ -19,6 +22,7 @@ public class WindowController {
     public ChapterEditWindow chapterEditWindow;
     public MediaInformationWindow mediaInformationWindow;
     public EqualizerWindow equalizerWindow;
+    public OpenSubtitlesWindow openSubtitlesWindow;
 
     public WindowController(MainController mainController){
         this.mainController = mainController;
@@ -32,6 +36,7 @@ public class WindowController {
         technicalDetailsWindow = new TechnicalDetailsWindow(this);
         chapterEditWindow = new ChapterEditWindow(this);
         equalizerWindow = new EqualizerWindow(this);
+        openSubtitlesWindow = new OpenSubtitlesWindow(this);
     }
 
     public void updateState(WindowState newState){
@@ -97,8 +102,39 @@ public class WindowController {
                 chapterEditWindow.frameService = null;
             }
             case EQUALIZER_OPEN -> {
+                equalizerWindow.scrollPane.setVvalue(0);
                 equalizerWindow.window.setVisible(false);
                 equalizerWindow.showing = false;
+            }
+            case OPEN_SUBTITLES_OPEN -> {
+                openSubtitlesWindow.window.setVisible(false);
+
+                openSubtitlesWindow.window.minHeightProperty().unbind();
+                openSubtitlesWindow.window.maxHeightProperty().unbind();
+                openSubtitlesWindow.window.setMinHeight(350);
+                openSubtitlesWindow.window.setMaxHeight(350);
+
+                openSubtitlesWindow.window.minWidthProperty().unbind();
+                openSubtitlesWindow.window.maxWidthProperty().unbind();
+                openSubtitlesWindow.window.setMinWidth(600);
+                openSubtitlesWindow.window.setMaxWidth(600);
+
+                switch (openSubtitlesWindow.openSubtitlesState){
+                    case SEARCH_OPEN -> openSubtitlesWindow.searchPage.reset();
+                    case CONNECTION_OPEN ->  openSubtitlesWindow.connectionPage.reset();
+                    case HELP_OPEN -> openSubtitlesWindow.helpPage.reset();
+                    case RESULTS_OPEN -> openSubtitlesWindow.resultsPage.reset();
+                }
+
+                openSubtitlesWindow.openSubtitlesState = OpenSubtitlesState.SEARCH_OPEN;
+
+                openSubtitlesWindow.searchPage.setOpacity(1);
+                openSubtitlesWindow.searchPage.setVisible(true);
+                openSubtitlesWindow.focusNodes.clear();
+                openSubtitlesWindow.focusNodes.add(openSubtitlesWindow.searchPage);
+                openSubtitlesWindow.focusNodes.add(openSubtitlesWindow.helpButton);
+                openSubtitlesWindow.focusNodes.add(openSubtitlesWindow.connectionButton);
+                openSubtitlesWindow.focusNodes.add(openSubtitlesWindow.mainButton);
             }
         }
 
@@ -117,6 +153,7 @@ public class WindowController {
             case THIRD_PARTY_SOFTWARE_WINDOW_OPEN -> thirdPartySoftwareWindow.focusForward();
             case MEDIA_INFORMATION_WINDOW_OPEN -> mediaInformationWindow.focusForward();
             case EQUALIZER_OPEN -> equalizerWindow.focusForward();
+            case OPEN_SUBTITLES_OPEN -> openSubtitlesWindow.focusForward();
         }
     }
 
@@ -131,6 +168,7 @@ public class WindowController {
             case THIRD_PARTY_SOFTWARE_WINDOW_OPEN -> thirdPartySoftwareWindow.focusBackward();
             case MEDIA_INFORMATION_WINDOW_OPEN -> mediaInformationWindow.focusBackward();
             case EQUALIZER_OPEN -> equalizerWindow.focusBackward();
+            case OPEN_SUBTITLES_OPEN -> openSubtitlesWindow.focusBackward();
         }
     }
 }

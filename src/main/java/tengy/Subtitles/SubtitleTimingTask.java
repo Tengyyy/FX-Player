@@ -1,6 +1,6 @@
-package tengy.Subtitles.Tasks;
+package tengy.Subtitles;
 
-import tengy.Subtitles.SubtitlesController;
+
 import tengy.SRTParser.utils.SRTUtils;
 import tengy.Utilities;
 import javafx.application.Platform;

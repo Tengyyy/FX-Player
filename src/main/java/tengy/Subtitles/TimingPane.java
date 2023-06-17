@@ -4,8 +4,6 @@ import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,10 +20,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import tengy.ClearableTextFieldSkin;
 import tengy.ControlTooltip;
 import tengy.PlaybackSettings.PlaybackSettingsController;
 import tengy.SVG;
-import tengy.Subtitles.Tasks.SubtitleTimingTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -264,9 +262,8 @@ public class TimingPane {
         });
 
         textField.setText("0.00");
-
         textField.setMaxWidth(MAX_WIDTH);
-        textField.getStyleClass().add("customTextField");
+        textField.getStyleClass().add("defaultTextField");
         textField.setId("timingTextField");
         label.getStyleClass().add("settingsPaneText");
         label.setId("subtitleDelayLabel");

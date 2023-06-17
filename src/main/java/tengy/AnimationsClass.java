@@ -119,6 +119,18 @@ public class AnimationsClass {
                 new KeyValue(region.maxHeightProperty(),newHeight, Interpolator.EASE_BOTH)));
     }
 
+    public static Timeline animateMinWidth(double newWidth, Region region){
+        Duration animationDuration = Duration.millis(ANIMATION_SPEED);
+        return new Timeline(new KeyFrame(animationDuration,
+                new KeyValue(region.minWidthProperty(),newWidth, Interpolator.EASE_BOTH)));
+    }
+
+    public static Timeline animateMaxWidth(double newWidth, Region region){
+        Duration animationDuration = Duration.millis(ANIMATION_SPEED);
+        return new Timeline(new KeyFrame(animationDuration,
+                new KeyValue(region.maxWidthProperty(),newWidth, Interpolator.EASE_BOTH)));
+    }
+
 
     public static void animateBackgroundColor(Region icon, Color fromColor, Color toColor, int duration) {
 

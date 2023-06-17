@@ -1,11 +1,11 @@
-package tengy.Subtitles.Tasks;
+package tengy.Windows.OpenSubtitles.Tasks;
 
+import com.github.wtekiela.opensub4j.api.OpenSubtitlesClient;
 import com.github.wtekiela.opensub4j.response.ListResponse;
 import com.github.wtekiela.opensub4j.response.SubtitleFile;
-import tengy.Subtitles.SubtitlesController;
-import tengy.Subtitles.OpenSubtitlesResultsPane;
 import javafx.concurrent.Task;
 import org.apache.xmlrpc.XmlRpcException;
+import tengy.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,29 +16,29 @@ import java.util.List;
 
 public class DownloadTask extends Task<File> {
 
-    SubtitlesController subtitlesController;
-    OpenSubtitlesResultsPane openSubtitlesResultsPane;
+    File parentFile;
     int subtitleId;
     String fileName;
     String encoding;
+    OpenSubtitlesClient osClient;
 
-    public DownloadTask(SubtitlesController subtitlesController, OpenSubtitlesResultsPane openSubtitlesResultsPane, String fileName, int subtitleId, String encoding){
-        this.subtitlesController = subtitlesController;
-        this.openSubtitlesResultsPane = openSubtitlesResultsPane;
+    public DownloadTask(OpenSubtitlesClient osClient, File parentFile, String fileName, int subtitleId, String encoding){
+        this.parentFile = parentFile;
         this.fileName = fileName;
         this.subtitleId = subtitleId;
         this.encoding = encoding;
+        this.osClient = osClient;
     }
 
 
     @Override
     public File call() {
         try {
-            ListResponse<SubtitleFile> downloadResponse = subtitlesController.openSubtitlesPane.osClient.downloadSubtitles(subtitleId);
+            ListResponse<SubtitleFile> downloadResponse = osClient.downloadSubtitles(subtitleId);
             if(downloadResponse.getData().isPresent()){
                 List<SubtitleFile> subtitleFiles = downloadResponse.getData().get();
                 SubtitleFile subtitleFile = subtitleFiles.get(0);
-                File file = openSubtitlesResultsPane.findFileName(fileName);
+                File file = Utilities.findFreeFileName(parentFile, fileName);
                 Files.write(file.toPath(), Collections.singleton(subtitleFile.getContent(encoding).getContent()), StandardCharsets.UTF_8);
                 return file;
             }

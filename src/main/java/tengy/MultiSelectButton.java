@@ -12,7 +12,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
-import tengy.Subtitles.OpenSubtitlesPane;
+import tengy.Windows.OpenSubtitles.OpenSubtitlesWindow;
+import tengy.Windows.OpenSubtitles.SearchPage;
 
 public class MultiSelectButton extends MenuButton {
 
@@ -65,7 +66,7 @@ public class MultiSelectButton extends MenuButton {
                     StringBuilder newTitle = new StringBuilder();
                     for (int i = 0; i < selectedItems.size(); i++) {
                         String languageName = selectedItems.get(i);
-                        String languageCode = OpenSubtitlesPane.languageMap.get(languageName);
+                        String languageCode = SearchPage.languageMap.get(languageName);
                         if (i < selectedItems.size() - 1) {
                             newTitle.append(languageCode).append(", ");
                         } else {

@@ -386,12 +386,6 @@ public class MediaInterface {
             mainController.miniplayer.miniplayerController.coverImageContainer.setVisible(false);
         }
 
-        subtitlesController.openSubtitlesPane.fileSearchLabel.setText("Current media file:\n" + queueItem.file.getName());
-        subtitlesController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER_LEFT);
-        if(!subtitlesController.openSubtitlesPane.fileSearchLabelContainer.getChildren().contains(subtitlesController.openSubtitlesPane.fileSearchExplanationLabel)) subtitlesController.openSubtitlesPane.fileSearchLabelContainer.getChildren().add(subtitlesController.openSubtitlesPane.fileSearchExplanationLabel);
-
-        if(!subtitlesController.openSubtitlesPane.searchInProgress.get()) subtitlesController.openSubtitlesPane.searchButton.setDisable(false);
-
         MediaItem mediaItem = queueItem.getMediaItem();
 
         if (mediaItem != null) loadMediaItem(queueItem);
@@ -442,12 +436,6 @@ public class MediaInterface {
         mainController.sliderHoverBox.setImage(null);
 
         subtitlesController.clearSubtitles();
-        subtitlesController.openSubtitlesPane.fileSearchLabel.setText("Select a media file to use this feature");
-        subtitlesController.openSubtitlesPane.fileSearchLabelContainer.setAlignment(Pos.CENTER);
-        subtitlesController.openSubtitlesPane.fileSearchLabelContainer.getChildren().remove(subtitlesController.openSubtitlesPane.fileSearchExplanationLabel);
-
-        if(subtitlesController.openSubtitlesPane.searchState == 2) subtitlesController.openSubtitlesPane.searchButton.setDisable(true);
-
 
         controlBarController.disablePreviousVideoButton();
         controlBarController.disableNextVideoButton();
@@ -692,21 +680,14 @@ public class MediaInterface {
                 executorService.shutdown();
             }
         }
-        else if(menuController.settingsPage.subtitleSection.searchOn.get()){
+
+        if(menuController.settingsPage.subtitleSection.searchOn.get() && mediaItem.subtitleStreams.isEmpty()){
             subtitlesController.scanParentFolderForMatchingSubtitles(mediaItem);
         }
 
         if(mediaItem.hasVideo() && !menuController.chapterController.chapterPage.chapterBox.getChildren().isEmpty()){
             chapterController.loadFrames();
         }
-
-        if(subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_OPEN && subtitlesController.subtitlesState != SubtitlesState.OPENSUBTITLES_RESULTS_OPEN){
-            Map<String, String> metadata = mediaItem.getMediaInformation();
-            if(metadata.containsKey("title") && !metadata.get("title").isBlank()) subtitlesController.openSubtitlesPane.titleField.setText(metadata.get("title"));
-            if(metadata.containsKey("season") && !metadata.get("season").isBlank()) subtitlesController.openSubtitlesPane.seasonField.setText(metadata.get("season"));
-            if(metadata.containsKey("episode") && !metadata.get("episode").isBlank()) subtitlesController.openSubtitlesPane.episodeField.setText(metadata.get("episode"));
-        }
-
     }
 
     public void initializeFrameGrabber(MediaItem mediaItem, int stream){

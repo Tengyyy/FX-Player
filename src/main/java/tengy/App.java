@@ -116,9 +116,8 @@ public class App extends Application {
 
     private void initializeConfig(){
 
-
         menuController.settingsPage.controlsSection.initializeControlsBox();
-        menuController.settingsPage.subtitleSection.readCredentials();
+        mainController.windowController.openSubtitlesWindow.connectionPage.readCredentials();
 
         menuController.settingsPage.loadPreferences();
 

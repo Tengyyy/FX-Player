@@ -21,6 +21,8 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import tengy.Windows.OpenSubtitles.OpenSubtitlesWindow;
+import tengy.Windows.OpenSubtitles.SearchPage;
 import tengy.Windows.WindowState;
 
 import java.io.File;
@@ -45,8 +47,6 @@ public class SubtitlesController {
 
     public SubtitlesHome subtitlesHome;
     public SubtitlesOptionsPane subtitlesOptionsPane;
-    public OpenSubtitlesPane openSubtitlesPane;
-    public OpenSubtitlesResultsPane openSubtitlesResultsPane;
     public SubtitlesBox subtitlesBox;
     public TimingPane timingPane;
 
@@ -110,8 +110,7 @@ public class SubtitlesController {
         subtitlesBox = new SubtitlesBox(this, mainController);
         subtitlesHome = new SubtitlesHome(this);
         subtitlesOptionsPane = new SubtitlesOptionsPane(this);
-        openSubtitlesPane = new OpenSubtitlesPane(subtitlesHome, this);
-        openSubtitlesResultsPane = new OpenSubtitlesResultsPane(subtitlesHome, this);
+
         timingPane = new TimingPane(subtitlesHome, this);
 
         subtitlesBox.loadSubtitlePreferences();
@@ -160,7 +159,7 @@ public class SubtitlesController {
             subtitlesHome.subtitlesChooserTab.setStyle("-fx-border-width: 1 0 0 0;");
 
             String preferredLanguage = menuController.settingsPage.subtitleSection.languageProperty.get();
-            String preferredLanguageCode = OpenSubtitlesPane.languageMap.get(preferredLanguage);
+            String preferredLanguageCode = SearchPage.languageMap.get(preferredLanguage);
 
             boolean selected = false;
 
@@ -205,7 +204,6 @@ public class SubtitlesController {
         }
     }
 
-
     public void scanParentFolderForMatchingSubtitles(MediaItem mediaItem){
         File mediaFile = mediaItem.getFile();
         String name = mediaFile.getName().substring(0, mediaFile.getName().lastIndexOf("." + Utilities.getFileExtension(mediaFile)));
@@ -216,11 +214,9 @@ public class SubtitlesController {
         }
     }
 
-
     public void resetSubtitles() {
         Utilities.cleanDirectory(System.getProperty("user.home").concat("/FXPlayer/subtitles/"));
     }
-
 
     public void loadSubtitles(File file){
 
@@ -390,8 +386,6 @@ public class SubtitlesController {
             case BACKGROUND_OPACITY_OPEN -> closeSubtitlesFromBackgroundOpacity();
             case LINE_SPACING_OPEN -> closeSubtitlesFromLineSpacing();
             case OPACITY_OPEN -> closeSubtitlesFromOpacity();
-            case OPENSUBTITLES_OPEN -> closeSubtitlesFromOpenSubtitles();
-            case OPENSUBTITLES_RESULTS_OPEN -> closeSubtitlesFromOpenSubtitlesResults();
             case TIMING_OPEN -> closeSubtitlesFromTimingPane();
             default -> {
             }
@@ -425,8 +419,6 @@ public class SubtitlesController {
             subtitlesHome.scrollPane.setMouseTransparent(true);
             subtitlesHome.scrollPane.setOpacity(1);
             subtitlesHome.scrollPane.setVvalue(0);
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -455,8 +447,6 @@ public class SubtitlesController {
             subtitlesOptionsPane.scrollPane.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -485,8 +475,6 @@ public class SubtitlesController {
             subtitlesOptionsPane.fontFamilyPane.scrollPane.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -515,8 +503,6 @@ public class SubtitlesController {
             subtitlesOptionsPane.fontColorPane.scrollPane.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -545,8 +531,6 @@ public class SubtitlesController {
             subtitlesOptionsPane.fontSizePane.scrollPane.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -575,8 +559,6 @@ public class SubtitlesController {
             subtitlesOptionsPane.textAlignmentPane.scrollPane.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -605,8 +587,6 @@ public class SubtitlesController {
             subtitlesOptionsPane.backgroundColorPane.scrollPane.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -635,8 +615,6 @@ public class SubtitlesController {
             subtitlesOptionsPane.backgroundOpacityPane.scrollPane.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -665,8 +643,6 @@ public class SubtitlesController {
             subtitlesOptionsPane.lineSpacingPane.scrollPane.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -695,76 +671,6 @@ public class SubtitlesController {
             subtitlesOptionsPane.fontOpacityPane.scrollPane.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSubtitlesFromOpenSubtitles(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), subtitlesBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition openSubtitlesTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), openSubtitlesPane.scrollPane);
-        openSubtitlesTransition.setFromValue(1);
-        openSubtitlesTransition.setToValue(0);
-
-        openSubtitlesPane.languageBox.hide();
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, openSubtitlesTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            subtitlesBuffer.setMouseTransparent(true);
-            subtitlesBackground.setVisible(false);
-            subtitlesBackground.setMouseTransparent(true);
-            openSubtitlesPane.scrollPane.setVisible(false);
-            openSubtitlesPane.scrollPane.setMouseTransparent(true);
-            openSubtitlesPane.scrollPane.setOpacity(1);
-            clip.setHeight(subtitlesHome.scrollPane.getHeight());
-            clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesPane.imdbFieldBorder.setVisible(false);
-            openSubtitlesPane.titleFieldBorder.setVisible(false);
-
-            openSubtitlesPane.languageBox.scrollPane.setVvalue(0);
-
-
-            openSubtitlesResultsPane.clearResults();
-        });
-
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-        parallelTransition.play();
-        animating.set(true);
-    }
-
-    public void closeSubtitlesFromOpenSubtitlesResults(){
-        FadeTransition backgroundTranslate = new FadeTransition(Duration.millis(ANIMATION_SPEED), subtitlesBackground);
-        backgroundTranslate.setFromValue(1);
-        backgroundTranslate.setToValue(0);
-
-        FadeTransition openSubtitlesResultsTransition = new FadeTransition(Duration.millis(ANIMATION_SPEED), openSubtitlesResultsPane.scrollPane);
-        openSubtitlesResultsTransition.setFromValue(1);
-        openSubtitlesResultsTransition.setToValue(0);
-
-        ParallelTransition parallelTransition = new ParallelTransition(backgroundTranslate, openSubtitlesResultsTransition);
-        parallelTransition.setOnFinished((e) -> {
-            animating.set(false);
-
-            subtitlesBuffer.setMouseTransparent(true);
-            subtitlesBackground.setVisible(false);
-            subtitlesBackground.setMouseTransparent(true);
-            openSubtitlesResultsPane.scrollPane.setVisible(false);
-            openSubtitlesResultsPane.scrollPane.setMouseTransparent(true);
-            openSubtitlesResultsPane.scrollPane.setOpacity(1);
-            clip.setHeight(subtitlesHome.scrollPane.getHeight());
-            clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -793,8 +699,6 @@ public class SubtitlesController {
             timingPane.container.setOpacity(1);
             clip.setHeight(subtitlesHome.scrollPane.getHeight());
             clip.setWidth(subtitlesHome.scrollPane.getWidth());
-
-            openSubtitlesResultsPane.clearResults();
         });
 
         parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
@@ -805,9 +709,7 @@ public class SubtitlesController {
     public void handleFocusForward() {
         switch (subtitlesState){
             case HOME_OPEN -> subtitlesHome.focusForward();
-            case OPENSUBTITLES_OPEN -> openSubtitlesPane.focusForward();
             case CAPTIONS_OPTIONS_OPEN -> subtitlesOptionsPane.focusForward();
-            case OPENSUBTITLES_RESULTS_OPEN -> openSubtitlesResultsPane.focusForward();
             case TIMING_OPEN -> timingPane.focusForward();
             case OPACITY_OPEN -> subtitlesOptionsPane.fontOpacityPane.focusForward();
             case FONT_SIZE_OPEN -> subtitlesOptionsPane.fontSizePane.focusForward();
@@ -823,9 +725,7 @@ public class SubtitlesController {
     public void handleFocusBackward() {
         switch (subtitlesState){
             case HOME_OPEN -> subtitlesHome.focusBackward();
-            case OPENSUBTITLES_OPEN -> openSubtitlesPane.focusBackward();
             case CAPTIONS_OPTIONS_OPEN -> subtitlesOptionsPane.focusBackward();
-            case OPENSUBTITLES_RESULTS_OPEN -> openSubtitlesResultsPane.focusBackward();
             case TIMING_OPEN -> timingPane.focusBackward();
             case OPACITY_OPEN -> subtitlesOptionsPane.fontOpacityPane.focusBackward();
             case FONT_SIZE_OPEN -> subtitlesOptionsPane.fontSizePane.focusBackward();

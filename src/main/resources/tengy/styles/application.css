@@ -355,12 +355,6 @@
     -fx-font-size: 14;
 }
 
-.resultTitle {
-    -fx-text-fill: rgb(200,200,200);
-    -fx-font-family: "Roboto Medium";
-    -fx-font-size: 16;
-}
-
 .settingsPaneSubText {
     -fx-font-family: "Roboto";
     -fx-font-size: 13;
@@ -666,6 +660,117 @@
     -fx-font-family: "Roboto";
     -fx-text-fill: white;
 }
+
+.blockText {
+    -fx-font-family: "Roboto";
+    -fx-font-size: 15;
+}
+
+.blockTitle {
+    -fx-font-family: "Roboto Bold";
+    -fx-font-size: 17;
+}
+
+.hyperlink {
+    -fx-font-family: "Roboto";
+    -fx-font-size: 15;
+    -fx-text-fill: rgb(13, 92, 219);
+}
+
+.hyperlink:pressed {
+    -fx-text-fill: rgb(2, 66, 168);
+}
+
+.hyperlink:visited {
+    -fx-text-fill: rgb(110, 2, 168);
+}
+
+.hyperlink:hover {
+    -fx-underline: true;
+}
+
+.resultItem {
+    -fx-background-radius: 3;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.resultItem:focused, .resultItem:hover {
+    -fx-background-color: rgba(75,75,75,0.6);
+}
+
+.resultItem:pressed {
+    -fx-background-color: rgba(60,60,60,0.6);
+}
+
+.resultItem .graphic {
+    -fx-background-color: rgb(200,200,200);
+}
+
+.resultItem:hover .graphic, .resultItem:focused .graphic {
+    -fx-background-color: white;
+}
+
+.resultItem:pressed .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+.resultTitle {
+    -fx-text-fill: rgb(200,200,200);
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 16;
+}
+
+.resultItem:hover .resultTitle, .resultItem:focused .resultTitle, .resultItem:pressed .resultTitle {
+    -fx-text-fill: white;
+}
+
+.resultItem:pressed .resultTitle {
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.resultsTableHeader {
+    -fx-cursor: hand;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+    -fx-border-insets: -5 -7 -5 -7;
+}
+
+.resultsTableHeader .graphic {
+    -fx-background-color: rgb(200,200,200);
+}
+
+.resultsTableLabel {
+    -fx-text-fill: rgb(200,200,200);
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 16;
+}
+
+.resultsTableHeader:keyboardFocused {
+    -fx-border-color: rgb(173, 216, 230);
+}
+
+.resultsTableHeader:hover .resultsTableLabel, .resultsTableHeader:focused .resultsTableLabel {
+    -fx-text-fill: white;
+}
+
+.resultsTableHeader:hover .graphic, .resultsTableHeader:focused .graphic {
+    -fx-background-color: white;
+}
+
+.resultsTableHeader:pressed .resultsTableLabel {
+    -fx-text-fill: rgb(180,180,180);
+}
+
+.resultsTableHeader:pressed .graphic {
+    -fx-background-color: rgb(180,180,180);
+}
+
+
+
+
+
 
 
 

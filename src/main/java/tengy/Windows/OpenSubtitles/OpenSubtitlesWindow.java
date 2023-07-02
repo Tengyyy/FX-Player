@@ -1,5 +1,6 @@
 package tengy.Windows.OpenSubtitles;
 
+import javafx.animation.Animation;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
@@ -19,6 +20,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import tengy.Menu.Queue.QueueBox;
+import tengy.OpenSubtitles.OpenSubtitles;
 import tengy.Subtitles.SubtitlesState;
 import tengy.Windows.WindowController;
 import tengy.Windows.WindowState;
@@ -39,8 +41,6 @@ public class OpenSubtitlesWindow {
 
     public StackPane window = new StackPane();
 
-
-
     StackPane buttonContainer = new StackPane();
     public Button helpButton = new Button("Help");
     public Button connectionButton = new Button("Connection");
@@ -57,8 +57,11 @@ public class OpenSubtitlesWindow {
 
     public SearchPage searchPage;
     public ConnectionPage connectionPage;
+    public ProfilePage profilePage;
     public HelpPage helpPage;
     public ResultsPage resultsPage;
+
+    public OpenSubtitles os = null;
 
     public OpenSubtitlesWindow(WindowController windowController){
         this.windowController = windowController;
@@ -66,6 +69,7 @@ public class OpenSubtitlesWindow {
 
         searchPage = new SearchPage(this);
         connectionPage = new ConnectionPage(this);
+        profilePage = new ProfilePage(this);
         helpPage = new HelpPage(this);
         resultsPage = new ResultsPage(this);
 
@@ -73,8 +77,8 @@ public class OpenSubtitlesWindow {
 
         window.setAlignment(Pos.TOP_LEFT);
 
-        window.setMinSize(600, 350);
-        window.setMaxSize(600, 350);
+        window.setMinSize(600, 355);
+        window.setMaxSize(600, 355);
         window.setOnMouseClicked(e -> window.requestFocus());
         window.getStyleClass().add("popupWindow");
         window.setVisible(false);
@@ -90,7 +94,7 @@ public class OpenSubtitlesWindow {
         helpButton.getStyleClass().add("menuButton");
         helpButton.setTextAlignment(TextAlignment.CENTER);
         helpButton.setPrefWidth(140);
-        helpButton.setOnAction(e -> openHelpPage());
+        helpButton.setOnAction(e -> openHelpPage(true));
         helpButton.setFocusTraversable(false);
         helpButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
@@ -118,7 +122,7 @@ public class OpenSubtitlesWindow {
         connectionButton.getStyleClass().add("menuButton");
         connectionButton.setTextAlignment(TextAlignment.CENTER);
         connectionButton.setPrefWidth(140);
-        connectionButton.setOnAction(e -> openConnectionPage());
+        connectionButton.setOnAction(e -> openConnectionPage(true));
         connectionButton.setFocusTraversable(false);
         connectionButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
@@ -169,7 +173,7 @@ public class OpenSubtitlesWindow {
         StackPane.setAlignment(mainButton, Pos.CENTER_RIGHT);
 
 
-        window.getChildren().addAll(searchPage, connectionPage, helpPage, resultsPage, buttonContainer);
+        window.getChildren().addAll(searchPage, connectionPage, profilePage, helpPage, resultsPage, buttonContainer);
 
         focusNodes.add(searchPage);
         focusNodes.add(helpButton);
@@ -202,9 +206,10 @@ public class OpenSubtitlesWindow {
     public void hide(){
         this.showing = false;
 
-        windowController.windowState = WindowState.CLOSED;
-        OpenSubtitlesState oldState = openSubtitlesState;
         openSubtitlesState = OpenSubtitlesState.SEARCH_OPEN;
+
+        windowController.windowState = WindowState.CLOSED;
+
 
         mainController.popupWindowContainer.setMouseTransparent(true);
 
@@ -216,20 +221,22 @@ public class OpenSubtitlesWindow {
 
             window.minHeightProperty().unbind();
             window.maxHeightProperty().unbind();
-            window.setMinHeight(350);
-            window.setMaxHeight(350);
+            window.setMinHeight(355);
+            window.setMaxHeight(355);
 
             window.minWidthProperty().unbind();
             window.maxWidthProperty().unbind();
             window.setMinWidth(600);
             window.setMaxWidth(600);
 
-            switch (oldState){
-                case SEARCH_OPEN -> searchPage.reset();
-                case CONNECTION_OPEN ->  connectionPage.reset();
-                case HELP_OPEN -> helpPage.reset();
-                case RESULTS_OPEN -> resultsPage.reset();
-            }
+            searchPage.reset();
+            connectionPage.reset();
+            profilePage.reset();
+            helpPage.reset();
+            resultsPage.reset();
+
+            connectionPage.previousPage = null;
+            helpPage.previousPage = null;
 
             searchPage.setOpacity(1);
             searchPage.setVisible(true);
@@ -239,6 +246,7 @@ public class OpenSubtitlesWindow {
             focusNodes.add(connectionButton);
             focusNodes.add(mainButton);
         });
+
         fadeTransition.play();
     }
 
@@ -266,7 +274,7 @@ public class OpenSubtitlesWindow {
 
     }
 
-    private void openConnectionPage(){
+    void openConnectionPage(boolean savePrevious){
         if(openSubtitlesState == OpenSubtitlesState.CONNECTION_OPEN || animating) return;
 
         animating = true;
@@ -278,7 +286,6 @@ public class OpenSubtitlesWindow {
         window.minHeightProperty().unbind();
         window.maxHeightProperty().unbind();
 
-
         OpenSubtitlesState oldState = openSubtitlesState;
         openSubtitlesState = OpenSubtitlesState.CONNECTION_OPEN;
 
@@ -289,13 +296,113 @@ public class OpenSubtitlesWindow {
             case SEARCH_OPEN -> contentFade.setNode(searchPage);
             case HELP_OPEN -> contentFade.setNode(helpPage);
             case RESULTS_OPEN -> contentFade.setNode(resultsPage);
+            case PROFILE_OPEN -> contentFade.setNode(profilePage);
         }
 
         contentFade.setFromValue(1);
         contentFade.setToValue(0);
 
-        Timeline minHeightTransition = AnimationsClass.animateMinHeight(350, window);
-        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(350, window);
+        Timeline minHeightTransition = AnimationsClass.animateMinHeight(355, window);
+        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(355, window);
+        Timeline minWidthTransition = AnimationsClass.animateMinWidth(600, window);
+        Timeline maxWidthTransition = AnimationsClass.animateMaxWidth(600, window);
+
+        parallelTransition.getChildren().addAll(contentFade, minHeightTransition, maxHeightTransition, minWidthTransition, maxWidthTransition);
+
+        if(savePrevious){
+            if(oldState == OpenSubtitlesState.SEARCH_OPEN) connectionPage.previousPage = searchPage;
+            else if(oldState == OpenSubtitlesState.RESULTS_OPEN) connectionPage.previousPage = resultsPage;
+            else if(oldState == OpenSubtitlesState.HELP_OPEN && helpPage.previousPage != connectionPage) connectionPage.previousPage = helpPage;
+        }
+
+        parallelTransition.setOnFinished(e -> {
+            switch (oldState){
+                case SEARCH_OPEN -> {
+                    searchPage.searchInProgress.set(false);
+
+                    if(searchPage.executorService != null){
+                        searchPage.executorService.shutdown();
+                        searchPage.executorService = null;
+                    }
+
+                    searchPage.setOpacity(0);
+                    searchPage.setVisible(false);
+                    searchPage.scrollPane.setVvalue(0);
+                    searchPage.errorLabel.setVisible(false);
+
+                    if(searchPage.advancedOptionsTransition != null && searchPage.advancedOptionsTransition.getStatus() == Animation.Status.RUNNING) {
+                        searchPage.advancedOptionsTransition.stop();
+                        searchPage.advancedOptionsTransition = null;
+
+                        searchPage.resetAdvancedOptions();
+                        searchPage.advancedOptionsBoxWrapper.setMinHeight(0);
+                        searchPage.advancedOptionsBoxWrapper.setMaxHeight(0);
+
+                        searchPage.clippedNode.setMinHeight(0);
+                        searchPage.clippedNode.setMaxHeight(0);
+
+                        searchPage.advancedOptionsIcon.setRotate(0);
+                    }
+                }
+                case HELP_OPEN -> helpPage.reset();
+                case RESULTS_OPEN -> {
+                    resultsPage.scrollPane.setVvalue(0);
+                    resultsPage.setOpacity(0);
+                    resultsPage.setVisible(false);
+                }
+                case PROFILE_OPEN -> profilePage.reset();
+            }
+
+            connectionPage.setVisible(true);
+            focusNodes.clear();
+            focusNodes.add(connectionPage);
+            focusNodes.add(helpButton);
+            focusNodes.add(mainButton);
+
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(200), connectionPage);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+            fadeIn.setOnFinished(event -> {
+                animating = false;
+                window.setMouseTransparent(false);
+            });
+
+            fadeIn.playFromStart();
+        });
+
+        parallelTransition.playFromStart();
+    }
+
+
+    void openProfilePage(){
+        if(openSubtitlesState == OpenSubtitlesState.PROFILE_OPEN || animating) return;
+
+        animating = true;
+        window.setMouseTransparent(true);
+
+        window.minWidthProperty().unbind();
+        window.maxWidthProperty().unbind();
+        window.minHeightProperty().unbind();
+        window.maxHeightProperty().unbind();
+
+        OpenSubtitlesState oldState = openSubtitlesState;
+        openSubtitlesState = OpenSubtitlesState.PROFILE_OPEN;
+
+        ParallelTransition parallelTransition = new ParallelTransition();
+
+        FadeTransition contentFade = new FadeTransition(Duration.millis(200));
+        switch (oldState){
+            case SEARCH_OPEN -> contentFade.setNode(searchPage);
+            case HELP_OPEN -> contentFade.setNode(helpPage);
+            case RESULTS_OPEN -> contentFade.setNode(resultsPage);
+            case CONNECTION_OPEN -> contentFade.setNode(connectionPage);
+        }
+
+        contentFade.setFromValue(1);
+        contentFade.setToValue(0);
+
+        Timeline minHeightTransition = AnimationsClass.animateMinHeight(355, window);
+        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(355, window);
         Timeline minWidthTransition = AnimationsClass.animateMinWidth(600, window);
         Timeline maxWidthTransition = AnimationsClass.animateMaxWidth(600, window);
 
@@ -316,26 +423,42 @@ public class OpenSubtitlesWindow {
                     searchPage.setVisible(false);
                     searchPage.scrollPane.setVvalue(0);
                     searchPage.errorLabel.setVisible(false);
+
+                    if(searchPage.advancedOptionsTransition != null && searchPage.advancedOptionsTransition.getStatus() == Animation.Status.RUNNING) {
+                        searchPage.advancedOptionsTransition.stop();
+                        searchPage.advancedOptionsTransition = null;
+
+                        searchPage.resetAdvancedOptions();
+                        searchPage.advancedOptionsBoxWrapper.setMinHeight(0);
+                        searchPage.advancedOptionsBoxWrapper.setMaxHeight(0);
+
+                        searchPage.clippedNode.setMinHeight(0);
+                        searchPage.clippedNode.setMaxHeight(0);
+
+                        searchPage.advancedOptionsIcon.setRotate(0);
+                    }
                 }
                 case HELP_OPEN -> helpPage.reset();
                 case RESULTS_OPEN -> resultsPage.reset();
+                case CONNECTION_OPEN -> connectionPage.reset();
             }
 
-                connectionPage.setVisible(true);
-                focusNodes.clear();
-                focusNodes.add(connectionPage);
-                focusNodes.add(helpButton);
-                focusNodes.add(mainButton);
+            profilePage.setVisible(true);
+            focusNodes.clear();
+            focusNodes.add(profilePage);
+            focusNodes.add(helpButton);
+            focusNodes.add(connectionButton);
+            focusNodes.add(mainButton);
 
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(200), connectionPage);
-                fadeIn.setFromValue(0);
-                fadeIn.setToValue(1);
-                fadeIn.setOnFinished(event -> {
-                    animating = false;
-                    window.setMouseTransparent(false);
-                });
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(200), profilePage);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+            fadeIn.setOnFinished(event -> {
+                animating = false;
+                window.setMouseTransparent(false);
+            });
 
-                fadeIn.playFromStart();
+            fadeIn.playFromStart();
         });
 
         parallelTransition.playFromStart();
@@ -363,13 +486,19 @@ public class OpenSubtitlesWindow {
             case CONNECTION_OPEN -> contentFade.setNode(connectionPage);
             case HELP_OPEN -> contentFade.setNode(helpPage);
             case RESULTS_OPEN -> contentFade.setNode(resultsPage);
+            case PROFILE_OPEN -> contentFade.setNode(profilePage);
         }
 
         contentFade.setFromValue(1);
         contentFade.setToValue(0);
 
-        Timeline minHeightTransition = AnimationsClass.animateMinHeight(350, window);
-        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(350, window);
+        double windowTargetHeight;
+
+        if(searchPage.advancedOptionsShowing) windowTargetHeight = Math.max(355, Math.min(600, mainController.videoImageViewWrapper.getHeight() * 0.8));
+        else windowTargetHeight = 355;
+
+        Timeline minHeightTransition = AnimationsClass.animateMinHeight(windowTargetHeight, window);
+        Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(windowTargetHeight, window);
         Timeline minWidthTransition = AnimationsClass.animateMinWidth(600, window);
         Timeline maxWidthTransition = AnimationsClass.animateMaxWidth(600, window);
 
@@ -380,8 +509,16 @@ public class OpenSubtitlesWindow {
                 case CONNECTION_OPEN -> connectionPage.reset();
                 case HELP_OPEN -> helpPage.reset();
                 case RESULTS_OPEN -> resultsPage.reset();
+                case PROFILE_OPEN -> profilePage.reset();
             }
 
+            connectionPage.previousPage = null;
+            helpPage.previousPage = null;
+
+            if(searchPage.advancedOptionsShowing) {
+                window.minHeightProperty().bind(Bindings.min(600, Bindings.max(355, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
+                window.maxHeightProperty().bind(Bindings.min(600, Bindings.max(355, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
+            }
 
             searchPage.setVisible(true);
             focusNodes.clear();
@@ -404,7 +541,7 @@ public class OpenSubtitlesWindow {
         parallelTransition.playFromStart();
     }
 
-    private void openHelpPage(){
+    void openHelpPage(boolean savePrevious){
         if(openSubtitlesState == OpenSubtitlesState.HELP_OPEN || animating) return;
 
         animating = true;
@@ -426,12 +563,13 @@ public class OpenSubtitlesWindow {
             case SEARCH_OPEN -> contentFade.setNode(searchPage);
             case CONNECTION_OPEN -> contentFade.setNode(connectionPage);
             case RESULTS_OPEN -> contentFade.setNode(resultsPage);
+            case PROFILE_OPEN -> contentFade.setNode(profilePage);
         }
 
         contentFade.setFromValue(1);
         contentFade.setToValue(0);
 
-        double target = Math.min(Math.max(350, mainController.videoImageViewWrapper.getHeight() * 0.8), 1000);
+        double target = Math.min(Math.max(355, mainController.videoImageViewWrapper.getHeight() * 0.8), 1000);
 
         Timeline minHeightTransition = AnimationsClass.animateMinHeight(target, window);
         Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(target, window);
@@ -439,6 +577,13 @@ public class OpenSubtitlesWindow {
         Timeline maxWidthTransition = AnimationsClass.animateMaxWidth(600, window);
 
         parallelTransition.getChildren().addAll(contentFade, minHeightTransition, maxHeightTransition, minWidthTransition, maxWidthTransition);
+
+        if(savePrevious){
+            if(oldState == OpenSubtitlesState.SEARCH_OPEN) helpPage.previousPage = searchPage;
+            else if(oldState == OpenSubtitlesState.PROFILE_OPEN) helpPage.previousPage = profilePage;
+            else if(oldState == OpenSubtitlesState.RESULTS_OPEN) helpPage.previousPage = resultsPage;
+            else if(oldState == OpenSubtitlesState.CONNECTION_OPEN && connectionPage.previousPage != helpPage) helpPage.previousPage = connectionPage;
+        }
 
         parallelTransition.setOnFinished(e -> {
             switch (oldState){
@@ -454,13 +599,36 @@ public class OpenSubtitlesWindow {
                     searchPage.setVisible(false);
                     searchPage.scrollPane.setVvalue(0);
                     searchPage.errorLabel.setVisible(false);
+
+                    if(searchPage.advancedOptionsTransition != null && searchPage.advancedOptionsTransition.getStatus() == Animation.Status.RUNNING) {
+                        searchPage.advancedOptionsTransition.stop();
+                        searchPage.advancedOptionsTransition = null;
+
+                        searchPage.resetAdvancedOptions();
+                        searchPage.advancedOptionsBoxWrapper.setMinHeight(0);
+                        searchPage.advancedOptionsBoxWrapper.setMaxHeight(0);
+
+                        searchPage.clippedNode.setMinHeight(0);
+                        searchPage.clippedNode.setMaxHeight(0);
+
+                        searchPage.advancedOptionsIcon.setRotate(0);
+                    }
                 }
                 case CONNECTION_OPEN -> connectionPage.reset();
-                case RESULTS_OPEN -> resultsPage.reset();
+                case PROFILE_OPEN -> {
+                    profilePage.setOpacity(0);
+                    profilePage.setVisible(false);
+                    profilePage.scrollPane.setVvalue(0);
+                }
+                case RESULTS_OPEN -> {
+                    resultsPage.scrollPane.setVvalue(0);
+                    resultsPage.setOpacity(0);
+                    resultsPage.setVisible(false);
+                }
             }
 
-            window.minHeightProperty().bind(Bindings.min(1000, Bindings.max(350, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
-            window.maxHeightProperty().bind(Bindings.min(1000, Bindings.max(350, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
+            window.minHeightProperty().bind(Bindings.min(1000, Bindings.max(355, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
+            window.maxHeightProperty().bind(Bindings.min(1000, Bindings.max(355, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
 
 
             helpPage.setVisible(true);
@@ -504,12 +672,13 @@ public class OpenSubtitlesWindow {
             case SEARCH_OPEN -> contentFade.setNode(searchPage);
             case CONNECTION_OPEN -> contentFade.setNode(connectionPage);
             case HELP_OPEN -> contentFade.setNode(helpPage);
+            case PROFILE_OPEN -> contentFade.setNode(profilePage);
         }
 
         contentFade.setFromValue(1);
         contentFade.setToValue(0);
 
-        double targetHeight = Math.min(Math.max(350, mainController.videoImageViewWrapper.getHeight() * 0.8), 1000);
+        double targetHeight = Math.min(Math.max(355, mainController.videoImageViewWrapper.getHeight() * 0.8), 1000);
 
         Timeline minHeightTransition = AnimationsClass.animateMinHeight(targetHeight, window);
         Timeline maxHeightTransition = AnimationsClass.animateMaxHeight(targetHeight, window);
@@ -535,13 +704,28 @@ public class OpenSubtitlesWindow {
                     searchPage.setVisible(false);
                     searchPage.scrollPane.setVvalue(0);
                     searchPage.errorLabel.setVisible(false);
+
+                    if(searchPage.advancedOptionsTransition != null && searchPage.advancedOptionsTransition.getStatus() == Animation.Status.RUNNING) {
+                        searchPage.advancedOptionsTransition.stop();
+                        searchPage.advancedOptionsTransition = null;
+
+                        searchPage.resetAdvancedOptions();
+                        searchPage.advancedOptionsBoxWrapper.setMinHeight(0);
+                        searchPage.advancedOptionsBoxWrapper.setMaxHeight(0);
+
+                        searchPage.clippedNode.setMinHeight(0);
+                        searchPage.clippedNode.setMaxHeight(0);
+
+                        searchPage.advancedOptionsIcon.setRotate(0);
+                    }
                 }
                 case CONNECTION_OPEN -> connectionPage.reset();
                 case HELP_OPEN -> helpPage.reset();
+                case PROFILE_OPEN -> profilePage.reset();
             }
 
-            window.minHeightProperty().bind(Bindings.min(1000, Bindings.max(350, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
-            window.maxHeightProperty().bind(Bindings.min(1000, Bindings.max(350, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
+            window.minHeightProperty().bind(Bindings.min(1000, Bindings.max(355, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
+            window.maxHeightProperty().bind(Bindings.min(1000, Bindings.max(355, mainController.videoImageViewWrapper.heightProperty().multiply(0.8))));
 
             window.minWidthProperty().bind(Bindings.min(1200, Bindings.max(600, mainController.videoImageViewWrapper.widthProperty().multiply(0.7))));
             window.maxWidthProperty().bind(Bindings.min(1200, Bindings.max(600, mainController.videoImageViewWrapper.widthProperty().multiply(0.7))));

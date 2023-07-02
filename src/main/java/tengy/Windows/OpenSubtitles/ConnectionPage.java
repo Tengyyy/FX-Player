@@ -1,9 +1,8 @@
 package tengy.Windows.OpenSubtitles;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,9 +13,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
 import tengy.ClearableTextFieldSkin;
+import tengy.OpenSubtitles.OpenSubtitles;
 import tengy.VisiblePasswordFieldSkin;
 import tengy.SVG;
 import tengy.Utilities;
+import tengy.Windows.OpenSubtitles.Tasks.LoginTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
 
 import static tengy.Utilities.keyboardFocusOff;
@@ -38,6 +41,9 @@ public class ConnectionPage extends VBox implements Page{
 
     StackPane titleContainer = new StackPane();
     Label title = new Label("Connection");
+    Button profileButton = new Button("Profile");
+    Region profileIcon = new Region();
+    SVGPath profileSVG = new SVGPath();
 
     Button backButton = new Button();
 
@@ -54,32 +60,32 @@ public class ConnectionPage extends VBox implements Page{
     public Button saveButton = new Button();
 
     BooleanProperty credentialsChanged = new SimpleBooleanProperty(false);
-    public String username = "";
-    public String password = "";
+    public StringProperty username = new SimpleStringProperty("");
+    public StringProperty password = new SimpleStringProperty("");
     public String apiKey = "";
 
     public static final String USERNAME_KEY = "open_subtitles_user";
     public static final String PASSWORD_KEY = "open_subtitles_pass";
-
 
     OpenSubtitlesWindow openSubtitlesWindow;
 
     IntegerProperty focus = new SimpleIntegerProperty(-1);
     List<Node> focusNodes = new ArrayList<>();
 
+    public Page previousPage = null;
+
     ConnectionPage(OpenSubtitlesWindow openSubtitlesWindow){
         this.openSubtitlesWindow = openSubtitlesWindow;
         this.setOpacity(0);
 
-        titleContainer.setPadding(new Insets(15, 20, 15, 0));
+        titleContainer.setPadding(new Insets(15, 55, 15, 0));
         titleContainer.setOnMouseClicked(e -> openSubtitlesWindow.window.requestFocus());
 
         StackPane.setAlignment(title, Pos.CENTER_LEFT);
         StackPane.setMargin(title, new Insets(0, 0, 0, 50));
         title.getStyleClass().add("popupWindowTitle");
 
-        titleContainer.getChildren().addAll(backButton, title);
-
+        titleContainer.getChildren().addAll(backButton, title, profileButton);
 
         SVGPath backSVG = new SVGPath();
         backSVG.setContent(SVG.ARROW_LEFT.getContent());
@@ -96,7 +102,14 @@ public class ConnectionPage extends VBox implements Page{
         backButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         backButton.setFocusTraversable(false);
         backButton.setGraphic(backIcon);
-        backButton.setOnAction(e -> openSubtitlesWindow.openSearchPage());
+        backButton.setOnAction(e -> {
+            backButton.requestFocus();
+
+            if(previousPage == openSubtitlesWindow.helpPage) openSubtitlesWindow.openHelpPage(false);
+            else if(previousPage == openSubtitlesWindow.resultsPage) openSubtitlesWindow.openResultsPage();
+            else openSubtitlesWindow.openSearchPage();
+        });
+
         backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 focus.set(0);
@@ -122,8 +135,52 @@ public class ConnectionPage extends VBox implements Page{
         StackPane.setAlignment(backButton, Pos.CENTER_LEFT);
         StackPane.setMargin(backButton, new Insets(0, 0, 0, 10));
 
+        profileSVG.setContent(SVG.PROFILE.getContent());
+        profileIcon.setShape(profileSVG);
+        profileIcon.getStyleClass().addAll("menuIcon", "graphic");
+        profileIcon.setPrefSize(13, 13);
+        profileIcon.setMaxSize(13, 13);
 
+        StackPane.setAlignment(profileButton, Pos.CENTER_RIGHT);
+        profileButton.setFocusTraversable(false);
+        profileButton.setGraphic(profileIcon);
+        profileButton.getStyleClass().add("menuButton");
+        profileButton.setOnAction(e -> {
+            profileButton.requestFocus();
 
+            openSubtitlesWindow.profilePage.loadProfile();
+        });
+
+        profileButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(1);
+                openSubtitlesWindow.focus.set(0);
+            }
+            else{
+                keyboardFocusOff(profileButton);
+                focus.set(-1);
+                openSubtitlesWindow.focus.set(-1);
+            }
+        });
+
+        profileButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            profileButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        profileButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            profileButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+        profileButton.disableProperty().bind(username.isEmpty().or(password.isEmpty()));
+
+        profileButton.disabledProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue) focusNodes.remove(profileButton);
+            else if(!focusNodes.contains(profileButton)){
+                focusNodes.add(1, profileButton);
+            }
+        });
 
         scrollPane = new ScrollPane() {
             ScrollBar vertical;
@@ -166,8 +223,9 @@ public class ConnectionPage extends VBox implements Page{
         usernameField.setFocusTraversable(false);
         usernameField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
+                if (profileButton.isDisabled()) focus.set(1);
+                else focus.set(2);
 
-                focus.set(1);
                 openSubtitlesWindow.focus.set(0);
             }
             else {
@@ -195,8 +253,9 @@ public class ConnectionPage extends VBox implements Page{
 
         passwordField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
+                if (profileButton.isDisabled()) focus.set(2);
+                else focus.set(3);
 
-                focus.set(2);
                 openSubtitlesWindow.focus.set(0);
             }
             else {
@@ -209,9 +268,10 @@ public class ConnectionPage extends VBox implements Page{
         passwordField.textProperty().addListener((observableValue, oldValue, newValue) -> credentialsChanged.set(true));
 
         buttonPane.getChildren().addAll(createAccountButton, saveButton);
-        buttonPane.setPadding(new Insets(25, 40, 0, 35));
+        buttonPane.setPadding(new Insets(25, 35, 0, 35));
 
         StackPane.setAlignment(createAccountButton, Pos.CENTER_LEFT);
+        createAccountButton.setFocusTraversable(false);
         createAccountButton.setText("Create account");
         createAccountButton.setPrefWidth(130);
         createAccountButton.getStyleClass().add("menuButton");
@@ -219,12 +279,14 @@ public class ConnectionPage extends VBox implements Page{
             createAccountButton.requestFocus();
 
             // open opensubtitles account creation page in web browser
-            Utilities.openBrowser("https://www.opensubtitles.org/en/newuser");
+            Utilities.openBrowser("https://www.opensubtitles.com");
         });
 
         createAccountButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                focus.set(3);
+                if (profileButton.isDisabled()) focus.set(3);
+                else focus.set(4);
+
                 openSubtitlesWindow.focus.set(0);
             }
             else{
@@ -244,8 +306,8 @@ public class ConnectionPage extends VBox implements Page{
             createAccountButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
         });
 
-
         StackPane.setAlignment(saveButton, Pos.CENTER_RIGHT);
+        saveButton.setFocusTraversable(false);
         saveButton.setText("Save");
         saveButton.setPrefWidth(130);
         saveButton.getStyleClass().add("mainButton");
@@ -267,7 +329,7 @@ public class ConnectionPage extends VBox implements Page{
 
         saveButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                focus.set(4);
+                focus.set(focusNodes.size() - 1);
                 openSubtitlesWindow.focus.set(0);
             }
             else{
@@ -299,13 +361,13 @@ public class ConnectionPage extends VBox implements Page{
 
     private void saveCredentials() throws IOException {
 
-        this.username = usernameField.getText();
-        this.password = passwordField.getText();
+        this.username.set(usernameField.getText());
+        this.password.set(passwordField.getText());
 
         Preferences preferences = openSubtitlesWindow.mainController.pref.preferences;
 
-        preferences.put(USERNAME_KEY, username);
-        preferences.put(PASSWORD_KEY, password);
+        preferences.put(USERNAME_KEY, username.getValue());
+        preferences.put(PASSWORD_KEY, password.getValue());
 
         credentialsChanged.set(false);
     }
@@ -323,11 +385,11 @@ public class ConnectionPage extends VBox implements Page{
 
         Preferences preferences = openSubtitlesWindow.mainController.pref.preferences;
 
-        this.username = preferences.get(USERNAME_KEY, "");
-        this.password = preferences.get(PASSWORD_KEY, "");
+        this.username.set(preferences.get(USERNAME_KEY, ""));
+        this.password.set(preferences.get(PASSWORD_KEY, ""));
 
-        usernameField.setText(username);
-        passwordField.setText(password);
+        usernameField.setText(username.get());
+        passwordField.setText(password.get());
 
         credentialsChanged.set(false);
     }
@@ -337,8 +399,8 @@ public class ConnectionPage extends VBox implements Page{
         this.setVisible(false);
         scrollPane.setVvalue(0);
         openSubtitlesWindow.connectionButton.setDisable(false);
-        usernameField.setText(username);
-        passwordField.setText(password);
+        usernameField.setText(username.get());
+        passwordField.setText(password.get());
         credentialsChanged.set(false);
     }
 

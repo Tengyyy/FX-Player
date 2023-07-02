@@ -199,34 +199,60 @@
     -fx-border-color: rgb(173, 216, 230);
 }
 
-.shuffleToggleActive {
+
+.leftButton {
+    -fx-background-radius: 5 0 0 5;
+    -fx-border-radius: 5 0 0 5;
+    -fx-border-width: 2;
+    -fx-border-insets: 1;
+}
+
+.middleButton {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-border-width: 2;
+    -fx-border-insets: 1;
+}
+
+.rightButton {
+    -fx-background-radius: 0 5 5 0;
+    -fx-border-radius: 0 5 5 0;
+    -fx-border-width: 2;
+    -fx-border-insets: 1;
+}
+
+.multiselectToggle {
+    -fx-padding: 3 11 3 11;
+}
+
+.toggleActive {
     -fx-text-filL: red;
     -fx-border-color: red;
 }
 
-.shuffleToggleActive > .graphic {
+.toggleActive > .graphic {
     -fx-background-color: red;
 }
 
-.shuffleToggleActive:hover > .graphic {
+.toggleActive:hover > .graphic {
     -fx-background-color: red;
 }
 
-.shuffleToggleActive:pressed > .graphic {
+.toggleActive:pressed > .graphic {
     -fx-background-color: red;
 }
 
-.shuffleToggleActive:hover, .shuffleToggleActive:focused {
+.toggleActive:hover, .toggleActive:focused {
     -fx-text-fill: red;
     -fx-border-color: red;
 }
 
-.shuffleToggleActive:pressed {
+.toggleActive:pressed {
     -fx-text-fill: red;
     -fx-border-color: red;
 }
 
-.shuffleToggleActive:keyboardFocused {
+.toggleActive:keyboardFocused {
     -fx-border-color: rgb(173, 216, 230);
 }
 

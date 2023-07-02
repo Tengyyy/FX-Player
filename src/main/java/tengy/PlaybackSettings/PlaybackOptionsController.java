@@ -142,7 +142,7 @@ public class PlaybackOptionsController {
 
                 if(!playbackSettingsController.menuController.queuePage.queueBox.queue.isEmpty()) playbackSettingsController.menuController.queuePage.queueBox.shuffleOff();
 
-                playbackSettingsController.menuController.queuePage.shuffleToggle.getStyleClass().remove("shuffleToggleActive");
+                playbackSettingsController.menuController.queuePage.shuffleToggle.getStyleClass().remove("toggleActive");
 
             } else { // ON
                 shuffleOn = true;
@@ -157,7 +157,7 @@ public class PlaybackOptionsController {
 
                 if(!playbackSettingsController.menuController.queuePage.queueBox.queue.isEmpty()) playbackSettingsController.menuController.queuePage.queueBox.shuffleOn();
 
-                if(!playbackSettingsController.menuController.queuePage.shuffleToggle.getStyleClass().contains("shuffleToggleActive")) playbackSettingsController.menuController.queuePage.shuffleToggle.getStyleClass().add("shuffleToggleActive");
+                if(!playbackSettingsController.menuController.queuePage.shuffleToggle.getStyleClass().contains("toggleActive")) playbackSettingsController.menuController.queuePage.shuffleToggle.getStyleClass().add("toggleActive");
             }
 
         });

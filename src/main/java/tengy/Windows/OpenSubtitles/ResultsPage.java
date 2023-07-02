@@ -70,7 +70,7 @@ public class ResultsPage extends VBox implements Page{
     SVGPath triangleUpSVG = new SVGPath();
     SVGPath triangleDownSVG = new SVGPath();
 
-    SortingMode sortingMode = SortingMode.DEFAULT;
+    SortingMode sortingMode = SortingMode.DOWNLOADS;
 
 
     IntegerProperty focus = new SimpleIntegerProperty(-1);
@@ -387,7 +387,6 @@ public class ResultsPage extends VBox implements Page{
         downloadsHeaderArrow.getStyleClass().add("graphic");
         downloadsHeaderArrow.setPrefSize(10, 6);
         downloadsHeaderArrow.setMaxSize(10, 6);
-        downloadsHeaderArrow.setVisible(false);
 
         this.getChildren().addAll(titleContainer, tableHeader, scrollPane);
         StackPane.setMargin(this, new Insets(0, 0, 70, 0));
@@ -416,11 +415,12 @@ public class ResultsPage extends VBox implements Page{
         focusNodes.clear();
         focusNodes.add(backButton);
 
-        downloadsHeaderArrow.setVisible(false);
+        downloadsHeaderArrow.setVisible(true);
+        downloadsHeaderArrow.setShape(triangleDownSVG);
         languageHeaderArrow.setVisible(false);
         fileNameHeaderArrow.setVisible(false);
 
-        sortingMode = SortingMode.DEFAULT;
+        sortingMode = SortingMode.DOWNLOADS;
     }
 
     private void updatePadding(boolean value){

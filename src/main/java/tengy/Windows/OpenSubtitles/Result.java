@@ -4,6 +4,7 @@ package tengy.Windows.OpenSubtitles;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.css.PseudoClass;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
@@ -192,7 +193,7 @@ public class Result extends GridPane {
         crossIcon.setMaxSize(16, 16);
         crossIcon.setMouseTransparent(true);
         crossIcon.setVisible(false);
-        crossIcon.getStyleClass().add("menuIcon");
+        crossIcon.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
     private void downloadFile() {
@@ -241,6 +242,8 @@ public class Result extends GridPane {
                     downloadsLabel.setVisible(false);
                     languageLabel.setVisible(false);
                     nameLabel.setText("Download failed");
+                    nameLabel.setTextFill(Color.RED);
+                    indexLabel.setTextFill(Color.RED);
                 }
             });
             downloadTask.setOnFailed(e -> {
@@ -250,6 +253,8 @@ public class Result extends GridPane {
                 downloadsLabel.setVisible(false);
                 languageLabel.setVisible(false);
                 nameLabel.setText("Download failed");
+                nameLabel.setTextFill(Color.RED);
+                indexLabel.setTextFill(Color.RED);
             });
 
             ExecutorService executorService = Executors.newFixedThreadPool(1);

@@ -111,20 +111,22 @@ public class WindowController {
 
                 openSubtitlesWindow.window.minHeightProperty().unbind();
                 openSubtitlesWindow.window.maxHeightProperty().unbind();
-                openSubtitlesWindow.window.setMinHeight(350);
-                openSubtitlesWindow.window.setMaxHeight(350);
+                openSubtitlesWindow.window.setMinHeight(355);
+                openSubtitlesWindow.window.setMaxHeight(355);
 
                 openSubtitlesWindow.window.minWidthProperty().unbind();
                 openSubtitlesWindow.window.maxWidthProperty().unbind();
                 openSubtitlesWindow.window.setMinWidth(600);
                 openSubtitlesWindow.window.setMaxWidth(600);
 
-                switch (openSubtitlesWindow.openSubtitlesState){
-                    case SEARCH_OPEN -> openSubtitlesWindow.searchPage.reset();
-                    case CONNECTION_OPEN ->  openSubtitlesWindow.connectionPage.reset();
-                    case HELP_OPEN -> openSubtitlesWindow.helpPage.reset();
-                    case RESULTS_OPEN -> openSubtitlesWindow.resultsPage.reset();
-                }
+                openSubtitlesWindow.searchPage.reset();
+                openSubtitlesWindow.connectionPage.reset();
+                openSubtitlesWindow.helpPage.reset();
+                openSubtitlesWindow.resultsPage.reset();
+                openSubtitlesWindow.profilePage.reset();
+
+                openSubtitlesWindow.connectionPage.previousPage = null;
+                openSubtitlesWindow.helpPage.previousPage = null;
 
                 openSubtitlesWindow.openSubtitlesState = OpenSubtitlesState.SEARCH_OPEN;
 

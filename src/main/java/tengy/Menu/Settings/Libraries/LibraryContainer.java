@@ -33,7 +33,6 @@ import static tengy.Utilities.keyboardFocusOn;
 
 public class LibraryContainer extends VBox {
 
-
     PressableNode header = new PressableNode();
     SVGPath svg = new SVGPath();
     Region icon = new Region();

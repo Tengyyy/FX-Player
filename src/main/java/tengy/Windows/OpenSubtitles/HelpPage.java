@@ -46,12 +46,21 @@ public class HelpPage extends VBox implements Page{
             "Keep in mind that this method will only work if you have not modified/edited the video file.");
     Text text8 = new Text("Method 2: Search by title");
     Text text9 = new Text("Use this method to manually search for subtitles by specifying the movie title if you have no luck with the first method. When searching for subtitles for a TV Show/Series, you can also provide a season and episode number.");
-    Text text10 = new Text("Downloading subtitles");
+    Text text10 = new Text("Advanced search options");
     Text text11 = new Text("""
+            OpenSubtitles provides additional search options for when then the standard search parameters don't provide the desired result.
+            You can provide the IMDb ID or the year of the movie to find the exact title you're looking for.
+            Additionally, you can search for only hearing impaired subtitles or only forced subtitles (subtitles that translate only the foreign parts).""");
+    Text text12 = new Text("Downloading subtitles");
+    Text text13 = new Text("""
             Click on one of subtitle files to download it.
             The subtitle file will be saved to the same directory as the currently active video and with the same name (different extension) so FXPlayer will be able to load the subtitles automatically every time you play the video.
             Make sure the option 'Scan parent folder for subtitle file with matching name' is turned on in the settings menu for the subtitles to load automatically next time you play the video.\s""");
 
+    Text text14 = new Text("Authentication");
+    Text text15 = new Text("An OpenSubtitles account is required to search for and download subtitles.\nStandard users can download 10 subtitles per 24 hours, so use your available downloads wisely! Check your available number of downloads on the connection page by pressing the 'profile' button.\nNB! If you're having trouble logging in, make sure to use your username and not email for authentication.");
+
+    public Page previousPage = null;
 
     HelpPage(OpenSubtitlesWindow openSubtitlesWindow){
         this.openSubtitlesWindow = openSubtitlesWindow;
@@ -83,7 +92,15 @@ public class HelpPage extends VBox implements Page{
         backButton.getStyleClass().addAll("transparentButton", "popupWindowCloseButton");
         backButton.setFocusTraversable(false);
         backButton.setGraphic(backIcon);
-        backButton.setOnAction(e -> openSubtitlesWindow.openSearchPage());
+
+        backButton.setOnAction(e -> {
+            backButton.requestFocus();
+
+            if(previousPage == openSubtitlesWindow.connectionPage) openSubtitlesWindow.openConnectionPage(false);
+            else if(previousPage == openSubtitlesWindow.resultsPage) openSubtitlesWindow.openResultsPage();
+            else if(previousPage == openSubtitlesWindow.profilePage) openSubtitlesWindow.openProfilePage();
+            else openSubtitlesWindow.openSearchPage();
+        });
         backButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
                 openSubtitlesWindow.focus.set(0);
@@ -129,8 +146,8 @@ public class HelpPage extends VBox implements Page{
         scrollPane.setBackground(Background.EMPTY);
         scrollPane.setContent(content);
 
-        List<Text> titles = List.of(text4, text6,text8,text10);
-        List<Text> paragraphs = List.of(text1, text3,text5,text7,text9,text11);
+        List<Text> titles = List.of(text4, text6,text8,text10,text12,text14);
+        List<Text> paragraphs = List.of(text1, text3,text5,text7,text9,text11,text13,text15);
 
         for(Text text : titles){
             text.setWrappingWidth(540);
@@ -154,10 +171,10 @@ public class HelpPage extends VBox implements Page{
         textFlow.getChildren().addAll(text1, hyperlink, text3);
         textFlow.setMaxWidth(540);
 
-        content.getChildren().addAll(textFlow, text4, text5, text6, text7, text8, text9, text10, text11);
+        content.getChildren().addAll(textFlow, text4, text5, text6, text7, text8, text9, text10, text11, text12, text13,text14,text15);
 
         hyperlink.setOnAction(e -> {
-            Utilities.openBrowser("https://www.opensubtitles.com/en");
+            Utilities.openBrowser("https://www.opensubtitles.com");
             hyperlink.setVisited(true);
         });
 

@@ -38,6 +38,7 @@ public class OpenSubtitles {
         header.put("Accept","application/json");
         header.put("Api-Key", key);
         header.put("Content-Type", "application/json");
+        header.put("User-Agent", "FXPlayer v1.0");
         //header.put("Accept-Language","en-US,en;q=0.5");
     }
 

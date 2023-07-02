@@ -3,7 +3,7 @@ package tengy.OpenSubtitles.models;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.TreeMap;
+import java.util.*;
 
 public abstract class Query {
 
@@ -23,7 +23,7 @@ public abstract class Query {
         }
     }
 
-    private TreeMap<String,String> data;
+    private final TreeMap<String,String> data;
     public static Query EMPTY_QUERY = new EmptyQuery();
 
     public Query() {
@@ -47,6 +47,7 @@ public abstract class Query {
             return "";
         }
         StringBuilder result = new StringBuilder("?");
+
         for(String key : data.keySet()) {
             result.append(String.format("%s=%s&", key, data.get(key)));
         }

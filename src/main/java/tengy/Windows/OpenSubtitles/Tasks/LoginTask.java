@@ -2,30 +2,48 @@ package tengy.Windows.OpenSubtitles.Tasks;
 
 
 import javafx.concurrent.Task;
+import javafx.util.Pair;
+import tengy.OpenSubtitles.OpenSubtitles;
 import tengy.OpenSubtitles.models.authentication.LoginResult;
-import tengy.Windows.OpenSubtitles.SearchPage;
+import tengy.OpenSubtitles.models.infos.UserResult;
 
 import java.io.IOException;
 
-public class LoginTask extends Task<Integer> {
+public class LoginTask extends Task<Pair<Integer, UserResult.Data>> {
 
-    SearchPage searchPage;
+    OpenSubtitles os;
+    boolean getInfo = false;
 
-    public LoginTask(SearchPage searchPage){
-        this.searchPage = searchPage;
+    public LoginTask(OpenSubtitles os){
+        this.os = os;
+    }
+
+    public LoginTask(OpenSubtitles os, boolean getInfo){
+        this.os = os;
+        this.getInfo = getInfo;
     }
 
     @Override
-    protected Integer call() {
-
-        if(searchPage.os.isLoggedIn()) return 200;
+    protected Pair<Integer, UserResult.Data> call() {
 
         try {
-            LoginResult lr = searchPage.os.login();
 
-            return lr.status;
+            if(os.isLoggedIn()){
+
+                if(!getInfo) return new Pair<>(200, null);
+
+                UserResult ur = os.getUserInfo();
+                return new Pair<>(200, ur.data);
+            }
+
+            LoginResult lr = os.login();
+            if(!getInfo) return new Pair<>(lr.status, null);
+            UserResult ur = os.getUserInfo();
+
+            return new Pair<>(lr.status, ur.data);
+
         } catch (IOException | InterruptedException e) {
-            return -1;
+            return new Pair<>(-1, null);
         }
     }
 }

@@ -14,11 +14,9 @@ import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -133,6 +131,8 @@ public class LicenseWindow {
         markdownScroll.setContent(markdownView);
 
 
+
+
         windowContainer.setPadding(new Insets(15, 0, 0, 15));
         windowContainer.getChildren().addAll(titleContainer, markdownScroll);
         windowContainer.setSpacing(20);
@@ -209,7 +209,7 @@ public class LicenseWindow {
         fadeTransition.setToValue(0);
         fadeTransition.setOnFinished(e -> {
             window.setVisible(false);
-            markdownScroll.setVvalue(0);
+            //markdownScroll.setVvalue(0);
         });
         fadeTransition.play();
     }

@@ -203,22 +203,16 @@
 .leftButton {
     -fx-background-radius: 5 0 0 5;
     -fx-border-radius: 5 0 0 5;
-    -fx-border-width: 2;
-    -fx-border-insets: 1;
 }
 
 .middleButton {
     -fx-background-radius: 0;
     -fx-border-radius: 0;
-    -fx-border-width: 2;
-    -fx-border-insets: 1;
 }
 
 .rightButton {
     -fx-background-radius: 0 5 5 0;
     -fx-border-radius: 0 5 5 0;
-    -fx-border-width: 2;
-    -fx-border-insets: 1;
 }
 
 .multiselectToggle {

@@ -4,6 +4,7 @@ import com.github.kokorin.jaffree.Rational;
 import com.github.kokorin.jaffree.ffprobe.Format;
 import com.github.kokorin.jaffree.ffprobe.Stream;
 import com.github.kokorin.jaffree.ffprobe.StreamDisposition;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.css.PseudoClass;
@@ -22,7 +23,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
@@ -54,9 +54,6 @@ public class TechnicalDetailsWindow {
 
     VBox windowContainer = new VBox();
 
-    VBox titleContainer = new VBox();
-
-
     StackPane buttonContainer = new StackPane();
     Button mainButton = new Button("Close");
 
@@ -64,7 +61,11 @@ public class TechnicalDetailsWindow {
     SVGPath closeButtonSVG = new SVGPath();
     Button closeButton = new Button();
 
+    StackPane titleContainer = new StackPane();
     Label title = new Label("Technical details");
+    Button chapterEditButton = new Button();
+    Button mediaInformationButton = new Button();
+    ControlTooltip chapterEditTooltip, mediaInformationTooltip;
 
     ScrollPane technicalDetailsScroll;
 
@@ -76,6 +77,7 @@ public class TechnicalDetailsWindow {
     public VBox subtitlesBox = new VBox();
     public VBox attachmentsBox = new VBox();
 
+    MediaItem mediaItem = null;
 
     boolean showing = false;
 
@@ -176,10 +178,98 @@ public class TechnicalDetailsWindow {
         windowContainer.setSpacing(5);
         StackPane.setMargin(windowContainer, new Insets(0, 0, 70, 0));
 
-        titleContainer.getChildren().addAll(title);
+        titleContainer.getChildren().addAll(title, chapterEditButton, mediaInformationButton);
+        titleContainer.setAlignment(Pos.CENTER_LEFT);
         titleContainer.setPadding(new Insets(5, 0, 5, 0));
 
-        title.getStyleClass().addAll("popupWindowTitle", "technicalDetailsWindowTitle");
+        StackPane.setAlignment(title, Pos.CENTER_LEFT);
+        title.getStyleClass().addAll("popupWindowTitle", "chapterWindowTitle");
+
+        SVGPath chapterEditSVG = new SVGPath();
+        chapterEditSVG.setContent(SVG.CHAPTER.getContent());
+        Region chapterEditIcon = new Region();
+        chapterEditIcon.setShape(chapterEditSVG);
+        chapterEditIcon.getStyleClass().addAll("menuIcon", "graphic");
+        chapterEditIcon.setPrefSize(16, 16);
+        chapterEditIcon.setMaxSize(16, 16);
+
+        StackPane.setAlignment(chapterEditButton, Pos.CENTER_RIGHT);
+        StackPane.setMargin(chapterEditButton, new Insets(0, 110, 0, 0));
+        HBox.setMargin(chapterEditButton, new Insets(0, 0, 0, 50));
+        chapterEditButton.setFocusTraversable(false);
+        chapterEditButton.setGraphic(chapterEditIcon);
+        chapterEditButton.getStyleClass().add("menuButton");
+        chapterEditButton.setOnAction(e -> {
+            chapterEditButton.requestFocus();
+
+            if(mediaItem == null) return;
+
+            mainController.windowController.chapterEditWindow.show(mediaItem);
+        });
+
+        chapterEditButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(1);
+            }
+            else{
+                keyboardFocusOff(chapterEditButton);
+                focus.set(-1);
+            }
+        });
+
+        chapterEditButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            chapterEditButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        chapterEditButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            chapterEditButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+
+
+        SVGPath mediaInformationSVG = new SVGPath();
+        mediaInformationSVG.setContent(SVG.INFORMATION.getContent());
+        Region mediaInformationIcon = new Region();
+        mediaInformationIcon.setShape(mediaInformationSVG);
+        mediaInformationIcon.getStyleClass().addAll("menuIcon", "graphic");
+        mediaInformationIcon.setPrefSize(16, 16);
+        mediaInformationIcon.setMaxSize(16, 16);
+
+        StackPane.setAlignment(mediaInformationButton, Pos.CENTER_RIGHT);
+        StackPane.setMargin(mediaInformationButton, new Insets(0, 60, 0 , 0));
+        mediaInformationButton.setFocusTraversable(false);
+        mediaInformationButton.setGraphic(mediaInformationIcon);
+        mediaInformationButton.getStyleClass().add("menuButton");
+        mediaInformationButton.setOnAction(e -> {
+            mediaInformationButton.requestFocus();
+
+            if(mediaItem == null) return;
+
+            mainController.windowController.mediaInformationWindow.show(mediaItem);
+        });
+
+        mediaInformationButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                if(chapterEditButton.isVisible()) focus.set(2);
+                else focus.set(1);
+            }
+            else{
+                keyboardFocusOff(mediaInformationButton);
+                focus.set(-1);
+            }
+        });
+
+        mediaInformationButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mediaInformationButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mediaInformationButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mediaInformationButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
 
 
         StackPane.setAlignment(buttonContainer, Pos.BOTTOM_CENTER);
@@ -196,7 +286,7 @@ public class TechnicalDetailsWindow {
         mainButton.setOnAction(e -> this.hide());
         mainButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                focus.set(1);
+                focus.set(focusNodes.size() - 1);
             }
             else{
                 keyboardFocusOff(mainButton);
@@ -215,8 +305,10 @@ public class TechnicalDetailsWindow {
         });
         StackPane.setAlignment(mainButton, Pos.CENTER_RIGHT);
 
-        focusNodes.add(closeButton);
-        focusNodes.add(mainButton);
+        Platform.runLater(() -> {
+            chapterEditTooltip = new ControlTooltip(mainController, "View chapters", "", chapterEditButton, 1000);
+            mediaInformationTooltip = new ControlTooltip(mainController, "Media information", "", mediaInformationButton, 1000);
+        });
     }
 
 
@@ -231,12 +323,15 @@ public class TechnicalDetailsWindow {
         window.setVisible(true);
 
         mainController.popupWindowContainer.setMouseTransparent(false);
-        AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 0 , 1, false, 1, true);
+        AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, mainController.popupWindowContainer.getOpacity(), 1, false, 1, true);
     }
 
     public void hide(){
 
         this.showing = false;
+        this.mediaItem = null;
+
+        focusNodes.clear();
 
         windowController.windowState = WindowState.CLOSED;
 
@@ -262,6 +357,33 @@ public class TechnicalDetailsWindow {
 
     private void initializeWindow(MediaItem mediaItem){
         if(mediaItem == null) return;
+
+        this.mediaItem = mediaItem;
+
+        focusNodes.add(closeButton);
+
+        String extension = Utilities.getFileExtension(mediaItem.getFile());
+        if(!extension.equals("mp4")
+        && !extension.equals("mkv")
+        && !extension.equals("mov")
+        && !extension.equals("mp3")
+        && !extension.equals("opus")
+        && !extension.equals("m4a")
+        && !extension.equals("wma")
+        && !extension.equals("wmv")
+        && !extension.equals("mka")
+        && !extension.equals("webm")){
+            chapterEditButton.setVisible(false);
+        }
+        else {
+            chapterEditButton.setVisible(true);
+            focusNodes.add(chapterEditButton);
+        }
+
+        focusNodes.add(mediaInformationButton);
+        focusNodes.add(mainButton);
+
+
 
         createFileSection(mediaItem);
         if(!mediaItem.videoStreams.isEmpty()) createVideoSection(mediaItem);

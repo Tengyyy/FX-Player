@@ -173,7 +173,7 @@ public class ChapterEditItem extends StackPane {
 
         titleField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                chapterEditWindow.focus.set(index + 1);
+                chapterEditWindow.focus.set(index + 3);
                 focus.set(0);
                 titleFieldBorder.setVisible(false);
                 titleIcon.setStyle("-fx-background-color: white;");
@@ -259,7 +259,7 @@ public class ChapterEditItem extends StackPane {
 
         startTimeField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue){
-                chapterEditWindow.focus.set(index + 1);
+                chapterEditWindow.focus.set(index + 3);
                 focus.set(1);
                 startTimeFieldBorder.setVisible(false);
                 timerIcon.setStyle("-fx-background-color: white;");
@@ -334,7 +334,7 @@ public class ChapterEditItem extends StackPane {
         removeButton.setGraphic(removeIcon);
         removeButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
             if(newValue) {
-                chapterEditWindow.focus.set(index + 1);
+                chapterEditWindow.focus.set(index + 3);
                 focus.set(focusNodes.size() - 1);
                 focusOn();
             }

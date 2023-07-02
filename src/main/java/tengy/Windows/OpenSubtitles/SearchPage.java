@@ -88,9 +88,9 @@ public class SearchPage extends VBox implements Page{
     StackPane impairedHearingBox = new StackPane();
     Label impairedHearingLabel = new Label("Hearing impaired subtitles:");
     HBox impairedHearingButtonContainer = new HBox();
-    Button impairedHearingExcludeButton = new Button("Exclude");
-    Button impairedHearingIncludeButton = new Button("Include");
-    Button impairedHearingOnlyButton = new Button("Only");
+    public Button impairedHearingExcludeButton = new Button("Exclude");
+    public Button impairedHearingIncludeButton = new Button("Include");
+    public Button impairedHearingOnlyButton = new Button("Only");
     SubtitlesQuery.Settings impairedHearingState = INCLUDE;
 
     StackPane yearBox = new StackPane();
@@ -100,21 +100,21 @@ public class SearchPage extends VBox implements Page{
     StackPane foreignPartsBox = new StackPane();
     Label foreignPartsLabel = new Label("Forced subtitles:");
     HBox foreignPartsButtonContainer = new HBox();
-    Button foreignPartsExcludeButton = new Button("Exclude");
-    Button foreignPartsIncludeButton = new Button("Include");
-    Button foreignPartsOnlyButton = new Button("Only");
+    public Button foreignPartsExcludeButton = new Button("Exclude");
+    public Button foreignPartsIncludeButton = new Button("Include");
+    public Button foreignPartsOnlyButton = new Button("Only");
     SubtitlesQuery.Settings foreignPartsState = INCLUDE;
 
     HBox toggleContainer = new HBox();
 
     StackPane movieOnlyBox = new StackPane();
     Label movieOnlyLabel = new Label("Only search for movies:");
-    MFXToggleButton movieOnlyToggle = new MFXToggleButton();
+    public MFXToggleButton movieOnlyToggle = new MFXToggleButton();
     Label movieOnlyToggleLabel = new Label("Off");
 
     StackPane aiTranslatedBox = new StackPane();
     Label aiTranslatedLabel = new Label("Include AI translated subtitles:");
-    MFXToggleButton aiTranslatedToggle = new MFXToggleButton();
+    public MFXToggleButton aiTranslatedToggle = new MFXToggleButton();
     Label aiTranslatedToggleLabel = new Label("On");
 
 

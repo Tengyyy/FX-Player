@@ -61,4 +61,5 @@ module hans {
     opens tengy.Windows.Equalizer to javafx.fxml, javafx.graphics;
     exports tengy.Windows.OpenSubtitles;
     opens tengy.Windows.OpenSubtitles to javafx.fxml, javafx.graphics;
+    exports tengy.Windows.MediaInformation;
 }

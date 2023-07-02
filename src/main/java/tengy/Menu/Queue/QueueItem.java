@@ -813,13 +813,10 @@ public class QueueItem extends GridPane {
     }
 
     public void showMetadata(){
-        menuController.mediaInformationPage.enter(this.getMediaItem());
+        menuController.mainController.windowController.mediaInformationWindow.show(this.getMediaItem());
     }
 
     public void showTechnicalDetails() {
-
-        if(menuController.menuInTransition) return;
-
         menuController.mainController.windowController.technicalDetailsWindow.show(this.getMediaItem());
     }
 

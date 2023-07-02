@@ -2,6 +2,7 @@ package tengy.Windows.ChapterEdit;
 
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -25,14 +26,11 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
-import tengy.AnimationsClass;
+import tengy.*;
 import tengy.Chapters.ChapterFrameGrabberTask;
-import tengy.MainController;
 import tengy.MediaItems.Chapter;
 import tengy.MediaItems.MediaItem;
 import tengy.Menu.Settings.Libraries.LibraryItem;
-import tengy.SVG;
-import tengy.Utilities;
 import tengy.Windows.WindowController;
 import tengy.Windows.WindowState;
 
@@ -55,8 +53,11 @@ public class ChapterEditWindow {
 
     VBox windowContainer = new VBox();
 
-    VBox titleContainer = new VBox();
+    StackPane titleContainer = new StackPane();
     Label title = new Label("Chapters");
+    Button technicalDetailsButton = new Button();
+    Button mediaInformationButton = new Button();
+    ControlTooltip technicalDetailsTooltip, mediaInformationTooltip;
 
     StackPane loadingContainer = new StackPane();
     HBox loadingPane = new HBox();
@@ -234,10 +235,99 @@ public class ChapterEditWindow {
         windowContainer.setSpacing(20);
         StackPane.setMargin(windowContainer, new Insets(0, 0, 70, 0));
 
-        titleContainer.getChildren().addAll(title);
+        titleContainer.getChildren().addAll(title, technicalDetailsButton, mediaInformationButton);
+        titleContainer.setAlignment(Pos.CENTER_LEFT);
         titleContainer.setPadding(new Insets(5, 0, 5, 0));
 
+        StackPane.setAlignment(title, Pos.CENTER_LEFT);
         title.getStyleClass().addAll("popupWindowTitle", "chapterWindowTitle");
+
+        SVGPath technicalDetailsSVG = new SVGPath();
+        technicalDetailsSVG.setContent(SVG.COGS.getContent());
+        Region technicalDetailsIcon = new Region();
+        technicalDetailsIcon.setShape(technicalDetailsSVG);
+        technicalDetailsIcon.getStyleClass().addAll("menuIcon", "graphic");
+        technicalDetailsIcon.setPrefSize(16, 16);
+        technicalDetailsIcon.setMaxSize(16, 16);
+
+        StackPane.setAlignment(technicalDetailsButton, Pos.CENTER_RIGHT);
+        StackPane.setMargin(technicalDetailsButton, new Insets(0, 110, 0, 0));
+        HBox.setMargin(technicalDetailsButton, new Insets(0, 0, 0, 50));
+        technicalDetailsButton.setFocusTraversable(false);
+        technicalDetailsButton.setGraphic(technicalDetailsIcon);
+        technicalDetailsButton.getStyleClass().add("menuButton");
+        technicalDetailsButton.setOnAction(e -> {
+            technicalDetailsButton.requestFocus();
+
+            if(mediaItem == null) return;
+
+            mainController.windowController.technicalDetailsWindow.show(mediaItem);
+        });
+
+        technicalDetailsButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(1);
+            }
+            else{
+                keyboardFocusOff(technicalDetailsButton);
+                focus.set(-1);
+            }
+        });
+
+        technicalDetailsButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            technicalDetailsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        technicalDetailsButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            technicalDetailsButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+
+
+        SVGPath mediaInformationSVG = new SVGPath();
+        mediaInformationSVG.setContent(SVG.INFORMATION.getContent());
+        Region mediaInformationIcon = new Region();
+        mediaInformationIcon.setShape(mediaInformationSVG);
+        mediaInformationIcon.getStyleClass().addAll("menuIcon", "graphic");
+        mediaInformationIcon.setPrefSize(16, 16);
+        mediaInformationIcon.setMaxSize(16, 16);
+
+        StackPane.setAlignment(mediaInformationButton, Pos.CENTER_RIGHT);
+        StackPane.setMargin(mediaInformationButton, new Insets(0, 60, 0 , 0));
+        mediaInformationButton.setFocusTraversable(false);
+        mediaInformationButton.setGraphic(mediaInformationIcon);
+        mediaInformationButton.getStyleClass().add("menuButton");
+        mediaInformationButton.setOnAction(e -> {
+            mediaInformationButton.requestFocus();
+
+            if(mediaItem == null) return;
+
+            mainController.windowController.mediaInformationWindow.show(mediaItem);
+        });
+
+        mediaInformationButton.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(newValue){
+                focus.set(2);
+            }
+            else{
+                keyboardFocusOff(mediaInformationButton);
+                focus.set(-1);
+            }
+        });
+
+        mediaInformationButton.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mediaInformationButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), true);
+        });
+
+        mediaInformationButton.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            if(e.getCode() != KeyCode.SPACE) return;
+            mediaInformationButton.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+        });
+
+
 
         StackPane.setAlignment(buttonContainer, Pos.BOTTOM_CENTER);
         buttonContainer.getChildren().add(mainButton);
@@ -369,6 +459,12 @@ public class ChapterEditWindow {
                 }
             }
         });
+
+        Platform.runLater(() -> {
+            technicalDetailsTooltip = new ControlTooltip(mainController, "Technical details", "", technicalDetailsButton, 1000);
+            mediaInformationTooltip = new ControlTooltip(mainController, "Media information", "", mediaInformationButton, 1000);
+        });
+
     }
 
     public void show(MediaItem mediaItem){
@@ -384,7 +480,7 @@ public class ChapterEditWindow {
 
         window.requestFocus();
 
-        AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, 0 , 1, false, 1, true);
+        AnimationsClass.fadeAnimation(100, mainController.popupWindowContainer, mainController.popupWindowContainer.getOpacity(), 1, false, 1, true);
     }
 
     public void hide(){
@@ -394,7 +490,6 @@ public class ChapterEditWindow {
         windowController.windowState = WindowState.CLOSED;
 
         focusNodes.clear();
-
 
         mainController.popupWindowContainer.setMouseTransparent(true);
 
@@ -432,6 +527,9 @@ public class ChapterEditWindow {
 
 
         focusNodes.add(closeButton);
+        focusNodes.add(technicalDetailsButton);
+        focusNodes.add(mediaInformationButton);
+
 
         if(mediaItem.editActive.get()){
             editActiveProperty.set(true);
@@ -667,7 +765,7 @@ public class ChapterEditWindow {
             return;
         }
 
-        if(focus.get() > 0 && focus.get() < focusNodes.size() - 1){
+        if(focus.get() > 2 && focus.get() < focusNodes.size() - 1){
             if(focusNodes.get(focus.get()) instanceof ChapterEditItem chapterEditItem){
                 boolean skipFocus = chapterEditItem.focusForward();
                 if(!skipFocus) return;
@@ -698,7 +796,7 @@ public class ChapterEditWindow {
             return;
         }
 
-        if(focus.get() > 0 && focus.get() < focusNodes.size() - 1){
+        if(focus.get() > 2 && focus.get() < focusNodes.size() - 1){
             if(focusNodes.get(focus.get()) instanceof ChapterEditItem chapterEditItem){
                 boolean skipFocus = chapterEditItem.focusBackward();
                 if(!skipFocus) return;
@@ -707,8 +805,7 @@ public class ChapterEditWindow {
 
         int newFocus;
 
-        if(focus.get() == 0) newFocus = focusNodes.size() - 1;
-        else if(focus.get() == -1) newFocus = 0;
+        if(focus.get() == 0 || focus.get() == -1) newFocus = focusNodes.size() - 1;
         else newFocus = focus.get() - 1;
 
         if(focusNodes.get(newFocus) instanceof ChapterEditItem chapterEditItem) {

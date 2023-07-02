@@ -4,6 +4,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import tengy.MainController;
 import tengy.Windows.ChapterEdit.ChapterEditWindow;
 import tengy.Windows.Equalizer.EqualizerWindow;
+import tengy.Windows.MediaInformation.MediaInformationWindow;
 import tengy.Windows.OpenSubtitles.OpenSubtitlesState;
 import tengy.Windows.OpenSubtitles.OpenSubtitlesWindow;
 
@@ -20,13 +21,12 @@ public class WindowController {
     public ThirdPartySoftwareWindow thirdPartySoftwareWindow;
     public TechnicalDetailsWindow technicalDetailsWindow;
     public ChapterEditWindow chapterEditWindow;
-    public MediaInformationWindow mediaInformationWindow;
     public EqualizerWindow equalizerWindow;
     public OpenSubtitlesWindow openSubtitlesWindow;
+    public MediaInformationWindow mediaInformationWindow;
 
     public WindowController(MainController mainController){
         this.mainController = mainController;
-
 
         addYoutubeVideoWindow = new AddYoutubeVideoWindow(this);
         closeConfirmationWindow = new CloseConfirmationWindow(this);
@@ -37,6 +37,7 @@ public class WindowController {
         chapterEditWindow = new ChapterEditWindow(this);
         equalizerWindow = new EqualizerWindow(this);
         openSubtitlesWindow = new OpenSubtitlesWindow(this);
+        mediaInformationWindow = new MediaInformationWindow(this);
     }
 
     public void updateState(WindowState newState){
@@ -75,6 +76,9 @@ public class WindowController {
                 technicalDetailsWindow.attachmentsBox.getChildren().clear();
 
                 technicalDetailsWindow.technicalDetailsScroll.setVvalue(0);
+
+                technicalDetailsWindow.mediaItem = null;
+                technicalDetailsWindow.focusNodes.clear();
             }
             case THIRD_PARTY_SOFTWARE_WINDOW_OPEN -> {
                 thirdPartySoftwareWindow.window.setVisible(false);
@@ -137,6 +141,13 @@ public class WindowController {
                 openSubtitlesWindow.focusNodes.add(openSubtitlesWindow.helpButton);
                 openSubtitlesWindow.focusNodes.add(openSubtitlesWindow.connectionButton);
                 openSubtitlesWindow.focusNodes.add(openSubtitlesWindow.mainButton);
+            }
+            case MEDIA_INFORMATION_WINDOW_OPEN -> {
+                mediaInformationWindow.window.setVisible(false);
+                mediaInformationWindow.showing = false;
+
+                mediaInformationWindow.mediaItem = null;
+                mediaInformationWindow.focusNodes.clear();
             }
         }
 

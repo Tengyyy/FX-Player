@@ -56,7 +56,6 @@ public class HelpPage extends VBox implements Page{
             Click on one of subtitle files to download it.
             The subtitle file will be saved to the same directory as the currently active video and with the same name (different extension) so FXPlayer will be able to load the subtitles automatically every time you play the video.
             Make sure the option 'Scan parent folder for subtitle file with matching name' is turned on in the settings menu for the subtitles to load automatically next time you play the video.\s""");
-
     Text text14 = new Text("Authentication");
     Text text15 = new Text("An OpenSubtitles account is required to search for and download subtitles.\nStandard users can download 10 subtitles per 24 hours, so use your available downloads wisely! Check your available number of downloads on the connection page by pressing the 'profile' button.\nNB! If you're having trouble logging in, make sure to use your username and not email for authentication.");
 

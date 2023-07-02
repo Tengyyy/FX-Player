@@ -933,8 +933,20 @@ public class MainController implements Initializable {
 
     public void pressEnter(){
         if(windowController.windowState == WindowState.OPEN_SUBTITLES_OPEN && windowController.openSubtitlesWindow.openSubtitlesState == OpenSubtitlesState.SEARCH_OPEN){
-            if(windowController.openSubtitlesWindow.searchPage.titleField.isFocused() || windowController.openSubtitlesWindow.searchPage.seasonField.isFocused() || windowController.openSubtitlesWindow.searchPage.episodeField.isFocused()){
-                windowController.openSubtitlesWindow.searchPage.titleSearchButton.fire();
+            if(windowController.openSubtitlesWindow.searchPage.titleField.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.seasonField.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.episodeField.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.imdbField.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.yearField.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.impairedHearingExcludeButton.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.impairedHearingIncludeButton.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.impairedHearingOnlyButton.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.foreignPartsExcludeButton.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.foreignPartsIncludeButton.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.foreignPartsOnlyButton.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.movieOnlyToggle.isFocused()
+                    || windowController.openSubtitlesWindow.searchPage.aiTranslatedToggle.isFocused()){
+                            windowController.openSubtitlesWindow.searchPage.titleSearchButton.fire();
             }
 
         }

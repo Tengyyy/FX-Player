@@ -43,7 +43,6 @@ public class SearchPage extends VBox implements Page{
 
     public OpenSubtitlesWindow openSubtitlesWindow;
 
-
     public ScrollPane scrollPane;
 
     VBox content = new VBox();
@@ -55,8 +54,7 @@ public class SearchPage extends VBox implements Page{
 
     public Button hashSearchButton = new Button("Search by hash");
 
-    public static HashMap<String, String> languageMap = new Languages();
-    public static final String[] supportedLanguages = {"Abkhazian", "Afrikaans", "Albanian", "Arabic", "Aragonese", "Armenian", "Assamese", "Asturian", "Azerbaijani","Basque", "Belarusian", "Bengali", "Bosnian", "Breton", "Bulgarian", "Burmese", "Catalan", "Chinese (simplified)", "Chinese (traditional)", "Chinese bilingual", "Croatian", "Czech", "Danish", "Dari", "Dutch", "English", "Esperanto", "Estonian", "Extremaduran", "Finnish", "French", "Gaelic", "Galician", "Georgian", "German", "Greek", "Hebrew", "Hindi", "Hungarian", "Icelandic", "Igbo", "Indonesian", "Interlingua", "Irish", "Italian", "Japanese", "Kannada", "Kazakh", "Khmer", "Korean", "Kurdish", "Latvian", "Lithuanian", "Luxembourgish", "Macedonian", "Malay", "Malayalam", "Manipuri", "Marathi", "Mongolian", "Montenegrin", "Navajo", "Nepali", "Northern Sami", "Norwegian", "Occitan", "Odia", "Persian", "Polish", "Portuguese", "Portuguese (BR)", "Portuguese (MZ)", "Pushto", "Romanian", "Russian", "Santali", "Serbian", "Sindhi", "Sinhalese", "Slovak", "Slovenian", "Somali", "Spanish", "Spanish (EU)", "Spanish (LA)", "Swahili", "Swedish", "Syriac", "Tagalog", "Tamil", "Tatar", "Telugu", "Thai", "Toki Pona", "Turkish", "Turkmen", "Ukrainian", "Urdu", "Vietnamese", "Welsh"};
+    public static final String[] supportedLanguages = {"Afrikaans", "Albanian", "Arabic", "Aragonese", "Armenian", "Asturian", "Basque", "Belarusian", "Bengali", "Bosnian", "Breton", "Bulgarian", "Burmese", "Catalan", "Chinese (simplified)", "Chinese (traditional)", "Chinese bilingual", "Croatian", "Czech", "Danish", "Dutch", "English", "Esperanto", "Estonian", "Finnish", "French", "Galician", "Georgian", "German", "Greek", "Hebrew", "Hindi", "Hungarian", "Icelandic", "Indonesian", "Italian", "Japanese", "Kazakh", "Khmer", "Korean", "Latvian", "Lithuanian", "Luxembourgish", "Macedonian", "Malay", "Malayalam", "Manipuri", "Mongolian", "Montenegrin", "Norwegian", "Occitan", "Persian", "Polish", "Portuguese", "Portuguese (BR)", "Romanian", "Russian", "Serbian", "Sinhalese", "Slovak", "Slovenian", "Spanish", "Swahili", "Swedish", "Syriac", "Tagalog", "Tamil", "Telugu", "Thai", "Turkish", "Ukrainian", "Urdu", "Uzbek", "Vietnamese"};
 
     StackPane titleBox = new StackPane();
 

@@ -21,6 +21,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import tengy.Windows.OpenSubtitles.Language;
 import tengy.Windows.OpenSubtitles.OpenSubtitlesWindow;
 import tengy.Windows.OpenSubtitles.SearchPage;
 import tengy.Windows.WindowState;
@@ -159,7 +160,8 @@ public class SubtitlesController {
             subtitlesHome.subtitlesChooserTab.setStyle("-fx-border-width: 1 0 0 0;");
 
             String preferredLanguage = menuController.settingsPage.subtitleSection.languageProperty.get();
-            String preferredLanguageCode = SearchPage.languageMap.get(preferredLanguage);
+            Language language = Language.get(preferredLanguage);
+            String code = language.getThreeLetterCode();
 
             boolean selected = false;
 
@@ -181,14 +183,14 @@ public class SubtitlesController {
 
                 if(stream.getDisposition().getDefault() == 1){
                     defaultSubtitlesTab = subtitlesTab;
-                    if(preferredLanguageCode.equals(languageCode)) {
+                    if(code.equals(languageCode)) {
                         subtitlesTab.selectSubtitles(true);
                         preferredLanguageSubtitlesTab = subtitlesTab;
                         selected = true;
                     }
                 }
 
-                if(preferredLanguageCode.equals(languageCode)) preferredLanguageSubtitlesTab = subtitlesTab;
+                if(code.equals(languageCode)) preferredLanguageSubtitlesTab = subtitlesTab;
 
                 subtitlesHome.subtitlesWrapper.getChildren().add(i + 1, subtitlesTab);
                 subtitlesHome.subtitlesTabs.add(subtitlesTab);

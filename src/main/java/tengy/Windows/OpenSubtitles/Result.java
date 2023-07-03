@@ -71,7 +71,7 @@ public class Result extends GridPane {
         this.subtitle = subtitle;
         this.fileName = subtitle.attributes.files[0].file_name + ".srt";
         this.downloads = subtitle.attributes.download_count;
-        this.language = subtitle.attributes.language;
+        this.language = Language.getThreeLetterCodeFromTwoLetterCode(subtitle.attributes.language);
 
         column2.setHgrow(Priority.ALWAYS); // makes the middle column (video title text) take up all available space
         this.getColumnConstraints().addAll(column1, column2, column3, column4, column5);

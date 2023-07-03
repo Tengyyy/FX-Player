@@ -5,6 +5,7 @@ import javafx.concurrent.Task;
 import tengy.OpenSubtitles.models.subtitles.SubtitlesQuery;
 import tengy.OpenSubtitles.models.subtitles.SubtitlesResult;
 import tengy.OpenSubtitles.tools.OpenSubtitlesHasher;
+import tengy.Windows.OpenSubtitles.Language;
 import tengy.Windows.OpenSubtitles.SearchPage;
 
 import java.io.File;
@@ -55,7 +56,8 @@ public class SearchTask extends Task<SubtitlesResult> {
         if(languages.isEmpty()) query = query.addLanguage("all");
         else {
             for (String languageName : languages) {
-                String languageCode = SearchPage.languageMap.get(languageName);
+                Language language = Language.get(languageName);
+                String languageCode = language.getTwoLetterCode();
                 query = query.addLanguage(languageCode);
             }
         }

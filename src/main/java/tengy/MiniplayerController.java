@@ -1,7 +1,7 @@
 package tengy;
 
-import tengy.Menu.MenuController;
-import tengy.Menu.Settings.Action;
+import tengy.menu.MenuController;
+import tengy.menu.Settings.Action;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;

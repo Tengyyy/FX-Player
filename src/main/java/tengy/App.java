@@ -2,9 +2,9 @@ package tengy;
 
 
 import javafx.scene.input.KeyCombination;
-import tengy.Subtitles.SubtitlesController;
-import tengy.Menu.MenuController;
-import tengy.PlaybackSettings.PlaybackSettingsController;
+import tengy.subtitles.SubtitlesController;
+import tengy.menu.MenuController;
+import tengy.playbackSettings.PlaybackSettingsController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;

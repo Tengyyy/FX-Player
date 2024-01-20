@@ -1,12 +1,12 @@
 package tengy;
 
-import tengy.Chapters.ChapterController;
-import tengy.Menu.MenuController;
-import tengy.Menu.Settings.Action;
-import tengy.PlaybackSettings.PlaybackSettingsController;
-import tengy.PlaybackSettings.PlaybackSettingsState;
-import tengy.Subtitles.SubtitlesController;
-import tengy.Subtitles.SubtitlesState;
+import tengy.chapters.ChapterController;
+import tengy.menu.MenuController;
+import tengy.menu.Settings.Action;
+import tengy.playbackSettings.PlaybackSettingsController;
+import tengy.playbackSettings.PlaybackSettingsState;
+import tengy.subtitles.SubtitlesController;
+import tengy.subtitles.SubtitlesState;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;

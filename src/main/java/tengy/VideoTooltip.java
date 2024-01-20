@@ -1,7 +1,7 @@
 package tengy;
 
 import javafx.scene.shape.SVGPath;
-import tengy.Menu.Queue.QueueItem;
+import tengy.menu.Queue.QueueItem;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Bounds;

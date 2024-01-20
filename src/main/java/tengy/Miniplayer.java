@@ -2,8 +2,8 @@ package tengy;
 
 
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene;
-import tengy.Menu.MenuController;
-import tengy.PlaybackSettings.PlaybackSettingsController;
+import tengy.menu.MenuController;
+import tengy.playbackSettings.PlaybackSettingsController;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;

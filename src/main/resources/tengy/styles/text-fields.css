@@ -5,9 +5,9 @@
 }
 
 .expandable-text-area .content {
-    -fx-background-color : rgba(30,30,30,0.4);
+    -fx-background-color : rgb(30,30,30);
     -fx-background-radius: 5;
-
+    -fx-background-insets: 0 1 0 0;
 }
 
 .expandable-text-area:focused {
@@ -20,14 +20,12 @@
 
 .expandable-text-area {
     -fx-background-color : 0;
-    -fx-background-insets: 0;
     -fx-text-fill        : white;
     -fx-font-family      : "Roboto";
     -fx-font-size        : 15;
     -fx-border-style     : solid;
-    -fx-border-color     : rgb(100,100,100);
+    -fx-border-color     : rgb(40,40,40) rgb(40,40,40) rgb(200,200,200) rgb(40,40,40);
     -fx-border-radius    : 5;
-    -fx-border-width     : 1;
 }
 
 .expandable-text-area .scroll-pane {
@@ -38,50 +36,24 @@
     -fx-background-color : transparent;
 }
 
+.expandable-text-area:hover .content {
+    -fx-background-color: rgb(50,50,50);
+}
+
+.expandable-text-area:focused .content {
+    -fx-background-color: rgb(20,20,20);
+}
+
+.expandable-text-area:focused {
+    -fx-border-color: rgb(40,40,40) rgb(40,40,40) red rgb(40,40,40);
+}
+
 .text-field {
     -fx-text-fill        : white;
     -fx-font-family      : "Roboto";
     -fx-font-size        : 15;
     -fx-padding          : 0 0 0 5;
 }
-
-.customTextField {
-    -fx-background-color : rgb(40,40,40);
-    -fx-background-radius: 5;
-    -fx-border-style     : solid;
-    -fx-border-color     : rgb(50,50,50) rgb(50,50,50) rgb(200,200,200) rgb(50,50,50);
-    -fx-border-radius    : 5;
-}
-
-.customTextField:hover {
-    -fx-background-color: rgb(50,50,50);
-}
-
-.customTextField:focused {
-    -fx-background-color: rgb(20,20,20);
-    -fx-border-color: rgb(50,50,50) rgb(50,50,50) red rgb(50,50,50);
-}
-
-.chapterField {
-    -fx-background-color: transparent;
-    -fx-border-width: 0 0 2 0;
-    -fx-border-radius: 0;
-}
-
-.customTextField .menu-item .label, .expandable-text-area .menu-item .label, .spinner .text-field .menu-item .label, .date-picker .text-field .menu-item .label, .key-text-field .menu-item .label{
-    -fx-text-fill: white;
-}
-
-.customTextField .menu-item:disabled .label, .expandable-text-area .menu-item:disabled .label, .spinner .text-field .menu-item:disabled .label, .date-picker .text-field .menu-item:disabled .label, .key-text-field .menu-item:disabled .label{
-    -fx-text-fill: rgb(150,150,150);
-}
-
-.customTextField .context-menu, .expandable-text-area .context-menu, .spinner .text-field .context-menu, .date-picker .text-field .context-menu, .key-text-field .context-menu{
-    -fx-background-color: rgba(15,15,15,0.95);
-    -fx-background-radius: 10;
-    -fx-padding: 6 3 6 3;
-}
-
 
 .defaultTextField {
     -fx-background-color : rgba(30,30,30,0.4);
@@ -106,12 +78,46 @@
     -fx-background-color : rgba(45,45,45,0.4);
 }
 
-.defaultTextField:keyboardFocused {
-    -fx-border-color: rgb(173, 216, 230);
+.customTextField {
+    -fx-background-color : rgb(30,30,30);
+    -fx-background-radius: 5;
+    -fx-border-style     : solid;
+    -fx-border-color     : rgb(40,40,40) rgb(40,40,40) rgb(200,200,200) rgb(40,40,40);
+    -fx-border-radius    : 5;
 }
 
+.customTextField:hover {
+    -fx-background-color: rgb(50,50,50);
+}
 
+.customTextField:focused {
+    -fx-background-color: rgb(20,20,20);
+    -fx-border-color: rgb(40,40,40) rgb(40,40,40) red rgb(40,40,40);
+}
 
+.chapterField {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-radius: 0;
+}
+
+.chapterField:hover, .chapterField:focused {
+    -fx-background-color: transparent;
+}
+
+.defaultTextField .menu-item .label, .customTextField .menu-item .label, .expandable-text-area .menu-item .label, .spinner .text-field .menu-item .label, .date-picker .text-field .menu-item .label, .key-text-field .menu-item .label{
+    -fx-text-fill: white;
+}
+
+.defaultTextField .menu-item:disabled .label, .customTextField .menu-item:disabled .label, .expandable-text-area .menu-item:disabled .label, .spinner .text-field .menu-item:disabled .label, .date-picker .text-field .menu-item:disabled .label, .key-text-field .menu-item:disabled .label{
+    -fx-text-fill: rgb(150,150,150);
+}
+
+.defaultTextField .context-menu, .customTextField .context-menu, .expandable-text-area .context-menu, .spinner .text-field .context-menu, .date-picker .text-field .context-menu, .key-text-field .context-menu{
+    -fx-background-color: rgba(15,15,15,0.95);
+    -fx-background-radius: 10;
+    -fx-padding: 6 3 6 3;
+}
 
 
 .multi-select-button .context-menu, .custom-menu-button .context-menu {
@@ -126,16 +132,16 @@
     -fx-background-color: transparent;
 }
 
-.customTextField .menu-item, .defaultTextField .menu-item, .expandable-text-area .menu-item, .spinner .text-field .menu-item, .date-picker .text-field .menu-item, .key-text-field .menu-item{
+.defaultTextField .menu-item, .customTextField .menu-item, .defaultTextField .menu-item, .expandable-text-area .menu-item, .spinner .text-field .menu-item, .date-picker .text-field .menu-item, .key-text-field .menu-item{
     -fx-background-color: transparent;
     -fx-background-radius: 5;
 }
 
-.customTextField .menu-item:hover, .defaultTextField .menu-item:hover, .expandable-text-area .menu-item:hover, .spinner .text-field .menu-item:hover, .date-picker .text-field .menu-item:hover, .key-text-field .menu-item:hover{
+.defaultTextField .menu-item:hover, .customTextField .menu-item:hover, .defaultTextField .menu-item:hover, .expandable-text-area .menu-item:hover, .spinner .text-field .menu-item:hover, .date-picker .text-field .menu-item:hover, .key-text-field .menu-item:hover{
     -fx-background-color: rgba(40,40,40, 0.9);
 }
 
-.customTextField .menu-item:disabled, .defaultTextField .menu-item:disabled, .expandable-text-area .menu-item:disabled, .spinner .text-field .menu-item:disabled, .date-picker .text-field .menu-item:disabled, .key-text-field .menu-item:disabled{
+.defaultTextField .menu-item:disabled, .customTextField .menu-item:disabled, .defaultTextField .menu-item:disabled, .expandable-text-area .menu-item:disabled, .spinner .text-field .menu-item:disabled, .date-picker .text-field .menu-item:disabled, .key-text-field .menu-item:disabled{
     -fx-background-color: transparent;
 }
 
@@ -161,15 +167,12 @@
     -fx-border-insets: 0;
 }
 
-.combo-box, .multi-select-button, .custom-menu-button {
+.multi-select-button, .custom-menu-button {
      -fx-background-color : rgba(30,30,30,0.4);
      -fx-background-radius: 5;
      -fx-border-style     : solid;
      -fx-border-color     : rgb(100,100,100);
      -fx-border-radius    : 5;
-     -fx-text-fill        : rgb(200,200,200);
-     -fx-font-family      : "Roboto";
-     -fx-font-size        : 15;
 }
 
 .multi-select-button .label, .custom-menu-button .label {
@@ -179,7 +182,7 @@
     -fx-border-color: transparent;
 }
 
-.combo-box:focused, .multi-select-button:focused, .multi-select-button:hover, .custom-menu-button:focused, .custom-menu-button:hover {
+.multi-select-button:focused, .multi-select-button:hover, .custom-menu-button:focused, .custom-menu-button:hover {
     -fx-border-color: rgb(200,200,200);
 }
 
@@ -196,7 +199,7 @@
 }
 
 
-.combo-box:keyboardFocused, .multi-select-button:keyboardFocused, .custom-menu-button:keyboardFocused {
+.multi-select-button:keyboardFocused, .custom-menu-button:keyboardFocused {
     -fx-border-color: rgb(173, 216, 230);
 }
 
@@ -208,16 +211,16 @@
     -fx-border-style      : none;
 }
 
-.combo-box:focused .arrow, .multi-select-button:hover .arrow, .multi-select-button:focused .arrow, .custom-menu-button:focused .arrow, .custom-menu-button:hover .arrow {
+.combo-box:hover .arrow, .combo-box:focused .arrow, .multi-select-button:hover .arrow, .multi-select-button:focused .arrow, .custom-menu-button:focused .arrow, .custom-menu-button:hover .arrow {
     -fx-background-color: white;
 }
 
-.multi-select-button:pressed .arrow, .custom-menu-button:pressed .arrow {
+.combo-box:pressed .arrow, .multi-select-button:pressed .arrow, .custom-menu-button:pressed .arrow {
     -fx-background-color: rgb(180,180,180);
 }
 
 
-.combo-box .list-cell, . {
+.combo-box .list-cell {
     -fx-text-fill        : rgb(200,200,200);
     -fx-font-family      : "Roboto";
     -fx-font-size        : 15;
@@ -227,6 +230,7 @@
     -fx-background-color: rgba(15,15,15,0.95);
     -fx-background-radius: 10;
     -fx-padding: 6 3 6 3;
+    -fx-translate-y: 2;
 }
 
 
@@ -238,10 +242,13 @@
     -fx-background-color  : transparent;
 }
 
+.combo-box .combo-box-popup .list-cell {
+    -fx-background-insets: 1 0 1 0;
+}
+
 .custom-combo-menu-item .label{
     -fx-text-fill: white;
 }
-
 
 .multi-select-item, .custom-combo-menu-item {
     -fx-padding: 4;
@@ -266,23 +273,41 @@
     -fx-background-color: rgb(40,40,40);
 }
 
+.customCombo {
+    -fx-background-color  : rgb(30,30,30);
+    -fx-background-radius : 5;
+    -fx-border-style      : solid;
+    -fx-border-color      : rgb(40,40,40) rgb(40,40,40) rgb(200,200,200) rgb(40,40,40);
+    -fx-border-radius     : 5;
+     -fx-text-fill        : rgb(200,200,200);
+     -fx-font-family      : "Roboto";
+     -fx-font-size        : 15;
+}
 
+.customCombo:hover {
+    -fx-background-color: rgb(50,50,50);
+}
+
+.customCombo:focused {
+    -fx-background-color: rgb(20,20,20);
+    -fx-border-color: rgb(40,40,40) rgb(40,40,40) red rgb(40,40,40);
+}
 
 .spinner, .date-picker {
-    -fx-background-color : rgba(30,30,30,0.4);
+    -fx-background-color : rgb(30,30,30);
     -fx-background-radius: 5;
     -fx-border-style     : solid;
-    -fx-border-color     : rgb(100,100,100);
+    -fx-border-color     : rgb(40,40,40) rgb(40,40,40) rgb(200,200,200) rgb(40,40,40);
     -fx-border-radius    : 5;
 }
 
-.spinner:focused,
-.spinner:contains-focus,
-.date-picker:focused,
-.date-picker:contains-focus {
-    -fx-background-color : rgba(30,30,30,0.4);
-    -fx-border-color: rgb(200,200,200);
-    -fx-border-width: 1;
+.spinner:hover, .date-picker:hover {
+    -fx-background-color: rgb(50,50,50);
+}
+
+.spinner:focused, .spinner:contains-focus, .date-picker:focused, .date-picker:contains-focus {
+    -fx-background-color: rgb(20,20,20);
+    -fx-border-color: rgb(40,40,40) rgb(40,40,40) red rgb(40,40,40);
 }
 
 .spinner .increment-arrow-button, .spinner .decrement-arrow-button, .date-picker .arrow-button {
@@ -291,8 +316,12 @@
     -fx-background-insets: 0;
 }
 
-.spinner .increment-arrow-button:hover, .spinner .decrement-arrow-button:hover, .spinner .increment-arrow-button:pressed, .spinner .decrement-arrow-button:pressed, .date-picker .arrow-button:hover, .date-picker .arrow-button:pressed {
-    -fx-background-color: rgba(60,60,60,0.9);
+.spinner .increment-arrow-button:hover, .spinner .decrement-arrow-button:hover, .date-picker .arrow-button:hover {
+    -fx-background-color: rgb(70,70,70);
+}
+
+.spinner .increment-arrow-button:pressed, .spinner .decrement-arrow-button:pressed, .date-picker .arrow-button:pressed {
+    -fx-background-color: rgb(60,60,60);
 }
 
 
@@ -301,7 +330,7 @@
 }
 
 .spinner .increment-arrow-button .increment-arrow, .spinner .decrement-arrow-button .decrement-arrow, .date-picker .arrow-button .arrow {
-    -fx-background-color: rgb(200,200,200);
+    -fx-background-color: rgb(220,220,220);
 }
 
 .date-picker-popup  {
@@ -330,6 +359,7 @@
 
 .date-picker-popup .spinner .button {
     -fx-border-color: transparent;
+    -fx-background-radius: 3;
     -fx-cursor: hand;
     -fx-scale-y: 1.5;
 }

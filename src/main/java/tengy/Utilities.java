@@ -7,10 +7,10 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import tengy.MediaItems.MediaItem;
-import tengy.MediaItems.MediaUtilities;
-import tengy.Menu.MenuController;
-import tengy.Menu.Queue.QueueItem;
+import tengy.mediaItems.MediaItem;
+import tengy.mediaItems.MediaUtilities;
+import tengy.menu.MenuController;
+import tengy.menu.Queue.QueueItem;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -386,5 +386,27 @@ public class Utilities {
         }
 
         return file;
+    }
+
+    public static String findFileName(MediaItem mediaItem){
+        File parent = new File(mediaItem.getFile().getParent());
+
+        String name = mediaItem.getFile().getName();
+
+        File file = new File(parent, name);
+        int index = 1;
+        while(file.exists()){
+            String extension = Utilities.getFileExtension(file);
+            String newName;
+            if(index == 1)
+                newName = file.getName().substring(0, file.getName().lastIndexOf("." + extension)) + " (1)." + extension;
+            else
+                newName = file.getName().substring(0, file.getName().lastIndexOf(" (")) + " (" + index + ")." + extension;
+
+            file = new File(file.getParentFile(), newName);
+            index++;
+        }
+
+        return file.getName();
     }
 }

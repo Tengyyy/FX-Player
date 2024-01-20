@@ -1,14 +1,15 @@
 package tengy;
 
-import tengy.Subtitles.SubtitlesState;
-import tengy.Menu.MenuState;
-import tengy.PlaybackSettings.PlaybackSettingsController;
-import tengy.PlaybackSettings.PlaybackSettingsState;
+import tengy.subtitles.SubtitlesState;
+import tengy.menu.MenuState;
+import tengy.playbackSettings.PlaybackSettingsController;
+import tengy.playbackSettings.PlaybackSettingsState;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Cursor;
 import javafx.util.Duration;
+import tengy.windows.WindowState;
 
 public class MouseEventTracker {
 
@@ -28,7 +29,13 @@ public class MouseEventTracker {
 
         mouseMoving.addListener((obs, wasMoving, isNowMoving) -> {
             if (!isNowMoving) {
-                if (mainController.mediaInterface.playing.get() && playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED && mainController.subtitlesController.subtitlesState == SubtitlesState.CLOSED && !controlBarController.volumeSlider.isValueChanging() && !controlBarController.durationSlider.isValueChanging() && !mainController.subtitlesController.subtitlesBox.subtitlesDragActive) {
+                if (mainController.mediaInterface.playing.get()
+                        && playbackSettingsController.playbackSettingsState == PlaybackSettingsState.CLOSED
+                        && mainController.subtitlesController.subtitlesState == SubtitlesState.CLOSED
+                        && !controlBarController.volumeSlider.isValueChanging()
+                        && !controlBarController.durationSlider.isValueChanging()
+                        && !mainController.subtitlesController.subtitlesBox.subtitlesDragActive
+                        && mainController.windowController.windowState == WindowState.CLOSED) {
                     if(controlBarController.titleShowing) controlBarController.hideTitle();
 
                     if(mainController.getMenuController().menuState == MenuState.CLOSED || !mainController.getMenuController().extended.get()) {

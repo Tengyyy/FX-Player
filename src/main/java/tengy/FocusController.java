@@ -1,13 +1,13 @@
 package tengy;
 
-import tengy.Menu.MenuController;
-import tengy.Menu.MenuState;
-import tengy.PlaybackSettings.PlaybackSettingsController;
-import tengy.PlaybackSettings.PlaybackSettingsState;
-import tengy.Subtitles.SubtitlesController;
-import tengy.Subtitles.SubtitlesState;
-import tengy.Windows.WindowController;
-import tengy.Windows.WindowState;
+import tengy.menu.MenuController;
+import tengy.menu.MenuState;
+import tengy.playbackSettings.PlaybackSettingsController;
+import tengy.playbackSettings.PlaybackSettingsState;
+import tengy.subtitles.SubtitlesController;
+import tengy.subtitles.SubtitlesState;
+import tengy.windows.WindowController;
+import tengy.windows.WindowState;
 
 public class FocusController {
 

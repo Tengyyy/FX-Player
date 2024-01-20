@@ -1,7 +1,7 @@
 package tengy;
 
-import tengy.Subtitles.SubtitlesController;
-import tengy.MediaItems.MediaItem;
+import tengy.subtitles.SubtitlesController;
+import tengy.mediaItems.MediaItem;
 import javafx.concurrent.Task;
 
 public class SubtitleExtractionTask extends Task<Boolean> {

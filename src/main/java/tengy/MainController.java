@@ -1,17 +1,17 @@
 package tengy;
 
-import tengy.MediaItems.MediaItem;
-import tengy.Windows.*;
-import tengy.Menu.Settings.Action;
-import tengy.Subtitles.SubtitlesController;
-import tengy.Subtitles.SubtitlesState;
-import tengy.Chapters.ChapterController;
-import tengy.MediaItems.MediaUtilities;
-import tengy.Menu.MenuController;
-import tengy.Menu.MenuState;
-import tengy.Menu.Queue.QueueItem;
-import tengy.PlaybackSettings.PlaybackSettingsController;
-import tengy.PlaybackSettings.PlaybackSettingsState;
+import tengy.mediaItems.MediaItem;
+import tengy.windows.*;
+import tengy.menu.Settings.Action;
+import tengy.subtitles.SubtitlesController;
+import tengy.subtitles.SubtitlesState;
+import tengy.chapters.ChapterController;
+import tengy.mediaItems.MediaUtilities;
+import tengy.menu.MenuController;
+import tengy.menu.MenuState;
+import tengy.menu.Queue.QueueItem;
+import tengy.playbackSettings.PlaybackSettingsController;
+import tengy.playbackSettings.PlaybackSettingsState;
 import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -35,7 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-import tengy.Windows.OpenSubtitles.OpenSubtitlesState;
+import tengy.windows.openSubtitles.OpenSubtitlesState;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 
 import java.io.File;
@@ -890,7 +890,7 @@ public class MainController implements Initializable {
     }
 
     public void addTaskBarButtons(){
-        //windowsTaskBarController = new WindowsTaskBarController(menuController, mediaInterface);
+        windowsTaskBarController = new WindowsTaskBarController(menuController, mediaInterface);
     }
 
     public void pressTAB(KeyEvent event){

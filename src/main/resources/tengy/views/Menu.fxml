@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="menu" minWidth="350.0" prefWidth="400.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tengy.Menu.MenuController">
+<StackPane fx:id="menu" minWidth="350.0" prefWidth="400.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tengy.menu.MenuController">
    <children>
       <StackPane fx:id="menuWrapper" maxWidth="1.7976931348623157E308">
          <children>

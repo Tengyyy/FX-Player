@@ -470,7 +470,14 @@
 
 .metadataKey {
     -fx-font-family: "Roboto Medium";
-    -fx-font-size: 18;
+    -fx-font-size: 16;
+    -fx-text-fill: white;
+    -fx-padding: 5 0 0 0;
+}
+
+.metadataSlash {
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 24;
     -fx-text-fill: white;
     -fx-padding: 5 0 0 0;
 }
@@ -876,9 +883,6 @@
 }
 
 .savePopup {
-    -fx-background-color: rgba(30,30,30,0.85);
+    -fx-background-color: rgba(35,35,35,0.95);
     -fx-background-radius: 5;
 }
-
-
-

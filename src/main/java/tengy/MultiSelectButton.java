@@ -12,9 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
-import tengy.Windows.OpenSubtitles.Language;
-import tengy.Windows.OpenSubtitles.OpenSubtitlesWindow;
-import tengy.Windows.OpenSubtitles.SearchPage;
+import tengy.windows.openSubtitles.Language;
 
 public class MultiSelectButton extends MenuButton {
 

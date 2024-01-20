@@ -1,5 +1,6 @@
 package fxplayer;
 
+import fxplayer.focuscontrol.FocusController;
 import fxplayer.mediaItems.MediaItem;
 import fxplayer.windows.*;
 import fxplayer.menu.Settings.Action;

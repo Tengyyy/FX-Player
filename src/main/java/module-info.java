@@ -67,4 +67,6 @@ module hans {
     opens fxplayer.windows.mediaInformation.components to javafx.fxml, javafx.graphics;
     exports fxplayer.windows.mediaInformation.items;
     opens fxplayer.windows.mediaInformation.items to javafx.fxml, javafx.graphics;
+    exports fxplayer.focuscontrol;
+    opens fxplayer.focuscontrol to javafx.fxml, javafx.graphics;
 }

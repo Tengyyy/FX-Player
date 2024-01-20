@@ -1,5 +1,6 @@
-package fxplayer;
+package fxplayer.focuscontrol;
 
+import fxplayer.MainController;
 import fxplayer.menu.MenuController;
 import fxplayer.menu.MenuState;
 import fxplayer.playbackSettings.PlaybackSettingsController;
@@ -17,7 +18,7 @@ public class FocusController {
     SubtitlesController subtitlesController;
     WindowController windowController;
 
-    FocusController(MainController mainController){
+    public FocusController(MainController mainController){
         this.mainController = mainController;
         this.menuController = mainController.getMenuController();
         this.playbackSettingsController = mainController.getPlaybackSettingsController();

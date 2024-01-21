@@ -1897,6 +1897,16 @@ public class MainController implements Initializable {
         return playbackSettingsController;
     }
 
+    public void loadControllers(){
+        App.controlBarController = controlBarController;
+        App.menuController = menuController;
+        App.hotkeyController = hotkeyController;
+        App.mediaInterface = mediaInterface;
+        App.subtitlesController = subtitlesController;
+        App.playbackSettingsController = playbackSettingsController;
+        App.focusController = focusController;
+    }
+
     public ControlBarController getControlBarController() {
         return controlBarController;
     }

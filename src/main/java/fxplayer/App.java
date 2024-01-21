@@ -1,6 +1,7 @@
 package fxplayer;
 
 
+import fxplayer.focuscontrol.FocusController;
 import javafx.scene.input.KeyCombination;
 import fxplayer.subtitles.SubtitlesController;
 import fxplayer.menu.MenuController;
@@ -27,15 +28,14 @@ public class App extends Application {
     public static boolean isWindows = false;
 
 
-    ControlBarController controlBarController;
-    PlaybackSettingsController playbackSettingsController;
-    MenuController menuController;
-    SubtitlesController subtitlesController;
-    MainController mainController;
-
-    MediaInterface mediaInterface;
-
-    HotkeyController hotkeyController;
+    public static ControlBarController controlBarController;
+    public static PlaybackSettingsController playbackSettingsController;
+    public static MenuController menuController;
+    public static SubtitlesController subtitlesController;
+    public static MainController mainController;
+    public static MediaInterface mediaInterface;
+    public static HotkeyController hotkeyController;
+    public static FocusController focusController;
 
 
     @Override
@@ -62,6 +62,7 @@ public class App extends Application {
                 Parent root = loader.load();
 
                 mainController = loader.getController();
+                mainController.loadControllers();
 
                 controlBarController = mainController.getControlBarController();
                 playbackSettingsController = mainController.getPlaybackSettingsController();

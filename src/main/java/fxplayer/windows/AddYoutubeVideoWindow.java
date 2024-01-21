@@ -73,7 +73,6 @@ public class AddYoutubeVideoWindow {
         closeButtonContainer.getChildren().add(closeButton);
         VBox.setMargin(closeButtonContainer, new Insets(0, 10, 0, 15));
 
-
         StackPane.setAlignment(closeButton, Pos.BOTTOM_RIGHT);
         closeButton.setPrefSize(25, 25);
         closeButton.setMaxSize(25, 25);
@@ -148,7 +147,7 @@ public class AddYoutubeVideoWindow {
         buttonContainer.setPadding(new Insets(20, 15, 20, 15));
 
         secondaryButton.setText("Cancel");
-        secondaryButton.getStyleClass().add("menuButton");
+        secondaryButton.getStyleClass().add("secondaryButton");
         secondaryButton.setOnAction(e -> this.hide());
         secondaryButton.setTextAlignment(TextAlignment.CENTER);
         secondaryButton.setPrefWidth(155);
@@ -206,8 +205,6 @@ public class AddYoutubeVideoWindow {
                 focus.set(-1);
             }
         });
-
-
 
 
         window.getChildren().addAll(closeButtonContainer, title, textField, buttonContainer);
